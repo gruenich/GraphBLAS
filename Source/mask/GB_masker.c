@@ -50,7 +50,7 @@
 // GB_masker_phase2.
 
 #include "mask/GB_mask.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_masker          // R = masker (C, M, Z)

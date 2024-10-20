@@ -10,7 +10,7 @@
 #ifndef GB_SUBASSIGN_METHODS_H
 #define GB_SUBASSIGN_METHODS_H
 
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "ij/GB_ij.h"
 #include "pending/GB_Pending.h"
 #include "assign/GB_subassign_IxJ_slice.h"

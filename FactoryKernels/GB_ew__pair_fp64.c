@@ -9,7 +9,7 @@
 
 #include "GB.h"
 #include "GB_control.h"
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_ew__include.h"
@@ -98,7 +98,7 @@ GrB_Info GB (_AaddB__pair_fp64)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

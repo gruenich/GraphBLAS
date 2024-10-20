@@ -31,8 +31,8 @@
 // but T<M>=A.*B is sparse (M sparse, with A and B bitmap), then it too can
 // be done in place.
 
-#include "ewise/GB_emult.h"
-#include "ewise/GB_add.h"
+#include "emult/GB_emult.h"
+#include "add/GB_add.h"
 #include "binaryop/GB_binop.h"
 
 #define GB_FREE_WORKSPACE                       \

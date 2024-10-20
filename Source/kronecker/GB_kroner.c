@@ -37,7 +37,7 @@
 }
 
 #include "kronecker/GB_kron.h"
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 
 GrB_Info GB_kroner                  // C = kron (A,B)
 (

@@ -72,7 +72,7 @@
     GB_FREE_WORKSPACE ;                     \
 }
 
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 
 //------------------------------------------------------------------------------
 // GB_allocate_result

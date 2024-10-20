@@ -19,7 +19,7 @@
 
 // Cp is constructed here, and either freed by phase2, or transplanted into C.
 
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "include/GB_unused.h"
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
@@ -95,7 +95,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     bool M_is_B = GB_all_aliased (M, B) ;
 
     #define GB_ADD_PHASE 1
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList

@@ -218,6 +218,8 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/concat
     Source/convert
     Source/ewise
+    Source/add
+    Source/emult
     Source/hyper
     Source/jit_kernels
     Source/math
