@@ -33,7 +33,9 @@ GrB_Info GB_cuda_select_bitmap
     {
         // make a copy of ythunk, since ythunk might be allocated on
         // the CPU stack and thus not accessible to the CUDA kernel.
-        ythunk_cuda = GB_MALLOC_WORK (op->ytype->size, GB_void, &ythunk_cuda_size) ;
+        ythunk_cuda = GB_MALLOC_WORK (op->ytype->size, GB_void,
+            &ythunk_cuda_size) ;
+
         if (ythunk_cuda == NULL)
         {
             return (GrB_OUT_OF_MEMORY) ;
@@ -50,7 +52,8 @@ GrB_Info GB_cuda_select_bitmap
     int64_t raw_gridsz = GB_ICEIL (anz, BLOCK_SIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     
-    // create a separate cnvals_result for CUDA since cnvals may be on the CPU stack
+    // create a separate cnvals_result for CUDA since cnvals may be on
+    // the CPU stack
     int64_t *cnvals_cuda ;
     size_t cnvals_cuda_size ;
     cnvals_cuda = GB_MALLOC_WORK (1, int64_t, &cnvals_cuda_size) ;
