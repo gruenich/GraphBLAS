@@ -195,7 +195,8 @@ typedef enum
     //... (up to 9 apply methods?)
 
     // select methods:
-    GB_JIT_CUDA_KERNEL_SELECT_BITMAP = 1035
+    GB_JIT_CUDA_KERNEL_SELECT_BITMAP = 1035,
+    GB_JIT_CUDA_KERNEL_SELECT_SPARSE = 1036
 
 }
 GB_jit_kcode ;
