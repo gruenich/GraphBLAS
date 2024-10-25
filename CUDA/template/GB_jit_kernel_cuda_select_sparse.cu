@@ -1,21 +1,10 @@
 using namespace cooperative_groups ;
 
-/*
-Steps:
-1. Build Keep array (which entries to Keep)
-2. Cumsum Keep for compression Map (Ax -> Cx)
-    - Need to know how many entries are preserved
-3. Use compression Map for building Aj' (preserved cols list)
-4. Build change array over compression Map
-    - Mark where things change
-*/
-
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORK (W) ;          \
     GB_FREE_WORK (W_2) ;        \
     GB_FREE_WORK (W_3) ;        \
-    GB_FREE_WORK (cnz) ;        \
 }
 
 #include "GB_cuda_ek_slice.cuh"
@@ -34,7 +23,10 @@ __global__ void GB_cuda_select_sparse_phase1
 )
 {
     const int64_t *__restrict__ Ap = A->p ;
+
+    #if ( GB_A_IS_HYPER )
     const int64_t *__restrict__ Ah = A->h ;
+    #endif
 
     #if ( GB_DEPENDS_ON_X )
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
@@ -113,7 +105,7 @@ __global__ void GB_cuda_select_sparse_phase2
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     
     GB_A_NHELD (anz) ;
-    int64_t cnz = Map[anz - 1];
+    int64_t cnz = Map [anz - 1];
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
     int nthreads = blockDim.x * gridDim.x ;
@@ -148,13 +140,17 @@ __global__ void GB_cuda_select_sparse_phase2
                 // cumsum, so decrement pC here to get the actual position in
                 // Ci,Cx.
                 pC-- ;
-                Ci[pC] = Ai [pA] ;
-                // Cx[pC] = Ax[pA] ;
+                Ci [pC] = Ai [pA] ;
+
+                // Cx [pC] = Ax [pA] ;
+                // Q: In iso case, this just becomes
+                // #define GB_ISO_SELECT 1? I would expect
+                // Cx [0] = Ax [0]
                 GB_SELECT_ENTRY (pC, pA) ;
 
                 // save the name of the vector kA that holds this entry in A,
                 // for the new position of this entry in C at pC.
-                Ak_keep[pC] = kA ;
+                Ak_keep [pC] = kA ;
             }
         }
 
@@ -170,7 +166,7 @@ __global__ void GB_cuda_select_sparse_phase2
             if (Map [pA-1] < pC)
             {
                 pC-- ;
-                Ck_delta [pC] = (Ak_keep[pC] != Ak_keep[pC - 1]) ;
+                Ck_delta [pC] = (Ak_keep [pC] != Ak_keep [pC - 1]) ;
             }
         }
     }
@@ -188,7 +184,9 @@ __global__ void GB_cuda_select_sparse_phase3
     int64_t *Ch
 )
 {
+    #if ( GB_A_IS_HYPER ) 
     const int64_t *__restrict__ Ah = A->h;
+    #endif
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
     int nthreads = blockDim.x * gridDim.x ;
@@ -246,7 +244,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // shift by one, to define Keep [-1] as 0
-    W [0] = 0;     // placeholder for easier end-condition
+    W [0] = 0;      // placeholder for easier end-condition
     Keep = W + 1 ;  // Keep has size A->nvals and starts at W [1]
 
     GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
@@ -259,10 +257,15 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
 
     // in-place cumsum, overwriting Keep with its cumsum, then becomes Map
-    GB_cuda_cumsum (Keep, Keep, A->nvals, stream, GB_CUDA_CUMSUM_INCLUSIVE) ;
+    CUDA_OK (GB_cuda_cumsum (Keep, Keep, A->nvals, stream,
+        GB_CUDA_CUMSUM_INCLUSIVE)) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-    cnz = Keep[A->nvals - 1];        // total # of entries kept, for C
+    int64_t *Map = Keep ;             // Keep has been replaced with Map
+    cnz = Map [A->nvals - 1] ;        // total # of entries kept, for C
+
+    // Q: need to allocate space for Cx, Ci?
+    // If cnz = 0, just need to do Cp [0] = 0, then done?
 
     // allocate workspace
     W_2 = GB_MALLOC_WORK (cnz + 1, int64_t, &W_2_size) ;
@@ -274,15 +277,14 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // shift by one: to define Ck_delta [-1] as zero
-    W_2[0] = 0 ;
+    // shift by one: to define Ck_delta [-1] as 0
+    W_2 [0] = 0 ;
     Ck_delta = W_2 + 1 ;
 
-    // shift bye one: to define Ak_keep [-1] as -1
-    W_3[0] = -1 ;
+    // shift by one: to define Ak_keep [-1] as -1
+    W_3 [0] = -1 ;
     Ak_keep = W_3 + 1 ;
 
-    int64_t *Map = Keep ;   // Keep has been replaced with Map
 
     //--------------------------------------------------------------------------
     // phase 2:
@@ -293,20 +295,31 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         (Map, A, Ak_keep, Ck_delta, Ci, Cx) ;
     
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-    // Cumsum over Ck_delta array -> Ck_map
+
+    // Cumsum over Ck_delta array to get Ck_map
     // Can reuse `Keep` to avoid a malloc
+    //--------------------------------------------------------------------------
+    // phase2b: Ck_map = cumsum (Ck_delta)
+    //--------------------------------------------------------------------------
+
     CUDA_OK (GB_cuda_cumsum (Keep, Ck_delta, cnz, stream,
         GB_CUDA_CUMSUM_INCLUSIVE)) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
-    int64_t *Ck_map = Keep;
 
+    int64_t *Ck_map = Keep;
+    int64_t cnk = Ck_map [cnz - 1] ;
+
+    // Q: Need to allocate space for Cp, Ch?
+
+    //--------------------------------------------------------------------------
     // Phase 3: Build Cp and Ch
+    //--------------------------------------------------------------------------
     GB_cuda_select_sparse_phase3 <<<grid, block, 0, stream>>>
         (A, cnz, Ak_keep, Ck_map, Cp, Ch) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     
     // log the end of the last vector of C
-    Cp[Ck_map[cnz - 1]] = cnz;
+    Cp [Ck_map [cnz - 1]] = cnz;
 
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;

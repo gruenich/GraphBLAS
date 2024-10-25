@@ -29,7 +29,9 @@ GrB_Info GB_cuda_select_sparse
     {
         // make a copy of ythunk, since ythunk might be allocated on
         // the CPU stack and thus not accessible to the CUDA kernel.
-        ythunk_cuda = GB_MALLOC_WORK (op->ytype->size, GB_void, &ythunk_cuda_size) ;
+        ythunk_cuda = GB_MALLOC_WORK (op->ytype->size, GB_void,
+            &ythunk_cuda_size) ;
+
         if (ythunk_cuda == NULL)
         {
             return (GrB_OUT_OF_MEMORY) ;

@@ -28,14 +28,20 @@ GrB_Info GB_cuda_select_bitmap_jit
     int32_t blocksz
 ) ;
 
-GrB_Info GB_cuda_select_sparse
+GrB_Info GB_cuda_select_sparse_jit
 (
+    // output:
     GrB_Matrix C,
+    // input:
     const bool C_iso,
     const GrB_IndexUnaryOp op,
     const bool flipij,
     const GrB_Matrix A,
-    const GB_void *ythunk
+    const GB_void *ythunk,
+    // CUDA stream and launch parameters:
+    cudaStream_t stream,
+    int32_t gridsz,
+    int32_t blocksz
 ) ;
 
 #endif
