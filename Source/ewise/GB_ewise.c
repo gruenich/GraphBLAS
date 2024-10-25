@@ -174,7 +174,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool T_is_csc = C->is_csc ;
     if (T_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose.  For example, if C is CSC and A is
+        // Negate A_transpose.  For example, if C is CSC and A is
         // CSR, and A_transpose is true, then C=A'+B is being computed.  But
         // this is the same as C=A+B where A is treated as if it is CSC.
         A_transpose = !A_transpose ;
@@ -182,7 +182,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     if (T_is_csc != B->is_csc)
     { 
-        // Flip the sense of B_transpose.
+        // Negate B_transpose.
         B_transpose = !B_transpose ;
     }
 

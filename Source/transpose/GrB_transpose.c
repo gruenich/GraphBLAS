@@ -80,7 +80,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     bool C_is_csc = C->is_csc ;
     if (C_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // Negate A_transpose
         A_transpose = !A_transpose ;
     }
 

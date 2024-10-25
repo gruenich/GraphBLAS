@@ -228,14 +228,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // CSR, treat it as A' in CSC, and if A' is in CSR, treat it as A in CSC.
     if (!A_in->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // Negate A_transpose
         A_transpose = !A_transpose ;
     }
 
     // B is treated just like A
     if (!B_in->is_csc)
     { 
-        // Flip the sense of B_transpose
+        // Negate B_transpose
         B_transpose = !B_transpose ;
     }
 

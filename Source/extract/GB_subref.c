@@ -51,21 +51,21 @@
 //      modified here.
 
 //      Reading a zombie entry:  A zombie entry A(i,j) has been marked by
-//      flipping its index.  The value of a zombie is not important, just its
-//      presence in the pattern.  All zombies have been flipped (i < 0), and
-//      all regular entries are not flipped (i >= 0).  Zombies are entries that
-//      have been marked for deletion but have not been removed from the matrix
-//      yet, since it's more efficient to delete zombies all at once rather
-//      than one at a time.
+//      GB_ZOMBIE on its index.  The value of a zombie is not important, just
+//      its presence in the pattern.  All zombies have been marked with
+//      GB_ZOMBIE so that i < 0, and all regular entries are not marked as
+//      zombies (i >= 0).  Zombies are entries that have been marked for
+//      deletion but have not been removed from the matrix yet, since it's more
+//      efficient to delete zombies all at once rather than one at a time.
 
 //      The symbolic case is zombie-agnostic, in the sense that it does not
 //      delete them.  It treats them like regular entries.  However, their
-//      normal index must be used, not their flipped indices.  The output
-//      matrix C contains all unflipped indices, and its references to zombies
+//      normal index must be used, not their GB_ZOMBIE'd indices.  The output
+//      matrix C contains all non-zombie indices, and its references to zombies
 //      and regular entries are identical.  Zombies in A are dealt with later.
 //      They cannot be detected in the output C matrix, but they can be
 //      detected in A.  Since pa = Cx [pc] holds the position of the entry in
-//      A, the entry is a zombie if Ai [pa] has been flipped.
+//      A, the entry is a zombie if Ai [pa] has been marked with GB_ZOMBIE.
 
 //      For symbolic extractionm, pending tuples can appear in the input matrix
 //      A.  These are ignored.
