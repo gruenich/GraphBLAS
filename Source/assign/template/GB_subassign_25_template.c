@@ -139,7 +139,7 @@
                     { 
                         // C(i,j) becomes a zombie
                         task_nzombies++ ;
-                        Ci [pM] = GB_FLIP (i) ;
+                        Ci [pM] = GB_ZOMBIE (i) ;
                     }
                 }
             }

@@ -41,7 +41,7 @@ GrB_Info GB_selector
     GrB_Info info ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_ZOMBIE (GB0)) ;
     // positional op (tril, triu, diag, offdiag, resize, rowindex, ...):
     // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
     GB_Opcode opcode = op->opcode ;

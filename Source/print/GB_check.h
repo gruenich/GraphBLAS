@@ -128,7 +128,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
     int pr,                 // print level; if negative, ignore nzombie
-                            // conditions and use GB_FLIP(pr) for diagnostics
+                            // conditions and use GB_ZOMBIE(pr) for diagnostics
     FILE *f,                // file for output
     const char *kind        // "matrix" or "vector"
 ) ;

@@ -75,7 +75,7 @@ GrB_Info GB_wait                // finish all pending computations
     struct GB_Matrix_opaque T_header, A1_header, S_header ;
     GrB_Matrix T = NULL, A1 = NULL, S = NULL, Y = NULL ;
 
-    ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to wait", GB_ZOMBIE (GB0)) ;
 
     if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
     { 
@@ -249,7 +249,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     // A zombie is an entry A(i,j) in the matrix that as been marked for
     // deletion, but hasn't been deleted yet.  It is marked by "negating"
-    // replacing its index i with GB_FLIP(i).
+    // replacing its index i with GB_ZOMBIE(i).
 
     // TODO: pass tnz to GB_selector, to pad the reallocated A matrix
     ASSERT_MATRIX_OK (A, "A before zombies removed", GB0) ;
