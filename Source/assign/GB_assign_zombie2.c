@@ -87,7 +87,7 @@ GrB_Info GB_assign_zombie2
             { 
                 ASSERT (i == Ci [pC]) ;
                 nzombies++ ;
-                Ci [pC] = GB_FLIP (i) ;
+                Ci [pC] = GB_ZOMBIE (i) ;
             }
         }
     }

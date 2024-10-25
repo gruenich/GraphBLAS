@@ -184,7 +184,7 @@ GrB_Info GB_assign_zombie4
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;
+                        Ci [pC] = GB_ZOMBIE (i) ;
                     }
                 }
             }

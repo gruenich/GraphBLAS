@@ -108,7 +108,7 @@ GrB_Info GB_subassign_zombie
         if (!GB_IS_ZOMBIE (i))
         { 
             nzombies++ ;
-            Ci [pC] = GB_FLIP (i) ;
+            Ci [pC] = GB_ZOMBIE (i) ;
         }
     }
 

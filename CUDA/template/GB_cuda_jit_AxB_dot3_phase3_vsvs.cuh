@@ -165,7 +165,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
         {
             // cij is a zombie
             my_nzombies++;
-            Ci [pair_id] = GB_FLIP (i) ;
+            Ci [pair_id] = GB_ZOMBIE (i) ;
         }
     }
 

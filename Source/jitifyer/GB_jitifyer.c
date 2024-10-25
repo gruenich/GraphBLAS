@@ -1673,6 +1673,11 @@ GrB_Info GB_jitifyer_load2_worker
     // look up the kernel in the hash table
     //--------------------------------------------------------------------------
 
+    // e->prejit_index >= 0 denotes an unchecked prejit kernel:
+    #define GB_PREJIT_CHECKED(i) (-(i)-2)
+    // ensure that e->prejit_index is >= 0, to denote that it's unchecked:
+    #define GB_PREJIT_UNCHECKED(i) (((i) < 0) ? GB_PREJIT_CHECKED(i) : (i))
+
     int64_t k1 = -1, kk = -1 ;
     (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
     if ((*dl_function) != NULL)
@@ -1693,10 +1698,10 @@ GrB_Info GB_jitifyer_load2_worker
                 monoid, op, type1, type2, type3) ;
             if (ok)
             { 
-                // PreJIT kernel is fine; flag it as checked by flipping
-                // its prejit_index.
+                // PreJIT kernel is fine; flag it as checked by marking
+                // its prejit_index as negative.
                 GBURBLE ("(prejit: ok) ") ;
-                e->prejit_index = GB_FLIP (k1) ;
+                e->prejit_index = GB_PREJIT_CHECKED (k1) ;
                 return (GrB_SUCCESS) ;
             }
             else
@@ -2329,7 +2334,7 @@ void GB_jitifyer_table_free (bool freeall)
                 if (e->dl_handle == NULL)
                 { 
                     // flag the PreJIT kernel as unchecked
-                    e->prejit_index = GB_UNFLIP (e->prejit_index) ;
+                    e->prejit_index = GB_PREJIT_UNCHECKED (e->prejit_index) ;
                 }
                 // free it if permitted
                 if (freeall || (e->dl_handle != NULL &&

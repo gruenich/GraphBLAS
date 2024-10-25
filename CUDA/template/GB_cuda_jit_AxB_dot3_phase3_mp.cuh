@@ -447,7 +447,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
             {
                // cij is a zombie
                zc++;
-               Ci [pair_id] = GB_FLIP (i) ;
+               Ci [pair_id] = GB_ZOMBIE (i) ;
             }
         }
         //__syncthreads(); 

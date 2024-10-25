@@ -11,7 +11,7 @@
 
 #include "extract/GB_subref.h"
 
-#define GB_Ai(p) GBI_UNFLIP (Ai, p, avlen)
+#define GB_Ai(p) GBI_UNZOMBIE (Ai, p, avlen)
 
 //------------------------------------------------------------------------------
 // GB_find_Ap_start_end

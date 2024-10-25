@@ -248,7 +248,7 @@
         int64_t pC = Sx [pS] ;                                              \
         int64_t iC = GBI (Ci, pC, Cvlen) ;                                  \
         bool is_zombie = GB_IS_ZOMBIE (iC) ;                                \
-        if (is_zombie) iC = GB_FLIP (iC) ;
+        if (is_zombie) iC = GB_DEZOMBIE (iC) ;
 
     //--------------------------------------------------------------------------
     // C(:,jC) is dense: iC = I [iA], and then look up C(iC,jC)
@@ -264,7 +264,7 @@
         int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;                     \
         int64_t pC = pC_start + iC ;                                        \
         bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (Ci [pC]) ;           \
-        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNFLIP (Ci [pC]) == iC)) ;
+        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNZOMBIE (Ci [pC]) == iC)) ;
 
     //--------------------------------------------------------------------------
     // get C(iC,jC) via binary search of C(:,jC)
@@ -400,7 +400,7 @@
         /* turn C(iC,jC) into a zombie */                                   \
         ASSERT (!GB_IS_FULL (C)) ;                                          \
         task_nzombies++ ;                                                   \
-        Ci [pC] = GB_FLIP (iC) ;                                            \
+        Ci [pC] = GB_ZOMBIE (iC) ;                                          \
     }
 
     #define GB_UNDELETE                                                     \
@@ -434,7 +434,7 @@
         //      pending tuples inserted here, by GxB_subassign.
 
         // (2) zombie entries.  These are entries that are still present in the
-        // pattern but marked for deletion (via GB_FLIP(i) for the row index).
+        // pattern but marked for deletion (via GB_ZOMBIE(i) for the row index).
 
         // For the current GxB_subassign, there are 16 cases to handle,
         // all combinations of the following options:
@@ -722,17 +722,17 @@
             //      ( delete ):
 
             //          C(I(i),J(j)) becomes a zombie, by flipping its row
-            //          index via the GB_FLIP function.
+            //          index via the GB_ZOMBIE function.
 
             //      ( undelete ):
 
             //          C(I(i),J(j)) = A(i,j) was a zombie and is no longer a
-            //          zombie.  Its row index is restored with GB_FLIP.
+            //          zombie.  Its row index is restored with GB_DEZOMBIE.
 
             //      ( X ):
 
             //          C(I(i),J(j)) was a zombie, and still is a zombie.
-            //          row index is < 0, and actual index is GB_FLIP(I(i))
+            //          row index is < 0, and actual index is GB_DEZOMBIE(I(i))
 
             //      ( C ):
 
@@ -1391,7 +1391,7 @@
     {                                                                       \
         /* no pending tuples, so skip phase 2 */                            \
         GB_FREE_ALL ;                                                       \
-        ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB_FLIP (GB0)) ;      \
+        ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB_ZOMBIE (GB0)) ;    \
         return (GrB_SUCCESS) ;                                              \
     }                                                                       \
     /* ensure that C->Pending is large enough to handle nnew more tuples */ \
@@ -1494,7 +1494,7 @@
     Pending->n += nnew ;                                                    \
     Pending->sorted = pending_sorted ;                                      \
     GB_FREE_ALL ;                                                           \
-    ASSERT_MATRIX_OK (C, "C with pending tuples", GB_FLIP (GB0)) ;          \
+    ASSERT_MATRIX_OK (C, "C with pending tuples", GB_ZOMBIE (GB0)) ;        \
     return (GrB_SUCCESS) ;
 
 //==============================================================================

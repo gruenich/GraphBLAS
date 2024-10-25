@@ -263,7 +263,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsdn_kernel
         else
         {
             my_nzombies++ ;
-            Ci [pair_id] = GB_FLIP (i) ;
+            Ci [pair_id] = GB_ZOMBIE (i) ;
         }
 
         // sum up the zombie count:

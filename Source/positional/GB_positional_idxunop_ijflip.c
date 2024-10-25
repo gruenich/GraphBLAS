@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 // Flip i and j to handle the CSR/CSC variations, for index-unary positional
-// ops.  The two operators GB_FLIPDIAG_INT[32,64] are only used internally
-// and are not available to the user application.
+// ops.  The two operators GxB_FLIPDIAGINDEX_INT32 and GxB_FLIPDIAGINDEX_INT64
+// are only used internally and are not available to the user application.
 
 #include "GB.h"
 

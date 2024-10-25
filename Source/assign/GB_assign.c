@@ -361,7 +361,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 GB_OK (GB_assign_zombie5 (C, M, Mask_comp, Mask_struct,
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Werk)) ;
             }
-            ASSERT_MATRIX_OK (C, "C for C-replace-phase done", GB_FLIP (GB0)) ;
+            ASSERT_MATRIX_OK (C, "C for C-replace-phase done", GB_ZOMBIE (GB0)) ;
         }
     }
 

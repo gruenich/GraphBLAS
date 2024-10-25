@@ -412,7 +412,7 @@ GrB_Info GB_select_sparse
 
         // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It is set to zero in GB_wait.
-        ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
+        ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_ZOMBIE (GB0)) ;
 
     }
     else

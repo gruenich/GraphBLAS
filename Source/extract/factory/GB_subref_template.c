@@ -18,7 +18,7 @@
 #if defined ( GB_SYMBOLIC )
 
     // symbolic method must tolerate zombies
-    #define GB_Ai(p) GBI_UNFLIP (Ai, p, avlen)
+    #define GB_Ai(p) GBI_UNZOMBIE (Ai, p, avlen)
 
 #else
 
