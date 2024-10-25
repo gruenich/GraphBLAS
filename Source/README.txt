@@ -15,6 +15,8 @@ Source/*/factory/* files are not used in the JIT.
 
 Files and folders in Source/
 
+add                 GrB_eWiseAdd and GxB_eWiseUnion (see also ewise folder)
+
 aliased             methods for determining if any components of a matrix
                     are aliased (shared) with another matrix.  Such a matrix
                     is called shallow (an array such as A->i is shallow
@@ -67,7 +69,9 @@ dup                 GrB_dup
 
 element             GrB_setElement, GrB_extractElement, GrB_removeElement
 
-ewise               GrB_eWiseAdd, GrB_eWiseMult, and GxB_eWiseUnion
+emult               GrB_eWiseMult (see also ewise folder)
+
+ewise               element-wise methods for ewise add, emult, and union
 
 extract             GrB_extract
 

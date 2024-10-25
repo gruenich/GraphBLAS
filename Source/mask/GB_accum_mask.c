@@ -52,7 +52,7 @@
 }
 
 #include "assign/GB_subassign.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "mask/GB_mask.h"
 #include "transpose/GB_transpose.h"
 #include "mask/GB_accum_mask.h"

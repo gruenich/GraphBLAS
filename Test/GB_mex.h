@@ -12,7 +12,7 @@
 
 #include "../Source/mxm/GB_mxm.h"
 #include "../Source/pending/GB_Pending.h"
-#include "../Source/ewise/GB_add.h"
+#include "../Source/add/GB_add.h"
 #include "../Source/extract/GB_subref.h"
 #include "../Source/transpose/GB_transpose.h"
 #include "../Source/sort/GB_sort.h"

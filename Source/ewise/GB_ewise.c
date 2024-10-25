@@ -20,8 +20,8 @@
 }
 
 #include "ewise/GB_ewise.h"
-#include "ewise/GB_add.h"
-#include "ewise/GB_emult.h"
+#include "add/GB_add.h"
+#include "emult/GB_emult.h"
 #include "transpose/GB_transpose.h"
 #include "mask/GB_accum_mask.h"
 #include "binaryop/GB_binop.h"

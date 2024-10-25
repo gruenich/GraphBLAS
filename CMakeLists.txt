@@ -41,8 +41,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# set ( GRAPHBLAS_USE_CUDA OFF )
-  set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
+  set ( GRAPHBLAS_USE_CUDA OFF )
+# set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
 
 include ( SuiteSparsePolicy )
 
@@ -218,6 +218,8 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/concat
     Source/convert
     Source/ewise
+    Source/add
+    Source/emult
     Source/hyper
     Source/jit_kernels
     Source/math

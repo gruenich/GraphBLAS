@@ -29,7 +29,7 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 // In this case, C is always sparse or hypersparse, not bitmap or full.
 
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
 #include "slice/GB_ek_slice.h"
@@ -352,7 +352,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         // are used, and the operator is not used.
         #define GB_ISO_ADD
         #define GB_IS_EWISEUNION 0
-        #include "ewise/template/GB_add_template.c"
+        #include "add/template/GB_add_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -539,12 +539,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 if (is_eWiseUnion)
                 { 
                     #define GB_IS_EWISEUNION 1
-                    #include "ewise/template/GB_add_template.c"
+                    #include "add/template/GB_add_template.c"
                 }
                 else
                 { 
                     #define GB_IS_EWISEUNION 0
-                    #include "ewise/template/GB_add_template.c"
+                    #include "add/template/GB_add_template.c"
                 }
             }
             else
@@ -555,12 +555,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 if (is_eWiseUnion)
                 { 
                     #define GB_IS_EWISEUNION 1
-                    #include "ewise/template/GB_add_template.c"
+                    #include "add/template/GB_add_template.c"
                 }
                 else
                 { 
                     #define GB_IS_EWISEUNION 0
-                    #include "ewise/template/GB_add_template.c"
+                    #include "add/template/GB_add_template.c"
                 }
             }
 
@@ -593,12 +593,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             if (is_eWiseUnion)
             { 
                 #define GB_IS_EWISEUNION 1
-                #include "ewise/template/GB_add_template.c"
+                #include "add/template/GB_add_template.c"
             }
             else
             { 
                 #define GB_IS_EWISEUNION 0
-                #include "ewise/template/GB_add_template.c"
+                #include "add/template/GB_add_template.c"
             }
         }
         info = GrB_SUCCESS ;

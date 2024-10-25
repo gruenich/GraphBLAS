@@ -19,7 +19,7 @@
 
 // Cp is either freed by GB_emult_08_phase2, or transplanted into C.
 
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 
 GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
 (
@@ -96,7 +96,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     #define GB_EMULT_08_PHASE 1
-    #include "ewise/template/GB_emult_08_meta.c"
+    #include "emult/template/GB_emult_08_meta.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList

@@ -52,7 +52,7 @@
 }
 
 #include "select/GB_select.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "binaryop/GB_binop.h"
 #include "pending/GB_Pending.h"
 #include "builder/GB_build.h"

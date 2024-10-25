@@ -14,7 +14,7 @@
 #define GB_FREE_ALL ;
 
 #include "ewise/GB_ewise.h"
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 

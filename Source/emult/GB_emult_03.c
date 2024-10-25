@@ -56,7 +56,7 @@
         //      sparse  full        full            sparse
 
 #include "ewise/GB_ewise.h"
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
@@ -254,7 +254,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "ewise/template/GB_emult_03_template.c"
+        #include "emult/template/GB_emult_03_template.c"
         info = GrB_SUCCESS ;
 
     }

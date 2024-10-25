@@ -10,7 +10,7 @@
 #ifndef GB_SUBASSIGN_H
 #define GB_SUBASSIGN_H
 #include "ij/GB_ij.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 (

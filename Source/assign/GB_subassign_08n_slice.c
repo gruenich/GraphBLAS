@@ -29,7 +29,7 @@
 
 #include "assign/GB_subassign_methods.h"
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
 #include "include/GB_unused.h"
 
