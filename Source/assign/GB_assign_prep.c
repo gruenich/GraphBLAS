@@ -370,13 +370,13 @@ GrB_Info GB_assign_prep
     // GrB_Matrix_assign, GxB_Matrix_subassign:  A and C can be in any format,
     // and A_transpose can be true or false, depending on the descriptor.  If
     // the CSR/CSC formats of A and C are the same, then A_transpose remains
-    // as-is.  If they differ, then A_transpose is flipped.  Then the CSR-CSC
+    // as-is.  If they differ, then A_transpose is negated.  Then the CSR-CSC
     // agnostic assignment proceeds.
 
     bool C_is_csc = C->is_csc ;
     if (!scalar_expansion && C_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // negate the sense of A_transpose
         A_transpose = !A_transpose ;
     }
 

@@ -14,7 +14,7 @@
 // If i >= 0 then it is not a zombie.
 // If i < 0 then it has been marked as a zombie.
 // Like negation, GB_ZOMBIE is its own inverse: GB_ZOMBIE (GB_ZOMBIE (i)) == i.
-// The "nil" value, -1, doesn't change when flipped: GB_ZOMBIE (-1) = -1.
+// The "nil" value, -1, doesn't change: GB_ZOMBIE (-1) = -1.
 // GB_UNZOMBIE(i) is like taking an absolute value, undoing any GB_ZOMBIE(i).
 
 // An entry A(i,j) in a matrix can be marked as a "zombie".  A zombie is an
@@ -24,12 +24,12 @@
 // not only new entries into C, but it also deletes entries already present in
 // C.  If an entry appears in A but not C(I,J), it is a new entry; new entries
 // placed in the pending tuple lists to be added later.  If an entry appear in
-// C(I,J) but NOT in A, then it is marked for deletion by flipping its row
-// index, marking it as a zombie.
+// C(I,J) but NOT in A, then it is marked for deletion by marking its row index
+// as a zombie.
 
 // Zombies can be restored as regular entries by GrB_*assign.  If an assignment
 // C(I,J)=A finds an entry in A that is a zombie in C, the zombie becomes a
-// regular entry, taking on the value from A.  The row index is unflipped.
+// regular entry, taking on the value from A.  The row index is 'dezombied'
 
 // Zombies are deleted and pending tuples are added into the matrix all at
 // once, by GB_wait.

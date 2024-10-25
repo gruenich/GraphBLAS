@@ -375,7 +375,7 @@ GB_Pending Pending ;        // list of pending tuples
 // still important, for two reasons: (1) the indices in each vector of the
 // matrix are kept sorted to enable the use of binary search, (2) a zombie may
 // be restored as a regular entry by a subsequent update, via setElement,
-// subassign, or assign.  In this case its index is unflipped and its value
+// subassign, or assign.  In this case its index is dezombied and its value
 // modified.  Had the zombie not been there, the update would have to be placed
 // in the pending tuple list.  It is more efficient to keep the pending tuple
 // lists as short as possible, so zombies are kept as long as possible to

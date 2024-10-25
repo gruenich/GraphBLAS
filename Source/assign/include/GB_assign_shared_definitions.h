@@ -721,7 +721,7 @@
 
             //      ( delete ):
 
-            //          C(I(i),J(j)) becomes a zombie, by flipping its row
+            //          C(I(i),J(j)) becomes a zombie, by changing its row
             //          index via the GB_ZOMBIE function.
 
             //      ( undelete ):

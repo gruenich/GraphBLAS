@@ -240,7 +240,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     bool T_is_csc = C->is_csc ;
     if (T_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // Negate A_transpose
         A_transpose = !A_transpose ;
     }
 
