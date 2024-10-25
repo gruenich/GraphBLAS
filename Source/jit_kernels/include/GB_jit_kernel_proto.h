@@ -662,7 +662,8 @@ GrB_Info GB_jit_kernel_select_sparse                                        \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz                                                         \
+    int32_t blocksz,                                                        \
+    const GB_callback_struct *restrict my_callback,                         \
 )
 
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \

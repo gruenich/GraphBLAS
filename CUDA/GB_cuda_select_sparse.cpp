@@ -23,6 +23,10 @@ GrB_Info GB_cuda_select_sparse
 )
 {
 
+    // check inputs
+    ASSERT (C != NULL && !(C->static_header)) ;
+    ASSERT (A != NULL && !(A->static_header)) ;
+
     GB_void *ythunk_cuda = NULL ;
     size_t ythunk_cuda_size = 0 ;
     if (ythunk != NULL && op != NULL && op->ytype != NULL)
@@ -48,21 +52,16 @@ GrB_Info GB_cuda_select_sparse
     int64_t raw_gridsz = GB_ICEIL (anz, BLOCK_SIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
 
-    ASSERT (!(C->static_header)) ;
-
     GrB_Info info = GrB_NO_VALUE ;
 
-//////////////////////////////////////////////////////////////
-// FIXME: add this:
-//  info = GB_cuda_select_sparse_jit (C, C_iso, A, 
-//      flipij, ythunk_cuda, op, stream, gridsz, BLOCK_SIZE) ;
-//  if (info == GrB_NO_VALUE) info = GrB_PANIC ;
-//  GB_OK (info) ;
-//////////////////////////////////////////////////////////////
+    info = GB_cuda_select_sparse_jit (C, C_iso, A,
+        flipij, ythunk_cuda, op, stream, gridsz, BLOCK_SIZE) ;
+    if (info == GrB_NO_VALUE) info = GrB_PANIC ;
+    GB_OK (info) ;
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
 
     GB_FREE_WORKSPACE ;
-    return info ; 
+    return info ;
 }
