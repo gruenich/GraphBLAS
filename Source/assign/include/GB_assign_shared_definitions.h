@@ -10,6 +10,7 @@
 // macros for the construction of the GB_subassign kernels
 
 #include "include/GB_kernel_shared_definitions.h"
+#include "include/GB_cumsum1.h"
 
 //==============================================================================
 // definitions redefined as needed
@@ -1406,7 +1407,7 @@
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
     /* cumsum Npending for each task, and get total from all tasks */       \
-    GB_cumsum (Npending, ntasks, NULL, 1, NULL) ;                           \
+    GB_cumsum1 (Npending, ntasks) ;                                         \
     int64_t total_new_npending = Npending [ntasks] ;                        \
     if (total_new_npending == 0)                                            \
     {                                                                       \

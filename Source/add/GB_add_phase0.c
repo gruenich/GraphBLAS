@@ -407,7 +407,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // cumulative sum of entries in Ch for each task
         //----------------------------------------------------------------------
 
-        GB_cumsum (kC_start, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (kC_start, ntasks) ;
         Cnvec = kC_start [ntasks] ;
 
         //----------------------------------------------------------------------

@@ -789,11 +789,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // Replace tnvec_slice with its cumulative sum, after which each slice tid
     // will be responsible for the # vectors in T that range from tnvec_slice
     // [tid] to tnvec_slice [tid+1]-1.
-    GB_cumsum (tnvec_slice, nthreads, NULL, 1, NULL) ;
+    GB_cumsum1 (tnvec_slice, nthreads) ;
     int64_t tnvec = tnvec_slice [nthreads] ;
 
     // Replace tnz_slice with its cumulative sum
-    GB_cumsum (tnz_slice, nthreads, NULL, 1, NULL) ;
+    GB_cumsum1 (tnz_slice, nthreads) ;
 
     // find the total # of final entries, after assembling duplicates
     int64_t tnz = tnz_slice [nthreads] ;

@@ -128,6 +128,7 @@ GrB_Info GB_subassign_one_slice
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
     GB_REALLOC_TASK_WORK (TaskList, ntasks0, max_ntasks) ;
 
+    GB_OK (GB_hyper_hash_build (C, Werk)) ;
     GB_GET_C_HYPER_HASH ;
 
     //--------------------------------------------------------------------------

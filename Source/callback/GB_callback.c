@@ -30,3 +30,19 @@ GB_callback_struct GB_callback =
     .GB_werk_push_func              = GB_werk_push
 } ;
 
+/* add for assign:
+
+    GB_hyper_hash_build
+    GB_subassign_one_slice
+    GB_add_phase0
+    GB_ewise_slice
+    GB_subassign_IxJ_slice
+    GB_Pending_ensure
+    ij/GB_ij.h for GB_ijlist (split the file; move to ij/include/GB_ijlist.h)
+
+move these out of the JIT kernels?
+    GB_Context_nthreads_max
+    GB_Context_chunk
+
+*/
+

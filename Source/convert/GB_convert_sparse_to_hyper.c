@@ -95,7 +95,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // compute cumulative sum of Counts and nvec_nonempty
         //----------------------------------------------------------------------
 
-        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (Count, ntasks) ;
         int64_t nvec_nonempty = Count [ntasks] ;
         A->nvec_nonempty = nvec_nonempty ;
 
