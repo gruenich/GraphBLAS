@@ -13,7 +13,6 @@
 #include "add/GB_add.h"
 #include "ij/GB_ij.h"
 #include "pending/GB_Pending.h"
-#include "assign/GB_subassign_IxJ_slice.h"
 #include "include/GB_unused.h"
 
 //------------------------------------------------------------------------------
@@ -506,33 +505,6 @@ GrB_Info GB_subassign_19
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type scalar_type,
-    GB_Werk Werk
-) ;
-
-//------------------------------------------------------------------------------
-// GB_subassign_one_slice
-//------------------------------------------------------------------------------
-
-// Slice A or M into fine/coarse tasks, for GB_subassign_05, 06n, and 07
-
-GrB_Info GB_subassign_one_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
-    // input:
-    const GrB_Matrix C,             // output matrix C
-    const GrB_Index *I,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix A,             // matrix to slice (M or A)
     GB_Werk Werk
 ) ;
 

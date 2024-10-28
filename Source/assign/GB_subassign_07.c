@@ -53,6 +53,9 @@ GrB_Info GB_subassign_07
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------

@@ -78,6 +78,9 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------

@@ -66,6 +66,9 @@ GrB_Info GB_subassign_06n
     ASSERT_MATRIX_OK (M, "M input for 06n", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for 06n", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------

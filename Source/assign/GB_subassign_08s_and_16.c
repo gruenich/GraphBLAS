@@ -57,6 +57,9 @@ GrB_Info GB_subassign_08s_and_16
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // S = C(I,J)
     //--------------------------------------------------------------------------

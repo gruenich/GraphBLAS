@@ -53,12 +53,14 @@ GrB_Info GB_subassign_05d
 
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -76,9 +78,6 @@ GrB_Info GB_subassign_05d
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense

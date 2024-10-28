@@ -222,6 +222,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/add
     Source/emult
     Source/hyper
+    Source/ij
     Source/jit_kernels
     Source/math
     Source/memory

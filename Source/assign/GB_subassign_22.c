@@ -48,7 +48,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=scalar", GB0) ;
     ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -60,10 +59,14 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     ASSERT_BINARYOP_OK (accum, "accum for C+=scalar", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get the operator
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     if (accum->opcode == GB_FIRST_binop_code || C->iso)
     { 
         // nothing to do
@@ -95,9 +98,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 

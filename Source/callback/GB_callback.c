@@ -2,17 +2,13 @@
 // GB_callback.c: global callback struct for kernels
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #include "GB.h"
 #include "callback/include/GB_callback.h"
-#include "mxm/GB_AxB_saxpy3.h"
-#include "assign/GB_bitmap_assign_methods.h"
-#include "slice/GB_ek_slice.h"
-#include "sort/GB_sort.h"
 
 GB_callback_struct GB_callback =
 {
@@ -27,22 +23,15 @@ GB_callback_struct GB_callback =
     .GB_memset_func                 = GB_memset,
     .GB_qsort_1_func                = GB_qsort_1,
     .GB_werk_pop_func               = GB_werk_pop,
-    .GB_werk_push_func              = GB_werk_push
+    .GB_werk_push_func              = GB_werk_push,
+
+    // added for assign:
+    .GB_hyper_hash_build_func       = GB_hyper_hash_build,
+    .GB_subassign_one_slice_func    = GB_subassign_one_slice,
+    .GB_add_phase0_func             = GB_add_phase0,
+    .GB_ewise_slice_func            = GB_ewise_slice,
+    .GB_subassign_IxJ_slice_func    = GB_subassign_IxJ_slice,
+    .GB_Pending_ensure_func         = GB_Pending_ensure,
+    .GB_subassign_08n_slice_func    = GB_subassign_08n_slice
 } ;
-
-/* add for assign:
-
-    GB_hyper_hash_build
-    GB_subassign_one_slice
-    GB_add_phase0
-    GB_ewise_slice
-    GB_subassign_IxJ_slice
-    GB_Pending_ensure
-    ij/GB_ij.h for GB_ijlist (split the file; move to ij/include/GB_ijlist.h)
-
-move these out of the JIT kernels?
-    GB_Context_nthreads_max
-    GB_Context_chunk
-
-*/
 

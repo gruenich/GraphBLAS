@@ -729,6 +729,7 @@
 #define GB_JITpackage_245 GM_JITpackage_245
 #define GB_JITpackage_246 GM_JITpackage_246
 #define GB_JITpackage_247 GM_JITpackage_247
+#define GB_JITpackage_248 GM_JITpackage_248
 #define GB_JITpackage_24 GM_JITpackage_24
 #define GB_JITpackage_25 GM_JITpackage_25
 #define GB_JITpackage_26 GM_JITpackage_26
@@ -989,6 +990,7 @@
 #define GB_op_string_get GM_op_string_get
 #define GB_op_string_set GM_op_string_set
 #define GB_Pending_alloc GM_Pending_alloc
+#define GB_Pending_ensure GM_Pending_ensure
 #define GB_Pending_free GM_Pending_free
 #define GB_Pending_n GM_Pending_n
 #define GB_Pending_realloc GM_Pending_realloc

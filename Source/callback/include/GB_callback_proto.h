@@ -2,7 +2,7 @@
 // GB_callback_proto.h: prototypes for functions for kernel callbacks
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -154,6 +154,131 @@ void *GX_werk_push    /* return pointer to newly allocated space */         \
     /* input */                                                             \
     size_t nitems,              /* # of items to allocate */                \
     size_t size_of_item,        /* size of each item */                     \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_HYPER_HASH_BUILD_PROTO(GX_hyper_hash_build)             \
+GrB_Info GX_hyper_hash_build    /* construct the A->Y hyper_hash for A */   \
+(                                                                           \
+    GrB_Matrix A,                                                           \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO(GX_subassign_one_slice)       \
+GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
+(                                                                           \
+    /* output: */                                                           \
+    GB_task_struct **p_TaskList,    /* array of structs */                  \
+    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    int *p_ntasks,                  /* # of tasks constructed */            \
+    int *p_nthreads,                /* # of threads to use */               \
+    /* input: */                                                            \
+    const GrB_Matrix C,             /* output matrix C */                   \
+    const GrB_Index *I,                                                     \
+    const int64_t nI,                                                       \
+    const int Ikind,                                                        \
+    const int64_t Icolon [3],                                               \
+    const GrB_Index *J,                                                     \
+    const int64_t nJ,                                                       \
+    const int Jkind,                                                        \
+    const int64_t Jcolon [3],                                               \
+    const GrB_Matrix M,             /* matrix to slice */                   \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_ADD_PHASE0_PROTO(GX_add_phase0)                         \
+GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
+(                                                                           \
+    int64_t *p_Cnvec,           /* # of vectors to compute in C */          \
+    int64_t *restrict *Ch_handle,        /* Ch: size Cnvec, or NULL */      \
+    size_t *Ch_size_handle,              /* size of Ch in bytes */          \
+    int64_t *restrict *C_to_M_handle,    /* C_to_M: size Cnvec, or NULL */  \
+    size_t *C_to_M_size_handle,          /* size of C_to_M in bytes */      \
+    int64_t *restrict *C_to_A_handle,    /* C_to_A: size Cnvec, or NULL */  \
+    size_t *C_to_A_size_handle,          /* size of C_to_A in bytes */      \
+    int64_t *restrict *C_to_B_handle,    /* C_to_B: size Cnvec, or NULL */  \
+    size_t *C_to_B_size_handle,          /* size of C_to_A in bytes */      \
+    bool *p_Ch_is_Mh,           /* if true, then Ch == Mh */                \
+    int *C_sparsity,            /* sparsity structure of C */               \
+    const GrB_Matrix M,         /* optional mask, may be NULL; not compl */ \
+    const GrB_Matrix A,         /* first input matrix */                    \
+    const GrB_Matrix B,         /* second input matrix */                   \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_EWISE_SLICE_PROTO(GX_ewise_slice)                       \
+GrB_Info GX_ewise_slice                                                     \
+(                                                                           \
+    /* output: */                                                           \
+    GB_task_struct **p_TaskList,    /* array of structs */                  \
+    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    int *p_ntasks,                  /* # of tasks constructed */            \
+    int *p_nthreads,                /* # of threads for eWise operation */  \
+    /* input: */                                                            \
+    const int64_t Cnvec,            /* # of vectors of C */                 \
+    const int64_t *restrict Ch,     /* vectors of C, if hypersparse */      \
+    const int64_t *restrict C_to_M, /* mapping of C to M */                 \
+    const int64_t *restrict C_to_A, /* mapping of C to A */                 \
+    const int64_t *restrict C_to_B, /* mapping of C to B */                 \
+    bool Ch_is_Mh,                  /* if true, then Ch == Mh; GB_add only*/\
+    const GrB_Matrix M,             /* mask matrix to slice (optional) */   \
+    const GrB_Matrix A,             /* matrix to slice */                   \
+    const GrB_Matrix B,             /* matrix to slice */                   \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO(GX_subassign_IxJ_slice)       \
+GrB_Info GX_subassign_IxJ_slice                                             \
+(                                                                           \
+    /* output: */                                                           \
+    GB_task_struct **p_TaskList,    /* array of structs */                  \
+    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    int *p_ntasks,                  /* # of tasks constructed */            \
+    int *p_nthreads,                /* # of threads to use */               \
+    /* input: */                                                            \
+    const int64_t nI,                                                       \
+    const int64_t nJ,                                                       \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_PENDING_ENSURE_PROTO(GX_Pending_ensure)                 \
+bool GX_Pending_ensure                                                      \
+(                                                                           \
+    GB_Pending *PHandle,    /* input/output */                              \
+    bool iso,               /* if true, do not allocate Pending->x */       \
+    GrB_Type type,          /* type of pending tuples */                    \
+    GrB_BinaryOp op,        /* operator for assembling pending tuples */    \
+    bool is_matrix,         /* true if Pending->j must be allocated */      \
+    int64_t nnew,           /* # of pending tuples to add */                \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO(GX_subassign_08n_slice)       \
+GrB_Info GX_subassign_08n_slice                                             \
+(                                                                           \
+    /* output: */                                                           \
+    GB_task_struct **p_TaskList,    /* size max_ntasks */                   \
+    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    int *p_ntasks,                  /* # of tasks constructed */            \
+    int *p_nthreads,                /* # of threads to use */               \
+    int64_t *p_Znvec,               /* # of vectors to compute in Z */      \
+    const int64_t *restrict *Zh_handle,  /* Zh is A->h, M->h, or NULL */    \
+    int64_t *restrict *Z_to_A_handle,    /* Z_to_A: size Znvec, or NULL */  \
+    size_t *Z_to_A_size_handle,                                             \
+    int64_t *restrict *Z_to_M_handle,    /* Z_to_M: size Znvec, or NULL */  \
+    size_t *Z_to_M_size_handle,                                             \
+    /* input: */                                                            \
+    const GrB_Matrix C,             /* output matrix C */                   \
+    const GrB_Index *I,                                                     \
+    const int64_t nI,                                                       \
+    const int Ikind,                                                        \
+    const int64_t Icolon [3],                                               \
+    const GrB_Index *J,                                                     \
+    const int64_t nJ,                                                       \
+    const int Jkind,                                                        \
+    const int64_t Jcolon [3],                                               \
+    const GrB_Matrix A,             /* matrix to slice */                   \
+    const GrB_Matrix M,             /* matrix to slice */                   \
     GB_Werk Werk                                                            \
 )
 

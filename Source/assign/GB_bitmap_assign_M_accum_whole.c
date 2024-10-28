@@ -63,6 +63,9 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, M, accum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get C, M, A, and accum
     //--------------------------------------------------------------------------

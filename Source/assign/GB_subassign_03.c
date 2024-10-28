@@ -51,6 +51,9 @@ GrB_Info GB_subassign_03
 
     ASSERT (!GB_IS_BITMAP (C)) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // S = C(I,J)
     //--------------------------------------------------------------------------

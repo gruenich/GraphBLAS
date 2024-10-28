@@ -13,7 +13,6 @@
 // JIT: needed.
 
 #include "extract/GB_subref.h"
-#include "assign/GB_subassign_IxJ_slice.h"
 
 #define GB_FREE_ALL             \
 {                               \

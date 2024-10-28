@@ -212,7 +212,24 @@ logstat ('test185'    ,s, j4  , f1  ) ; % test dot4, saxpy for all sparsity
 logstat ('test256'    ,t, j4  , f0  ) ; % JIT error handling
 logstat ('test238'    ,t, j4  , f1  ) ; % test GrB_mxm (dot4 and dot2)
 logstat ('test238b'   ,t, j4  , f0  ) ; % test GrB_mxm (dot4 and dot2)
+
+% Note that test186 can sometimes non-deterministically miss this block of code
+% in GB_AxB_saxbit_A_sparse_B_bitmap_template.c, about line 352:
+%                      ...
+%                      else if (cb == keep)
+%                      {    <----- HERE
+%                           // C(i,j) is already present
+%                           #if !GB_IS_ANY_MONOID
+%                           GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
+%                           GB_Z_ATOMIC_UPDATE_HX (i, t) ;    // C(i,j) += t
+%                           #endif
+%                       }
+%                       GB_ATOMIC_WRITE
+%                       Cb [pC] = cb ;                  // unlock the entry
+%                      ...
+
 logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
+
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack
 
 % 1 to 10 seconds: debug_on

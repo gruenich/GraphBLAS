@@ -24,13 +24,8 @@
 
 #include "builder/GB_build.h"
 
-GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
-(
-    GrB_Matrix A,
-    GB_Werk Werk
-)
-{ 
-
+GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
+{
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------

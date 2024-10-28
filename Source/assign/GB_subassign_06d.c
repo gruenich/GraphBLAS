@@ -51,10 +51,8 @@ GrB_Info GB_subassign_06d
 {
 
     //--------------------------------------------------------------------------
-    // get inputs
+    // check inputs
     //--------------------------------------------------------------------------
-
-    GrB_Info info ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -68,10 +66,15 @@ GrB_Info GB_subassign_06d
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    const GB_Type_code ccode = C->type->code ;
-
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    const GB_Type_code ccode = C->type->code ;
 
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased

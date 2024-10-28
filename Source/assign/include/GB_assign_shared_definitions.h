@@ -1188,14 +1188,12 @@
 // GB_SUBASSIGN_IXJ_SLICE: slice IxJ for a scalar assignement method
 //------------------------------------------------------------------------------
 
-// Methods: 01, 03, 13, 15, 17, 19.  All of these methods access the C matrix
-// via S, not via binary search.
+// Methods: 01, 02, 03, 04, 11, 06s_and_14, 08s_and_16, 09, 12_and_20,
+// 10_and_18, 13, 15, 17, 19, and bitmap assignment.
 
 #define GB_SUBASSIGN_IXJ_SLICE                                              \
-    GB_OK (GB_subassign_IxJ_slice (                                         \
-        &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
-        /* I, */ nI, /* Ikind, Icolon, J, */ nJ, /* Jkind, Jcolon, */       \
-        Werk)) ;                                                            \
+    GB_OK (GB_subassign_IxJ_slice (&TaskList, &TaskList_size, &ntasks,      \
+        &nthreads, nI, nJ, Werk)) ;                                         \
     GB_ALLOCATE_NPENDING_WERK ;
 
 //------------------------------------------------------------------------------
@@ -1552,9 +1550,6 @@
 
 #define GB_GET_C_BITMAP                                                     \
     GrB_Info info ;                                                         \
-    /* also get the max # of threads to use */                              \
-    int nthreads_max = GB_Context_nthreads_max ( ) ;                        \
-    double chunk = GB_Context_chunk ( ) ;                                   \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t  *Cb = C->b ;                                                    \

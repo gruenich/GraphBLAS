@@ -46,26 +46,7 @@
 // GB_subassign_one_slice
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_one_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
-    // input:
-    const GrB_Matrix C,             // output matrix C
-    const GrB_Index *I,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix M,             // matrix to slice
-    GB_Werk Werk
-)
+GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
 {
 
     //--------------------------------------------------------------------------

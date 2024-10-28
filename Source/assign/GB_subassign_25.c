@@ -57,6 +57,9 @@ GrB_Info GB_subassign_25
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
@@ -105,9 +108,6 @@ GrB_Info GB_subassign_25
     //--------------------------------------------------------------------------
     // C<M> = A for built-in types
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 
