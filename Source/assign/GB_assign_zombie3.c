@@ -25,8 +25,9 @@
 
 #include "assign/GB_assign.h"
 #include "assign/GB_assign_zombie.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_methods.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_assign_zombie3
 (
@@ -64,7 +65,7 @@ GrB_Info GB_assign_zombie3
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     int64_t pC_start, pC_end ;
-    const int64_t cnvec = C->nvec ;
+    const int64_t Cnvec = C->nvec ;
 
     if (Ch != NULL)
     { 
@@ -73,7 +74,7 @@ GrB_Info GB_assign_zombie3
         const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
         const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
         const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
-        GB_hyper_hash_lookup (Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+        GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
             j, &pC_start, &pC_end) ;
     }
     else

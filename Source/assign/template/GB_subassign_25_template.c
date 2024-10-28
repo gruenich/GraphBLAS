@@ -57,6 +57,7 @@
     const int8_t   *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
 
+    bool C_iso = C->iso ;
     ASSERT (C->iso == A->iso) ;
 
     #ifdef GB_ISO_ASSIGN
@@ -132,7 +133,7 @@
                     { 
                         // C(i,j) = A(i,j)
                         #ifndef GB_ISO_ASSIGN
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork, C_iso) ;
                         #endif
                     }
                     else
@@ -195,7 +196,7 @@
                     { 
                         // C(i,j) = A(i,j)
                         int64_t p = pA + GBI_M (Mi, pM, Mvlen) ;
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork, C_iso) ;
                     }
                 }
             }

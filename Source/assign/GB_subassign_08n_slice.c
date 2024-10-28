@@ -28,10 +28,11 @@
 // does not need to consider the bitmap case for C, M, or A.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "emult/GB_emult.h"
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
 #include "include/GB_unused.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_08n_slice
 (

@@ -44,8 +44,9 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -156,7 +157,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                     #define GB_AIJ_WORK(pC,pA)                              \
                     {                                                       \
                         /* Cx [pC] = Ax [pA] */                             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
                         Cb [pC] = 1 ;                                       \
                     }
                     #include "assign/factory/GB_bitmap_assign_A_whole_template.c"

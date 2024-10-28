@@ -23,13 +23,14 @@
 // all entries present.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -167,8 +168,8 @@ GrB_Info GB_subassign_05d
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
         // Cx [pC] = cwork
-        #undef  GB_COPY_scalar_to_C
-        #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
+        #undef  GB_COPY_cwork_to_C
+        #define GB_COPY_cwork_to_C(Cx, pC, cwork, C_iso) \
             memcpy (Cx + ((pC)*csize), cwork, csize)
 
         #include "assign/template/GB_subassign_05d_template.c"

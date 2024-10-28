@@ -19,8 +19,8 @@
 #define GB_C_TYPE int8_t
 #define GB_DECLAREC(cwork) int8_t cwork
 #define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = Ax [A_iso ? 0 : (pA)]
-#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]
-#define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork
+#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork,C_iso) Cx [pC] = (A_iso) ? cwork : Ax [pA]
+#define GB_COPY_cwork_to_C(Cx,pC,cwork,C_iso) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // disable this operator and use the generic case if these conditions hold
@@ -41,7 +41,7 @@ GrB_Info GB (_subassign_05d__int8)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *scalar,      // of type C->type
+    const GB_void *scalar,      // of type C->type, already typecasted
     GB_Werk Werk
 )
 { 

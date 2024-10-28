@@ -37,6 +37,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -132,7 +133,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             {                                           \
                 int8_t cb = Cb [pC] ;                   \
                 /* Cx [pC] = scalar */                  \
-                GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                 Cb [pC] = 1 ;                           \
                 task_cnvals += (cb == 0) ;              \
             }
@@ -167,7 +168,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             {                                                       \
                 int8_t cb = Cb [pC] ;                               \
                 /* Cx [pC] = Ax [pA] */                             \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
                 Cb [pC] = 1 ;                                       \
             }
             #include "assign/factory/GB_bitmap_assign_A_template.c"

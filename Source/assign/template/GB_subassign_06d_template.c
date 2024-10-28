@@ -74,7 +74,8 @@
     ASSERT (GB_IMPLIES (A_iso, Mask_struct)) ;
 
     int8_t *restrict Cb = C->b ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
+    bool C_iso = C->iso ;
 
     #ifdef GB_ISO_ASSIGN
     // C is iso, and A is either iso or effectively iso (with a single entry
@@ -125,7 +126,7 @@
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
-                    GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
+                    GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork, C_iso) ;
                 }
             }
             #endif
@@ -164,7 +165,7 @@
                         { 
                             // Cx [p] = Ax [p]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork,C_iso);
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -193,7 +194,7 @@
                         // Cx [p] = Ax [p]
                         if (Ab [p])
                         { 
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork,C_iso);
                         }
                     }
                 }
@@ -237,7 +238,7 @@
                             kfirst, klast, pstart_Aslice,
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
-                        int64_t pC = j * cvlen ;
+                        int64_t pC = j * Cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
                         GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -245,7 +246,8 @@
                             int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork,
+                                C_iso) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -280,14 +282,15 @@
                                 kfirst, klast, pstart_Aslice,
                                 GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                             // pC is the start of C(:,j)
-                            int64_t pC = j * cvlen ;
+                            int64_t pC = j * Cvlen ;
                             // C<A(:,j),struct>=A(:,j) with C full, A sparse
                             GB_PRAGMA_SIMD_VECTORIZE
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork,
+                                    C_iso) ;
                             }
                         }
                     }
@@ -331,7 +334,8 @@
                         if (GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork,
+                                C_iso) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -355,7 +359,7 @@
                     if (GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork, C_iso) ;
                     }
                 }
             }
@@ -387,7 +391,8 @@
                         if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork,
+                                C_iso) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -411,7 +416,7 @@
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork, C_iso) ;
                     }
                 }
             }
@@ -453,7 +458,7 @@
                             kfirst, klast, pstart_Aslice,
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
-                        int64_t pC = j * cvlen ;
+                        int64_t pC = j * Cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
                         GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -462,7 +467,8 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork,
+                                    C_iso) ;
                                 task_cnvals += (Cb [p] == 0) ;
                                 Cb [p] = 1 ;
                             }
@@ -495,7 +501,7 @@
                             kfirst, klast, pstart_Aslice,
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
-                        int64_t pC = j * cvlen ;
+                        int64_t pC = j * Cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C full, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -504,7 +510,8 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork,
+                                    C_iso) ;
                             }
                         }
                     }

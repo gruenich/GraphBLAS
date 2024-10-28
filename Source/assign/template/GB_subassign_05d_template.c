@@ -38,6 +38,7 @@
     const size_t msize = M->type->size ;
     #endif
 
+    // GB_GET_M:
     const int64_t *restrict Mp = M->p ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
@@ -45,8 +46,9 @@
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t Mvlen = M->vlen ;
 
+    // GB_GET_C (subset):
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
 
     //--------------------------------------------------------------------------
     // C<M> = x
@@ -78,7 +80,7 @@
                 GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
 
             // pC_start points to the start of C(:,j)
-            int64_t pC_start = j * cvlen ;
+            int64_t pC_start = j * Cvlen ;
 
             //------------------------------------------------------------------
             // C<M(:,j)> = x
@@ -91,7 +93,7 @@
                 { 
                     int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
                     // Cx [pC] = cwork
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, false) ;
                 }
             }
             else
@@ -103,7 +105,7 @@
                     { 
                         int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
                         // Cx [pC] = cwork
-                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;
+                        GB_COPY_cwork_to_C (Cx, pC, cwork, false) ;
                     }
                 }
             }

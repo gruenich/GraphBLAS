@@ -21,8 +21,9 @@
 // C: not bitmap or full
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "include/GB_unused.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_09
 (

@@ -25,6 +25,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -113,13 +114,13 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         break ;                                     \
                     case 2: /* C(i,j) not present, M(i,j) = 1 */    \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
+                        GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                         Cb [pC] = 1 ;                               \
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 3:  /* C(i,j) present, M(i,j) = 1 */       \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
+                        GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                         Cb [pC] = 1 ;                               \
                     default: ;                                      \
                 }                                                   \
@@ -141,13 +142,13 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                 {                                           \
                     /* C(i,j) present, M(i,j) = 1 */        \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                 }                                           \
                 else                                        \
                 {                                           \
                     /* C(i,j) not present, M(i,j) = 1 */    \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                     Cb [pC] = 1 ;                           \
                     task_cnvals++ ;                         \
                 }                                           \
@@ -201,7 +202,8 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                             if (GBB (Ab, pC))                                 \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
-                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
+                                   C_iso) ;                                   \
                                 Cb [pC] = 1 ;                                 \
                                 task_cnvals++ ;                               \
                             }                                                 \
@@ -215,7 +217,8 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                             if (GBB (Ab, pC))                                 \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
-                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
+                                    C_iso) ;                                  \
                                 Cb [pC] = 1 ;                                 \
                             }                                                 \
                             else                                              \
@@ -247,7 +250,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         if (GBB (Ab, pC))                                     \
                         {                                                     \
                             /* Cx [pC] = Ax [pC] */                           \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ; \
+                            GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;\
                         }                                                     \
                         else                                                  \
                         {                                                     \
@@ -262,7 +265,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                         if (GBB (Ab, pC))                                     \
                         {                                                     \
                             /* Cx [pC] = Ax [pC] */                           \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ; \
+                            GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;\
                             Cb [pC] = 1 ;                                     \
                             task_cnvals++ ;                                   \
                         }                                                     \
@@ -305,7 +308,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                     {                                                       \
                         /* M(i,j)=1 and A(i,j) present */                   \
                         /* Cx [pC] = Ax [pA] ; */                           \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
                         Cb [pC] = 4 ;                                       \
                         task_cnvals += (cb == 2) ;                          \
                     }                                                       \
@@ -369,7 +372,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
                     {                                                       \
                         /* M(i,j)=1 and A(i,j) present */                   \
                         /* Cx [pC] = Ax [pA] ; */                           \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
                         Cb [pC] = 1 ;                                       \
                         task_cnvals += (cb == 2) ;                          \
                     }                                                       \

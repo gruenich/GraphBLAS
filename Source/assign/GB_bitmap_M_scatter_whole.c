@@ -10,6 +10,7 @@
 // JIT: not needed, but variants possible for each kind of mask matrix.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
@@ -32,7 +33,7 @@ GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
 
     GB_GET_M
     int8_t *Cb = C->b ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
     int64_t cnvals = 0 ;
 
     //--------------------------------------------------------------------------

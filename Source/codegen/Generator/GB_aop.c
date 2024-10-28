@@ -28,24 +28,24 @@ GB_ctype
 GB_declarec
 GB_copy_aij_to_cwork
 GB_copy_aij_to_c
-GB_copy_scalar_to_c
+GB_copy_cwork_to_c
 GB_ax_mask
 
 // C(i,j) += ywork
-#define GB_ACCUMULATE_scalar(Cx,pC,ywork) \
+#define GB_ACCUMULATE_scalar(Cx,pC,ywork,C_iso) \
     GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
 
 // C(i,j) += (ytype) A(i,j)
-#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)      \
+#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)    \
 {                                                       \
     if (A_iso)                                          \
     {                                                   \
-        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;   \
     }                                                   \
     else                                                \
     {                                                   \
         /* A and Y have the same type here */           \
-        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA]) ;        \
+        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA], C_iso) ; \
     }                                                   \
 }
 

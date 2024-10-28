@@ -50,7 +50,7 @@
 
             // for subassign, M has same size as C(I,J) and A.
             int64_t jC = GB_ijlist (J, jM, Jkind, Jcolon) ;
-            int64_t pC0 = jC * cvlen ;
+            int64_t pC0 = jC * Cvlen ;
 
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
             {

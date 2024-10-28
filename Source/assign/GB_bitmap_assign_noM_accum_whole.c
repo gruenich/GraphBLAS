@@ -35,6 +35,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -65,6 +66,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
         GB_ALL, GB_ALL, GB_ASSIGN) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, no M, accum", GB0) ;
+    ASSERT_BINARYOP_OK (accum, "accum for bitmap assign, no M, accum", GB0) ; 
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -100,12 +102,12 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                 if (cb == 0)                                \
                 {                                           \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                 }                                           \
                 else                                        \
                 {                                           \
                     /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
                 }                                           \
             }
             if (!C_iso)
@@ -139,12 +141,12 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     if (cb == 0)                                            \
                     {                                                       \
                         /* Cx [pC] = Ax [pC] */                             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;   \
+                        GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;  \
                     }                                                       \
                     else                                                    \
                     {                                                       \
                         /* Cx [pC] += Ax [pC] */                            \
-                        GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ;  \
+                        GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,C_iso) ; \
                     }                                                       \
                 }
                 if (!C_iso)
@@ -172,14 +174,14 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         if (cb == 0)                                           \
                         {                                                      \
                             /* Cx [pC] = Ax [pC] */                            \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;  \
+                            GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ; \
                             Cb [pC] = 1 ;                                      \
                             task_cnvals++ ;                                    \
                         }                                                      \
                         else                                                   \
                         {                                                      \
                             /* Cx [pC] += Ax [pC] */                           \
-                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ; \
+                            GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,C_iso) ;\
                         }                                                      \
                     }                                                          \
                 }
@@ -201,14 +203,14 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                     if (cb == 0)                                            \
                     {                                                       \
                         /* Cx [pC] = Ax [pA] */                             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
                         Cb [pC] = 1 ;                                       \
                         task_cnvals++ ;                                     \
                     }                                                       \
                     else                                                    \
                     {                                                       \
                         /* Cx [pC] += Ax [pA] */                            \
-                        GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
+                        GB_ACCUMULATE_aij (Cx,pC,Ax,pA,A_iso,ywork,C_iso) ; \
                     }                                                       \
                 }
                 #include "assign/factory/GB_bitmap_assign_A_whole_template.c"

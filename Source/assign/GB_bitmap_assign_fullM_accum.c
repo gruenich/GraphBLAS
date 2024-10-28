@@ -31,6 +31,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -127,14 +128,14 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 if (cb == 0)                                \
                 {                                           \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;   \
                     Cb [pC] = 1 ;                           \
                     task_cnvals++ ;                         \
                 }                                           \
                 else /* (cb == 1) */                        \
                 {                                           \
                     /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
                 }                                           \
             }                                               \
         }
@@ -193,14 +194,14 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 if (cb == 0)                                            \
                 {                                                       \
                     /* Cx [pC] = Ax [pA] */                             \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ; \
                     Cb [pC] = 1 ;                                       \
                     task_cnvals++ ;                                     \
                 }                                                       \
                 else /* (cb == 1) */                                    \
                 {                                                       \
                     /* Cx [pC] += Ax [pA] */                            \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
                 }                                                       \
             }                                                           \
         }

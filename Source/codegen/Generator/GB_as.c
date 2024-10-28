@@ -20,7 +20,7 @@ GB_ctype
 GB_declarec
 GB_copy_aij_to_cwork
 GB_copy_aij_to_c
-GB_copy_scalar_to_c
+GB_copy_cwork_to_c
 GB_ax_mask
 
 // disable this operator and use the generic case if these conditions hold
@@ -37,7 +37,7 @@ GrB_Info GB (_subassign_05d)
     GrB_Matrix C,
     const GrB_Matrix M,
     const bool Mask_struct,
-    const GB_void *scalar,      // of type C->type
+    const GB_void *scalar,      // of type C->type, already typecasted
     GB_Werk Werk
 )
 { 

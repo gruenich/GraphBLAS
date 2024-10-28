@@ -59,7 +59,7 @@
             //------------------------------------------------------------------
 
             int64_t jC = GB_ijlist (J, jA, Jkind, Jcolon) ;
-            int64_t pC0 = jC * cvlen ;      // first entry in C(:,jC)
+            int64_t pC0 = jC * Cvlen ;      // first entry in C(:,jC)
 
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 

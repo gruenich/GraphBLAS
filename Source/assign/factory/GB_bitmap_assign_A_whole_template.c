@@ -58,7 +58,7 @@
             // traverse over A(:,j), the kth vector of A
             //------------------------------------------------------------------
 
-            int64_t pC0 = j * cvlen ;      // first entry in C(:,j)
+            int64_t pC0 = j * Cvlen ;      // first entry in C(:,j)
 
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 

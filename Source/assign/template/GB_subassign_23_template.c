@@ -84,7 +84,7 @@
         { 
             if (!Ab [p]) continue ;
             // Cx [p] += (ytype) Ax [p], with typecasting
-            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
+            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork, false) ;
         }
 
     }
@@ -100,7 +100,7 @@
         for (p = 0 ; p < cnz ; p++)
         { 
             // Cx [p] += (ytype) Ax [p], with typecasting
-            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
+            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork, false) ;
         }
 
     }
@@ -117,7 +117,7 @@
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ai = A->i ;
         const int64_t avlen = A->vlen ;
-        const int64_t cvlen = C->vlen ;
+        const int64_t Cvlen = C->vlen ;
         bool A_jumbled = A->jumbled ;
 
         const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
@@ -149,10 +149,10 @@
                 int64_t pA_end   = GBP_A (Ap, k+1, avlen) ;
                 GB_GET_PA (my_pA_start, my_pA_end, taskid, k,
                     kfirst, klast, pstart_Aslice, pA_start, pA_end) ;
-                bool ajdense = ((pA_end - pA_start) == cvlen) ;
+                bool ajdense = ((pA_end - pA_start) == Cvlen) ;
 
                 // pC points to the start of C(:,j)
-                int64_t pC = j * cvlen ;
+                int64_t pC = j * Cvlen ;
 
                 //--------------------------------------------------------------
                 // C(:,j) += A(:,j)
@@ -171,7 +171,7 @@
                         int64_t i = pA - pA_start ;
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
-                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
+                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork, false) ;
                     }
 
                 }
@@ -188,7 +188,7 @@
                         int64_t i = Ai [pA] ;
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
-                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
+                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork, false) ;
                     }
                 }
             }

@@ -44,7 +44,7 @@
     for (pC = 0 ; pC < cnz ; pC++)
     { 
         // Cx [pC] += ywork
-        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;
+        GB_ACCUMULATE_scalar (Cx, pC, ywork, false) ;
     }
 }
 

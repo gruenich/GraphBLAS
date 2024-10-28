@@ -15,6 +15,7 @@
 // method, C can be returned with any sparsity structure.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL

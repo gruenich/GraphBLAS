@@ -514,7 +514,7 @@ struct GB_Pending_struct    // list of pending tuples for a matrix
     size_t j_size ;
     GB_void *x ;        // values of pending tuples
     size_t x_size ;
-    GrB_Type type ;     // the type of s
+    GrB_Type type ;     // the type of x
     size_t size ;       // type->size
     GrB_BinaryOp op ;   // operator to assemble pending tuples
 } ;

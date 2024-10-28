@@ -29,12 +29,13 @@
 // C and A can have any sparsity structure.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -185,7 +186,7 @@ GrB_Info GB_subassign_06d
             const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-            #define C_iso false
+            // #define C_iso false
             #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
 

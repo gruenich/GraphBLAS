@@ -27,13 +27,14 @@
 // C and A can have any sparsity structure, but C must be as-if-full.
 
 #include "assign/GB_subassign_dense.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_aop__include.h"
 #endif
 #include "include/GB_unused.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -184,7 +185,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
         #define C_iso false
 
         #undef  GB_ACCUMULATE_aij
-        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)              \
+        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)        \
         {                                                               \
             /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                \
             if (A_iso)                                                  \

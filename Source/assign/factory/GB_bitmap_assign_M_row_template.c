@@ -59,7 +59,7 @@
                 if (mij)
                 { 
                     int64_t jC = jM ;
-                    int64_t pC = iC + jC * cvlen ;
+                    int64_t pC = iC + jC * Cvlen ;
                     GB_MASK_WORK (pC) ;
                 }
             }
