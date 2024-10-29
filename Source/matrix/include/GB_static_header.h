@@ -2,7 +2,7 @@
 // GB_static_header.h: macros for allocating static headers
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -12,8 +12,9 @@
 // matrices on the CPU, but the static headers do not get automatically
 // transfered to the GPU.  Only dynamically allocated headers, allocated by
 // rmm_wrap_malloc, get transfered.  Set this to 1 to turn off static headers
-// (required for CUDA; see GB_static_headers.h).  Leave static headers
-// enabled by default by leaving this commented out or setting GBNSTATIC to 0.
+// (required for CUDA).  Leave static headers enabled by default by leaving
+// this commented out or setting GBNSTATIC to 0.
+
 // #undef  GBNSTATIC
 // #define GBNSTATIC 1
 

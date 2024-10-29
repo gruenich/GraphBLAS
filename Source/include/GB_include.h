@@ -85,6 +85,7 @@
     #include "include/GB_ok.h"
     #include "include/GB_ijlist.h"
 
+    // not used by CUDA
     #include "include/GB_bytes.h"
     #include "include/GB_atomics.h"
     #include "include/GB_assert_kernels.h"
@@ -127,6 +128,7 @@
     #include "ok/include/GB_ok.h"
     #include "ij/include/GB_ijlist.h"
 
+    // not used by CUDA
     #include "type/include/GB_bytes.h"
     #include "omp/include/GB_atomics.h"
     #include "ok/include/GB_assert_kernels.h"
