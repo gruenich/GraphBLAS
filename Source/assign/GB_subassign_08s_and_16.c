@@ -10,9 +10,10 @@
 // JIT: needed.
 
 // Method 08s: C(I,J)<M> += A ; using S
-// Method 16: C(I,J)<!M> += A ; using S
+// Method 16:  C(I,J)<!M> += A ; using S
 
 // M:           present
+// Mask_struct: true or false
 // Mask_comp:   true or false
 // C_replace:   false
 // accum:       present
