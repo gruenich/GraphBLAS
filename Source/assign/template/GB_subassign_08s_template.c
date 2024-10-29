@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_06s_template: C(I,J)<M or !M> = A ; using S
+// GB_subassign_08s_template: C(I,J)<M or !M> += A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Method 06s: C(I,J)<M> = A ; using S
-// Method 14:  C(I,J)<!M> = A ; using S
+// Method 08s: C(I,J)<M> += A ; using S
+// Method 16:  C(I,J)<!M> += A ; using S
 
 // M:           present
 // Mask_struct: true or false
 // Mask_comp:   true or false
 // C_replace:   false
-// accum:       NULL
+// accum:       present
 // A:           matrix
 // S:           constructed
 
-// C: not bitmap or full: use GB_bitmap_assign instead
+// C: not bitmap: use GB_bitmap_assign instead
 // M, A: any sparsity structure.
 
 {
@@ -38,26 +38,24 @@
     GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
     GB_GET_MASK_HYPER_HASH ;
-    GB_GET_A ;
     GB_GET_S ;
+    GB_GET_ACCUM_MATRIX ;
 
     //--------------------------------------------------------------------------
-    // Method 06s: C(I,J)<M> = A ; using S
+    // Method 16:  C(I,J)<!M> += A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector
-    // of M, not including the time to construct S=C(I,J).  If A, S, and M
-    // are similar in sparsity, then this method can perform well.  If M is
-    // very sparse, Method 06n should be used instead.  Method 06s is selected
-    // if nnz (A) < nnz (M) or if M is bitmap.
+    // Time: Close to optimal.  All entries in A+S must be traversed.
 
     //--------------------------------------------------------------------------
-    // Method 14: C(I,J)<!M> = A ; using S
+    // Method 08s: C(I,J)<M> += A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Close to optimal.  Omega(nnz(S)+nnz(A)) is required, and the
-    // sparsity of !M cannot be exploited.  The time taken is
-    // O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector of M.
+    // Time: Only entries in A must be traversed, and the corresponding entries
+    // in C located.  This method constructs S and traverses all of it in the
+    // worst case.  Compare with method 08n, which does not construct S but
+    // instead uses a binary search for entries in C, but it only traverses
+    // entries in A.*M.
 
     //--------------------------------------------------------------------------
     // Parallel: A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
@@ -82,7 +80,7 @@
     {
 
         //----------------------------------------------------------------------
-        // phase1: A is bitmap TODO: this is SLOW! for method 06s
+        // phase1: A is bitmap
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -129,18 +127,14 @@
                     bool Afound = Ab [pA] ;
 
                     if (Sfound && !Afound)
-                    {
+                    { 
                         // S (i,j) is present but A (i,j) is not
-                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
-                        if (mij)
-                        { 
-                            // ----[C . 1] or [X . 1]---------------------------
-                            // [C . 1]: action: ( delete ): becomes zombie
-                            // [X . 1]: action: ( X ): still zombie
-                            GB_C_S_LOOKUP ;
-                            GB_DELETE_ENTRY ;
-                        }
+                        // ----[C . 1] or [X . 1]-------------------------------
+                        // [C . 1]: action: ( C ): no change, with accum
+                        // [X . 1]: action: ( X ): still a zombie
+                        // ----[C . 0] or [X . 0]-------------------------------
+                        // [C . 0]: action: ( C ): no change, with accum
+                        // [X . 0]: action: ( X ): still a zombie
                         GB_NEXT (S) ;
                     }
                     else if (!Sfound && Afound)
@@ -164,9 +158,10 @@
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =A ): A to C no accum
+                            // [C A 1]: action: ( =C+A ): apply accum
                             // [X A 1]: action: ( undelete ): zombie lives
                             GB_C_S_LOOKUP ;
-                            GB_noaccum_C_A_1_matrix ;
+                            GB_withaccum_C_A_1_matrix ;
                         }
                         GB_NEXT (S) ;
                     }
@@ -231,18 +226,14 @@
                     int64_t iA = GBI (Ai, pA, Avlen) ;
 
                     if (iS < iA)
-                    {
+                    { 
                         // S (i,j) is present but A (i,j) is not
-                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                        if (Mask_comp) mij = !mij ;
-                        if (mij)
-                        { 
-                            // ----[C . 1] or [X . 1]---------------------------
-                            // [C . 1]: action: ( delete ): becomes zombie
-                            // [X . 1]: action: ( X ): still zombie
-                            GB_C_S_LOOKUP ;
-                            GB_DELETE_ENTRY ;
-                        }
+                        // ----[C . 1] or [X . 1]-------------------------------
+                        // [C . 1]: action: ( C ): no change, with accum
+                        // [X . 1]: action: ( X ): still a zombie
+                        // ----[C . 0] or [X . 0]-------------------------------
+                        // [C . 0]: action: ( C ): no change, with accum
+                        // [X . 0]: action: ( X ): still a zombie
                         GB_NEXT (S) ;
                     }
                     else if (iA < iS)
@@ -267,32 +258,17 @@
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =A ): A to C no accum
+                            // [C A 1]: action: ( =C+A ): apply accum
                             // [X A 1]: action: ( undelete ): zombie lives
                             GB_C_S_LOOKUP ;
-                            GB_noaccum_C_A_1_matrix ;
+                            GB_withaccum_C_A_1_matrix ;
                         }
                         GB_NEXT (S) ;
                         GB_NEXT (A) ;
                     }
                 }
 
-                // while list S (:,j) has entries.  List A (:,j) exhausted.
-                while (pS < pS_end)
-                {
-                    // S (i,j) is present but A (i,j) is not
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                    if (Mask_comp) mij = !mij ;
-                    if (mij)
-                    { 
-                        // ----[C . 1] or [X . 1]-------------------------------
-                        // [C . 1]: action: ( delete ): becomes zombie
-                        // [X . 1]: action: ( X ): still zombie
-                        GB_C_S_LOOKUP ;
-                        GB_DELETE_ENTRY ;
-                    }
-                    GB_NEXT (S) ;
-                }
+                // ignore the remainder of S(:,j)
 
                 // while list A (:,j) has entries.  List S (:,j) exhausted.
                 while (pA < pA_end)

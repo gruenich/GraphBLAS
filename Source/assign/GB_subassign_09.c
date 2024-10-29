@@ -2,7 +2,7 @@
 // GB_subassign_09: C(I,J)<M,repl> = scalar ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -12,6 +12,7 @@
 // Method 09: C(I,J)<M,repl> = scalar ; using S
 
 // M:           present
+// Mask_struct: true or false
 // Mask_comp:   false
 // C_replace:   true
 // accum:       NULL
