@@ -78,6 +78,7 @@ GrB_Info GB_subassign_02
     // via the generic kernel
     //--------------------------------------------------------------------------
 
+    GrB_BinaryOp accum = NULL ;
     #define GB_GENERIC
     #define GB_SCALAR_ASSIGN 0
     #include "assign/include/GB_assign_shared_definitions.h"

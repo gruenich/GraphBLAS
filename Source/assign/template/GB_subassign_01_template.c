@@ -39,7 +39,6 @@
     const int64_t Cnvec = C->nvec ;
     GB_GET_SCALAR ;
     GB_GET_S ;
-    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
     // Method 01: C(I,J) = scalar ; using S

@@ -53,6 +53,8 @@ GrB_Info GB_subassign_10_and_18
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_BinaryOp accum = NULL ;
+
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
@@ -80,7 +82,6 @@ GrB_Info GB_subassign_10_and_18
     GB_GET_MASK_HYPER_HASH ;
     GB_GET_A ;
     GB_GET_S ;
-    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
     // Method 10: C(I,J)<M,repl> = A ; using S

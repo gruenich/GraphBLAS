@@ -1,18 +1,19 @@
 //------------------------------------------------------------------------------
-// GB_subassign_05_template: C(I,J)<M> = scalar ; no S
+// GB_subassign_07: C(I,J)<M> += scalar ; no S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// Method 05: C(I,J)<M> = scalar ; no S
+// Method 07: C(I,J)<M> += scalar ; no S
 
 // M:           present
+// Mask_struct: true or false
 // Mask_comp:   false
 // C_replace:   false
-// accum:       NULL
+// accum:       present
 // A:           scalar
 // S:           none
 
@@ -35,21 +36,13 @@
     const int64_t Cnvec = C->nvec ;
     GB_GET_C_HYPER_HASH ;
     GB_GET_MASK ;
-    GB_GET_SCALAR ;
+    GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------
-    // Method 05: C(I,J)<M> = scalar ; no S
+    // Method 07: C(I,J)<M> += scalar ; no S
     //--------------------------------------------------------------------------
 
-    // Time: Close to Optimal:  the method must iterate over all entries in M,
-    // so the time is Omega(nnz(M)).  For each entry M(i,j)=1, the
-    // corresponding entry in C must be found and updated (inserted or
-    // modified).  This method does this with a binary search of C(:,jC) or a
-    // direct lookup if C(:,jC) is dense.  The time is thus O(nnz(M)*log(n)) in
-    // the worst case, usually less than that since C(:,jC) often has O(1)
-    // entries.  An additional time of O(|J|*log(Cnvec)) is added if C is
-    // hypersparse.  There is no equivalent method that computes
-    // C(I,J)<M>=scalar using the matrix S.
+    // Time: Close to Optimal:  same as Method 05.
 
     // Method 05 and Method 07 are very similar.  Also compare with Method 06n.
 
@@ -99,7 +92,7 @@
             bool cjdense = (cjnz == Cvlen) ;
 
             //------------------------------------------------------------------
-            // C(I,jC)<M(:,j)> = scalar ; no S
+            // C(I,jC)<M(:,j)> += scalar ; no S
             //------------------------------------------------------------------
 
             if (cjdense)
@@ -123,9 +116,9 @@
                         GB_iC_DENSE_LOOKUP ;
 
                         // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =A ): copy A into C, no accum
+                        // [C A 1]: action: ( =C+A ): apply accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_noaccum_C_A_1_scalar ;
+                        GB_withaccum_C_A_1_scalar ;
                     }
                 }
 
@@ -154,9 +147,9 @@
                         if (cij_found)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =A ): copy A into C, no accum
+                            // [C A 1]: action: ( =C+A ): apply accum
                             // [X A 1]: action: ( undelete ): zombie lives
-                            GB_noaccum_C_A_1_scalar ;
+                            GB_withaccum_C_A_1_scalar ;
                         }
                         else
                         { 
@@ -214,7 +207,7 @@
             bool cjdense = ((pC_end - pC_start) == Cvlen) ;
 
             //------------------------------------------------------------------
-            // C(I,jC)<M(:,j)> = scalar ; no S
+            // C(I,jC)<M(:,j)> += scalar ; no S
             //------------------------------------------------------------------
 
             if (!cjdense)

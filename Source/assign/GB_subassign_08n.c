@@ -23,9 +23,8 @@
 // M, A: not bitmap; Method 08s is used instead if M or A are bitmap.
 
 #include "assign/GB_subassign_methods.h"
-#define GB_GENERIC
-#define GB_SCALAR_ASSIGN 0
-#include "assign/include/GB_assign_shared_definitions.h"
+#include "jitifyer/GB_stringify.h"
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // GB_PHASE1_ACTION
@@ -92,10 +91,12 @@ GrB_Info GB_subassign_08n
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -117,6 +118,15 @@ GrB_Info GB_subassign_08n
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
+    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
+    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
+
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
+
+
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
 
@@ -125,9 +135,6 @@ GrB_Info GB_subassign_08n
     //--------------------------------------------------------------------------
 
     GB_EMPTY_TASKLIST ;
-    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
 
     GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;

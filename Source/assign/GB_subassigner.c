@@ -358,7 +358,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S ",
                 Istring, Jstring) ;
             GB_OK (GB_subassign_07 (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, accum, scalar, scalar_type, Werk)) ;
         }
         break ;
@@ -382,7 +382,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // Method 08n: C(I,J)<M> += A ; no S
             GBURBLE ("Method 08n: C(%s,%s)<M> += Z ; no S ", Istring, Jstring) ;
             GB_OK (GB_subassign_08n (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon,
+                J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, accum, A, Werk)) ;
         }
         break ;
@@ -421,7 +422,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // Method 06n: C(I,J)<M> = A ; no S
             GBURBLE ("Method 06n: C(%s,%s)<M> = Z ; no S ", Istring, Jstring) ;
             GB_OK (GB_subassign_06n (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, A, Werk)) ;
         }
         break ;

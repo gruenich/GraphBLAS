@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_02_template: C(I,J) = A ; using S
+// GB_subassign_06s_template: C(I,J)<M or !M> = A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -7,17 +7,19 @@
 
 //------------------------------------------------------------------------------
 
-// Method 02: C(I,J) = A ; using S
+// Method 06s: C(I,J)<M> = A ; using S
+// Method 14:  C(I,J)<!M> = A ; using S
 
-// M:           NULL
-// Mask_comp:   false
+// M:           present
+// Mask_struct: true or false
+// Mask_comp:   true or false
 // C_replace:   false
 // accum:       NULL
 // A:           matrix
 // S:           constructed
 
 // C: not bitmap or full: use GB_bitmap_assign instead
-// A: any sparsity structure.
+// M, A: any sparsity structure.
 
 {
 
@@ -33,22 +35,34 @@
     // get inputs
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "C input for Method 06s/14", GB0) ;
+    ASSERT_MATRIX_OK (M, "M input for Method 06s/14", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for Method 06s/14", GB0) ;
+    ASSERT_MATRIX_OK (S, "S constructed for Method 06s/14", GB0) ;
+
     GB_GET_C ;      // C must not be bitmap
+    GB_GET_MASK ;
+    GB_GET_MASK_HYPER_HASH ;
     GB_GET_A ;
     GB_GET_S ;
 
     //--------------------------------------------------------------------------
-    // Method 02: C(I,J) = A ; using S
+    // Method 06s: C(I,J)<M> = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Optimal.  All entries in A+S must be examined, so the work is
-    // Omega (nnz(A)+nnz(S)).
+    // Time: O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector
+    // of M, not including the time to construct S=C(I,J).  If A, S, and M
+    // are similar in sparsity, then this method can perform well.  If M is
+    // very sparse, Method 06n should be used instead.  Method 06s is selected
+    // if nnz (A) < nnz (M) or if M is bitmap.
 
-    // Method 02 and Method 04 are somewhat similar.  They differ on how C is
-    // modified when the entry is present in S but not A.
+    //--------------------------------------------------------------------------
+    // Method 14: C(I,J)<!M> = A ; using S
+    //--------------------------------------------------------------------------
 
-    // TODO: phase2 of Method 02 and 04 are identical and could be
-    // done in a single function.
+    // Time: Close to optimal.  Omega(nnz(S)+nnz(A)) is required, and the
+    // sparsity of !M cannot be exploited.  The time taken is
+    // O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector of M.
 
     //--------------------------------------------------------------------------
     // Parallel: A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
@@ -73,7 +87,7 @@
     {
 
         //----------------------------------------------------------------------
-        // phase1: A is bitmap
+        // phase1: A is bitmap TODO: this is SLOW! for method 06s
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -102,6 +116,14 @@
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
+                // get M(:,j)
+                //--------------------------------------------------------------
+
+                int64_t pM_start, pM_end ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                bool mjdense = (pM_end - pM_start) == Mvlen ;
+
+                //--------------------------------------------------------------
                 // do a 2-way merge of S(iA_start:iA_end,j) and A(ditto,j)
                 //--------------------------------------------------------------
 
@@ -110,31 +132,47 @@
                     int64_t pA = pA_start + iA ;
                     bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
                     bool Afound = Ab [pA] ;
+
                     if (Sfound && !Afound)
-                    { 
-                        // ----[C . 1] or [X . 1]-------------------------------
+                    {
                         // S (i,j) is present but A (i,j) is not
-                        // [C . 1]: action: ( delete ): becomes zombie
-                        // [X . 1]: action: ( X ): still a zombie
-                        GB_C_S_LOOKUP ;
-                        GB_DELETE_ENTRY ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[C . 1] or [X . 1]---------------------------
+                            // [C . 1]: action: ( delete ): becomes zombie
+                            // [X . 1]: action: ( X ): still zombie
+                            GB_C_S_LOOKUP ;
+                            GB_DELETE_ENTRY ;
+                        }
                         GB_NEXT (S) ;
                     }
                     else if (!Sfound && Afound)
-                    { 
-                        // ----[. A 1]------------------------------------------
+                    {
                         // S (i,j) is not present, A (i,j) is present
-                        // [. A 1]: action: ( insert )
-                        task_pending++ ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // [. A 1]: action: ( insert )
+                            task_pending++ ;
+                        }
                     }
                     else if (Sfound && Afound)
-                    { 
-                        // ----[C A 1] or [X A 1]-------------------------------
+                    {
                         // both S (i,j) and A (i,j) present
-                        // [C A 1]: action: ( =A ): copy A into C, no accum
-                        // [X A 1]: action: ( undelete ): zombie lives
-                        GB_C_S_LOOKUP ;
-                        GB_noaccum_C_A_1_matrix ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[C A 1] or [X A 1]---------------------------
+                            // [C A 1]: action: ( =A ): A to C no accum
+                            // [X A 1]: action: ( undelete ): zombie lives
+                            GB_C_S_LOOKUP ;
+                            GB_noaccum_C_A_1_matrix ;
+                        }
                         GB_NEXT (S) ;
                     }
                 }
@@ -177,6 +215,14 @@
                 GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen);
 
                 //--------------------------------------------------------------
+                // get M(:,j)
+                //--------------------------------------------------------------
+
+                int64_t pM_start, pM_end ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                bool mjdense = (pM_end - pM_start) == Mvlen ;
+
+                //--------------------------------------------------------------
                 // do a 2-way merge of S(:,j) and A(:,j)
                 //--------------------------------------------------------------
 
@@ -190,31 +236,46 @@
                     int64_t iA = GBI (Ai, pA, Avlen) ;
 
                     if (iS < iA)
-                    { 
-                        // ----[C . 1] or [X . 1]-------------------------------
+                    {
                         // S (i,j) is present but A (i,j) is not
-                        // [C . 1]: action: ( delete ): becomes zombie
-                        // [X . 1]: action: ( X ): still a zombie
-                        GB_C_S_LOOKUP ;
-                        GB_DELETE_ENTRY ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[C . 1] or [X . 1]---------------------------
+                            // [C . 1]: action: ( delete ): becomes zombie
+                            // [X . 1]: action: ( X ): still zombie
+                            GB_C_S_LOOKUP ;
+                            GB_DELETE_ENTRY ;
+                        }
                         GB_NEXT (S) ;
                     }
                     else if (iA < iS)
-                    { 
-                        // ----[. A 1]------------------------------------------
+                    {
                         // S (i,j) is not present, A (i,j) is present
-                        // [. A 1]: action: ( insert )
-                        task_pending++ ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // [. A 1]: action: ( insert )
+                            task_pending++ ;
+                        }
                         GB_NEXT (A) ;
                     }
                     else
-                    { 
-                        // ----[C A 1] or [X A 1]-------------------------------
+                    {
                         // both S (i,j) and A (i,j) present
-                        // [C A 1]: action: ( =A ): copy A into C, no accum
-                        // [X A 1]: action: ( undelete ): zombie lives
-                        GB_C_S_LOOKUP ;
-                        GB_noaccum_C_A_1_matrix ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[C A 1] or [X A 1]---------------------------
+                            // [C A 1]: action: ( =A ): A to C no accum
+                            // [X A 1]: action: ( undelete ): zombie lives
+                            GB_C_S_LOOKUP ;
+                            GB_noaccum_C_A_1_matrix ;
+                        }
                         GB_NEXT (S) ;
                         GB_NEXT (A) ;
                     }
@@ -222,18 +283,37 @@
 
                 // while list S (:,j) has entries.  List A (:,j) exhausted.
                 while (pS < pS_end)
-                { 
-                    // ----[C . 1] or [X . 1]-----------------------------------
+                {
                     // S (i,j) is present but A (i,j) is not
-                    // [C . 1]: action: ( delete ): becomes zombie
-                    // [X . 1]: action: ( X ): still a zombie
-                    GB_C_S_LOOKUP ;
-                    GB_DELETE_ENTRY ;
+                    int64_t iS = GBI (Si, pS, Svlen) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
+                    if (Mask_comp) mij = !mij ;
+                    if (mij)
+                    { 
+                        // ----[C . 1] or [X . 1]-------------------------------
+                        // [C . 1]: action: ( delete ): becomes zombie
+                        // [X . 1]: action: ( X ): still zombie
+                        GB_C_S_LOOKUP ;
+                        GB_DELETE_ENTRY ;
+                    }
                     GB_NEXT (S) ;
                 }
 
-                // List A (:,j) has entries.  List S (:,j) exhausted.
-                task_pending += (pA_end - pA) ;
+                // while list A (:,j) has entries.  List S (:,j) exhausted.
+                while (pA < pA_end)
+                {
+                    // S (i,j) is not present, A (i,j) is present
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
+                    if (mij)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // [. A 1]: action: ( insert )
+                        task_pending++ ;
+                    }
+                    GB_NEXT (A) ;
+                }
             }
 
             GB_PHASE1_TASK_WRAPUP ;
@@ -279,6 +359,14 @@
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
+                // get M(:,j)
+                //--------------------------------------------------------------
+
+                int64_t pM_start, pM_end ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                bool mjdense = (pM_end - pM_start) == Mvlen ;
+
+                //--------------------------------------------------------------
                 // do a 2-way merge of S(iA_start:iA_end,j) and A(ditto,j)
                 //--------------------------------------------------------------
 
@@ -291,13 +379,17 @@
                     bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
                     bool Afound = Ab [pA] ;
                     if (!Sfound && Afound)
-                    { 
-                        // ----[. A 1]------------------------------------------
+                    {
                         // S (i,j) is not present, A (i,j) is present
-                        // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                        GB_PENDING_INSERT_aij ;
-                        GB_NEXT (A) ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // [. A 1]: action: ( insert )
+                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                            GB_PENDING_INSERT_aij ;
+                        }
                     }
                     else if (Sfound)
                     { 
@@ -344,6 +436,14 @@
                 GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen);
 
                 //--------------------------------------------------------------
+                // get M(:,j)
+                //--------------------------------------------------------------
+
+                int64_t pM_start, pM_end ;
+                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                bool mjdense = (pM_end - pM_start) == Mvlen ;
+
+                //--------------------------------------------------------------
                 // do a 2-way merge of S(:,j) and A(:,j)
                 //--------------------------------------------------------------
 
@@ -358,38 +458,49 @@
 
                     if (iS < iA)
                     { 
+                        // S (i,j) is present but A (i,j) is not
                         GB_NEXT (S) ;
                     }
                     else if (iA < iS)
-                    { 
-                        // ----[. A 1]------------------------------------------
+                    {
                         // S (i,j) is not present, A (i,j) is present
-                        // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                        GB_PENDING_INSERT_aij ;
+                        GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                        if (Mask_comp) mij = !mij ;
+                        if (mij)
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // [. A 1]: action: ( insert )
+                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                            GB_PENDING_INSERT_aij ;
+                        }
                         GB_NEXT (A) ;
                     }
                     else
                     { 
+                        // both S (i,j) and A (i,j) present
                         GB_NEXT (S) ;
                         GB_NEXT (A) ;
                     }
                 }
 
-                // ignore the remainder of S (:,j)
-
                 // while list A (:,j) has entries.  List S (:,j) exhausted.
                 while (pA < pA_end)
-                { 
-                    // ----[. A 1]----------------------------------------------
+                {
                     // S (i,j) is not present, A (i,j) is present
-                    // [. A 1]: action: ( insert )
                     int64_t iA = GBI (Ai, pA, Avlen) ;
-                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                    GB_PENDING_INSERT_aij ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
+                    if (Mask_comp) mij = !mij ;
+                    if (mij)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // [. A 1]: action: ( insert )
+                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        GB_PENDING_INSERT_aij ;
+                    }
                     GB_NEXT (A) ;
                 }
             }
+
             GB_PHASE2_TASK_WRAPUP ;
         }
     }
