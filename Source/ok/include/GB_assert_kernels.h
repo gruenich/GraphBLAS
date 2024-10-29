@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_assert_kernels.h: assertions
+// GB_assert_kernels.h: assertions for JIT kernels
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// These methods are for JIT kernels.
+// For outside of JIT kernels, see ok/GB_assert.h.
 
 //------------------------------------------------------------------------------
 // debugging definitions

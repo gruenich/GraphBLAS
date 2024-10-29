@@ -12,11 +12,9 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT4_PROTO (GB_jit_kernel)
 {
-    #ifdef GB_JIT_RUNTIME
     // get callback functions
-    GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
-    GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
-    #endif
+    GB_GET_CALLBACK (GB_free_memory) ;
+    GB_GET_CALLBACK (GB_malloc_memory) ;
 
     #include "template/GB_AxB_dot4_meta.c"
     return (GrB_SUCCESS) ;

@@ -1,58 +1,24 @@
 //------------------------------------------------------------------------------
-// GB_subassign_03: C(I,J) += scalar ; using S
+// GB_subassign_01_template: C(I,J) = scalar ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
-
-// Method 03: C(I,J) += scalar ; using S
+// Method 01: C(I,J) = scalar ; using S
 
 // M:           NULL
 // Mask_comp:   false
 // C_replace:   false
-// accum:       present
+// accum:       NULL
 // A:           scalar
 // S:           constructed
 
 // C: not bitmap
 
-#include "assign/GB_subassign_methods.h"
-#define GB_GENERIC
-#include "assign/include/GB_assign_shared_definitions.h"
-
-GrB_Info GB_subassign_03
-(
-    GrB_Matrix C,
-    // input:
-    const GrB_Index *I,
-    const int64_t ni,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nj,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_BinaryOp accum,
-    const void *scalar,
-    const GrB_Type scalar_type,
-    GB_Werk Werk
-)
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (!GB_IS_BITMAP (C)) ;
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -71,17 +37,19 @@ GrB_Info GB_subassign_03
     const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t Cnvec = C->nvec ;
+    GB_GET_SCALAR ;
     GB_GET_S ;
-    GB_GET_ACCUM_SCALAR ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 03: C(I,J) += scalar ; using S
+    // Method 01: C(I,J) = scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Optimal; must visit all IxJ, so Omega(|I|*|J|) is required.
 
     // Entries in S are found and the corresponding entry in C replaced with
-    // the scalar.
+    // the scalar.  The traversal of S is identical to the traversal of M in
+    // Method 4.
 
     // Method 01 and Method 03 are very similar.
 
@@ -126,7 +94,7 @@ GrB_Info GB_subassign_03
             GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
 
             //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC) += scalar
+            // C(I(iA_start,iA_end-1),jC) = scalar
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
@@ -143,10 +111,10 @@ GrB_Info GB_subassign_03
                 { 
                     // ----[C A 1] or [X A 1]-----------------------------------
                     // both S (i,j) and A (i,j) present
-                    // [C A 1]: action: ( =C+A ): apply accum
+                    // [C A 1]: action: ( =A ): scalar to C, no accum
                     // [X A 1]: action: ( undelete ): zombie lives
                     GB_C_S_LOOKUP ;
-                    GB_withaccum_C_A_1_scalar ;
+                    GB_noaccum_C_A_1_scalar ;
                     GB_NEXT (S) ;
                 }
             }
@@ -192,7 +160,7 @@ GrB_Info GB_subassign_03
             GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
 
             //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC) += scalar
+            // C(I(iA_start,iA_end-1),jC) = scalar
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)

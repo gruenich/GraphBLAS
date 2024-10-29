@@ -318,7 +318,7 @@ GrB_Info GB_subassign_17
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
                             int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                            GB_PENDING_INSERT (scalar) ;
+                            GB_PENDING_INSERT_scalar ;
                         }
                     }
                 }

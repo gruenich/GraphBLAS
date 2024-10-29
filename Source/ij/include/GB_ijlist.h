@@ -37,8 +37,8 @@ static inline int64_t GB_ijlist     // get the kth item in a list of indices
     }
     else // Ikind == GB_LIST
     { 
-        ASSERT (Ikind == GB_LIST) ;
-        ASSERT (I != NULL) ;
+        // ASSERT (Ikind == GB_LIST) ;
+        // ASSERT (I != NULL) ;
         return (I [k]) ;
     }
 }

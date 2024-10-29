@@ -279,7 +279,7 @@ GrB_Info GB_subassign_05
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            GB_PENDING_INSERT (scalar) ;
+                            GB_PENDING_INSERT_scalar ;
                         }
                     }
                 }

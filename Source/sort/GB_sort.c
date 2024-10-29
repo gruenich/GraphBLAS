@@ -203,9 +203,6 @@
     GB_phybix_free (P) ;                    \
 }
 
-// redefine to use the revised GB_FREE_ALL above:
-#include "matrix/GB_static_header.h"
-
 GrB_Info GB_sort
 (
     // output:

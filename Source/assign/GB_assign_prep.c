@@ -30,9 +30,6 @@
     GB_FREE_WORK (&J2k, J2k_size) ; \
 }
 
-// redefine to use the revised GB_FREE_ALL above:
-#include "matrix/GB_static_header.h"
-
 GrB_Info GB_assign_prep
 (
     // output:

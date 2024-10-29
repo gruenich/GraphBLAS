@@ -28,7 +28,6 @@
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;
-#include "matrix/GB_static_header.h"
 
 GrB_Info GB_subassign_zombie
 (

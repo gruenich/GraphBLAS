@@ -79,7 +79,10 @@ GrB_Info GB_subassign_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, I, ni, nI, Icolon, J, nj, nJ, Jcolon, M, A,
-        scalar, nthreads_max, chunk, Werk, &GB_callback)) ;
+    return (GB_jit_kernel (C,
+        I, ni, nI, Ikind, Icolon,
+        J, nj, nJ, Jkind, Jcolon,
+        M, A, scalar, scalar_type,
+        nthreads_max, chunk, Werk, &GB_callback)) ;
 }
 

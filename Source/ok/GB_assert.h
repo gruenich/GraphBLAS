@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_assert.h: assertions
+// GB_assert.h: assertions for all of GraphBLAS except JIT kernels.
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// These methods are used in all of GraphBLAS except for JIT kernels.
+// For JIT kernels, see ok/GB_assert_kernels.h.
 
 //------------------------------------------------------------------------------
 // debugging definitions

@@ -11,7 +11,6 @@
 #define GB_IJ_H
 
 #include "GB.h"
-#include "include/GB_ijlist.h"
 
 void GB_ijlength            // get the length and kind of an index list I
 (

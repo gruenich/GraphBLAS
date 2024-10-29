@@ -282,5 +282,26 @@ GrB_Info GX_subassign_08n_slice                                             \
     GB_Werk Werk                                                            \
 )
 
+#define GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO(GX_subassign_symbolic)         \
+GrB_Info GX_subassign_symbolic                                              \
+(                                                                           \
+    /* output */                                                            \
+    GrB_Matrix S,           /* S = symbolic(C(I,J)), static header */       \
+    /* inputs, not modified: */                                             \
+    const GrB_Matrix C,     /* matrix to extract the pattern of */          \
+    const GrB_Index *I,     /* index list for S = C(I,J), or GrB_ALL, etc */\
+    const int64_t ni,       /* length of I, or special */                   \
+    const GrB_Index *J,     /* index list for S = C(I,J), or GrB_ALL, etc */\
+    const int64_t nj,       /* length of J, or special */                   \
+    const bool S_must_not_be_jumbled,                                       \
+    GB_Werk Werk                                                            \
+)
+
+#define GB_CALLBACK_MATRIX_FREE_PROTO(GX_Matrix_free)                       \
+void GX_Matrix_free             /* free a matrix */                         \
+(                                                                           \
+    GrB_Matrix *Ahandle         /* handle of matrix to free */              \
+)
+
 #endif
 

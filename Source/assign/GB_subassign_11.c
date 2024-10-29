@@ -364,7 +364,7 @@ GrB_Info GB_subassign_11
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
                         int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                        GB_PENDING_INSERT (scalar) ;
+                        GB_PENDING_INSERT_scalar ;
                     }
                     else if (Sfound)
                     { 
@@ -436,7 +436,7 @@ GrB_Info GB_subassign_11
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
                             int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                            GB_PENDING_INSERT (scalar) ;
+                            GB_PENDING_INSERT_scalar ;
                         }
                         GB_NEXT (M) ;
                     }
@@ -458,7 +458,7 @@ GrB_Info GB_subassign_11
                         // [. A 1]: action: ( insert )
                         int64_t iM = GBI (Mi, pM, Mvlen) ;
                         int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                        GB_PENDING_INSERT (scalar) ;
+                        GB_PENDING_INSERT_scalar ;
                     }
                     GB_NEXT (M) ;
                 }

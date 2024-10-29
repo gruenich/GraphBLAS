@@ -916,14 +916,12 @@
             // Otherwise the matrix C would be left in an incoherent partial
             // state of computation.  It's cleaner to just free it all.
 
-            // The action is done by GB_PENDING_INSERT in GB_Pending.h.
-
             #if 0
             #define GB_D_A_1_scalar                                         \
             {                                                               \
                 /* ----[. A 1]                                           */ \
                 /* action: ( insert )                                    */ \
-                GB_PENDING_INSERT (scalar) ;                                \
+                GB_PENDING_INSERT_scalar ;                                  \
             }
 
             #define GB_D_A_1_matrix                                         \
@@ -1448,23 +1446,42 @@
     GB_START_PENDING_INSERTION ;
 
 //------------------------------------------------------------------------------
-// GB_PENDING_INSERT: add (iC,jC,aij) or just (iC,aij) if Pending_j is NULL
+// GB_PENDING_INSERT_*: add (iC,jC,aij) or just (iC,aij) if Pending_j is NULL
 //------------------------------------------------------------------------------
 
-// GB_PENDING_INSERT(aij) is used by GB_subassign_* to insert a pending tuple,
+// GB_PENDING_INSERT_* is used by GB_subassign_* to insert a pending tuple,
 // in phase 2.  The list has already been reallocated after phase 1 to hold all
 // the new pending tuples, so GB_Pending_realloc is not required.  If C is iso,
 // Pending->x is NULL.
 
-#ifndef GB_COPY_to_PENDING_X
-#define GB_COPY_to_PENDING_X(aij)                                           \
-    if (Pending_x != NULL)                                                  \
-    {                                                                       \
-        memcpy (Pending_x +(my_npending*asize), (aij), asize) ;             \
-    }
+// The type of Pending_x is always identical to the type of A, or the scalar,
+// so no typecasting is required.
+
+// insert a scalar into Pending_x:
+#undef GB_COPY_scalar_to_PENDING_X
+#ifdef GB_GENERIC
+    #define GB_COPY_scalar_to_PENDING_X                                     \
+        { memcpy (Pending_x +(my_npending*asize), scalar, asize) ; }
+#else
+    #define GB_COPY_scalar_to_PENDING_X                                     \
+        { Pending_x [my_npending] = (*((GB_A_TYPE *) scalar)) ; }
 #endif
 
-#define GB_PENDING_INSERT(aij)                                              \
+// insert A(i,j) into Pending_x:
+#undef GB_COPY_aij_to_PENDING_X
+#ifdef GB_GENERIC
+    #define GB_COPY_aij_to_PENDING_X                                        \
+        { memcpy (Pending_x +(my_npending*asize),                           \
+            (Ax + (A_iso ? 0 : ((pA)*asize))), asize) ; }
+#else
+    #define GB_COPY_aij_to_PENDING_X                                        \
+        { Pending_x [my_npending] = Ax [A_iso ? 0 : (pA)] ; }
+#endif 
+
+#define GB_PENDING_INSERT_aij    GB_PENDING_INSERT (GB_COPY_aij_to_PENDING_X)
+#define GB_PENDING_INSERT_scalar GB_PENDING_INSERT (GB_COPY_scalar_to_PENDING_X)
+
+#define GB_PENDING_INSERT(copy_to_Pending_x)                                \
     if (task_sorted)                                                        \
     {                                                                       \
         if (!((jlast < jC) || (jlast == jC && ilast <= iC)))                \
@@ -1474,14 +1491,10 @@
     }                                                                       \
     Pending_i [my_npending] = iC ;                                          \
     if (Pending_j != NULL) Pending_j [my_npending] = jC ;                   \
-    GB_COPY_to_PENDING_X (aij) ;                                            \
+    if (Pending_x != NULL) copy_to_Pending_x ;                              \
     my_npending++ ;                                                         \
     ilast = iC ;                                                            \
     jlast = jC ;
-
-// insert A(i,j) into the list of pending tuples
-#define GB_PENDING_INSERT_aij                                               \
-    GB_PENDING_INSERT (Ax + (A_iso ? 0 : ((pA)*asize)))
 
 //------------------------------------------------------------------------------
 // GB_PHASE2_TASK_WRAPUP: wrapup for a task in phase 2

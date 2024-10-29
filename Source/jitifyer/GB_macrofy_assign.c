@@ -117,6 +117,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     GrB_Type xtype, ytype, ztype ;
     const char *xtype_name, *ytype_name, *ztype_name ;
 
+    fprintf (fp, "\n// accum: ") ;
     if (accum == NULL)
     { 
         // accum operator is not present
@@ -126,7 +127,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         xtype = NULL ;
         ytype = NULL ;
         ztype = NULL ;
-        fprintf (fp, "// accum: not present\n\n") ;
+        fprintf (fp, "not present\n\n") ;
     }
     else
     { 
@@ -140,13 +141,13 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         if (accum->hash == 0)
         { 
             // builtin operator
-            fprintf (fp, "// accum: (%s, %s)\n\n", accum->name, xtype_name) ;
+            fprintf (fp, "(%s, %s)\n\n", accum->name, xtype_name) ;
         }
         else
         { 
             // user-defined operator
             fprintf (fp,
-                "// accum: %s, ztype: %s, xtype: %s, ytype: %s\n\n",
+                "%s, ztype: %s, xtype: %s, ytype: %s\n\n",
                 accum->name, ztype_name, xtype_name, ytype_name) ;
         }
     }
@@ -174,6 +175,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
 
     bool did_accum_scalar = false ;
     bool did_accum_aij = false ;
+    bool need_copy_c_to_xwork = false ;
 
     if (accum != NULL)
     {
@@ -241,6 +243,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             else
             { 
                 // xwork = (xtype) Cx [pC]
+                need_copy_c_to_xwork = true ;
                 xname = "xwork" ;
                 fprintf (fp,
                     "    GB_DECLAREX (xwork) ;                  \\\n"
@@ -312,7 +315,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     { 
         // cwork = (ctype) scalar
         GB_macrofy_cast_input (fp, "GB_COPY_scalar_to_cwork", "cwork",
-            "scalar", "scalar", ctype, atype) ;
+            "scalar", "(*((GB_A_TYPE *) scalar))", ctype, atype) ;
         // C(i,j) = (ctype) scalar, already typecasted to cwork
         fprintf (fp, "#define GB_COPY_cwork_to_C(Cx,pC,cwork,C_iso)%s",
             C_iso ? "\n" : " Cx [pC] = cwork\n") ;
@@ -354,13 +357,12 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             " /* unused */\n") ;
     }
 
-    // xwork = (xtype) C(i,j)
-    if (C_iso)
+    // xwork = (xtype) C(i,j), if needed
+    if (need_copy_c_to_xwork)
     { 
-        fprintf (fp, "#define GB_COPY_C_to_xwork(xwork,Cx,pC)\n");
-    }
-    else
-    { 
+        ASSERT (accum != NULL) ;
+        ASSERT (!C_iso) ;
+        ASSERT (xtype != ctype) ;
         GB_macrofy_cast_input (fp, "GB_COPY_C_to_xwork", "xwork",
             "Cx,p", "Cx [p]", xtype, ctype) ;
     }
@@ -418,16 +420,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)"
             " /* unused */\n") ;
     }
-
-    //--------------------------------------------------------------------------
-    // construct macro for pending tuples
-    //--------------------------------------------------------------------------
-
-    fprintf (fp, "#define GB_COPY_to_PENDING_X(aij) \\n"
-        "    if (Pending_x != NULL) { Pending_x [my_npending] = aij ; }\n") ;
-
-    fprintf (fp, "#define GB_PENDING_INSERT_aij GB_PENDING_INSERT (%s)\n",
-        A_iso ? "Ax [0]" : "Ax [pA]") ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions
