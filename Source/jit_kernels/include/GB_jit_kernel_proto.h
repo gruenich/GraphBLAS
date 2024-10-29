@@ -500,10 +500,11 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const int64_t nJ,                                                   \
     const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \
+    const GrB_BinaryOp accum,                                           \
     const GrB_Matrix M,                                                 \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
-    GrB_Type scalar_type,                                               \
+    const GrB_Type scalar_type,                                         \
     const int nthreads_max,                                             \
     double chunk,                                                       \
     GB_Werk Werk,                                                       \

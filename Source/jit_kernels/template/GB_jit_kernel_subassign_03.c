@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_subassign_01.c: C(I,J) = scalar ; using S
+// GB_jit_kernel_subassign_03.c: C(I,J) += scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -34,6 +34,6 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_subassign_symbolic) ;
     GB_GET_CALLBACK (GB_Matrix_free) ;
 
-    #include "template/GB_subassign_01_template.c"
+    #include "template/GB_subassign_03_template.c"
 }
 

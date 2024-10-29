@@ -1,67 +1,25 @@
 //------------------------------------------------------------------------------
-// GB_subassign_11: C(I,J)<M,repl> += scalar ; using S
+// GB_subassign_02: C(I,J) = A ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
+// Method 02: C(I,J) = A ; using S
 
-// Method 11: C(I,J)<M,repl> += scalar ; using S
-
-// M:           present
+// M:           NULL
 // Mask_comp:   false
-// C_replace:   true
-// accum:       present
-// A:           scalar
+// C_replace:   false
+// accum:       NULL
+// A:           matrix
 // S:           constructed
 
-// C, M: not bitmap
+// C: not bitmap or full: use GB_bitmap_assign instead
+// A: any sparsity structure.
 
-#include "assign/GB_subassign_methods.h"
-#include "include/GB_unused.h"
-#include "jitifyer/GB_stringify.h"
-#define GB_FREE_ALL ;
-
-GrB_Info GB_subassign_11
-(
-    GrB_Matrix C,
-    // input:
-    const GrB_Index *I,
-    const int64_t ni,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nj,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const GrB_BinaryOp accum,
-    const void *scalar,
-    const GrB_Type scalar_type,
-    GB_Werk Werk
-)
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
-
-    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
-
-#define GB_GENERIC
-#include "assign/include/GB_assign_shared_definitions.h"
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -76,49 +34,47 @@ GrB_Info GB_subassign_11
     //--------------------------------------------------------------------------
 
     GB_GET_C ;      // C must not be bitmap
-    GB_GET_MASK ;
-    GB_GET_ACCUM_SCALAR ;
+    GB_GET_A ;
     GB_GET_S ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 11: C(I,J)<M,repl> += scalar ; using S
+    // Method 02: C(I,J) = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Optimal.  All entries in M+S must be examined.  All entries in S
-    // are modified:  if M(i,j)=1 then S(i,j) is used to write to the
-    // corresponding entry in C.  If M(i,j) is not present, or zero, then the
-    // entry in C is cleared (because of C_replace).  If S(i,j) is not present,
-    // and M(i,j)=1, then the scalar is inserted into C.  The only case that
-    // can be skipped is if neither S nor M is present.  As a result, this
-    // method need not traverse all of IxJ.  It can limit its traversal to the
-    // pattern of M+S.
+    // Time: Optimal.  All entries in A+S must be examined, so the work is
+    // Omega (nnz(A)+nnz(S)).
 
-    // Method 09 and Method 11 are very similar.
+    // Method 02 and Method 04 are somewhat similar.  They differ on how C is
+    // modified when the entry is present in S but not A.
+
+    // TODO: phase2 of Method 02 and 04 are identical and could be
+    // done in a single function.
 
     //--------------------------------------------------------------------------
-    // Parallel: M+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
+    // Parallel: A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    if (M_is_bitmap)
+    if (A_is_bitmap)
     { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
     { 
-        // traverse all M+S
-        GB_SUBASSIGN_TWO_SLICE (M, S) ;
+        // traverse all A+S
+        GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
-    if (M_is_bitmap)
+    if (A_is_bitmap)
     {
 
         //----------------------------------------------------------------------
-        // phase1: M is bitmap
+        // phase1: A is bitmap
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -130,7 +86,7 @@ GrB_Info GB_subassign_11
             // get the task descriptor
             //------------------------------------------------------------------
 
-            GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 (iM_start, iM_end) ;
+            GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 (iA_start, iA_end) ;
 
             //------------------------------------------------------------------
             // compute all vectors in this task
@@ -140,48 +96,46 @@ GrB_Info GB_subassign_11
             {
 
                 //--------------------------------------------------------------
-                // get S(iM_start:iM_end,j)
+                // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_LOOKUP_VECTOR_FOR_IXJ (S, iM_start) ;
-                int64_t pM_start = j * Mvlen ;
+                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+                int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
-                // do a 2-way merge of S(iM_start:iM_end,j) and M(ditto,j)
+                // do a 2-way merge of S(iA_start:iA_end,j) and A(ditto,j)
                 //--------------------------------------------------------------
 
-                for (int64_t iM = iM_start ; iM < iM_end ; iM++)
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
-
-                    int64_t pM = pM_start + iM ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iM) ;
-                    bool mij = Mb [pM] && GB_MCAST (Mx, pM, msize) ;
-
-                    if (Sfound && !mij)
+                    int64_t pA = pA_start + iA ;
+                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                    bool Afound = Ab [pA] ;
+                    if (Sfound && !Afound)
                     { 
-                        // S (i,j) is present but M (i,j) is false
-                        // ----[C A 0] or [X A 0]-------------------------------
-                        // [X A 0]: action: ( X ): still a zombie
-                        // [C A 0]: C_repl: action: ( delete ): becomes zombie
+                        // ----[C . 1] or [X . 1]-------------------------------
+                        // S (i,j) is present but A (i,j) is not
+                        // [C . 1]: action: ( delete ): becomes zombie
+                        // [X . 1]: action: ( X ): still a zombie
                         GB_C_S_LOOKUP ;
                         GB_DELETE_ENTRY ;
                         GB_NEXT (S) ;
                     }
-                    else if (!Sfound && mij)
+                    else if (!Sfound && Afound)
                     { 
-                        // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
+                        // S (i,j) is not present, A (i,j) is present
                         // [. A 1]: action: ( insert )
                         task_pending++ ;
                     }
-                    else if (Sfound && mij)
+                    else if (Sfound && Afound)
                     { 
-                        // S (i,j) present and M (i,j) is true
-                        GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =C+A ): apply accum
+                        // both S (i,j) and A (i,j) present
+                        // [C A 1]: action: ( =A ): copy A into C, no accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_withaccum_C_A_1_scalar ;
+                        GB_C_S_LOOKUP ;
+                        GB_noaccum_C_A_1_matrix ;
                         GB_NEXT (S) ;
                     }
                 }
@@ -194,7 +148,7 @@ GrB_Info GB_subassign_11
     {
 
         //----------------------------------------------------------------------
-        // phase1: M is hypersparse, sparse, or full
+        // phase1: A is hypersparse, sparse, or full
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -216,94 +170,71 @@ GrB_Info GB_subassign_11
             {
 
                 //--------------------------------------------------------------
-                // get S(:,j) and M(:,j)
+                // get A(:,j) and S(:,j)
                 //--------------------------------------------------------------
 
                 int64_t j = GBH (Zh, k) ;
-                GB_GET_MAPPED (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X, Mvlen);
+                GB_GET_MAPPED (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X, Avlen);
                 GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen);
 
                 //--------------------------------------------------------------
-                // do a 2-way merge of S(:,j) and M(:,j)
+                // do a 2-way merge of S(:,j) and A(:,j)
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
                 // int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
-                // while both list S (:,j) and M (:,j) have entries
-                while (pS < pS_end && pM < pM_end)
+                // while both list S (:,j) and A (:,j) have entries
+                while (pS < pS_end && pA < pA_end)
                 {
                     int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iM = GBI (Mi, pM, Mvlen) ;
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
 
-                    if (iS < iM)
+                    if (iS < iA)
                     { 
-                        // S (i,j) is present but M (i,j) is not
-                        // ----[C A 0] or [X A 0]-------------------------------
-                        // [X A 0]: action: ( X ): still a zombie
-                        // [C A 0]: C_repl: action: ( delete ): becomes zombie
+                        // ----[C . 1] or [X . 1]-------------------------------
+                        // S (i,j) is present but A (i,j) is not
+                        // [C . 1]: action: ( delete ): becomes zombie
+                        // [X . 1]: action: ( X ): still a zombie
                         GB_C_S_LOOKUP ;
                         GB_DELETE_ENTRY ;
                         GB_NEXT (S) ;
                     }
-                    else if (iM < iS)
-                    {
-                        // S (i,j) is not present, M (i,j) is present
-                        if (GB_MCAST (Mx, pM, msize))
-                        { 
-                            // ----[. A 1]--------------------------------------
-                            // [. A 1]: action: ( insert )
-                            task_pending++ ;
-                        }
-                        GB_NEXT (M) ;
+                    else if (iA < iS)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // S (i,j) is not present, A (i,j) is present
+                        // [. A 1]: action: ( insert )
+                        task_pending++ ;
+                        GB_NEXT (A) ;
                     }
                     else
-                    {
-                        // both S (i,j) and M (i,j) present
+                    { 
+                        // ----[C A 1] or [X A 1]-------------------------------
+                        // both S (i,j) and A (i,j) present
+                        // [C A 1]: action: ( =A ): copy A into C, no accum
+                        // [X A 1]: action: ( undelete ): zombie lives
                         GB_C_S_LOOKUP ;
-                        if (GB_MCAST (Mx, pM, msize))
-                        { 
-                            // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =C+A ): apply accum
-                            // [X A 1]: action: ( undelete ): zombie lives
-                            GB_withaccum_C_A_1_scalar ;
-                        }
-                        else
-                        { 
-                            // ----[C A 0] or [X A 0]---------------------------
-                            // [X A 0]: action: ( X ): still a zombie
-                            // [C A 0]: C_repl: action: ( delete ): now zombie
-                            GB_DELETE_ENTRY ;
-                        }
+                        GB_noaccum_C_A_1_matrix ;
                         GB_NEXT (S) ;
-                        GB_NEXT (M) ;
+                        GB_NEXT (A) ;
                     }
                 }
 
-                // while list S (:,j) has entries.  List M (:,j) exhausted.
+                // while list S (:,j) has entries.  List A (:,j) exhausted.
                 while (pS < pS_end)
                 { 
-                    // S (i,j) is present but M (i,j) is not
-                    // ----[C A 0] or [X A 0]-----------------------------------
-                    // [X A 0]: action: ( X ): still a zombie
-                    // [C A 0]: C_repl: action: ( delete ): becomes zombie
+                    // ----[C . 1] or [X . 1]-----------------------------------
+                    // S (i,j) is present but A (i,j) is not
+                    // [C . 1]: action: ( delete ): becomes zombie
+                    // [X . 1]: action: ( X ): still a zombie
                     GB_C_S_LOOKUP ;
                     GB_DELETE_ENTRY ;
                     GB_NEXT (S) ;
                 }
 
-                // while list M (:,j) has entries.  List S (:,j) exhausted.
-                while (pM < pM_end)
-                {
-                    // S (i,j) is not present, M (i,j) is present
-                    if (GB_MCAST (Mx, pM, msize))
-                    { 
-                        // ----[. A 1]------------------------------------------
-                        // [. A 1]: action: ( insert )
-                        task_pending++ ;
-                    }
-                    GB_NEXT (M) ;
-                }
+                // List A (:,j) has entries.  List S (:,j) exhausted.
+                task_pending += (pA_end - pA) ;
             }
 
             GB_PHASE1_TASK_WRAPUP ;
@@ -316,11 +247,11 @@ GrB_Info GB_subassign_11
 
     GB_PENDING_CUMSUM ;
 
-    if (M_is_bitmap)
+    if (A_is_bitmap)
     {
 
         //----------------------------------------------------------------------
-        // phase2: M is bitmap
+        // phase2: A is bitmap
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -332,7 +263,7 @@ GrB_Info GB_subassign_11
             // get the task descriptor
             //------------------------------------------------------------------
 
-            GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 (iM_start, iM_end) ;
+            GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 (iA_start, iA_end) ;
 
             //------------------------------------------------------------------
             // compute all vectors in this task
@@ -342,32 +273,32 @@ GrB_Info GB_subassign_11
             {
 
                 //--------------------------------------------------------------
-                // get S(iM_start:iM_end,j)
+                // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_LOOKUP_VECTOR_FOR_IXJ (S, iM_start) ;
-                int64_t pM_start = j * Mvlen ;
+                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+                int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
-                // do a 2-way merge of S(iM_start:iM_end,j) and M(ditto,j)
+                // do a 2-way merge of S(iA_start:iA_end,j) and A(ditto,j)
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
                 int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
-                for (int64_t iM = iM_start ; iM < iM_end ; iM++)
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
-                    int64_t pM = pM_start + iM ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iM) ;
-                    bool mij = Mb [pM] && GB_MCAST (Mx, pM, msize) ;
-
-                    if (!Sfound && mij)
+                    int64_t pA = pA_start + iA ;
+                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                    bool Afound = Ab [pA] ;
+                    if (!Sfound && Afound)
                     { 
-                        // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
+                        // S (i,j) is not present, A (i,j) is present
                         // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                        GB_PENDING_INSERT_scalar ;
+                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        GB_PENDING_INSERT_aij ;
+                        GB_NEXT (A) ;
                     }
                     else if (Sfound)
                     { 
@@ -384,7 +315,7 @@ GrB_Info GB_subassign_11
     {
 
         //----------------------------------------------------------------------
-        // phase2: M is hypersparse, sparse, or full
+        // phase2: A is hypersparse, sparse, or full
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -406,67 +337,60 @@ GrB_Info GB_subassign_11
             {
 
                 //--------------------------------------------------------------
-                // get S(:,j) and M(:,j)
+                // get A(:,j) and S(:,j)
                 //--------------------------------------------------------------
 
                 int64_t j = GBH (Zh, k) ;
-                GB_GET_MAPPED (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X, Mvlen);
+                GB_GET_MAPPED (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X, Avlen);
                 GB_GET_MAPPED (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S, Svlen);
 
                 //--------------------------------------------------------------
-                // do a 2-way merge of S(:,j) and M(:,j)
+                // do a 2-way merge of S(:,j) and A(:,j)
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
                 int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
-                // while both list S (:,j) and M (:,j) have entries
-                while (pS < pS_end && pM < pM_end)
+                // while both list S (:,j) and A (:,j) have entries
+                while (pS < pS_end && pA < pA_end)
                 {
                     int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iM = GBI (Mi, pM, Mvlen) ;
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
 
-                    if (iS < iM)
+                    if (iS < iA)
                     { 
-                        // S (i,j) is present but M (i,j) is not
                         GB_NEXT (S) ;
                     }
-                    else if (iM < iS)
-                    {
-                        // S (i,j) is not present, M (i,j) is present
-                        if (GB_MCAST (Mx, pM, msize))
-                        { 
-                            // ----[. A 1]--------------------------------------
-                            // [. A 1]: action: ( insert )
-                            int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                            GB_PENDING_INSERT_scalar ;
-                        }
-                        GB_NEXT (M) ;
+                    else if (iA < iS)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // S (i,j) is not present, A (i,j) is present
+                        // [. A 1]: action: ( insert )
+                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        GB_PENDING_INSERT_aij ;
+                        GB_NEXT (A) ;
                     }
                     else
                     { 
-                        // both S (i,j) and M (i,j) present
                         GB_NEXT (S) ;
-                        GB_NEXT (M) ;
+                        GB_NEXT (A) ;
                     }
                 }
 
-                // while list M (:,j) has entries.  List S (:,j) exhausted.
-                while (pM < pM_end)
-                {
-                    // S (i,j) is not present, M (i,j) is present
-                    if (GB_MCAST (Mx, pM, msize))
-                    { 
-                        // ----[. A 1]------------------------------------------
-                        // [. A 1]: action: ( insert )
-                        int64_t iM = GBI (Mi, pM, Mvlen) ;
-                        int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                        GB_PENDING_INSERT_scalar ;
-                    }
-                    GB_NEXT (M) ;
+                // ignore the remainder of S (:,j)
+
+                // while list A (:,j) has entries.  List S (:,j) exhausted.
+                while (pA < pA_end)
+                { 
+                    // ----[. A 1]----------------------------------------------
+                    // S (i,j) is not present, A (i,j) is present
+                    // [. A 1]: action: ( insert )
+                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                    GB_PENDING_INSERT_aij ;
+                    GB_NEXT (A) ;
                 }
             }
-
             GB_PHASE2_TASK_WRAPUP ;
         }
     }

@@ -22,8 +22,7 @@
 
 #include "assign/GB_subassign_methods.h"
 #include "jitifyer/GB_stringify.h"
-#define GB_GENERIC
-#include "assign/include/GB_assign_shared_definitions.h"
+#define GB_FREE_ALL ;
 
 GrB_Info GB_subassign_01
 (
@@ -76,6 +75,8 @@ GrB_Info GB_subassign_01
     // via the generic kernel
     //--------------------------------------------------------------------------
 
+    #define GB_GENERIC
+    #include "assign/include/GB_assign_shared_definitions.h"
     #include "assign/template/GB_subassign_01_template.c"
 }
 

@@ -390,7 +390,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             // accum is present
             // ywork = (ytype) scalar 
             GB_macrofy_cast_input (fp, "GB_COPY_scalar_to_ywork", "ywork",
-                "scalar", "scalar", ytype, atype) ;
+                "scalar", "(*((GB_A_TYPE *) scalar))", ytype, atype) ;
             did_scalar_to_ywork = true ;
         }
     }
@@ -409,17 +409,19 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         }
     }
 
+#if 0
     if (!did_scalar_to_ywork)
-    { 
+    {
         fprintf (fp, "#define GB_COPY_scalar_to_ywork(ywork,scalar)"
             " /* unused */\n") ;
     }
 
     if (!did_aij_to_ywork)
-    { 
+    {
         fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)"
             " /* unused */\n") ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // include the final default definitions

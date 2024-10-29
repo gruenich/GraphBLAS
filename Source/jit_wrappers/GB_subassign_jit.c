@@ -82,7 +82,7 @@ GrB_Info GB_subassign_jit
     return (GB_jit_kernel (C,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
-        M, A, scalar, scalar_type,
+        accum, M, A, scalar, scalar_type,
         nthreads_max, chunk, Werk, &GB_callback)) ;
 }
 
