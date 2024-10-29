@@ -7,20 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// Method 05d: C(:,:)<M> = scalar ; no S, C is dense
-
-// M:           present
-// Mask_comp:   false
-// Mask_struct: true or false
-// C_replace:   false
-// accum:       NULL
-// A:           scalar, already cast to C->type
-// S:           none
-// I:           NULL
-// J:           NULL
-
-// C can have any sparsity structure, but it must be entirely dense with
-// all entries present.
+// Unlike most jit kernels for assign, the scalar has already been typecasted
+// to C->type.
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)

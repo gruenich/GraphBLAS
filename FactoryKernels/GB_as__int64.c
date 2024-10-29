@@ -36,6 +36,9 @@
 // C<M> = scalar, when C is dense
 //------------------------------------------------------------------------------
 
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 1
+
 GrB_Info GB (_subassign_05d__int64)
 (
     GrB_Matrix C,
@@ -59,6 +62,9 @@ GrB_Info GB (_subassign_05d__int64)
 //------------------------------------------------------------------------------
 // C<A> = A, when C is dense
 //------------------------------------------------------------------------------
+
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 0
 
 GrB_Info GB (_subassign_06d__int64)
 (

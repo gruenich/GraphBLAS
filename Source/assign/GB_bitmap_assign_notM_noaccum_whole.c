@@ -71,7 +71,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A_AND_SCALAR
+    GB_GET_A_AND_SCALAR_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // scatter M into the bitmap of C

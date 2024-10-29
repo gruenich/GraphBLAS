@@ -78,6 +78,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         assign_kind) ;
     fprintf (fp, "// assign/subassign: %s\n", description) ;
 
+    fprintf (fp, "#define GB_SCALAR_ASSIGN %d\n", s_assign ? 1 : 0) ;
+
     fprintf (fp, "#define GB_ASSIGN_KIND ") ;
     switch (assign_kind)
     {

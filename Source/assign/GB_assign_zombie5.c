@@ -27,6 +27,7 @@
 #include "assign/GB_subassign_methods.h"
 #include "slice/GB_ek_slice.h"
 #define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL

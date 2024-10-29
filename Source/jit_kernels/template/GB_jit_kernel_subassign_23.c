@@ -7,20 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// Method 23: C += A, where C is dense
-
-// M:           NULL
-// Mask_comp:   false
-// Mask_struct: ignored
-// C_replace:   false
-// accum:       present
-// A:           matrix
-// S:           none
-// I:           NULL
-// J:           NULL
-
-// C and A can have any sparsity structure, but C must be as-if-full.
-
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
 {

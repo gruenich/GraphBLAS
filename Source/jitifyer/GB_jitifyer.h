@@ -114,14 +114,15 @@ typedef enum
     GB_JIT_KERNEL_SUBASSIGN_01  = 45, // GB_subassign_01
     GB_JIT_KERNEL_SUBASSIGN_02  = 46, // GB_subassign_02
     GB_JIT_KERNEL_SUBASSIGN_03  = 47, // GB_subassign_03
+    GB_JIT_KERNEL_SUBASSIGN_04  = 48, // GB_subassign_04
+    GB_JIT_KERNEL_SUBASSIGN_05  = 49, // GB_subassign_05
 
     //--------------------------------------------------------------------------
     // future:: the following kernels have not been implemented yet
     //--------------------------------------------------------------------------
 
     // future:: assign/subassign methods: continued
-    GB_JIT_KERNEL_SUBASSIGN_04  = 48, // GB_subassign_04
-    GB_JIT_KERNEL_SUBASSIGN_05  = 49, // GB_subassign_05
+
     GB_JIT_KERNEL_SUBASSIGN_06n = 50, // GB_subassign_06n
     GB_JIT_KERNEL_SUBASSIGN_06s = 51, // GB_subassign_06s_and_14
     GB_JIT_KERNEL_SUBASSIGN_07  = 52, // GB_subassign_07

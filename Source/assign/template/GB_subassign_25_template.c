@@ -7,6 +7,24 @@
 
 //------------------------------------------------------------------------------
 
+// Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
+
+// M:           present
+// Mask_comp:   false
+// Mask_struct: true
+// C_replace:   effectively false (not relevant since C is empty)
+// accum:       NULL
+// A:           matrix
+// S:           none
+
+// C and M are sparse or hypersparse.  A can have any sparsity structure, even
+// bitmap, but it must either be bitmap, or as-if-full.  M may be jumbled.  If
+// so, C is constructed as jumbled.  C is reconstructed with the same structure
+// as M and can have any sparsity structure on input.  The only constraint on C
+// is nnz(C) is zero on input.
+
+// C is iso if A is iso
+
 // C<M> = A where C starts as empty, M is structural, and A is dense.  The
 // pattern of C is an exact copy of M.  A is full, dense, or bitmap.
 // M is sparse or hypersparse, and C is constructed with the same pattern as M.

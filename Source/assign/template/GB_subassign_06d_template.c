@@ -7,6 +7,25 @@
 
 //------------------------------------------------------------------------------
 
+// Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
+
+// M:           present, and aliased to A
+// Mask_comp:   false
+// Mask_struct: true or false
+// C_replace:   false
+// accum:       NULL
+// A:           matrix, and aliased to M
+// S:           none
+
+// C must be bitmap or full.  No entries are deleted and thus no zombies
+// are introduced into C.  C can be hypersparse, sparse, bitmap, or full, and
+// its sparsity structure does not change.  If C is hypersparse, sparse, or
+// full, then the pattern does not change (all entries are present, and this
+// does not change), and these cases can all be treated the same (as if full).
+// If C is bitmap, new entries can be inserted into the bitmap C->b.
+
+// C and A can have any sparsity structure.
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \

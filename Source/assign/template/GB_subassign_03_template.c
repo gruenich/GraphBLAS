@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_03: C(I,J) += scalar ; using S
+// GB_subassign_02_template: C(I,J) += scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

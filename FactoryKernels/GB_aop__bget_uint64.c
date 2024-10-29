@@ -62,6 +62,9 @@
 // C += A, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
 
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 0
+
 GrB_Info GB (_subassign_23__bget_uint64)
 (
     GrB_Matrix C,
@@ -82,6 +85,9 @@ GrB_Info GB (_subassign_23__bget_uint64)
 //------------------------------------------------------------------------------
 // C += y, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
+
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 1
 
 GrB_Info GB (_subassign_22__bget_uint64)
 (

@@ -58,6 +58,7 @@ GrB_Info GB_subassign_11
     GB_MATRIX_WAIT_IF_JUMBLED (M) ;
 
 #define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
 #include "assign/include/GB_assign_shared_definitions.h"
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;

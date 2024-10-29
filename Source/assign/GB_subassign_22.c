@@ -29,6 +29,7 @@
 #include "FactoryKernels/GB_aop__include.h"
 #endif
 #define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -38,7 +39,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
-    const GrB_Type scalar_type,           // type of the input scalar
+    const GrB_Type scalar_type,     // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Werk Werk
 )

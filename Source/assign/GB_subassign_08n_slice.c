@@ -32,6 +32,7 @@
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
 #include "include/GB_unused.h"
 #define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
 #include "assign/include/GB_assign_shared_definitions.h"
 
 GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)

@@ -347,7 +347,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GBURBLE ("Method 05: C(%s,%s)<M> = scalar ; no S ",
                 Istring, Jstring) ;
             GB_OK (GB_subassign_05 (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, scalar, scalar_type, Werk)) ;
         }
         break ;

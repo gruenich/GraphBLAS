@@ -79,6 +79,7 @@ GrB_Info GB_subassign_02
     //--------------------------------------------------------------------------
 
     #define GB_GENERIC
+    #define GB_SCALAR_ASSIGN 0
     #include "assign/include/GB_assign_shared_definitions.h"
     #include "assign/template/GB_subassign_02_template.c"
 }

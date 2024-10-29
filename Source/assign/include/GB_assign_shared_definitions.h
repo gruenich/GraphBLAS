@@ -60,6 +60,11 @@
     #define GB_CAST_FUNCTION(f,zcode,xcode)
 #endif
 
+#ifndef GB_SCALAR_ASSIGN
+// currently needed for bitmap methods only
+#define GB_SCALAR_ASSIGN (A == NULL)
+#endif
+
 //------------------------------------------------------------------------------
 // GB_EMPTY_TASKLIST: declare an empty TaskList
 //------------------------------------------------------------------------------
@@ -112,6 +117,11 @@
 //------------------------------------------------------------------------------
 
 // M and A can be aliased, but both are const.
+
+#ifdef GB_JIT_KERNEL
+    #define Mask_struct GB_MASK_STRUCT
+    #define Mask_comp   GB_MASK_COMP
+#endif
 
 #define GB_GET_M                                                            \
     ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
@@ -1588,22 +1598,22 @@
     GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
 
 //------------------------------------------------------------------------------
-// GB_GET_A_AND_SCALAR: get the A matrix or the scalar
+// GB_GET_A_AND_SCALAR_FOR_BITMAP: get the A matrix or the scalar
 //------------------------------------------------------------------------------
 
 // ALIAS of C and A for bitmap methods: OK only for C(:,:)=A assignment.
 
-#define GB_GET_A_AND_SCALAR                                                 \
+#define GB_GET_A_AND_SCALAR_FOR_BITMAP                                      \
     const int64_t *Ap = NULL ;                                              \
     const int64_t *Ah = NULL ;                                              \
     const int8_t  *Ab = NULL ;                                              \
     const int64_t *Ai = NULL ;                                              \
     const GB_A_TYPE *Ax = NULL ;                                            \
-    const bool A_iso = (A == NULL) ? false : A->iso ;                       \
-    const GrB_Type atype = (A == NULL) ? scalar_type : A->type ;            \
+    const bool A_iso = (GB_SCALAR_ASSIGN) ? false : A->iso ;                \
+    const GrB_Type atype = (GB_SCALAR_ASSIGN) ? scalar_type : A->type ;     \
     const size_t       asize = atype->size ;                                \
     const GB_Type_code acode = atype->code ;                                \
-    if (A != NULL)                                                          \
+    if (!(GB_SCALAR_ASSIGN))                                                \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
         Ap = A->p ;                                                         \
@@ -1616,7 +1626,7 @@
     GB_CAST_FUNCTION (cast_A_to_C, ccode, acode) ;                          \
     if (!C_iso)                                                             \
     {                                                                       \
-        if (A == NULL)                                                      \
+        if (GB_SCALAR_ASSIGN)                                               \
         {                                                                   \
             /* cwork = (ctype) scalar */                                    \
             GB_COPY_scalar_to_cwork (cwork, scalar) ;                       \
@@ -1637,7 +1647,7 @@
     GB_DECLAREY (ywork) ;                                                   \
     if (!C_iso)                                                             \
     {                                                                       \
-        if (A == NULL)                                                      \
+        if (GB_SCALAR_ASSIGN)                                               \
         {                                                                   \
             /* ywork = (ytype) scalar */                                    \
             GB_COPY_scalar_to_ywork (ywork, scalar) ;                       \

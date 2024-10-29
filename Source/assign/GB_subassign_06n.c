@@ -31,6 +31,7 @@
 
 #include "assign/GB_subassign_methods.h"
 #define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
 #include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_06n

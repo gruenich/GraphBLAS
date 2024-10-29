@@ -75,7 +75,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_GET_M
-    GB_GET_A_AND_SCALAR
+    GB_GET_A_AND_SCALAR_FOR_BITMAP
     GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------

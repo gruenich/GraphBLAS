@@ -739,7 +739,11 @@
 #define GB_JITpackage_254 GM_JITpackage_254
 #define GB_JITpackage_255 GM_JITpackage_255
 #define GB_JITpackage_256 GM_JITpackage_256
+#define GB_JITpackage_257 GM_JITpackage_257
+#define GB_JITpackage_258 GM_JITpackage_258
+#define GB_JITpackage_259 GM_JITpackage_259
 #define GB_JITpackage_25 GM_JITpackage_25
+#define GB_JITpackage_260 GM_JITpackage_260
 #define GB_JITpackage_26 GM_JITpackage_26
 #define GB_JITpackage_27 GM_JITpackage_27
 #define GB_JITpackage_28 GM_JITpackage_28

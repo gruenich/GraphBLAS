@@ -23,6 +23,7 @@
 #include "assign/GB_subassign_methods.h"
 #include "include/GB_unused.h"
 #define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
 #include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_subassign_09

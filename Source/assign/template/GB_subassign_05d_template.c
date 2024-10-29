@@ -7,6 +7,19 @@
 
 //------------------------------------------------------------------------------
 
+// Method 05d: C(:,:)<M> = scalar ; no S, C is dense
+
+// M:           present
+// Mask_comp:   false
+// Mask_struct: true or false
+// C_replace:   false
+// accum:       NULL
+// A:           scalar
+// S:           none
+
+// C can have any sparsity structure, but it must be entirely dense with
+// all entries present.
+
 #undef  GB_FREE_ALL        
 #define GB_FREE_ALL                         \
 {                                           \

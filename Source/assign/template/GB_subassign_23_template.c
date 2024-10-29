@@ -7,6 +7,23 @@
 
 //------------------------------------------------------------------------------
 
+// Method 23: C += A, where C is full
+
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           matrix
+// S:           none
+
+// The type of C must match the type of x and z for the accum function, since
+// C(i,j) = accum (C(i,j), A(i,j)) is handled.  The generic case here can
+// typecast A(i,j) but not C(i,j).  The case for typecasting of C is handled by
+// Method 04.
+
+// C and A can have any sparsity structure, but C must be as-if-full.
+
 #include "include/GB_unused.h"
 
 #undef  GB_FREE_ALL
