@@ -17,12 +17,12 @@
 #define GB_GETA_AND_UPDATE(z,Ax,p) z = Ax [p]
 
 // A matrix (no typecasting to Z type here)
-#define GB_A_TYPE GxB_FC32_t
+#define GB_A_TYPE  GxB_FC32_t
 #define GB_DECLAREA(aij) GxB_FC32_t aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
 // monoid properties:
-#define GB_Z_TYPE GxB_FC32_t
+#define GB_Z_TYPE  GxB_FC32_t
 #define GB_DECLARE_IDENTITY(z) GxB_FC32_t z = GxB_CMPLXF(0,0)
 #define GB_DECLARE_IDENTITY_CONST(z) const GxB_FC32_t z = GxB_CMPLXF(0,0)
 #define GB_IS_ANY_MONOID 1

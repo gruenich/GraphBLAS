@@ -16,24 +16,24 @@
     // get A and C
     //--------------------------------------------------------------------------
 
-    #undef GBH_S
-    #undef GB_S_TYPE
+    #undef GBH_AB
+    #undef GB_AB_TYPE
 
     #ifdef GB_BIND_1ST
         // A is the name of the matrix passed in to this kernel, but it takes
         // the place of the B matrix for C=op(x,A').  As a result, the B macros
         // must be used to access its contents.
-        #define GBH_S(Ah,k) GBH_B(Ah,k)
-        #define GB_S_TYPE GB_B_TYPE
+        #define GBH_AB(Ah,k) GBH_B(Ah,k)
+        #define GB_AB_TYPE GB_B_TYPE
     #else
         // for bind2nd, unary ops, and mere typecasting, use the A macros to
         // access the A matrix.
-        #define GBH_S(Ah,k) GBH_A(Ah,k)
-        #define GB_S_TYPE GB_A_TYPE
+        #define GBH_AB(Ah,k) GBH_A(Ah,k)
+        #define GB_AB_TYPE GB_A_TYPE
     #endif
 
     #ifndef GB_ISO_TRANSPOSE
-    const GB_S_TYPE *restrict Ax = (GB_S_TYPE *) A->x ;
+    const GB_AB_TYPE *restrict Ax = (GB_AB_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
@@ -86,6 +86,6 @@
 }
 
 #undef GB_ISO_TRANSPOSE
-#undef GBH_S
-#undef GB_S_TYPE
+#undef GBH_AB
+#undef GB_AB_TYPE
 

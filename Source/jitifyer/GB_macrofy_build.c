@@ -75,9 +75,9 @@ void GB_macrofy_build           // construct all macros for GB_build
     GB_macrofy_type (fp, "X", "_", xtype_name) ;
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
 
-    fprintf (fp, "\n// S and T data types:\n") ;
-    GB_macrofy_type (fp, "T", "_", ttype_name) ;
-    GB_macrofy_type (fp, "S", "_", stype_name) ;
+    fprintf (fp, "\n// Sx and Tx data types:\n") ;
+    GB_macrofy_type (fp, "Tx", "_", ttype_name) ;
+    GB_macrofy_type (fp, "Sx", "_", stype_name) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the binary operator

@@ -16,13 +16,13 @@
 #define GB_BLD_COPY(Tx,k,Sx,i) Tx [k] = Sx [i]
 
 // array types for S and T
-#define GB_S_TYPE double
-#define GB_T_TYPE double
+#define GB_Sx_TYPE double
+#define GB_Tx_TYPE double
 
 // operator types: z = dup (x,y)
-#define GB_Z_TYPE double
-#define GB_X_TYPE double
-#define GB_Y_TYPE double
+#define GB_Z_TYPE  double
+#define GB_X_TYPE  double
+#define GB_Y_TYPE  double
 
 // disable this operator and use the generic case if these conditions hold
 #if (defined(GxB_NO_FIRST) || defined(GxB_NO_FP64) || defined(GxB_NO_FIRST_FP64))
@@ -39,9 +39,9 @@
 
 GrB_Info GB (_bld__first_fp64)
 (
-    GB_T_TYPE *restrict Tx,
+    GB_Tx_TYPE *restrict Tx,
     int64_t  *restrict Ti,
-    const GB_S_TYPE *restrict Sx,
+    const GB_Sx_TYPE *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,

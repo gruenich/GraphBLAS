@@ -41,6 +41,13 @@
 #ifndef GB_SUBASSIGN_SHARED_DEFINITIONS_H
 #define GB_SUBASSIGN_SHARED_DEFINITIONS_H
 
+//------------------------------------------------------------------------------
+// matrix types and other properties
+//------------------------------------------------------------------------------
+
+// The JIT/PreJIT kernels and FactoryKernels define the GB_*_TYPE macros as
+// real types.  If not yet defined, the generic kernels use GB_void.
+
 #ifndef GB_C_TYPE
 #define GB_C_TYPE GB_void
 #endif
@@ -64,6 +71,42 @@
 // currently needed for bitmap methods only
 #define GB_SCALAR_ASSIGN (A == NULL)
 #endif
+
+#ifdef GB_JIT_KERNEL
+    // FIXME: this is the wrong direction
+    #define Mask_struct GB_MASK_STRUCT
+    #define Mask_comp   GB_MASK_COMP
+#endif
+
+/* TODO:
+
+    C_iso
+    A_iso
+
+    A_is_bitmap
+    A_is_full
+    A_is_sparse
+    A_is_hyper
+
+    C_is_bitmap
+    C_is_full
+    C_is_sparse
+    C_is_hyper
+
+    M_is_bitmap
+    M_is_full
+    M_is_sparse
+    M_is_hyper
+
+    GB_ASSIGN_KIND
+    GB_I_KIND
+    GB_J_KIND
+
+    GB_MCAST
+
+    GB_NO_MASK
+*/
+
 
 //------------------------------------------------------------------------------
 // GB_EMPTY_TASKLIST: declare an empty TaskList
@@ -117,11 +160,6 @@
 //------------------------------------------------------------------------------
 
 // M and A can be aliased, but both are const.
-
-#ifdef GB_JIT_KERNEL
-    #define Mask_struct GB_MASK_STRUCT
-    #define Mask_comp   GB_MASK_COMP
-#endif
 
 #define GB_GET_M                                                            \
     ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
@@ -1090,7 +1128,7 @@
             // this is the same as the C_A_0 action above.
 
             // This condition cannot occur if A is a dense matrix, nor for
-            // scalar expansion, but the existance of the entry A is not
+            // scalar expansion, but the existence of the entry A is not
             // relevant.
 
             // If C_replace is false, then the [C D 0] action does nothing.

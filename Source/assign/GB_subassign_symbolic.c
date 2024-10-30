@@ -30,7 +30,7 @@ GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
     // extract the pattern: S = C(I,J) for S_Extraction method, and quick mask
     //--------------------------------------------------------------------------
 
-    // S is a sparse int64_t matrix.  Its "values" are not numerical, but
+    // S is a matrix with int64_t type.  Its "values" are not numerical, but
     // indices into C.  For example, suppose 100 = I [5] and 200 = J [7].  Then
     // S(5,7) is the entry C(I(5),J(7)), and the value of S(5,7) is the
     // position in C that holds that particular entry C(100,200):
@@ -53,7 +53,8 @@ GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
     // S and C have the same CSR/CSC format.  S can be jumbled.  It is in
     // in the same hypersparse form as C (unless S is empty, in which case
     // it is always returned as hypersparse). This also checks I and J.
-    // S is not iso, even if C is iso.
+    // S is not iso, even if C is iso.  S can be sparse, hypersparse, or full
+    // (not bitmap).
     GB_OK (GB_subref (S, false, C->is_csc, C, I, ni, J, nj, true, Werk)) ;
     ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as jumbled
     ASSERT (!GB_ZOMBIES (S)) ;

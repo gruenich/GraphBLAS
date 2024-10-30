@@ -10,8 +10,8 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_BUILD_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_BUILD_PROTO (GB_jit_kernel)
 {
-    GB_T_TYPE *restrict Tx = (GB_T_TYPE *) Tx_void ;
-    const GB_S_TYPE *restrict Sx = (GB_S_TYPE *) Sx_void ;
+    GB_Tx_TYPE *restrict Tx = (GB_Tx_TYPE *) Tx_void ;
+    const GB_Sx_TYPE *restrict Sx = (GB_Sx_TYPE *) Sx_void ;
     #include "template/GB_bld_template.c"
     return (GrB_SUCCESS) ;
 }
