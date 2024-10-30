@@ -248,9 +248,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // find the part of B(:,j) to be computed by this task
             //------------------------------------------------------------------
 
-            int64_t pB, pB_end ;
-            GB_get_pA (&pB, &pB_end, taskid, kk,
-                kfirst, klast, pstart_Bslice, Bp, bvlen) ;
+            GB_GET_PA (pB, pB_end, taskid, kk, kfirst, klast, pstart_Bslice,
+                GBP_B (Bp, kk, bvlen), GBP_B (Bp, kk+1, bvlen)) ;
             int64_t my_bjnz = pB_end - pB ;
             int64_t j = GBH (Bh, kk) ;
 

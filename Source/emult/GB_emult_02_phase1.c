@@ -102,9 +102,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                     // count the entries in C(:,j)
                     int64_t j = GBH (Ah, k) ;
                     int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k,
-                        kfirst, klast, pstart_Aslice, Ap, vlen) ;
+                    GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                        GBP_A (Ap, k, vlen), GBP_A (Ap, k+1, vlen)) ;
                     int64_t cjnz = 0 ;
                     for ( ; pA < pA_end ; pA++)
                     { 
@@ -148,9 +147,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                     // count the entries in C(:,j)
                     int64_t j = GBH (Ah, k) ;
                     int64_t pB_start = j * vlen ;
-                    int64_t pA, pA_end ;
-                    GB_get_pA (&pA, &pA_end, tid, k,
-                        kfirst, klast, pstart_Aslice, Ap, vlen) ;
+                    GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                        GBP_A (Ap, k, vlen), GBP_A (Ap, k+1, vlen)) ;
                     int64_t cjnz = 0 ;
                     for ( ; pA < pA_end ; pA++)
                     { 

@@ -50,9 +50,8 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_A (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k, kfirst,
-                klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // traverse over A(:,j), the kth vector of A

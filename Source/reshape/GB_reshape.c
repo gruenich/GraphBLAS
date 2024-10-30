@@ -278,9 +278,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     int64_t jold = GBH (Th, k) ;
-                    int64_t pT_start, pT_end ;
-                    GB_get_pA (&pT_start, &pT_end, tid, k,
-                        kfirst, klast, pstart_Tslice, Tp, tvlen) ;
+                    GB_GET_PA (pT_start, pT_end, tid, k, kfirst, klast,
+                        pstart_Tslice,
+                        GBP (Tp, k, tvlen), GBP (Tp, k+1, tvlen)) ;
                     for (int64_t p = pT_start ; p < pT_end ; p++)
                     {
                         int64_t iold = Ti [p] ;
@@ -308,9 +308,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     int64_t jold = GBH (Th, k) ;
-                    int64_t pT_start, pT_end ;
-                    GB_get_pA (&pT_start, &pT_end, tid, k,
-                        kfirst, klast, pstart_Tslice, Tp, tvlen) ;
+                    GB_GET_PA (pT_start, pT_end, tid, k, kfirst, klast,
+                    pstart_Tslice, GBP (Tp, k, tvlen), GBP (Tp, k+1, tvlen)) ;
                     for (int64_t p = pT_start ; p < pT_end ; p++)
                     {
                         int64_t iold = Ti [p] ;
@@ -354,13 +353,13 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             &S_work_size,
             !T_jumbled,     // indices may be jumbled on input
             true,           // no duplicates exist
-            nvals,          // number of entries in T and C 
+            nvals,          // number of entries in T and C
             true,           // C is a matrix
             NULL,           // I_input is not used
             NULL,           // J_input is not used
             S_input,        // S_input is used if not in-place; NULL if in-place
             T_iso,          // true if T and C are iso-valued
-            nvals,          // number of entries in T and C 
+            nvals,          // number of entries in T and C
             NULL,           // no dup operator
             type,           // type of S_work and S_input
             true,           // burble is allowed

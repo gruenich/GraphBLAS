@@ -85,9 +85,8 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
             //------------------------------------------------------------------
 
             int64_t j = GBH (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k, 
-                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // extract vector indices of A(:,j)
