@@ -68,9 +68,9 @@ GrB_Info GB_subassign_06n
     ASSERT_MATRIX_OK (M, "M input for 06n", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for 06n", GB0) ;
 
-    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
+    GB_UNJUMBLE (C) ;
+    GB_UNJUMBLE (M) ;
+    GB_UNJUMBLE (A) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel

@@ -51,11 +51,11 @@ GrB_Info GB_subassign_05
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT_IF_JUMBLED (C) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
-
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
+
+    GB_UNJUMBLE (C) ;
+    GB_MATRIX_WAIT (M) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel

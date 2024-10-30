@@ -55,7 +55,9 @@ GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
     // it is always returned as hypersparse). This also checks I and J.
     // S is not iso, even if C is iso.
     GB_OK (GB_subref (S, false, C->is_csc, C, I, ni, J, nj, true, Werk)) ;
-    ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as unsorted
+    ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as jumbled
+    ASSERT (!GB_ZOMBIES (S)) ;
+    ASSERT (!GB_PENDING (S)) ;
 
     //--------------------------------------------------------------------------
     // sort S and compute S->Y if requested
@@ -63,7 +65,7 @@ GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
 
     if (S_must_not_be_jumbled)
     { 
-        GB_MATRIX_WAIT_IF_JUMBLED (S) ; // but the caller requires S sorted
+        GB_MATRIX_WAIT (S) ; // but the caller requires S unjumbled
         ASSERT (!GB_JUMBLED (S)) ;
         GB_OK (GB_hyper_hash_build (S, Werk)) ;    // construct S->Y
     }

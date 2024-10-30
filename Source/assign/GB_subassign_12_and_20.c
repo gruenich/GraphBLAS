@@ -58,8 +58,8 @@ GrB_Info GB_subassign_12_and_20
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
-    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
-    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
+    GB_MATRIX_WAIT (M) ;
+    GB_MATRIX_WAIT (A) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel

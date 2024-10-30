@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_subassign_11.c: C(I,J)<M,repl> += A ; using S
+// GB_jit_kernel_subassign_15.c: C(I,J)<!M> = scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -24,16 +24,16 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_werk_pop) ;
     GB_GET_CALLBACK (GB_werk_push) ;
 
-//  GB_GET_CALLBACK (GB_hyper_hash_build) ;
+    GB_GET_CALLBACK (GB_hyper_hash_build) ;
 //  GB_GET_CALLBACK (GB_subassign_one_slice) ;
-    GB_GET_CALLBACK (GB_add_phase0) ;
-    GB_GET_CALLBACK (GB_ewise_slice) ;
+//  GB_GET_CALLBACK (GB_add_phase0) ;
+//  GB_GET_CALLBACK (GB_ewise_slice) ;
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
     GB_GET_CALLBACK (GB_Pending_ensure) ;
 //  GB_GET_CALLBACK (GB_subassign_08n_slice) ;
     GB_GET_CALLBACK (GB_subassign_symbolic) ;
     GB_GET_CALLBACK (GB_Matrix_free) ;
 
-    #include "template/GB_subassign_11_template.c"
+    #include "template/GB_subassign_15_template.c"
 }
 

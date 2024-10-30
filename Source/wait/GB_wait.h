@@ -49,8 +49,32 @@ GrB_Info GB_unjumble        // unjumble a matrix
 #define GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES(A)                         \
     GB_WAIT_IF (GB_PENDING_OR_ZOMBIES (A), A, GB_STR (A))
 
-// ensure A is not jumbled
+// ensure A is not jumbled (if so, do all pending work)
 #define GB_MATRIX_WAIT_IF_JUMBLED(A) GB_WAIT_IF (GB_JUMBLED (A), A, GB_STR (A))
+
+// just ensure A is not jumbled; leaving pending tuples alone if possible
+#define GB_UNJUMBLE(A)                                                  \
+{                                                                       \
+    if (GB_JUMBLED (A))                                                 \
+    {                                                                   \
+        GrB_Info info ;                                                 \
+        if (GB_ZOMBIES (A))                                             \
+        {                                                               \
+            /* zombies cannot be unjumbled, so do all pending work */   \
+            GB_OK (GB_wait ((GrB_Matrix) A, GB_STR (A), Werk)) ;        \
+            ASSERT (!GB_PENDING (A)) ;                                  \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            /* just unjumble the matrix; do no other pending work */    \
+            GB_BURBLE_MATRIX (A, "(unjumble: %s) ", GB_STR (A)) ;       \
+            GB_OK (GB_unjumble ((GrB_Matrix) A, Werk)) ;                \
+            ASSERT (GB_PENDING_OK (A)) ;                                \
+        }                                                               \
+        ASSERT (!GB_ZOMBIES (A)) ;                                      \
+    }                                                                   \
+    ASSERT (!GB_JUMBLED (A)) ;                                          \
+}
 
 #endif
 

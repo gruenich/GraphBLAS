@@ -1,64 +1,26 @@
 //------------------------------------------------------------------------------
-// GB_subassign_17: C(I,J)<!M,repl> = scalar ; using S
+// GB_subassign_13_template: C(I,J)<!M> = scalar ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
-
-// Method 17: C(I,J)<!M,repl> = scalar ; using S
+// Method 13: C(I,J)<!M> = scalar ; using S
 
 // M:           present
+// Mask_struct: true or false
 // Mask_comp:   true
-// C_replace:   true
+// C_replace:   false
 // accum:       NULL
 // A:           scalar
 // S:           constructed
 
-// C: not bitmap
+// C: not bitmap, but can be full since no zombies are inserted in that case
 // M: not bitmap
 
-#include "assign/GB_subassign_methods.h"
-#define GB_GENERIC
-#define GB_SCALAR_ASSIGN 1
-#include "assign/include/GB_assign_shared_definitions.h"
-
-GrB_Info GB_subassign_17
-(
-    GrB_Matrix C,
-    // input:
-    const GrB_Index *I,
-    const int64_t ni,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nj,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix M,
-    const bool Mask_struct,
-    const void *scalar,
-    const GrB_Type scalar_type,
-    GB_Werk Werk
-)
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GrB_BinaryOp accum = NULL ;
-
-    ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // S = C(I,J)
@@ -72,8 +34,6 @@ GrB_Info GB_subassign_17
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (M) ;
-
     GB_GET_C ;      // C must not be bitmap
     const int64_t Cnvec = C->nvec ;
     const int64_t *restrict Ch = C->h ;
@@ -85,7 +45,7 @@ GrB_Info GB_subassign_17
     GB_GET_S ;
 
     //--------------------------------------------------------------------------
-    // Method 17: C(I,J)<!M,repl> = scalar ; using S
+    // Method 13: C(I,J)<!M> = scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
@@ -184,20 +144,13 @@ GrB_Info GB_subassign_17
                     ASSERT (i == iA) ;
                     {
                         // both S (i,j) and A (i,j) present
-                        GB_C_S_LOOKUP ;
                         if (mij)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =A ): copy A, no accum
                             // [X A 1]: action: ( undelete ): zombie lives
+                            GB_C_S_LOOKUP ;
                             GB_noaccum_C_A_1_scalar ;
-                        }
-                        else
-                        { 
-                            // ----[C A 0] or [X A 0]---------------------------
-                            // [X A 0]: action: ( X ): still a zombie
-                            // [C A 0]: C_repl: action: ( delete ): zombie
-                            GB_DELETE_ENTRY ;
                         }
                         GB_NEXT (S) ;
                     }

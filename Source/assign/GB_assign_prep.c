@@ -493,7 +493,7 @@ GrB_Info GB_assign_prep
                     }
                     else
                     { 
-                        GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+                        GB_UNJUMBLE (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
                         GB_OK (GB_assign_zombie2 (C, I [0])) ;

@@ -339,7 +339,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 ASSERT (M->vlen == 1 && M->vdim == C->vdim) ;
                 int64_t i = GB_ijlist (I, 0, Ikind, Icolon) ;
                 GBURBLE ("assign zombies outside C(i,J) ") ;
-                GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+                GB_UNJUMBLE (C) ;
                 GB_MATRIX_WAIT (M) ;
                 GB_OK (GB_hyper_hash_build (M, Werk)) ;
                 GB_OK (GB_assign_zombie4 (C, M, Mask_comp, Mask_struct,

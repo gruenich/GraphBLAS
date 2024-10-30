@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_07_template: C(I,J)<M> += scalar ; no S
+// GB_subassign_15_template: C(I,J)<!M> += scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -7,53 +7,60 @@
 
 //------------------------------------------------------------------------------
 
-// Method 07: C(I,J)<M> += scalar ; no S
+// Method 15: C(I,J)<!M> += scalar ; using S
 
 // M:           present
 // Mask_struct: true or false
-// Mask_comp:   false
+// Mask_comp:   true
 // C_replace:   false
 // accum:       present
 // A:           scalar
-// S:           none
+// S:           constructed
 
-// C: not bitmap
-// M: any sparsity
+// C: not bitmap, but can be full since no zombies are inserted in that case
+// M: not bitmap
 
 {
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    GB_EMPTY_TASKLIST ;
+    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_EMPTY_TASKLIST ;
-
     GB_GET_C ;      // C must not be bitmap
-    int64_t zorig = C->nzombies ;
+    const int64_t Cnvec = C->nvec ;
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
-    const int64_t Cnvec = C->nvec ;
-    GB_GET_C_HYPER_HASH ;
     GB_GET_MASK ;
+    GB_GET_MASK_HYPER_HASH ;
+    GB_GET_S ;
     GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------
-    // Method 07: C(I,J)<M> += scalar ; no S
+    // Method 15: C(I,J)<!M> += scalar ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Close to Optimal:  same as Method 05.
+    // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
+    // required.  The sparsity of !M cannot be exploited.
 
-    // Method 05 and Method 07 are very similar.  Also compare with Method 06n.
-
-    //--------------------------------------------------------------------------
-    // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
-    //--------------------------------------------------------------------------
-
-    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled 
+    // Methods 13, 15, 17, and 19 are very similar.
 
     //--------------------------------------------------------------------------
-    // phase 1: undelete zombies, update entries, and count pending tuples
+    // Parallel: all IxJ (Methods 01, 03, 13, 15, 17, 19)
+    //--------------------------------------------------------------------------
+
+    GB_SUBASSIGN_IXJ_SLICE ;
+
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -65,93 +72,95 @@
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR_PHASE1 ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 (iA_start, iA_end) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t k = kfirst ; k <= klast ; k++)
+        for (int64_t j = kfirst ; j <= klast ; j++)
         {
-
-            //------------------------------------------------------------------
-            // get j, the kth vector of M
-            //------------------------------------------------------------------
-
-            int64_t j = GBH (Mh, k) ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
-            int64_t mjnz = pM_end - pM ;
-            if (mjnz == 0) continue ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
-            int64_t cjnz = pC_end - pC_start ;
-            bool cjdense = (cjnz == Cvlen) ;
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
             //------------------------------------------------------------------
-            // C(I,jC)<M(:,j)> += scalar ; no S
+            // get S(iA_start:end,j) and M(iA_start:end,j)
             //------------------------------------------------------------------
 
-            if (cjdense)
+            GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+            GB_LOOKUP_VECTOR_FOR_IXJ (M, iA_start) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC)<!M> += scalar
+            //------------------------------------------------------------------
+
+            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is dense so the binary search of C is not needed
+                // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                for ( ; pM < pM_end ; pM++)
-                {
+                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
 
-                    //----------------------------------------------------------
-                    // update C(iC,jC), but only if M(iA,j) allows it
-                    //----------------------------------------------------------
+                //--------------------------------------------------------------
+                // find the smallest index of [iS iA iM] (always iA)
+                //--------------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
-                    if (mij)
-                    { 
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
-                        GB_iC_DENSE_LOOKUP ;
+                int64_t i = iA ;
 
-                        // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =C+A ): apply accum
-                        // [X A 1]: action: ( undelete ): zombie lives
-                        GB_withaccum_C_A_1_scalar ;
-                    }
+                //--------------------------------------------------------------
+                // get M(i,j)
+                //--------------------------------------------------------------
+
+                bool mij ;
+                if (i == iM)
+                { 
+                    // mij = (bool) M [pM]
+                    mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    GB_NEXT (M) ;
+                }
+                else
+                { 
+                    // mij not present, implicitly false
+                    ASSERT (i < iM) ;
+                    mij = false ;
                 }
 
-            }
-            else
-            {
+                // complement the mask entry mij since Mask_comp is true
+                mij = !mij ;
 
                 //--------------------------------------------------------------
-                // C(:,jC) is sparse; use binary search for C
+                // accumulate the entry
                 //--------------------------------------------------------------
 
-                for ( ; pM < pM_end ; pM++)
+                if (i == iS)
                 {
-
-                    //----------------------------------------------------------
-                    // update C(iC,jC), but only if M(iA,j) allows it
-                    //----------------------------------------------------------
-
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
-                    if (mij)
+                    ASSERT (i == iA) ;
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
-
-                        // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
-                        if (cij_found)
+                        // both S (i,j) and A (i,j) present
+                        if (mij)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =C+A ): apply accum
                             // [X A 1]: action: ( undelete ): zombie lives
+                            GB_C_S_LOOKUP ;
                             GB_withaccum_C_A_1_scalar ;
                         }
-                        else
+                        GB_NEXT (S) ;
+                    }
+                }
+                else
+                {
+                    ASSERT (i == iA) ;
+                    {
+                        // S (i,j) is not present, A (i,j) is present
+                        if (mij)
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
@@ -170,7 +179,6 @@
     //--------------------------------------------------------------------------
 
     GB_PENDING_CUMSUM ;
-    zorig = C->nzombies ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(&&:pending_sorted)
@@ -181,60 +189,90 @@
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR_PHASE2 ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 (iA_start, iA_end) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t k = kfirst ; k <= klast ; k++)
+        for (int64_t j = kfirst ; j <= klast ; j++)
         {
-
-            //------------------------------------------------------------------
-            // get j, the kth vector of M
-            //------------------------------------------------------------------
-
-            int64_t j = GBH (Mh, k) ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
-            int64_t mjnz = pM_end - pM ;
-            if (mjnz == 0) continue ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
-            bool cjdense = ((pC_end - pC_start) == Cvlen) ;
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
             //------------------------------------------------------------------
-            // C(I,jC)<M(:,j)> += scalar ; no S
+            // get S(iA_start:end,j) and M(iA_start:end,j)
             //------------------------------------------------------------------
 
-            if (!cjdense)
+            GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+            GB_LOOKUP_VECTOR_FOR_IXJ (M, iA_start) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC)<!M> += scalar
+            //------------------------------------------------------------------
+
+            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is sparse; use binary search for C
+                // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                for ( ; pM < pM_end ; pM++)
+                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
+
+                //--------------------------------------------------------------
+                // find the smallest index of [iS iA iM] (always iA)
+                //--------------------------------------------------------------
+
+                int64_t i = iA ;
+
+                //--------------------------------------------------------------
+                // get M(i,j)
+                //--------------------------------------------------------------
+
+                bool mij ;
+                if (i == iM)
+                { 
+                    // mij = (bool) M [pM]
+                    mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    GB_NEXT (M) ;
+                }
+                else
+                { 
+                    // mij not present, implicitly false
+                    ASSERT (i < iM) ;
+                    mij = false ;
+                }
+
+                // complement the mask entry mij since Mask_comp is true
+                mij = !mij ;
+
+                //--------------------------------------------------------------
+                // accumulate the entry
+                //--------------------------------------------------------------
+
+                if (i == iS)
                 {
-
-                    //----------------------------------------------------------
-                    // update C(iC,jC), but only if M(iA,j) allows it
-                    //----------------------------------------------------------
-
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
-                    if (mij)
+                    ASSERT (i == iA) ;
+                    { 
+                        GB_NEXT (S) ;
+                    }
+                }
+                else
+                {
+                    ASSERT (i == iA) ;
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
-
-                        // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
-                        if (!cij_found)
+                        // S (i,j) is not present, A (i,j) is present
+                        if (mij)
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
+                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                             GB_PENDING_INSERT_scalar ;
                         }
                     }

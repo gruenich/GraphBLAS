@@ -71,7 +71,7 @@ GrB_Info GB_subassign_19
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT_IF_JUMBLED (M) ;
+    GB_MATRIX_WAIT (M) ;
 
     GB_GET_C ;      // C must not be bitmap
     const int64_t *restrict Ch = C->h ;
