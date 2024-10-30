@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_09: C(I,J)<M,repl> = scalar ; using S
+// GB_subassign_11: C(I,J)<M,repl> += scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -7,17 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// Method 09: C(I,J)<M,repl> = scalar ; using S
+// Method 11: C(I,J)<M,repl> += scalar ; using S
 
 // M:           present
 // Mask_struct: true or false
 // Mask_comp:   false
 // C_replace:   true
-// accum:       NULL
+// accum:       present
 // A:           scalar
 // S:           constructed
 
-// C: not bitmap or full
+// C, M: not bitmap
 
 {
 
@@ -35,11 +35,11 @@
 
     GB_GET_C ;      // C must not be bitmap
     GB_GET_MASK ;
-    GB_GET_SCALAR ;
+    GB_GET_ACCUM_SCALAR ;
     GB_GET_S ;
 
     //--------------------------------------------------------------------------
-    // Method 09: C(I,J)<M,repl> = scalar ; using S
+    // Method 11: C(I,J)<M,repl> += scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Optimal.  All entries in M+S must be examined.  All entries in S
@@ -137,9 +137,9 @@
                         // S (i,j) present and M (i,j) is true
                         GB_C_S_LOOKUP ;
                         // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =A ): copy A, no accum
+                        // [C A 1]: action: ( =C+A ): apply accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_noaccum_C_A_1_scalar ;
+                        GB_withaccum_C_A_1_scalar ;
                         GB_NEXT (S) ;
                     }
                 }
@@ -222,9 +222,9 @@
                         if (GB_MCAST (Mx, pM, msize))
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =A ): copy A, no accum
+                            // [C A 1]: action: ( =C+A ): apply accum
                             // [X A 1]: action: ( undelete ): zombie lives
-                            GB_noaccum_C_A_1_scalar ;
+                            GB_withaccum_C_A_1_scalar ;
                         }
                         else
                         { 
