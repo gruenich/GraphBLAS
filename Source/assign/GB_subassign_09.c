@@ -55,7 +55,7 @@ GrB_Info GB_subassign_09
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
-    GB_MATRIX_WAIT (M) ;
+    GB_UNJUMBLE (M) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel

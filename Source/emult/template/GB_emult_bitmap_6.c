@@ -26,7 +26,10 @@
     // complemented, then C is constructed as sparse, not bitmap.
     ASSERT (M != NULL) ;
     ASSERT (Mask_comp) ;
+    ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
+    ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
 
     // C(i,j) = A(i,j) .* B(i,j) can only be computed where M(i,j) is
     // not present in the sparse pattern of M, and where it is present
@@ -36,8 +39,8 @@
     // scatter M into the C bitmap
     //--------------------------------------------------------------------------
 
-    GB_bitmap_M_scatter_whole (C, M, Mask_struct, GB_BITMAP_M_SCATTER_SET_2,
-        M_ek_slicing, M_ntasks, M_nthreads) ;
+    GB_bitmap_M_scatter_whole (C, M, Mask_struct,
+        GB_BITMAP_M_SCATTER_SET_2, M_ek_slicing, M_ntasks, M_nthreads) ;
 
     // C(i,j) has been marked, in Cb, with the value 2 where M(i,j)=1.
     // These positions will not be computed in C(i,j).  C(i,j) can only

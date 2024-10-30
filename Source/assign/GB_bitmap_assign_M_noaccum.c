@@ -187,9 +187,9 @@ GrB_Info GB_bitmap_assign_M_noaccum
             { 
                 // clear the mask
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter (C,
-                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                    M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
+                GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon,
+                    J, nJ, Jkind, Jcolon, M, Mask_struct,
+                    GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }
@@ -311,9 +311,9 @@ GrB_Info GB_bitmap_assign_M_noaccum
 
                 // clear M from C 
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter (C,
-                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                    M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
+                GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon,
+                    J, nJ, Jkind, Jcolon, M, Mask_struct,
+                    assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }

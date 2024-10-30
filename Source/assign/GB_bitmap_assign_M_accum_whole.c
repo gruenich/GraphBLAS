@@ -94,8 +94,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
             //------------------------------------------------------------------
 
             // Cb [pC] += 2 for each entry M(i,j) in the mask
-            GB_bitmap_M_scatter_whole (C,
-                M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
+            GB_bitmap_M_scatter_whole (C, M, Mask_struct,
+                GB_BITMAP_M_SCATTER_PLUS_2,
                 M_ek_slicing, M_ntasks, M_nthreads) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
@@ -181,8 +181,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 //--------------------------------------------------------------
 
                 // Cb [pC] += 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter_whole (C,
-                    M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
+                GB_bitmap_M_scatter_whole (C, M, Mask_struct,
+                    GB_BITMAP_M_SCATTER_PLUS_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
                 // the bitmap of C now contains:
                 //  Cb (i,j) = 0:   cij not present, mij zero
@@ -271,8 +271,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
             //------------------------------------------------------------------
 
             // Cb [pC] += 2 for each entry M(i,j) in the mask
-            GB_bitmap_M_scatter_whole (C,
-                M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
+            GB_bitmap_M_scatter_whole (C, M, Mask_struct,
+                GB_BITMAP_M_SCATTER_PLUS_2,
                 M_ek_slicing, M_ntasks, M_nthreads) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
@@ -319,8 +319,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
             { 
                 // clear the mask
                 // Cb [pC] -= 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter_whole (C,
-                    M, Mask_struct, GB_BITMAP_M_SCATTER_MINUS_2,
+                GB_bitmap_M_scatter_whole (C, M, Mask_struct,
+                    GB_BITMAP_M_SCATTER_MINUS_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }

@@ -320,7 +320,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 ASSERT (M->vlen == C->vlen && M->vdim == 1 && M->h == NULL) ;
                 int64_t j = GB_ijlist (J, 0, Jkind, Jcolon) ;
                 GBURBLE ("assign zombies outside C(I,j) ") ;
-                GB_MATRIX_WAIT (M) ;
+                GB_UNJUMBLE (M) ;
                 GB_OK (GB_hyper_hash_build (C, Werk)) ;
                 GB_OK (GB_assign_zombie3 (C, M, Mask_comp, Mask_struct,
                     j, I, nI, Ikind, Icolon)) ;
@@ -340,7 +340,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 int64_t i = GB_ijlist (I, 0, Ikind, Icolon) ;
                 GBURBLE ("assign zombies outside C(i,J) ") ;
                 GB_UNJUMBLE (C) ;
-                GB_MATRIX_WAIT (M) ;
+                GB_UNJUMBLE (M) ;
                 GB_OK (GB_hyper_hash_build (M, Werk)) ;
                 GB_OK (GB_assign_zombie4 (C, M, Mask_comp, Mask_struct,
                     i, J, nJ, Jkind, Jcolon)) ;
@@ -356,7 +356,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 // M has the same size as C
                 ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
                 GBURBLE ("assign zombies outside C(I,J) ") ;
-                GB_MATRIX_WAIT (M) ;
+                GB_UNJUMBLE (M) ;
                 GB_OK (GB_hyper_hash_build (M, Werk)) ;
                 GB_OK (GB_assign_zombie5 (C, M, Mask_comp, Mask_struct,
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Werk)) ;

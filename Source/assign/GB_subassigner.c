@@ -108,7 +108,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (GB_is_dense (A))
     { 
         // methods that rely on A being dense assume A is not jumbled
-        GB_MATRIX_WAIT (A) ;
+        GB_UNJUMBLE (A) ;
     }
 
     if (GB_is_dense (C) && !GB_PENDING_OR_ZOMBIES (C) && !GB_IS_BITMAP (C))

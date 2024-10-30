@@ -768,6 +768,10 @@
 #define GB_JITpackage_280 GM_JITpackage_280
 #define GB_JITpackage_281 GM_JITpackage_281
 #define GB_JITpackage_282 GM_JITpackage_282
+#define GB_JITpackage_283 GM_JITpackage_283
+#define GB_JITpackage_284 GM_JITpackage_284
+#define GB_JITpackage_285 GM_JITpackage_285
+#define GB_JITpackage_286 GM_JITpackage_286
 #define GB_JITpackage_28 GM_JITpackage_28
 #define GB_JITpackage_29 GM_JITpackage_29
 #define GB_JITpackage_2 GM_JITpackage_2

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "sort/GB_sort.h"
 
 GrB_Info GB_unjumble        // unjumble a matrix

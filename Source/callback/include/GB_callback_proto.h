@@ -58,7 +58,7 @@ void GX_bitmap_M_scatter_whole  /* scatter M into the C bitmap */           \
     /* inputs: */                                                           \
     const GrB_Matrix M,         /* mask to scatter into the C bitmap */     \
     const bool Mask_struct,     /* true: M structural, false: M valued */   \
-    const int operation,        /* +=2, -=2, or %=2 */                      \
+    const int operation,        /* +=2, -=2, or =2 */                       \
     const int64_t *M_ek_slicing, /* size 3*M_ntasks+1 */                    \
     const int M_ntasks,                                                     \
     const int M_nthreads                                                    \

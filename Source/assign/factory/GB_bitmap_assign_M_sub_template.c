@@ -15,6 +15,10 @@
 // C is bitmap/full.  M is sparse/hyper, and can be jumbled.
 
 {
+    ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
+    ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+
     const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
     const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
     const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
