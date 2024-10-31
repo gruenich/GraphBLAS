@@ -39,12 +39,10 @@
             // GrB_assign: C<M>(I,J), where M is the same size as C
             #include "assign/factory/GB_bitmap_assign_M_all_template.c"
             break ;
-        #ifndef GB_NO_SUBASSIGN_CASE
         case GB_SUBASSIGN : 
             // GxB_subassign: C(I,J)<M>, where M is same size as C(I,J) and A
             #include "assign/factory/GB_bitmap_assign_M_sub_template.c"
             break ;
-        #endif
         default: ;
     }
 }

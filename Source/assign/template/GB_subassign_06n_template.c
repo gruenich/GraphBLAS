@@ -101,7 +101,7 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH (Mh, k) ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
+            GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -110,7 +110,7 @@
             //------------------------------------------------------------------
 
             int64_t pA, pA_end ;
-            GB_LOOKUP_VECTOR (pA, pA_end, A, j) ;
+            GB_LOOKUP_VECTOR_A (j, pA, pA_end) ;
             int64_t ajnz = pA_end - pA ;
             bool ajdense = (ajnz == Avlen) ;
             int64_t pA_start = pA ;
@@ -119,7 +119,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
+            GB_LOOKUP_VECTOR_jC ;
             int64_t cjnz = pC_end - pC_start ;
             if (cjnz == 0 && ajnz == 0) continue ;
             bool cjdense = (cjnz == Cvlen) ;
@@ -331,7 +331,7 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH (Mh, k) ;
-            GB_GET_VECTOR (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
+            GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -340,7 +340,7 @@
             //------------------------------------------------------------------
 
             int64_t pA, pA_end ;
-            GB_LOOKUP_VECTOR (pA, pA_end, A, j) ;
+            GB_LOOKUP_VECTOR_A (j, pA, pA_end) ;
             int64_t ajnz = pA_end - pA ;
             if (ajnz == 0) continue ;
             bool ajdense = (ajnz == Avlen) ;
@@ -350,7 +350,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
+            GB_LOOKUP_VECTOR_jC ;
             bool cjdense = ((pC_end - pC_start) == Cvlen) ;
 
             //------------------------------------------------------------------

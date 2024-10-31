@@ -272,7 +272,6 @@ GrB_Info GB_bitmap_assign_M_noaccum
             // row/col/assign case
             //------------------------------------------------------------------
 
-            #define GB_NO_SUBASSIGN_CASE
 
             if (C_replace)
             { 
@@ -296,7 +295,9 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 3) ;                   \
                     task_cnvals -= (cb == 1) ;              \
                 }
+                #define GB_NO_SUBASSIGN_CASE
                 #include "assign/factory/GB_bitmap_assign_C_template.c"
+                #undef GB_NO_SUBASSIGN_CASE
             }
             else
             { 

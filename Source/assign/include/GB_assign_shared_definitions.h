@@ -338,7 +338,7 @@
 
     #define GB_C_S_LOOKUP                                                   \
         int64_t pC = Sx [pS] ;                                              \
-        int64_t iC = GBI (Ci, pC, Cvlen) ;                                  \
+        int64_t iC = GBI_C (Ci, pC, Cvlen) ;                                \
         bool is_zombie = GB_IS_ZOMBIE (iC) ;                                \
         if (is_zombie) iC = GB_DEZOMBIE (iC) ;
 
@@ -377,14 +377,6 @@
         bool cij_found, is_zombie ;                                         \
         GB_BINARY_SEARCH_ZOMBIE (iC, Ci, pC, pright, cij_found, zorig,      \
             is_zombie) ;
-
-    //--------------------------------------------------------------------------
-    // for a 2-way or 3-way merge
-    //--------------------------------------------------------------------------
-
-    // An entry S(i,j), A(i,j), or M(i,j) has been processed;
-    // move to the next one.
-    #define GB_NEXT(X) (p ## X)++ ;
 
     //--------------------------------------------------------------------------
     // basic operations
@@ -1265,6 +1257,9 @@
 // GB_GET_MAPPED: get the content of a vector for a coarse/fine task
 //------------------------------------------------------------------------------
 
+// Used for the M, S, and A matrices.  Note that the generic GBP macro is used,
+// so this is not fully optimized for the JIT.
+
 #define GB_GET_MAPPED(pX_start, pX_fini, pX, pX_end, Xp, j, k, Z_to_X, Xvlen) \
     int64_t pX_start = -1, pX_fini = -1 ;                                   \
     if (fine_task)                                                          \
@@ -1287,6 +1282,9 @@
 //------------------------------------------------------------------------------
 // GB_GET_EVEC: get the content of a vector for Method08n
 //------------------------------------------------------------------------------
+
+// Used for the M and A matrices.  Note that the generic GBP macro is used,
+// so this is not fully optimized for the JIT.
 
 #define GB_GET_EVEC(pX_start, pX_fini, pX, pX_end, Xp, Xh, j,k,Z_to_X,Xvlen)\
     int64_t pX_start = -1, pX_fini = -1 ;                                   \
@@ -1333,30 +1331,74 @@
     GB_START_PENDING_INSERTION ;
 
 //------------------------------------------------------------------------------
-// GB_LOOKUP_VECTOR
+// GB_LOOKUP_VECTOR_X: Find pX_start and pX_end for the vector X (:,j)
 //------------------------------------------------------------------------------
 
-// Find pX_start and pX_end for the vector X (:,j)
+    // GB_LOOKUP_VECTOR_C: find pC_start and pC_end for C(:,j)
+    #define GB_LOOKUP_VECTOR_C(j,pC_start,pC_end)                   \
+    {                                                               \
+        if (C_is_hyper)                                             \
+        {                                                           \
+            GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp,              \
+                C_Yi, C_Yx, C_hash_bits, j, &pC_start, &pC_end) ;   \
+        }                                                           \
+        else                                                        \
+        {                                                           \
+            pC_start = GBP_C (Cp, j  , Cvlen) ;                     \
+            pC_end   = GBP_C (Cp, j+1, Cvlen) ;                     \
+        }                                                           \
+    }
 
-#define GB_LOOKUP_VECTOR(pX_start,pX_end,X,j)                               \
-{                                                                           \
-    if (X ## _is_hyper)                                                     \
-    {                                                                       \
-        GB_hyper_hash_lookup (X ## h, X ## nvec, X ## p, X ## _Yp,          \
-            X ## _Yi, X ## _Yx, X ## _hash_bits, j, &pX_start, &pX_end) ;   \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        pX_start = GBP (X ## p, j  , X ## vlen) ;                           \
-        pX_end   = GBP (X ## p, j+1, X ## vlen) ;                           \
-    }                                                                       \
-}
+    // GB_LOOKUP_VECTOR_M: find pM_start and pM_end for M(:,j)
+    #define GB_LOOKUP_VECTOR_M(j,pM_start,pM_end)                   \
+    {                                                               \
+        if (M_is_hyper)                                             \
+        {                                                           \
+            GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp,              \
+                M_Yi, M_Yx, M_hash_bits, j, &pM_start, &pM_end) ;   \
+        }                                                           \
+        else                                                        \
+        {                                                           \
+            pM_start = GBP_M (Mp, j  , Mvlen) ;                     \
+            pM_end   = GBP_M (Mp, j+1, Mvlen) ;                     \
+        }                                                           \
+    }
+
+    // GB_LOOKUP_VECTOR_A: find pA_start and pA_end for A(:,j)
+    #define GB_LOOKUP_VECTOR_A(j,pA_start,pA_end)                   \
+    {                                                               \
+        if (A_is_hyper)                                             \
+        {                                                           \
+            GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp,              \
+                A_Yi, A_Yx, A_hash_bits, j, &pA_start, &pA_end) ;   \
+        }                                                           \
+        else                                                        \
+        {                                                           \
+            pA_start = GBP_A (Ap, j  , Avlen) ;                     \
+            pA_end   = GBP_A (Ap, j+1, Avlen) ;                     \
+        }                                                           \
+    }
+
+    // GB_LOOKUP_VECTOR_S: find pS_start and pS_end for S(:,j)
+    #define GB_LOOKUP_VECTOR_S(j,pS_start,pS_end)                   \
+    {                                                               \
+        if (S_is_hyper)                                             \
+        {                                                           \
+            GB_hyper_hash_lookup (Sh, Snvec, Sp, S_Yp,              \
+                S_Yi, S_Yx, S_hash_bits, j, &pS_start, &pS_end) ;   \
+        }                                                           \
+        else                                                        \
+        {                                                           \
+            pS_start = GBP_S (Sp, j  , Svlen) ;                     \
+            pS_end   = GBP_S (Sp, j+1, Svlen) ;                     \
+        }                                                           \
+    }
 
 //------------------------------------------------------------------------------
-// GB_LOOKUP_VECTOR_jC: get the vector C(:,jC)
+// GB_LOOKUP_VECTOR_jC: get the vector C(:,jC) where jC = J [j]
 //------------------------------------------------------------------------------
 
-#define GB_LOOKUP_VECTOR_jC(fine_task,taskid)                               \
+#define GB_LOOKUP_VECTOR_jC                                                 \
     /* lookup jC in C */                                                    \
     /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */       \
     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;                          \
@@ -1368,34 +1410,57 @@
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        GB_LOOKUP_VECTOR (pC_start, pC_end, C, jC) ;                        \
+        GB_LOOKUP_VECTOR_C (jC, pC_start, pC_end) ;                         \
     }
 
 //------------------------------------------------------------------------------
-// GB_LOOKUP_VECTOR_FOR_IXJ: get the start of a vector for scalar assignment
+// GB_LOOKUP_VECTOR_X_FOR_IXJ: get the start of a vector for scalar assignment
 //------------------------------------------------------------------------------
 
-// Find pX and pX_end for the vector X (iQ_start:iQ_end, j), for a scalar
+// Find pX and pX_end for the vector X (iQ_start:end, j), for a scalar
 // assignment method, or a method iterating over all IxJ for a bitmap M or A.
 
-#define GB_LOOKUP_VECTOR_FOR_IXJ(X,iQ_start)                                \
-    int64_t p ## X, p ## X ## _end ;                                        \
-    GB_LOOKUP_VECTOR (p ## X, p ## X ## _end, X, j) ;                       \
-    if (iQ_start != 0)                                                      \
-    {                                                                       \
-        if (X ## i == NULL)                                                 \
+// Used for the M and S matrices.
+
+    // lookup S (iQ_start:end, j) 
+    #define GB_LOOKUP_VECTOR_S_FOR_IXJ(j,pS,pS_end,iQ_start)                \
+        int64_t pS, pS_end ;                                                \
+        GB_LOOKUP_VECTOR_S (j, pS, pS_end) ;                                \
+        if (iQ_start != 0)                                                  \
         {                                                                   \
-            /* X is full or bitmap */                                       \
-            p ## X += iQ_start ;                                            \
-        }                                                                   \
-        else                                                                \
+            if (Si == NULL)                                                 \
+            {                                                               \
+                /* S is full or bitmap */                                   \
+                pS += iQ_start ;                                            \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                /* S is sparse or hypersparse */                            \
+                int64_t pright = pS_end - 1 ;                               \
+                bool found ;                                                \
+                GB_SPLIT_BINARY_SEARCH (iQ_start, Si, pS, pright, found) ;  \
+            }                                                               \
+        }
+
+    // lookup M (iQ_start:end, j)
+    #define GB_LOOKUP_VECTOR_M_FOR_IXJ(j,pM,pM_end,iQ_start)                \
+        int64_t pM, pM_end ;                                                \
+        GB_LOOKUP_VECTOR_M (j, pM, pM_end) ;                                \
+        if (iQ_start != 0)                                                  \
         {                                                                   \
-            /* X is sparse or hypersparse */                                \
-            int64_t pright = p ## X ## _end - 1 ;                           \
-            bool found ;                                                    \
-            GB_SPLIT_BINARY_SEARCH (iQ_start, X ## i, p ## X, pright, found) ;\
-        }                                                                   \
-    }
+            if (Mi == NULL)                                                 \
+            {                                                               \
+                /* M is full or bitmap */                                   \
+                pM += iQ_start ;                                            \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                /* M is sparse or hypersparse */                            \
+                int64_t pright = pM_end - 1 ;                               \
+                bool found ;                                                \
+                GB_SPLIT_BINARY_SEARCH (iQ_start, Mi, pM, pright, found) ;  \
+            }                                                               \
+        }
 
 //------------------------------------------------------------------------------
 // GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP

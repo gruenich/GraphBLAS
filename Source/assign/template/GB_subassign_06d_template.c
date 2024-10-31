@@ -40,11 +40,11 @@
 
     #ifdef GB_JIT_KERNEL
     // FIXME: this is the wrong direction
-    #define Mask_struct GB_MASK_STRUCT
-    #define C_is_bitmap GB_C_IS_BITMAP
-    #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_is_full   GB_A_IS_FULL
-    #define A_iso       GB_A_ISO
+    #define Mask_struct GB_MASK_STRUCT  /* FIXME */
+    #define C_is_bitmap GB_C_IS_BITMAP  /* FIXME */
+    #define A_is_bitmap GB_A_IS_BITMAP  /* FIXME */
+    #define A_is_full   GB_A_IS_FULL    /* FIXME */
+    #define A_iso       GB_A_ISO    /* FIXME */
     #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (((GB_M_TYPE *) Ax), pA, asize)
     #else
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;

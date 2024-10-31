@@ -107,14 +107,15 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             // for row assign: set Cb(i,:) to zero
             // for col assign: set Cb(:,j) to zero
             // for subassign: set all Cb(I,J) to zero
-            #define NO_ASSIGN_CASE
             #define GB_CIJ_WORK(pC)                 \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = 0 ;                       \
                 task_cnvals -= (cb == 1) ;          \
             }
+            #define GB_NO_ASSIGN_CASE
             #include "assign/factory/GB_bitmap_assign_C_template.c"
+            #undef GB_NO_ASSIGN_CASE
         }
     }
 

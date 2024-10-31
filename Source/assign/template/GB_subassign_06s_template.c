@@ -107,7 +107,7 @@
                 // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+                GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
@@ -115,7 +115,7 @@
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR_M (j, pM_start, pM_end) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -141,7 +141,7 @@
                             GB_C_S_LOOKUP ;
                             GB_DELETE_ENTRY ;
                         }
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                     else if (!Sfound && Afound)
                     {
@@ -168,7 +168,7 @@
                             GB_C_S_LOOKUP ;
                             GB_noaccum_C_A_1_matrix ;
                         }
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                 }
             }
@@ -214,7 +214,7 @@
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR_M (j, pM_start, pM_end) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -243,7 +243,7 @@
                             GB_C_S_LOOKUP ;
                             GB_DELETE_ENTRY ;
                         }
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                     else if (iA < iS)
                     {
@@ -256,7 +256,7 @@
                             // [. A 1]: action: ( insert )
                             task_pending++ ;
                         }
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else
                     {
@@ -271,8 +271,8 @@
                             GB_C_S_LOOKUP ;
                             GB_noaccum_C_A_1_matrix ;
                         }
-                        GB_NEXT (S) ;
-                        GB_NEXT (A) ;
+                        pS++ ;  // go to the next entry in S(:,j)
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                 }
 
@@ -291,7 +291,7 @@
                         GB_C_S_LOOKUP ;
                         GB_DELETE_ENTRY ;
                     }
-                    GB_NEXT (S) ;
+                    pS++ ;  // go to the next entry in S(:,j)
                 }
 
                 // while list A (:,j) has entries.  List S (:,j) exhausted.
@@ -307,7 +307,7 @@
                         // [. A 1]: action: ( insert )
                         task_pending++ ;
                     }
-                    GB_NEXT (A) ;
+                    pA++ ;  // go to the next entry in A(:,j)
                 }
             }
 
@@ -350,7 +350,7 @@
                 // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+                GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
@@ -358,7 +358,7 @@
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR_M (j, pM_start, pM_end) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -389,7 +389,7 @@
                     else if (Sfound)
                     { 
                         // S (i,j) present
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                 }
             }
@@ -435,7 +435,7 @@
                 //--------------------------------------------------------------
 
                 int64_t pM_start, pM_end ;
-                GB_LOOKUP_VECTOR (pM_start, pM_end, M, j) ;
+                GB_LOOKUP_VECTOR_M (j, pM_start, pM_end) ;
                 bool mjdense = (pM_end - pM_start) == Mvlen ;
 
                 //--------------------------------------------------------------
@@ -454,7 +454,7 @@
                     if (iS < iA)
                     { 
                         // S (i,j) is present but A (i,j) is not
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                     else if (iA < iS)
                     {
@@ -468,13 +468,13 @@
                             int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                             GB_PENDING_INSERT_aij ;
                         }
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else
                     { 
                         // both S (i,j) and A (i,j) present
-                        GB_NEXT (S) ;
-                        GB_NEXT (A) ;
+                        pS++ ;  // go to the next entry in S(:,j)
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                 }
 
@@ -492,7 +492,7 @@
                         int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                         GB_PENDING_INSERT_aij ;
                     }
-                    GB_NEXT (A) ;
+                    pA++ ;  // go to the next entry in A(:,j)
                 }
             }
 

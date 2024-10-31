@@ -27,6 +27,8 @@
 
 // C is iso if A is iso
 
+#define GB_DEBUG /* HACK FIXME */
+
 #include "assign/GB_subassign_methods.h"
 #include "assign/GB_subassign_dense.h"
 #include "jitifyer/GB_stringify.h"

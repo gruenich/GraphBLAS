@@ -48,7 +48,7 @@
             const int64_t j = GBH_C (Ch, k) ;
             #endif
 
-            GB_GET_VECTOR (pM, pM_end, pM, pM_end, Mp, k, mvlen) ;
+            GB_GET_VECTOR_M (pM, pM_end, pM, pM_end, Mp, k, mvlen) ;
 
             //------------------------------------------------------------------
             // get B(:,j)

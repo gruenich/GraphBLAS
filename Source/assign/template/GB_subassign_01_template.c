@@ -90,7 +90,7 @@
             // get S(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+            GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC) = scalar
@@ -114,7 +114,7 @@
                     // [X A 1]: action: ( undelete ): zombie lives
                     GB_C_S_LOOKUP ;
                     GB_noaccum_C_A_1_scalar ;
-                    GB_NEXT (S) ;
+                    pS++ ;  // go to the next entry in S(:,j)
                 }
             }
         }
@@ -156,7 +156,7 @@
             // get S(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+            GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC) = scalar
@@ -176,7 +176,7 @@
                 else
                 { 
                     // both S (i,j) and A (i,j) present
-                    GB_NEXT (S) ;
+                    pS++ ;  // go to the next entry in S(:,j)
                 }
             }
         }

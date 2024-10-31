@@ -114,5 +114,3 @@
     }
 }
 
-#undef GB_NO_ASSIGN_CASE
-#undef GB_NO_SUBASSIGN_CASE

@@ -47,7 +47,7 @@
 
     #ifdef GB_JIT_KERNEL
     // FIXME: this is the wrong direction
-    #define Mask_struct GB_MASK_STRUCT
+    #define Mask_struct GB_MASK_STRUCT  /* FIXME */
     #else
     const size_t msize = M->type->size ;
     #endif
@@ -102,6 +102,7 @@
 
             if (Mx == NULL && Mb == NULL)
             {
+                // mask is structural and not bitmap
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 

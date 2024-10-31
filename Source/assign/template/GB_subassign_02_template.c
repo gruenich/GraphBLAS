@@ -98,7 +98,7 @@
                 // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+                GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
@@ -118,7 +118,7 @@
                         // [X . 1]: action: ( X ): still a zombie
                         GB_C_S_LOOKUP ;
                         GB_DELETE_ENTRY ;
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                     else if (!Sfound && Afound)
                     { 
@@ -135,7 +135,7 @@
                         // [X A 1]: action: ( undelete ): zombie lives
                         GB_C_S_LOOKUP ;
                         GB_noaccum_C_A_1_matrix ;
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                 }
             }
@@ -197,7 +197,7 @@
                         // [X . 1]: action: ( X ): still a zombie
                         GB_C_S_LOOKUP ;
                         GB_DELETE_ENTRY ;
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                     else if (iA < iS)
                     { 
@@ -205,7 +205,7 @@
                         // S (i,j) is not present, A (i,j) is present
                         // [. A 1]: action: ( insert )
                         task_pending++ ;
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else
                     { 
@@ -215,8 +215,8 @@
                         // [X A 1]: action: ( undelete ): zombie lives
                         GB_C_S_LOOKUP ;
                         GB_noaccum_C_A_1_matrix ;
-                        GB_NEXT (S) ;
-                        GB_NEXT (A) ;
+                        pS++ ;  // go to the next entry in S(:,j)
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                 }
 
@@ -229,7 +229,7 @@
                     // [X . 1]: action: ( X ): still a zombie
                     GB_C_S_LOOKUP ;
                     GB_DELETE_ENTRY ;
-                    GB_NEXT (S) ;
+                    pS++ ;  // go to the next entry in S(:,j)
                 }
 
                 // List A (:,j) has entries.  List S (:,j) exhausted.
@@ -275,7 +275,7 @@
                 // get S(iA_start:iA_end,j)
                 //--------------------------------------------------------------
 
-                GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
+                GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
                 int64_t pA_start = j * Avlen ;
 
                 //--------------------------------------------------------------
@@ -297,12 +297,12 @@
                         // [. A 1]: action: ( insert )
                         int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                         GB_PENDING_INSERT_aij ;
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else if (Sfound)
                     { 
                         // S (i,j) present
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                 }
             }
@@ -358,7 +358,7 @@
 
                     if (iS < iA)
                     { 
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                     else if (iA < iS)
                     { 
@@ -367,12 +367,12 @@
                         // [. A 1]: action: ( insert )
                         int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                         GB_PENDING_INSERT_aij ;
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else
                     { 
-                        GB_NEXT (S) ;
-                        GB_NEXT (A) ;
+                        pS++ ;  // go to the next entry in S(:,j)
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                 }
 
@@ -387,7 +387,7 @@
                     int64_t iA = GBI (Ai, pA, Avlen) ;
                     int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                     GB_PENDING_INSERT_aij ;
-                    GB_NEXT (A) ;
+                    pA++ ;  // go to the next entry in A(:,j)
                 }
             }
             GB_PHASE2_TASK_WRAPUP ;

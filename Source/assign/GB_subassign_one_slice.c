@@ -224,7 +224,12 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
             ASSERT (k >= 0 && k < Mnvec) ;
             int64_t j = GBH (Mh, k) ;
             ASSERT (j >= 0 && j < nJ) ;
-            GB_LOOKUP_VECTOR_jC (false, 0) ;
+
+            // lookup jC in C
+            // jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            int64_t pC_start, pC_end ;
+            GB_LOOKUP_VECTOR_C (jC, pC_start, pC_end) ;
 
             bool jC_dense = (pC_end - pC_start == Cvlen) ;
 

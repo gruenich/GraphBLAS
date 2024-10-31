@@ -39,9 +39,9 @@
     //--------------------------------------------------------------------------
 
     #ifdef GB_JIT_KERNEL
-    #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_is_full   GB_A_IS_FULL
-    #define A_iso       GB_A_ISO
+    #define A_is_bitmap GB_A_IS_BITMAP      /* FIXME */
+    #define A_is_full   GB_A_IS_FULL        /* FIXME */
+    #define A_iso       GB_A_ISO        /* FIXME */
     #else
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
     bool A_is_full = GB_IS_FULL (A) ;
@@ -58,7 +58,7 @@
     double work = anz + A->nvec ;
     if (A_is_bitmap || A_is_full)
     { 
-        // C is full and A is bitmap or full
+        // C is full and A is bitmap or full: A_ek_slicing is not created.
         A_nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         A_ntasks = 0 ;   // unused
         ASSERT (A_ek_slicing == NULL) ;

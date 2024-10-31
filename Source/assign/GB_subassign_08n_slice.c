@@ -175,7 +175,12 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (false, 0) ;
+            // lookup jC in C
+            // jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            int64_t pC_start, pC_end ;
+            GB_LOOKUP_VECTOR_C (jC, pC_start, pC_end) ;
+
             bool cjdense = (pC_end - pC_start == Cvlen) ;
 
             //------------------------------------------------------------------

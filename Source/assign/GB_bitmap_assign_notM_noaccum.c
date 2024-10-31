@@ -207,7 +207,6 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     }
     else
     {
-        #define GB_NO_SUBASSIGN_CASE
         if (C_replace)
         { 
             // for all entries in C.  Also clears M from C
@@ -217,7 +216,9 @@ GrB_Info GB_bitmap_assign_notM_noaccum
                 Cb [pC] = (cb == 1) ;               \
                 task_cnvals -= (cb == 3) ;          \
             }
+            #define GB_NO_SUBASSIGN_CASE
             #include "assign/factory/GB_bitmap_assign_C_template.c"
+            #undef GB_NO_SUBASSIGN_CASE
         }
         else
         { 

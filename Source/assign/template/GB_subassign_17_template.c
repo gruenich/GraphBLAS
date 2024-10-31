@@ -91,8 +91,8 @@
             // get S(iA_start:end,j) and M(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
-            GB_LOOKUP_VECTOR_FOR_IXJ (M, iA_start) ;
+            GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
+            GB_LOOKUP_VECTOR_M_FOR_IXJ (j, pM, pM_end, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC)<!M,repl> = scalar
@@ -123,7 +123,7 @@
                 { 
                     // mij = (bool) M [pM]
                     mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
-                    GB_NEXT (M) ;
+                    pM++ ;  // go to the next entry in M(:,j)
                 }
                 else
                 { 
@@ -159,7 +159,7 @@
                             // [C A 0]: C_repl: action: ( delete ): zombie
                             GB_DELETE_ENTRY ;
                         }
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                 }
                 else
@@ -215,8 +215,8 @@
             // get S(iA_start:end,j) and M(iA_start:end,j)
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_FOR_IXJ (S, iA_start) ;
-            GB_LOOKUP_VECTOR_FOR_IXJ (M, iA_start) ;
+            GB_LOOKUP_VECTOR_S_FOR_IXJ (j, pS, pS_end, iA_start) ;
+            GB_LOOKUP_VECTOR_M_FOR_IXJ (j, pM, pM_end, iA_start) ;
 
             //------------------------------------------------------------------
             // C(I(iA_start,iA_end-1),jC)<!M,repl> = scalar
@@ -247,7 +247,7 @@
                 { 
                     // mij = (bool) M [pM]
                     mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
-                    GB_NEXT (M) ;
+                    pM++ ;  // go to the next entry in M(:,j)
                 }
                 else
                 { 
@@ -267,7 +267,7 @@
                 {
                     ASSERT (i == iA) ;
                     { 
-                        GB_NEXT (S) ;
+                        pS++ ;  // go to the next entry in S(:,j)
                     }
                 }
                 else

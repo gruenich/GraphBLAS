@@ -182,9 +182,8 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
+            GB_LOOKUP_VECTOR_jC ;
             bool cjdense = (pC_end - pC_start == Cvlen) ;
-
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
@@ -246,19 +245,19 @@
                     if (iA < iM)
                     { 
                         // A(i,j) exists but not M(i,j)
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else if (iM < iA)
                     { 
                         // M(i,j) exists but not A(i,j)
-                        GB_NEXT (M) ;
+                        pM++ ;  // go to the next entry in M(:,j)
                     }
                     else
                     { 
                         // both A(i,j) and M(i,j) exist
                         if (GB_MCAST (Mx, pM, msize)) GB_PHASE1_ACTION ;
-                        GB_NEXT (A) ;
-                        GB_NEXT (M) ;
+                        pA++ ;  // go to the next entry in A(:,j)
+                        pM++ ;  // go to the next entry in M(:,j)
                     }
                 }
             }
@@ -318,7 +317,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (fine_task, taskid) ;
+            GB_LOOKUP_VECTOR_jC ;
             bool cjdense = (pC_end - pC_start == Cvlen) ;
             if (cjdense) continue ;
 
@@ -382,19 +381,19 @@
                     if (iA < iM)
                     { 
                         // A(i,j) exists but not M(i,j)
-                        GB_NEXT (A) ;
+                        pA++ ;  // go to the next entry in A(:,j)
                     }
                     else if (iM < iA)
                     { 
                         // M(i,j) exists but not A(i,j)
-                        GB_NEXT (M) ;
+                        pM++ ;  // go to the next entry in M(:,j)
                     }
                     else
                     { 
                         // both A(i,j) and M(i,j) exist
                         if (GB_MCAST (Mx, pM, msize)) GB_PHASE2_ACTION ;
-                        GB_NEXT (A) ;
-                        GB_NEXT (M) ;
+                        pA++ ;  // go to the next entry in A(:,j)
+                        pM++ ;  // go to the next entry in M(:,j)
                     }
                 }
             }

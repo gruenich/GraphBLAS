@@ -42,8 +42,9 @@
     //--------------------------------------------------------------------------
 
     #ifdef GB_JIT_KERNEL
-    #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_iso       GB_A_ISO
+    // FIXME: wrong direction */
+    #define A_is_bitmap GB_A_IS_BITMAP  /* FIXME */
+    #define A_iso       GB_A_ISO    /* FIXME */
     #else
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_iso = A->iso ;
