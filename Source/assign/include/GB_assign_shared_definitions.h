@@ -74,8 +74,8 @@
 
 #ifdef GB_JIT_KERNEL
     // FIXME: this is the wrong direction
-    #define Mask_struct GB_MASK_STRUCT
     #define Mask_comp   GB_MASK_COMP
+    #define Mask_struct GB_MASK_STRUCT
 #endif
 
 /* TODO:
@@ -1600,8 +1600,8 @@
 
 #define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind)   \
     GBURBLE ("Method:" method " ") ;                                        \
-    GB_assign_burble (C_replace, Ikind, Jkind, M, Mask_comp,                \
-        Mask_struct, accum, A, akind) ;
+    GB_assign_burble (C_replace, Ikind, Jkind, M, Mask_comp, Mask_struct,   \
+        accum, A, akind) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_C_BITMAP: get the C matrix (must be bitmap)

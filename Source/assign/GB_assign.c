@@ -164,9 +164,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // structure, but otherwise C is returned as bitmap.
 
         GB_OK (GB_bitmap_assign (C, C_replace,
-            I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-            M, Mask_comp, Mask_struct, accum, A,
-            scalar, scalar_type, assign_kind, Werk)) ;
+            I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+            M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
+            assign_kind, Werk)) ;
 
     }
     else

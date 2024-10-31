@@ -490,6 +490,7 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
 GrB_Info GB_jit_kernel_subassign_any                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
+    const bool C_replace,                                               \
     const GrB_Index *I,                                                 \
     const int64_t ni,                                                   \
     const int64_t nI,                                                   \
@@ -500,14 +501,17 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const int64_t nJ,                                                   \
     const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \
-    const GrB_BinaryOp accum,                                           \
     const GrB_Matrix M,                                                 \
+ /* const bool Mask_comp,    FIXME */                                   \
+ /* const bool Mask_struct,  FIXME */                                   \
+    const GrB_BinaryOp accum,                                           \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
     const GrB_Type scalar_type,                                         \
+    const int assign_kind,                                              \
+    GB_Werk Werk,                                                       \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    GB_Werk Werk,                                                       \
     const GB_callback_struct *restrict my_callback                      \
 )
 

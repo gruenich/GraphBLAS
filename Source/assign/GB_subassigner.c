@@ -231,7 +231,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // sparsity (if present).
             GBURBLE ("Method: bitmap_subassign ") ;
             GB_OK (GB_bitmap_assign (C, C_replace,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
                 GB_SUBASSIGN, Werk)) ;
         }

@@ -46,6 +46,7 @@
     ASSERT (!C->iso) ;
 
     #ifdef GB_JIT_KERNEL
+    // FIXME: this is the wrong direction
     #define Mask_struct GB_MASK_STRUCT
     #else
     const size_t msize = M->type->size ;

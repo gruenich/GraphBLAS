@@ -39,6 +39,7 @@
     //--------------------------------------------------------------------------
 
     #ifdef GB_JIT_KERNEL
+    // FIXME: this is the wrong direction
     #define Mask_struct GB_MASK_STRUCT
     #define C_is_bitmap GB_C_IS_BITMAP
     #define A_is_bitmap GB_A_IS_BITMAP

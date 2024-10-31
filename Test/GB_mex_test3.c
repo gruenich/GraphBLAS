@@ -562,7 +562,7 @@ void mexFunction
 
     // C(I,I) = A
     OK (GB_bitmap_assign_noM_noaccum (C, true,
-        I, 2, GB_LIST, NULL, I, 2, GB_LIST, NULL,
+        I, 2, 2, GB_LIST, NULL, I, 2, 2, GB_LIST, NULL,
         false, true, A, NULL, GrB_BOOL, GB_ASSIGN, NULL)) ;
 
     OK (GxB_Matrix_fprint (C, "C after C<M>=A", GxB_SHORT, NULL)) ;

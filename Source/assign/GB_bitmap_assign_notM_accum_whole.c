@@ -40,13 +40,24 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     GrB_Matrix C,               // input/output matrix in bitmap format
     // inputs:
     const bool C_replace,       // descriptor for C
+    #define I NULL              /* I index list */
+    #define ni 0
+    #define nI 0
+    #define Ikind GB_ALL
+    #define Icolon NULL
+    #define J NULL              /* J index list */
+    #define ni 0
+    #define nI 0
+    #define Jkind GB_ALL
+    #define Jcolon NULL
     const GrB_Matrix M,         // mask matrix
-//  const bool Mask_comp,       // true here, for !M only
+    #define Mask_comp true      /* true here, for !M only */
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
+    #define assign_kind         GB_ASSIGN
     GB_Werk Werk
 )
 {

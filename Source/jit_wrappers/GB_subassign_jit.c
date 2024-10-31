@@ -55,8 +55,9 @@ GrB_Info GB_subassign_jit
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_assign (&encoding, &suffix,
-        assign_kernel, C, C_replace, Ikind, Jkind, M, Mask_struct,
-        Mask_comp, accum, A, scalar_type, assign_kind) ;
+        assign_kernel, C, C_replace, Ikind, Jkind,
+        M, Mask_struct, Mask_comp,  // FIXME: args out of order
+        accum, A, scalar_type, assign_kind) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -79,10 +80,11 @@ GrB_Info GB_subassign_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C,
+    return (GB_jit_kernel (C, C_replace,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
-        accum, M, A, scalar, scalar_type,
-        nthreads_max, chunk, Werk, &GB_callback)) ;
+        M, /* FIXME: Mask_comp, Mask_struct, */
+        accum, A, scalar, scalar_type, assign_kind, Werk,
+        nthreads_max, chunk, &GB_callback)) ;
 }
 
