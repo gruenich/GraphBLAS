@@ -22,6 +22,10 @@ GrB_Info GB_cuda_select_sparse
     const GB_void *ythunk
 )
 {
+    // in progress
+    return (GrB_NOT_IMPLEMENTED) ;
+
+#if 0
 
     // check inputs
     ASSERT (C != NULL && !(C->static_header)) ;
@@ -64,4 +68,5 @@ GrB_Info GB_cuda_select_sparse
 
     GB_FREE_WORKSPACE ;
     return info ;
+#endif
 }

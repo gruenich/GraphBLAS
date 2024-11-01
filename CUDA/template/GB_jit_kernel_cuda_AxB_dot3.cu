@@ -487,8 +487,13 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                             }
                             gridsz = GB_IMIN (gridsz, 256*number_of_sms) ;
                             dim3 grid_3 (gridsz) ;
+                            // each thread block creates Ai_s and Bj_s; each
+                            // are int64_t arrays of size shared_vector_size
+                            size_t shared_bytes = 0 ;
+                                // shared_vector_size *
+                                // sizeof (int64_t) * 2 ;
                             GB_cuda_AxB_dot3_phase3_mp_kernel
-                                <<<grid_3, block, 0, stream>>>
+                                <<<grid_3, block, shared_bytes, stream>>>
                                 (start, end, Bucket, C, M, A, B, theta) ;
                         }
                         break ;

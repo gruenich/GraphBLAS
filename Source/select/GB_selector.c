@@ -160,6 +160,7 @@ GrB_Info GB_selector
 
     info = GrB_NO_VALUE ;
 
+#if 0
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if (!in_place_A /* Fixme for CUDA: remove this condition, and let the CUDA
         kernel handle the in-place-A condition for GB_wait and GB_resize. */
@@ -168,6 +169,7 @@ GrB_Info GB_selector
         info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
     }
     #endif
+#endif
 
     if (info == GrB_NO_VALUE)
     {
