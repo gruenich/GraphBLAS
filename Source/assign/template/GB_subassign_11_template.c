@@ -10,8 +10,8 @@
 // Method 11: C(I,J)<M,repl> += scalar ; using S
 
 // M:           present
-// Mask_struct: true or false
 // Mask_comp:   false
+// Mask_struct: true or false
 // C_replace:   true
 // accum:       present
 // A:           scalar
@@ -112,7 +112,7 @@
                 {
 
                     int64_t pM = pM_start + iM ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iM) ;
+                    bool Sfound = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iM) ;
                     bool mij = Mb [pM] && GB_MCAST (Mx, pM, msize) ;
 
                     if (Sfound && !mij)
@@ -191,8 +191,8 @@
                 // while both list S (:,j) and M (:,j) have entries
                 while (pS < pS_end && pM < pM_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iM = GBI (Mi, pM, Mvlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
+                    int64_t iM = GBI_M (Mi, pM, Mvlen) ;
 
                     if (iS < iM)
                     { 
@@ -316,7 +316,7 @@
                 for (int64_t iM = iM_start ; iM < iM_end ; iM++)
                 {
                     int64_t pM = pM_start + iM ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iM) ;
+                    bool Sfound = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iM) ;
                     bool mij = Mb [pM] && GB_MCAST (Mx, pM, msize) ;
 
                     if (!Sfound && mij)
@@ -381,8 +381,8 @@
                 // while both list S (:,j) and M (:,j) have entries
                 while (pS < pS_end && pM < pM_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iM = GBI (Mi, pM, Mvlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
+                    int64_t iM = GBI_M (Mi, pM, Mvlen) ;
 
                     if (iS < iM)
                     { 
@@ -417,7 +417,7 @@
                     { 
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
-                        int64_t iM = GBI (Mi, pM, Mvlen) ;
+                        int64_t iM = GBI_M (Mi, pM, Mvlen) ;
                         int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
                         GB_PENDING_INSERT_scalar ;
                     }

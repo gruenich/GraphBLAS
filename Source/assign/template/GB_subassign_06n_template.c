@@ -100,7 +100,7 @@
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
@@ -144,13 +144,13 @@
 
                     if (GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // find iA in A(:,j)
                         // A(:,j) is dense; no need for binary search
                         pA = pA_start + iA ;
-                        ASSERT (GBI (Ai, pA, Avlen) == iA) ;
+                        ASSERT (GBI_A (Ai, pA, Avlen) == iA) ;
                         // ----[C A 1] or [X A 1]-----------------------
                         // [C A 1]: action: ( =A ): copy A to C, no acc
                         // [X A 1]: action: ( undelete ): zombie lives
@@ -175,7 +175,7 @@
 
                     if (GB_MCAST (Mx, pM, msize))
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // find iA in A(:,j)
@@ -218,14 +218,14 @@
 
                     if (GB_MCAST (Mx, pM, msize))
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
 
                         // lookup iA in A(:,j)
                         pA = pA_start + iA ;
-                        ASSERT (GBI (Ai, pA, Avlen) == iA) ;
+                        ASSERT (GBI_A (Ai, pA, Avlen) == iA) ;
 
                         if (cij_found)
                         { 
@@ -261,7 +261,7 @@
 
                     if (GB_MCAST (Mx, pM, msize))
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
@@ -330,7 +330,7 @@
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
@@ -373,14 +373,14 @@
 
                     if (GB_MCAST (Mx, pM, msize))
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find iA in A(:,j)
                         if (ajdense)
                         { 
                             // A(:,j) is dense; no need for binary search
                             pA = pA_start + iA ;
-                            ASSERT (GBI (Ai, pA, Avlen) == iA) ;
+                            ASSERT (GBI_A (Ai, pA, Avlen) == iA) ;
                         }
                         else
                         { 

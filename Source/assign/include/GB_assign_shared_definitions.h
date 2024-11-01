@@ -72,41 +72,78 @@
 #define GB_SCALAR_ASSIGN (A == NULL)
 #endif
 
-#ifdef GB_JIT_KERNEL
-    // FIXME: this is the wrong direction
-    #define Mask_comp   GB_MASK_COMP
-    #define Mask_struct GB_MASK_STRUCT
-#endif
-
 /* TODO:
-
-    C_iso
-    A_iso
-
-    A_is_bitmap
-    A_is_full
-    A_is_sparse
-    A_is_hyper
-
-    C_is_bitmap
-    C_is_full
-    C_is_sparse
-    C_is_hyper
-
-    M_is_bitmap
-    M_is_full
-    M_is_sparse
-    M_is_hyper
-
     GB_ASSIGN_KIND
     GB_I_KIND
     GB_J_KIND
-
-    GB_MCAST
-
     GB_NO_MASK
 */
 
+#ifndef GB_MASK_COMP
+#define GB_MASK_COMP Mask_comp
+#endif
+
+#ifndef GB_MASK_STRUCT
+#define GB_MASK_STRUCT Mask_struct
+#endif
+
+#ifndef GB_C_IS_BITMAP
+#define GB_C_IS_BITMAP C_is_bitmap
+#endif
+#ifndef GB_C_IS_FULL
+#define GB_C_IS_FULL C_is_full
+#endif
+#ifndef GB_C_IS_SPARSE
+#define GB_C_IS_SPARSE C_is_sparse
+#endif
+#ifndef GB_C_IS_HYPER
+#define GB_C_IS_HYPER C_is_hyper
+#endif
+#ifndef GB_C_ISO
+#define GB_C_ISO C_iso
+#endif
+
+#ifndef GB_M_IS_BITMAP
+#define GB_M_IS_BITMAP M_is_bitmap
+#endif
+#ifndef GB_M_IS_FULL
+#define GB_M_IS_FULL M_is_full
+#endif
+#ifndef GB_M_IS_SPARSE
+#define GB_M_IS_SPARSE M_is_sparse
+#endif
+#ifndef GB_M_IS_HYPER
+#define GB_M_IS_HYPER M_is_hyper
+#endif
+
+#ifndef GB_A_IS_BITMAP
+#define GB_A_IS_BITMAP A_is_bitmap
+#endif
+#ifndef GB_A_IS_FULL
+#define GB_A_IS_FULL A_is_full
+#endif
+#ifndef GB_A_IS_SPARSE
+#define GB_A_IS_SPARSE A_is_sparse
+#endif
+#ifndef GB_A_IS_HYPER
+#define GB_A_IS_HYPER A_is_hyper
+#endif
+#ifndef GB_A_ISO
+#define GB_A_ISO A_iso
+#endif
+
+#ifndef GB_S_IS_BITMAP
+#define GB_S_IS_BITMAP S_is_bitmap
+#endif
+#ifndef GB_S_IS_FULL
+#define GB_S_IS_FULL S_is_full
+#endif
+#ifndef GB_S_IS_SPARSE
+#define GB_S_IS_SPARSE S_is_sparse
+#endif
+#ifndef GB_S_IS_HYPER
+#define GB_S_IS_HYPER S_is_hyper
+#endif
 
 //------------------------------------------------------------------------------
 // GB_EMPTY_TASKLIST: declare an empty TaskList
@@ -136,7 +173,7 @@
     ASSERT (!GB_IS_BITMAP (C)) ;                                            \
     const bool C_iso = C->iso ;                                             \
     int64_t *restrict Ci = C->i ;                                           \
-    GB_C_TYPE *restrict Cx = (C_iso) ? NULL : (GB_C_TYPE *) C->x ;          \
+    GB_C_TYPE *restrict Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;       \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t Cvdim = C->vdim ;                                         \
@@ -167,7 +204,7 @@
     const int8_t  *Mb = M->b ;                                              \
     const int64_t *Mh = M->h ;                                              \
     const int64_t *Mi = M->i ;                                              \
-    const GB_M_TYPE *Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;     \
+    const GB_M_TYPE *Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;  \
     const size_t msize = M->type->size ;                                    \
     const size_t Mvlen = M->vlen ;
 
@@ -238,7 +275,7 @@
     const GB_Type_code acode = atype->code ;                                \
     GB_DECLAREC (cwork) ;                                                   \
     GB_CAST_FUNCTION (cast_A_to_C, ccode, acode) ;                          \
-    if (A_iso)                                                              \
+    if (GB_A_ISO)                                                           \
     {                                                                       \
         /* cwork = (ctype) Ax [0], typecast iso value of A into cwork */    \
         GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;                         \
@@ -290,7 +327,7 @@
     GB_GET_A ;                                                              \
     GB_GET_ACCUM ;                                                          \
     GB_DECLAREY (ywork) ;                                                   \
-    if (A_iso)                                                              \
+    if (GB_A_ISO)                                                           \
     {                                                                       \
         /* ywork = Ax [0], with typecasting */                              \
         GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;                         \
@@ -853,7 +890,7 @@
                 /* ----[X A 1]                                           */ \
                 /* action: ( undelete ): bring a zombie back to life     */ \
                 GB_UNDELETE ;                                               \
-                GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;          \
+                GB_COPY_aij_to_C (Cx,pC,Ax,pA,GB_A_ISO,cwork,GB_C_ISO) ;    \
             }
 
             // [X A 1] scalar case
@@ -862,7 +899,7 @@
                 /* ----[X A 1]                                           */ \
                 /* action: ( undelete ): bring a zombie back to life     */ \
                 GB_UNDELETE ;                                               \
-                GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;                 \
+                GB_COPY_cwork_to_C (Cx, pC, cwork, GB_C_ISO) ;              \
             }
 
             // [C A 1] matrix case when accum is present
@@ -878,7 +915,7 @@
                 {                                                           \
                     /* ----[C A 1] with accum                            */ \
                     /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;\
+                    GB_ACCUMULATE_aij (Cx,pC,Ax,pA,GB_A_ISO,ywork,GB_C_ISO);\
                 }                                                           \
             }
 
@@ -895,7 +932,7 @@
                 {                                                           \
                     /* ----[C A 1] with accum, scalar expansion          */ \
                     /* action: ( =C+A ): apply the accumulator           */ \
-                    GB_ACCUMULATE_scalar (Cx,pC,ywork,C_iso) ;              \
+                    GB_ACCUMULATE_scalar (Cx,pC,ywork,GB_C_ISO) ;           \
                 }                                                           \
             }
 
@@ -912,7 +949,7 @@
                 {                                                           \
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
-                    GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;      \
+                    GB_COPY_aij_to_C (Cx,pC,Ax,pA,GB_A_ISO,cwork,GB_C_ISO) ;\
                 }                                                           \
             }
 
@@ -929,7 +966,7 @@
                 {                                                           \
                     /* ----[C A 1] no accum, scalar expansion            */ \
                     /* action: ( =A ): copy A into C                     */ \
-                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;             \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, GB_C_ISO) ;          \
                 }                                                           \
             }
 
@@ -1337,7 +1374,7 @@
     // GB_LOOKUP_VECTOR_C: find pC_start and pC_end for C(:,j)
     #define GB_LOOKUP_VECTOR_C(j,pC_start,pC_end)                   \
     {                                                               \
-        if (C_is_hyper)                                             \
+        if (GB_C_IS_HYPER)                                          \
         {                                                           \
             GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp,              \
                 C_Yi, C_Yx, C_hash_bits, j, &pC_start, &pC_end) ;   \
@@ -1352,7 +1389,7 @@
     // GB_LOOKUP_VECTOR_M: find pM_start and pM_end for M(:,j)
     #define GB_LOOKUP_VECTOR_M(j,pM_start,pM_end)                   \
     {                                                               \
-        if (M_is_hyper)                                             \
+        if (GB_M_IS_HYPER)                                          \
         {                                                           \
             GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp,              \
                 M_Yi, M_Yx, M_hash_bits, j, &pM_start, &pM_end) ;   \
@@ -1367,7 +1404,7 @@
     // GB_LOOKUP_VECTOR_A: find pA_start and pA_end for A(:,j)
     #define GB_LOOKUP_VECTOR_A(j,pA_start,pA_end)                   \
     {                                                               \
-        if (A_is_hyper)                                             \
+        if (GB_A_IS_HYPER)                                          \
         {                                                           \
             GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp,              \
                 A_Yi, A_Yx, A_hash_bits, j, &pA_start, &pA_end) ;   \
@@ -1382,7 +1419,7 @@
     // GB_LOOKUP_VECTOR_S: find pS_start and pS_end for S(:,j)
     #define GB_LOOKUP_VECTOR_S(j,pS_start,pS_end)                   \
     {                                                               \
-        if (S_is_hyper)                                             \
+        if (GB_S_IS_HYPER)                                          \
         {                                                           \
             GB_hyper_hash_lookup (Sh, Snvec, Sp, S_Yp,              \
                 S_Yi, S_Yx, S_hash_bits, j, &pS_start, &pS_end) ;   \
@@ -1470,7 +1507,7 @@
 
 #define GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP(i)                             \
     bool mij ;                                                              \
-    if (M_is_bitmap)                                                        \
+    if (GB_M_IS_BITMAP)                                                     \
     {                                                                       \
         /* M(:,j) is bitmap, no need for binary search */                   \
         int64_t pM = pM_start + i ;                                         \
@@ -1525,11 +1562,11 @@
         ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB_ZOMBIE (GB0)) ;    \
         return (GrB_SUCCESS) ;                                              \
     }                                                                       \
-    /* ensure that C->Pending is large enough to handle total_new_npending */\
-    /* more tuples.  The type of Pending->x is atype, the type of A or the */\
-    /* scalar. */                                                           \
-    if (!GB_Pending_ensure (&(C->Pending), C_iso, atype, accum, is_matrix,  \
-        total_new_npending, Werk))                                          \
+    /* ensure C->Pending is large enough to handle total_new_npending */    \
+    /* more tuples.  The type of Pending->x is atype, the type of A or */   \
+    /* the scalar. */                                                       \
+    if (!GB_Pending_ensure (&(C->Pending), GB_C_ISO, atype, accum,          \
+        is_matrix, total_new_npending, Werk))                               \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
         return (GrB_OUT_OF_MEMORY) ;                                        \
@@ -1585,10 +1622,10 @@
 #ifdef GB_GENERIC
     #define GB_COPY_aij_to_PENDING_X                                        \
         { memcpy (Pending_x +(my_npending*asize),                           \
-            (Ax + (A_iso ? 0 : ((pA)*asize))), asize) ; }
+            (Ax + (GB_A_ISO ? 0 : ((pA)*asize))), asize) ; }
 #else
     #define GB_COPY_aij_to_PENDING_X                                        \
-        { Pending_x [my_npending] = Ax [A_iso ? 0 : (pA)] ; }
+        { Pending_x [my_npending] = Ax [GB_A_ISO ? 0 : (pA)] ; }
 #endif 
 
 #define GB_PENDING_INSERT_aij    GB_PENDING_INSERT (GB_COPY_aij_to_PENDING_X)
@@ -1680,7 +1717,7 @@
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t  *Cb = C->b ;                                                    \
     const bool C_iso = C->iso ;                                             \
-    GB_C_TYPE *Cx = (C_iso) ? NULL : (GB_C_TYPE *) C->x ;                   \
+    GB_C_TYPE *Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;                \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t Cvdim = C->vdim ;                                         \
@@ -1723,18 +1760,18 @@
         Ah = A->h ;                                                         \
         Ab = A->b ;                                                         \
         Ai = A->i ;                                                         \
-        Ax = (C_iso) ? NULL : (GB_A_TYPE *) A->x ;                          \
+        Ax = (GB_C_ISO) ? NULL : (GB_A_TYPE *) A->x ;                       \
     }                                                                       \
     GB_DECLAREC (cwork) ;                                                   \
     GB_CAST_FUNCTION (cast_A_to_C, ccode, acode) ;                          \
-    if (!C_iso)                                                             \
+    if (!GB_C_ISO)                                                          \
     {                                                                       \
         if (GB_SCALAR_ASSIGN)                                               \
         {                                                                   \
             /* cwork = (ctype) scalar */                                    \
             GB_COPY_scalar_to_cwork (cwork, scalar) ;                       \
         }                                                                   \
-        else if (A_iso)                                                     \
+        else if (GB_A_ISO)                                                  \
         {                                                                   \
             /* cwork = (ctype) Ax [0], typecast iso value of A into cwork */\
             GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;                     \
@@ -1748,14 +1785,14 @@
 #define GB_GET_ACCUM_FOR_BITMAP                                             \
     GB_GET_ACCUM ;                                                          \
     GB_DECLAREY (ywork) ;                                                   \
-    if (!C_iso)                                                             \
+    if (!GB_C_ISO)                                                          \
     {                                                                       \
         if (GB_SCALAR_ASSIGN)                                               \
         {                                                                   \
             /* ywork = (ytype) scalar */                                    \
             GB_COPY_scalar_to_ywork (ywork, scalar) ;                       \
         }                                                                   \
-        else if (A_iso)                                                     \
+        else if (GB_A_ISO)                                                  \
         {                                                                   \
             /* ywork = (ytype) Ax [0] */                                    \
             GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;                     \

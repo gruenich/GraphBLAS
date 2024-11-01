@@ -83,7 +83,7 @@ GrB_Info GB_subassign_jit
     return (GB_jit_kernel (C, C_replace,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
-        M, /* FIXME: Mask_comp, Mask_struct, */
+        M, Mask_comp, Mask_struct,
         accum, A, scalar, scalar_type, assign_kind, Werk,
         nthreads_max, chunk, &GB_callback)) ;
 }

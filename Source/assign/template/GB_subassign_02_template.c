@@ -54,7 +54,7 @@
     // Parallel: A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
@@ -69,7 +69,7 @@
     // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -108,7 +108,7 @@
                 for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
                     int64_t pA = pA_start + iA ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                    bool Sfound = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iA) ;
                     bool Afound = Ab [pA] ;
                     if (Sfound && !Afound)
                     { 
@@ -186,8 +186,8 @@
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
 
                     if (iS < iA)
                     { 
@@ -246,7 +246,7 @@
 
     GB_PENDING_CUMSUM ;
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -288,7 +288,7 @@
                 for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
                     int64_t pA = pA_start + iA ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                    bool Sfound = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iA) ;
                     bool Afound = Ab [pA] ;
                     if (!Sfound && Afound)
                     { 
@@ -353,8 +353,8 @@
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
 
                     if (iS < iA)
                     { 
@@ -384,7 +384,7 @@
                     // ----[. A 1]----------------------------------------------
                     // S (i,j) is not present, A (i,j) is present
                     // [. A 1]: action: ( insert )
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
                     int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
                     GB_PENDING_INSERT_aij ;
                     pA++ ;  // go to the next entry in A(:,j)

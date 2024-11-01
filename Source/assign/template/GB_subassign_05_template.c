@@ -85,7 +85,7 @@
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
@@ -116,10 +116,10 @@
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     { 
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -144,10 +144,10 @@
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
@@ -201,7 +201,7 @@
             // get j, the kth vector of M
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
@@ -231,10 +231,10 @@
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    bool mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    bool mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     {
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;

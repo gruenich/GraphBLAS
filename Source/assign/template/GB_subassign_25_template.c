@@ -41,15 +41,9 @@
     // get inputs
     //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_KERNEL
-    // FIXME: wrong direction */
-    #define A_is_bitmap GB_A_IS_BITMAP  /* FIXME */
-    #define A_iso       GB_A_ISO    /* FIXME */
-    #else
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_iso = A->iso ;
-    #endif
-    ASSERT (GB_IS_FULL (A) || A_is_bitmap) ;
+    ASSERT (GB_IS_FULL (A) || GB_A_IS_BITMAP) ;
 
     //--------------------------------------------------------------------------
     // Parallel: slice M into equal-sized chunks
@@ -86,7 +80,7 @@
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     GB_DECLAREC (cwork) ;
-    if (A_iso)
+    if (GB_A_ISO)
     {
         // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
@@ -101,7 +95,7 @@
     // C<M> = A
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -152,7 +146,8 @@
                     { 
                         // C(i,j) = A(i,j)
                         #ifndef GB_ISO_ASSIGN
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork, C_iso) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p,
+                            GB_A_ISO, cwork, GB_C_ISO) ;
                         #endif
                     }
                     else
@@ -215,7 +210,8 @@
                     { 
                         // C(i,j) = A(i,j)
                         int64_t p = pA + GBI_M (Mi, pM, Mvlen) ;
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork, C_iso) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p,
+                            GB_A_ISO, cwork, GB_C_ISO) ;
                     }
                 }
             }

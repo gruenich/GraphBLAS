@@ -45,20 +45,15 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
-    #ifdef GB_JIT_KERNEL
-    // FIXME: this is the wrong direction
-    #define Mask_struct GB_MASK_STRUCT  /* FIXME */
-    #else
-    const size_t msize = M->type->size ;
-    #endif
-
     // GB_GET_M:
     const int64_t *restrict Mp = M->p ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
-    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict
+        Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
     const size_t Mvlen = M->vlen ;
+    const size_t msize = M->type->size ;
 
     // GB_GET_C (subset):
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;

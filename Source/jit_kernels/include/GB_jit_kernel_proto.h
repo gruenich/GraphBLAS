@@ -502,8 +502,8 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \
     const GrB_Matrix M,                                                 \
- /* const bool Mask_comp,    FIXME */                                   \
- /* const bool Mask_struct,  FIXME */                                   \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
     const GrB_BinaryOp accum,                                           \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \

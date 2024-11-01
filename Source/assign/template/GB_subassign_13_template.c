@@ -10,8 +10,8 @@
 // Method 13: C(I,J)<!M> = scalar ; using S
 
 // M:           present
-// Mask_struct: true or false
 // Mask_comp:   true
+// Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           scalar
@@ -105,8 +105,8 @@
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBI_S (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI_M (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)
@@ -122,7 +122,7 @@
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     pM++ ;  // go to the next entry in M(:,j)
                 }
                 else
@@ -222,8 +222,8 @@
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? GBI (Si, pS, Svlen) : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? GBI (Mi, pM, Mvlen) : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBI_S (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBI_M (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)
@@ -239,7 +239,7 @@
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     pM++ ;  // go to the next entry in M(:,j)
                 }
                 else

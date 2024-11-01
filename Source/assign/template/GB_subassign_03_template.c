@@ -97,7 +97,7 @@
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
-                bool found = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                bool found = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iA) ;
                 if (!found)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -163,7 +163,7 @@
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
-                bool found = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                bool found = (pS < pS_end) && (GBI_S (Si, pS, Svlen) == iA) ;
                 if (!found)
                 { 
                     // ----[. A 1]----------------------------------------------

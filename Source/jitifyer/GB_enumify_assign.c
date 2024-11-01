@@ -15,49 +15,9 @@
 // GB_bitmap_assign or GB_subassigner to do the actual work, or related methods
 // that do not need a JIT (GB_*assign_zombie, in particular).
 
-// GB_bitmap_assign and GB_subassigner will not call the JIT directly.
-// Instead, they call one of the many assign/subassign kernels, each of which
-// will have a JIT variant (39 of them):
-//
-//      GB_subassign_01
-//      GB_subassign_02
-//      GB_subassign_03
-//      GB_subassign_04
-//      GB_subassign_05
-//      GB_subassign_05d
-//      GB_subassign_06d
-//      GB_subassign_06n
-//      GB_subassign_06s_and_14
-//      GB_subassign_07
-//      GB_subassign_08n
-//      GB_subassign_08s_and_16
-//      GB_subassign_09
-//      GB_subassign_10_and_18
-//      GB_subassign_11
-//      GB_subassign_12_and_20
-//      GB_subassign_13
-//      GB_subassign_15
-//      GB_subassign_17
-//      GB_subassign_19
-//      GB_subassign_22
-//      GB_subassign_23
-//      GB_subassign_25
-//      GB_bitmap_assign_M_accum
-//      GB_bitmap_assign_M_accum_whole
-//      GB_bitmap_assign_M_noaccum
-//      GB_bitmap_assign_M_noaccum_whole
-//      GB_bitmap_assign_fullM_accum
-//      GB_bitmap_assign_fullM_accum_whole
-//      GB_bitmap_assign_fullM_noaccum
-//      GB_bitmap_assign_fullM_noaccum_whole
-//      GB_bitmap_assign_noM_accum
-//      GB_bitmap_assign_noM_accum_whole
-//      GB_bitmap_assign_noM_noaccum
-//      GB_bitmap_assign_noM_noaccum_whole
-//      GB_bitmap_assign_notM_accum
-//      GB_bitmap_assign_notM_accum_whole
-//      GB_bitmap_assign_notM_noaccum
-//      GB_bitmap_assign_notM_noaccum_whole
+// GB_bitmap_assign and GB_subassigner do not call the JIT directly.  Instead,
+// they call one of the many assign/subassign kernels, each of which has a JIT
+// variant.
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"

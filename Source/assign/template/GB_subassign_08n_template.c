@@ -171,10 +171,10 @@
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = GBI (Ai, pA, Avlen) ;
-            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
-            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
-            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
+            int64_t iA_first = GBI_A (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI_A (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI_M (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI_M (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
             int64_t pM_start = pM ;
 
@@ -200,7 +200,7 @@
                 {
                     if (GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
@@ -223,7 +223,7 @@
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij) GB_PHASE1_ACTION ;
                 }
@@ -240,8 +240,8 @@
 
                 while (pA < pA_end && pM < pM_end)
                 {
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
-                    int64_t iM = GBI (Mi, pM, Mvlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
+                    int64_t iM = GBI_M (Mi, pM, Mvlen) ;
                     if (iA < iM)
                     { 
                         // A(i,j) exists but not M(i,j)
@@ -306,10 +306,10 @@
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = GBI (Ai, pA, Avlen) ;
-            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
-            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
-            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
+            int64_t iA_first = GBI_A (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI_A (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI_M (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI_M (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
             int64_t pM_start = pM ;
 
@@ -336,7 +336,7 @@
                 {
                     if (GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t iA = GBI (Mi, pM, Mvlen) ;
+                        int64_t iA = GBI_M (Mi, pM, Mvlen) ;
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
@@ -359,7 +359,7 @@
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij) GB_PHASE2_ACTION ;
                 }
@@ -376,8 +376,8 @@
 
                 while (pA < pA_end && pM < pM_end)
                 {
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
-                    int64_t iM = GBI (Mi, pM, Mvlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
+                    int64_t iM = GBI_M (Mi, pM, Mvlen) ;
                     if (iA < iM)
                     { 
                         // A(i,j) exists but not M(i,j)

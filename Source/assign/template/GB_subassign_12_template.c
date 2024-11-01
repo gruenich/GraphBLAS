@@ -11,8 +11,8 @@
 // Method 20: C(I,J)<!M,repl> += A ; using S
 
 // M:           present
-// Mask_stuct:  true or false
 // Mask_comp:   true or false
+// Mask_stuct:  true or false
 // C_replace:   true
 // accum:       present
 // A:           matrix
@@ -54,7 +54,7 @@
     // Parallel: A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
@@ -69,7 +69,7 @@
     // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -116,14 +116,14 @@
                 for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
                     int64_t pA = pA_start + iA ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                    bool Sfound = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iA) ;
                     bool Afound = Ab [pA] ;
 
                     if (Sfound && !Afound)
                     {
                         // S (i,j) is present but A (i,j) is not
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         if (!mij)
                         { 
                             // ----[C . 0] or [X . 0]---------------------------
@@ -138,7 +138,7 @@
                     {
                         // S (i,j) is not present, A (i,j) is present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         if (mij)
                         { 
                             // ----[. A 1]--------------------------------------
@@ -150,7 +150,7 @@
                     {
                         // both S (i,j) and A (i,j) present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         GB_C_S_LOOKUP ;
                         if (mij)
                         { 
@@ -226,14 +226,14 @@
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
 
                     if (iS < iA)
                     {
                         // S (i,j) is present but A (i,j) is not
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         if (!mij)
                         { 
                             // ----[C . 0] or [X . 0]---------------------------
@@ -248,7 +248,7 @@
                     {
                         // S (i,j) is not present, A (i,j) is present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         if (mij)
                         { 
                             // ----[. A 1]--------------------------------------
@@ -261,7 +261,7 @@
                     {
                         // both S (i,j) and A (i,j) present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         GB_C_S_LOOKUP ;
                         if (mij)
                         { 
@@ -286,9 +286,9 @@
                 // while list S (:,j) has entries.  List A (:,j) exhausted.
                 while (pS < pS_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
-                    if (Mask_comp) mij = !mij ;
+                    if (GB_MASK_COMP) mij = !mij ;
                     if (!mij)
                     { 
                         // ----[C . 0] or [X . 0]-------------------------------
@@ -304,9 +304,9 @@
                 while (pA < pA_end)
                 {
                     // S (i,j) is not present, A (i,j) is present
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                    if (Mask_comp) mij = !mij ;
+                    if (GB_MASK_COMP) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -327,7 +327,7 @@
 
     GB_PENDING_CUMSUM ;
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -377,13 +377,13 @@
                 for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
                     int64_t pA = pA_start + iA ;
-                    bool Sfound = (pS < pS_end) && (GBI (Si, pS, Svlen) == iA) ;
+                    bool Sfound = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iA) ;
                     bool Afound = Ab [pA] ;
                     if (!Sfound && Afound)
                     {
                         // S (i,j) is not present, A (i,j) is present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         if (mij)
                         { 
                             // ----[. A 1]--------------------------------------
@@ -454,8 +454,8 @@
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
                 {
-                    int64_t iS = GBI (Si, pS, Svlen) ;
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iS = GBI_S (Si, pS, Svlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
 
                     if (iS < iA)
                     { 
@@ -466,7 +466,7 @@
                     {
                         // S (i,j) is not present, A (i,j) is present
                         GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                        if (Mask_comp) mij = !mij ;
+                        if (GB_MASK_COMP) mij = !mij ;
                         if (mij)
                         { 
                             // ----[. A 1]--------------------------------------
@@ -488,9 +488,9 @@
                 while (pA < pA_end)
                 {
                     // S (i,j) is not present, A (i,j) is present
-                    int64_t iA = GBI (Ai, pA, Avlen) ;
+                    int64_t iA = GBI_A (Ai, pA, Avlen) ;
                     GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
-                    if (Mask_comp) mij = !mij ;
+                    if (GB_MASK_COMP) mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------

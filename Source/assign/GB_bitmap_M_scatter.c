@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: make this a pure template file, so it can be specialized inside
-// a JIT kernel according to the type of the mask matrix.
-
 // This method handles the C(I,J)<M> = ... case for subassign, where I and J
 // are not GrB_ALL, C<M>(I,J) = ... for assign, and also the row/col
 // assignments.  The C and M matrices can have different sizes.  Compare with

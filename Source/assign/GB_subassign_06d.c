@@ -102,7 +102,13 @@ GrB_Info GB_subassign_06d
 
         ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
+        #undef  GB_MASK_STRUCT
+        #define GB_MASK_STRUCT 1
+        #undef  GB_C_ISO
+        #define GB_C_ISO 1
         #include "assign/template/GB_subassign_06d_template.c"
+        #undef  GB_MASK_STRUCT
+        #undef  GB_C_ISO
         info = GrB_SUCCESS ;
 
     }
@@ -190,10 +196,12 @@ GrB_Info GB_subassign_06d
             const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-            // #define C_iso false
             #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
-
+            #undef  GB_C_ISO
+            #define GB_C_ISO 0
+            #undef  GB_MASK_STRUCT
+            #define GB_MASK_STRUCT Mask_struct
             #include "assign/template/GB_subassign_06d_template.c"
             info = GrB_SUCCESS ;
         }
