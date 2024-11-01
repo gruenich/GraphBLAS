@@ -21,6 +21,10 @@ GrB_Info GB_cuda_select_sparse_jit
     int32_t blocksz
 )
 { 
+    // in progress
+    return (GrB_NO_VALUE) ;
+
+#if 0
 
     //--------------------------------------------------------------------------
     // encodify the problem
@@ -48,4 +52,5 @@ GrB_Info GB_cuda_select_sparse_jit
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, ythunk, stream, gridsz, blocksz)) ;
+#endif
 }
