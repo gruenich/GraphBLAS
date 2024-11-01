@@ -47,9 +47,6 @@
     // Method 02 and Method 04 are somewhat similar.  They differ on how C is
     // modified when the entry is present in S but not A.
 
-    // TODO: phase2 of Method 02 and 04 are identical and could be
-    // done in a single function.
-
     //--------------------------------------------------------------------------
     // Parallel: A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
@@ -181,7 +178,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                // int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                // int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
@@ -283,7 +280,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
@@ -295,7 +292,7 @@
                         // ----[. A 1]------------------------------------------
                         // S (i,j) is not present, A (i,j) is present
                         // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                         GB_PENDING_INSERT_aij ;
                         pA++ ;  // go to the next entry in A(:,j)
                     }
@@ -348,7 +345,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
@@ -365,7 +362,7 @@
                         // ----[. A 1]------------------------------------------
                         // S (i,j) is not present, A (i,j) is present
                         // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                         GB_PENDING_INSERT_aij ;
                         pA++ ;  // go to the next entry in A(:,j)
                     }
@@ -385,7 +382,7 @@
                     // S (i,j) is not present, A (i,j) is present
                     // [. A 1]: action: ( insert )
                     int64_t iA = GBI_A (Ai, pA, Avlen) ;
-                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                    int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                     GB_PENDING_INSERT_aij ;
                     pA++ ;  // go to the next entry in A(:,j)
                 }

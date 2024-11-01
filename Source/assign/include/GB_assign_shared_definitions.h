@@ -72,12 +72,17 @@
 #define GB_SCALAR_ASSIGN (A == NULL)
 #endif
 
-/* TODO:
-    GB_ASSIGN_KIND
-    GB_I_KIND
-    GB_J_KIND
-    GB_NO_MASK
-*/
+#ifndef GB_ASSIGN_KIND
+#define GB_ASSIGN_KIND assign_kind
+#endif
+
+#ifndef GB_I_KIND
+#define GB_I_KIND Ikind
+#endif
+
+#ifndef GB_J_KIND
+#define GB_J_KIND Jkind
+#endif
 
 #ifndef GB_MASK_COMP
 #define GB_MASK_COMP Mask_comp
@@ -390,7 +395,7 @@
     // This used for Methods 05, 06n, 07, and 08n, which do not use S.
 
     #define GB_iC_DENSE_LOOKUP                                              \
-        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;                     \
+        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;                 \
         int64_t pC = pC_start + iC ;                                        \
         bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (Ci [pC]) ;           \
         ASSERT (GB_IMPLIES (Ci != NULL, GB_UNZOMBIE (Ci [pC]) == iC)) ;
@@ -408,7 +413,7 @@
     // search of any fine tasks conflict with each other.
 
     #define GB_iC_BINARY_SEARCH                                             \
-        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;                     \
+        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;                 \
         int64_t pC = pC_start ;                                             \
         int64_t pright = pC_end - 1 ;                                       \
         bool cij_found, is_zombie ;                                         \
@@ -1229,7 +1234,7 @@
 #define GB_SUBASSIGN_ONE_SLICE(M)                                           \
     GB_OK (GB_subassign_one_slice (                                         \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
-        C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,                      \
+        C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,              \
         M, Werk)) ;                                                         \
     GB_ALLOCATE_NPENDING_WERK ;
 
@@ -1438,7 +1443,7 @@
 #define GB_LOOKUP_VECTOR_jC                                                 \
     /* lookup jC in C */                                                    \
     /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */       \
-    int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;                          \
+    int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;                      \
     int64_t pC_start, pC_end ;                                              \
     if (fine_task)                                                          \
     {                                                                       \

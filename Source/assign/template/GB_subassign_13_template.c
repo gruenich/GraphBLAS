@@ -85,7 +85,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j) and M(iA_start:end,j)
@@ -202,7 +202,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j) and M(iA_start:end,j)
@@ -272,7 +272,7 @@
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                            int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                             GB_PENDING_INSERT_scalar ;
                         }
                     }

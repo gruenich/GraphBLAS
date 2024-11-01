@@ -130,7 +130,7 @@
     GB_OK (GB_subassign_08n_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
-        C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+        C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
         A, M, Werk)) ;
     GB_ALLOCATE_NPENDING_WERK ;
 

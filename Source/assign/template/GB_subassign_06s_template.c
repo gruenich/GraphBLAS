@@ -222,7 +222,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                // int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                // int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
@@ -366,7 +366,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
@@ -382,7 +382,7 @@
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                            int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                             GB_PENDING_INSERT_aij ;
                         }
                     }
@@ -443,7 +443,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 // while both list S (:,j) and A (:,j) have entries
                 while (pS < pS_end && pA < pA_end)
@@ -465,7 +465,7 @@
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                            int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                             GB_PENDING_INSERT_aij ;
                         }
                         pA++ ;  // go to the next entry in A(:,j)
@@ -489,7 +489,7 @@
                     { 
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                         GB_PENDING_INSERT_aij ;
                     }
                     pA++ ;  // go to the next entry in A(:,j)

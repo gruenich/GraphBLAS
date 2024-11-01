@@ -186,7 +186,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                // int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                // int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 // while both list S (:,j) and M (:,j) have entries
                 while (pS < pS_end && pM < pM_end)
@@ -311,7 +311,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 for (int64_t iM = iM_start ; iM < iM_end ; iM++)
                 {
@@ -324,7 +324,7 @@
                         // S (i,j) is not present, M (i,j) is true
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
-                        int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
+                        int64_t iC = GB_ijlist (I, iM, GB_I_KIND, Icolon) ;
                         GB_PENDING_INSERT_scalar ;
                     }
                     else if (Sfound)
@@ -376,7 +376,7 @@
                 //--------------------------------------------------------------
 
                 // jC = J [j] ; or J is a colon expression
-                int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+                int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
 
                 // while both list S (:,j) and M (:,j) have entries
                 while (pS < pS_end && pM < pM_end)
@@ -396,7 +396,7 @@
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
+                            int64_t iC = GB_ijlist (I, iM, GB_I_KIND, Icolon) ;
                             GB_PENDING_INSERT_scalar ;
                         }
                         pM++ ;  // go to the next entry in M(:,j)
@@ -418,7 +418,7 @@
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
                         int64_t iM = GBI_M (Mi, pM, Mvlen) ;
-                        int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
+                        int64_t iC = GB_ijlist (I, iM, GB_I_KIND, Icolon) ;
                         GB_PENDING_INSERT_scalar ;
                     }
                     pM++ ;  // go to the next entry in M(:,j)
