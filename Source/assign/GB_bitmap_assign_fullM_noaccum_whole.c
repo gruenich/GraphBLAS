@@ -93,13 +93,13 @@ GrB_Info GB_bitmap_assign_fullM_noaccum_whole
     //--------------------------------------------------------------------------
 
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = (GBB (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ Mask_comp ;
+        bool mij = (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ GB_MASK_COMP ;
 
     //--------------------------------------------------------------------------
     // assignment phase
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     {
 
         //----------------------------------------------------------------------
@@ -182,7 +182,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum_whole
                 #define GB_CIJ_WORK(pC)                                     \
                 {                                                           \
                     int8_t cb = Cb [pC] ;                                   \
-                    if (mij && GBB (Ab, pC))                                \
+                    if (mij && GBB_A (Ab, pC))                              \
                     {                                                       \
                         /* Cx [pC] = Ax [pC] */                             \
                         GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;  \
@@ -212,7 +212,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum_whole
                     if (mij)                                                  \
                     {                                                         \
                         int8_t cb = Cb [pC] ;                                 \
-                        if (GBB (Ab, pC))                                     \
+                        if (GBB_A (Ab, pC))                                   \
                         {                                                     \
                             /* Cx [pC] = Ax [pC] */                           \
                             GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;\

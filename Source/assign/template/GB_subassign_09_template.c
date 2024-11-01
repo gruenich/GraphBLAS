@@ -57,7 +57,7 @@
     // Parallel: M+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    if (M_is_bitmap)
+    if (GB_M_IS_BITMAP)
     { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
@@ -72,7 +72,7 @@
     // phase 1: create zombies, update entries, and count pending tuples
     //--------------------------------------------------------------------------
 
-    if (M_is_bitmap)
+    if (GB_M_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -274,7 +274,7 @@
 
     GB_PENDING_CUMSUM ;
 
-    if (M_is_bitmap)
+    if (GB_M_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------

@@ -93,7 +93,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
 
     #undef  GB_GET_MIJ
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = (GBB (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ Mask_comp ;
+        bool mij = (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ GB_MASK_COMP ;
 
     //--------------------------------------------------------------------------
     // C_replace phase
@@ -101,9 +101,9 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
 
     if (C_replace)
     { 
-        // if C FULL: use two passes: first pass checks if any
+        // FUTURE: if C FULL: use two passes: first pass checks if any
         // entry must be deleted.  If none: do nothing.  Else:  change C
-        // to full and do 2nd pass as below.
+        // to bitmap and do 2nd pass as below.
 
         // for row assign: set Cb(i,:) to zero if mij == 0
         // for col assign: set Cb(:,j) to zero if mij == 0
@@ -126,14 +126,14 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     // assignment phase
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     {
 
         //----------------------------------------------------------------------
         // scalar assignment: C<M or !M>(I,J) = scalar
         //----------------------------------------------------------------------
 
-        // if C FULL: no change, just cb = GBB (CB,pC)
+        // FUTURE: if C FULL: Cb is effectively all 1's and stays that way
 
         // for all entries in IxJ
         #undef  GB_IXJ_WORK
@@ -151,9 +151,9 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             }                                           \
         }
 
-        ASSERT (assign_kind == GB_ASSIGN || assign_kind == GB_SUBASSIGN) ;
+        ASSERT (GB_ASSIGN_KIND == GB_ASSIGN || GB_ASSIGN_KIND == GB_SUBASSIGN) ;
 
-        switch (assign_kind)
+        switch (GB_ASSIGN_KIND)
         {
             case GB_ASSIGN : 
                 // C<M>(I,J) = scalar where M has the same size as C
@@ -229,7 +229,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
             }                               \
         }
 
-        switch (assign_kind)
+        switch (GB_ASSIGN_KIND)
         {
             case GB_ROW_ASSIGN : 
                 // C<m>(i,J) = A where m is a 1-by-C->vdim row vector

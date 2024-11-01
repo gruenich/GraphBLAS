@@ -96,7 +96,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
 
     if (C_replace)
     {
-        if (assign_kind == GB_ASSIGN)
+        if (GB_ASSIGN_KIND == GB_ASSIGN)
         { 
             // for assign: set all Cb(:,:) to zero
             GB_memset (Cb, 0, cnzmax, nthreads_max) ;
@@ -123,10 +123,10 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     // assignment phase
     //--------------------------------------------------------------------------
 
-    if (!Mask_comp)
+    if (!GB_MASK_COMP)
     {
 
-        if (A == NULL)
+        if (GB_SCALAR_ASSIGN)
         { 
 
             //------------------------------------------------------------------

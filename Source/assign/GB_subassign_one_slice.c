@@ -222,7 +222,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
             //------------------------------------------------------------------
 
             ASSERT (k >= 0 && k < Mnvec) ;
-            int64_t j = GBH (Mh, k) ;
+            int64_t j = GBH_M (Mh, k) ;
             ASSERT (j >= 0 && j < nJ) ;
 
             // lookup jC in C
@@ -279,7 +279,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
                     // slice M(:,k) for this task
                     int64_t p1, p2 ;
                     GB_PARTITION (p1, p2, mknz, tfine, nfine) ;
-                    int64_t pM_start = GBP (Mp, k, Mvlen) ;
+                    int64_t pM_start = GBP_M (Mp, k, Mvlen) ;
                     int64_t pM     = pM_start + p1 ;
                     int64_t pM_end = pM_start + p2 ;
                     TaskList [ntasks].pA     = pM ;
@@ -294,9 +294,9 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
                     else
                     { 
                         // find where this task starts and ends in C(:,jC)
-                        int64_t iM_start = GBI (Mi, pM, Mvlen) ;
+                        int64_t iM_start = GBI_M (Mi, pM, Mvlen) ;
                         int64_t iC1 = GB_ijlist (I, iM_start, Ikind, Icolon) ;
-                        int64_t iM_end = GBI (Mi, pM_end-1, Mvlen) ;
+                        int64_t iM_end = GBI_M (Mi, pM_end-1, Mvlen) ;
                         int64_t iC2 = GB_ijlist (I, iM_end, Ikind, Icolon) ;
 
                         // If I is an explicit list, it must be already sorted

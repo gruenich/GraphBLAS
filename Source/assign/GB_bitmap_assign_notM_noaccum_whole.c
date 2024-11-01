@@ -89,7 +89,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     //--------------------------------------------------------------------------
 
     // Cb [pC] += 2 for each entry M(i,j) in the mask
-    GB_bitmap_M_scatter_whole (C, M, Mask_struct,
+    GB_bitmap_M_scatter_whole (C, M, GB_MASK_STRUCT,
         GB_BITMAP_M_SCATTER_PLUS_2, M_ek_slicing, M_ntasks, M_nthreads) ;
     // the bitmap of C now contains:
     //  Cb (i,j) = 0:   cij not present, mij zero
@@ -101,7 +101,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     // do the assignment
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     {
 
         //----------------------------------------------------------------------
@@ -209,7 +209,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     switch (Cb [pC])                                          \
                     {                                                         \
                         case 0: /* C(i,j) not present, !M(i,j) = 1 */         \
-                            if (GBB (Ab, pC))                                 \
+                            if (GBB_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -219,7 +219,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                             }                                                 \
                             break ;                                           \
                         case 1: /* C(i,j) present, !M(i,j) = 1 */             \
-                            if (GBB (Ab, pC))                                 \
+                            if (GBB_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -260,7 +260,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     switch (Cb [pC])                                          \
                     {                                                         \
                         case 0: /* C(i,j) not present, !M(i,j) = 1 */         \
-                            if (GBB (Ab, pC))                                 \
+                            if (GBB_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -270,7 +270,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                             }                                                 \
                             break ;                                           \
                         case 1: /* C(i,j) present, !M(i,j) = 1 */             \
-                            if (GBB (Ab, pC))                                 \
+                            if (GBB_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \

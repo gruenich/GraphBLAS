@@ -98,9 +98,10 @@ GrB_Info GB_assign_zombie3
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mvlen = M->vlen ;
-    int64_t pM_start = 0 ; // Mp [0]
-    int64_t pM_end = GBP (Mp, 1, Mvlen) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+
+    int64_t pM_start = 0 ; // Mp [0]
+    int64_t pM_end = GBP_M (Mp, 1, Mvlen) ;
     const bool mjdense = (pM_end - pM_start) == Mvlen ;
 
     //--------------------------------------------------------------------------

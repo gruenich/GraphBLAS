@@ -165,10 +165,10 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = GBI (Ai, pA, Avlen) ;
-            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
-            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
-            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
+            int64_t iA_first = GBI_A (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI_A (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI_M (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI_M (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
 
             //------------------------------------------------------------------

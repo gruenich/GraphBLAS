@@ -90,15 +90,15 @@ GrB_Info GB_bitmap_assign_notM_accum
     //--------------------------------------------------------------------------
 
     // Cb [pC] += 2 for each entry M(i,j) in the mask
-    GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-        M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
+    GB_bitmap_M_scatter (C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
+        M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_PLUS_2,
         M_ek_slicing, M_ntasks, M_nthreads) ;
 
     //--------------------------------------------------------------------------
     // do the assignment
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     { 
 
         //----------------------------------------------------------------------
@@ -172,8 +172,9 @@ GrB_Info GB_bitmap_assign_notM_accum
                 // 2 -> 0
                 // 3 -> 1       keep this entry
         // Cb [pC] -= 2 for each entry M(i,j) in the mask
-        GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-            M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MINUS_2,
+        GB_bitmap_M_scatter (C,
+            I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
+            M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_MINUS_2,
             M_ek_slicing, M_ntasks, M_nthreads) ;
     }
     else

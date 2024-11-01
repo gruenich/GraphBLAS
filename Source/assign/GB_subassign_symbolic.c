@@ -102,16 +102,16 @@ GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
     for (int64_t k = 0 ; k < S->nvec ; k++)
     {
         // prepare to iterate over the entries of vector S(:,jnew)
-        int64_t jnew = GBH (Sh, k) ;
-        int64_t pS_start = GBP (Sp, k, S->vlen) ;
-        int64_t pS_end   = GBP (Sp, k+1, S->vlen) ;
+        int64_t jnew = GBH_S (Sh, k) ;
+        int64_t pS_start = GBP_S (Sp, k, S->vlen) ;
+        int64_t pS_end   = GBP_S (Sp, k+1, S->vlen) ;
         // S (inew,jnew) corresponds to C (iC, jC) ;
         // jC = J [j] ; or J is a colon expression
         int64_t jC = GB_ijlist (J, jnew, Jkind, Jcolon) ;
         for (int64_t pS = pS_start ; pS < pS_end ; pS++)
         {
             // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
-            int64_t inew = GBI (Si, pS, S->vlen) ;
+            int64_t inew = GBI_S (Si, pS, S->vlen) ;
             ASSERT (inew >= 0 && inew < nI) ;
             // iC = I [iA] ; or I is a colon expression
             int64_t iC = GB_ijlist (I, inew, Ikind, Icolon) ;
@@ -126,7 +126,7 @@ GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
             // assigned to C(iC,jC), and p = S(inew,jnew) gives the pointer
             // into C to where the entry (C(iC,jC) appears in C:
             ASSERT (pC_start <= p && p < pC_end) ;
-            ASSERT (iC == GB_UNZOMBIE (GBI (C->i, p, C->vlen))) ;
+            ASSERT (iC == GB_UNZOMBIE (GBI_C (C->i, p, C->vlen))) ;
         }
     }
     #endif
