@@ -12,7 +12,6 @@
 #include "assign/GB_subassign.h"
 #include "assign/GB_bitmap_assign.h"
 #include "assign/GB_assign_zombie.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_methods.h"
 #include "transpose/GB_transpose.h"
 #include "extract/GB_subref.h"
@@ -30,9 +29,6 @@
     GB_FREE_WORK (&I2k, I2k_size) ; \
     GB_FREE_WORK (&J2k, J2k_size) ; \
 }
-
-// redefine to use the revised GB_FREE_ALL above:
-#include "matrix/GB_static_header.h"
 
 GrB_Info GB_assign_prep
 (
@@ -485,8 +481,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(i,:)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            I,    1, GB_LIST, NULL, // I
-                            NULL, 0, GB_ALL,  NULL, // J
+                            I,    1, 1, GB_LIST, NULL, // I = [i]
+                            NULL, 0, 0, GB_ALL,  NULL, // J = [:]
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -497,7 +493,7 @@ GrB_Info GB_assign_prep
                     }
                     else
                     { 
-                        GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+                        GB_UNJUMBLE (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
                         GB_OK (GB_assign_zombie2 (C, I [0])) ;
@@ -519,8 +515,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(:,j)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            NULL, 0, GB_ALL,  NULL, // I
-                            J,    1, GB_LIST, NULL, // J
+                            NULL, 0, 0, GB_ALL,  NULL, // I = [:]
+                            J,    1, 1, GB_LIST, NULL, // J = [j]
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -570,8 +566,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(I,J)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            I, nI, Ikind, Icolon,
-                            J, nJ, Jkind, Jcolon,
+                            I, ni, nI, Ikind, Icolon,
+                            J, nj, nJ, Jkind, Jcolon,
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,

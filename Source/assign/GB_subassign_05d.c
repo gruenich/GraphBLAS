@@ -23,13 +23,15 @@
 // all entries present.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -52,12 +54,14 @@ GrB_Info GB_subassign_05d
 
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -75,9 +79,6 @@ GrB_Info GB_subassign_05d
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense
@@ -167,8 +168,8 @@ GrB_Info GB_subassign_05d
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
         // Cx [pC] = cwork
-        #undef  GB_COPY_scalar_to_C
-        #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
+        #undef  GB_COPY_cwork_to_C
+        #define GB_COPY_cwork_to_C(Cx, pC, cwork, C_iso) \
             memcpy (Cx + ((pC)*csize), cwork, csize)
 
         #include "assign/template/GB_subassign_05d_template.c"

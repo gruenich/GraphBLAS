@@ -114,7 +114,7 @@ GrB_Info GB_assign_zombie4
             // get C(:,j) and determine if j is outside the list J
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ch, k) ;
+            int64_t j = GBH_C (Ch, k) ;
             bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
             if (j_outside)
             {
@@ -148,7 +148,7 @@ GrB_Info GB_assign_zombie4
                     { 
                         // M is bitmap/full
                         int64_t pM = j ;
-                        mij = GBB (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                        mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     }
                     else
                     {

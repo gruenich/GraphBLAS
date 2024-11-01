@@ -1,28 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_ok.h: macros for checking inputs and returning if an error occurs
+// GB_check_inputs.h: macros for checking inputs; return if error occurs
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_OK_H
-#define GB_OK_H
-
-//------------------------------------------------------------------------------
-// GB_OK: call a method and take corrective active if it fails
-//------------------------------------------------------------------------------
-
-#define GB_OK(method)                       \
-{                                           \
-    info = method ;                         \
-    if (info != GrB_SUCCESS)                \
-    {                                       \
-        GB_FREE_ALL ;                       \
-        return (info) ;                     \
-    }                                       \
-}
+#ifndef GB_CHECK_INPUTS_H
+#define GB_CHECK_INPUTS_H
 
 //------------------------------------------------------------------------------
 // GB_RETURN_*: input guards for user-callable GrB* and GxB* methods

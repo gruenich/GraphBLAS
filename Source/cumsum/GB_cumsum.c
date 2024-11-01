@@ -65,14 +65,7 @@ void GB_cumsum                      // cumulative sum of an array
             // cumsum with one thread
             //------------------------------------------------------------------
 
-            int64_t s = 0 ;
-            for (int64_t i = 0 ; i < n ; i++)
-            { 
-                int64_t c = count [i] ;
-                count [i] = s ;
-                s += c ;
-            }
-            count [n] = s ;
+            GB_cumsum1 (count, n) ;
 
         }
         else
@@ -88,7 +81,7 @@ void GB_cumsum                      // cumulative sum of an array
             if (ws == NULL)
             { 
                 // out of memory; use a single thread instead
-                GB_cumsum (count, n, NULL, 1, NULL) ;
+                GB_cumsum1 (count, n) ;
                 return ;
             }
 

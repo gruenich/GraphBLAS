@@ -58,7 +58,11 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
+    // A may remain jumbled
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     C->jumbled = false ;        // prior contents of C are discarded
     const bool C_iso = A->iso ; // C is iso if A is iso

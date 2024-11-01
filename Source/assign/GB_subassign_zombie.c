@@ -23,11 +23,12 @@
 // C->iso is not affected.
 
 #include "assign/GB_subassign_methods.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;
-#include "matrix/GB_static_header.h"
 
 GrB_Info GB_subassign_zombie
 (

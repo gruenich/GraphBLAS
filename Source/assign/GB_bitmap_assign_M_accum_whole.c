@@ -25,6 +25,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -39,13 +40,24 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     GrB_Matrix C,               // input/output matrix in bitmap format
     // inputs:
     const bool C_replace,       // descriptor for C
+    #define I NULL              /* I index list */
+    #define ni 0
+    #define nI 0
+    #define Ikind GB_ALL
+    #define Icolon NULL
+    #define J NULL              /* J index list */
+    #define ni 0
+    #define nI 0
+    #define Jkind GB_ALL
+    #define Jcolon NULL
     const GrB_Matrix M,         // mask matrix, which is not NULL here
-//  const bool Mask_comp,       // false here
+    #define Mask_comp false
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
+    #define assign_kind GB_ASSIGN
     GB_Werk Werk
 )
 {
@@ -62,20 +74,23 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, M, accum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get C, M, A, and accum
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A_AND_SCALAR
+    GB_GET_A_AND_SCALAR_FOR_BITMAP
     GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // do the assignment
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     {
 
         //----------------------------------------------------------------------
@@ -90,8 +105,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
             //------------------------------------------------------------------
 
             // Cb [pC] += 2 for each entry M(i,j) in the mask
-            GB_bitmap_M_scatter_whole (C,
-                M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
+            GB_bitmap_M_scatter_whole (C, M, GB_MASK_STRUCT,
+                GB_BITMAP_M_SCATTER_PLUS_2,
                 M_ek_slicing, M_ntasks, M_nthreads) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
@@ -111,13 +126,13 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                         break ;                                     \
                     case 2: /* C(i,j) not present, M(i,j) = 1 */    \
                         /* Cx [pC] = scalar */                      \
-                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;       \
+                        GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                         Cb [pC] = 1 ;                               \
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 3: /* C(i,j) present, M(i,j) = 1 */        \
                         /* Cx [pC] += scalar */                     \
-                        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;      \
+                        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;      \
                         Cb [pC] = 1 ;                               \
                         break ;                                     \
                     default: ;                                      \
@@ -140,13 +155,13 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 {                                           \
                     /* C(i,j) present, M(i,j) = 1 */        \
                     /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
                 }                                           \
                 else                                        \
                 {                                           \
                     /* C(i,j) not present, M(i,j) = 1 */    \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;   \
                     Cb [pC] = 1 ;                           \
                     task_cnvals++ ;                         \
                 }                                           \
@@ -177,8 +192,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 //--------------------------------------------------------------
 
                 // Cb [pC] += 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter_whole (C,
-                    M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
+                GB_bitmap_M_scatter_whole (C, M, GB_MASK_STRUCT,
+                    GB_BITMAP_M_SCATTER_PLUS_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
                 // the bitmap of C now contains:
                 //  Cb (i,j) = 0:   cij not present, mij zero
@@ -197,10 +212,11 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                             task_cnvals-- ;                                   \
                             break ;                                           \
                         case 2: /* C(i,j) not present, M(i,j) = 1 */          \
-                            if (GBB (Ab, pC))                                 \
+                            if (GBB_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
-                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork) ;  \
+                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
+                                    C_iso) ;                                  \
                                 Cb [pC] = 1 ;                                 \
                                 task_cnvals++ ;                               \
                             }                                                 \
@@ -211,10 +227,11 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                             }                                                 \
                             break ;                                           \
                         case 3: /* C(i,j) present, M(i,j) = 1 */              \
-                            if (GBB (Ab, pC))                                 \
+                            if (GBB_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] += Ax [pC] */                      \
-                                GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork) ; \
+                                GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,   \
+                                    C_iso) ;                                  \
                             }                                                 \
                             Cb [pC] = 1 ;                                     \
                             break ;                                           \
@@ -234,20 +251,20 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 #undef  GB_MASK_WORK
                 #define GB_MASK_WORK(pC)                                       \
                 {                                                              \
-                    if (GBB (Ab, pC))                                          \
+                    if (GBB_A (Ab, pC))                                        \
                     {                                                          \
                         /* A(i,j) is present */                                \
                         if (Cb [pC])                                           \
                         {                                                      \
                             /* C(i,j) present, M(i,j) = 1 */                   \
                             /* Cx [pC] += Ax [pC] */                           \
-                            GB_ACCUMULATE_aij (Cx, pC, Ax, pC, A_iso, ywork) ; \
+                            GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,C_iso) ;\
                         }                                                      \
                         else                                                   \
                         {                                                      \
                             /* C(i,j) not present, M(i,j) = 1 */               \
                             /* Cx [pC] = Ax [pC] */                            \
-                            GB_COPY_aij_to_C (Cx, pC, Ax, pC, A_iso, cwork) ;  \
+                            GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ; \
                             Cb [pC] = 1 ;                                      \
                             task_cnvals++ ;                                    \
                         }                                                      \
@@ -265,8 +282,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
             //------------------------------------------------------------------
 
             // Cb [pC] += 2 for each entry M(i,j) in the mask
-            GB_bitmap_M_scatter_whole (C,
-                M, Mask_struct, GB_BITMAP_M_SCATTER_PLUS_2,
+            GB_bitmap_M_scatter_whole (C, M, GB_MASK_STRUCT,
+                GB_BITMAP_M_SCATTER_PLUS_2,
                 M_ek_slicing, M_ntasks, M_nthreads) ;
             // the bitmap of C now contains:
             //  Cb (i,j) = 0:   cij not present, mij zero
@@ -284,7 +301,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 {                                                       \
                     /* C(i,j) not present, M(i,j) = 1 */                \
                     /* Cx [pC] = Ax [pA] */                             \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
                     Cb [pC] = 3 ;                                       \
                     task_cnvals++ ;                                     \
                 }                                                       \
@@ -292,7 +309,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                 {                                                       \
                     /* C(i,j) present, M(i,j) = 1 */                    \
                     /* Cx [pC] += Ax [pA] */                            \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
                 }                                                       \
             }
             #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
@@ -313,8 +330,8 @@ GrB_Info GB_bitmap_assign_M_accum_whole
             { 
                 // clear the mask
                 // Cb [pC] -= 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter_whole (C,
-                    M, Mask_struct, GB_BITMAP_M_SCATTER_MINUS_2,
+                GB_bitmap_M_scatter_whole (C, M, GB_MASK_STRUCT,
+                    GB_BITMAP_M_SCATTER_MINUS_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }

@@ -35,9 +35,9 @@ GB_disable
 
 GrB_Info GB (_bld)
 (
-    GB_T_TYPE *restrict Tx,
+    GB_Tx_TYPE *restrict Tx,
     int64_t  *restrict Ti,
-    const GB_S_TYPE *restrict Sx,
+    const GB_Sx_TYPE *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,

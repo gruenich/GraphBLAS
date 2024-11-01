@@ -7,6 +7,24 @@
 
 //------------------------------------------------------------------------------
 
+// Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
+
+// M:           present
+// Mask_comp:   false
+// Mask_struct: true
+// C_replace:   effectively false (not relevant since C is empty)
+// accum:       NULL
+// A:           matrix
+// S:           none
+
+// C and M are sparse or hypersparse.  A can have any sparsity structure, even
+// bitmap, but it must either be bitmap, or as-if-full.  M may be jumbled.  If
+// so, C is constructed as jumbled.  C is reconstructed with the same structure
+// as M and can have any sparsity structure on input.  The only constraint on C
+// is nnz(C) is zero on input.
+
+// C is iso if A is iso
+
 // C<M> = A where C starts as empty, M is structural, and A is dense.  The
 // pattern of C is an exact copy of M.  A is full, dense, or bitmap.
 // M is sparse or hypersparse, and C is constructed with the same pattern as M.
@@ -23,14 +41,9 @@
     // get inputs
     //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_KERNEL
-    #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_iso       GB_A_ISO
-    #else
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_iso = A->iso ;
-    #endif
-    ASSERT (GB_IS_FULL (A) || A_is_bitmap) ;
+    ASSERT (GB_IS_FULL (A) || GB_A_IS_BITMAP) ;
 
     //--------------------------------------------------------------------------
     // Parallel: slice M into equal-sized chunks
@@ -57,6 +70,7 @@
     const int8_t   *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
 
+    bool C_iso = C->iso ;
     ASSERT (C->iso == A->iso) ;
 
     #ifdef GB_ISO_ASSIGN
@@ -66,7 +80,7 @@
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     GB_DECLAREC (cwork) ;
-    if (A_iso)
+    if (GB_A_ISO)
     {
         // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
@@ -81,7 +95,7 @@
     // C<M> = A
     //--------------------------------------------------------------------------
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -132,7 +146,8 @@
                     { 
                         // C(i,j) = A(i,j)
                         #ifndef GB_ISO_ASSIGN
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p,
+                            GB_A_ISO, cwork, GB_C_ISO) ;
                         #endif
                     }
                     else
@@ -195,7 +210,8 @@
                     { 
                         // C(i,j) = A(i,j)
                         int64_t p = pA + GBI_M (Mi, pM, Mvlen) ;
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p, A_iso, cwork) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p,
+                            GB_A_ISO, cwork, GB_C_ISO) ;
                     }
                 }
             }

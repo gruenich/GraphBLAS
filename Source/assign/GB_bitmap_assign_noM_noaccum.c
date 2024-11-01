@@ -37,6 +37,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -49,17 +50,19 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     // inputs:
     const bool C_replace,       // descriptor for C
     const GrB_Index *I,         // I index list
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,         // J index list
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-//  const GrB_Matrix M,         // mask matrix, not present here
+    #define M NULL              /* mask matrix, not present here */
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
-//  const GrB_BinaryOp accum,   // not present
+    #define accum NULL          /* not present */
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
@@ -77,12 +80,15 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_GET_A_AND_SCALAR
+    GB_GET_A_AND_SCALAR_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // C_replace phase
@@ -90,7 +96,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
 
     if (C_replace)
     {
-        if (assign_kind == GB_ASSIGN)
+        if (GB_ASSIGN_KIND == GB_ASSIGN)
         { 
             // for assign: set all Cb(:,:) to zero
             GB_memset (Cb, 0, cnzmax, nthreads_max) ;
@@ -101,14 +107,15 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             // for row assign: set Cb(i,:) to zero
             // for col assign: set Cb(:,j) to zero
             // for subassign: set all Cb(I,J) to zero
-            #define NO_ASSIGN_CASE
             #define GB_CIJ_WORK(pC)                 \
             {                                       \
                 int8_t cb = Cb [pC] ;               \
                 Cb [pC] = 0 ;                       \
                 task_cnvals -= (cb == 1) ;          \
             }
+            #define GB_NO_ASSIGN_CASE
             #include "assign/factory/GB_bitmap_assign_C_template.c"
+            #undef GB_NO_ASSIGN_CASE
         }
     }
 
@@ -116,10 +123,10 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     // assignment phase
     //--------------------------------------------------------------------------
 
-    if (!Mask_comp)
+    if (!GB_MASK_COMP)
     {
 
-        if (A == NULL)
+        if (GB_SCALAR_ASSIGN)
         { 
 
             //------------------------------------------------------------------
@@ -132,7 +139,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             {                                           \
                 int8_t cb = Cb [pC] ;                   \
                 /* Cx [pC] = scalar */                  \
-                GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                 Cb [pC] = 1 ;                           \
                 task_cnvals += (cb == 0) ;              \
             }
@@ -167,7 +174,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
             {                                                       \
                 int8_t cb = Cb [pC] ;                               \
                 /* Cx [pC] = Ax [pA] */                             \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
                 Cb [pC] = 1 ;                                       \
             }
             #include "assign/factory/GB_bitmap_assign_A_template.c"

@@ -273,7 +273,7 @@ GrB_Info GB_serialize_array
     // compute cumulative sum of the compressed blocks
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Sblocks, nblocks, NULL, 1, Werk) ;
+    GB_cumsum1 (Sblocks, nblocks) ;
 
     //--------------------------------------------------------------------------
     // free workspace return result

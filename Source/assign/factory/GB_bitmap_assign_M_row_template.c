@@ -13,6 +13,9 @@
 // C is bitmap/full.  M is sparse/hyper, and can be jumbled.
 
 {
+    ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
+    ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
 
     const int64_t *restrict kfirst_Mslice = M_ek_slicing ;
     const int64_t *restrict klast_Mslice  = M_ek_slicing + M_ntasks ;
@@ -41,9 +44,8 @@
             //------------------------------------------------------------------
 
             int64_t jM = GBH_M (Mh, k) ;
-            int64_t pM_start, pM_end ;
-            GB_get_pA (&pM_start, &pM_end, tid, k, kfirst,
-                klast, pstart_Mslice, Mp, Mvlen) ;
+            GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast, pstart_Mslice,
+                GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
 
             //------------------------------------------------------------------
             // traverse over M(0,jM), the kth vector of M
@@ -59,7 +61,7 @@
                 if (mij)
                 { 
                     int64_t jC = jM ;
-                    int64_t pC = iC + jC * cvlen ;
+                    int64_t pC = iC + jC * Cvlen ;
                     GB_MASK_WORK (pC) ;
                 }
             }

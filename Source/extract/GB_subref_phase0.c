@@ -450,7 +450,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (Count, ntasks) ;
         Cnvec = Count [ntasks] ;
 
     }
@@ -504,7 +504,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (Count, ntasks) ;
         Cnvec = Count [ntasks] ;
     }
 

@@ -180,9 +180,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
             // count the entries in C(:,j)
             int64_t j = GBH (Mh, k) ;
             int64_t pstart = j * vlen ;     // start of A(:,j) and B(:,j)
-            int64_t pM, pM_end ;
-            GB_get_pA (&pM, &pM_end, tid, k,
-                kfirst, klast, pstart_Mslice, Mp, vlen) ;
+            GB_GET_PA (pM, pM_end, tid, k, kfirst, klast, pstart_Mslice,
+                Mp [k], Mp [k+1]) ;
             int64_t cjnz = 0 ;
             for ( ; pM < pM_end ; pM++)
             { 

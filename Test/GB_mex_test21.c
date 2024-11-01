@@ -406,31 +406,12 @@ void mexFunction
     GB_macrofy_assign (fp, scode, accum,
         /* ctype: */ GrB_BOOL, /* atype: */ GrB_BOOL) ;
 
-#if 0
-void GB_enumify_assign      // enumerate a GrB_assign problem
-(
-    // output:
-    uint64_t *scode,        // unique encoding of the entire operation
-    // input:
-    // C matrix:
-    GrB_Matrix C,
-    bool C_replace,
-    // index types:
-    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
-    int Jkind,              // ditto
-    // M matrix:
-    GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
-    bool Mask_comp,         // mask is complemented
-    // operator:
-    GrB_BinaryOp accum,     // the accum operator (may be NULL)
-    // A matrix or scalar
-    GrB_Matrix A,           // NULL for scalar assignment
-    GrB_Type scalar_type,
-    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
-)
-#endif
+    //--------------------------------------------------------------------------
+    // test GB_macrofy_cast_input
+    //--------------------------------------------------------------------------
 
+    HEADER ;
+    GB_macrofy_cast_input (fp, "stuff", "zarg", "xargs", "nil", NULL, NULL) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

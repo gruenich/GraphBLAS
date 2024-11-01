@@ -514,7 +514,7 @@ struct GB_Pending_struct    // list of pending tuples for a matrix
     size_t j_size ;
     GB_void *x ;        // values of pending tuples
     size_t x_size ;
-    GrB_Type type ;     // the type of s
+    GrB_Type type ;     // the type of x
     size_t size ;       // type->size
     GrB_BinaryOp op ;   // operator to assemble pending tuples
 } ;
@@ -597,6 +597,14 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #define GBB_B(Bb,p)      GBB (Bb,p)
 #define GB_B_NVALS(e)    int64_t e = GB_nnz (B)
 #define GB_B_NHELD(e)    int64_t e = GB_nnz_held (B)
+
+// accessing the S matrix
+#define GBP_S(Sp,k,vlen) GBP (Sp,k,vlen)
+#define GBH_S(Sh,k)      GBH (Sh,k)
+#define GBI_S(Si,p,vlen) GBI (Si,p,vlen)
+#define GBB_S(Sb,p)      GBB (Sb,p)
+#define GB_S_NVALS(e)    int64_t e = GB_nnz (S)
+#define GB_S_NHELD(e)    int64_t e = GB_nnz_held (S)
 
 #endif
 

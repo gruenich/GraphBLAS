@@ -217,12 +217,15 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/callback
     Source/concat
     Source/convert
+    Source/cumsum
     Source/ewise
     Source/add
     Source/emult
     Source/hyper
+    Source/ij
     Source/jit_kernels
     Source/math
+    Source/matrix
     Source/memory
     Source/monoid
     Source/mxm

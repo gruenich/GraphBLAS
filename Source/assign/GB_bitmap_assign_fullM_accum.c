@@ -31,6 +31,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -43,10 +44,12 @@ GrB_Info GB_bitmap_assign_fullM_accum
     // inputs:
     const bool C_replace,       // descriptor for C
     const GrB_Index *I,         // I index list
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,         // J index list
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -73,13 +76,16 @@ GrB_Info GB_bitmap_assign_fullM_accum
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, M full, accum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_GET_M
-    GB_GET_A_AND_SCALAR
+    GB_GET_A_AND_SCALAR_FOR_BITMAP
     GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
@@ -87,13 +93,13 @@ GrB_Info GB_bitmap_assign_fullM_accum
     //--------------------------------------------------------------------------
 
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = (GBB (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ Mask_comp ;
+        bool mij = (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ GB_MASK_COMP ;
 
     //--------------------------------------------------------------------------
     // assignment phase
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     {
 
         //----------------------------------------------------------------------
@@ -114,7 +120,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //      else // if Cb(p) == 1:
         //          Cx(p) += scalar // C(iC,jC) still present, updated
 
-        // if C FULL: no change, just cb = GBB (Cb,pC)
+        // FUTURE: if C FULL: Cb is effectively all 1's and stays that way
 
         #undef  GB_IXJ_WORK
         #define GB_IXJ_WORK(pC,pA)                          \
@@ -127,21 +133,21 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 if (cb == 0)                                \
                 {                                           \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;   \
                     Cb [pC] = 1 ;                           \
                     task_cnvals++ ;                         \
                 }                                           \
                 else /* (cb == 1) */                        \
                 {                                           \
                     /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork) ;  \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
                 }                                           \
             }                                               \
         }
 
-        ASSERT (assign_kind == GB_ASSIGN || assign_kind == GB_SUBASSIGN) ;
+        ASSERT (GB_ASSIGN_KIND == GB_ASSIGN || GB_ASSIGN_KIND == GB_SUBASSIGN) ;
 
-        switch (assign_kind)
+        switch (GB_ASSIGN_KIND)
         {
             case GB_ASSIGN : 
                 // C<M>(I,J) += scalar where M has the same size as C
@@ -181,7 +187,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
         //         else // if Cb(p) == 1:
         //             Cx(p) += aij    // C(iC,jC) still present, updated
 
-        // if C FULL: no change, just cb = GBB (Cb,pC)
+        // FUTURE: if C FULL: Cb is effectively all 1's and stays that way
 
         #define GB_AIJ_WORK(pC,pA)                                      \
         {                                                               \
@@ -193,19 +199,19 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 if (cb == 0)                                            \
                 {                                                       \
                     /* Cx [pC] = Ax [pA] */                             \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ; \
                     Cb [pC] = 1 ;                                       \
                     task_cnvals++ ;                                     \
                 }                                                       \
                 else /* (cb == 1) */                                    \
                 {                                                       \
                     /* Cx [pC] += Ax [pA] */                            \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork) ;  \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
                 }                                                       \
             }                                                           \
         }
 
-        switch (assign_kind)
+        switch (GB_ASSIGN_KIND)
         {
             case GB_ROW_ASSIGN : 
                 // C<m>(i,J) += A where m is a 1-by-C->vdim row vector
@@ -241,9 +247,9 @@ GrB_Info GB_bitmap_assign_fullM_accum
 
     if (C_replace)
     { 
-        // if C FULL: use two passes: first pass checks if any
+        // FUTURE: if C FULL: use two passes: first pass checks if any
         // entry must be deleted.  If none: do nothing.  Else:  change C
-        // to full and do 2nd pass as below.
+        // to bitmap and do 2nd pass as below.
 
         // for row assign: for all entries in C(i,:)
         // for col assign: for all entries in C(:,j)

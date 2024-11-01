@@ -44,8 +44,9 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -56,13 +57,24 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
     GrB_Matrix C,               // input/output matrix in bitmap format
     // inputs:
     const bool C_replace,       // descriptor for C
-//  const GrB_Matrix M,         // mask matrix, not present here
+    #define I NULL              /* I index list */
+    #define ni 0
+    #define nI 0
+    #define Ikind GB_ALL
+    #define Icolon NULL
+    #define J NULL              /* J index list */
+    #define ni 0
+    #define nI 0
+    #define Jkind GB_ALL
+    #define Jcolon NULL
+    #define M NULL              /* mask matrix, not present here */
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
-//  const GrB_BinaryOp accum,   // not present
+    #define accum NULL          /* not present */
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
+    #define assign_kind         GB_ASSIGN
     GB_Werk Werk
 )
 {
@@ -77,18 +89,21 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // do the assignment
     //--------------------------------------------------------------------------
 
-    if (!Mask_comp)
+    if (!GB_MASK_COMP)
     {
 
         //----------------------------------------------------------------------
         // C = A or C = scalar
         //----------------------------------------------------------------------
 
-        if (A == NULL)
+        if (GB_SCALAR_ASSIGN)
         { 
 
             //------------------------------------------------------------------
@@ -107,7 +122,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
             //------------------------------------------------------------------
 
             GB_GET_C_BITMAP ;           // C must be bitmap
-            GB_GET_A_AND_SCALAR
+            GB_GET_A_AND_SCALAR_FOR_BITMAP
 
             if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
             {
@@ -156,7 +171,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                     #define GB_AIJ_WORK(pC,pA)                              \
                     {                                                       \
                         /* Cx [pC] = Ax [pA] */                             \
-                        GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
                         Cb [pC] = 1 ;                                       \
                     }
                     #include "assign/factory/GB_bitmap_assign_A_whole_template.c"

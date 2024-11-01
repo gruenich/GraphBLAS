@@ -29,12 +29,14 @@
 // C and A can have any sparsity structure.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -50,10 +52,8 @@ GrB_Info GB_subassign_06d
 {
 
     //--------------------------------------------------------------------------
-    // get inputs
+    // check inputs
     //--------------------------------------------------------------------------
-
-    GrB_Info info ;
 
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -67,10 +67,15 @@ GrB_Info GB_subassign_06d
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    const GB_Type_code ccode = C->type->code ;
-
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    const GB_Type_code ccode = C->type->code ;
 
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
@@ -97,7 +102,13 @@ GrB_Info GB_subassign_06d
 
         ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
+        #undef  GB_MASK_STRUCT
+        #define GB_MASK_STRUCT 1
+        #undef  GB_C_ISO
+        #define GB_C_ISO 1
         #include "assign/template/GB_subassign_06d_template.c"
+        #undef  GB_MASK_STRUCT
+        #undef  GB_C_ISO
         info = GrB_SUCCESS ;
 
     }
@@ -185,10 +196,12 @@ GrB_Info GB_subassign_06d
             const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-            #define C_iso false
             #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
-
+            #undef  GB_C_ISO
+            #define GB_C_ISO 0
+            #undef  GB_MASK_STRUCT
+            #define GB_MASK_STRUCT Mask_struct
             #include "assign/template/GB_subassign_06d_template.c"
             info = GrB_SUCCESS ;
         }

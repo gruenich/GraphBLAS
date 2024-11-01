@@ -791,7 +791,7 @@ static GrB_Info GB_SORT (matrix)
     // construct a list of vectors that must still be sorted
     //--------------------------------------------------------------------------
 
-    GB_cumsum (C_skip, ntasks, NULL, 1, Werk) ;
+    GB_cumsum1 (C_skip, ntasks) ;
     int64_t total_skipped = C_skip [ntasks] ;
 
     C_skipped = GB_MALLOC_WORK (total_skipped, int64_t, &C_skipped_size) ;

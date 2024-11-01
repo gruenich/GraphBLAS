@@ -490,20 +490,28 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
 GrB_Info GB_jit_kernel_subassign_any                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
+    const bool C_replace,                                               \
     const GrB_Index *I,                                                 \
     const int64_t ni,                                                   \
     const int64_t nI,                                                   \
+    const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
     const GrB_Index *J,                                                 \
     const int64_t nj,                                                   \
     const int64_t nJ,                                                   \
+    const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \
     const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_BinaryOp accum,                                           \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
+    const GrB_Type scalar_type,                                         \
+    const int assign_kind,                                              \
+    GB_Werk Werk,                                                       \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    GB_Werk Werk,                                                       \
     const GB_callback_struct *restrict my_callback                      \
 )
 
@@ -732,6 +740,20 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 
 #define JIT_CUDA_RED(g)  GB_JIT_CUDA_KERNEL_REDUCE_PROTO(g) ;
 #define JIT_CUDA_DOT3(g) GB_JIT_CUDA_KERNEL_DOT3_PROTO(g) ;
+
+//------------------------------------------------------------------------------
+// GB_GET_CALLBACK: get function pointer from the callback struct for JIT kernel
+//------------------------------------------------------------------------------
+
+#undef GB_GET_CALLBACK
+#ifdef GB_JIT_RUNTIME
+    // JIT kernels (CPU and CUDA) require the function pointers
+    #define GB_GET_CALLBACK(function) \
+        function ## _f function = my_callback->function ## _func ;
+#else
+    // PreJIT kernels link against -lgraphblas and do not need function pointers
+    #define GB_GET_CALLBACK(function)
+#endif
 
 #endif
 

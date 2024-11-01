@@ -162,7 +162,7 @@ GrB_Info GB_selector
 
 #if 0
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (!in_place_A /* FIXME: remove this condition, and let the CUDA
+    if (!in_place_A /* Fixme for CUDA: remove this condition, and let the CUDA
         kernel handle the in-place-A condition for GB_wait and GB_resize. */
         && GB_cuda_select_branch (A, op))
     {

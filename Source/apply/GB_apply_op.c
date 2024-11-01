@@ -217,7 +217,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                     case GB_POSITIONI1_unop_code : // z = pos_i1(A(i,j)) == i+1
                     case GB_ROWINDEX_idxunop_code : // z = i+thunk
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (i + thunk) ;
                         #include "apply/template/GB_apply_unop_ip.c"
                         break ;
@@ -232,14 +232,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                     case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (j - (i+thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ;
 
                     case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (i - (j+thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ;
@@ -263,7 +263,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                     case GB_POSITIONI1_unop_code : // z = pos_i1(A(i,j)) == i+1
                     case GB_ROWINDEX_idxunop_code : // z = i+thunk
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (int32_t) (i + thunk) ;
                         #include "apply/template/GB_apply_unop_ip.c"
                         break ;
@@ -278,14 +278,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                     case GB_DIAGINDEX_idxunop_code : // z = (j-(i+thunk)
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (int32_t) (j - (i+thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ;
 
                     case GB_FLIPDIAGINDEX_idxunop_code : // z = (i-(j+thunk)
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (int32_t) (i - (j+thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ;
@@ -308,28 +308,28 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                     case GB_TRIL_idxunop_code : // z = (j <= (i+thunk))
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (j <= (i + thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ; ;
 
                     case GB_TRIU_idxunop_code : // z = (j >= (i+thunk))
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (j >= (i + thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ; ;
 
                     case GB_DIAG_idxunop_code : // z = (j == (i+thunk))
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (j == (i + thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ; ;
 
                     case GB_OFFDIAG_idxunop_code : // z = (j != (i+thunk))
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (j != (i + thunk)) ;
                         #include "apply/template/GB_apply_unop_ijp.c"
                         break ; ;
@@ -348,14 +348,14 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
                     case GB_ROWLE_idxunop_code : // z = (i <= thunk)
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (i <= thunk) ;
                         #include "apply/template/GB_apply_unop_ip.c"
                         break ; ;
 
                     case GB_ROWGT_idxunop_code : // z = (i > thunk)
                         #define GB_APPLY_OP(pC,pA)                  \
-                            int64_t i = GBI_A (Ai, pA, avlen) ;     \
+                            int64_t i = GBI (Ai, pA, avlen) ;       \
                             Cz [pC] = (i > thunk) ;
                         #include "apply/template/GB_apply_unop_ip.c"
                         break ; ;
@@ -778,7 +778,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             // Cx [pC] = op (Ax [A_iso ? 0 : pA], i, j, ythunk)
             #define GB_APPLY_OP(pC,pA)                                      \
-                int64_t i = GBI_A (Ai, pA, avlen) ;                         \
+                int64_t i = GBI (Ai, pA, avlen) ;                           \
                 GB_void xwork [GB_VLA(xsize)] ;                             \
                 cast_A_to_X (xwork, Ax +(A_iso ? 0 : (pA))*asize, asize) ;  \
                 fop (Cx +((pC)*zsize), xwork,                               \

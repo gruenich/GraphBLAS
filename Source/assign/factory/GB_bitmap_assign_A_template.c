@@ -50,16 +50,15 @@
             //------------------------------------------------------------------
 
             int64_t jA = GBH_A (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k, kfirst,
-                klast, pstart_Aslice, Ap, nI) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP_A (Ap, k, nI), GBP_A (Ap, k+1, nI)) ;
 
             //------------------------------------------------------------------
             // traverse over A(:,jA), the kth vector of A
             //------------------------------------------------------------------
 
             int64_t jC = GB_ijlist (J, jA, Jkind, Jcolon) ;
-            int64_t pC0 = jC * cvlen ;      // first entry in C(:,jC)
+            int64_t pC0 = jC * Cvlen ;      // first entry in C(:,jC)
 
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 

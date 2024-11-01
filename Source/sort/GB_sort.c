@@ -203,9 +203,6 @@
     GB_phybix_free (P) ;                    \
 }
 
-// redefine to use the revised GB_FREE_ALL above:
-#include "matrix/GB_static_header.h"
-
 GrB_Info GB_sort
 (
     // output:
@@ -465,7 +462,7 @@ GrB_Info GB_sort
     int C_nthreads, C_ntasks ;
     GB_SLICE_MATRIX (C, 1) ;
     int64_t *restrict Cp = C->p ;
-    const int64_t cvlen = C->vlen ;
+//  const int64_t cvlen = C->vlen ;
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static,1)
     for (tid = 0 ; tid < C_ntasks ; tid++)
@@ -475,9 +472,8 @@ GrB_Info GB_sort
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             const int64_t pC0 = Cp [k] ;
-            int64_t pC_start, pC_end ;
-            GB_get_pA (&pC_start, &pC_end, tid, k,
-                kfirst, klast, pstart_Cslice, Cp, cvlen) ;
+            GB_GET_PA (pC_start, pC_end, tid, k, kfirst, klast, pstart_Cslice,
+                pC0, Cp [k+1]) ;
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             { 
                 Ti [pC] = pC - pC0 ;

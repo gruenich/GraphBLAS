@@ -27,13 +27,15 @@
 // C and A can have any sparsity structure, but C must be as-if-full.
 
 #include "assign/GB_subassign_dense.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_aop__include.h"
 #endif
 #include "include/GB_unused.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -53,11 +55,6 @@ GrB_Info GB_subassign_23      // C += A; C is full
 
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=A", GB0) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -74,10 +71,14 @@ GrB_Info GB_subassign_23      // C += A; C is full
     ASSERT (A->vlen == C->vlen) ;
     ASSERT (A->vdim == C->vdim) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get the operator
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     if (accum->opcode == GB_FIRST_binop_code || C->iso)
     { 
         // nothing to do
@@ -94,9 +95,6 @@ GrB_Info GB_subassign_23      // C += A; C is full
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 
@@ -184,7 +182,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
         #define C_iso false
 
         #undef  GB_ACCUMULATE_aij
-        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)              \
+        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)        \
         {                                                               \
             /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                \
             if (A_iso)                                                  \

@@ -115,24 +115,7 @@ static inline bool GB_allocate_result
 // GB_add_phase0:  find the vectors of C for C<M>=A+B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
-(
-    int64_t *p_Cnvec,           // # of vectors to compute in C
-    int64_t *restrict *Ch_handle,        // Ch: size Cnvec, or NULL
-    size_t *Ch_size_handle,                 // size of Ch in bytes
-    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
-    size_t *C_to_M_size_handle,             // size of C_to_M in bytes
-    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
-    size_t *C_to_A_size_handle,             // size of C_to_A in bytes
-    int64_t *restrict *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
-    size_t *C_to_B_size_handle,             // size of C_to_A in bytes
-    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
-    int *C_sparsity,            // sparsity structure of C
-    const GrB_Matrix M,         // optional mask, may be NULL; not complemented
-    const GrB_Matrix A,         // first input matrix
-    const GrB_Matrix B,         // second input matrix
-    GB_Werk Werk
-)
+GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
 {
 
     //--------------------------------------------------------------------------
@@ -407,7 +390,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // cumulative sum of entries in Ch for each task
         //----------------------------------------------------------------------
 
-        GB_cumsum (kC_start, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (kC_start, ntasks) ;
         Cnvec = kC_start [ntasks] ;
 
         //----------------------------------------------------------------------

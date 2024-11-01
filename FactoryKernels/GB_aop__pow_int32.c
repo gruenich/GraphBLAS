@@ -27,25 +27,25 @@
 #define GB_C_TYPE int32_t
 #define GB_DECLAREC(cwork) int32_t cwork
 #define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = Ax [A_iso ? 0 : (pA)]
-#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]
-#define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork
+#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork,C_iso) Cx [pC] = (A_iso) ? cwork : Ax [pA]
+#define GB_COPY_cwork_to_C(Cx,pC,cwork,C_iso) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // C(i,j) += ywork
-#define GB_ACCUMULATE_scalar(Cx,pC,ywork) \
+#define GB_ACCUMULATE_scalar(Cx,pC,ywork,C_iso) \
     GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
 
 // C(i,j) += (ytype) A(i,j)
-#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)      \
+#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)    \
 {                                                       \
     if (A_iso)                                          \
     {                                                   \
-        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;   \
     }                                                   \
     else                                                \
     {                                                   \
         /* A and Y have the same type here */           \
-        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA]) ;        \
+        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA], C_iso) ; \
     }                                                   \
 }
 
@@ -61,6 +61,9 @@
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
+
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 0
 
 GrB_Info GB (_subassign_23__pow_int32)
 (
@@ -82,6 +85,9 @@ GrB_Info GB (_subassign_23__pow_int32)
 //------------------------------------------------------------------------------
 // C += y, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
+
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 1
 
 GrB_Info GB (_subassign_22__pow_int32)
 (

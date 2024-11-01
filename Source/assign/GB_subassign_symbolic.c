@@ -8,25 +8,14 @@
 //------------------------------------------------------------------------------
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "extract/GB_subref.h"
+#define GB_GENERIC
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_phybix_free (S) ;
 
-GrB_Info GB_subassign_symbolic
-(
-    // output
-    GrB_Matrix S,               // S = symbolic(C(I,J)), static header
-    // inputs, not modified:
-    const GrB_Matrix C,         // matrix to extract the pattern of
-    const GrB_Index *I,         // index list for S = C(I,J), or GrB_ALL, etc.
-    const int64_t ni,           // length of I, or special
-    const GrB_Index *J,         // index list for S = C(I,J), or GrB_ALL, etc.
-    const int64_t nj,           // length of J, or special
-    const bool S_must_not_be_jumbled,
-    GB_Werk Werk
-)
+GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic)
 {
 
     //--------------------------------------------------------------------------
@@ -41,7 +30,7 @@ GrB_Info GB_subassign_symbolic
     // extract the pattern: S = C(I,J) for S_Extraction method, and quick mask
     //--------------------------------------------------------------------------
 
-    // S is a sparse int64_t matrix.  Its "values" are not numerical, but
+    // S is a matrix with int64_t type.  Its "values" are not numerical, but
     // indices into C.  For example, suppose 100 = I [5] and 200 = J [7].  Then
     // S(5,7) is the entry C(I(5),J(7)), and the value of S(5,7) is the
     // position in C that holds that particular entry C(100,200):
@@ -64,9 +53,12 @@ GrB_Info GB_subassign_symbolic
     // S and C have the same CSR/CSC format.  S can be jumbled.  It is in
     // in the same hypersparse form as C (unless S is empty, in which case
     // it is always returned as hypersparse). This also checks I and J.
-    // S is not iso, even if C is iso.
+    // S is not iso, even if C is iso.  S can be sparse, hypersparse, or full
+    // (not bitmap).
     GB_OK (GB_subref (S, false, C->is_csc, C, I, ni, J, nj, true, Werk)) ;
-    ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as unsorted
+    ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as jumbled
+    ASSERT (!GB_ZOMBIES (S)) ;
+    ASSERT (!GB_PENDING (S)) ;
 
     //--------------------------------------------------------------------------
     // sort S and compute S->Y if requested
@@ -74,7 +66,7 @@ GrB_Info GB_subassign_symbolic
 
     if (S_must_not_be_jumbled)
     { 
-        GB_MATRIX_WAIT_IF_JUMBLED (S) ; // but the caller requires S sorted
+        GB_MATRIX_WAIT (S) ; // but the caller requires S unjumbled
         ASSERT (!GB_JUMBLED (S)) ;
         GB_OK (GB_hyper_hash_build (S, Werk)) ;    // construct S->Y
     }
@@ -110,16 +102,16 @@ GrB_Info GB_subassign_symbolic
     for (int64_t k = 0 ; k < S->nvec ; k++)
     {
         // prepare to iterate over the entries of vector S(:,jnew)
-        int64_t jnew = GBH (Sh, k) ;
-        int64_t pS_start = GBP (Sp, k, S->vlen) ;
-        int64_t pS_end   = GBP (Sp, k+1, S->vlen) ;
+        int64_t jnew = GBH_S (Sh, k) ;
+        int64_t pS_start = GBP_S (Sp, k, S->vlen) ;
+        int64_t pS_end   = GBP_S (Sp, k+1, S->vlen) ;
         // S (inew,jnew) corresponds to C (iC, jC) ;
         // jC = J [j] ; or J is a colon expression
         int64_t jC = GB_ijlist (J, jnew, Jkind, Jcolon) ;
         for (int64_t pS = pS_start ; pS < pS_end ; pS++)
         {
             // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
-            int64_t inew = GBI (Si, pS, S->vlen) ;
+            int64_t inew = GBI_S (Si, pS, S->vlen) ;
             ASSERT (inew >= 0 && inew < nI) ;
             // iC = I [iA] ; or I is a colon expression
             int64_t iC = GB_ijlist (I, inew, Ikind, Icolon) ;
@@ -134,7 +126,7 @@ GrB_Info GB_subassign_symbolic
             // assigned to C(iC,jC), and p = S(inew,jnew) gives the pointer
             // into C to where the entry (C(iC,jC) appears in C:
             ASSERT (pC_start <= p && p < pC_end) ;
-            ASSERT (iC == GB_UNZOMBIE (GBI (C->i, p, C->vlen))) ;
+            ASSERT (iC == GB_UNZOMBIE (GBI_C (C->i, p, C->vlen))) ;
         }
     }
     #endif

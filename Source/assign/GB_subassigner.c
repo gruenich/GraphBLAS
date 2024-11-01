@@ -108,13 +108,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (GB_is_dense (A))
     { 
         // methods that rely on A being dense assume A is not jumbled
-        GB_MATRIX_WAIT_IF_JUMBLED (A) ;
+        GB_UNJUMBLE (A) ;
     }
 
     if (GB_is_dense (C) && !GB_PENDING_OR_ZOMBIES (C) && !GB_IS_BITMAP (C))
     { 
-        // C is dense or full
-        GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+        // C is dense or full (as-if): if sparse, make sure it's unjumbled
+        GB_UNJUMBLE (C) ;
     }
 
     GBURBLE ("(pending: " GBd ") ", GB_Pending_n (C)) ;
@@ -231,7 +231,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // sparsity (if present).
             GBURBLE ("Method: bitmap_subassign ") ;
             GB_OK (GB_bitmap_assign (C, C_replace,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
                 GB_SUBASSIGN, Werk)) ;
         }
@@ -347,7 +347,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GBURBLE ("Method 05: C(%s,%s)<M> = scalar ; no S ",
                 Istring, Jstring) ;
             GB_OK (GB_subassign_05 (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, scalar, scalar_type, Werk)) ;
         }
         break ;
@@ -358,7 +358,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GBURBLE ("Method 07: C(%s,%s)<M> += scalar ; no S ",
                 Istring, Jstring) ;
             GB_OK (GB_subassign_07 (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, accum, scalar, scalar_type, Werk)) ;
         }
         break ;
@@ -382,7 +382,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // Method 08n: C(I,J)<M> += A ; no S
             GBURBLE ("Method 08n: C(%s,%s)<M> += Z ; no S ", Istring, Jstring) ;
             GB_OK (GB_subassign_08n (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon,
+                J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, accum, A, Werk)) ;
         }
         break ;
@@ -421,7 +422,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // Method 06n: C(I,J)<M> = A ; no S
             GBURBLE ("Method 06n: C(%s,%s)<M> = Z ; no S ", Istring, Jstring) ;
             GB_OK (GB_subassign_06n (C,
-                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                 M, Mask_struct, A, Werk)) ;
         }
         break ;

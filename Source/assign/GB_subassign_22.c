@@ -22,13 +22,15 @@
 // C += scalar where C is full
 
 #include "assign/GB_subassign_dense.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_aop__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -37,7 +39,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
-    const GrB_Type scalar_type,           // type of the input scalar
+    const GrB_Type scalar_type,     // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Werk Werk
 )
@@ -47,7 +49,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=scalar", GB0) ;
     ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -59,10 +60,14 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     ASSERT_BINARYOP_OK (accum, "accum for C+=scalar", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get the operator
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     if (accum->opcode == GB_FIRST_binop_code || C->iso)
     { 
         // nothing to do
@@ -94,9 +99,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 
@@ -170,7 +172,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 
         // C(i,j) = C(i,j) + y
         #undef  GB_ACCUMULATE_scalar
-        #define GB_ACCUMULATE_scalar(Cx,pC,ywork)           \
+        #define GB_ACCUMULATE_scalar(Cx,pC,ywork,C_iso) \
             faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 
         #include "assign/template/GB_subassign_22_template.c"

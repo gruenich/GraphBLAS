@@ -48,28 +48,6 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
     GB_Werk Werk
 ) ;
 
-#if 0
-int GB_subassigner_method           // return method to use in GB_subassigner
-(
-    // outputs
-    bool *C_iso_out,                // true if C is iso on output
-    GB_void *cout,                  // iso value of C on output
-    // inputs
-    const GrB_Matrix C,             // input/output matrix for results
-    const bool C_replace,           // C matrix descriptor
-    const GrB_Matrix M,             // optional mask for C(I,J), unused if NULL
-    const bool Mask_comp,           // mask descriptor
-    const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),A)
-    const GrB_Matrix A,             // input matrix (NULL for scalar expansion)
-    const int Ikind,
-    const int Jkind,
-    const bool scalar_expansion,    // if true, expand scalar to A
-    const void *scalar,
-    const GrB_Type scalar_type      // type of the scalar
-) ;
-#endif
-
 int GB_subassigner_method           // return method to use in GB_subassigner
 (
     // outputs

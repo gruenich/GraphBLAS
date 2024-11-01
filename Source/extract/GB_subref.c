@@ -178,7 +178,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // Ensure input matrix is not jumbled.  Zombies are OK.
     // Pending tuples are OK (and ignored) for symbolic extraction.
     // GB_subref_phase0 may build the hyper_hash.
-    GB_MATRIX_WAIT_IF_JUMBLED (A) ;
+    GB_UNJUMBLE (A) ;
 
     //--------------------------------------------------------------------------
     // phase0: find vectors for C=A(I,J), and I,J properties

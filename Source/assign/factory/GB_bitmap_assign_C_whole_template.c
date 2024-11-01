@@ -31,8 +31,8 @@
         GB_PARTITION (pC_start, pC_end, cnzmax, tid, nthreads) ;
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
-            // int64_t iC = pC % cvlen ;
-            // int64_t jC = pC / cvlen ;
+            // int64_t iC = pC % Cvlen ;
+            // int64_t jC = pC / Cvlen ;
             GB_GET_MIJ (mij, pC) ;          // mij = Mask (pC)
             GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
         }

@@ -17,12 +17,12 @@
 #define GB_GETA_AND_UPDATE(z,Ax,p) if (Ax [p] > z) { z = Ax [p] ; }
 
 // A matrix (no typecasting to Z type here)
-#define GB_A_TYPE int8_t
+#define GB_A_TYPE  int8_t
 #define GB_DECLAREA(aij) int8_t aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
 // monoid properties:
-#define GB_Z_TYPE int8_t
+#define GB_Z_TYPE  int8_t
 #define GB_DECLARE_IDENTITY(z) int8_t z = INT8_MIN
 #define GB_DECLARE_IDENTITY_CONST(z) const int8_t z = INT8_MIN
 

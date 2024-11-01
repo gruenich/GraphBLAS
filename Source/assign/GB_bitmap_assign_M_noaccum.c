@@ -25,6 +25,7 @@
 // JIT: needed.
 
 #include "assign/GB_bitmap_assign_methods.h"
+#define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -40,17 +41,19 @@ GrB_Info GB_bitmap_assign_M_noaccum
     // inputs:
     const bool C_replace,       // descriptor for C
     const GrB_Index *I,         // I index list
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,         // J index list
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,         // mask matrix, which is not NULL here
-//  const bool Mask_comp,       // false here
+    #define Mask_comp false
     const bool Mask_struct,     // true if M is structural, false if valued
-//  const GrB_BinaryOp accum,   // not present
+    #define accum NULL
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
@@ -70,13 +73,16 @@ GrB_Info GB_bitmap_assign_M_noaccum
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, M, noaccum", GB0) ;
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
     GB_SLICE_M
-    GB_GET_A_AND_SCALAR
+    GB_GET_A_AND_SCALAR_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // C<M,repl or !repl>(I,J) = A or scalar
@@ -87,8 +93,8 @@ GrB_Info GB_bitmap_assign_M_noaccum
     //--------------------------------------------------------------------------
 
     // Cb [pC] += 2 for each entry M(i,j) in the mask
-    GB_bitmap_M_scatter (C, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-        M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_PLUS_2,
+    GB_bitmap_M_scatter (C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
+        M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_PLUS_2,
         M_ek_slicing, M_ntasks, M_nthreads) ;
 
 
@@ -104,7 +110,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
     // scatter A or the scalar into C(I,J)
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (GB_SCALAR_ASSIGN)
     {
 
         //----------------------------------------------------------------------
@@ -114,7 +120,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
         // if C FULL:  if C_replace false, no deletion occurs
         // otherwise: convert C to bitmap
 
-        if (assign_kind == GB_SUBASSIGN)
+        if (GB_ASSIGN_KIND == GB_SUBASSIGN)
         { 
 
             //------------------------------------------------------------------
@@ -129,7 +135,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 if (cb >= 2)                                \
                 {                                           \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                     Cb [pC] = 1 ;                           \
                     task_cnvals += (cb == 2) ;              \
                 }                                           \
@@ -143,7 +149,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
             #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
 
         }
-        else // assign_kind == GB_ASSIGN
+        else // GB_ASSIGN_KIND == GB_ASSIGN
         { 
 
             //------------------------------------------------------------------
@@ -160,7 +166,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 if (cb >= 2)                                \
                 {                                           \
                     /* Cx [pC] = scalar */                  \
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;   \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
                     Cb [pC] = keep ;                        \
                     task_cnvals += (cb == 2) ;              \
                 }                                           \
@@ -184,8 +190,8 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 // clear the mask
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
                 GB_bitmap_M_scatter (C,
-                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                    M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
+                    I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
+                    M, GB_MASK_STRUCT, GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }
@@ -214,7 +220,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
             if (cb >= 2)                                            \
             {                                                       \
                 /* Cx [pC] = Ax [pA] ; */                           \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork) ;   \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
                 Cb [pC] = 4 ;                                       \
                 task_cnvals += (cb == 2) ;                          \
             }                                                       \
@@ -225,7 +231,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
         // clear M from C and handle C_replace for row/col/assign
         //----------------------------------------------------------------------
 
-        if (assign_kind == GB_SUBASSIGN)
+        if (GB_ASSIGN_KIND == GB_SUBASSIGN)
         {
 
             //------------------------------------------------------------------
@@ -266,7 +272,6 @@ GrB_Info GB_bitmap_assign_M_noaccum
             // row/col/assign case
             //------------------------------------------------------------------
 
-            #define GB_NO_SUBASSIGN_CASE
 
             if (C_replace)
             { 
@@ -290,7 +295,9 @@ GrB_Info GB_bitmap_assign_M_noaccum
                     Cb [pC] = (cb == 3) ;                   \
                     task_cnvals -= (cb == 1) ;              \
                 }
+                #define GB_NO_SUBASSIGN_CASE
                 #include "assign/factory/GB_bitmap_assign_C_template.c"
+                #undef GB_NO_SUBASSIGN_CASE
             }
             else
             { 
@@ -308,8 +315,9 @@ GrB_Info GB_bitmap_assign_M_noaccum
                 // clear M from C 
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
                 GB_bitmap_M_scatter (C,
-                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                    M, Mask_struct, assign_kind, GB_BITMAP_M_SCATTER_MOD_2,
+                    I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
+                    M, GB_MASK_STRUCT, GB_ASSIGN_KIND,
+                    GB_BITMAP_M_SCATTER_MOD_2,
                     M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }

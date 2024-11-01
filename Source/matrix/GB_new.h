@@ -59,9 +59,6 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const bool iso              // if true, allocate A as iso
 ) ;
 
-// See GB_callbacks.h:
-// GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc) ;
-
 GrB_Info GB_ix_realloc      // reallocate space in a matrix
 (
     GrB_Matrix A,               // matrix to allocate space for
@@ -86,11 +83,6 @@ void GB_hyper_hash_free         // free the A->Y hyper_hash of a matrix
 void GB_phybix_free             // free all content of a matrix
 (
     GrB_Matrix A                // matrix with content to free
-) ;
-
-void GB_Matrix_free             // free a matrix
-(
-    GrB_Matrix *Ahandle         // handle of matrix to free
 ) ;
 
 #endif
