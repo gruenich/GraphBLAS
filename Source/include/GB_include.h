@@ -82,10 +82,10 @@
     #include "include/GB_saxpy3task_struct.h"
     #include "include/GB_callback.h"
     #include "include/GB_hyper_hash_lookup.h"
-    #include "include/GB_ok.h"
-    #include "include/GB_ijlist.h"
 
     // not used by CUDA
+    #include "include/GB_ok.h"
+    #include "include/GB_ijlist.h"
     #include "include/GB_bytes.h"
     #include "include/GB_atomics.h"
     #include "include/GB_assert_kernels.h"
@@ -125,10 +125,10 @@
     #include "mxm/include/GB_saxpy3task_struct.h"
     #include "callback/include/GB_callback.h"
     #include "hyper/include/GB_hyper_hash_lookup.h"
-    #include "ok/include/GB_ok.h"
-    #include "ij/include/GB_ijlist.h"
 
     // not used by CUDA
+    #include "ok/include/GB_ok.h"
+    #include "ij/include/GB_ijlist.h"
     #include "type/include/GB_bytes.h"
     #include "omp/include/GB_atomics.h"
     #include "ok/include/GB_assert_kernels.h"
