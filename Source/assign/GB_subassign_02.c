@@ -47,6 +47,7 @@ GrB_Info GB_subassign_02
     const GrB_Matrix A,
     #define scalar NULL
     #define scalar_type NULL
+    #define assign_kind GB_SUBASSIGN
     GB_Werk Werk
 )
 {

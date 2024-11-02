@@ -228,8 +228,8 @@ GrB_Info GB_subassign_06s_and_14
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,
     const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Werk Werk
 ) ;
@@ -329,8 +329,8 @@ GrB_Info GB_subassign_10_and_18
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,
     const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Werk Werk
 ) ;
@@ -380,8 +380,8 @@ GrB_Info GB_subassign_12_and_20
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,
     const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Werk Werk
@@ -458,8 +458,8 @@ GrB_Info GB_subassign_08s_and_16
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,
     const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Werk Werk

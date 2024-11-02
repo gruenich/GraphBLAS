@@ -43,11 +43,13 @@ GrB_Info GB_subassign_10_and_18
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    // FIXME: args out of order
-    const bool Mask_struct,         // if true, use the only structure of M
     const bool Mask_comp,           // if true, !M, else use M
+    const bool Mask_struct,         // if true, use the only structure of M
     #define accum NULL
     const GrB_Matrix A,
+    #define scalar NULL
+    #define scalar_type NULL
+    #define assign_kind GB_SUBASSIGN
     GB_Werk Werk
 )
 {
