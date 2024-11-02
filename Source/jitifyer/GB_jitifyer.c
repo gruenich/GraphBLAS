@@ -1792,7 +1792,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_assign_family : 
             op1 = op ;
-            scode_digits = 12 ;
+            scode_digits = 13 ;
             break ;
 
         case GB_jit_build_family  : 

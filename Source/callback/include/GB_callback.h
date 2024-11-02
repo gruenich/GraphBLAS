@@ -35,8 +35,6 @@ typedef GB_CALLBACK_EWISE_SLICE_PROTO ((*GB_ewise_slice_f)) ;
 typedef GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO ((*GB_subassign_IxJ_slice_f)) ;
 typedef GB_CALLBACK_PENDING_ENSURE_PROTO ((*GB_Pending_ensure_f)) ;
 typedef GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO ((*GB_subassign_08n_slice_f)) ;
-typedef GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO ((*GB_subassign_symbolic_f)) ;
-typedef GB_CALLBACK_MATRIX_FREE_PROTO ((*GB_Matrix_free_f)) ;
 
 //------------------------------------------------------------------------------
 // GB_callback: a struct to pass to kernels to give them their callback methods
@@ -65,8 +63,6 @@ typedef struct
     GB_subassign_IxJ_slice_f    GB_subassign_IxJ_slice_func ;
     GB_Pending_ensure_f         GB_Pending_ensure_func ;
     GB_subassign_08n_slice_f    GB_subassign_08n_slice_func ;
-    GB_subassign_symbolic_f     GB_subassign_symbolic_func ;
-    GB_Matrix_free_f            GB_Matrix_free_func ;
 }
 GB_callback_struct ;
 

@@ -29,6 +29,7 @@ GrB_Info GB_subassign_05
 (
     GrB_Matrix C,
     // input:
+    #define C_replace false
     const GrB_Index *I,
     const int64_t ni,
     const int64_t nI,
@@ -40,9 +41,13 @@ GrB_Info GB_subassign_05
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    #define Mask_comp false
     const bool Mask_struct,
+    #define accum NULL
+    #define A NULL
     const void *scalar,
     const GrB_Type scalar_type,
+    #define assign_kind GB_SUBASSIGN
     GB_Werk Werk
 )
 {
@@ -51,9 +56,10 @@ GrB_Info GB_subassign_05
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
-
     GB_UNJUMBLE (C) ;
     GB_UNJUMBLE (M) ;
 
@@ -61,7 +67,7 @@ GrB_Info GB_subassign_05
     // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_subassign_jit (C,
+    info = GB_subassign_jit (C,
         /* C_replace: */ false,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
@@ -71,6 +77,7 @@ GrB_Info GB_subassign_05
         /* accum: */ NULL,
         /* A: */ NULL,
         scalar, scalar_type,
+        /* S: */ NULL,
         GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05, "subassign_05",
         Werk) ;
     if (info != GrB_NO_VALUE)
@@ -82,7 +89,6 @@ GrB_Info GB_subassign_05
     // via the generic kernel
     //--------------------------------------------------------------------------
 
-    GrB_BinaryOp accum = NULL ;
     #define GB_GENERIC
     #define GB_SCALAR_ASSIGN 1
     #include "assign/include/GB_assign_shared_definitions.h"

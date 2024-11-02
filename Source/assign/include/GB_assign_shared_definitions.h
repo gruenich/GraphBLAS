@@ -20,6 +20,15 @@
 #define GB_FREE_WORKSPACE ;
 #endif
 
+#undef  GB_FREE_S
+#ifdef  GB_GENERIC
+// generic kernels are inside their calling method, so they must free S
+#define GB_FREE_S GB_Matrix_free (&S)
+#else
+// JIT, PreJIT, and factory kernels are passed S already construct
+#define GB_FREE_S
+#endif
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                             \
 {                                               \
@@ -31,7 +40,7 @@
     GB_FREE_WORK (&Z_to_S, Z_to_S_size) ;       \
     GB_FREE_WORK (&Z_to_A, Z_to_A_size) ;       \
     GB_FREE_WORK (&Z_to_M, Z_to_M_size) ;       \
-    GB_Matrix_free (&S) ;                       \
+    GB_FREE_S ;                                 \
 }
 
 //==============================================================================
@@ -163,9 +172,7 @@
     int64_t *restrict Z_to_X = NULL ; size_t Z_to_X_size = 0 ;              \
     int64_t *restrict Z_to_S = NULL ; size_t Z_to_S_size = 0 ;              \
     int64_t *restrict Z_to_A = NULL ; size_t Z_to_A_size = 0 ;              \
-    int64_t *restrict Z_to_M = NULL ; size_t Z_to_M_size = 0 ;              \
-    struct GB_Matrix_opaque S_header ;                                      \
-    GrB_Matrix S = NULL ;
+    int64_t *restrict Z_to_M = NULL ; size_t Z_to_M_size = 0 ;
 
 //------------------------------------------------------------------------------
 // GB_GET_C: get the C matrix (cannot be bitmap)

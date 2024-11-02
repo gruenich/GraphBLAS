@@ -16,6 +16,24 @@
 #include "include/GB_unused.h"
 
 //------------------------------------------------------------------------------
+// GB_subassign_symbolic: S = C(I,J)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
+(
+    // output
+    GrB_Matrix S,           // S = symbolic(C(I,J)), static header
+    // inputs, not modified:
+    const GrB_Matrix C,     // matrix to extract the pattern of
+    const GrB_Index *I,     // index list for S = C(I,J), or GrB_ALL, etc
+    const int64_t ni,       // length of I, or special
+    const GrB_Index *J,     // index list for S = C(I,J), or GrB_ALL, etc
+    const int64_t nj,       // length of J, or special
+    const bool S_must_not_be_jumbled,   // if true, S cannot be jumbled
+    GB_Werk Werk
+) ;
+
+//------------------------------------------------------------------------------
 // GB_subassign_zombie: C(I,J) = empty ; using S
 //------------------------------------------------------------------------------
 

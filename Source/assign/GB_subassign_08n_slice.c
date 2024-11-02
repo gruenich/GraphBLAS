@@ -42,11 +42,13 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Matrix S = NULL ;           // not constructed
+    GB_EMPTY_TASKLIST
+
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_BITMAP (M)) ;    // Method 08n is not used for M bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;    // Method 08n is not used for A bitmap
 
-    GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;

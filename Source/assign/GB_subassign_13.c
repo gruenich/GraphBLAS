@@ -24,7 +24,7 @@
 
 #include "assign/GB_subassign_methods.h"
 #include "jitifyer/GB_stringify.h"
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_Matrix_free (&S) ;
 
 GrB_Info GB_subassign_13
 (
@@ -48,6 +48,7 @@ GrB_Info GB_subassign_13
     #define A NULL
     const void *scalar,
     const GrB_Type scalar_type,
+    #define assign_kind GB_SUBASSIGN
     GB_Werk Werk
 )
 {
@@ -56,16 +57,25 @@ GrB_Info GB_subassign_13
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
-
     GB_UNJUMBLE (M) ;
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    struct GB_Matrix_opaque S_header ;
+    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_subassign_jit (C,
+    info = GB_subassign_jit (C,
         /* C_replace: */ false,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
@@ -75,10 +85,12 @@ GrB_Info GB_subassign_13
         /* accum: */ NULL,
         /* A: */ NULL,
         scalar, scalar_type,
+        S,
         GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_13, "subassign_13",
         Werk) ;
     if (info != GrB_NO_VALUE)
     { 
+        GB_FREE_ALL ;
         return (info) ;
     }
 

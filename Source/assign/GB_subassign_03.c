@@ -22,12 +22,13 @@
 
 #include "assign/GB_subassign_methods.h"
 #include "jitifyer/GB_stringify.h"
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_Matrix_free (&S) ;
 
 GrB_Info GB_subassign_03
 (
     GrB_Matrix C,
     // input:
+    #define C_replace false
     const GrB_Index *I,
     const int64_t ni,
     const int64_t nI,
@@ -38,9 +39,14 @@ GrB_Info GB_subassign_03
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
+    #define M NULL
+    #define Mask_comp false
+    #define Mask_struct true
     const GrB_BinaryOp accum,
+    #define A NULL
     const void *scalar,
     const GrB_Type scalar_type,
+    #define assign_kind GB_SUBASSIGN
     GB_Werk Werk
 )
 {
@@ -49,13 +55,23 @@ GrB_Info GB_subassign_03
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;
     ASSERT (!GB_IS_BITMAP (C)) ;
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    struct GB_Matrix_opaque S_header ;
+    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_subassign_jit (C,
+    info = GB_subassign_jit (C,
         /* C_replace: */ false,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
@@ -65,10 +81,12 @@ GrB_Info GB_subassign_03
         accum,
         /* A: */ NULL,
         scalar, scalar_type,
+        S,
         GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_03, "subassign_03",
         Werk) ;
     if (info != GrB_NO_VALUE)
     { 
+        GB_FREE_ALL ;
         return (info) ;
     }
 

@@ -53,6 +53,8 @@ GrB_Info GB_subassign_23      // C += A; C is full
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
     ASSERT_MATRIX_OK (C, "C for C+=A", GB0) ;
@@ -71,14 +73,13 @@ GrB_Info GB_subassign_23      // C += A; C is full
     ASSERT (A->vlen == C->vlen) ;
     ASSERT (A->vdim == C->vdim) ;
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
     //--------------------------------------------------------------------------
     // get the operator
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     if (accum->opcode == GB_FIRST_binop_code || C->iso)
     { 
         // nothing to do
@@ -149,6 +150,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
             /* accum: */ accum,
             /* A: */ A,
             /* scalar, scalar_type: */ NULL, NULL,
+            /* S: */ NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23",
             Werk) ;
     }

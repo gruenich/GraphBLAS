@@ -26,7 +26,11 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // extract the assign scode
     //--------------------------------------------------------------------------
 
-    // assign_kind, Ikind, and Jkind (2 hex digits)
+    // S sparsity (2 bits, 1 hex digit)
+    int ssparsity   = GB_RSHIFT (scode, 48, 2) ;
+
+    // assign_kind, Ikind, Jkind, and S present (2 hex digits)
+    int S_present   = GB_RSHIFT (scode, 47, 1) ;
     int C_repl      = GB_RSHIFT (scode, 46, 1) ;
     int assign_kind = GB_RSHIFT (scode, 44, 2) ;
     int Ikind       = GB_RSHIFT (scode, 42, 2) ;
@@ -424,6 +428,21 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             " /* unused */\n") ;
     }
 #endif
+
+    //--------------------------------------------------------------------------
+    // construct the macros for S
+    //--------------------------------------------------------------------------
+
+    if (S_present)
+    {
+        GB_macrofy_sparsity (fp, "S", ssparsity) ;
+        fprintf (fp, "#define GB_S_CONSTRUCTED 1\n") ;
+    }
+    else
+    {
+        fprintf (fp, "\n// S matrix: not constructed\n")  ;
+        fprintf (fp, "#define GB_S_CONSTRUCTED 0\n") ;
+    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions

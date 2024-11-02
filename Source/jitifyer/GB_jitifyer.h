@@ -116,13 +116,6 @@ typedef enum
     GB_JIT_KERNEL_SUBASSIGN_03  = 47, // GB_subassign_03
     GB_JIT_KERNEL_SUBASSIGN_04  = 48, // GB_subassign_04
     GB_JIT_KERNEL_SUBASSIGN_05  = 49, // GB_subassign_05
-
-    //--------------------------------------------------------------------------
-    // future:: the following kernels have not been implemented yet
-    //--------------------------------------------------------------------------
-
-    // future:: assign/subassign methods: continued
-
     GB_JIT_KERNEL_SUBASSIGN_06n = 50, // GB_subassign_06n
     GB_JIT_KERNEL_SUBASSIGN_06s = 51, // GB_subassign_06s_and_14
     GB_JIT_KERNEL_SUBASSIGN_07  = 52, // GB_subassign_07
@@ -136,6 +129,10 @@ typedef enum
     GB_JIT_KERNEL_SUBASSIGN_15  = 60, // GB_subassign_15
     GB_JIT_KERNEL_SUBASSIGN_17  = 61, // GB_subassign_17
     GB_JIT_KERNEL_SUBASSIGN_19  = 62, // GB_subassign_19
+
+    //--------------------------------------------------------------------------
+    // future:: the following kernels have not been implemented yet
+    //--------------------------------------------------------------------------
 
     // future:: bitmap assign/subassign:
     GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC           = 63, // GB_bitmap_assign_M_accum

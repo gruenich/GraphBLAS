@@ -34,7 +34,6 @@
     //--------------------------------------------------------------------------
 
     GB_EMPTY_TASKLIST ;
-
     GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;

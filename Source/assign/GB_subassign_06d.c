@@ -55,26 +55,26 @@ GrB_Info GB_subassign_06d
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
-
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
     //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     const GB_Type_code ccode = C->type->code ;
 
     //--------------------------------------------------------------------------
@@ -178,6 +178,7 @@ GrB_Info GB_subassign_06d
                 /* accum: */ NULL,
                 /* A: */ A,
                 /* scalar, scalar_type: */ NULL, NULL,
+                /* S: */ NULL,
                 GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_06d, "subassign_06d",
                 Werk) ;
         }

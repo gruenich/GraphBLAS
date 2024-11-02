@@ -31,8 +31,6 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
     GB_GET_CALLBACK (GB_Pending_ensure) ;
 //  GB_GET_CALLBACK (GB_subassign_08n_slice) ;
-    GB_GET_CALLBACK (GB_subassign_symbolic) ;
-    GB_GET_CALLBACK (GB_Matrix_free) ;
 
     #include "template/GB_subassign_02_template.c"
 }

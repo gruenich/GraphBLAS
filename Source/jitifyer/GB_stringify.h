@@ -1336,13 +1336,15 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
+    bool Mask_struct,       // mask is structural
     // operator:
     GrB_BinaryOp accum,     // the accum operator (may be NULL)
-    // A matrix
+    // A matrix or scalar
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
+    // S matrix:
+    GrB_Matrix S,           // may be MULL
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 ) ;
 
@@ -1373,13 +1375,15 @@ uint64_t GB_encodify_assign     // encode an assign problem
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
+    bool Mask_struct,       // mask is structural
     // operator:
     GrB_BinaryOp accum,     // the accum operator (may be NULL)
     // A matrix or scalar
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
+    // S matrix:
+    GrB_Matrix S,           // may be NULL
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 ) ;
 
@@ -1411,6 +1415,8 @@ GrB_Info GB_subassign_jit
     const GrB_Matrix A,         // NULL for scalar assignment
     const void *scalar,
     const GrB_Type scalar_type,
+    // S matrix:
+    const GrB_Matrix S,         // NULL if not constructed
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc

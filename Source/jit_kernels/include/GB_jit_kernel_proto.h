@@ -508,6 +508,7 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
     const GrB_Type scalar_type,                                         \
+    const GrB_Matrix S,                                                 \
     const int assign_kind,                                              \
     GB_Werk Werk,                                                       \
     const int nthreads_max,                                             \

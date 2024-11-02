@@ -77,16 +77,11 @@
 #undef GB_M_TYPE
 #undef GB_MCAST
 
-// accessing the S matrix (FIXME) for assign methods
-/*
+// accessing the S matrix for assign methods
 #undef GBP_S
 #undef GBH_S
 #undef GBI_S
 #undef GBB_S
-#undef GBX_S
-#undef GB_S_NVALS
-#undef GB_S_NHELD
-*/
 
 #endif
 

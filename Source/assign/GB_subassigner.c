@@ -98,13 +98,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C input for subassigner", GB0) ;
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
 
     //--------------------------------------------------------------------------
     // methods that rely on C and A being dense assume they are not jumbled
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_PENDING (A)) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
     if (GB_is_dense (A))
     { 
         // methods that rely on A being dense assume A is not jumbled

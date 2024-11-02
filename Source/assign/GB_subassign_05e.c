@@ -49,14 +49,11 @@ GrB_Info GB_subassign_05e
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (C->iso) ;
 
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_05e", GB0) ;
     ASSERT_MATRIX_OK (M, "M for subassign method_05e", GB0) ;
     ASSERT (GB_nnz (C) == 0) ;
@@ -86,7 +83,8 @@ GrB_Info GB_subassign_05e
     // set C->iso = true    OK
     GB_OK (GB_dup_worker (&C, true, M, false, C->type)) ;
     C->is_csc = C_is_csc ;
-    GB_cast_scalar (C->x, C->type->code, scalar, scalar_type->code, scalar_type->size) ;
+    GB_cast_scalar (C->x, C->type->code, scalar, scalar_type->code,
+        scalar_type->size) ;
 
     C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;
