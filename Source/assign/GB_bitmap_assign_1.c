@@ -30,6 +30,8 @@
 
 // JIT: needed.
 
+// If C were full: entries can be deleted only if C_replace is true.
+
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
@@ -37,7 +39,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_bitmap_assign_fullM_accum
+GrB_Info GB_bitmap_assign_1     // C bitmap, M bitmap/full, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -69,8 +71,9 @@ GrB_Info GB_bitmap_assign_fullM_accum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit1", M, Mask_comp, accum,
-        Ikind, Jkind, assign_kind) ;
+    GB_assign_burble ("bit1", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M full, accum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, accum", GB0) ;
@@ -153,13 +156,13 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 // C<M>(I,J) += scalar where M has the same size as C
                 #undef  GB_GET_pM
                 #define GB_GET_pM pC
-                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+                #include "template/GB_bitmap_assign_IxJ_template.c"
                 break ;
             case GB_SUBASSIGN : 
                 // C(I,J)<M> += scalar where M has the same size as A
                 #undef  GB_GET_pM
                 #define GB_GET_pM pA
-                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+                #include "template/GB_bitmap_assign_IxJ_template.c"
                 break ;
             default: ;
         }
@@ -217,25 +220,25 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 // C<m>(i,J) += A where m is a 1-by-C->vdim row vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM jC
-                #include "assign/factory/GB_bitmap_assign_A_template.c"
+                #include "template/GB_bitmap_assign_A_template.c"
                 break ;
             case GB_COL_ASSIGN : 
                 // C<m>(I,j) += A where m is a C->vlen-by-1 column vector
                 #undef  GB_GET_pM
                 #define GB_GET_pM iC
-                #include "assign/factory/GB_bitmap_assign_A_template.c"
+                #include "template/GB_bitmap_assign_A_template.c"
                 break ;
             case GB_ASSIGN : 
                 // C<M>(I,J) += A where M has the same size as C
                 #undef  GB_GET_pM
                 #define GB_GET_pM pC
-                #include "assign/factory/GB_bitmap_assign_A_template.c"
+                #include "template/GB_bitmap_assign_A_template.c"
                 break ;
             case GB_SUBASSIGN : 
                 // C(I,J)<M> += A where M has the same size as A
                 #undef  GB_GET_pM
                 #define GB_GET_pM (iA + jA * nI)
-                #include "assign/factory/GB_bitmap_assign_A_template.c"
+                #include "template/GB_bitmap_assign_A_template.c"
                 break ;
             default: ;
         }
@@ -266,7 +269,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
                 task_cnvals -= (cb == 1) ;  \
             }                               \
         }
-        #include "assign/factory/GB_bitmap_assign_C_template.c"
+        #include "template/GB_bitmap_assign_C_template.c"
     }
 
     //--------------------------------------------------------------------------

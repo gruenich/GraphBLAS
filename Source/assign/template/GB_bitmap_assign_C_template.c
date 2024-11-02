@@ -86,7 +86,7 @@
         case GB_ASSIGN : 
         {
             // iterate over all of C(:,:).
-            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+            #include "template/GB_bitmap_assign_C_whole_template.c"
         }
         break ;
         #endif
@@ -105,7 +105,7 @@
                 GB_GET_MIJ (mij, pA) ;          /* mij = Mask (pA)      */  \
                 GB_CIJ_WORK (pC) ;              /* operate on C(iC,jC)  */  \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
         }
         break ;
         #endif

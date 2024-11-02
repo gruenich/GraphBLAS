@@ -440,17 +440,17 @@ GrB_Info GB_assign_prep
         // The mask M is empty, and complemented, and thus M(i,j)=0 for all i
         // and j.  The result does not depend on A or accum.  The output C is
         // either untouched (if C_replace is false) or cleared (if C_replace is
-        // true).  However, the GrB_Row_assign and GrB_Col_assign only clear
-        // their specific row or column of C, respectively.  GB_subassign only
-        // clears C(I,J).  GrB_assign clears all of C.
+        // true).  However, GrB_Row_assign and GrB_Col_assign only clear their
+        // specific row or column of C, respectively.  GB_subassign only clears
+        // C(I,J).  GrB_assign clears all of C.
 
-        // M is NULL so C and M cannot be the same, and A is ignored so
-        // it doesn't matter whether or not C == A.  Thus C is not aliased
-        // to the inputs.
+        // M is NULL so C and M cannot be the same, and A is ignored so it
+        // doesn't matter whether or not C == A.  Thus C is not aliased to the
+        // inputs.
 
-        // This condition is like GB_RETURN_IF_QUICK_MASK(...), except that
-        // the action taken by C_replace is different for row/col assign
-        // and subassign.
+        // This condition is like GB_RETURN_IF_QUICK_MASK(...), except that the
+        // action taken by C_replace is different for row/col assign and
+        // subassign.
 
         if (*C_replace)
         {

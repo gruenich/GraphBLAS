@@ -57,21 +57,21 @@ GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter)
 
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] += 2
-            #include "assign/factory/GB_bitmap_assign_M_template.c"
+            #include "template/GB_bitmap_assign_M_template.c"
             break ;
 
         case GB_BITMAP_M_SCATTER_MINUS_2 :      // Cb (i,j) -= 2
 
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] -= 2
-            #include "assign/factory/GB_bitmap_assign_M_template.c"
+            #include "template/GB_bitmap_assign_M_template.c"
             break ;
 
         case GB_BITMAP_M_SCATTER_MOD_2 :        // Cb (i,j) %= 2
 
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] %= 2
-            #include "assign/factory/GB_bitmap_assign_M_template.c"
+            #include "template/GB_bitmap_assign_M_template.c"
             break ;
 
         default: ;

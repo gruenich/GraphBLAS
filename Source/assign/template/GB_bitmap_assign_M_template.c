@@ -29,19 +29,19 @@
     {
         case GB_ROW_ASSIGN : 
             // row assignment: C<M>(iC,J), where M is a row vector
-            #include "assign/factory/GB_bitmap_assign_M_row_template.c"
+            #include "template/GB_bitmap_assign_M_row_template.c"
             break ;
         case GB_COL_ASSIGN : 
             // column assignment: C<M>(I,jC), where M is a column vector
-            #include "assign/factory/GB_bitmap_assign_M_col_template.c"
+            #include "template/GB_bitmap_assign_M_col_template.c"
             break ;
         case GB_ASSIGN : 
             // GrB_assign: C<M>(I,J), where M is the same size as C
-            #include "assign/factory/GB_bitmap_assign_M_all_template.c"
+            #include "template/GB_bitmap_assign_M_all_template.c"
             break ;
         case GB_SUBASSIGN : 
             // GxB_subassign: C(I,J)<M>, where M is same size as C(I,J) and A
-            #include "assign/factory/GB_bitmap_assign_M_sub_template.c"
+            #include "template/GB_bitmap_assign_M_sub_template.c"
             break ;
         default: ;
     }

@@ -31,7 +31,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
 
     // assign_kind, Ikind, Jkind, and S present (2 hex digits)
     int S_present   = GB_RSHIFT (scode, 47, 1) ;
-    int C_repl      = GB_RSHIFT (scode, 46, 1) ;
+    int C_replace   = GB_RSHIFT (scode, 46, 1) ;
     int assign_kind = GB_RSHIFT (scode, 44, 2) ;
     int Ikind       = GB_RSHIFT (scode, 42, 2) ;
     int Jkind       = GB_RSHIFT (scode, 40, 2) ;
@@ -77,12 +77,19 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case 2 : M_sparsity = GxB_BITMAP      ; break ;
         case 3 : M_sparsity = GxB_FULL        ; break ;
     }
-    GB_assign_describe (description, SLEN, C_repl, Ikind, Jkind,
+
+    switch (assign_kind)
+    {
+        case GB_ASSIGN     : fprintf (fp, "// assign: "     ) ; break ;
+        case GB_SUBASSIGN  : fprintf (fp, "// subassign: "  ) ; break ;
+        case GB_ROW_ASSIGN : fprintf (fp, "// row assign: " ) ; break ;
+        case GB_COL_ASSIGN : fprintf (fp, "// col assign: " ) ; break ;
+        default:;
+    }
+    GB_assign_describe (description, SLEN, C_replace, Ikind, Jkind,
         M_is_null, M_sparsity, Mask_comp, Mask_struct, accum, s_assign,
         assign_kind) ;
-    fprintf (fp, "// assign/subassign: %s\n", description) ;
-
-    fprintf (fp, "#define GB_SCALAR_ASSIGN %d\n", s_assign ? 1 : 0) ;
+    fprintf (fp, "%s\n", description) ;
 
     fprintf (fp, "#define GB_ASSIGN_KIND ") ;
     switch (assign_kind)
@@ -93,6 +100,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case GB_COL_ASSIGN : fprintf (fp, "GB_COL_ASSIGN\n" ) ; break ;
         default:;
     }
+
+    fprintf (fp, "#define GB_SCALAR_ASSIGN %d\n", s_assign ? 1 : 0) ;
 
     fprintf (fp, "#define GB_I_KIND ") ;
     switch (Ikind)
@@ -114,7 +123,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         default:;
     }
 
-    fprintf (fp, "#define GB_C_REPLACE %d\n", C_repl) ;
+    fprintf (fp, "#define GB_C_REPLACE %d\n", C_replace) ;
 
     //--------------------------------------------------------------------------
     // describe the accum operator

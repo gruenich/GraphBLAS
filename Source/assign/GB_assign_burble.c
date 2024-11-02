@@ -11,6 +11,7 @@
 
 void GB_assign_burble
 (
+    const char *method,         // method
     const bool C_replace,       // descriptor for C
     const int Ikind,
     const int Jkind,
@@ -46,6 +47,6 @@ void GB_assign_burble
     // burble the description
     //--------------------------------------------------------------------------
 
-    GBURBLE ("%s", description) ;
+    GBURBLE ("(%s: %s) ", method, description) ;
 }
 

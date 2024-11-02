@@ -29,10 +29,12 @@
 // kind:        assign, row assign, col assign, or subassign (all the same)
 
 // If Mask_comp is true, then an empty mask is complemented.  This case has
-// already been handled by GB_assign_prep, which calls
-// GB_bitmap_assign_noM_noaccum, with a scalar (which is unused).
+// already been handled by GB_assign_prep, which calls GB_bitmap_assign with a
+// scalar (which is unused).
 
 // JIT: needed.
+
+// If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
@@ -41,7 +43,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_bitmap_assign_noM_accum
+GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -73,8 +75,9 @@ GrB_Info GB_bitmap_assign_noM_accum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit5", NULL, Mask_comp, accum,
-        Ikind, Jkind, assign_kind) ;
+    GB_assign_burble ("bit5", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, no M, accum", GB0) ;
 
@@ -85,7 +88,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap TODO: C full is OK
+    GB_GET_C_BITMAP ;           // C must be bitmap
     GB_GET_A_AND_SCALAR_FOR_BITMAP
     GB_GET_ACCUM_FOR_BITMAP
 
@@ -124,7 +127,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                     GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
                 }                                           \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
 
         }
         else
@@ -158,7 +161,7 @@ GrB_Info GB_bitmap_assign_noM_accum
                     GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
                 }                                                       \
             }
-            #include "assign/factory/GB_bitmap_assign_A_template.c"
+            #include "template/GB_bitmap_assign_A_template.c"
         }
 
     }
@@ -186,7 +189,7 @@ GrB_Info GB_bitmap_assign_noM_accum
             Cb [pC] = 0 ;               \
             task_cnvals -= (cb == 1) ;  \
         }
-        #include "assign/factory/GB_bitmap_assign_C_template.c"
+        #include "template/GB_bitmap_assign_C_template.c"
     }
 #endif
 

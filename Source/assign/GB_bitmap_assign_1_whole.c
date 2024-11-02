@@ -30,6 +30,8 @@
 
 // JIT: needed.
 
+// If C were full: entries can be deleted only if C_replace is true.
+
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
@@ -37,7 +39,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_bitmap_assign_fullM_accum_whole
+GrB_Info GB_bitmap_assign_1_whole   // C bitmap, M bitmap/full, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -69,8 +71,9 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit1:whole", M, Mask_comp, accum,
-        GB_ALL, GB_ALL, GB_ASSIGN) ;
+    GB_assign_burble ("bit1_whole", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M full, accum, whole", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, accum, whole", GB0) ;
@@ -140,7 +143,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                     task_cnvals -= (cb == 1) ;                  \
                 }                                               \
             }
-            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+            #include "template/GB_bitmap_assign_C_whole_template.c"
 
         }
         else
@@ -169,7 +172,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                     }                                           \
                 }                                               \
             }
-            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+            #include "template/GB_bitmap_assign_C_whole_template.c"
         }
 
     }
@@ -221,7 +224,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                         task_cnvals -= (cb == 1) ;                             \
                     }                                                          \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
 
             }
             else
@@ -251,7 +254,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                         }                                                   \
                     }                                                       \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
             }
 
         }
@@ -284,7 +287,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                     }                                                       \
                 }                                                           \
             }
-            #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
+            #include "template/GB_bitmap_assign_A_whole_template.c"
 
             // clear the mask and delete entries not assigned
             if (C_replace)
@@ -300,7 +303,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
                         task_cnvals -= (cb == 1) ;      \
                     }                                   \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
             }
         }
     }

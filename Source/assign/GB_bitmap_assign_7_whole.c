@@ -1,16 +1,16 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_notM_noaccum_whole:  assign to C bitmap
+// GB_bitmap_assign_notM_accum_whole:  assign to C bitmap
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-// C<!M> = A       assign
-// C<!M> = A       subassign
+// C<!M> += A       assign
+// C<!M> += A       subassign
 
-// C<!M,repl> = A       assign
-// C<!M,repl> = A       subassign
+// C<!M,repl> += A       assign
+// C<!M,repl> += A       subassign
 //------------------------------------------------------------------------------
 
 // C:           bitmap
@@ -18,11 +18,13 @@
 // Mask_comp:   true
 // Mask_struct: true or false
 // C_replace:   true or false
-// accum:       not present
+// accum:       present
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign or subassign (same action)
 
 // JIT: needed.
+
+// If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
@@ -34,7 +36,7 @@
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
-GrB_Info GB_bitmap_assign_notM_noaccum_whole
+GrB_Info GB_bitmap_assign_7_whole   // C bitmap, !M sparse/hyper, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -53,7 +55,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     const GrB_Matrix M,         // mask matrix
     #define Mask_comp true      /* true here, for !M only */
     const bool Mask_struct,     // true if M is structural, false if valued
-    #define accum NULL          /* not present */
+    const GrB_BinaryOp accum,   // present
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
@@ -66,12 +68,14 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit8:whole", M, true, NULL,
-        GB_ALL, GB_ALL, GB_ASSIGN) ;
+    GB_assign_burble ("bit7_whole", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
-    ASSERT_MATRIX_OK (C, "C for bitmap assign, !M, noaccum", GB0) ;
-    ASSERT_MATRIX_OK (M, "M for bitmap assign, !M, noaccum", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, !M, noaccum", GB0) ;
+    ASSERT (GB_JUMBLED_OK (M)) ;
+    ASSERT_MATRIX_OK (C, "C for bitmap assign, !M, accum", GB0) ;
+    ASSERT_MATRIX_OK (M, "M for bitmap assign, !M, accum", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, !M, accum", GB0) ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
@@ -81,11 +85,12 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_SLICE_M
+    GB_SLICE_M_FOR_BITMAP
     GB_GET_A_AND_SCALAR_FOR_BITMAP
+    GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
-    // scatter M into the bitmap of C
+    // scatter M
     //--------------------------------------------------------------------------
 
     // Cb [pC] += 2 for each entry M(i,j) in the mask
@@ -105,14 +110,14 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     {
 
         //----------------------------------------------------------------------
-        // scalar assignment: C<!M, replace or !replace> = scalar
+        // scalar assignment: C<!M, replace or !replace> += scalar
         //----------------------------------------------------------------------
 
         if (C_replace)
         { 
 
             //------------------------------------------------------------------
-            // C<!M,replace> = scalar
+            // C<!M,replace> += scalar
             //------------------------------------------------------------------
 
             #undef  GB_CIJ_WORK
@@ -127,8 +132,8 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 1: /* C(i,j) present, !M(i,j) = 1 */       \
-                        /* Cx [pC] = scalar */                      \
-                        GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
+                        /* Cx [pC] += scalar */                     \
+                        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;      \
                         break ;                                     \
                     case 2: /* C(i,j) not present, !M(i,j) = 0 */   \
                         /* clear the mask from C */                 \
@@ -142,14 +147,14 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     default: ;                                      \
                 }                                                   \
             }
-            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+            #include "template/GB_bitmap_assign_C_whole_template.c"
 
         }
         else
         { 
 
             //------------------------------------------------------------------
-            // C<!M> = scalar
+            // C<!M> += scalar
             //------------------------------------------------------------------
 
             #undef  GB_CIJ_WORK
@@ -164,8 +169,8 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         task_cnvals++ ;                             \
                         break ;                                     \
                     case 1: /* C(i,j) present, !M(i,j) = 1 */       \
-                        /* Cx [pC] = scalar */                      \
-                        GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
+                        /* Cx [pC] += scalar */                     \
+                        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;      \
                         break ;                                     \
                     case 2: /* C(i,j) not present, !M(i,j) = 0 */   \
                         /* clear the mask from C */                 \
@@ -178,7 +183,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                     default: ;                                      \
                 }                                                   \
             }
-            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+            #include "template/GB_bitmap_assign_C_whole_template.c"
         }
 
     }
@@ -186,21 +191,21 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
     {
 
         //----------------------------------------------------------------------
-        // matrix assignment: C<!M, replace or !replace> = A
+        // matrix assignment: C<!M, replace or !replace> += A
         //----------------------------------------------------------------------
 
         if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
         {
 
             //------------------------------------------------------------------
-            // C<!M, replace or !replace> = A where A is bitmap or full
+            // C<!M, replace or !replace> += A where A is bitmap or full
             //------------------------------------------------------------------
 
             if (C_replace)
             { 
 
                 //--------------------------------------------------------------
-                // C<!M, replace> = A where A is bitmap or full
+                // C<!M, replace> += A where A is bitmap or full
                 //--------------------------------------------------------------
 
                 #undef  GB_CIJ_WORK
@@ -221,15 +226,9 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         case 1: /* C(i,j) present, !M(i,j) = 1 */             \
                             if (GBB_A (Ab, pC))                               \
                             {                                                 \
-                                /* Cx [pC] = Ax [pC] */                       \
-                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
+                                /* Cx [pC] += Ax [pC] */                      \
+                                GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,   \
                                     C_iso) ;                                  \
-                            }                                                 \
-                            else                                              \
-                            {                                                 \
-                                /* delete this entry */                       \
-                                Cb [pC] = 0 ;                                 \
-                                task_cnvals-- ;                               \
                             }                                                 \
                             break ;                                           \
                         case 2: /* C(i,j) not present, !M(i,j) = 0 */         \
@@ -244,14 +243,14 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         default: ;                                            \
                     }                                                         \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
 
             }
             else
             { 
 
                 //--------------------------------------------------------------
-                // C<!M> = A where A is bitmap or full
+                // C<!M> += A where A is bitmap or full
                 //--------------------------------------------------------------
 
                 #undef  GB_CIJ_WORK
@@ -272,16 +271,11 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         case 1: /* C(i,j) present, !M(i,j) = 1 */             \
                             if (GBB_A (Ab, pC))                               \
                             {                                                 \
-                                /* Cx [pC] = Ax [pC] */                       \
-                                GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
+                                /* Cx [pC] += Ax [pC] */                      \
+                                GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,   \
                                     C_iso) ;                                  \
                             }                                                 \
-                            else                                              \
-                            {                                                 \
-                                /* delete this entry */                       \
-                                Cb [pC] = 0 ;                                 \
-                                task_cnvals-- ;                               \
-                            }                                                 \
+                            Cb [pC] = 1 ;                                     \
                             break ;                                           \
                         case 2: /* C(i,j) not present, !M(i,j) = 0 */         \
                             /* clear the mask from C */                       \
@@ -294,7 +288,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
                         default: ;                                            \
                     }                                                         \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
             }
 
         }
@@ -302,46 +296,48 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
         {
 
             //------------------------------------------------------------------
-            // C<!M, replace or !replace> = A where A is sparse or hyper
+            // C<!M, replace or !replace> += A where A is sparse or hyper
             //------------------------------------------------------------------
 
-            // assign entries from A into C
+            // assign or accumulate entries from A into C
             #undef  GB_AIJ_WORK
             #define GB_AIJ_WORK(pC,pA)                                  \
             {                                                           \
                 int8_t cb = Cb [pC] ;                                   \
-                if (cb <= 1)                                            \
+                if (cb == 0)                                            \
                 {                                                       \
                     /* Cx [pC] = Ax [pA] */                             \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ; \
-                    Cb [pC] = 4 ;                                       \
-                    task_cnvals += (cb == 0) ;                          \
+                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
+                    Cb [pC] = 1 ;                                       \
+                    task_cnvals++ ;                                     \
+                }                                                       \
+                else if (cb == 1)                                       \
+                {                                                       \
+                    /* Cx [pC] += Ax [pA] */                            \
+                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
                 }                                                       \
             }
-            #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
+            #include "template/GB_bitmap_assign_A_whole_template.c"
 
-            // clear the mask and delete entries not assigned
             if (C_replace)
             { 
-                #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                     \
-                {                                           \
-                    int8_t cb = Cb [pC] ;                   \
-                    Cb [pC] = (cb == 4) ;                   \
-                    task_cnvals -= (cb == 1 || cb == 3) ;   \
+                // clear the mask and delete entries not assigned
+                #undef  GB_MASK_WORK
+                #define GB_MASK_WORK(pC)                \
+                {                                       \
+                    int8_t cb = Cb [pC] ;               \
+                    Cb [pC] = 0 ;                       \
+                    task_cnvals -= (cb == 3) ;          \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_M_all_template.c"
             }
             else
             { 
-                #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                     \
-                {                                           \
-                    int8_t cb = Cb [pC] ;                   \
-                    Cb [pC] = (cb == 4 || cb == 3) ;        \
-                    task_cnvals -= (cb == 1) ;              \
-                }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                // clear the mask
+                // Cb [pC] -= 2 for each entry M(i,j) in the mask
+                GB_bitmap_M_scatter_whole (C, M, GB_MASK_STRUCT,
+                    GB_BITMAP_M_SCATTER_MINUS_2,
+                    M_ek_slicing, M_ntasks, M_nthreads) ;
             }
         }
     }
@@ -352,7 +348,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum_whole
 
     C->nvals = cnvals ;
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "final C for bitmap assign, !M, noaccum, whole", GB0) ;
+    ASSERT_MATRIX_OK (C, "final C for bitmap assign, !M, accum, whole", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -36,6 +36,9 @@
 
 // JIT: needed.
 
+// If C were full: entries can be deleted if C_replace is true,
+// or if A is not full and missing at least one entry.
+
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
@@ -43,7 +46,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_bitmap_assign_noM_noaccum
+GrB_Info GB_bitmap_assign_6     // C bitmap, no M, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -75,8 +78,9 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit6", NULL, Mask_comp, NULL,
-        Ikind, Jkind, assign_kind) ;
+    GB_assign_burble ("bit6", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 
@@ -114,7 +118,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 task_cnvals -= (cb == 1) ;          \
             }
             #define GB_NO_ASSIGN_CASE
-            #include "assign/factory/GB_bitmap_assign_C_template.c"
+            #include "template/GB_bitmap_assign_C_template.c"
             #undef GB_NO_ASSIGN_CASE
         }
     }
@@ -143,7 +147,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 Cb [pC] = 1 ;                           \
                 task_cnvals += (cb == 0) ;              \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
 
         }
         else
@@ -163,7 +167,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                     Cb [pC] = 0 ;                       \
                     task_cnvals -= (cb == 1) ;          \
                 }
-                #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+                #include "template/GB_bitmap_assign_IxJ_template.c"
             }
 
             // for all entries aij in A (A hyper, sparse, bitmap, or full)
@@ -177,7 +181,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
                 GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
                 Cb [pC] = 1 ;                                       \
             }
-            #include "assign/factory/GB_bitmap_assign_A_template.c"
+            #include "template/GB_bitmap_assign_A_template.c"
 
             cnvals += GB_nnz (A) ;
         }

@@ -130,27 +130,26 @@ typedef enum
     GB_JIT_KERNEL_SUBASSIGN_17  = 61, // GB_subassign_17
     GB_JIT_KERNEL_SUBASSIGN_19  = 62, // GB_subassign_19
 
+    GB_JIT_KERNEL_BITMAP_ASSIGN_1       = 63, // GB_bitmap_assign_1
+    GB_JIT_KERNEL_BITMAP_ASSIGN_1_WHOLE = 64, // GB_bitmap_assign_1_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_2       = 65, // GB_bitmap_assign_2
+    GB_JIT_KERNEL_BITMAP_ASSIGN_2_WHOLE = 66, // GB_bitmap_assign_2_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_3       = 67, // GB_bitmap_assign_3
+    GB_JIT_KERNEL_BITMAP_ASSIGN_3_WHOLE = 68, // GB_bitmap_assign_3_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_4       = 69, // GB_bitmap_assign_4
+    GB_JIT_KERNEL_BITMAP_ASSIGN_4_WHOLE = 70, // GB_bitmap_assign_4_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_5       = 71, // GB_bitmap_assign_5
+    GB_JIT_KERNEL_BITMAP_ASSIGN_5_WHOLE = 72, // GB_bitmap_assign_5_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_6       = 73, // GB_bitmap_assign_6
+    GB_JIT_KERNEL_BITMAP_ASSIGN_6_WHOLE = 74, // GB_bitmap_assign_6_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_7       = 75, // GB_bitmap_assign_7
+    GB_JIT_KERNEL_BITMAP_ASSIGN_7_WHOLE = 76, // GB_bitmap_assign_7_whole
+    GB_JIT_KERNEL_BITMAP_ASSIGN_8       = 77, // GB_bitmap_assign_8
+    GB_JIT_KERNEL_BITMAP_ASSIGN_8_WHOLE = 78, // GB_bitmap_assign_8_whole
+
     //--------------------------------------------------------------------------
     // future:: the following kernels have not been implemented yet
     //--------------------------------------------------------------------------
-
-    // future:: bitmap assign/subassign:
-    GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC           = 63, // GB_bitmap_assign_M_accum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_M_ACC_WHOLE     = 64, // GB_bitmap_assign_M_accum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC         = 65, // GB_bitmap_assign_M_noaccum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_M_NOACC_WHOLE   = 66, // GB_bitmap_assign_M_noaccum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC          = 67, // GB_bitmap_assign_fullM_accum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_ACC_WHOLE    = 68, // GB_bitmap_assign_fullM_accum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC        = 69, // GB_bitmap_assign_fullM_noaccum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_FM_NOACC_WHOLE  = 70, // GB_bitmap_assign_fullM_noaccum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC         = 71, // GB_bitmap_assign_noM_accum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_ACC_WHOLE   = 72, // GB_bitmap_assign_noM_accum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC       = 73, // GB_bitmap_assign_noM_noaccum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NOM_NOACC_WHOLE = 74, // GB_bitmap_assign_noM_noaccum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC          = 75, // GB_bitmap_assign_notM_accum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_ACC_WHOLE    = 76, // GB_bitmap_assign_notM_accum_whole
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC        = 77, // GB_bitmap_assign_notM_noaccum
-    GB_JIT_KERNEL_ASSIGN_BITMAP_NM_NOACC_WHOLE  = 78, // GB_bitmap_assign_notM_noaccum_whole
 
     // future:: subref methods:
     GB_JIT_KERNEL_SUBREF        = 79, // GB_bitmap_subref

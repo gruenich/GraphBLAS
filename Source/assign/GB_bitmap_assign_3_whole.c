@@ -24,6 +24,8 @@
 
 // JIT: needed.
 
+// If C were full: entries can be deleted only if C_replace is true.
+
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
@@ -34,7 +36,7 @@
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
-GrB_Info GB_bitmap_assign_M_accum_whole
+GrB_Info GB_bitmap_assign_3_whole   // C bitmap, M sparse/hyper, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -66,8 +68,9 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit3:whole", M, false, accum,
-        GB_ALL, GB_ALL, GB_ASSIGN) ;
+    GB_assign_burble ("bit3_whole", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M, accum", GB0) ;
@@ -82,7 +85,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     //--------------------------------------------------------------------------
 
     GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_SLICE_M
+    GB_SLICE_M_FOR_BITMAP
     GB_GET_A_AND_SCALAR_FOR_BITMAP
     GB_GET_ACCUM_FOR_BITMAP
 
@@ -138,7 +141,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                     default: ;                                      \
                 }                                                   \
             }
-            #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+            #include "template/GB_bitmap_assign_C_whole_template.c"
 
         }
         else
@@ -166,7 +169,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                     task_cnvals++ ;                         \
                 }                                           \
             }
-            #include "assign/factory/GB_bitmap_assign_M_all_template.c"
+            #include "template/GB_bitmap_assign_M_all_template.c"
         }
 
     }
@@ -238,7 +241,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                         default: ;                                            \
                     }                                                         \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
 
             }
             else
@@ -270,7 +273,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                         }                                                      \
                     }                                                          \
                 }
-                #include "assign/factory/GB_bitmap_assign_M_all_template.c"
+                #include "template/GB_bitmap_assign_M_all_template.c"
 
             }
         }
@@ -312,7 +315,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                     GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
                 }                                                       \
             }
-            #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
+            #include "template/GB_bitmap_assign_A_whole_template.c"
 
             if (C_replace)
             { 
@@ -324,7 +327,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
                     Cb [pC] = (cb == 3) ;               \
                     task_cnvals -= (cb == 1) ;          \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
             }
             else
             { 

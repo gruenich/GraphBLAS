@@ -11,7 +11,7 @@
 // is in bitmap form, or when C is converted into bitmap form.
 
 // C is returned as bitmap in all cases except for C = A or C = scalar (the
-// whole_C_matrix case with GB_bitmap_assign_noM_noaccum_whole).  For that
+// whole_C_matrix case with GB_bitmap_assign_6_whole).  For that
 // method, C can be returned with any sparsity structure.
 
 #include "assign/GB_bitmap_assign_methods.h"
@@ -77,14 +77,14 @@ GrB_Info GB_bitmap_assign
             { 
                 // C = A or scalar, no mask.  C may become sparse, hyper, or
                 // full, or it may remain bitmap.
-                GB_OK (GB_bitmap_assign_noM_noaccum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_6_whole (C, C_replace,
                     /* no M, */ Mask_comp, Mask_struct, /* no accum, */
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C(I,J) = A or scalar, no mask
-                GB_OK (GB_bitmap_assign_noM_noaccum (C, C_replace,
+                GB_OK (GB_bitmap_assign_6 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     /* no M, */ Mask_comp, Mask_struct, /* no accum, */
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -95,14 +95,14 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C += A or scalar, no mask.
-                GB_OK (GB_bitmap_assign_noM_accum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_5_whole (C, C_replace,
                     /* no M, */ Mask_comp, Mask_struct, accum,
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C(I,J) += A or scalar, no mask.
-                GB_OK (GB_bitmap_assign_noM_accum (C, C_replace,
+                GB_OK (GB_bitmap_assign_5 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     /* no M, */ Mask_comp, Mask_struct, accum,
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -116,14 +116,14 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C<M or !M, where M is bitmap or full> = A or scalar
-                GB_OK (GB_bitmap_assign_fullM_noaccum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_2_whole (C, C_replace,
                     M, Mask_comp, Mask_struct, /* no accum, */
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C<M or !M, where M is bitmap or full>(I,J) = A or scalar
-                GB_OK (GB_bitmap_assign_fullM_noaccum (C, C_replace,
+                GB_OK (GB_bitmap_assign_2 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, Mask_comp, Mask_struct, /* no accum, */
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -133,15 +133,15 @@ GrB_Info GB_bitmap_assign
         {
             if (whole_C_matrix)
             { 
-                // C<M or !M, where M is bitmap or full> = A or scalar
-                GB_OK (GB_bitmap_assign_fullM_accum_whole (C, C_replace,
+                // C<M or !M, where M is bitmap or full> += A or scalar
+                GB_OK (GB_bitmap_assign_1_whole (C, C_replace,
                     M, Mask_comp, Mask_struct, accum,
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
-                // C<M or !M, where M is bitmap or full>(I,J) = A or scalar
-                GB_OK (GB_bitmap_assign_fullM_accum (C, C_replace,
+                // C<M or !M, where M is bitmap or full>(I,J) + A or scalar
+                GB_OK (GB_bitmap_assign_1 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, Mask_comp, Mask_struct, accum,
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -155,14 +155,15 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C<M> = A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_M_noaccum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_4_whole (C, C_replace,
                     M, /* Mask_comp false, */ Mask_struct, /* no accum, */
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C<M>(I,J) = A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_M_noaccum (C, C_replace,
+                GB_OK (GB_bitmap_assign_4 (C, C_replace,
+
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, /* Mask_comp false, */ Mask_struct, /* no accum, */
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -173,14 +174,14 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C<M> += A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_M_accum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_3_whole (C, C_replace,
                     M, /* Mask_comp false, */ Mask_struct, accum,
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C<M>(I,J) += A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_M_accum (C, C_replace,
+                GB_OK (GB_bitmap_assign_3 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, /* Mask_comp false, */ Mask_struct, accum,
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -194,14 +195,14 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C<!M> = A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_notM_noaccum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_8_whole (C, C_replace,
                     M, /* Mask_comp true, */ Mask_struct, /* no accum, */
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C<!M>(I,J) = A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_notM_noaccum (C, C_replace,
+                GB_OK (GB_bitmap_assign_8 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, /* Mask_comp true, */ Mask_struct, /* no accum, */
                     A, scalar, scalar_type, assign_kind, Werk)) ;
@@ -212,14 +213,14 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C<!M> += A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_notM_accum_whole (C, C_replace,
+                GB_OK (GB_bitmap_assign_7_whole (C, C_replace,
                     M, /* Mask_comp true, */ Mask_struct, accum,
                     A, scalar, scalar_type, Werk)) ;
             }
             else
             { 
                 // C<!M>(I,J) += A or scalar, M is sparse or hypersparse
-                GB_OK (GB_bitmap_assign_notM_accum (C, C_replace,
+                GB_OK (GB_bitmap_assign_7 (C, C_replace,
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, /* Mask_comp true, */ Mask_struct, accum,
                     A, scalar, scalar_type, assign_kind, Werk)) ;

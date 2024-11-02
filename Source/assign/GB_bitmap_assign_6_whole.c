@@ -43,6 +43,9 @@
 
 // JIT: needed.
 
+// If C were full: entries can be deleted if C_replace is true,
+// or if A is not full and missing at least one entry.
+
 #include "assign/GB_bitmap_assign_methods.h"
 #include "assign/GB_subassign_dense.h"
 #define GB_GENERIC
@@ -51,7 +54,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_bitmap_assign_noM_noaccum_whole
+GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -83,9 +86,10 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_assign_burble ("bit6_whole", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     GrB_Info info ;
-    GBURBLE_BITMAP_ASSIGN ("bit6:whole", NULL, Mask_comp, NULL,
-        GB_ALL, GB_ALL, GB_ASSIGN) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign: noM, noaccum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign: noM, noaccum", GB0) ;
 
@@ -174,7 +178,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
                         GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
                         Cb [pC] = 1 ;                                       \
                     }
-                    #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
+                    #include "template/GB_bitmap_assign_A_whole_template.c"
                     C->nvals = GB_nnz (A) ;
                 }
             }

@@ -1709,15 +1709,6 @@
 //==============================================================================
 
 //------------------------------------------------------------------------------
-// burble
-//------------------------------------------------------------------------------
-
-#define GBURBLE_BITMAP_ASSIGN(method,M,Mask_comp,accum,Ikind,Jkind,akind)   \
-    GBURBLE ("Method:" method " ") ;                                        \
-    GB_assign_burble (C_replace, Ikind, Jkind, M, Mask_comp, Mask_struct,   \
-        accum, A, akind) ;
-
-//------------------------------------------------------------------------------
 // GB_GET_C_BITMAP: get the C matrix (must be bitmap)
 //------------------------------------------------------------------------------
 
@@ -1742,7 +1733,7 @@
 // GB_SLICE_M: slice the mask matrix M
 //------------------------------------------------------------------------------
 
-#define GB_SLICE_M                                                          \
+#define GB_SLICE_M_FOR_BITMAP                                               \
     GB_GET_M                                                                \
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
     int M_ntasks, M_nthreads ;                                              \

@@ -21,7 +21,7 @@
 // prototypes
 //------------------------------------------------------------------------------
 
-GrB_Info GB_bitmap_assign_fullM_accum
+GrB_Info GB_bitmap_assign_1     // C bitmap, M or !M bitmap/full, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -48,7 +48,7 @@ GrB_Info GB_bitmap_assign_fullM_accum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_fullM_accum_whole
+GrB_Info GB_bitmap_assign_1_whole   // C bitmap, M or !M bitmap/full, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -65,7 +65,7 @@ GrB_Info GB_bitmap_assign_fullM_accum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_fullM_noaccum
+GrB_Info GB_bitmap_assign_2     // C bitmap, M or !M bitmap/full, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -92,7 +92,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_fullM_noaccum_whole
+GrB_Info GB_bitmap_assign_2_whole   // C bitmap, M or !M bitmap/full, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -109,7 +109,7 @@ GrB_Info GB_bitmap_assign_fullM_noaccum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_M_accum
+GrB_Info GB_bitmap_assign_3     // C bitmap, M sparse/hyper, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -136,7 +136,7 @@ GrB_Info GB_bitmap_assign_M_accum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_M_accum_whole
+GrB_Info GB_bitmap_assign_3_whole   // C bitmap, M sparse/hyper, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -153,7 +153,7 @@ GrB_Info GB_bitmap_assign_M_accum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_M_noaccum
+GrB_Info GB_bitmap_assign_4     // C bitmap, M sparse/hyper, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -180,7 +180,7 @@ GrB_Info GB_bitmap_assign_M_noaccum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_M_noaccum_whole
+GrB_Info GB_bitmap_assign_4_whole   // C bitmap, M sparse/hyper, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -197,7 +197,7 @@ GrB_Info GB_bitmap_assign_M_noaccum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_noM_accum
+GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -224,7 +224,7 @@ GrB_Info GB_bitmap_assign_noM_accum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_noM_accum_whole
+GrB_Info GB_bitmap_assign_5_whole   // C bitmap, no M, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -241,7 +241,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_noM_noaccum
+GrB_Info GB_bitmap_assign_6     // C bitmap, no M, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -268,7 +268,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_noM_noaccum_whole
+GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -285,7 +285,7 @@ GrB_Info GB_bitmap_assign_noM_noaccum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_notM_accum
+GrB_Info GB_bitmap_assign_7     // C bitmap, !M sparse/hyper, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -312,7 +312,7 @@ GrB_Info GB_bitmap_assign_notM_accum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_notM_accum_whole
+GrB_Info GB_bitmap_assign_7_whole   // C bitmap, !M sparse/hyper, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -329,7 +329,7 @@ GrB_Info GB_bitmap_assign_notM_accum_whole
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_notM_noaccum
+GrB_Info GB_bitmap_assign_8     // C bitmap, !M sparse/hyper, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -356,7 +356,7 @@ GrB_Info GB_bitmap_assign_notM_noaccum
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_bitmap_assign_notM_noaccum_whole
+GrB_Info GB_bitmap_assign_8_whole   // C bitmap, !M sparse/hyper, no accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format

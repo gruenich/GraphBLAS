@@ -152,7 +152,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cx [pC] = pA ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
         }
         else
         #endif
@@ -172,7 +172,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cb [pC] = ab ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
 
         }
         else
@@ -196,7 +196,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                     task_cnvals++ ;                                         \
                 }                                                           \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
 
         }
 
@@ -223,7 +223,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
             {                                                               \
                 Cx [pC] = pA ;                                              \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
 
         }
         else if (C_iso)
@@ -251,7 +251,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 /* Cx [pC] = Ax [pA] */                                     \
                 memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;        \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
         }
     }
 

@@ -34,6 +34,8 @@
 
 // JIT: needed.
 
+// If C were full: entries can be deleted only if C_replace is true.
+
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
@@ -41,7 +43,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
-GrB_Info GB_bitmap_assign_noM_accum_whole
+GrB_Info GB_bitmap_assign_5_whole   // C bitmap, no M, with accum
 (
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
@@ -73,8 +75,9 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBURBLE_BITMAP_ASSIGN ("bit5:whole", NULL, Mask_comp, accum,
-        GB_ALL, GB_ALL, GB_ASSIGN) ;
+    GB_assign_burble ("bit5_whole", C_replace, Ikind, Jkind,
+        M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
+
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, no M, accum", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for bitmap assign, no M, accum", GB0) ; 
@@ -125,7 +128,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
             }
             if (!C_iso)
             {
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
             }
 
             // free the bitmap or set it to all ones
@@ -163,7 +166,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                 }
                 if (!C_iso)
                 {
-                    #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                    #include "template/GB_bitmap_assign_C_whole_template.c"
                 }
 
                 // free the bitmap or set it to all ones
@@ -197,7 +200,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         }                                                      \
                     }                                                          \
                 }
-                #include "assign/factory/GB_bitmap_assign_C_whole_template.c"
+                #include "template/GB_bitmap_assign_C_whole_template.c"
                 C->nvals = cnvals ;
 
             }
@@ -225,7 +228,7 @@ GrB_Info GB_bitmap_assign_noM_accum_whole
                         GB_ACCUMULATE_aij (Cx,pC,Ax,pA,A_iso,ywork,C_iso) ; \
                     }                                                       \
                 }
-                #include "assign/factory/GB_bitmap_assign_A_whole_template.c"
+                #include "template/GB_bitmap_assign_A_whole_template.c"
                 C->nvals = cnvals ;
             }
         }
