@@ -120,7 +120,6 @@
                 }                                           \
             }
             #include "template/GB_bitmap_assign_M_all_template.c"
-
         }
 
     }
@@ -238,7 +237,6 @@
                     }                                                         \
                 }
                 #include "template/GB_bitmap_assign_M_all_template.c"
-
             }
         }
         else
@@ -356,7 +354,6 @@
                     task_cnvals -= (cb == 3) ;                  \
                 }
                 #include "template/GB_bitmap_assign_M_all_template.c"
-
             }
         }
     }

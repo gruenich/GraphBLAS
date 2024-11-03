@@ -53,12 +53,12 @@
     //--------------------------------------------------------------------------
 
     if (GB_A_IS_BITMAP)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all A+S
         GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }

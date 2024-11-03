@@ -71,7 +71,7 @@
     // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled 
+    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

@@ -7,15 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
+// JIT: done.
 
 #include "assign/GB_bitmap_assign_methods.h"
 #include "assign/GB_subassign_dense.h"
-#define GB_GENERIC
-#include "assign/include/GB_assign_shared_definitions.h"
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL ;
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_bitmap_assign_6b_whole  // C bitmap, no M, no accum
 (
@@ -54,39 +50,29 @@ GrB_Info GB_bitmap_assign_6b_whole  // C bitmap, no M, no accum
     ASSERT_MATRIX_OK (C, "C for bitmap assign_6b_whole", GB0) ;
     ASSERT_MATRIX_OK (A, "A for bitmap assign_6b_whole", GB0) ;
 
+    //--------------------------------------------------------------------------
+    // via the JIT or PreJIT kernel
+    //--------------------------------------------------------------------------
+
+    GrB_Info info = GB_subassign_jit (C, C_replace,
+        I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+        M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
+        /* S: */ NULL, assign_kind,
+        GB_JIT_KERNEL_BITMAP_ASSIGN_6b_WHOLE, "bitmap_assign_6b_whole",
+        Werk) ;
+    if (info != GrB_NO_VALUE)
+    { 
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // via the generic kernel
+    //--------------------------------------------------------------------------
+
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    #undef  GB_FREE_ALL
-    #define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
-    GB_GET_C_A_SCALAR_FOR_BITMAP
-
-    //--------------------------------------------------------------------------
-    // C = A, where C is bitmap and A is sparse/hyper
-    //--------------------------------------------------------------------------
-
-    GB_memset (Cb, 0, cnzmax, nthreads_max) ;
-    cnvals = 0 ;
-    #define GB_AIJ_WORK(pC,pA)                              \
-    {                                                       \
-        /* Cx [pC] = Ax [pA] */                             \
-        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
-        Cb [pC] = 1 ;                                       \
-    }
-    #include "template/GB_bitmap_assign_A_whole_template.c"
-    GB_A_NVALS (anz) ;
-    C->nvals = anz ;
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "final C bitmap assign_6b_whole", GB0) ;
-    return (GrB_SUCCESS) ;
+    #define GB_GENERIC
+    #include "assign/include/GB_assign_shared_definitions.h"
+    #include "assign/template/GB_bitmap_assign_6b_whole_template.c"
 }
 

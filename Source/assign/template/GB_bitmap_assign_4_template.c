@@ -264,7 +264,7 @@
                 }
                 #include "template/GB_bitmap_assign_IxJ_template.c"
 
-                // clear M from C 
+                // clear M from C
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
                 GB_bitmap_M_scatter (C,
                     I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,

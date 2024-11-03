@@ -117,7 +117,6 @@
             }
             #include "template/GB_bitmap_assign_A_template.c"
         }
-
     }
 
 #if 0

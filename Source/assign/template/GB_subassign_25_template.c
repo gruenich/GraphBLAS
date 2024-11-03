@@ -81,7 +81,7 @@
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     GB_DECLAREC (cwork) ;
     if (GB_A_ISO)
-    {
+    { 
         // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
         // This is no longer used.  If A is iso, so is C, and in that case,

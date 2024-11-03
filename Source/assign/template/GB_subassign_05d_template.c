@@ -20,7 +20,7 @@
 // C can have any sparsity structure, but it must be entirely dense with
 // all entries present.
 
-#undef  GB_FREE_ALL        
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
@@ -123,6 +123,6 @@
     GB_FREE_ALL ;
 }
 
-#undef  GB_FREE_ALL        
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 
