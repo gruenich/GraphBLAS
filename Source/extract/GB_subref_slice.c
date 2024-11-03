@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but GB_subref_method has 6 or 7 variants.
+// JIT: not needed.
 
 // Determine the tasks for computing C=A(I,J).  The matrix C has Cnvec vectors,
 // and these are divided into coarse and fine tasks.  A coarse task will

@@ -409,7 +409,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             did_scalar_to_ywork = true ;
         }
         GB_macrofy_sparsity (fp, "A", -1) ; // unused macros
-        fprintf (fp, "#define GB_A_NHELD(e) int64_t e = 0 ; /* unused */\n") ;
+        fprintf (fp, "#define GB_A_NVALS(e) int64_t e = 1 ; /* unused */\n") ;
+        fprintf (fp, "#define GB_A_NHELD(e) int64_t e = 1 ; /* unused */\n") ;
     }
     else
     {

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but could use one for each mask type.
+// JIT: possible: one for each mask type.
 
 // Symbolic analysis phase for GB_emult_02 and GB_emult_03.
 

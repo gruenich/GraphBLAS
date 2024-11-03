@@ -10,7 +10,7 @@
 // This method only handles the full assign case, where there are not I and J
 // index lists.  The C and M matrices must have the same size.
 
-// JIT: not needed, but variants possible for each kind of mask matrix.
+// JIT: possible: for each kind of mask matrix.
 // This method is called from inside JIT kernels, so using a JIT for this
 // method would be unusual.
 

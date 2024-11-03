@@ -32,6 +32,7 @@ GB_callback_struct GB_callback =
     .GB_ewise_slice_func            = GB_ewise_slice,
     .GB_subassign_IxJ_slice_func    = GB_subassign_IxJ_slice,
     .GB_Pending_ensure_func         = GB_Pending_ensure,
-    .GB_subassign_08n_slice_func    = GB_subassign_08n_slice
+    .GB_subassign_08n_slice_func    = GB_subassign_08n_slice,
+    .GB_bitmap_assign_to_full_func  = GB_bitmap_assign_to_full
 } ;
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but 36 variants possible, one for each mask type (6: 1, 2,
+// JIT: possible: 36 variants, one for each mask type (6: 1, 2,
 // 4, 8, 16 bytes and structural), for each matrix type (3: bitmap/full/sparse
 // & hyper), mask comp (2).  No variants needed for C.
 

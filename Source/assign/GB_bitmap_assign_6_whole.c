@@ -66,8 +66,8 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
     #define Ikind GB_ALL
     #define Icolon NULL
     #define J NULL              /* J index list */
-    #define ni 0
-    #define nI 0
+    #define nj 0
+    #define nJ 0
     #define Jkind GB_ALL
     #define Jcolon NULL
     #define M NULL              /* mask matrix, not present here */
@@ -179,7 +179,8 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
                         Cb [pC] = 1 ;                                       \
                     }
                     #include "template/GB_bitmap_assign_A_whole_template.c"
-                    C->nvals = GB_nnz (A) ;
+                    GB_A_NVALS (anz) ;
+                    C->nvals = anz ;
                     GB_FREE_ALL ;
                 }
             }

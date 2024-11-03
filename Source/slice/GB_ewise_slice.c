@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but could use variants for sparsity formats.
+// JIT: possible: could use variants for sparsity formats.
 
 // Constructs a set of tasks to compute C, for an element-wise operation that
 // operates on two input matrices, C=op(A,B).  These include:

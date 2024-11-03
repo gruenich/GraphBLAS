@@ -15,11 +15,11 @@ void GB_assign_burble
     const bool C_replace,       // descriptor for C
     const int Ikind,
     const int Jkind,
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix (NULL if not present)
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
-    const GrB_Matrix A,         // input matrix, not transposed
+    const GrB_Matrix A,         // input matrix (NULL for scalar assign)
     const int assign_kind       // row assign, col assign, assign, or subassign
 )
 { 

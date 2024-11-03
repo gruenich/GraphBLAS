@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_callbacks.h: prototypes for kernel callbacks for PreJIT
+// GB_callbacks.h: prototypes for kernel callbacks
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -31,6 +31,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice) ;
 GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice) ;
 GB_CALLBACK_PENDING_ENSURE_PROTO (GB_Pending_ensure) ;
 GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice) ;
+GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO (GB_bitmap_assign_to_full) ;
 
 #endif
 

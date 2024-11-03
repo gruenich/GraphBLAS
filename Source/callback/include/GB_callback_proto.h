@@ -282,5 +282,12 @@ GrB_Info GX_subassign_08n_slice                                             \
     GB_Werk Werk                                                            \
 )
 
+#define GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO(GX_bitmap_assign_to_full)   \
+void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
+(                                                                           \
+    GrB_Matrix C,                                                           \
+    int nthreads_max                                                        \
+)
+
 #endif
 

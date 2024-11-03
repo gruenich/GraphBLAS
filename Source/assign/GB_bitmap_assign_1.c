@@ -80,19 +80,11 @@ GrB_Info GB_bitmap_assign_1     // C bitmap, M bitmap/full, with accum
     // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    #define S NULL
-    GrB_Info info = GB_subassign_jit (C,
-        C_replace,
-        I, ni, nI, Ikind, Icolon,
-        J, nj, nJ, Jkind, Jcolon,
-        M,
-        Mask_comp,
-        Mask_struct,
-        accum,
-        A,
-        scalar, scalar_type,
-        S,
-        assign_kind, GB_JIT_KERNEL_BITMAP_ASSIGN_1, "bitmap_assign_1",
+    GrB_Info info = GB_subassign_jit (C, C_replace,
+        I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+        M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
+        /* S: */ NULL, assign_kind,
+        GB_JIT_KERNEL_BITMAP_ASSIGN_1, "bitmap_assign_1",
         Werk) ;
     if (info != GrB_NO_VALUE)
     { 

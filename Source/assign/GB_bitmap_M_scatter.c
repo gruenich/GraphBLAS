@@ -12,7 +12,7 @@
 // assignments.  The C and M matrices can have different sizes.  Compare with
 // GB_bitmap_M_scatter_whole, where C and M always have the same size.
 
-// JIT: not needed, but variants possible for each kind of mask matrix.
+// JIT: possible: for each kind of mask matrix.
 // This method is called from inside JIT kernels, so using a JIT for this
 // method would be unusual.
 

@@ -32,16 +32,12 @@
 // already been handled by GB_assign_prep, which calls GB_bitmap_assign with a
 // scalar (which is unused).
 
-// JIT: needed.
+// JIT: done.
 
 // If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"
-#define GB_GENERIC
-#include "assign/include/GB_assign_shared_definitions.h"
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
 (
@@ -78,127 +74,34 @@ GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
     GB_assign_burble ("bit5", C_replace, Ikind, Jkind,
         M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
 
-    ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, no M, accum", GB0) ;
+    ASSERT (GB_IS_BITMAP (C)) ;
+    ASSERT_MATRIX_OK (C, "C for bitmap_assign_5", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap_assign_5", GB0) ;
+    ASSERT_BINARYOP_OK (accum, "accum for bitmap_assign_5", GB0) ; 
+
+    //--------------------------------------------------------------------------
+    // via the JIT or PreJIT kernel
+    //--------------------------------------------------------------------------
+
+    GrB_Info info = GB_subassign_jit (C, C_replace,
+        I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+        M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
+        /* S: */ NULL, assign_kind,
+        GB_JIT_KERNEL_BITMAP_ASSIGN_5, "bitmap_assign_5",
+        Werk) ;
+    if (info != GrB_NO_VALUE)
+    { 
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // via the generic kernel
+    //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GB_GET_C_A_SCALAR_FOR_BITMAP
-    GB_GET_ACCUM_FOR_BITMAP
-
-    //--------------------------------------------------------------------------
-    // do the assignment
-    //--------------------------------------------------------------------------
-
-    if (!GB_MASK_COMP)
-    {
-
-        //----------------------------------------------------------------------
-        // C(I,J) += A or += scalar
-        //----------------------------------------------------------------------
-
-        if (GB_SCALAR_ASSIGN)
-        { 
-
-            //------------------------------------------------------------------
-            // scalar assignment: C(I,J) += scalar
-            //------------------------------------------------------------------
-
-            // for all entries in IxJ
-            #define GB_IXJ_WORK(pC,ignore)                  \
-            {                                               \
-                int8_t cb = Cb [pC] ;                       \
-                if (cb == 0)                                \
-                {                                           \
-                    /* Cx [pC] = scalar */                  \
-                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;   \
-                    Cb [pC] = 1 ;                           \
-                    task_cnvals++ ;                         \
-                }                                           \
-                else                                        \
-                {                                           \
-                    /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
-                }                                           \
-            }
-            #include "template/GB_bitmap_assign_IxJ_template.c"
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // matrix assignment: C(I,J) += A
-            //------------------------------------------------------------------
-
-            // for all entries aij in A (A hyper, sparse, bitmap, or full)
-            //        if Cb(p) == 0
-            //            Cx(p) = aij
-            //            Cb(p) = 1       // C(iC,jC) is now present, insert
-            //        else // if Cb(p) == 1:
-            //            Cx(p) += aij    // C(iC,jC) still present, updated
-            //            task_cnvals++
-
-            #define GB_AIJ_WORK(pC,pA)                                  \
-            {                                                           \
-                int8_t cb = Cb [pC] ;                                   \
-                if (cb == 0)                                            \
-                {                                                       \
-                    /* Cx [pC] = Ax [pA] */                             \
-                    GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ; \
-                    Cb [pC] = 1 ;                                       \
-                    task_cnvals++ ;                                     \
-                }                                                       \
-                else                                                    \
-                {                                                       \
-                    /* Cx [pC] += Ax [pA] */                            \
-                    GB_ACCUMULATE_aij (Cx, pC, Ax, pA, A_iso, ywork, C_iso) ;  \
-                }                                                       \
-            }
-            #include "template/GB_bitmap_assign_A_template.c"
-        }
-
-    }
-
-#if 0
-    else if (C_replace)
-    {
-
-        //----------------------------------------------------------------------
-        // This case is handled by GB_assign_prep and is thus not needed here.
-        //----------------------------------------------------------------------
-
-        // mask not present yet complemented: C_replace phase only
-
-        // for row assign: for all entries in C(i,:)
-        // for col assign: for all entries in C(:,j)
-        // for assign: for all entries in C(:,:)
-        // for subassign: for all entries in C(I,J)
-        //      M not present; so effective value of the mask is mij==0
-        //      set Cb(p) = 0
-
-        #define GB_CIJ_WORK(pC)         \
-        {                               \
-            int8_t cb = Cb [pC] ;       \
-            Cb [pC] = 0 ;               \
-            task_cnvals -= (cb == 1) ;  \
-        }
-        #include "template/GB_bitmap_assign_C_template.c"
-    }
-#endif
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    C->nvals = cnvals ;
-    GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
-    return (GrB_SUCCESS) ;
+    #define GB_GENERIC
+    #include "assign/include/GB_assign_shared_definitions.h"
+    #include "assign/template/GB_bitmap_assign_5_template.c"
 }
 

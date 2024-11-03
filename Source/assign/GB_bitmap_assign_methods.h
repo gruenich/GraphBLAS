@@ -37,7 +37,7 @@ GrB_Info GB_bitmap_assign_1     // C bitmap, M or !M bitmap/full, with accum
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix, which is present here
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
@@ -125,7 +125,7 @@ GrB_Info GB_bitmap_assign_3     // C bitmap, M sparse/hyper, with accum
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix, which is present here
 //  const bool Mask_comp,       // false here
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
@@ -142,7 +142,7 @@ GrB_Info GB_bitmap_assign_3_whole   // C bitmap, M sparse/hyper, with accum
     GrB_Matrix C,               // input/output matrix in bitmap format
     // inputs:
     const bool C_replace,       // descriptor for C
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix, which is present here
 //  const bool Mask_comp,       // false here
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
@@ -169,7 +169,7 @@ GrB_Info GB_bitmap_assign_4     // C bitmap, M sparse/hyper, no accum
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix, which is present here
 //  const bool Mask_comp,       // false here
     const bool Mask_struct,     // true if M is structural, false if valued
 //  const GrB_BinaryOp accum,   // not present
@@ -186,7 +186,7 @@ GrB_Info GB_bitmap_assign_4_whole   // C bitmap, M sparse/hyper, no accum
     GrB_Matrix C,               // input/output matrix in bitmap format
     // inputs:
     const bool C_replace,       // descriptor for C
-    const GrB_Matrix M,         // mask matrix, which is not NULL here
+    const GrB_Matrix M,         // mask matrix, which is present here
 //  const bool Mask_comp,       // false here
     const bool Mask_struct,     // true if M is structural, false if valued
 //  const GrB_BinaryOp accum,   // not present
@@ -371,12 +371,6 @@ GrB_Info GB_bitmap_assign_8_whole   // C bitmap, !M sparse/hyper, no accum
     const GrB_Type scalar_type, // type of input scalar
 //  const int assign_kind,      // assign
     GB_Werk Werk
-) ;
-
-void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
-(
-    GrB_Matrix C,
-    int nthreads_max
 ) ;
 
 #endif

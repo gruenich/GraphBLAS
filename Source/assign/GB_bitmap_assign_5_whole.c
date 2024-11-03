@@ -32,16 +32,12 @@
 // already been handled by GB_assign_prep, which calls GB_clear, and thus
 // Mask_comp is always false in this method.
 
-// JIT: needed.
+// JIT: done.
 
 // If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"
-#define GB_GENERIC
-#include "assign/include/GB_assign_shared_definitions.h"
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_bitmap_assign_5_whole   // C bitmap, no M, with accum
 (
@@ -55,8 +51,8 @@ GrB_Info GB_bitmap_assign_5_whole   // C bitmap, no M, with accum
     #define Ikind GB_ALL
     #define Icolon NULL
     #define J NULL              /* J index list */
-    #define ni 0
-    #define nI 0
+    #define nj 0
+    #define nJ 0
     #define Jkind GB_ALL
     #define Jcolon NULL
     #define M NULL              /* mask matrix, not present here */
@@ -78,178 +74,34 @@ GrB_Info GB_bitmap_assign_5_whole   // C bitmap, no M, with accum
     GB_assign_burble ("bit5_whole", C_replace, Ikind, Jkind,
         M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
 
-    ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
-    ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap assign, no M, accum", GB0) ;
-    ASSERT_BINARYOP_OK (accum, "accum for bitmap assign, no M, accum", GB0) ; 
+    ASSERT (GB_IS_BITMAP (C)) ;
+    ASSERT_MATRIX_OK (C, "C for bitmap_assign_5_whole", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap_assign_5_whole", GB0) ;
+    ASSERT_BINARYOP_OK (accum, "accum for bitmap_assign_5_whole", GB0) ; 
+
+    //--------------------------------------------------------------------------
+    // via the JIT or PreJIT kernel
+    //--------------------------------------------------------------------------
+
+    GrB_Info info = GB_subassign_jit (C, C_replace,
+        I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+        M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
+        /* S: */ NULL, assign_kind,
+        GB_JIT_KERNEL_BITMAP_ASSIGN_5_WHOLE, "bitmap_assign_5_whole",
+        Werk) ;
+    if (info != GrB_NO_VALUE)
+    { 
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // via the generic kernel
+    //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GB_GET_C_A_SCALAR_FOR_BITMAP
-    GB_GET_ACCUM_FOR_BITMAP
-
-    //--------------------------------------------------------------------------
-    // do the assignment
-    //--------------------------------------------------------------------------
-
-    if (!GB_MASK_COMP)
-    {
-
-        //----------------------------------------------------------------------
-        // C += A or += scalar
-        //----------------------------------------------------------------------
-
-        if (GB_SCALAR_ASSIGN)
-        { 
-
-            //------------------------------------------------------------------
-            // scalar assignment: C += scalar
-            //------------------------------------------------------------------
-
-            #undef  GB_CIJ_WORK
-            #define GB_CIJ_WORK(pC)                         \
-            {                                               \
-                int8_t cb = Cb [pC] ;                       \
-                if (cb == 0)                                \
-                {                                           \
-                    /* Cx [pC] = scalar */                  \
-                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
-                }                                           \
-                else                                        \
-                {                                           \
-                    /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
-                }                                           \
-            }
-            if (!C_iso)
-            {
-                #include "template/GB_bitmap_assign_C_whole_template.c"
-            }
-
-            // free the bitmap or set it to all ones
-            GB_bitmap_assign_to_full (C, nthreads_max) ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // matrix assignment: C += A
-            //------------------------------------------------------------------
-
-            if (GB_IS_FULL (A))
-            { 
-
-                //--------------------------------------------------------------
-                // C += A where C is bitmap and A is full
-                //--------------------------------------------------------------
-
-                #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                                     \
-                {                                                           \
-                    int8_t cb = Cb [pC] ;                                   \
-                    if (cb == 0)                                            \
-                    {                                                       \
-                        /* Cx [pC] = Ax [pC] */                             \
-                        GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;  \
-                    }                                                       \
-                    else                                                    \
-                    {                                                       \
-                        /* Cx [pC] += Ax [pC] */                            \
-                        GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,C_iso) ; \
-                    }                                                       \
-                }
-                if (!C_iso)
-                {
-                    #include "template/GB_bitmap_assign_C_whole_template.c"
-                }
-
-                // free the bitmap or set it to all ones
-                GB_bitmap_assign_to_full (C, nthreads_max) ;
-
-            }
-            else if (GB_IS_BITMAP (A))
-            { 
-
-                //--------------------------------------------------------------
-                // C += A where C and A are bitmap
-                //--------------------------------------------------------------
-
-                #undef  GB_CIJ_WORK
-                #define GB_CIJ_WORK(pC)                                        \
-                {                                                              \
-                    if (Ab [pC])                                               \
-                    {                                                          \
-                        int8_t cb = Cb [pC] ;                                  \
-                        if (cb == 0)                                           \
-                        {                                                      \
-                            /* Cx [pC] = Ax [pC] */                            \
-                            GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ; \
-                            Cb [pC] = 1 ;                                      \
-                            task_cnvals++ ;                                    \
-                        }                                                      \
-                        else                                                   \
-                        {                                                      \
-                            /* Cx [pC] += Ax [pC] */                           \
-                            GB_ACCUMULATE_aij (Cx,pC,Ax,pC,A_iso,ywork,C_iso) ;\
-                        }                                                      \
-                    }                                                          \
-                }
-                #include "template/GB_bitmap_assign_C_whole_template.c"
-                C->nvals = cnvals ;
-
-            }
-            else
-            { 
-
-                //--------------------------------------------------------------
-                // C += A where C is bitmap and A is sparse or hyper
-                //--------------------------------------------------------------
-
-                #undef  GB_AIJ_WORK
-                #define GB_AIJ_WORK(pC,pA)                                  \
-                {                                                           \
-                    int8_t cb = Cb [pC] ;                                   \
-                    if (cb == 0)                                            \
-                    {                                                       \
-                        /* Cx [pC] = Ax [pA] */                             \
-                        GB_COPY_aij_to_C (Cx,pC,Ax,pA,A_iso,cwork,C_iso) ;  \
-                        Cb [pC] = 1 ;                                       \
-                        task_cnvals++ ;                                     \
-                    }                                                       \
-                    else                                                    \
-                    {                                                       \
-                        /* Cx [pC] += Ax [pA] */                            \
-                        GB_ACCUMULATE_aij (Cx,pC,Ax,pA,A_iso,ywork,C_iso) ; \
-                    }                                                       \
-                }
-                #include "template/GB_bitmap_assign_A_whole_template.c"
-                C->nvals = cnvals ;
-            }
-        }
-    }
-
-#if 0
-    else if (C_replace)
-    {
-        // The mask is not present yet complemented: C_replace phase only.  all
-        // entries are deleted.  This is done by GB_clear in GB_assign_prep
-        // and is thus not needed here.
-        GB_memset (Cb, 0, cnzmax, nthreads_max) ;
-        cnvals = 0 ;
-    }
-#endif
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum, whole", GB0) ;
-    return (GrB_SUCCESS) ;
+    #define GB_GENERIC
+    #include "assign/include/GB_assign_shared_definitions.h"
+    #include "assign/template/GB_bitmap_assign_5_whole_template.c"
 }
 

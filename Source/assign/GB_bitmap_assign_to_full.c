@@ -12,11 +12,7 @@
 
 #include "assign/GB_bitmap_assign_methods.h"
 
-void GB_bitmap_assign_to_full   // set all C->b to 1, or free it and make C full
-(
-    GrB_Matrix C,
-    int nthreads_max
-)
+GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO (GB_bitmap_assign_to_full)
 {
 
     //--------------------------------------------------------------------------

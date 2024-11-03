@@ -45,8 +45,8 @@ GrB_Info GB_bitmap_assign_7_whole   // C bitmap, !M sparse/hyper, with accum
     #define Ikind GB_ALL
     #define Icolon NULL
     #define J NULL              /* J index list */
-    #define ni 0
-    #define nI 0
+    #define nj 0
+    #define nJ 0
     #define Jkind GB_ALL
     #define Jcolon NULL
     const GrB_Matrix M,         // mask matrix
