@@ -142,6 +142,7 @@
 #define GB_bitmap_assign_4_whole GM_bitmap_assign_4_whole
 #define GB_bitmap_assign_5 GM_bitmap_assign_5
 #define GB_bitmap_assign_5_whole GM_bitmap_assign_5_whole
+#define GB_bitmap_assign_6b_whole GM_bitmap_assign_6b_whole
 #define GB_bitmap_assign_6 GM_bitmap_assign_6
 #define GB_bitmap_assign_6_whole GM_bitmap_assign_6_whole
 #define GB_bitmap_assign_7 GM_bitmap_assign_7

@@ -77,7 +77,7 @@ GrB_Info GB_bitmap_assign_5_whole   // C bitmap, no M, with accum
     ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap_assign_5_whole", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (A, "A for bitmap_assign_5_whole", GB0) ;
-    ASSERT_BINARYOP_OK (accum, "accum for bitmap_assign_5_whole", GB0) ; 
+    ASSERT_BINARYOP_OK (accum, "accum for bitmap_assign_5_whole", GB0) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel

@@ -76,9 +76,12 @@ GrB_Info GB_bitmap_assign
             if (whole_C_matrix)
             { 
                 // C = A or scalar, no mask.  C may become sparse, hyper, or
-                // full, or it may remain bitmap.
-                GB_OK (GB_bitmap_assign_6_whole (C, C_replace,
-                    /* no M, */ Mask_comp, Mask_struct, /* no accum, */
+                // full, or it may remain bitmap.  The Mask_comp = true and/or
+                // C_replace = true cases are handled in GB_assign_prep, and
+                // in that case, GB_bitmap_assign is not called.
+                ASSERT (!C_replace) ;
+                ASSERT (!Mask_comp) ;
+                GB_OK (GB_bitmap_assign_6_whole (C,
                     A, scalar, scalar_type, Werk)) ;
             }
             else
@@ -163,7 +166,6 @@ GrB_Info GB_bitmap_assign
             { 
                 // C<M>(I,J) = A or scalar, M is sparse or hypersparse
                 GB_OK (GB_bitmap_assign_4 (C, C_replace,
-
                     I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
                     M, /* Mask_comp false, */ Mask_struct, /* no accum, */
                     A, scalar, scalar_type, assign_kind, Werk)) ;

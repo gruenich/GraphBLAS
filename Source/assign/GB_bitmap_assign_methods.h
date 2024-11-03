@@ -273,15 +273,18 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
     // input/output:
     GrB_Matrix C,               // input/output matrix in bitmap format
     // inputs:
-    const bool C_replace,       // descriptor for C
-//  const GrB_Matrix M,         // mask matrix, not present here
-    const bool Mask_comp,       // true for !M, false for M
-    const bool Mask_struct,     // true if M is structural, false if valued
-//  const GrB_BinaryOp accum,   // not present
     const GrB_Matrix A,         // input matrix, not transposed
     const void *scalar,         // input scalar
     const GrB_Type scalar_type, // type of input scalar
-//  const int assign_kind,      // assign
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_bitmap_assign_6b_whole  // C bitmap, no M, no accum
+(
+    // input/output:
+    GrB_Matrix C,               // input/output matrix in bitmap format
+    // inputs:
+    const GrB_Matrix A,         // input matrix, not transposed
     GB_Werk Werk
 ) ;
 

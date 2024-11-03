@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_bitmap_assign_6_whole.c: C bitmap, no M, no accum
+// GB_jit_kernel_bitmap_assign_6b_whole.c: C bitmap, no M, no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -32,8 +32,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
 //  GB_GET_CALLBACK (GB_Pending_ensure) ;
 //  GB_GET_CALLBACK (GB_subassign_08n_slice) ;
 //  GB_GET_CALLBACK (GB_bitmap_assign_to_full) ;
-    #define GB_subassign_IxJ_slice garbage
 
-    #include "template/GB_bitmap_assign_6_whole_template.c"
+    #include "template/GB_bitmap_assign_6b_whole_template.c"
 }
 
