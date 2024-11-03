@@ -2,7 +2,7 @@
 // GB_assign_shared_definitions.h: definitions for GB_subassign kernels
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -165,7 +165,7 @@
 
 #define GB_EMPTY_TASKLIST                                                   \
     GrB_Info info ;                                                         \
-    int taskid, ntasks = 0, nthreads ;                                      \
+    int taskid, ntasks = 0, nthreads = 0 ;                                  \
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;            \
     GB_WERK_DECLARE (Npending, int64_t) ;                                   \
     int64_t *restrict Zh     = NULL ; size_t Zh_size = 0 ;                  \
@@ -210,7 +210,7 @@
 
 // M and A can be aliased, but both are const.
 
-#define GB_GET_M                                                            \
+#define GB_GET_MASK                                                         \
     ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
     const int64_t *Mp = M->p ;                                              \
     const int8_t  *Mb = M->b ;                                              \
@@ -218,13 +218,10 @@
     const int64_t *Mi = M->i ;                                              \
     const GB_M_TYPE *Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;  \
     const size_t msize = M->type->size ;                                    \
-    const size_t Mvlen = M->vlen ;
-
-#define GB_GET_MASK                                                         \
-    GB_GET_M ;                                                              \
+    const size_t Mvlen = M->vlen ;                                          \
     const int64_t Mnvec = M->nvec ;                                         \
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;                         \
-    const bool M_is_bitmap = GB_IS_BITMAP (M)
+    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
 
 #define GB_GET_MASK_HYPER_HASH                                              \
     GB_OK (GB_hyper_hash_build (M, Werk)) ;                                 \
@@ -1708,14 +1705,28 @@
 // macros for bitmap_assign methods
 //==============================================================================
 
+#define GB_FREE_ALL_FOR_BITMAP                          \
+    GB_WERK_POP (A_ek_slicing, int64_t) ;               \
+    GB_WERK_POP (M_ek_slicing, int64_t) ;               \
+    GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;
+
 //------------------------------------------------------------------------------
-// GB_GET_C_BITMAP: get the C matrix (must be bitmap)
+// GB_GET_C_A_SCALAR_FOR_BITMAP: get the C and A matrices and the scalar
 //------------------------------------------------------------------------------
 
-// C must be a bitmap matrix
+// C must be a bitmap matrix.  Gets the C and A matrices, and the scalar, and
+// declares workspace for M, A, and TaskList_IxJ.
 
-#define GB_GET_C_BITMAP                                                     \
+#define GB_GET_C_A_SCALAR_FOR_BITMAP                                        \
     GrB_Info info ;                                                         \
+    /* workspace: */                                                        \
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
+    int M_ntasks = 0, M_nthreads = 0 ;                                      \
+    GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;    \
+    int ntasks_IxJ = 0, nthreads_IxJ = 0 ;                                  \
+    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;                               \
+    int A_ntasks = 0, A_nthreads = 0 ;                                      \
+    /* C matrix: */                                                         \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
     int8_t  *Cb = C->b ;                                                    \
@@ -1727,26 +1738,8 @@
     const int64_t Cvlen = C->vlen ;                                         \
     const int64_t vlen = Cvlen ;    /* for GB_bitmap_assign_IxJ_template */ \
     const int64_t cnzmax = Cvlen * Cvdim ;                                  \
-    int64_t cnvals = C->nvals ;
-
-//------------------------------------------------------------------------------
-// GB_SLICE_M: slice the mask matrix M
-//------------------------------------------------------------------------------
-
-#define GB_SLICE_M_FOR_BITMAP                                               \
-    GB_GET_M                                                                \
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;                               \
-    int M_ntasks, M_nthreads ;                                              \
-    GB_M_NHELD (M_nnz_held) ;                                               \
-    GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
-
-//------------------------------------------------------------------------------
-// GB_GET_A_AND_SCALAR_FOR_BITMAP: get the A matrix or the scalar
-//------------------------------------------------------------------------------
-
-// ALIAS of C and A for bitmap methods: OK only for C(:,:)=A assignment.
-
-#define GB_GET_A_AND_SCALAR_FOR_BITMAP                                      \
+    int64_t cnvals = C->nvals ;                                             \
+    /* A matrix and scalar: */                                              \
     const int64_t *Ap = NULL ;                                              \
     const int64_t *Ah = NULL ;                                              \
     const int8_t  *Ab = NULL ;                                              \
@@ -1756,6 +1749,7 @@
     const GrB_Type atype = (GB_SCALAR_ASSIGN) ? scalar_type : A->type ;     \
     const size_t       asize = atype->size ;                                \
     const GB_Type_code acode = atype->code ;                                \
+    int64_t Avlen ;                                                         \
     if (!(GB_SCALAR_ASSIGN))                                                \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
@@ -1764,6 +1758,7 @@
         Ab = A->b ;                                                         \
         Ai = A->i ;                                                         \
         Ax = (GB_C_ISO) ? NULL : (GB_A_TYPE *) A->x ;                       \
+        Avlen = A->vlen ;                                                   \
     }                                                                       \
     GB_DECLAREC (cwork) ;                                                   \
     GB_CAST_FUNCTION (cast_A_to_C, ccode, acode) ;                          \
@@ -1780,6 +1775,15 @@
             GB_COPY_aij_to_cwork (cwork, Ax, 0, true) ;                     \
         }                                                                   \
     }
+
+//------------------------------------------------------------------------------
+// GB_SLICE_M_FOR_BITMAP: slice the mask matrix M
+//------------------------------------------------------------------------------
+
+#define GB_SLICE_M_FOR_BITMAP                                               \
+    GB_GET_MASK                                                             \
+    GB_M_NHELD (M_nnz_held) ;                                               \
+    GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + Mnvec, M_nnz_held) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM_FOR_BITMAP: get accum op and its related typecasting functions

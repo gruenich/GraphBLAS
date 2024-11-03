@@ -2,7 +2,7 @@
 // GB_bitmap_assign_M_noaccum:  assign to C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -32,10 +32,7 @@
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL                         \
-{                                           \
-    GB_WERK_POP (M_ek_slicing, int64_t) ;   \
-}
+#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
 
 GrB_Info GB_bitmap_assign_4     // C bitmap, M sparse/hyper, no accum
 (
@@ -84,9 +81,8 @@ GrB_Info GB_bitmap_assign_4     // C bitmap, M sparse/hyper, no accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap
+    GB_GET_C_A_SCALAR_FOR_BITMAP
     GB_SLICE_M_FOR_BITMAP
-    GB_GET_A_AND_SCALAR_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // C<M,repl or !repl>(I,J) = A or scalar
@@ -100,7 +96,6 @@ GrB_Info GB_bitmap_assign_4     // C bitmap, M sparse/hyper, no accum
     GB_bitmap_M_scatter (C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
         M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_PLUS_2,
         M_ek_slicing, M_ntasks, M_nthreads) ;
-
 
     //    Cb (i,j) = 0:  mij == 0, cij not present
     //    Cb (i,j) = 1:  mij == 0, cij present

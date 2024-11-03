@@ -14,9 +14,15 @@
 
 #include "extract/GB_subref.h"
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_phybix_free (C) ;        \
+#define GB_FREE_WORKSPACE                               \
+{                                                       \
+    GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;   \
+}
+
+#define GB_FREE_ALL                                     \
+{                                                       \
+    GB_FREE_WORKSPACE                                   \
+    GB_phybix_free (C) ;                                \
 }
 
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
@@ -50,6 +56,13 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
+
+    //--------------------------------------------------------------------------
+    // workspace for GB_bitmap_assign_IxJ_template.c
+    //--------------------------------------------------------------------------
+
+    GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;
+    int ntasks_IxJ = 0, nthreads_IxJ = 0 ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -112,8 +125,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // In GB_bitmap_assign_IxJ_template, vlen is the vector length of the
     // submatrix C(I,J), but here the template is used to access A(I,J), and so
     // the vector length is A->vlen, not C->vlen.  The pointers pA and pC are
-    // swapped in the macros below, since C=A(I,J) is being computed, instead
-    // of C(I,J)=A for the bitmap assignment.
+    // swapped in GB_IXJ_WORK macro below, since C=A(I,J) is being computed,
+    // instead of C(I,J)=A for the bitmap assignment.
 
     int64_t vlen = avlen ;
 
@@ -233,6 +246,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
             // C=A(I,J) iso numeric with A and C full
             //------------------------------------------------------------------
 
+            // slice IxJ: not needed in this case
             memcpy (C->x, cscalar, ctype->size) ;
 
         }
@@ -261,6 +275,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "C output for bitmap subref C=A(I,J)", GB0) ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 

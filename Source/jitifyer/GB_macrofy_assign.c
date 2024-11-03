@@ -408,6 +408,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
                 "scalar", "(*((GB_A_TYPE *) scalar))", ytype, atype) ;
             did_scalar_to_ywork = true ;
         }
+        GB_macrofy_sparsity (fp, "A", -1) ; // unused macros
+        fprintf (fp, "#define GB_A_NHELD(e) int64_t e = 0 ; /* unused */\n") ;
     }
     else
     {
@@ -424,7 +426,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         }
     }
 
-#if 0
     if (!did_scalar_to_ywork)
     {
         fprintf (fp, "#define GB_COPY_scalar_to_ywork(ywork,scalar)"
@@ -436,7 +437,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)"
             " /* unused */\n") ;
     }
-#endif
 
     //--------------------------------------------------------------------------
     // construct the macros for S

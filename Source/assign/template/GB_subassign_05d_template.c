@@ -2,7 +2,7 @@
 // GB_subassign_05d_template: C<M> = x where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -45,7 +45,6 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
-    // GB_GET_M:
     const int64_t *restrict Mp = M->p ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
@@ -55,7 +54,6 @@
     const size_t Mvlen = M->vlen ;
     const size_t msize = M->type->size ;
 
-    // GB_GET_C (subset):
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t Cvlen = C->vlen ;
 

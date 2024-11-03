@@ -2,7 +2,7 @@
 // GB_bitmap_assign_fullM_noaccum_whole: assign to C bitmap, M is bitmap or full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -38,7 +38,7 @@
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
 
 GrB_Info GB_bitmap_assign_2_whole   // C bitmap, M bitmap/full, no accum
 (
@@ -88,9 +88,8 @@ GrB_Info GB_bitmap_assign_2_whole   // C bitmap, M bitmap/full, no accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_GET_M
-    GB_GET_A_AND_SCALAR_FOR_BITMAP
+    GB_GET_C_A_SCALAR_FOR_BITMAP
+    GB_GET_MASK
 
     //--------------------------------------------------------------------------
     // to get the effective value of the mask entry mij
@@ -312,6 +311,7 @@ GrB_Info GB_bitmap_assign_2_whole   // C bitmap, M bitmap/full, no accum
     //--------------------------------------------------------------------------
 
     C->nvals = cnvals ;
+    GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "final C bitmap assign, M full, noaccum, whole", GB0) ;
     return (GrB_SUCCESS) ;
 }

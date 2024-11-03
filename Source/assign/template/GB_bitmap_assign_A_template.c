@@ -2,7 +2,7 @@
 // GB_bitmap_assign_A_template: traverse over A for bitmap assignment into C
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,20 +11,35 @@
 // the corresponding entry in C(i,j), using the GB_AIJ_WORK macro.  A can be
 // hypersparse, sparse, bitmap, or full.  It is not a scalar.  The matrix
 // C must be bitmap or full.
+//
+// The workspace must already be declared as follows:
+//
+//      GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
+//      int A_ntasks = 0, A_nthreads = 0 ;
+//
+// The workspace is allocated and tasks are computed, if not already done.
+// It is not freed, so it can be used for subsequent uses of this template.
+// To free the workspace, the method that uses this template must do:
+//
+//      GB_WERK_POP (A_ek_slicing, int64_t) ;
 
 {
 
     //--------------------------------------------------------------------------
-    // matrix assignment: slice the entries of A for each task
+    // slice the matrix A
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int A_ntasks, A_nthreads ;
-    GB_A_NHELD (A_nnz_held) ;
-    GB_SLICE_MATRIX_WORK (A, 8, A_nnz_held + A->nvec, A_nnz_held) ;
+    if (A_ek_slicing == NULL)
+    { 
+        GB_A_NHELD (A_nnz_held) ;
+        GB_SLICE_MATRIX_WORK (A, 8, A_nnz_held + A->nvec, A_nnz_held) ;
+    }
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
-    // traverse of the entries of the matrix A
+    // traverse the entries of the matrix A
     //--------------------------------------------------------------------------
 
     int tid ;
@@ -76,11 +91,5 @@
         }
         cnvals += task_cnvals ;
     }
-
-    //--------------------------------------------------------------------------
-    // free workspace
-    //--------------------------------------------------------------------------
-
-    GB_WERK_POP (A_ek_slicing, int64_t) ;
 }
 

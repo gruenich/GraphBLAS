@@ -2,7 +2,7 @@
 // GB_bitmap_assign_noM_noaccum_whole:  assign to C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -125,9 +125,6 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
             // matrix assignment: C = A
             //------------------------------------------------------------------
 
-            GB_GET_C_BITMAP ;           // C must be bitmap
-            GB_GET_A_AND_SCALAR_FOR_BITMAP
-
             if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
             {
 
@@ -141,7 +138,7 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
                 if (GB_IS_BITMAP (A))
                 { 
                     // copy the bitmap
-                    GB_memcpy (Cb, Ab, cnzmax, nthreads_max) ;
+                    GB_memcpy (C->b, A->b, GB_nnz_held (A), nthreads_max) ;
                     C->nvals = GB_nnz (A) ;
                 }
                 else
@@ -170,6 +167,9 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
                 else
                 { 
                     // C remains bitmap: scatter A into the C bitmap
+                    #undef  GB_FREE_ALL
+                    #define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
+                    GB_GET_C_A_SCALAR_FOR_BITMAP
                     GB_memset (Cb, 0, cnzmax, nthreads_max) ;
                     cnvals = 0 ;
                     #define GB_AIJ_WORK(pC,pA)                              \
@@ -180,6 +180,7 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
                     }
                     #include "template/GB_bitmap_assign_A_whole_template.c"
                     C->nvals = GB_nnz (A) ;
+                    GB_FREE_ALL ;
                 }
             }
         }

@@ -2,7 +2,7 @@
 // GB_bitmap_assign_noM_accum:  assign to C bitmap, mask M is not present
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
 
 GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
 (
@@ -88,8 +88,7 @@ GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_GET_A_AND_SCALAR_FOR_BITMAP
+    GB_GET_C_A_SCALAR_FOR_BITMAP
     GB_GET_ACCUM_FOR_BITMAP
 
     //--------------------------------------------------------------------------
@@ -198,6 +197,7 @@ GrB_Info GB_bitmap_assign_5     // C bitmap, no M, with accum
     //--------------------------------------------------------------------------
 
     C->nvals = cnvals ;
+    GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, no M, accum", GB0) ;
     return (GrB_SUCCESS) ;
 }

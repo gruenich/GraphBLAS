@@ -2,7 +2,7 @@
 // GB_bitmap_assign_noM_noaccum:  assign to C bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
 
 GrB_Info GB_bitmap_assign_6     // C bitmap, no M, no accum
 (
@@ -91,8 +91,7 @@ GrB_Info GB_bitmap_assign_6     // C bitmap, no M, no accum
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C_BITMAP ;           // C must be bitmap
-    GB_GET_A_AND_SCALAR_FOR_BITMAP
+    GB_GET_C_A_SCALAR_FOR_BITMAP
 
     //--------------------------------------------------------------------------
     // C_replace phase
@@ -192,6 +191,7 @@ GrB_Info GB_bitmap_assign_6     // C bitmap, no M, no accum
     //--------------------------------------------------------------------------
 
     C->nvals = cnvals ;
+    GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "final C for bitmap assign: noM, noaccum", GB0) ;
     return (GrB_SUCCESS) ;
 }

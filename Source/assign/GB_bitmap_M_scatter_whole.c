@@ -39,7 +39,7 @@ GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
     // get C and M
     //--------------------------------------------------------------------------
 
-    GB_GET_M
+    GB_GET_MASK
     int8_t *Cb = C->b ;
     const int64_t Cvlen = C->vlen ;
     int64_t cnvals = 0 ;    // not needed

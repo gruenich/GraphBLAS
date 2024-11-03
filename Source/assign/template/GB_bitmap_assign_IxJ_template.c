@@ -2,7 +2,7 @@
 // GB_bitmap_assign_IxJ_template: iterate over all of C(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -15,33 +15,48 @@
 // For bitmap assignent, C(I,J)=A is being computed.  For bitmap extraction,
 // C=A(I,J) so the roles of A and C are swapped (see GB_bitmap_subref.c).
 
+// The workspace must already have been declared as follow:
+//
+//      GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;
+//      int ntasks_IxJ = 0, nthreads_IxJ = 0 ;
+
+// This template is used in the GB_bitmap_assign_* methods, and
+// GB_bitmap_subref.  vlen = C->vlen must be assigned.
+
+// The workspace is allocated and tasks are computed, if not already done.
+// It is not freed, so it can be used for subsequent uses of this template.
+// To free the workspace, the method that uses this template must do:
+//
+//      GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;
+
 {
 
     //--------------------------------------------------------------------------
-    // create the tasks to iterate over IxJ
+    // slice IxJ
     //--------------------------------------------------------------------------
 
-    int ntasks = 0, nthreads ;
-    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    GB_OK (GB_subassign_IxJ_slice (&TaskList, &TaskList_size, &ntasks,
-        &nthreads, nI, nJ, Werk)) ;
+    if (TaskList_IxJ == NULL)
+    { 
+        GB_OK (GB_subassign_IxJ_slice (&TaskList_IxJ, &TaskList_IxJ_size,
+            &ntasks_IxJ, &nthreads_IxJ, nI, nJ, Werk)) ;
+    }
 
     //--------------------------------------------------------------------------
     // iterate over all IxJ
     //--------------------------------------------------------------------------
 
     int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+    #pragma omp parallel for num_threads(nthreads_IxJ) schedule(dynamic,1) \
         reduction(+:cnvals)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < ntasks_IxJ ; taskid++)
     {
 
         //----------------------------------------------------------------------
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        int64_t kfirst = TaskList [taskid].kfirst ;
-        int64_t klast  = TaskList [taskid].klast ;
+        int64_t kfirst = TaskList_IxJ [taskid].kfirst ;
+        int64_t klast  = TaskList_IxJ [taskid].klast ;
         int64_t task_cnvals = 0 ;
         bool fine_task = (klast == -1) ;
         int64_t iA_start = 0, iA_end = nI ;
@@ -49,8 +64,8 @@
         { 
             // a fine task operates on a slice of a single vector
             klast = kfirst ;
-            iA_start = TaskList [taskid].pA ;
-            iA_end   = TaskList [taskid].pA_end ;
+            iA_start = TaskList_IxJ [taskid].pA ;
+            iA_end   = TaskList_IxJ [taskid].pA_end ;
         }
 
         //----------------------------------------------------------------------
@@ -86,11 +101,5 @@
         }
         cnvals += task_cnvals ;
     }
-
-    //--------------------------------------------------------------------------
-    // free workpace
-    //--------------------------------------------------------------------------
-
-    GB_FREE_WORK (&TaskList, TaskList_size) ;
 }
 
