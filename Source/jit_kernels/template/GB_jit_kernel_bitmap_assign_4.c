@@ -17,6 +17,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_werk_pop) ;
     GB_GET_CALLBACK (GB_werk_push) ;
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
+
     #include "template/GB_bitmap_assign_4_template.c"
 }
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_fullM_noaccum:  assign to C bitmap, M is bitmap or full
+// GB_bitmap_assign_2_template: C bitmap, M bitmap/full, no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

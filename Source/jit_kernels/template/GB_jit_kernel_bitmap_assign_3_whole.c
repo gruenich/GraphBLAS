@@ -16,8 +16,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_free_memory) ;
     GB_GET_CALLBACK (GB_werk_pop) ;
     GB_GET_CALLBACK (GB_werk_push) ;
-//  GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
-    #define GB_subassign_IxJ_slice garbage
+
     #include "template/GB_bitmap_assign_3_whole_template.c"
 }
 

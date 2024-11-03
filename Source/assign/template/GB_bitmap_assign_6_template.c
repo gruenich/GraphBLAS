@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_noM_noaccum:  assign to C bitmap
+// GB_bitmap_assign_6_template: C bitmap, no M, no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -32,7 +32,8 @@
 // complemented.  This case is handled by GB_assign_prep by calling this
 // method with no matrix A, but with a scalar (which is unused).  However,
 // for GB_ASSIGN, C<!,replace>(I,J)=anything clears all of C, regardless of
-// I and J.  In that case, GB_assign_prep calls GB_clear instead.
+// I and J.  In that case, GB_assign_prep calls GB_clear instead of this
+// method (see the dead code below).
 
 // If C were full: entries can be deleted if C_replace is true,
 // or if A is not full and missing at least one entry.
@@ -55,8 +56,9 @@
     if (C_replace)
     {
         if (GB_ASSIGN_KIND == GB_ASSIGN)
-        { 
+        {
             // for assign: set all Cb(:,:) to zero
+            // (this is currently dead code; see note above)
             GB_memset (Cb, 0, cnzmax, nthreads_max) ;
             cnvals = 0 ;
         }

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_noM_accum_whole:  assign to C bitmap, mask M is not present
+// GB_bitmap_assign_5_whole_template: C bitmap, no M, with accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

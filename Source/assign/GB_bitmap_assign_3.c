@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_M_accum:  assign to C bitmap 
+// GB_bitmap_assign_3: C bitmap, M sparse/hyper, with accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -28,9 +28,6 @@
 
 #include "assign/GB_bitmap_assign_methods.h"
 #include "jitifyer/GB_stringify.h"
-
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
 
 GrB_Info GB_bitmap_assign_3     // C bitmap, M sparse/hyper, with accum
 (
@@ -67,6 +64,7 @@ GrB_Info GB_bitmap_assign_3     // C bitmap, M sparse/hyper, with accum
     GB_assign_burble ("bit3", C_replace, Ikind, Jkind,
         M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
 
+    ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT (GB_IS_HYPERSPARSE (M) || GB_IS_SPARSE (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M, accum", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M, accum", GB0) ;

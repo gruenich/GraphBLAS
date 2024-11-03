@@ -16,6 +16,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_werk_push) ;
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
     GB_GET_CALLBACK (GB_Pending_ensure) ;
+
     #include "template/GB_subassign_01_template.c"
 }
 

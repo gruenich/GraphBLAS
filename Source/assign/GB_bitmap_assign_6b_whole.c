@@ -1,11 +1,13 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_6b_whole:  C = A where C is bitmap and A is sparse/hyper
+// GB_bitmap_assign_6b_whole:  C bitmap, no M, no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// C = A, C is bitmap, A is sparse/hyper
 
 // JIT: done.
 

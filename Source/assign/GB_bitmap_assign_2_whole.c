@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_fullM_noaccum_whole: assign to C bitmap, M is bitmap or full
+// GB_bitmap_assign_2_whole: C bitmap, M bitmap/full, no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -71,6 +71,7 @@ GrB_Info GB_bitmap_assign_2_whole   // C bitmap, M bitmap/full, no accum
     GB_assign_burble ("bit2_whole", C_replace, Ikind, Jkind,
         M, Mask_comp, Mask_struct, accum, A, assign_kind) ;
 
+    ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT_MATRIX_OK (C, "C for bitmap assign, M full, noaccum, whole", GB0) ;
     ASSERT_MATRIX_OK (M, "M for bitmap assign, M full, noaccum, whole", GB0) ;

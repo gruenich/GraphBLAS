@@ -74,8 +74,6 @@ j42 = {4,2} ;       % JIT     on, pause
 % 3 runs
 j404 = {4,0,4} ;    % JIT     on, off, on
 f110 = {1,1,0} ;    % factory on, on , off
-j420 = {4,2,0} ;
-f110 = {1,1,0} ;
 
 % start with the Werk stack enabled
 hack (2) = 0 ; GB_mex_hack (hack) ;
@@ -83,8 +81,40 @@ hack (2) = 0 ; GB_mex_hack (hack) ;
 % save the current malloc debug status
 debug_save = stat ;
 
-jall = {4,3,2,1,0,4,3,2,1,0} ;
-fall = {1,1,1,1,1,0,0,0,0,0} ;
+% HACK FIXME:
+% run once
+j4 = {4,0} ;          % JIT     on
+f1 = {1,0} ;          % factory on
+j0 = {0,0} ;          % JIT     off
+f0 = {0,0} ;          % factory off
+
+% run twice
+j44 = {4,4,0} ;       % JIT     on, on
+j40 = {4,0,0} ;       % JIT     on, off
+f10 = {1,0,0} ;       % factory on, off
+f11 = {1,1,0} ;       % factory on, on
+j42 = {4,2,0} ;       % JIT     on, pause
+
+% 3 runs
+j404 = {4,0,4,0} ;    % JIT     on, off, on
+f110 = {1,1,0,0} ;    % factory on, on , off
+
+% run once
+J4 = {4} ;          % JIT     on
+F1 = {1} ;          % factory on
+J0 = {0} ;          % JIT     off
+F0 = {0} ;          % factory off
+
+% run twice
+J44 = {4,4} ;       % JIT     on, on
+J40 = {4,0} ;       % JIT     on, off
+F10 = {1,0} ;       % factory on, off
+F11 = {1,1} ;       % factory on, on
+J42 = {4,2} ;       % JIT     on, pause
+
+% 3 runs
+J404 = {4,0,4} ;    % JIT     on, off, on
+F110 = {1,1,0} ;    % factory on, on , off
 
 %===============================================================================
 % quick tests (< 1 sec)
@@ -227,7 +257,6 @@ logstat ('test238b'   ,t, j4  , f0  ) ; % test GrB_mxm (dot4 and dot2)
 %                       GB_ATOMIC_WRITE
 %                       Cb [pC] = cb ;                  // unlock the entry
 %                      ...
-
 logstat ('test186'    ,t, j4  , f1  ) ; % saxpy, all formats (slice_balanced)
 
 hack (2) = 0 ; GB_mex_hack (hack) ; % re-enable the Werk stack

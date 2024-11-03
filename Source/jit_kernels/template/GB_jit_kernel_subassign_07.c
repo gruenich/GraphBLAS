@@ -17,6 +17,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_hyper_hash_build) ;
     GB_GET_CALLBACK (GB_subassign_one_slice) ;
     GB_GET_CALLBACK (GB_Pending_ensure) ;
+
     #include "template/GB_subassign_07_template.c"
 }
 

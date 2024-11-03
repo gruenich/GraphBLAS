@@ -8939,13 +8939,9 @@ then reconstruct the kernels there as needed.
 \label{jit_future}
 
 \subsubsection{More JIT kernels}
-I have 44 JIT kernels but could write about another 43 for \verb'GrB_assign',
+I have 78 JIT kernels but could write about another 10 to 23 for
 \verb'GrB_extract', \verb'GrB_kronecker', and other kernels.  Grep the source
-code for \verb'JIT: needed' for a list.  The current JIT kernels cover all the
-\verb'generic' kernels in SuiteSparse GraphBLAS v7.x and earlier for which {\em
-factory} kernels are available.  However, in those versions, some kernels are
-only generic.  This version does not accelerate those, but they will be
-accelerated by the JIT in a future version.
+code for \verb'JIT: needed' or \verb'JIT: possible' for a list.
 
 \subsubsection{Kernel fusion}
 The introduction of the JIT and its related PreJIT kernels allow for the future
@@ -8960,7 +8956,8 @@ As mentioned in Section~\ref{jit_performance}, GraphBLAS may compile JIT
 kernels that are used for only tiny problems where the compile time of a single
 kernel will dominate any performance gains from using the compiled kernel.  A
 heuristic could be introduced so that it compiles them only for larger
-problems.
+problems.  The possible downside of this approach is that the same JIT kernels
+might be needed later for larger problems.
 
 \subsubsection{CUDA / SYCL / OpenCL kernels}
 The CUDA JIT will enable NVIDIA GPUs to be exploited.  There are simply too
@@ -14822,6 +14819,13 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Nov XX, 2024: version 9.4.1 (BETA)    % FIXME
+
+    \begin{itemize}
+    \item More JIT kernels: all JIT kernels for \verb'GrB_assign' and
+    \verb'GxB_subassign' have been created.
+    \end{itemize}
 
 \item Oct 15, 2024: version 9.4.0 (BETA)    % FIXME
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_bitmap_assign_6b_whole_template:  C = A, C is bitmap, A is sparse/hyper
+// GB_bitmap_assign_6b_whole_template: C bitmap, no M, no accum
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
