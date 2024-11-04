@@ -15,7 +15,6 @@
 //------------------------------------------------------------------------------
 
 typedef GB_CALLBACK_SAXPY3_CUMSUM_PROTO ((*GB_AxB_saxpy3_cumsum_f)) ;
-typedef GB_CALLBACK_BITMAP_M_SCATTER_PROTO ((*GB_bitmap_M_scatter_f)) ;
 typedef GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO ((*GB_bitmap_M_scatter_whole_f)) ;
 typedef GB_CALLBACK_BIX_ALLOC_PROTO ((*GB_bix_alloc_f)) ;
 typedef GB_CALLBACK_EK_SLICE_PROTO ((*GB_ek_slice_f)) ;
@@ -44,7 +43,6 @@ typedef GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO ((*GB_bitmap_assign_to_full_f)) 
 typedef struct
 {
     GB_AxB_saxpy3_cumsum_f      GB_AxB_saxpy3_cumsum_func ;
-    GB_bitmap_M_scatter_f       GB_bitmap_M_scatter_func ;
     GB_bitmap_M_scatter_whole_f GB_bitmap_M_scatter_whole_func ;
     GB_bix_alloc_f              GB_bix_alloc_func ;
     GB_ek_slice_f               GB_ek_slice_func ;

@@ -27,29 +27,6 @@ void GX_AxB_saxpy3_cumsum                                                   \
     GB_Werk Werk                                                            \
 )
 
-#define GB_CALLBACK_BITMAP_M_SCATTER_PROTO(GX_bitmap_M_scatter)             \
-void GX_bitmap_M_scatter        /* scatter M into the C bitmap */           \
-(                                                                           \
-    /* input/output: */                                                     \
-    GrB_Matrix C,                                                           \
-    /* inputs: */                                                           \
-    const GrB_Index *I,         /* I index list */                          \
-    const int64_t nI,                                                       \
-    const int Ikind,                                                        \
-    const int64_t Icolon [3],                                               \
-    const GrB_Index *J,         /* J index list */                          \
-    const int64_t nJ,                                                       \
-    const int Jkind,                                                        \
-    const int64_t Jcolon [3],                                               \
-    const GrB_Matrix M,         /* mask to scatter into the C bitmap */     \
-    const bool Mask_struct,     /* true: M structural, false: M valued */   \
-    const int assign_kind,      /* row assign, col assign, assign, sub. */  \
-    const int operation,        /* +=2, -=2, or %=2 */                      \
-    const int64_t *M_ek_slicing,    /* size 3*M_ntasks+1 */                 \
-    const int M_ntasks,                                                     \
-    const int M_nthreads                                                    \
-)
-
 #define GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO(GX_bitmap_M_scatter_whole) \
 void GX_bitmap_M_scatter_whole  /* scatter M into the C bitmap */           \
 (                                                                           \

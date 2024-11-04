@@ -13,7 +13,6 @@
 GB_callback_struct GB_callback =
 {
     .GB_AxB_saxpy3_cumsum_func      = GB_AxB_saxpy3_cumsum,
-    .GB_bitmap_M_scatter_func       = GB_bitmap_M_scatter,
     .GB_bitmap_M_scatter_whole_func = GB_bitmap_M_scatter_whole,
     .GB_bix_alloc_func              = GB_bix_alloc,
     .GB_ek_slice_func               = GB_ek_slice,

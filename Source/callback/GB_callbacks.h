@@ -20,7 +20,6 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc) ;
 GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1) ; 
 GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push) ;
 GB_CALLBACK_WERK_POP_PROTO (GB_werk_pop) ;
-GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter) ;
 GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole) ;
 
 // added for assign:

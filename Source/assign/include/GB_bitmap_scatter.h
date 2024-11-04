@@ -13,7 +13,6 @@
 #define GB_BITMAP_M_SCATTER_PLUS_2  0
 #define GB_BITMAP_M_SCATTER_MINUS_2 1
 #define GB_BITMAP_M_SCATTER_SET_2   2
-#define GB_BITMAP_M_SCATTER_MOD_2   3
 
 #endif
 

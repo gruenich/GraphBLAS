@@ -42,16 +42,16 @@
     //--------------------------------------------------------------------------
 
     // Cb [pC] += 2 for each entry M(i,j) in the mask
-    GB_bitmap_M_scatter (C,
-        I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
-        M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_PLUS_2,
-        M_ek_slicing, M_ntasks, M_nthreads) ;
+    #undef  GB_MASK_WORK
+    #define GB_MASK_WORK(pC) Cb [pC] += 2
+    #define GB_NO_CNVALS
+    #include "template/GB_bitmap_assign_M_template.c"
 
-    // Cb (i,j) = 0:   cij not present, mij zero: can be modified
-    // Cb (i,j) = 1:   cij present, mij zero: can be modified,
-    //                      but delete if aij not present
-    // Cb (i,j) = 2:   cij not present, mij == 1: do not modify
-    // Cb (i,j) = 3:   cij present, mij == 1: do not modify
+    // the bitmap of C now contains:
+    //    Cb (i,j) = 0:  mij == 0, cij not present, do not modify
+    //    Cb (i,j) = 1:  mij == 0, cij present, do not modify
+    //    Cb (i,j) = 2:  mij == 1, cij not present, can be modified
+    //    Cb (i,j) = 3:  mij == 1, cij present, can be modified
 
     //--------------------------------------------------------------------------
     // assign A into C
@@ -177,10 +177,11 @@
         { 
             // clear M from C
             // Cb [pC] %= 2 for each entry M(i,j) in the mask
-            GB_bitmap_M_scatter (C,
-                I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
-                M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_MOD_2,
-                M_ek_slicing, M_ntasks, M_nthreads) ;
+            #undef  GB_MASK_WORK
+            #define GB_MASK_WORK(pC) Cb [pC] &= 1
+            #define GB_NO_CNVALS
+            #include "template/GB_bitmap_assign_M_template.c"
+
         }
         #undef GB_NO_SUBASSIGN_CASE
     }

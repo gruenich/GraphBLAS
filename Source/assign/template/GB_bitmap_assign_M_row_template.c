@@ -66,7 +66,11 @@
                 }
             }
         }
+        #ifndef GB_NO_CNVALS
         cnvals += task_cnvals ;
+        #endif
     }
 }
+
+#undef GB_NO_CNVALS
 

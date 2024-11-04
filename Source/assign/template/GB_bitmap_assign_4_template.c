@@ -46,17 +46,19 @@
     //--------------------------------------------------------------------------
 
     // Cb [pC] += 2 for each entry M(i,j) in the mask
-    GB_bitmap_M_scatter (C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
-        M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_PLUS_2,
-        M_ek_slicing, M_ntasks, M_nthreads) ;
+    #undef  GB_MASK_WORK
+    #define GB_MASK_WORK(pC) Cb [pC] += 2
+    #define GB_NO_CNVALS
+    #include "template/GB_bitmap_assign_M_template.c"
 
-    //    Cb (i,j) = 0:  mij == 0, cij not present
-    //    Cb (i,j) = 1:  mij == 0, cij present
-    //    Cb (i,j) = 2:  mij == 1, cij not present, can be assigned
-    //    Cb (i,j) = 3:  mij == 1, cij present, can be assigned
+    // the bitmap of C now contains:
+    //    Cb (i,j) = 0:  mij == 0, cij not present, do not modify
+    //    Cb (i,j) = 1:  mij == 0, cij present, do not modify
+    //    Cb (i,j) = 2:  mij == 1, cij not present, can be modified
+    //    Cb (i,j) = 3:  mij == 1, cij present, can be modified
 
     //    below:
-    //    Cb (i,j) = 4:  mij == 1, cij present, has been assigned
+    //    Cb (i,j) = 4:  mij == 1, cij present, has been modified (and keep it)
 
     //--------------------------------------------------------------------------
     // scatter A or the scalar into C(I,J)
@@ -108,7 +110,7 @@
             // scalar assign: C<M,repl or !repl>(I,J) = scalar
             //------------------------------------------------------------------
 
-            int keep = C_replace ? 4 : 1 ;
+            int8_t keep = C_replace ? 4 : 1 ;
 
             // for all IxJ
             #undef  GB_IXJ_WORK
@@ -141,10 +143,11 @@
             { 
                 // clear the mask
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter (C,
-                    I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
-                    M, GB_MASK_STRUCT, GB_ASSIGN, GB_BITMAP_M_SCATTER_MOD_2,
-                    M_ek_slicing, M_ntasks, M_nthreads) ;
+                #undef  GB_MASK_WORK
+                #define GB_MASK_WORK(pC) Cb [pC] &= 1
+                #define GB_NO_CNVALS
+                #include "template/GB_bitmap_assign_M_all_template.c"
+
             }
         }
 
@@ -224,6 +227,7 @@
             // row/col/assign case
             //------------------------------------------------------------------
 
+            #define GB_NO_SUBASSIGN_CASE
 
             if (C_replace)
             { 
@@ -247,9 +251,7 @@
                     Cb [pC] = (cb == 3) ;                   \
                     task_cnvals -= (cb == 1) ;              \
                 }
-                #define GB_NO_SUBASSIGN_CASE
                 #include "template/GB_bitmap_assign_C_template.c"
-                #undef GB_NO_SUBASSIGN_CASE
             }
             else
             { 
@@ -266,12 +268,13 @@
 
                 // clear M from C
                 // Cb [pC] %= 2 for each entry M(i,j) in the mask
-                GB_bitmap_M_scatter (C,
-                    I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,
-                    M, GB_MASK_STRUCT, GB_ASSIGN_KIND,
-                    GB_BITMAP_M_SCATTER_MOD_2,
-                    M_ek_slicing, M_ntasks, M_nthreads) ;
+                #undef  GB_MASK_WORK
+                #define GB_MASK_WORK(pC) Cb [pC] &= 1
+                #define GB_NO_CNVALS
+                #include "template/GB_bitmap_assign_M_template.c"
             }
+
+            #undef GB_NO_SUBASSIGN_CASE
         }
     }
 

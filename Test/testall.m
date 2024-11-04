@@ -214,7 +214,8 @@ logstat ('test238b'   ,t, J4   , F0   ) ; % GrB_mxm (dot4 and dot2)
 logstat ('test238'    ,t, J4   , F1   ) ; % GrB_mxm (dot4 and dot2)
 
 % Note that test186 can sometimes non-deterministically miss this block of code
-% in GB_AxB_saxbit_A_sparse_B_bitmap_template.c, about line 352:
+% in GB_AxB_saxbit_A_sparse_B_bitmap_template.c, about line 352, so it is run
+% 3 times:
 %                      ...
 %                      else if (cb == keep)
 %                      {    <----- HERE
@@ -227,6 +228,8 @@ logstat ('test238'    ,t, J4   , F1   ) ; % GrB_mxm (dot4 and dot2)
 %                       GB_ATOMIC_WRITE
 %                       Cb [pC] = cb ;                  // unlock the entry
 %                      ...
+logstat ('test186'    ,t, J4   , F1   ) ; % saxpy, all formats (slice_balanced)
+logstat ('test186'    ,t, J4   , F1   ) ; % saxpy, all formats (slice_balanced)
 logstat ('test186'    ,t, J4   , F1   ) ; % saxpy, all formats (slice_balanced)
 
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
