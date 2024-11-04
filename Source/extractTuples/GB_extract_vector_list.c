@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: possible: 3 variants (sparse/hyper/full)
+// JIT: not needed; factory cases possible with 3 variants (sparse/hyper/full)
 
 // Constructs a list of vector indices for each entry in a matrix.  Creates
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort

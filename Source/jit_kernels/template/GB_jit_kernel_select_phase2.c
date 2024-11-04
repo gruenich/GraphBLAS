@@ -14,7 +14,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE2_PROTO (GB_jit_kernel)
     #if GB_DEPENDS_ON_Y
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
     #endif
-    #include "template/GB_select_phase2.c"
+    #include "template/GB_select_phase2_template.c"
     return (GrB_SUCCESS) ;
 }
 

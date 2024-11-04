@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: possible: one for each mask type.
+// JIT: not needed: could use up to 24 factory cases (one for each mask type,
+// M bitmap/full, and B bitmap/full).
 
 // Symbolic analysis phase for GB_emult_02 and GB_emult_03.
 
@@ -44,6 +45,10 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     //--------------------------------------------------------------------------
     // get C, M, A, and B
     //--------------------------------------------------------------------------
+
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
+    ASSERT ((M == NULL) || GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
 
     GrB_Info info ;
     const int8_t  *restrict Mb = (M == NULL) ? NULL : M->b ;
@@ -103,7 +108,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                     int64_t j = GBH (Ah, k) ;
                     int64_t pB_start = j * vlen ;
                     GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                        GBP (Ap, k, vlen), GBP (Ap, k+1, vlen)) ;
+                        Ap [k], Ap [k+1]) ;
                     int64_t cjnz = 0 ;
                     for ( ; pA < pA_end ; pA++)
                     { 
@@ -133,6 +138,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
             //------------------------------------------------------------------
 
             ASSERT (M != NULL) ;
+            ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
+            ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
 
             int tid ;
             #pragma omp parallel for num_threads(A_nthreads) schedule(dynamic,1)
@@ -148,7 +155,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                     int64_t j = GBH (Ah, k) ;
                     int64_t pB_start = j * vlen ;
                     GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                        GBP (Ap, k, vlen), GBP (Ap, k+1, vlen)) ;
+                        Ap [k], Ap [k+1]) ;
                     int64_t cjnz = 0 ;
                     for ( ; pA < pA_end ; pA++)
                     { 

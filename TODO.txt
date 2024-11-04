@@ -1,13 +1,13 @@
 JIT kernels needed:
 
 -------------------------------------------------------------------------
-ewise family
+add to ewise family:
 -------------------------------------------------------------------------
 
 * GB_kroner
 
 -------------------------------------------------------------------------
-assign family:
+add to assign family:
 -------------------------------------------------------------------------
 
 * GB_bitmap_subref and GB_subref_phase2
@@ -38,7 +38,7 @@ new masker family:
         sparsity of R.  Add this to assign family and use it instead?
 
 -------------------------------------------------------------------------
-apply family:
+add to apply family:
 -------------------------------------------------------------------------
 
 * GB_unjumble for user-defined data types (GB_qsort_1b)
@@ -68,4 +68,37 @@ new sort family:
         with xtype == ytype
     single data type A:  move data, and typecast A to to x and y
     typecast A to xtype/ytype if needed
+
+-------------------------------------------------------------------------
+JIT: possible
+-------------------------------------------------------------------------
+
+* GB_AxB_saxpy3_flopcount
+    3 matrices: M, A, B
+    bool: Mask_comp
+    no operators or data types
+
+* GB_AxB_saxpy3_slice_balanced
+    3 matrices: M, A, B
+    bool: Mask_comp
+    int AxB_method
+    no operators or data types
+
+* GB_ewise_slice
+    3 matrices: M, A, B
+    bool Ch_is_Mh
+
+* GB_assign_zombie5
+* GB_assign_zombie4
+* GB_assign_zombie3
+    use assign family
+
+-------------------------------------------------------------------------
+could use factory cases for these methods:
+-------------------------------------------------------------------------
+
+* GB_extract_vector_list
+* GB_select_positional_phase1
+* GB_select_positional_phase2
+* GB_emult_02_phase1
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: possible
+// JIT: not needed; just 2 variants (T sparse or hypersparse)
 
 // If the input matrix is nrows-by-ncols, and the size of the newly-created
 // matrix C is nrows_new-by-ncols_new, then nrows*ncols must equal
@@ -279,8 +279,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 {
                     int64_t jold = GBH (Th, k) ;
                     GB_GET_PA (pT_start, pT_end, tid, k, kfirst, klast,
-                        pstart_Tslice,
-                        GBP (Tp, k, tvlen), GBP (Tp, k+1, tvlen)) ;
+                        pstart_Tslice, Tp [k], Tp [k+1]) ;
                     for (int64_t p = pT_start ; p < pT_end ; p++)
                     {
                         int64_t iold = Ti [p] ;
@@ -309,7 +308,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 {
                     int64_t jold = GBH (Th, k) ;
                     GB_GET_PA (pT_start, pT_end, tid, k, kfirst, klast,
-                    pstart_Tslice, GBP (Tp, k, tvlen), GBP (Tp, k+1, tvlen)) ;
+                        pstart_Tslice, Tp [k], Tp [k+1]) ;
                     for (int64_t p = pT_start ; p < pT_end ; p++)
                     {
                         int64_t iold = Ti [p] ;
