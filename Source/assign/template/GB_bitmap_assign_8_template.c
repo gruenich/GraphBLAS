@@ -161,6 +161,7 @@
     }
     else
     {
+        #define GB_NO_SUBASSIGN_CASE
         if (C_replace)
         { 
             // for all entries in C.  Also clears M from C
@@ -170,9 +171,7 @@
                 Cb [pC] = (cb == 1) ;               \
                 task_cnvals -= (cb == 3) ;          \
             }
-            #define GB_NO_SUBASSIGN_CASE
             #include "template/GB_bitmap_assign_C_template.c"
-            #undef GB_NO_SUBASSIGN_CASE
         }
         else
         { 
@@ -183,6 +182,7 @@
                 M, GB_MASK_STRUCT, GB_ASSIGN_KIND, GB_BITMAP_M_SCATTER_MOD_2,
                 M_ek_slicing, M_ntasks, M_nthreads) ;
         }
+        #undef GB_NO_SUBASSIGN_CASE
     }
 
     //--------------------------------------------------------------------------

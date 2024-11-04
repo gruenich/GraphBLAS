@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
 // Does the work for GrB_*_reduce_TYPE, both matrix and vector.
 

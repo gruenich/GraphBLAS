@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #include "select/GB_select.h"
 #include "slice/GB_ek_slice.h"
 #ifndef GBCOMPACT

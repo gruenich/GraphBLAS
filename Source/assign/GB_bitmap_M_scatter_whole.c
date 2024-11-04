@@ -7,12 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// This method only handles the full assign case, where there are not I and J
+// This method only handles the full assign case, where there are no I and J
 // index lists.  The C and M matrices must have the same size.
 
-// JIT: possible: for each kind of mask matrix.
-// This method is called from inside JIT kernels, so using a JIT for this
-// method would be unusual.
+// JIT: possible: 6 or 12 variants for each kind of mask matrix, M.
+// 6 types: struct, 1, 2, 4, 8, 16 bytes
+// 2 matrix formats of M: sparse and hypersparse (could use just one, with
+// the generic ternary run-time test jM = GBH (Mh, k).
+
+// alternatively, create the 12 variants in a factory-style, with no JIT
+// kernels, since this method is called inside other JIT kernels.
 
 // C is bitmap.  M is sparse or hypersparse, and may be jumbled.
 

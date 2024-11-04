@@ -1,0 +1,71 @@
+JIT kernels needed:
+
+-------------------------------------------------------------------------
+ewise family
+-------------------------------------------------------------------------
+
+* GB_kroner
+
+-------------------------------------------------------------------------
+assign family:
+-------------------------------------------------------------------------
+
+* GB_bitmap_subref and GB_subref_phase2
+    C = A(I,J)
+    no operator
+    no typecast
+    no mask
+    no scalar case
+    2 matrices: C and A
+    index lists: I and J
+    lots of analysis to pass to numeric phase; do not use assign_jit
+        but use assign family; can use encodify/enumify/macrofy_assign
+
+    has symbolic and C_iso cases, but these do not need the JIT
+
+-------------------------------------------------------------------------
+new masker family:
+-------------------------------------------------------------------------
+
+* GB_masker
+    C<M> = Z, returning result in R
+    no operator
+    4 matrices (R, C, M, Z)
+    matrix R = mask (C,M,Z)
+    single data type, no typecasting: R, C, and Z have the same type
+
+    can almost use the assign family but need info about the
+        sparsity of R.  Add this to assign family and use it instead?
+
+-------------------------------------------------------------------------
+apply family:
+-------------------------------------------------------------------------
+
+* GB_unjumble for user-defined data types (GB_qsort_1b)
+    no operator (use identity op, no typecast)
+    one matrix A
+    single data type; just move data
+    no typecasting
+
+* GB_all_entries_are_iso and GB_expand_iso
+    no operator (use identity op, no typecast)
+    no typecast
+    one matrix, one data type: A
+
+* GB_convert_bitmap_worker
+    no operator (use identity op, xtype and ztype can differ)
+    one matrix A
+    single data type, just move data
+    no typecasting, but could add it (see GB_extractTuples)
+
+-------------------------------------------------------------------------
+new sort family:
+-------------------------------------------------------------------------
+
+* GB_sort: sort for user defined types and comparator operators
+    one matrix A
+    binary op (not index binary op), for x < y as z=f(x,y), z is bool,
+        with xtype == ytype
+    single data type A:  move data, and typecast A to to x and y
+    typecast A to xtype/ytype if needed
+

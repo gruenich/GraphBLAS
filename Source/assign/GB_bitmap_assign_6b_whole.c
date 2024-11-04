@@ -9,8 +9,6 @@
 
 // C = A, C is bitmap, A is sparse/hyper
 
-// JIT: done.
-
 #include "assign/GB_bitmap_assign_methods.h"
 #include "assign/GB_subassign_dense.h"
 #include "jitifyer/GB_stringify.h"

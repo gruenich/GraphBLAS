@@ -7,9 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // The matrix A is converted from sparse/hypersparse to bitmap.
+
 // FUTURE: A could also be typecasted and/or a unary operator applied,
 // via the JIT kernel.
 

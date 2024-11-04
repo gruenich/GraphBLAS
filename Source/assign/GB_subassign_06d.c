@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
 // M:           present, and aliased to A

@@ -9,8 +9,6 @@
 
 // C += A+B where no matrix is iso and all three matrices are as-if-full
 
-// JIT: done.
-
 #include "ewise/GB_ewise.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"

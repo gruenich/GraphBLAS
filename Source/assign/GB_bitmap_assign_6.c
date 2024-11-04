@@ -34,8 +34,6 @@
 // for GB_ASSIGN, C<!,replace>(I,J)=anything clears all of C, regardless of
 // I and J.  In that case, GB_assign_prep calls GB_clear instead.
 
-// JIT: done.
-
 // If C were full: entries can be deleted if C_replace is true,
 // or if A is not full and missing at least one entry.
 

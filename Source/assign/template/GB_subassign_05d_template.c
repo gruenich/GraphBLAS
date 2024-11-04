@@ -9,7 +9,7 @@
 
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
-// M:           present
+// M:           present, can be sparse, hypersparse, bitmap, or full
 // Mask_comp:   false
 // Mask_struct: true or false
 // C_replace:   false
@@ -93,7 +93,8 @@
             // C<M(:,j)> = x
             //------------------------------------------------------------------
 
-            if (Mx == NULL && Mb == NULL)
+            if (Mx == NULL && Mb == NULL)   // FIXME
+//          if (GB_MASK_STRUCT && !GB_M_IS_BITMAP)  <--- use this instead
             {
                 // mask is structural and not bitmap
                 GB_PRAGMA_SIMD_VECTORIZE

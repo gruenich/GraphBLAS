@@ -22,8 +22,6 @@
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign or subassign (same action)
 
-// JIT: done.
-
 // If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"

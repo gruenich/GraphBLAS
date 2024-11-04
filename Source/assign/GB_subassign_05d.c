@@ -7,20 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
-// M:           present
+// C:           full
+// M:           present, any sparsity structure
 // Mask_comp:   false
 // Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           scalar
 // S:           none
-
-// C can have any sparsity structure, but it must be entirely dense with
-// all entries present.
 
 #include "assign/GB_subassign_methods.h"
 #include "assign/GB_subassign_dense.h"

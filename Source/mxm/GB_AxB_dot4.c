@@ -18,8 +18,6 @@
 
 // The ANY monoid is a special case: C is not modified at all.
 
-// JIT: done.
-
 //------------------------------------------------------------------------------
 
 #include "mxm/GB_mxm.h"

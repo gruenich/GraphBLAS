@@ -1,9 +1,6 @@
 function test21b (fulltest)
 %TEST21B test GrB_assign
 
-% Future: prune this test (132 sec, lo cover);
-% (difficult to prune because of rand in innermost loops)
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

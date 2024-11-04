@@ -45,7 +45,7 @@
 
             int64_t jM = GBH_M (Mh, k) ;
             GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast, pstart_Mslice,
-                GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
+                Mp [k], Mp [k+1]) ;
 
             //------------------------------------------------------------------
             // traverse over M(:,jM), the kth vector of M
@@ -63,7 +63,7 @@
                     int64_t iM = Mi [pM] ;
                     int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
                     int64_t pC = iC + pC0 ;
-                    GB_MASK_WORK (pC) ;             // operate on Cx [pC]
+                    GB_MASK_WORK (pC) ;
                 }
             }
         }

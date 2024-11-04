@@ -12,11 +12,17 @@
 // assignments.  The C and M matrices can have different sizes.  Compare with
 // GB_bitmap_M_scatter_whole, where C and M always have the same size.
 
-// JIT: possible: for each kind of mask matrix.
-// This method is called from inside JIT kernels, so using a JIT for this
-// method would be unusual.
+// JIT: possible: 768 variants for each kind of mask matrix, M and I,J kinds
+// 6 types: struct, 1, 2, 4, 8, 16 bytes
+// 2 matrix formats of M: sparse and hypersparse
+// Ikind: 4 variants
+// Jkind: 4 variants
+// assign_kind: 4 variants
 
 // C is bitmap.  M is sparse or hypersparse, and may be jumbled.
+
+// alternatively: make this a static inline function so it can be used inside
+// a JIT kernel, or simply a template
 
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC

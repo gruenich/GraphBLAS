@@ -167,6 +167,7 @@ typedef enum
     GB_JIT_KERNEL_CONVERTBITMAP = 85, // GB_convert_bitmap_worker
     GB_JIT_KERNEL_EXPANDISO     = 86, // GB_expand_iso
     GB_JIT_KERNEL_SORT          = 87, // GB_sort
+    GB_JIT_KERNEL_UNJUMBLE      = 88, // GB_unjumble
 
     //--------------------------------------------------------------------------
     // future:: CUDA kernels

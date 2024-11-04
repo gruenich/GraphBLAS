@@ -32,8 +32,6 @@
 // already been handled by GB_assign_prep, which calls GB_clear, and thus
 // Mask_comp is always false in this method.
 
-// JIT: done.
-
 // If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"

@@ -22,8 +22,6 @@
 // performance is not as good as it could be.  For large problems, C=(A')*B is
 // faster with the saxpy3 method, as compared to this method with C=A'*B.
 
-// JIT: done.
-
 #define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_Matrix_free (&Mwork) ;               \
@@ -385,10 +383,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         int M_ntasks, M_nthreads ;
         GB_SLICE_MATRIX (M, 8) ;
         // Cb [pC] += 2 for each entry M(i,j) in the mask
-//      GB_bitmap_M_scatter (C,
-//          NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
-//          M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-//          M_ek_slicing, M_ntasks, M_nthreads) ;
         GB_bitmap_M_scatter_whole (C, M, Mask_struct,
             GB_BITMAP_M_SCATTER_PLUS_2, M_ek_slicing, M_ntasks, M_nthreads) ;
         // the bitmap of C now contains:

@@ -28,8 +28,6 @@
 // A:           matrix (hyper, sparse, bitmap, or full), or scalar
 // kind:        assign, row assign, col assign, or subassign
 
-// JIT: done.
-
 // If C were full: entries can be deleted if C_replace is true,
 // or if A is not full and missing at least one entry.
 

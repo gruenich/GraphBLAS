@@ -32,8 +32,6 @@
 // already been handled by GB_assign_prep, which calls GB_bitmap_assign with a
 // scalar (which is unused).
 
-// JIT: done.
-
 // If C were full: entries can be deleted only if C_replace is true.
 
 #include "assign/GB_bitmap_assign_methods.h"

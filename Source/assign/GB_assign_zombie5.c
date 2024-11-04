@@ -146,7 +146,7 @@ GrB_Info GB_assign_zombie5
             // j_outside is true if column j is outside the C(I,J) submatrix
             bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
             GB_GET_PA (pC_start, pC_end, tid, k, kfirst, klast, pstart_Cslice,
-                GBI_C (Cp, k, zvlen), GBI_C (Cp, k+1, zvlen)) ;
+                Cp [k], Cp [k+1]) ;
 
             //------------------------------------------------------------------
             // get M(:,j)
@@ -154,23 +154,6 @@ GrB_Info GB_assign_zombie5
 
             int64_t pM_start, pM_end ;
             GB_LOOKUP_VECTOR_M (j, pM_start, pM_end) ;
-
-#if 0
-            // this works for M with any sparsity structure
-            int64_t pM_start, pM_end ;
-            if (M_is_hyper)
-            { 
-                // M is hypersparse
-                GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx,
-                    M_hash_bits, j, &pM_start, &pM_end) ;
-            }
-            else
-            { 
-                // M is sparse, bitmap, or full
-                pM_start = GBP_M (Mp, j  , Mvlen) ;
-                pM_end   = GBP_M (Mp, j+1, Mvlen) ;
-            }
-#endif
 
             bool mjdense = (pM_end - pM_start) == Mvlen ;
 

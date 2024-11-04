@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // C can have any sparsity on input; it becomes a full non-iso matrix on output.
 // C can have pending work, which is discarded.
 

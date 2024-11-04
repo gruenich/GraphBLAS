@@ -16,8 +16,6 @@
 // The monoid must have an atomic implementation, so the TIMES monoid for
 // complex types is not supported.
 
-// JIT: done.
-
 //------------------------------------------------------------------------------
 
 #include "mxm/GB_mxm.h"
