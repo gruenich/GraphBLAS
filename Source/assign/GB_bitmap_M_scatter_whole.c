@@ -10,19 +10,16 @@
 // This method only handles the full assign case, where there are no I and J
 // index lists.  The C and M matrices must have the same size.
 
-// JIT: possible: 6 or 12 variants for each kind of mask matrix, M.
-// 6 types: struct, 1, 2, 4, 8, 16 bytes
-// 2 matrix formats of M: sparse and hypersparse (could use just one, with
-// the generic ternary run-time test jM = GBH (Mh, k).
-
-// alternatively, create the 12 variants in a factory-style, with no JIT
-// kernels, since this method is called inside other JIT kernels.
+// JIT: not needed; this method includes variants for all 6 cases of the mask
+// (structure, and 1, 2, 4, 8, and 16-byte).
 
 // C is bitmap.  M is sparse or hypersparse, and may be jumbled.
 
 #include "assign/GB_bitmap_assign_methods.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL ;
 
 GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
 {
@@ -47,36 +44,70 @@ GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole)
     int8_t *Cb = C->b ;
     const int64_t Cvlen = C->vlen ;
     int64_t cnvals = 0 ;    // not needed
+    ASSERT ((Mx == NULL) == Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // scatter M into the C bitmap
     //--------------------------------------------------------------------------
 
-    switch (operation)
+    if (Mx == NULL)
+    { 
+        #undef  GB_MCAST
+        #define GB_MCAST(Mx,p,msize) 1
+        #include "assign/factory/GB_bitmap_M_scatter_whole_template.c"
+    }
+    else
     {
+        switch (msize)
+        {
 
-        case GB_BITMAP_M_SCATTER_PLUS_2 :       // Cb (i,j) += 2
-
-            #undef  GB_MASK_WORK
-            #define GB_MASK_WORK(pC) Cb [pC] += 2
-            #include "template/GB_bitmap_assign_M_all_template.c"
+            default:
+            case GB_1BYTE : 
+            {
+                uint8_t *Mx1 = (uint8_t *) Mx ;
+                #undef  GB_MCAST
+                #define GB_MCAST(Mx,p,msize) (Mx1 [p] != 0)
+                #include "assign/factory/GB_bitmap_M_scatter_whole_template.c"
+            }
             break ;
 
-        case GB_BITMAP_M_SCATTER_MINUS_2 :      // Cb (i,j) -= 2
-
-            #undef  GB_MASK_WORK
-            #define GB_MASK_WORK(pC) Cb [pC] -= 2
-            #include "template/GB_bitmap_assign_M_all_template.c"
+            case GB_2BYTE : 
+            {
+                uint16_t *Mx2 = (uint16_t *) Mx ;
+                #undef  GB_MCAST
+                #define GB_MCAST(Mx,p,msize) (Mx2 [p] != 0)
+                #include "assign/factory/GB_bitmap_M_scatter_whole_template.c"
+            }
             break ;
 
-        case GB_BITMAP_M_SCATTER_SET_2 :        // Cb (i,j) = 2
-
-            #undef  GB_MASK_WORK
-            #define GB_MASK_WORK(pC) Cb [pC] = 2
-            #include "template/GB_bitmap_assign_M_all_template.c"
+            case GB_4BYTE : 
+            {
+                uint32_t *Mx4 = (uint32_t *) Mx ;
+                #undef  GB_MCAST
+                #define GB_MCAST(Mx,p,msize) (Mx4 [p] != 0)
+                #include "assign/factory/GB_bitmap_M_scatter_whole_template.c"
+            }
             break ;
 
-        default: ;
+            case GB_8BYTE : 
+            {
+                uint64_t *Mx8 = (uint64_t *) Mx ;
+                #undef  GB_MCAST
+                #define GB_MCAST(Mx,p,msize) (Mx8 [p] != 0)
+                #include "assign/factory/GB_bitmap_M_scatter_whole_template.c"
+            }
+            break ;
+
+            case GB_16BYTE : 
+            {
+                uint64_t *Mx16 = (uint64_t *) Mx ;
+                #undef  GB_MCAST
+                #define GB_MCAST(Mx,p,msize) \
+                    (Mx16 [2*(p)] != 0) || (Mx16 [2*(p)+1] != 0)
+                #include "assign/factory/GB_bitmap_M_scatter_whole_template.c"
+            }
+            break ;
+        }
     }
 }
 
