@@ -1,19 +1,20 @@
 //------------------------------------------------------------------------------
-// GB_subref_template: C = A(I,J)
+// GB_subref_template: C = A(I,J) where C and A are sparse/hypersparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// GB_subref_templat extracts a submatrix, C = A(I,J).  The method is done in
-// two phases.  Phase 1 just counts the entries in C, and phase 2 constructs
-// the pattern and values of C.  There are 3 kinds of subref:
+// GB_subref_template extracts a submatrix, C = A(I,J).  The method is done in
+// three phases.  Phase 1 and 2 are symbolic, and phase 3 (this phase)
+// constructs the pattern and values of C.  There are 3 kinds of subref:
 //
-//      symbolic:  C(i,j) is the position of A(I(i),J(j)) in the matrix A
-//      iso:     C = A(I,J), extracting the pattern only, not the values
-//      numeric: C = A(I,J), extracting the pattern and values
+//      symbolic:  C(i,j) is the position of A(I(i),J(j)) in the matrix A,
+//                  in this case, A can have zombies
+//      iso:       C = A(I,J), extracting the pattern only, not the values
+//      numeric:   C = A(I,J), extracting the pattern and values,
 
 #if defined ( GB_SYMBOLIC )
 
@@ -42,7 +43,7 @@
     const int64_t *restrict Ai = A->i ;
     const int64_t avlen = A->vlen ;
 
-    // these values are ignored if Ikind == GB_LIST
+    // these values are ignored if GB_I_KIND == GB_LIST
     int64_t ibegin = Icolon [GxB_BEGIN] ;
     int64_t iinc   = Icolon [GxB_INC  ] ;
     int64_t inc    = (iinc < 0) ? (-iinc) : iinc ;
@@ -173,8 +174,10 @@
             else
             { 
                 // determine the method based on A(*,kA) and I
-                method = GB_subref_method (NULL, NULL, alen, avlen, Ikind, nI,
-                    (Mark != NULL), need_qsort, iinc, nduplicates) ;
+// FIXME: make the nI and (Mark != NULL) compile-time constants for the JIT:
+                method = GB_subref_method (NULL, NULL, alen, avlen, GB_I_KIND,
+                    nI, (Mark != NULL), GB_NEED_QSORT, iinc,
+                    GB_I_HAS_DUPLICATES) ;
             }
 
             //------------------------------------------------------------------
@@ -189,7 +192,7 @@
                 //--------------------------------------------------------------
 
                     // A (:,kA) has not been sliced
-                    ASSERT (Ikind == GB_ALL) ;
+                    ASSERT (GB_I_KIND == GB_ALL) ;
                     ASSERT (pA     == Ap_start [kC]) ;
                     ASSERT (pA_end == Ap_end   [kC]) ;
                     // copy the entire vector and construct indices
@@ -199,7 +202,7 @@
                     for (int64_t k = 0 ; k < ilen ; k++)
                     { 
                         int64_t inew = k + pI ;
-                        ASSERT (inew == GB_ijlist (I, inew, Ikind, Icolon)) ;
+                        ASSERT (inew == GB_ijlist (I, inew, GB_I_KIND, Icolon));
                         ASSERT (inew == GB_Ai (pA + inew)) ;
                         Ci [pC + k] = inew ;
                     }
@@ -223,7 +226,7 @@
                     { 
                         // C(inew,kC) =  A(i,kA), and it always exists.
                         int64_t inew = k + pI ;
-                        int64_t i = GB_ijlist (I, inew, Ikind, Icolon) ;
+                        int64_t i = GB_ijlist (I, inew, GB_I_KIND, Icolon) ;
                         ASSERT (i == GB_Ai (pA + i)) ;
                         Ci [pC + k] = inew ;
                         GB_COPY_ENTRY (pC + k, pA + i) ;
@@ -236,16 +239,16 @@
                 //--------------------------------------------------------------
 
                     // binary search in GB_subref_phase0 has already found it.
-                    // This can be any Ikind with nI=1: GB_ALL with A->vlen=1,
-                    // GB_RANGE with ibegin==iend, GB_STRIDE such as 0:-1:0
-                    // (with length 1), or a GB_LIST with ni=1.
+                    // This can be any GB_I_KIND with nI=1: GB_ALL with
+                    // A->vlen=1, GB_RANGE with ibegin==iend, GB_STRIDE such as
+                    // 0:-1:0 (with length 1), or a GB_LIST with ni=1.
 
                     // Time: 50x faster
 
                     ASSERT (!fine_task) ;
                     ASSERT (alen == 1) ;
                     ASSERT (nI == 1) ;
-                    ASSERT (GB_Ai (pA) == GB_ijlist (I, 0, Ikind, Icolon)) ;
+                    ASSERT (GB_Ai (pA) == GB_ijlist (I, 0, GB_I_KIND, Icolon)) ;
                     #if defined ( GB_ANALYSIS_PHASE )
                     clen = 1 ;
                     #else
@@ -255,13 +258,13 @@
                     break ;
 
                 //--------------------------------------------------------------
-                case 4 : // Ikind is ":", thus C(:,kC) = A (:,kA)
+                case 4 : // GB_I_KIND is ":", thus C(:,kC) = A (:,kA)
                 //--------------------------------------------------------------
 
                     // Time: 1x faster but low speedup on the Mac.  Why?
                     // Probably memory bound since it is just memcpy's.
 
-                    ASSERT (Ikind == GB_ALL && ibegin == 0) ;
+                    ASSERT (GB_I_KIND == GB_ALL && ibegin == 0) ;
                     #if defined ( GB_ANALYSIS_PHASE )
                     clen = alen ;
                     #else
@@ -277,7 +280,7 @@
                         { 
                             // symbolic C(:,kC) = A(:,kA) where A has zombies
                             int64_t i = GB_Ai (pA + k) ;
-                            ASSERT (i == GB_ijlist (I, i, Ikind, Icolon)) ;
+                            ASSERT (i == GB_ijlist (I, i, GB_I_KIND, Icolon)) ;
                             Ci [pC + k] = i ;
                         }
                     }
@@ -289,12 +292,12 @@
                     break ;
 
                 //--------------------------------------------------------------
-                case 5 : // Ikind is GB_RANGE = ibegin:iend
+                case 5 : // GB_I_KIND is GB_RANGE = ibegin:iend
                 //--------------------------------------------------------------
 
                     // Time: much faster.  Good speedup too.
 
-                    ASSERT (Ikind == GB_RANGE) ;
+                    ASSERT (GB_I_KIND == GB_RANGE) ;
                     #if defined ( GB_ANALYSIS_PHASE )
                     clen = alen ;
                     #else
@@ -302,7 +305,7 @@
                     { 
                         int64_t i = GB_Ai (pA + k) ;
                         int64_t inew = i - ibegin ;
-                        ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
+                        ASSERT (i == GB_ijlist (I, inew, GB_I_KIND, Icolon)) ;
                         Ci [pC + k] = inew ;
                     }
                     GB_COPY_RANGE (pC, pA, alen) ;
@@ -340,7 +343,7 @@
                         // C(inew,kC) = A (i,kA), if it exists.
                         // i = I [inew] ; or from a colon expression
                         int64_t inew = k + pI ;
-                        int64_t i = GB_ijlist (I, inew, Ikind, Icolon) ;
+                        int64_t i = GB_ijlist (I, inew, GB_I_KIND, Icolon) ;
                         bool found ;
                         int64_t pleft = pA ;
                         int64_t pright = pA_end - 1 ;
@@ -377,7 +380,7 @@
                     // but has good speedup.  About as fast with
                     // enough threads.
 
-                    ASSERT (Ikind == GB_STRIDE && iinc > 1) ;
+                    ASSERT (GB_I_KIND == GB_STRIDE && iinc > 1) ;
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present; see if it is in ibegin:iinc:iend
@@ -411,7 +414,7 @@
                     // Good speedup though.  Faster for
                     // large values (iinc = -128).
                 
-                    ASSERT (Ikind == GB_STRIDE && iinc < -1) ;
+                    ASSERT (GB_I_KIND == GB_STRIDE && iinc < -1) ;
                     for (int64_t k = alen - 1 ; k >= 0 ; k--)
                     {
                         // A(i,kA) present; see if it is in ibegin:iinc:iend
@@ -443,7 +446,7 @@
 
                     // Time: much faster.  Good speedup.
 
-                    ASSERT (Ikind == GB_STRIDE && iinc == -1) ;
+                    ASSERT (GB_I_KIND == GB_STRIDE && iinc == -1) ;
                     #if defined ( GB_ANALYSIS_PHASE )
                     clen = alen ;
                     #else
@@ -452,7 +455,7 @@
                         // A(i,kA) is present
                         int64_t i = GB_Ai (pA + k) ;
                         int64_t inew = (ibegin - i) ;
-                        ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
+                        ASSERT (i == GB_ijlist (I, inew, GB_I_KIND, Icolon)) ;
                         Ci [pC] = inew ;
                         GB_COPY_ENTRY (pC, pA + k) ;
                         pC++ ;
@@ -472,7 +475,7 @@
                     // Case 10 works well when I has many entries and A(:,kA)
                     // has few entries. C(:,kC) must be sorted after this pass.
 
-                    ASSERT (Ikind == GB_LIST) ;
+                    ASSERT (GB_I_KIND == GB_LIST) ;
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present, look it up in the I inverse buckets
@@ -482,7 +485,7 @@
                         GB_for_each_index_in_bucket (inew, i)
                         { 
                             ASSERT (inew >= 0 && inew < nI) ;
-                            ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
+                            ASSERT (i == GB_ijlist (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;
                             #else
@@ -512,6 +515,7 @@
                         GB_qsort_1 (Ci + pC, clen) ;
                         #else
                         // sort the pattern of C(:,kC), and the values
+// FIXME for JIT kernel: need to JIT GB_qsort_1b for C->type
                         GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
                             GB_CSIZE2, clen) ;
                         #endif
@@ -528,7 +532,7 @@
                     // so that no sort is required for C(:,kC).  It is
                     // otherwise identical to Case 10.
 
-                    ASSERT (Ikind == GB_LIST) ;
+                    ASSERT (GB_I_KIND == GB_LIST) ;
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present, look it up in the I inverse buckets
@@ -538,7 +542,7 @@
                         GB_for_each_index_in_bucket (inew, i)
                         { 
                             ASSERT (inew >= 0 && inew < nI) ;
-                            ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
+                            ASSERT (i == GB_ijlist (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;
                             #else
@@ -562,7 +566,7 @@
                     // just needs to iterate 0 or 1 times.  Works well when I
                     // has many entries and A(:,kA) has few entries.
 
-                    ASSERT (Ikind == GB_LIST && nduplicates == 0) ;
+                    ASSERT (GB_I_KIND == GB_LIST && !GB_I_HAS_DUPLICATES)
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present, look it up in the I inverse buckets
@@ -573,7 +577,7 @@
                         if (inew >= 0)
                         { 
                             ASSERT (inew >= 0 && inew < nI) ;
-                            ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
+                            ASSERT (i == GB_ijlist (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;
                             #else
@@ -641,6 +645,7 @@
                     #else
                     { 
                         // sort the pattern of C(:,kC), and the values
+// FIXME for JIT kernel: need to JIT GB_qsort_1b for C->type
                         GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
                             GB_CSIZE2, clen) ;
                     }

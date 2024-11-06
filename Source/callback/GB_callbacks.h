@@ -32,5 +32,8 @@ GB_CALLBACK_PENDING_ENSURE_PROTO (GB_Pending_ensure) ;
 GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice) ;
 GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO (GB_bitmap_assign_to_full) ;
 
+// added for subref:
+GB_CALLBACK_QSORT_1B_PROTO (GB_qsort_1b) ;
+
 #endif
 

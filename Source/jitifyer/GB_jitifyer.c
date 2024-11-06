@@ -545,6 +545,9 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("masker_phase1")) c = GB_JIT_KERNEL_MASKER_PHASE1 ;
         else if (IS ("masker_phase2")) c = GB_JIT_KERNEL_MASKER_PHASE2 ;
 
+        else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
+        else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
+
         // add CUDA PreJIT kernels here (future):
 //      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
         else
@@ -1877,6 +1880,10 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_masker_family  : 
             scode_digits = 5 ;
+            break ;
+
+        case GB_jit_subref_family  : 
+            scode_digits = 4 ;
             break ;
 
         default: ;

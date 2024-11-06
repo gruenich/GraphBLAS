@@ -308,6 +308,7 @@
 #define GB_encodify_mxm GM_encodify_mxm
 #define GB_encodify_reduce GM_encodify_reduce
 #define GB_encodify_select GM_encodify_select
+#define GB_encodify_subref GM_encodify_subref
 #define GB_encodify_user_op GM_encodify_user_op
 #define GB_encodify_user_type GM_encodify_user_type
 #define GB_entry_check GM_entry_check
@@ -325,6 +326,7 @@
 #define GB_enumify_reduce GM_enumify_reduce
 #define GB_enumify_select GM_enumify_select
 #define GB_enumify_sparsity GM_enumify_sparsity
+#define GB_enumify_subref GM_enumify_subref
 #define GB_enumify_terminal GM_enumify_terminal
 #define GB_enumify_unop GM_enumify_unop
 #define GB_ERR_getErrorString GM_ERR_getErrorString
@@ -828,6 +830,9 @@
 #define GB_JITpackage_332 GM_JITpackage_332
 #define GB_JITpackage_333 GM_JITpackage_333
 #define GB_JITpackage_334 GM_JITpackage_334
+#define GB_JITpackage_335 GM_JITpackage_335
+#define GB_JITpackage_336 GM_JITpackage_336
+#define GB_JITpackage_337 GM_JITpackage_337
 #define GB_JITpackage_33 GM_JITpackage_33
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35
@@ -1016,6 +1021,7 @@
 #define GB_macrofy_select GM_macrofy_select
 #define GB_macrofy_sparsity GM_macrofy_sparsity
 #define GB_macrofy_string GM_macrofy_string
+#define GB_macrofy_subref GM_macrofy_subref
 #define GB_macrofy_typedefs GM_macrofy_typedefs
 #define GB_macrofy_type GM_macrofy_type
 #define GB_macrofy_unop GM_macrofy_unop
@@ -1215,6 +1221,7 @@
 #define GB_subref_phase2 GM_subref_phase2
 #define GB_subref_phase3 GM_subref_phase3
 #define GB_subref_slice GM_subref_slice
+#define GB_subref_sparse_jit GM_subref_sparse_jit
 #define GB_task_cumsum GM_task_cumsum
 #define GB_transplant_conform GM_transplant_conform
 #define GB_transplant GM_transplant

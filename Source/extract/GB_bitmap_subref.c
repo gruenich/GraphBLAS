@@ -2,7 +2,7 @@
 // GB_bitmap_subref: C = A(I,J) where A is bitmap or full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,6 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     const int8_t *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
-    const size_t asize = A->type->size ;
 
     //--------------------------------------------------------------------------
     // check the properties of I and J
@@ -101,6 +100,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         // J invalid
         return (info) ;
     }
+
+    #define GB_I_KIND Ikind
+    #define GB_J_KIND Jkind
 
     //--------------------------------------------------------------------------
     // allocate C
@@ -195,6 +197,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
             // C=A(I,J) non-iso numeric with A and C bitmap; both non-iso
             //------------------------------------------------------------------
 
+            const size_t csize = C->type->size ; // C and A have the same type
             const GB_void *restrict Ax = (GB_void *) A->x ;
                   GB_void *restrict Cx = (GB_void *) C->x ;
             #undef  GB_IXJ_WORK
@@ -205,7 +208,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 if (ab)                                                     \
                 {                                                           \
                     /* Cx [pC] = Ax [pA] */                                 \
-                    memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;    \
+                    memcpy (Cx +((pC)*csize), Ax +((pA)*csize), csize) ;    \
                     task_cnvals++ ;                                         \
                 }                                                           \
             }
@@ -257,13 +260,14 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
             // C=A(I,J) non-iso numeric with A and C full, both are non-iso
             //------------------------------------------------------------------
 
+            const size_t csize = C->type->size ; // C and A have the same type
             const GB_void *restrict Ax = (GB_void *) A->x ;
                   GB_void *restrict Cx = (GB_void *) C->x ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
             {                                                               \
                 /* Cx [pC] = Ax [pA] */                                     \
-                memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;        \
+                memcpy (Cx +((pC)*csize), Ax +((pA)*csize), csize) ;        \
             }
             #include "template/GB_bitmap_assign_IxJ_template.c"
         }

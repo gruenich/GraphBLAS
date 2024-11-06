@@ -266,5 +266,14 @@ void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
     int nthreads_max                                                        \
 )
 
+#define GB_CALLBACK_QSORT_1B_PROTO(GX_qsort_1b)                             \
+void GX_qsort_1b                                                            \
+(                                                                           \
+    int64_t *restrict A_0,       /* size n array */                         \
+    GB_void *restrict A_1,       /* size n array */                         \
+    const size_t xsize,          /* size of entries in A_1 */               \
+    const int64_t n                                                         \
+)
+
 #endif
 

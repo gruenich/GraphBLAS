@@ -624,6 +624,25 @@ GrB_Info GB_jit_kernel_masker2                                          \
     const int M_ntasks                                                  \
 )
 
+#define GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(GB_jit_kernel_subref_sparse)  \
+GrB_Info GB_jit_kernel_subref_sparse                                    \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GB_task_struct *restrict TaskList,                            \
+    const int ntasks,                                                   \
+    const int nthreads,                                                 \
+    const bool post_sort,                                               \
+    const int64_t *Mark,                                                \
+    const int64_t *Inext,                                               \
+    const int64_t *restrict Ap_start,                                   \
+    const int64_t *restrict Ap_end,                                     \
+    const int64_t nI,                                                   \
+    const int64_t Icolon [3],                                           \
+    const GrB_Matrix A,                                                 \
+    const GrB_Index *I,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------
@@ -778,6 +797,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_UTYP(g) GB_JIT_KERNEL_USER_TYPE_PROTO(g) ;
 #define JIT_MAS1(g) GB_JIT_KERNEL_MASKER_PHASE1_PROTO(g) ;
 #define JIT_MAS2(g) GB_JIT_KERNEL_MASKER_PHASE2_PROTO(g) ;
+#define JIT_SREF(g) GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(g) ;
+#define JIT_BREF(g) GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------

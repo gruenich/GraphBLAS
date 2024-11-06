@@ -2,7 +2,7 @@
 // GB_I_inverse: invert an index list
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     size_t *p_Mark_size,
     int64_t *restrict *p_Inext, // next pointers for buckets, size nI
     size_t *p_Inext_size,
-    int64_t *p_ndupl,           // number of duplicate entries in I
+    int64_t *p_nduplicates,     // number of duplicate entries in I
     GB_Werk Werk
 )
 {
@@ -40,11 +40,11 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     int64_t *Mark  = NULL ; size_t Mark_size = 0 ;
     int64_t *Inext = NULL ; size_t Inext_size = 0 ;
-    int64_t ndupl = 0 ;
+    int64_t nduplicates = 0 ;
 
     (*p_Mark ) = NULL ; (*p_Mark_size ) = 0 ;
     (*p_Inext) = NULL ; (*p_Inext_size) = 0 ;
-    (*p_ndupl) = 0 ;
+    (*p_nduplicates) = 0 ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -81,7 +81,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
         else
         { 
             // i has already been seen in the list I
-            ndupl++ ;
+            nduplicates++ ;
         }
         Mark [i] = inew + 1 ;       // (Mark [i] - 1) = inew
         Inext [inew] = ihead ;
@@ -119,7 +119,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 
     (*p_Mark ) = Mark  ; (*p_Mark_size ) = Mark_size ;
     (*p_Inext) = Inext ; (*p_Inext_size) = Inext_size ;
-    (*p_ndupl) = ndupl ;
+    (*p_nduplicates) = nduplicates ;
     return (GrB_SUCCESS) ;
 }
 

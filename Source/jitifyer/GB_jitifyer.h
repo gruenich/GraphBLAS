@@ -40,6 +40,7 @@ typedef enum
     GB_jit_user_type_family = 8,    // kcode 39
     GB_jit_assign_family    = 9,    // kcodes 40 to 78
     GB_jit_masker_family    = 10,   // kcodes 79 to 80
+    GB_jit_subref_family    = 11,   // kcodes 81 to 82
 }
 GB_jit_family ;
 
@@ -152,13 +153,13 @@ typedef enum
     GB_JIT_KERNEL_MASKER_PHASE1 = 79, // GB_masker_phase1
     GB_JIT_KERNEL_MASKER_PHASE2 = 80, // GB_masker_phase2
 
+    // subref methods:
+    GB_JIT_KERNEL_SUBREF_SPARSE = 81, // GB_subref_sparse
+    GB_JIT_KERNEL_BITMAP_SUBREF = 82, // GB_bitmap_subref
+
     //--------------------------------------------------------------------------
     // future:: the following kernels have not been implemented yet
     //--------------------------------------------------------------------------
-
-    // future:: subref methods:
-    GB_JIT_KERNEL_SUBREF        = 81, // GB_bitmap_subref
-    GB_JIT_KERNEL_SUBREF_PHASE3 = 82, // GB_subref_phase3
 
     // future:: Kronecker:
     GB_JIT_KERNEL_KRONER        = 83, // GB_kroner

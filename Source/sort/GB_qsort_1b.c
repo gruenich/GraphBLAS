@@ -48,13 +48,7 @@
 
 #include "sort/factory/GB_qsort_template.c"
 
-void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
-(
-    int64_t *restrict A_0,       // size n array
-    GB_void *restrict A_1,       // size n array
-    const size_t xsize,          // size of entries in A_1
-    const int64_t n
-)
+GB_CALLBACK_QSORT_1B_PROTO (GB_qsort_1b)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;

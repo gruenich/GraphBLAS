@@ -7,7 +7,7 @@ add to ewise family:
 * GB_kroner
 
 -------------------------------------------------------------------------
-add to assign family:
+new subref family:
 -------------------------------------------------------------------------
 
 * GB_bitmap_subref and GB_subref_phase2
@@ -18,9 +18,6 @@ add to assign family:
     no scalar case
     2 matrices: C and A
     index lists: I and J
-    lots of analysis to pass to numeric phase; do not use assign_jit
-        but use assign family; can use encodify/enumify/macrofy_assign
-
     has symbolic and C_iso cases, but these do not need the JIT
 
 -------------------------------------------------------------------------

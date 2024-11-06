@@ -79,7 +79,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, jA, Jkind, Jcolon) ;
+            int64_t jC = GB_ijlist (J, jA, GB_J_KIND, Jcolon) ;
             int64_t pC0 = jC * vlen ;       // first entry in C(:,jC)
             int64_t pA0 = jA * nI ;         // first entry in A(:,jA)
 
@@ -89,7 +89,7 @@
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             { 
-                int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
                 int64_t pC = iC + pC0 ;
                 int64_t pA = iA + pA0 ;
                 // operate on C(iC,jC) at pC (if C is bitmap or full)

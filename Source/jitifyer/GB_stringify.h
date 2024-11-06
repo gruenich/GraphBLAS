@@ -1571,6 +1571,77 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
 ) ;
 
 //------------------------------------------------------------------------------
+// subref methods, C = A(I,J)
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_subref     // encode an subref problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    // C matrix:
+    GrB_Matrix C,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto, or 0 if not used
+    bool need_qsort,        // true if qsort needs to be called
+    bool I_has_duplicates,  // true if I has duplicate entries
+    // A matrix:
+    GrB_Matrix A
+) ;
+
+void GB_enumify_subref      // enumerate a GrB_extract problem
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire operation
+    // C matrix:
+    GrB_Matrix C,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto, or 0 if not used
+    bool need_qsort,        // true if qsort needs to be called
+    bool I_has_duplicates,  // true if I has duplicate entries
+    // A matrix:
+    GrB_Matrix A
+) ;
+
+void GB_macrofy_subref          // construct all macros for GrB_extract
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    GrB_Type ctype
+) ;
+
+GrB_Info GB_subref_sparse_jit
+(
+    // output matrix
+    GrB_Matrix C,                       // same type as A
+    // from phase1:
+    const GB_task_struct *restrict TaskList,  // list of tasks
+    const int ntasks,                   // # of tasks
+    const int nthreads,                 // # of threads to use
+    const bool post_sort,               // true if post-sort needed
+    const int64_t *Mark,                // for I inverse buckets, size A->vlen
+    const int64_t *Inext,               // for I inverse buckets, size nI
+    const bool I_has_duplicates,        // true if I has duplicates
+    // from phase0:
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
+    const bool need_qsort,
+    const int Ikind,
+    const int64_t nI,
+    const int64_t Icolon [3],
+    // original input:
+    const GrB_Matrix A,
+    const GrB_Index *I
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 
