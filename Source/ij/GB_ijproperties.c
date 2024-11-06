@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // check a list of indices I and determine its properties
 
 #include "ij/GB_ij.h"

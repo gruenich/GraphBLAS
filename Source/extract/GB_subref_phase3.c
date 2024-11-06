@@ -164,8 +164,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         // non-iso numeric subref
         //----------------------------------------------------------------------
 
-        // TODO: create versions for asize = 1, 2, 4, 8, 16, and other
-
         ASSERT (C->type = A->type) ;
         const int64_t asize = A->type->size ;
         const GB_void *restrict Ax = (GB_void *) A->x ;

@@ -24,20 +24,6 @@ add to assign family:
     has symbolic and C_iso cases, but these do not need the JIT
 
 -------------------------------------------------------------------------
-new masker family:
--------------------------------------------------------------------------
-
-* GB_masker
-    C<M> = Z, returning result in R
-    no operator
-    4 matrices (R, C, M, Z)
-    matrix R = mask (C,M,Z)
-    single data type, no typecasting: R, C, and Z have the same type
-
-    can almost use the assign family but need info about the
-        sparsity of R.  Add this to assign family and use it instead?
-
--------------------------------------------------------------------------
 add to apply family:
 -------------------------------------------------------------------------
 

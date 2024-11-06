@@ -224,6 +224,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/hyper
     Source/ij
     Source/jit_kernels
+    Source/mask
     Source/math
     Source/matrix
     Source/memory

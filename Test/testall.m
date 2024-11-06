@@ -105,7 +105,7 @@ logstat ('test174'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test203'    ,t, J4   , F1   ) ; % iso subref
 logstat ('test213'    ,t, J40  , F10  ) ; % iso assign (method 05d)
 logstat ('test216'    ,t, J4   , F1   ) ; % C<A>=A, iso case
-logstat ('test225'    ,t, J4   , F1   ) ; % mask operations (GB_masker)
+logstat ('test225'    ,t, J40  , F10  ) ; % mask operations (GB_masker)
 logstat ('test226'    ,t, J4   , F1   ) ; % kron with iso matrices
 logstat ('test235'    ,t, J40  , F10  ) ; % GxB_eWiseUnion, GrB_eWiseAdd
 logstat ('test252'    ,t, J4   , F1   ) ; % basic tests
@@ -128,7 +128,7 @@ logstat ('test276'    ,t, J0   , F1   ) ; % semiring get/set
 logstat ('test277'    ,t, J0   , F1   ) ; % context get/set
 logstat ('test279'    ,t, J0   , F1   ) ; % blob get/set
 logstat ('test281'    ,t, J4   , F1   ) ; % user-defined idx unop, no JIT
-logstat ('test268'    ,t, J4   , F1   ) ; % C<M>=Z sparse masker
+logstat ('test268'    ,t, J40  , F10  ) ; % C<M>=Z sparse masker
 logstat ('test207'    ,t, J4   , F1   ) ; % iso subref
 logstat ('test211'    ,t, J40  , F10  ) ; % iso assign
 logstat ('test183'    ,s, J4   , F1   ) ; % eWiseMult w/hypersparse mask

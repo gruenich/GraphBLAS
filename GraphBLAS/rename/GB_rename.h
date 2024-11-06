@@ -304,6 +304,7 @@
 #define GB_encodify_assign GM_encodify_assign
 #define GB_encodify_build GM_encodify_build
 #define GB_encodify_ewise GM_encodify_ewise
+#define GB_encodify_masker GM_encodify_masker
 #define GB_encodify_mxm GM_encodify_mxm
 #define GB_encodify_reduce GM_encodify_reduce
 #define GB_encodify_select GM_encodify_select
@@ -317,6 +318,7 @@
 #define GB_enumify_cuda_atomic GM_enumify_cuda_atomic
 #define GB_enumify_ewise GM_enumify_ewise
 #define GB_enumify_identity GM_enumify_identity
+#define GB_enumify_masker GM_enumify_masker
 #define GB_enumify_mask GM_enumify_mask
 #define GB_enumify_monoid GM_enumify_monoid
 #define GB_enumify_mxm GM_enumify_mxm
@@ -819,7 +821,13 @@
 #define GB_JITpackage_326 GM_JITpackage_326
 #define GB_JITpackage_327 GM_JITpackage_327
 #define GB_JITpackage_328 GM_JITpackage_328
+#define GB_JITpackage_329 GM_JITpackage_329
 #define GB_JITpackage_32 GM_JITpackage_32
+#define GB_JITpackage_330 GM_JITpackage_330
+#define GB_JITpackage_331 GM_JITpackage_331
+#define GB_JITpackage_332 GM_JITpackage_332
+#define GB_JITpackage_333 GM_JITpackage_333
+#define GB_JITpackage_334 GM_JITpackage_334
 #define GB_JITpackage_33 GM_JITpackage_33
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35
@@ -994,6 +1002,7 @@
 #define GB_macrofy_family GM_macrofy_family
 #define GB_macrofy_id GM_macrofy_id
 #define GB_macrofy_input GM_macrofy_input
+#define GB_macrofy_masker GM_macrofy_masker
 #define GB_macrofy_mask GM_macrofy_mask
 #define GB_macrofy_monoid GM_macrofy_monoid
 #define GB_macrofy_multadd GM_macrofy_multadd
@@ -1017,7 +1026,9 @@
 #define GB_Mask_compatible GM_Mask_compatible
 #define GB_masker GM_masker
 #define GB_masker_phase1 GM_masker_phase1
+#define GB_masker_phase1_jit GM_masker_phase1_jit
 #define GB_masker_phase2 GM_masker_phase2
+#define GB_masker_phase2_jit GM_masker_phase2_jit
 #define GB_masker_sparsity GM_masker_sparsity
 #define GB_mask GM_mask
 #define GB_Matrix_check GM_Matrix_check

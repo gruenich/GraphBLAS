@@ -264,7 +264,7 @@ if (jit_enabled)
 
 //  expected = error_fallback ? GrB_INVALID_VALUE : GxB_JIT_ERROR ;
     expected = GxB_JIT_ERROR ;
-    ERR (GxB_Type_new (&MyType, 0, "mytype2", "garbage")) ;
+    ERR (GxB_Type_new (&MyType, 0, "mytype2_crud", "garbage")) ;
     CHECK (MyType == NULL) ;
     printf ("\n-------------------------------------------------------\n\n") ;
 
@@ -281,7 +281,7 @@ if (jit_enabled)
     printf ("new error log: [%s]\n", t) ;
     CHECK (MATCH (t, "/tmp/grb_error_log.txt")) ;
 
-    ERR (GxB_Type_new (&MyType, 0, "mytype2", "garbage")) ;
+    ERR (GxB_Type_new (&MyType, 0, "mytype2_crud", "garbage")) ;
     CHECK (MyType == NULL) ;
 
     printf ("\n------------------------ compile error log (intentional):\n") ;
@@ -295,7 +295,7 @@ if (jit_enabled)
     CHECK (MATCH (s, "/tmp/grberr2.txt")) ;
 
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
-    ERR (GxB_Type_new (&MyType, 0, "mytype2", "more garbage")) ;
+    ERR (GxB_Type_new (&MyType, 0, "mytype2_crud", "more garbage")) ;
     CHECK (MyType == NULL) ;
 
     printf ("\n------------------------ compile error log (intentional):\n") ;

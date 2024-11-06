@@ -32,8 +32,6 @@
 // For matrix assignment, C = A, if A is sparse or hyper and C may become
 // sparse or hyper, then the assignement is done by GB_subassign_24.
 
-// JIT: not needed.
-
 // If C were full: entries can be deleted if C_replace is true,
 // or if A is not full and missing at least one entry.
 

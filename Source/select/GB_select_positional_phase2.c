@@ -9,8 +9,7 @@
 
 // A is sparse or hypersparse
 
-// JIT: not need: use factory; just 3 variants (A sparse, hyper,
-// or full for DIAG)
+// JIT: not need: use factory; 3 variants (A sparse, hyper, or full for DIAG)
 
 #include "select/GB_select.h"
 #include "slice/GB_ek_slice.h"

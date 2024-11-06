@@ -61,7 +61,8 @@
     #define GB_COPY_Z                                           \
     {                                                           \
         Ri [pR] = i ;                                           \
-        memcpy (Rx +(pR)*rsize, Zx +(Z_iso ? 0:(pZ)*rsize), rsize) ;        \
+     /* memcpy (Rx +(pR)*rsize, Zx +(Z_iso ? 0:(pZ)*rsize), rsize) ; */     \
+        GB_COPY_Z_TO_R (Rx, pR, Zx, pZ, Z_iso, rsize) ;         \
         pR++ ;                                                  \
     }
 #endif
@@ -74,13 +75,13 @@
 #if defined ( GB_PHASE_1_OF_2 )
     #define GB_COPY_Z_BITMAP_OR_FULL                            \
     {                                                           \
-        rjnz += GBB (Zb, pZ_start + i - iZ_first) ;             \
+        rjnz += GBB_Z (Zb, pZ_start + i - iZ_first) ;             \
     }
 #elif defined ( GB_ISO_MASKER )
     #define GB_COPY_Z_BITMAP_OR_FULL                            \
     {                                                           \
         int64_t pZ = pZ_start + i - iZ_first ;                  \
-        if (GBB (Zb, pZ))                                       \
+        if (GBB_Z (Zb, pZ))                                       \
         {                                                       \
             Ri [pR] = i ;                                       \
             pR++ ;                                              \
@@ -90,10 +91,11 @@
     #define GB_COPY_Z_BITMAP_OR_FULL                            \
     {                                                           \
         int64_t pZ = pZ_start + i - iZ_first ;                  \
-        if (GBB (Zb, pZ))                                       \
+        if (GBB_Z (Zb, pZ))                                       \
         {                                                       \
             Ri [pR] = i ;                                       \
-            memcpy (Rx +(pR)*rsize, Zx +(Z_iso ? 0:(pZ)*rsize), rsize) ;    \
+        /*  memcpy (Rx +(pR)*rsize, Zx +(Z_iso ? 0:(pZ)*rsize), rsize) ; */ \
+            GB_COPY_Z_TO_R (Rx, pR, Zx, pZ, Z_iso, rsize) ;         \
             pR++ ;                                              \
         }                                                       \
     }
@@ -119,7 +121,8 @@
     #define GB_COPY_C                                           \
     {                                                           \
         Ri [pR] = i ;                                           \
-        memcpy (Rx +(pR)*rsize, Cx +(C_iso ? 0:(pC)*rsize), rsize) ;        \
+     /* memcpy (Rx +(pR)*rsize, Cx +(C_iso ? 0:(pC)*rsize), rsize) ; */     \
+        GB_COPY_C_TO_R (Rx, pR, Cx, pC, C_iso, rsize) ;         \
         pR++ ;                                                  \
     }
 #endif
@@ -135,7 +138,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-    ASSERT (C_is_sparse || C_is_hyper) ;
+    ASSERT (GB_C_IS_SPARSE || GB_C_IS_HYPER) ;
 
     #pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < R_ntasks ; taskid++)
@@ -172,7 +175,7 @@
             // get j, the kth vector of R
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Rh, k) ;
+            int64_t j = GBH_R (Rh, k) ;
 
             #if defined ( GB_PHASE_1_OF_2 )
             int64_t rjnz = 0 ;
@@ -253,8 +256,8 @@
                 int64_t kZ = (R_to_Z == NULL) ? j : R_to_Z [k] ;
                 if (kZ >= 0)
                 { 
-                    pZ     = GBP (Zp, kZ, vlen) ;
-                    pZ_end = GBP (Zp, kZ+1, vlen) ;
+                    pZ     = GBP_Z (Zp, kZ, vlen) ;
+                    pZ_end = GBP_Z (Zp, kZ+1, vlen) ;
                 }
             }
 
@@ -265,8 +268,8 @@
             int64_t iZ_first = -1, iZ_last = -1 ;
             if (zjnz > 0)
             {
-                iZ_first = GBI (Zi, pZ, vlen) ;
-                iZ_last  = GBI (Zi, pZ_end-1, vlen) ;
+                iZ_first = GBI_Z (Zi, pZ, vlen) ;
+                iZ_last  = GBI_Z (Zi, pZ_end-1, vlen) ;
             }
 
             //------------------------------------------------------------------
@@ -304,7 +307,7 @@
             // R(:,j) = masker (C (:,j), M (:,j), Z (:,j))
             //------------------------------------------------------------------
 
-            if (Z_is_bitmap || Z_is_full)
+            if (GB_Z_IS_BITMAP || GB_Z_IS_FULL)
             {
 
                 //--------------------------------------------------------------
@@ -322,8 +325,8 @@
                 // Otherwise, R is bitmap and not computed here, but in
                 // GB_bitmap_masker_template instead.
 
-                ASSERT (M_is_sparse || M_is_hyper) ;
-                ASSERT (!Mask_comp) ;
+                ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                ASSERT (!GB_MASK_COMP) ;
 
                 // 2-way merge of C(:,j) and M(:,j) and direct lookup of Z
 
@@ -419,9 +422,9 @@
                 //      sparse  sparse      sparse          sparse
 
                 // Z must be sparse or hypersparse
-                ASSERT (Z_is_sparse || Z_is_hyper) ;
+                ASSERT (GB_Z_IS_SPARSE || GB_Z_IS_HYPER) ;
 
-                if (!Mask_comp)
+                if (!GB_MASK_COMP)
                 { 
 
                     //----------------------------------------------------------
@@ -433,19 +436,20 @@
                     rjnz = cjnz ;
                     #else
                     ASSERT (rjnz == cjnz) ;
-                    memcpy (Ri +(pR),       Ci +(pC), cjnz * sizeof (int64_t)) ;
+                    memcpy (Ri +(pR), Ci +(pC), cjnz * sizeof (int64_t)) ;
                     #ifndef GB_ISO_MASKER
-                    if (C_iso)
-                    {
-                        for (int64_t k = 0 ; k < cjnz ; k++)
-                        {
-                            memcpy (Rx +(pR+k)*rsize, Cx, rsize) ;
-                        }
-                    }
-                    else
-                    {
-                        memcpy (Rx +(pR)*rsize, Cx +(pC)*rsize, cjnz*rsize) ;
-                    }
+                    GB_COPY_C_TO_R_RANGE (Rx, pR, Cx, pC, C_iso, rsize, cjnz) ;
+//                  if (C_iso)
+//                  {
+//                      for (int64_t k = 0 ; k < cjnz ; k++)
+//                      {
+//                          memcpy (Rx +(pR+k)*rsize, Cx, rsize) ;
+//                      }
+//                  }
+//                  else
+//                  {
+//                      memcpy (Rx +(pR)*rsize, Cx +(pC)*rsize, cjnz*rsize) ;
+//                  }
                     #endif
                     #endif
 
@@ -464,17 +468,19 @@
                     ASSERT (rjnz == zjnz) ;
                     memcpy (Ri +(pR), Zi +(pZ), zjnz * sizeof (int64_t)) ;
                     #ifndef GB_ISO_MASKER
-                    if (Z_iso)
-                    {
-                        for (int64_t k = 0 ; k < zjnz ; k++)
-                        {
-                            memcpy (Rx +(pR+k)*rsize, Zx, rsize) ;
-                        }
-                    }
-                    else
-                    {
-                        memcpy (Rx +(pR)*rsize, Zx +(pZ)*rsize, zjnz*rsize) ;
-                    }
+                    GB_COPY_Z_TO_R_RANGE (Rx, pR, Zx, pZ, Z_iso, rsize, zjnz) ;
+//                  if (Z_iso)
+//                  {
+//                      for (int64_t k = 0 ; k < zjnz ; k++)
+//                      {
+//                          memcpy (Rx +(pR+k)*rsize, Zx, rsize) ;
+//                      }
+//                  }
+//                  else
+//                  {
+//                      memcpy (Rx +(pR)*rsize, Zx +(pZ)*rsize, zjnz*rsize) ;
+//                  }
+
                     #endif
                     #endif
                 }
@@ -507,7 +513,7 @@
                 // present), but both C and Z are stored in a sparse or
                 // hypersparse sparsity structure.  M has any sparsity.
 
-                ASSERT (Z_is_sparse || Z_is_hyper) ;
+                ASSERT (GB_Z_IS_SPARSE || GB_Z_IS_HYPER) ;
 
                 ASSERT (cjnz == zjnz) ;
                 ASSERT (iC_first == iZ_first) ;
@@ -527,19 +533,21 @@
                         mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                         pM++ ;
                     }
-                    if (Mask_comp) mij = !mij ;
+                    if (GB_MASK_COMP) mij = !mij ;
                     #ifndef GB_ISO_MASKER
                     if (mij)
                     { 
                         // R(i,j) = Z (i,j)
-                        memcpy (Rx +(pR+p)*rsize, Zx +(Z_iso? 0:(pZ+p)*rsize),
-                            rsize) ;
+//                      memcpy (Rx +(pR+p)*rsize, Zx +(Z_iso? 0:(pZ+p)*rsize),
+//                          rsize) ;
+                        GB_COPY_Z_TO_R (Rx, pR+p, Zx, pZ+p, Z_iso, rsize) ;
                     }
                     else
                     { 
                         // R(i,j) = C (i,j)
-                        memcpy (Rx +(pR+p)*rsize, Cx +(C_iso? 0:(pC+p)*rsize),
-                            rsize) ;
+//                      memcpy (Rx +(pR+p)*rsize, Cx +(C_iso? 0:(pC+p)*rsize),
+//                          rsize) ;
+                        GB_COPY_C_TO_R (Rx, pR+p, Cx, pC+p, C_iso, rsize) ;
                     }
                     #endif
                 }
@@ -554,7 +562,7 @@
                 //--------------------------------------------------------------
 
                 // Z is sparse or hypersparse; M has any sparsity structure
-                ASSERT (Z_is_sparse || Z_is_hyper) ;
+                ASSERT (GB_Z_IS_SPARSE || GB_Z_IS_HYPER) ;
 
                 //--------------------------------------------------------------
                 // Z is sparse or hypersparse, M has any sparsity
@@ -622,7 +630,7 @@
 
                         // Use GB_SPLIT_BINARY_SEARCH so that pM can be used in
                         // the for loop with index pM in the wrapup phase.
-                        ASSERT (M_is_sparse || M_is_hyper) ;
+                        ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                         int64_t pright = pM_end - 1 ;
                         bool found ;
                         GB_SPLIT_BINARY_SEARCH (i, Mi, pM, pright, found) ;
@@ -635,7 +643,7 @@
                         }
                     }
 
-                    if (Mask_comp) mij = !mij ;
+                    if (GB_MASK_COMP) mij = !mij ;
 
                     //----------------------------------------------------------
                     // R(i,j) = C(i,j) or Z(i,j)
@@ -685,7 +693,7 @@
                     // C(:,j) is empty
                     //----------------------------------------------------------
 
-                    if (!Mask_comp)
+                    if (!GB_MASK_COMP)
                     {
 
                         //------------------------------------------------------
@@ -721,7 +729,7 @@
                             // This loop requires pM to start at the first
                             // entry in M(:,j) that has not yet been handled.
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pM < pM_end ; pM++)
                             {
                                 if (GB_MCAST (Mx, pM, msize))
@@ -742,7 +750,7 @@
                             // Method04e: M(:,j) is much denser than Z(:,j)
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
                                 // wrapup, C now empty, M(:,j) much denser than
@@ -764,7 +772,7 @@
                             // Method04f: M(:,j) and Z(:,j) about same # entries
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             while (pM < pM_end && pZ < pZ_end)
                             {
                                 int64_t iM = Mi [pM] ;
@@ -822,7 +830,7 @@
                             // Method04h: M(:,j) is sparse
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
                                 int64_t i = Zi [pZ] ;
@@ -844,7 +852,7 @@
                     // Z(:,j) is empty
                     //----------------------------------------------------------
 
-                    if (Mask_comp)
+                    if (GB_MASK_COMP)
                     {
 
                         //------------------------------------------------------
@@ -877,7 +885,7 @@
                             // Method04j: C(:,j) is much denser than M(:,j)
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pM < pM_end ; pM++)
                             {
                                 if (GB_MCAST (Mx, pM, msize))
@@ -898,7 +906,7 @@
                             // Method04k: M(:,j) is much denser than C(:,j)
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = Ci [pC] ;
@@ -918,7 +926,7 @@
                             // Method04l: M(:,j) and C(:,j) about same # entries
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             while (pM < pM_end && pC < pC_end)
                             {
                                 int64_t iM = Mi [pM] ;
@@ -976,7 +984,7 @@
                             // Method04n: M(:,j) is sparse
                             //--------------------------------------------------
 
-                            ASSERT (M_is_sparse || M_is_hyper) ;
+                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = Ci [pC] ;

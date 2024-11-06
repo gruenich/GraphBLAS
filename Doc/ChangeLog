@@ -1,6 +1,6 @@
 Nov XX, 2024: version 9.4.1 (FIXME)
 
-    * new JIT kernels added: for GrB_assign and GxB_subassign
+    * new JIT kernels added: for GrB_assign, GxB_subassign, and GB_masker
 
 Oct 15, 2024: version 9.4.0 (BETA)
 

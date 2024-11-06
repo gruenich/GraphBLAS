@@ -2,7 +2,7 @@
 // GB_macrofy_mask: return string to define mask macros
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -230,6 +230,5 @@ void GB_macrofy_mask
             fprintf (fp, "#error undefined mask behavior\n") ;
             break ;
     }
-
 }
 

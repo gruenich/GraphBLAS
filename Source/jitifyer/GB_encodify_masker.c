@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_encodify_user_type: encode a user type
+// GB_encodify_masker: encode a masker problem, including types
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -7,25 +7,34 @@
 
 //------------------------------------------------------------------------------
 
+// FUTURE: allow the types of R, C, and Z to differ.
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-uint64_t GB_encodify_user_type      // encode a user defined type
+uint64_t GB_encodify_masker     // encode a masker problem
 (
     // output:
     GB_jit_encoding *encoding,  // unique encoding of the entire problem,
                                 // except for the suffix
     char **suffix,              // suffix for user-defined kernel
     // input:
-    const GrB_Type type
+    const GB_jit_kcode kcode,   // kernel to encode
+    const GrB_Matrix R,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix C,
+    const GrB_Matrix Z 
 )
 { 
 
     //--------------------------------------------------------------------------
-    // check if the type is JIT'able
+    // check if the R->type is JIT'able
     //--------------------------------------------------------------------------
 
-    if (type != NULL && type->hash == UINT64_MAX)
+    GrB_Type rtype = (R == NULL) ? NULL : R->type ;
+    if (R != NULL && rtype->hash == UINT64_MAX)
     { 
         // cannot JIT this type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
@@ -34,20 +43,20 @@ uint64_t GB_encodify_user_type      // encode a user defined type
     }
 
     //--------------------------------------------------------------------------
-    // primary encoding of the user type
+    // primary encoding of the problem
     //--------------------------------------------------------------------------
 
-    encoding->kcode = GB_JIT_KERNEL_USERTYPE ;
-    encoding->code = 0 ;
+    encoding->kcode = kcode ;
+    GB_enumify_masker (&encoding->code, R, M, Mask_struct, Mask_comp, C, Z) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length
     //--------------------------------------------------------------------------
 
     // if hash is zero, it denotes a builtin type
-    uint64_t hash = type->hash ;
-    encoding->suffix_len = (hash == 0) ? 0 : type->name_len ;
-    (*suffix) = (hash == 0) ? NULL : type->name ;
+    uint64_t hash = (rtype == NULL) ? 0 : rtype->hash ;
+    encoding->suffix_len = (hash == 0) ? 0 : rtype->name_len ;
+    (*suffix) = (hash == 0) ? NULL : rtype->name ;
 
     //--------------------------------------------------------------------------
     // compute the hash of the entire problem

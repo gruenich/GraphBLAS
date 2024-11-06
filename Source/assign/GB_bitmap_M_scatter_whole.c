@@ -10,9 +10,6 @@
 // This method only handles the full assign case, where there are no I and J
 // index lists.  The C and M matrices must have the same size.
 
-// JIT: not needed; this method includes variants for all 6 cases of the mask
-// (structure, and 1, 2, 4, 8, and 16-byte).
-
 // C is bitmap.  M is sparse or hypersparse, and may be jumbled.
 
 #include "assign/GB_bitmap_assign_methods.h"

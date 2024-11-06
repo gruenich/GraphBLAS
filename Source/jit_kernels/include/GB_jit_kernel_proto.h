@@ -581,6 +581,49 @@ GrB_Info GB_jit_kernel_union                                            \
     const void *theta                                                   \
 )
 
+#define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
+GrB_Info GB_jit_kernel_masker1                                          \
+(                                                                       \
+    int64_t *Rp,                                                        \
+    int64_t *Rnvec_nonempty,                                            \
+    GB_task_struct *restrict TaskList,                                  \
+    const int R_ntasks,                                                 \
+    const int R_nthreads,                                               \
+    const int64_t Rnvec,                                                \
+    const int64_t *restrict Rh,                                         \
+    const int64_t *restrict R_to_M,                                     \
+    const int64_t *restrict R_to_C,                                     \
+    const int64_t *restrict R_to_Z,                                     \
+    const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_Matrix C,                                                 \
+    const GrB_Matrix Z                                                  \
+)
+
+#define GB_JIT_KERNEL_MASKER_PHASE2_PROTO(GB_jit_kernel_masker2)        \
+GrB_Info GB_jit_kernel_masker2                                          \
+(                                                                       \
+    GrB_Matrix R,                                                       \
+    const GB_task_struct *restrict TaskList,                            \
+    const int R_ntasks,                                                 \
+    const int R_nthreads,                                               \
+    const int64_t *restrict R_to_M,                                     \
+    const int64_t *restrict R_to_C,                                     \
+    const int64_t *restrict R_to_Z,                                     \
+    const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_Matrix C,                                                 \
+    const GrB_Matrix Z,                                                 \
+    const int64_t *restrict C_ek_slicing,                               \
+    const int C_nthreads,                                               \
+    const int C_ntasks,                                                 \
+    const int64_t *restrict M_ek_slicing,                               \
+    const int M_nthreads,                                               \
+    const int M_ntasks                                                  \
+)
+
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------
@@ -733,6 +776,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
 #define JIT_UOP(g)  GB_JIT_KERNEL_USER_OP_PROTO(g) ;
 #define JIT_UTYP(g) GB_JIT_KERNEL_USER_TYPE_PROTO(g) ;
+#define JIT_MAS1(g) GB_JIT_KERNEL_MASKER_PHASE1_PROTO(g) ;
+#define JIT_MAS2(g) GB_JIT_KERNEL_MASKER_PHASE2_PROTO(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------

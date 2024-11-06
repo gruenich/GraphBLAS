@@ -33,33 +33,35 @@
     const int8_t  *restrict Cb = C->b ;
     const int64_t *restrict Ci = C->i ;
     const int64_t vlen = C->vlen ;
+    #ifndef GB_JIT_KERNEL
     const bool C_is_hyper = GB_IS_HYPERSPARSE (C) ;
     const bool C_is_sparse = GB_IS_SPARSE (C) ;
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
     const bool C_is_full = GB_IS_FULL (C) ;
-    int C_nthreads, C_ntasks ;
+    #endif
 
     const int64_t *restrict Zp = Z->p ;
     const int64_t *restrict Zh = Z->h ;
     const int8_t  *restrict Zb = Z->b ;
     const int64_t *restrict Zi = Z->i ;
+    #ifndef GB_JIT_KERNEL
     const bool Z_is_hyper = GB_IS_HYPERSPARSE (Z) ;
     const bool Z_is_sparse = GB_IS_SPARSE (Z) ;
     const bool Z_is_bitmap = GB_IS_BITMAP (Z) ;
     const bool Z_is_full = GB_IS_FULL (Z) ;
-    int Z_nthreads, Z_ntasks ;
+    #endif
 
     const int64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
     const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
+    #ifndef GB_JIT_KERNEL
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full = GB_IS_FULL (M) ;
-    const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
-    int M_nthreads, M_ntasks ;
+    #endif
     size_t msize = 0 ;
     if (M != NULL)
     { 
@@ -67,17 +69,19 @@
         Mh = M->h ;
         Mb = M->b ;
         Mi = M->i ;
-        Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
+        Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
         msize = M->type->size ;
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
+    #ifndef GB_JIT_KERNEL
     const bool Z_iso = Z->iso ;
     const bool C_iso = C->iso ;
+    #endif
     #ifndef GB_ISO_MASKER
-    const GB_void *restrict Cx = (GB_void *) C->x ;
-    const GB_void *restrict Zx = (GB_void *) Z->x ;
-          GB_void *restrict Rx = (GB_void *) R->x ;
+    const GB_R_TYPE *restrict Cx = (GB_R_TYPE *) C->x ;
+    const GB_R_TYPE *restrict Zx = (GB_R_TYPE *) Z->x ;
+          GB_R_TYPE *restrict Rx = (GB_R_TYPE *) R->x ;
     #endif
     const int64_t *restrict Rp = R->p ;
     const int64_t *restrict Rh = R->h ;
@@ -85,9 +89,8 @@
           int64_t *restrict Ri = R->i ;
     size_t rsize = R->type->size ;
     // when R is bitmap or full:
-    const int64_t rnz = GB_nnz_held (R) ;
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
+//  const int64_t rnz = GB_nnz_held (R) ;
+    GB_R_NHELD (rnz) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -96,22 +99,22 @@
 
     #if defined ( GB_PHASE_1_OF_2 )
     { 
-        // phase1
-        #include "mask/factory/GB_sparse_masker_template.c"
+        // phase1: R is always sparse or hypersparse
+        #include "template/GB_sparse_masker_template.c"
     }
     #else
     {
         // phase2
-        if (R_sparsity == GxB_SPARSE || R_sparsity == GxB_HYPERSPARSE)
+        if (GB_R_IS_SPARSE || GB_R_IS_HYPER)
         { 
             // R is sparse or hypersparse (phase1 and phase2)
-            #include "mask/factory/GB_sparse_masker_template.c"
+            #include "template/GB_sparse_masker_template.c"
         }
-        else // R_sparsity == GxB_BITMAP
+        else // R is bitmap
         { 
             // R is bitmap (phase2 only)
-            ASSERT (R_sparsity == GxB_BITMAP) ;
-            #include "mask/factory/GB_bitmap_masker_template.c"
+            ASSERT (GB_R_IS_BITMAP) ;
+            #include "template/GB_bitmap_masker_template.c"
         }
     }
     #endif

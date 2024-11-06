@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_FREE (&I_work, I_work_size) ;    \

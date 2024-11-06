@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 #define GB_FREE_ALL                 \
 {                                   \
     GB_phybix_free (C) ;            \

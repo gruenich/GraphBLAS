@@ -8939,7 +8939,7 @@ then reconstruct the kernels there as needed.
 \label{jit_future}
 
 \subsubsection{More JIT kernels}
-I have 78 JIT kernels but could write about another 10 to 16 for
+I have 80 JIT kernels but could write about another 8 to 14 for
 \verb'GrB_extract', \verb'GrB_kronecker', and other kernels.  Grep the source
 code for \verb'JIT: needed' or \verb'JIT: possible' for a list.
 
@@ -14823,8 +14823,9 @@ GraphBLAS folder.
 \item Nov XX, 2024: version 9.4.1 (BETA)    % FIXME
 
     \begin{itemize}
-    \item More JIT kernels: all JIT kernels for \verb'GrB_assign' and
-        \verb'GxB_subassign' have been created.
+    \item More JIT kernels: all JIT kernels for \verb'GrB_assign',
+    \verb'GxB_subassign', and the stand-alone mask phase (an internal method
+    that computes $\bf C \langle M \rangle Z$) have been created.
     \end{itemize}
 
 \item Oct 15, 2024: version 9.4.0 (BETA)

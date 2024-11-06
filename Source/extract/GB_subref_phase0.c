@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 #include "extract/GB_subref.h"
 
 #define GB_Ai(p) GBI_UNZOMBIE (Ai, p, avlen)

@@ -606,5 +606,21 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #define GB_S_NVALS(e)    int64_t e = GB_nnz (S)
 #define GB_S_NHELD(e)    int64_t e = GB_nnz_held (S)
 
+// accessing the R matrix
+#define GBP_R(Rp,k,vlen) GBP (Rp,k,vlen)
+#define GBH_R(Rh,k)      GBH (Rh,k)
+#define GBI_R(Ri,p,vlen) GBI (Ri,p,vlen)
+#define GBB_R(Rb,p)      GBB (Rb,p)
+#define GB_R_NVALS(e)    int64_t e = GB_nnz (R)
+#define GB_R_NHELD(e)    int64_t e = GB_nnz_held (R)
+
+// accessing the Z matrix
+#define GBP_Z(Zp,k,vlen) GBP (Zp,k,vlen)
+#define GBH_Z(Zh,k)      GBH (Zh,k)
+#define GBI_Z(Zi,p,vlen) GBI (Zi,p,vlen)
+#define GBB_Z(Zb,p)      GBB (Zb,p)
+#define GB_Z_NVALS(e)    int64_t e = GB_nnz (Z)
+#define GB_Z_NHELD(e)    int64_t e = GB_nnz_held (Z)
+
 #endif
 

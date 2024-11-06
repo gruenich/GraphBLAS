@@ -491,18 +491,62 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("split_bitmap" )) c = GB_JIT_KERNEL_SPLIT_BITMAP ;
         else if (IS ("split_full"   )) c = GB_JIT_KERNEL_SPLIT_FULL ;
         else if (IS ("split_sparse" )) c = GB_JIT_KERNEL_SPLIT_SPARSE ;
+
         else if (IS ("subassign_05d")) c = GB_JIT_KERNEL_SUBASSIGN_05d ;
         else if (IS ("subassign_06d")) c = GB_JIT_KERNEL_SUBASSIGN_06d ;
         else if (IS ("subassign_22" )) c = GB_JIT_KERNEL_SUBASSIGN_22 ;
         else if (IS ("subassign_23" )) c = GB_JIT_KERNEL_SUBASSIGN_23 ;
         else if (IS ("subassign_25" )) c = GB_JIT_KERNEL_SUBASSIGN_25 ;
+
         else if (IS ("trans_bind1st")) c = GB_JIT_KERNEL_TRANSBIND1 ;
         else if (IS ("trans_bind2nd")) c = GB_JIT_KERNEL_TRANSBIND2 ;
         else if (IS ("trans_unop"   )) c = GB_JIT_KERNEL_TRANSUNOP ;
         else if (IS ("union"        )) c = GB_JIT_KERNEL_UNION ;
         else if (IS ("user_op"      )) c = GB_JIT_KERNEL_USEROP ;
         else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
-        else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
+
+        // added for v9.4.1:
+        else if (IS ("subassign_01" )) c = GB_JIT_KERNEL_SUBASSIGN_01 ;
+        else if (IS ("subassign_02" )) c = GB_JIT_KERNEL_SUBASSIGN_02 ;
+        else if (IS ("subassign_03" )) c = GB_JIT_KERNEL_SUBASSIGN_03 ;
+        else if (IS ("subassign_04" )) c = GB_JIT_KERNEL_SUBASSIGN_04 ;
+        else if (IS ("subassign_05" )) c = GB_JIT_KERNEL_SUBASSIGN_05 ;
+        else if (IS ("subassign_06n")) c = GB_JIT_KERNEL_SUBASSIGN_06n ;
+        else if (IS ("subassign_06s")) c = GB_JIT_KERNEL_SUBASSIGN_06s ;
+        else if (IS ("subassign_07" )) c = GB_JIT_KERNEL_SUBASSIGN_07 ;
+        else if (IS ("subassign_08n")) c = GB_JIT_KERNEL_SUBASSIGN_08n ;
+        else if (IS ("subassign_08s")) c = GB_JIT_KERNEL_SUBASSIGN_08s ;
+        else if (IS ("subassign_09" )) c = GB_JIT_KERNEL_SUBASSIGN_09 ;
+        else if (IS ("subassign_10" )) c = GB_JIT_KERNEL_SUBASSIGN_10 ;
+        else if (IS ("subassign_11" )) c = GB_JIT_KERNEL_SUBASSIGN_11 ;
+        else if (IS ("subassign_12" )) c = GB_JIT_KERNEL_SUBASSIGN_12 ;
+        else if (IS ("subassign_13" )) c = GB_JIT_KERNEL_SUBASSIGN_13 ;
+        else if (IS ("subassign_15" )) c = GB_JIT_KERNEL_SUBASSIGN_15 ;
+        else if (IS ("subassign_17" )) c = GB_JIT_KERNEL_SUBASSIGN_17 ;
+        else if (IS ("subassign_19" )) c = GB_JIT_KERNEL_SUBASSIGN_19 ;
+
+        else if (IS ("bitmap_assign_1"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_1 ;
+        else if (IS ("bitmap_assign_1_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_1_WHOLE ;
+        else if (IS ("bitmap_assign_2"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_2 ;
+        else if (IS ("bitmap_assign_2_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_2_WHOLE ;
+        else if (IS ("bitmap_assign_3"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_3 ;
+        else if (IS ("bitmap_assign_3_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_3_WHOLE ;
+        else if (IS ("bitmap_assign_4"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_4 ;
+        else if (IS ("bitmap_assign_4_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_4_WHOLE ;
+        else if (IS ("bitmap_assign_5"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_5 ;
+        else if (IS ("bitmap_assign_5_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_5_WHOLE ;
+        else if (IS ("bitmap_assign_6"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_6 ;
+        else if (IS ("bitmap_assign_6b_whole")) c = GB_JIT_KERNEL_BITMAP_ASSIGN_6b_WHOLE ;
+        else if (IS ("bitmap_assign_7"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_7 ;
+        else if (IS ("bitmap_assign_7_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_7_WHOLE ;
+        else if (IS ("bitmap_assign_8"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_8 ;
+        else if (IS ("bitmap_assign_8_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_8_WHOLE  ;
+
+        else if (IS ("masker_phase1")) c = GB_JIT_KERNEL_MASKER_PHASE1 ;
+        else if (IS ("masker_phase2")) c = GB_JIT_KERNEL_MASKER_PHASE2 ;
+
+        // add CUDA PreJIT kernels here (future):
+//      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
         else
         {
             // PreJIT error: kernel_name is invalid; ignore this kernel
@@ -1829,6 +1873,10 @@ GrB_Info GB_jitifyer_load2_worker
         case GB_jit_user_op_family : 
             scode_digits = 1 ;
             op1 = op ;
+            break ;
+
+        case GB_jit_masker_family  : 
+            scode_digits = 5 ;
             break ;
 
         default: ;

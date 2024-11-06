@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // Method 00: C(I,J)<!,repl> = empty ; using S
 
 // M:           NULL

@@ -46,16 +46,17 @@
     
     int64_t p, rnvals = 0 ;
 
-    ASSERT (R_sparsity == GxB_BITMAP) ;
-    ASSERT (C_is_sparse || C_is_hyper) ;
-    ASSERT (Z_is_bitmap || Z_is_full) ;
+    ASSERT (GB_R_IS_BITMAP) ;
+    ASSERT (GB_C_IS_SPARSE || GB_C_IS_HYPER) ;
+    ASSERT (GB_Z_IS_BITMAP || GB_Z_IS_FULL) ;
 
     //--------------------------------------------------------------------------
     // scatter C into the R bitmap
     //--------------------------------------------------------------------------
 
-    GB_C_NHELD (C_nnz_held) ;
-    GB_SLICE_MATRIX_WORK (C, 8, C_nnz_held + C->nvec, C_nnz_held) ;
+    const int64_t *kfirst_Cslice = C_ek_slicing ;
+    const int64_t *klast_Cslice  = C_ek_slicing + C_ntasks ;
+    const int64_t *pstart_Cslice = C_ek_slicing + C_ntasks*2 ;
 
     #pragma omp parallel for num_threads(C_nthreads) schedule(dynamic,1) \
         reduction(+:rnvals)
@@ -68,7 +69,7 @@
             // find the part of C(:,k) for this task
             int64_t j = GBH_C (Ch, k) ;
             GB_GET_PA (pC_start, pC_end, taskid, k,kfirst,klast, pstart_Cslice,
-                GBP_C (Cp, k, vlen), GBP_C (Cp, k+1, vlen)) ;
+                Cp [k], Cp [k+1]) ;
             int64_t pR_start = j * vlen ;
             // traverse over C(:,j), the kth vector of C
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
@@ -79,7 +80,8 @@
                 Rb [pR] = 1 ;
                 rnvals++ ;
                 #ifndef GB_ISO_MASKER
-                memcpy (Rx + (pR)*rsize, Cx + (C_iso? 0:(pC)*rsize), rsize) ;
+//              memcpy (Rx + (pR)*rsize, Cx + (C_iso? 0:(pC)*rsize), rsize) ;
+                GB_COPY_C_TO_R (Rx, pR, Cx, pC, C_iso, rsize) ;
                 #endif
             }
         }
@@ -91,7 +93,7 @@
     // R<M>=Z or R<!M>=Z
     //--------------------------------------------------------------------------
 
-    if (M_is_sparse || M_is_hyper)
+    if (GB_M_IS_SPARSE || GB_M_IS_HYPER)
     {
 
         //----------------------------------------------------------------------
@@ -105,14 +107,15 @@
         //      sparse  sparse      bitmap          bitmap
         //      sparse  sparse      full            bitmap
 
-        ASSERT (Mask_comp) ;
+        ASSERT (GB_MASK_COMP) ;
 
         //----------------------------------------------------------------------
         // scatter M into the R bitmap
         //----------------------------------------------------------------------
 
-        GB_M_NHELD (M_nnz_held) ;
-        GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
+        const int64_t *kfirst_Mslice = M_ek_slicing ;
+        const int64_t *klast_Mslice  = M_ek_slicing + M_ntasks ;
+        const int64_t *pstart_Mslice = M_ek_slicing + M_ntasks*2 ;
 
         #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1)
         for (taskid = 0 ; taskid < M_ntasks ; taskid++)
@@ -124,7 +127,7 @@
                 // find the part of M(:,k) for this task
                 int64_t j = GBH_M (Mh, k) ;
                 GB_GET_PA (pM_start, pM_end, taskid, k, kfirst, klast,
-                    pstart_Mslice, GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
+                    pstart_Mslice, Mp [k], Mp [k+1]) ;
                 int64_t pR_start = j * vlen ;
                 // traverse over M(:,j), the kth vector of M
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -169,7 +172,7 @@
         for (p = 0 ; p < rnz ; p++)
         {
             int8_t r = Rb [p] ;
-            int8_t z = GBB (Zb, p) ;
+            int8_t z = GBB_Z (Zb, p) ;
             switch (r)
             {
                 case 0 :    // R(i,j) not present, M(i,j) false
@@ -177,7 +180,8 @@
                     { 
                         // R(i,j) = Z(i,j), insert new value
                         #ifndef GB_ISO_MASKER
-                        memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+//                      memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+                        GB_COPY_Z_TO_R (Rx, p, Zx, p, Z_iso, rsize) ;
                         #endif
                         Rb [p] = 1 ;
                         rnvals++ ;
@@ -189,7 +193,8 @@
                     { 
                         // R(i,j) = Z(i,j), update prior value
                         #ifndef GB_ISO_MASKER
-                        memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+//                      memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+                        GB_COPY_Z_TO_R (Rx, p, Zx, p, Z_iso, rsize) ;
                         #endif
                     }
                     else
@@ -257,10 +262,10 @@
         for (p = 0 ; p < rnz ; p++)
         {
             bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;
-            if (Mask_comp) mij = !mij ;
+            if (GB_MASK_COMP) mij = !mij ;
             if (mij)
             {
-                int8_t z = GBB (Zb, p) ;
+                int8_t z = GBB_Z (Zb, p) ;
                 int8_t r = Rb [p] ;
                 if (r)
                 {
@@ -268,7 +273,8 @@
                     { 
                         // R(i,j) = Z(i,j), update, no change to rnvals
                         #ifndef GB_ISO_MASKER
-                        memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+//                      memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize);
+                        GB_COPY_Z_TO_R (Rx, p, Zx, p, Z_iso, rsize) ;
                         #endif
                     }
                     else
@@ -282,7 +288,8 @@
                 { 
                     // R(i,j) = Z(i,j), new entry
                     #ifndef GB_ISO_MASKER
-                    memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize) ;
+//                  memcpy (Rx +(p)*rsize, Zx +(Z_iso? 0:(p)*rsize), rsize) ;
+                    GB_COPY_Z_TO_R (Rx, p, Zx, p, Z_iso, rsize) ;
                     #endif
                     Rb [p] = 1 ;
                     rnvals++ ;

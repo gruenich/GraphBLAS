@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.
-
 // GB_subref_phase2 counts the number of entries in each vector of C, for
 // C=A(I,J) and then does a cumulative sum to find Cp.
 
