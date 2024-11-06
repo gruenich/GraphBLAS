@@ -174,7 +174,6 @@
             else
             { 
                 // determine the method based on A(*,kA) and I
-// FIXME: make the nI and (Mark != NULL) compile-time constants for the JIT:
                 method = GB_subref_method (NULL, NULL, alen, avlen, GB_I_KIND,
                     nI, (Mark != NULL), GB_NEED_QSORT, iinc,
                     GB_I_HAS_DUPLICATES) ;
@@ -515,9 +514,7 @@
                         GB_qsort_1 (Ci + pC, clen) ;
                         #else
                         // sort the pattern of C(:,kC), and the values
-// FIXME for JIT kernel: need to JIT GB_qsort_1b for C->type
-                        GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
-                            GB_CSIZE2, clen) ;
+                        GB_QSORT_1B (Ci, Cx, pC, clen) ;
                         #endif
                     }
                     #endif
@@ -645,9 +642,7 @@
                     #else
                     { 
                         // sort the pattern of C(:,kC), and the values
-// FIXME for JIT kernel: need to JIT GB_qsort_1b for C->type
-                        GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
-                            GB_CSIZE2, clen) ;
+                        GB_QSORT_1B (Ci, Cx, pC, clen) ;
                     }
                     #endif
                 }
@@ -662,8 +657,7 @@
 #undef GB_for_each_index_in_bucket
 #undef GB_COPY_RANGE
 #undef GB_COPY_ENTRY
-#undef GB_CSIZE1
-#undef GB_CSIZE2
 #undef GB_SYMBOLIC
 #undef GB_ISO_SUBREF
+#undef GB_QSORT_1B
 

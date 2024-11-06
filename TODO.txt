@@ -7,18 +7,10 @@ add to ewise family:
 * GB_kroner
 
 -------------------------------------------------------------------------
-new subref family:
+add to subref family:
 -------------------------------------------------------------------------
 
-* GB_bitmap_subref and GB_subref_phase2
-    C = A(I,J)
-    no operator
-    no typecast
-    no mask
-    no scalar case
-    2 matrices: C and A
-    index lists: I and J
-    has symbolic and C_iso cases, but these do not need the JIT
+* GB_bitmap_subref
 
 -------------------------------------------------------------------------
 add to apply family:

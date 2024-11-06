@@ -19,49 +19,6 @@
 
 #define GB_BASECASE (64 * 1024)
 
-void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
-(
-    int64_t *restrict A_0,      // size n array
-    GB_void *restrict A_1,      // size n array
-    const size_t xsize,         // size of entries in A_1
-    const int64_t n
-) ;
-
-void GB_qsort_1b_size1  // GB_qsort_1b with A1 with sizeof = 1
-(
-    int64_t *restrict A_0,       // size n array
-    uint8_t *restrict A_1,       // size n array
-    const int64_t n
-) ;
-
-void GB_qsort_1b_size2  // GB_qsort_1b with A1 with sizeof = 2
-(
-    int64_t *restrict A_0,       // size n array
-    uint16_t *restrict A_1,      // size n array
-    const int64_t n
-) ;
-
-void GB_qsort_1b_size4  // GB_qsort_1b with A1 with sizeof = 4
-(
-    int64_t *restrict A_0,       // size n array
-    uint32_t *restrict A_1,      // size n array
-    const int64_t n
-) ;
-
-void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
-(
-    int64_t *restrict A_0,       // size n array
-    uint64_t *restrict A_1,      // size n array
-    const int64_t n
-) ;
-
-void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
-(
-    int64_t *restrict A_0,       // size n array
-    GB_blob16 *restrict A_1,     // size n array
-    const int64_t n
-) ;
-
 void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *restrict A_0,      // size n array

@@ -59,6 +59,8 @@
     // include files for JIT kernels
     //--------------------------------------------------------------------------
 
+    #include "include/GB_bytes.h"
+
     // Placed in the SuiteSparse/GrB(version)/src/include folder by GrB_init,
     // via the JITPackage.  These files are used by the CPU JIT kernels (via
     // this file) and the CUDA JIT kernels (CUDA/include/GB_cuda_kernel.cuh):
@@ -86,7 +88,6 @@
     // not used by CUDA
     #include "include/GB_ok.h"
     #include "include/GB_ijlist.h"
-    #include "include/GB_bytes.h"
     #include "include/GB_atomics.h"
     #include "include/GB_assert_kernels.h"
     #include "include/GB_nthreads.h"
@@ -102,6 +103,8 @@
     //--------------------------------------------------------------------------
     // include files for the GraphBLAS libary
     //--------------------------------------------------------------------------
+
+    #include "type/include/GB_bytes.h"
 
     // Original location in the GraphBLAS/Source folder, for compiling
     // the GraphBLAS library, including PreJIT kernels:
@@ -129,7 +132,6 @@
     // not used by CUDA
     #include "ok/include/GB_ok.h"
     #include "ij/include/GB_ijlist.h"
-    #include "type/include/GB_bytes.h"
     #include "omp/include/GB_atomics.h"
     #include "ok/include/GB_assert_kernels.h"
     #include "omp/include/GB_nthreads.h"

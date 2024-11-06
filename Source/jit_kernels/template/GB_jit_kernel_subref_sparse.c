@@ -13,7 +13,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel)
 {
     // get callback functions
-    GB_GET_CALLBACK (GB_qsort_1b) ;
+    GB_GET_QSORT_CALLBACK ;
 
     #define GB_PHASE_2_OF_2
     const int64_t *restrict Cp = C->p ;

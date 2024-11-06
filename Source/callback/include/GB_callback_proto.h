@@ -102,13 +102,6 @@ void GX_memset                  /* parallel memset */                       \
     int nthreads                /* max # of threads to use */               \
 )
 
-#define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
-void GX_qsort_1    /* sort array A of size 1-by-n */                        \
-(                                                                           \
-    int64_t *restrict A_0,      /* size n array */                          \
-    const int64_t n                                                         \
-)
-
 #define GB_CALLBACK_WERK_POP_PROTO(GX_werk_pop)                             \
 void *GX_werk_pop     /* free the top block of werkspace memory */          \
 (                                                                           \
@@ -266,12 +259,27 @@ void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
     int nthreads_max                                                        \
 )
 
-#define GB_CALLBACK_QSORT_1B_PROTO(GX_qsort_1b)                             \
+#define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
+void GX_qsort_1    /* sort array A of size 1-by-n */                        \
+(                                                                           \
+    int64_t *restrict A_0,      /* size n array */                          \
+    const int64_t n                                                         \
+)
+
+#define GB_CALLBACK_QSORT_1B_ANY_PROTO(GX_qsort_1b)                         \
 void GX_qsort_1b                                                            \
 (                                                                           \
     int64_t *restrict A_0,       /* size n array */                         \
     GB_void *restrict A_1,       /* size n array */                         \
     const size_t xsize,          /* size of entries in A_1 */               \
+    const int64_t n                                                         \
+)
+
+#define GB_CALLBACK_QSORT_1B_SIZE_PROTO(GX_qsort_1b_size,a1_t)              \
+void GX_qsort_1b_size                                                       \
+(                                                                           \
+    int64_t *restrict A_0,       /* size n array */                         \
+    a1_t *restrict A_1,          /* size n array */                         \
     const int64_t n                                                         \
 )
 
