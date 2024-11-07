@@ -834,7 +834,6 @@
 #define GB_JITpackage_336 GM_JITpackage_336
 #define GB_JITpackage_337 GM_JITpackage_337
 #define GB_JITpackage_338 GM_JITpackage_338
-#define GB_JITpackage_339 GM_JITpackage_339
 #define GB_JITpackage_33 GM_JITpackage_33
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35

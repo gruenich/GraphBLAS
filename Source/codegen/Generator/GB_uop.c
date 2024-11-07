@@ -37,7 +37,7 @@ GB_ctype
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "apply/include/GB_apply_shared_definitions.h"
+#include "omp/include/GB_kernel_shared_definitions.h"
 
 m4_divert(if_uop_apply_enabled)
 //------------------------------------------------------------------------------

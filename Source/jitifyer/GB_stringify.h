@@ -989,11 +989,14 @@ uint64_t GB_encodify_apply      // encode an apply problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
+    // C matrix:
     const int C_sparsity,
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
-    const GB_Operator op,
+    // operator:
+    const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,
+    // A matrix:
     const GrB_Matrix A
 ) ;
 
