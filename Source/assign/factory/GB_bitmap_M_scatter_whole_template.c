@@ -12,6 +12,8 @@
 
 // C is bitmap.  M is sparse or hypersparse, and may be jumbled.
 
+#define GB_NO_CNVALS
+
 {
     switch (operation)
     {
@@ -20,7 +22,6 @@
 
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] += 2
-            #define GB_NO_CNVALS
             #include "template/GB_bitmap_assign_M_all_template.c"
             break ;
 
@@ -28,7 +29,6 @@
 
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] -= 2
-            #define GB_NO_CNVALS
             #include "template/GB_bitmap_assign_M_all_template.c"
             break ;
 
@@ -36,7 +36,6 @@
 
             #undef  GB_MASK_WORK
             #define GB_MASK_WORK(pC) Cb [pC] = 2
-            #define GB_NO_CNVALS
             #include "template/GB_bitmap_assign_M_all_template.c"
             break ;
 
@@ -44,3 +43,4 @@
     }
 }
 
+#undef GB_NO_CNVALS

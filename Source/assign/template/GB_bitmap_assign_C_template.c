@@ -45,7 +45,9 @@
                     GB_GET_MIJ (mij, jC) ;          // mij = Mask (jC)
                     GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
                 }
+                #ifndef GB_NO_CNVALS
                 cnvals += task_cnvals ;
+                #endif
             }
         }
         break ;
@@ -73,7 +75,9 @@
                     GB_GET_MIJ (mij, iC) ;          // mij = Mask (iC)
                     GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
                 }
+                #ifndef GB_NO_CNVALS
                 cnvals += task_cnvals ;
+                #endif
             }
         }
         break ;

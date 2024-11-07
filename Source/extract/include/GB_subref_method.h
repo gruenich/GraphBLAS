@@ -27,11 +27,11 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
     const int64_t avlen,            // A->vlen
     const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE, or GB_LIST
     const int64_t nI,               // length of I
-    const bool I_inverse_ok,        // true if I is invertable 
+    const bool I_inverse_ok,        // true if I is invertable
     const bool need_qsort,          // true if C(:,k) requires sorting
     const int64_t iinc,             // increment for GB_STRIDE
     const bool I_has_duplicates     // true if duplicates in I
-                                    // (false if not yet known) 
+                                    // (false if not yet known)
 )
 {
 

@@ -242,6 +242,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
         if (info == GrB_NO_VALUE)
         { 
+            GBURBLE ("(generic masker) ") ;
             #include "mask/template/GB_masker_template.c"
             info = GrB_SUCCESS ;
         }

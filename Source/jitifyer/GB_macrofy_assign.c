@@ -403,7 +403,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         if (accum != NULL)
         { 
             // accum is present
-            // ywork = (ytype) scalar 
+            // ywork = (ytype) scalar
             GB_macrofy_cast_input (fp, "GB_COPY_scalar_to_ywork", "ywork",
                 "scalar", "(*((GB_A_TYPE *) scalar))", ytype, atype) ;
             did_scalar_to_ywork = true ;
@@ -420,7 +420,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         if (accum != NULL)
         { 
             // accum is present
-            // ywork = (ytype) A(i,j) 
+            // ywork = (ytype) A(i,j)
             fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) "
                 "GB_GETA (ywork, Ax, pA, A_iso)\n") ;
             did_aij_to_ywork = true ;

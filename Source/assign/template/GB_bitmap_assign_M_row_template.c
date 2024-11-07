@@ -72,5 +72,3 @@
     }
 }
 
-#undef GB_NO_CNVALS
-

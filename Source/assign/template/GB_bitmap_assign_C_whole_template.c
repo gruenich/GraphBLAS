@@ -36,6 +36,8 @@
             GB_GET_MIJ (mij, pC) ;          // mij = Mask (pC)
             GB_CIJ_WORK (pC) ;              // operate on C(iC,jC)
         }
+        #ifndef GB_NO_CNVALS
         cnvals += task_cnvals ;
+        #endif
     }
 }

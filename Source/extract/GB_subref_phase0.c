@@ -402,7 +402,7 @@ GrB_Info GB_subref_phase0
         //----------------------------------------------------------------------
 
         // For the case where J is jbegin:jend, Ah has been trimmed (see above).
-        // Ch is a shifted copy of the trimmed Ah, of length Cnvec = anvec.  
+        // Ch is a shifted copy of the trimmed Ah, of length Cnvec = anvec,
         // so kA = kC, and jC = Ch [kC] = jA - jmin.  Ap has also been trimmed.
 
         Cnvec = anvec ;

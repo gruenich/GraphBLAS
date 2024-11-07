@@ -89,7 +89,9 @@
                 GB_AIJ_WORK (pC, pA) ;
             }
         }
+        #ifndef GB_NO_CNVALS
         cnvals += task_cnvals ;
+        #endif
     }
 }
 

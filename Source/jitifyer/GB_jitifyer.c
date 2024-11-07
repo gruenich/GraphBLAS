@@ -545,8 +545,8 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("masker_phase1")) c = GB_JIT_KERNEL_MASKER_PHASE1 ;
         else if (IS ("masker_phase2")) c = GB_JIT_KERNEL_MASKER_PHASE2 ;
 
-        else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
-        else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
+        else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
+        else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
 
         // add CUDA PreJIT kernels here (future):
 //      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
@@ -2247,7 +2247,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         }
         memset (GB_jit_table, 0, siz) ;
         GB_jit_table_size = GB_JITIFIER_INITIAL_SIZE ;
-        GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ; 
+        GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ;
         GB_jit_table_allocated = siz ;
 
     }

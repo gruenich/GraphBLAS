@@ -7,12 +7,6 @@ add to ewise family:
 * GB_kroner
 
 -------------------------------------------------------------------------
-add to subref family:
--------------------------------------------------------------------------
-
-* GB_bitmap_subref
-
--------------------------------------------------------------------------
 add to apply family:
 -------------------------------------------------------------------------
 
@@ -21,6 +15,7 @@ add to apply family:
     one matrix A
     single data type; just move data
     no typecasting
+    GB_qsort_1b is also use by the subref_sparse JIT kernel
 
 * GB_all_entries_are_iso and GB_expand_iso
     no operator (use identity op, no typecast)

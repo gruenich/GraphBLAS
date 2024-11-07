@@ -66,6 +66,7 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     { 
         // C and A are bitmap/full
         // need_qsort, I_has_duplicates not needed for bitmap subsref
+        fprintf (fp, "#define GB_J_KIND ") ;
         switch (Jkind)
         {
             case GB_ALL    : fprintf (fp, "GB_ALL\n"    ) ; break ;
@@ -94,49 +95,53 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
 
     //--------------------------------------------------------------------------
-    // construct the qsort macros
+    // construct the qsort macros (sparse case only)
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n// qsort:\n#define GB_QSORT_1B(Ci,Cx,pC,clen) \\\n    ") ;
-
-    switch (ctype->size)
+    if (asparsity <= 1)
     {
-        case GB_1BYTE : 
-            fprintf (fp, "GB_qsort_1b_size1 (Ci+pC, Cx+pC, clen)\n"
-                "#define GB_GET_QSORT_CALLBACK "
-                "GB_GET_CALLBACK (GB_qsort_1b_size1)\n") ;
-            break ;
+        fprintf (fp,
+            "\n// qsort:\n#define GB_QSORT_1B(Ci,Cx,pC,clen) \\\n    ") ;
 
-        case GB_2BYTE : 
-            fprintf (fp, "GB_qsort_1b_size2 (Ci+pC, Cx+pC, clen)\n"
-                "#define GB_GET_QSORT_CALLBACK "
-                "GB_GET_CALLBACK (GB_qsort_1b_size2)\n") ;
-            break ;
+        switch (ctype->size)
+        {
+            case GB_1BYTE : 
+                fprintf (fp, "GB_qsort_1b_size1 (Ci+pC, Cx+pC, clen)\n"
+                    "#define GB_GET_QSORT_CALLBACK "
+                    "GB_GET_CALLBACK (GB_qsort_1b_size1)\n") ;
+                break ;
 
-        case GB_4BYTE : 
-            fprintf (fp, "GB_qsort_1b_size4 (Ci+pC, Cx+pC, clen)\n"
-                "#define GB_GET_QSORT_CALLBACK "
-                "GB_GET_CALLBACK (GB_qsort_1b_size2)\n") ;
-            break ;
+            case GB_2BYTE : 
+                fprintf (fp, "GB_qsort_1b_size2 (Ci+pC, Cx+pC, clen)\n"
+                    "#define GB_GET_QSORT_CALLBACK "
+                    "GB_GET_CALLBACK (GB_qsort_1b_size2)\n") ;
+                break ;
 
-        case GB_8BYTE : 
-            fprintf (fp, "GB_qsort_1b_size8 (Ci+pC, Cx+pC, clen)\n"
-                "#define GB_GET_QSORT_CALLBACK "
-                "GB_GET_CALLBACK (GB_qsort_1b_size8)\n") ;
-            break ;
+            case GB_4BYTE : 
+                fprintf (fp, "GB_qsort_1b_size4 (Ci+pC, Cx+pC, clen)\n"
+                    "#define GB_GET_QSORT_CALLBACK "
+                    "GB_GET_CALLBACK (GB_qsort_1b_size2)\n") ;
+                break ;
 
-        case GB_16BYTE  : 
-            fprintf (fp, "GB_qsort_1b_size16 (Ci+pC, Cx+pC, clen)\n"
-                "#define GB_GET_QSORT_CALLBACK "
-                "GB_GET_CALLBACK (GB_qsort_1b_size16)\n") ;
-            break ;
+            case GB_8BYTE : 
+                fprintf (fp, "GB_qsort_1b_size8 (Ci+pC, Cx+pC, clen)\n"
+                    "#define GB_GET_QSORT_CALLBACK "
+                    "GB_GET_CALLBACK (GB_qsort_1b_size8)\n") ;
+                break ;
 
-        default : 
-            fprintf (fp,    
-                "GB_qsort_1b (Ci+pC, Cx+pC, sizeof (GB_C_TYPE), clen)\n"
-                "#define GB_GET_QSORT_CALLBACK "
-                "GB_GET_CALLBACK (GB_qsort_1b)\n") ;
-            break ;
+            case GB_16BYTE  : 
+                fprintf (fp, "GB_qsort_1b_size16 (Ci+pC, Cx+pC, clen)\n"
+                    "#define GB_GET_QSORT_CALLBACK "
+                    "GB_GET_CALLBACK (GB_qsort_1b_size16)\n") ;
+                break ;
+
+            default : 
+                fprintf (fp,    
+                    "GB_qsort_1b (Ci+pC, Cx+pC, sizeof (GB_C_TYPE), clen)\n"
+                    "#define GB_GET_QSORT_CALLBACK "
+                    "GB_GET_CALLBACK (GB_qsort_1b)\n") ;
+                break ;
+        }
     }
 
     //--------------------------------------------------------------------------

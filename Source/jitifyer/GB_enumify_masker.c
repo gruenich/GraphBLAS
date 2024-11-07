@@ -20,7 +20,7 @@ uint64_t GB_enumify_masker  // enumify a masker problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_Matrix C,
-    const GrB_Matrix Z 
+    const GrB_Matrix Z
 )
 { 
 

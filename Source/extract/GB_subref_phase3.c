@@ -176,6 +176,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         if (info == GrB_NO_VALUE)
         { 
             // using the generic kernel
+            GBURBLE ("(generic subref) ") ;
             ASSERT (C->type = A->type) ;
             const int64_t csize = C->type->size ;
             const GB_void *restrict Ax = (GB_void *) A->x ;

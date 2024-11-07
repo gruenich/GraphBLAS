@@ -25,7 +25,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_Matrix C,
-    const GrB_Matrix Z 
+    const GrB_Matrix Z
 )
 { 
 

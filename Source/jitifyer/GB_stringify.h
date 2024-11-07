@@ -888,7 +888,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     int sparsity
 ) ;
 
-void GB_macrofy_nvals  
+void GB_macrofy_nvals
 (
     FILE *fp,
     // input:
@@ -1545,7 +1545,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_Matrix C,
-    const GrB_Matrix Z 
+    const GrB_Matrix Z
 ) ;
 
 uint64_t GB_enumify_masker  // enumify a masker problem
@@ -1558,7 +1558,7 @@ uint64_t GB_enumify_masker  // enumify a masker problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_Matrix C,
-    const GrB_Matrix Z 
+    const GrB_Matrix Z
 ) ;
 
 void GB_macrofy_masker          // construct all macros for GrB_eWise
@@ -1639,6 +1639,25 @@ GrB_Info GB_subref_sparse_jit
     // original input:
     const GrB_Matrix A,
     const GrB_Index *I
+) ;
+
+GrB_Info GB_subref_bitmap_jit
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    GrB_Matrix A,
+    // I:
+    const GrB_Index *I,
+    const int64_t nI,
+    const int Ikind,
+    const int64_t Icolon [3],
+    // J:
+    const GrB_Index *J,
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    GB_Werk Werk
 ) ;
 
 //------------------------------------------------------------------------------

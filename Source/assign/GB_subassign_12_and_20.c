@@ -99,6 +99,7 @@ GrB_Info GB_subassign_12_and_20
     // via the generic kernel
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(generic assign) ") ;
     #define GB_GENERIC
     #define GB_SCALAR_ASSIGN 0
     #include "assign/include/GB_assign_shared_definitions.h"

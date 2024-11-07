@@ -317,7 +317,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             if (info == GrB_NO_VALUE)
             { 
-                // user-defined types
+                GBURBLE ("(generic split) ") ;
                 #define GB_C_TYPE GB_void
                 #define GB_A_TYPE GB_void
                 #undef  GB_COPY

@@ -88,13 +88,36 @@ F100 = {4,4,0} ;
 J4040 = {4,0,4,0} ;
 F1100 = {1,1,0,0} ;
 
+%{
+J4 = {4,0} ;          % JIT     on
+F1 = {1,0} ;          % factory on
+J0 = {0,0} ;          % JIT     off
+F0 = {0,0} ;          % factory off
+
+% run twice
+J44 = {4,4,0} ;       % JIT     on, on
+J40 = {4,0,0} ;       % JIT     on, off
+F10 = {1,0,0} ;       % factory on, off
+F11 = {1,1,0} ;       % factory on, on
+J42 = {4,2,0} ;       % JIT     on, pause
+F00 = {0,0,0} ;
+J00 = {0,0,0} ;
+
+% 3 runs
+J404 = {4,0,4,0} ;    % JIT     on, off, on
+F110 = {1,1,0,0} ;    % factory on, on , off
+J440 = {4,4,0,0} ;
+J400 = {4,0,0,0} ;
+F100 = {4,4,0,0} ;
+%}
+
 %===============================================================================
 % quick tests (< 1 sec)
 %===============================================================================
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
-logstat ('test285'    ,t, J4   , F0   ) ; % GB_mex_assign (bitmap, 7_whole)
+logstat ('test285'    ,t, J40  , F00  ) ; % GB_mex_assign (bitmap, 7_whole)
 logstat ('test247'    ,t, J40  , F10  ) ; % GrB_mxm: fine Hash method
 logstat ('test109'    ,t, J4040, F1100) ; % terminal monoid with user-defn type
 logstat ('test138'    ,s, J40  , F10  ) ; % assign, coarse-only in IxJ slice
@@ -132,7 +155,7 @@ logstat ('test268'    ,t, J40  , F10  ) ; % C<M>=Z sparse masker
 logstat ('test207'    ,t, J4   , F1   ) ; % iso subref
 logstat ('test211'    ,t, J40  , F10  ) ; % iso assign
 logstat ('test183'    ,s, J4   , F1   ) ; % eWiseMult w/hypersparse mask
-logstat ('test212'    ,t, J44  , F10  ) ; % iso mask all zero
+logstat ('test212'    ,t, J440 , F100 ) ; % iso mask all zero
 logstat ('test219'    ,s, J40  , F10 ) ; % reduce to scalar (1 thread)
 
 % < 1 second: debug_on
@@ -196,7 +219,7 @@ logstat ('test80'     ,t, J4   , F1   ) ; % GrB_mxm on all semirings
 logstat ('test200'    ,t, J4   , F1   ) ; % iso full matrix multiply
 logstat ('test283'    ,t, J4   , F1   ) ; % index binary op
 logstat ('test254'    ,t, J44  , F10  ) ; % mask types
-logstat ('test142b'   ,t, J4   , F0   ) ; % GrB_assign with accum
+logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
 logstat ('test142'    ,t, J400 , F110 ) ; % GrB_assign with accum
 logstat ('test54'     ,t, J40  , F10  ) ; % assign, extract with begin:inc:end
 logstat ('testcc(1)'  ,t, J40  , F10  ) ; % transpose, builtin complex
@@ -277,7 +300,7 @@ logstat ('test193'    ,t, J4   , F1   ) ; % GxB_Matrix_diag
 logstat ('test127'    ,t, J0   , F1   ) ; % eWiseAdd, eWiseMult
 logstat ('test23'     ,t, J0   , F1   ) ; % quick test of GB_*_build
 logstat ('test243'    ,t, J4   , F1   ) ; % GxB_Vector_Iterator
-logstat ('test53'     ,t, J4   , F1   ) ; % GB_mex_Matrix_extract
+logstat ('test53'     ,t, J40  , F10  ) ; % GB_mex_Matrix_extract
 logstat ('test242'    ,t, J4   , F1   ) ; % GxB_Iterator for matrices
 logstat ('test17'     ,t, J4   , F1   ) ; % quick test of GrB_*_extractElement
 logstat ('test246'    ,t, J4   , F1   ) ; % GrB_mxm: fine Hash, parallelism

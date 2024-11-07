@@ -125,6 +125,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     if (info == GrB_NO_VALUE)
     { 
         // via the generic kernel
+        GBURBLE ("(generic masker) ") ;
         #define GB_PHASE_1_OF_2
         #include "mask/template/GB_masker_template.c"
         info = GrB_SUCCESS ;

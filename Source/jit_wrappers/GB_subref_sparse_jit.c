@@ -44,8 +44,8 @@ GrB_Info GB_subref_sparse_jit
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_subref (&encoding, &suffix,
-        GB_JIT_KERNEL_SUBREF_SPARSE,
-        C, Ikind, 0, need_qsort, I_has_duplicates, A) ;
+        GB_JIT_KERNEL_SUBREF_SPARSE, C, Ikind, 0,
+        need_qsort, I_has_duplicates, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

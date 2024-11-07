@@ -833,6 +833,8 @@
 #define GB_JITpackage_335 GM_JITpackage_335
 #define GB_JITpackage_336 GM_JITpackage_336
 #define GB_JITpackage_337 GM_JITpackage_337
+#define GB_JITpackage_338 GM_JITpackage_338
+#define GB_JITpackage_339 GM_JITpackage_339
 #define GB_JITpackage_33 GM_JITpackage_33
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35
@@ -1216,6 +1218,7 @@
 #define GB_subassign_scalar GM_subassign_scalar
 #define GB_subassign_symbolic GM_subassign_symbolic
 #define GB_subassign_zombie GM_subassign_zombie
+#define GB_subref_bitmap_jit GM_subref_bitmap_jit
 #define GB_subref GM_subref
 #define GB_subref_phase0 GM_subref_phase0
 #define GB_subref_phase2 GM_subref_phase2

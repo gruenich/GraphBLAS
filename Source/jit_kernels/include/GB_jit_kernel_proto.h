@@ -643,6 +643,25 @@ GrB_Info GB_jit_kernel_subref_sparse                                    \
     const GB_callback_struct *restrict my_callback                      \
 )
 
+#define GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(GB_jit_kernel_bitmap_subref)  \
+GrB_Info GB_jit_kernel_bitmap_subref                                    \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    GrB_Matrix A,                                                       \
+    const GrB_Index *I,                                                 \
+    const int64_t nI,                                                   \
+    const int Ikind,                                                    \
+    const int64_t Icolon [3],                                           \
+    const GrB_Index *J,                                                 \
+    const int64_t nJ,                                                   \
+    const int Jkind,                                                    \
+    const int64_t Jcolon [3],                                           \
+    GB_Werk Werk,                                                       \
+    const int nthreads_max,                                             \
+    double chunk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------

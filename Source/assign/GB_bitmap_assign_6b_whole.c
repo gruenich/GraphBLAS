@@ -69,6 +69,7 @@ GrB_Info GB_bitmap_assign_6b_whole  // C bitmap, no M, no accum
     // via the generic kernel
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(generic assign) ") ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     #define GB_GENERIC

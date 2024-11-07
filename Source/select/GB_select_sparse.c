@@ -222,6 +222,7 @@ GrB_Info GB_select_sparse
         if (info == GrB_NO_VALUE)
         { 
             // generic entry selector, phase1
+            GBURBLE ("(generic select) ") ;
             info = GB_select_generic_phase1 (Cp, Wfirst, Wlast,
                 A, flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
         }

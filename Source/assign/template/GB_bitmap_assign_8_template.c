@@ -46,6 +46,7 @@
     #define GB_MASK_WORK(pC) Cb [pC] += 2
     #define GB_NO_CNVALS
     #include "template/GB_bitmap_assign_M_template.c"
+    #undef  GB_NO_CNVALS
 
     // the bitmap of C now contains:
     //    Cb (i,j) = 0:  mij == 0, cij not present, do not modify
@@ -181,6 +182,7 @@
             #define GB_MASK_WORK(pC) Cb [pC] &= 1
             #define GB_NO_CNVALS
             #include "template/GB_bitmap_assign_M_template.c"
+            #undef  GB_NO_CNVALS
 
         }
         #undef GB_NO_SUBASSIGN_CASE
