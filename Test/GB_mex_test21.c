@@ -231,7 +231,8 @@ void mexFunction
         fprintf (fp, "GB_enumify_apply / GB_macrofy_apply: %s\n", op->name) ;
         printf ("GB_enumify_apply / GB_macrofy_apply: %s\n", op->name) ;
         GB_enumify_apply (&scode, GxB_SPARSE, true, GrB_INT32,
-            (GB_Operator) op, false, A) ;
+            (GB_Operator) op, false,
+            GB_sparsity (A), true, GrB_INT32, A->iso, A->nzombies) ;
 //      printf ("apply  scode: %016" PRIx64 "\n", scode) ;
         GB_macrofy_apply (fp, scode, (GB_Operator) op, GrB_INT32, GrB_INT32) ;
     }
@@ -242,7 +243,8 @@ void mexFunction
     printf ("GB_enumify_apply / GB_macrofy_apply: %s\n", op1->name) ;
 //  printf ("apply  scode: %016" PRIx64 "\n", scode) ;
     GB_enumify_apply (&scode, GxB_SPARSE, true, GrB_INT32,
-            (GB_Operator) op1, false, A) ;
+            (GB_Operator) op1, false,
+            GB_sparsity (A), true, GrB_INT32, A->iso, A->nzombies) ;
     GB_macrofy_apply (fp, scode, (GB_Operator) op1, GrB_INT32, GrB_INT32) ;
 
     //--------------------------------------------------------------------------

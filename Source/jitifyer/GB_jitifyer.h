@@ -165,11 +165,10 @@ typedef enum
     GB_JIT_KERNEL_KRONER        = 83, // GB_kroner
 
     // future:: utilities:
-    GB_JIT_KERNEL_CHECKISO      = 84, // GB_all_entries_are_iso
-    GB_JIT_KERNEL_CONVERTBITMAP = 85, // GB_convert_bitmap_worker
-    GB_JIT_KERNEL_EXPANDISO     = 86, // GB_expand_iso
-    GB_JIT_KERNEL_SORT          = 87, // GB_sort
-    GB_JIT_KERNEL_UNJUMBLE      = 88, // GB_unjumble
+    GB_JIT_KERNEL_CONVERT_BITMAP = 85, // GB_convert_bitmap_worker
+    GB_JIT_KERNEL_ISO_EXPAND     = 86, // GB_expand_iso
+    GB_JIT_KERNEL_SORT           = 87, // GB_sort
+    GB_JIT_KERNEL_UNJUMBLE       = 88, // GB_unjumble
 
     //--------------------------------------------------------------------------
     // future:: CUDA kernels

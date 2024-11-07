@@ -26,7 +26,12 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,
     // A matrix:
-    const GrB_Matrix A
+//  const GrB_Matrix A
+    const int A_sparsity,
+    const bool A_is_matrix,
+    const GrB_Type atype,
+    const bool A_iso,
+    const int64_t A_nzombies
 )
 { 
 
@@ -48,7 +53,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
 
     encoding->kcode = kcode ;
     GB_enumify_apply (&encoding->code, C_sparsity, C_is_matrix, ctype, op,
-        flipij, A) ;
+        flipij, A_sparsity, A_is_matrix, atype, A_iso, A_nzombies) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

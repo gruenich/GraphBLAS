@@ -932,17 +932,22 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
     // C matrix:
-    int C_sparsity,         // sparse, hyper, bitmap, or full.  For apply
+    const int C_sparsity,   // sparse, hyper, bitmap, or full.  For apply
                             // without transpose, Cx = op(A) is computed where
                             // Cx is just C->x, so the caller uses 'full' when
                             // C is sparse, hyper, or full.
-    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    const bool C_is_matrix, // true for C=op(A), false for Cx=op(A)
+    const GrB_Type ctype,   // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
-        bool flipij,                // if true, flip i,j for user idxunop
+        const bool flipij,          // if true, flip i,j for user idxunop
     // A matrix:
-    const GrB_Matrix A              // input matrix
+//  const GrB_Matrix A              // input matrix
+    const int A_sparsity,
+    const bool A_is_matrix,
+    const GrB_Type atype,
+    const bool A_iso,
+    const int64_t A_nzombies
 ) ;
 
 void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
@@ -997,7 +1002,12 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,
     // A matrix:
-    const GrB_Matrix A
+//  const GrB_Matrix A
+    const int A_sparsity,
+    const bool A_is_matrix,
+    const GrB_Type atype,
+    const bool A_iso,
+    const int64_t A_nzombies
 ) ;
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT

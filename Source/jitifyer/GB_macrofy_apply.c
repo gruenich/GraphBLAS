@@ -27,6 +27,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // extract the apply scode
     //--------------------------------------------------------------------------
 
+    int A_mat       = GB_RSHIFT (scode, 38, 1) ;
     int A_zombies   = GB_RSHIFT (scode, 37, 1) ;
     int A_iso       = GB_RSHIFT (scode, 36, 1) ;
 
@@ -89,6 +90,9 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     GB_macrofy_type (fp, "Z", "_", ztype_name) ;
     GB_macrofy_type (fp, "X", "_", xtype_name) ;
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
+    fprintf (fp, "#define GB_DECLAREZ(zwork) %s zwork\n", ztype_name) ;
+    fprintf (fp, "#define GB_DECLAREX(xwork) %s xwork\n", xtype_name) ;
+    fprintf (fp, "#define GB_DECLAREY(ywork) %s ywork\n", ytype_name) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the unary operator
@@ -188,11 +192,21 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     }
 
     //--------------------------------------------------------------------------
-    // construct the macros for A
+    // construct the macros for A array or matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-        atype, asparsity, acode, A_iso, A_zombies) ;
+    if (A_mat)
+    {
+        // C or Cx = op(A) for a matrix A
+        GB_macrofy_input (fp, "a", "A", "A", true, xtype,
+            atype, asparsity, acode, A_iso, A_zombies) ;
+    }
+    else
+    {
+        // Cx = op(Ax) for unary op only
+        fprintf (fp, "\n// A type:\n") ;
+        GB_macrofy_type (fp, "A", "_", atype->name) ;
+    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions
