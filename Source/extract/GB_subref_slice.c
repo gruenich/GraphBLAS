@@ -179,17 +179,10 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
         int64_t pA_end  = Ap_end   [kC] ;
         int64_t alen = pA_end - pA ;      // nnz (A (imin:imax,j))
 
-        int64_t work ;              // amount of work for C(:,kC) = A (I,kA)
         bool this_needs_I_inverse ; // true if this vector needs I inverse
-
-        // nduplicates in I not yet known; it is found when I is inverted.  For
-        // now, assume I has no duplicate entries.  All that is needed for now
-        // is the work required for each C(:,kC), and whether or not I inverse
-        // must be created.  The # of duplicates has no impact on the I inverse
-        // decision, and a minor effect on the work (which is ignored).
-
-        GB_subref_method (&work, &this_needs_I_inverse, alen, avlen,
-            Ikind, nI, I_inverse_ok, need_qsort, iinc, false) ;
+        // amount of work for C(:,kC) = A (I,kA):
+        int64_t work = GB_subref_work (&this_needs_I_inverse, alen, avlen,
+            Ikind, nI, I_inverse_ok, need_qsort, iinc) ;
 
         // log the result
         need_I_inverse = need_I_inverse || this_needs_I_inverse ;
@@ -377,8 +370,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
                 int64_t pA_end = Ap_end   [k] ;
                 int64_t alen = pA_end - pA ;      // nnz (A (imin:imax,j))
 
-                int method = GB_subref_method (NULL, NULL, alen, avlen, Ikind,
-                    nI, I_inverse_ok, need_qsort, iinc, I_has_duplicates) ;
+                int method = GB_subref_method (alen, avlen, Ikind, nI,
+                    I_inverse_ok, need_qsort, iinc, I_has_duplicates) ;
 
                 if (method == 10)
                 { 

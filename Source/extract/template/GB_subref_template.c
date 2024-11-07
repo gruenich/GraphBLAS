@@ -174,9 +174,8 @@
             else
             { 
                 // determine the method based on A(*,kA) and I
-                method = GB_subref_method (NULL, NULL, alen, avlen, GB_I_KIND,
-                    nI, (Mark != NULL), GB_NEED_QSORT, iinc,
-                    GB_I_HAS_DUPLICATES) ;
+                method = GB_subref_method (alen, avlen, GB_I_KIND, nI,
+                    (Mark != NULL), GB_NEED_QSORT, iinc, GB_I_HAS_DUPLICATES) ;
             }
 
             //------------------------------------------------------------------
@@ -412,7 +411,7 @@
                     // Time: 2x slower for iinc = -2 or -8.
                     // Good speedup though.  Faster for
                     // large values (iinc = -128).
-                
+
                     ASSERT (GB_I_KIND == GB_STRIDE && iinc < -1) ;
                     for (int64_t k = alen - 1 ; k >= 0 ; k--)
                     {
