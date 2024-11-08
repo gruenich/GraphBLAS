@@ -2,12 +2,10 @@
 // GB_subassign_25: C(:,:)<M,s> = A; C empty, A full, M structural
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: done.
 
 // Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
@@ -54,18 +52,11 @@ GrB_Info GB_subassign_25
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (!GB_IS_BITMAP (M)) ; ASSERT (!GB_IS_FULL (M)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_25", GB0) ;
     ASSERT (GB_nnz (C) == 0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -79,6 +70,13 @@ GrB_Info GB_subassign_25
 
     ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
     ASSERT (GB_IS_FULL (A) || GB_IS_BITMAP (A)) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     const GB_Type_code ccode = C->type->code ;
     const GB_Type_code acode = A->type->code ;
@@ -192,6 +190,7 @@ GrB_Info GB_subassign_25
                 /* accum: */ NULL,
                 /* A: */ A,
                 /* scalar, scalar_type: */ NULL, NULL,
+                /* S: */ NULL,
                 GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_25, "subassign_25",
                 Werk) ;
         }

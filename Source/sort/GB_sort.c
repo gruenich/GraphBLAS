@@ -142,7 +142,7 @@
 #include "sort/factory/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
-// macros for user-defined types and when typecasting is performed 
+// macros for user-defined types and when typecasting is performed
 //------------------------------------------------------------------------------
 
 #undef  GB_ADDR

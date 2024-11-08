@@ -84,7 +84,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
         else
         { 
-            GBPR0 ("%s", A->type->name) ;
+            if (A->type->name [0] == '\0')
+            { 
+                GBPR0 ("user-defined (type size %zu bytes)", A->type->size) ;
+            }
+            else
+            { 
+                GBPR0 ("%s", A->type->name) ;
+            }
         }
     }
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // CALLS:     GB_builder
 
 // The matrix A has zombies and/or pending tuples placed there by
@@ -429,7 +427,8 @@ GrB_Info GB_wait                // finish all pending computations
             int64_t *restrict A1p = A1->p ;
             int64_t *restrict A1h = A1->h ;
             int64_t a1nvec = 0 ;
-            for (int64_t k = kA ; k < anvec ; k++)
+
+            for (int64_t k = kA ; k < anvec ; k++) // TODO:parallel
             {
                 // get A (:,k)
                 int64_t pA_start = Ap [k] ;
@@ -508,7 +507,7 @@ GrB_Info GB_wait                // finish all pending computations
         }
 
         // append the vectors of T to the end of A
-        for (int64_t k = 0 ; k < tnvec ; k++)
+        for (int64_t k = 0 ; k < tnvec ; k++) // TODO:parallel
         { 
             int64_t j = Th [k] ;
             ASSERT (j >= tjfirst) ;

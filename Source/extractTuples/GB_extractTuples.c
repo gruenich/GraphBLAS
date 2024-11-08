@@ -2,12 +2,10 @@
 // GB_extractTuples: extract all the tuples from a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: not needed.  Only one variant possible.
 
 // Extracts all tuples from a matrix, like [I,J,X] = find (A).  If any
 // parameter I, J and/or X is NULL, then that component is not extracted.  The
@@ -36,7 +34,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Index *J_out,           // array for returning col indices of tuples
     void *X,                    // array for returning values of tuples
     GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
-    const GB_Type_code xcode,   // type of array X
+    const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
     GB_Werk Werk
 )
@@ -59,13 +57,14 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // allow A to remain jumbled
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
 
+    // get the types
     GB_BURBLE_DENSE (A, "(A %s) ") ;
-    ASSERT (xcode <= GB_UDT_code) ;
+    const GB_Type_code xcode = xtype->code ;
     const GB_Type_code acode = A->type->code ;
     const size_t asize = A->type->size ;
 
-    // xcode and A must be compatible
-    if (!GB_code_compatible (xcode, acode))
+    // X and A must be compatible
+    if (!GB_Type_compatible (xtype, A->type))
     { 
         return (GrB_DOMAIN_MISMATCH) ;
     }
@@ -139,7 +138,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // extract the tuples
         //----------------------------------------------------------------------
 
-        // TODO: pass xcode to GB_convert_bitmap_worker and let it do the
+        // TODO: pass xtype to GB_convert_bitmap_worker and let it do the
         // typecasting.  This works for now, however.
 
         // if A is iso, GB_convert_bitmap_worker expands the iso scalar
@@ -220,10 +219,10 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             if (A->iso)
             { 
                 // typecast the scalar and expand it into X
-                size_t xsize = GB_code_size (xcode, asize) ;
+                const size_t xsize = xtype->size ;
                 GB_void scalar [GB_VLA(xsize)] ;
                 GB_cast_scalar (scalar, xcode, A->x, acode, asize) ;
-                GB_expand_iso (X, anz, scalar, xsize) ;
+                GB_OK (GB_iso_expand (X, anz, scalar, xtype)) ;
             }
             else if (xcode == acode)
             { 

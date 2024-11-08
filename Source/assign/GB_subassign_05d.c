@@ -2,25 +2,21 @@
 // GB_subassign_05d: C(:,:)<M> = scalar where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
-// M:           present
+// C:           full
+// M:           present, any sparsity structure
 // Mask_comp:   false
 // Mask_struct: true or false
 // C_replace:   false
 // accum:       NULL
 // A:           scalar
 // S:           none
-
-// C can have any sparsity structure, but it must be entirely dense with
-// all entries present.
 
 #include "assign/GB_subassign_methods.h"
 #include "assign/GB_subassign_dense.h"
@@ -52,16 +48,10 @@ GrB_Info GB_subassign_05d
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -72,6 +62,13 @@ GrB_Info GB_subassign_05d
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     // quick return if work has already been done by GB_assign_prep
     if (C->iso) return (GrB_SUCCESS) ;
@@ -154,6 +151,7 @@ GrB_Info GB_subassign_05d
             /* accum: */ NULL,
             /* A: */ NULL,
             /* scalar, scalar_type: */ cwork, C->type,
+            /* S: */ NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05d, "subassign_05d",
             Werk) ;
     }

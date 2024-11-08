@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.
-
 // Extract the value of single scalar, x = V(i), typecasting from the
 // type of V to the type of x, as needed.
 

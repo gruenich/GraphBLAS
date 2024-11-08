@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #define GB_FREE_WORKSPACE                   \
     GB_WERK_POP (C_ek_slicing, int64_t) ;   \
     GB_FREE_WORK (&Wp, Wp_size) ;
@@ -319,7 +317,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             if (info == GrB_NO_VALUE)
             { 
-                // user-defined types
+                GBURBLE ("(generic split) ") ;
                 #define GB_C_TYPE GB_void
                 #define GB_A_TYPE GB_void
                 #undef  GB_COPY

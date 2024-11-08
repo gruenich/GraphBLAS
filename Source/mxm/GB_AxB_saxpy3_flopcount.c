@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but many variants possible (matrix sparsity formats)
+// JIT: possible: many variants possible (matrix sparsity formats)
+// matrices: A, B, M; bool Mask_comp
 
 // On input, A, B, and M (optional) are matrices for C=A*B, C<M>=A*B, or
 // C<!M>=A*B.  The flop count for each B(:,j) is computed, and returned as a

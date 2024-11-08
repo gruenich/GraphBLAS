@@ -27,29 +27,6 @@ void GX_AxB_saxpy3_cumsum                                                   \
     GB_Werk Werk                                                            \
 )
 
-#define GB_CALLBACK_BITMAP_M_SCATTER_PROTO(GX_bitmap_M_scatter)             \
-void GX_bitmap_M_scatter        /* scatter M into the C bitmap */           \
-(                                                                           \
-    /* input/output: */                                                     \
-    GrB_Matrix C,                                                           \
-    /* inputs: */                                                           \
-    const GrB_Index *I,         /* I index list */                          \
-    const int64_t nI,                                                       \
-    const int Ikind,                                                        \
-    const int64_t Icolon [3],                                               \
-    const GrB_Index *J,         /* J index list */                          \
-    const int64_t nJ,                                                       \
-    const int Jkind,                                                        \
-    const int64_t Jcolon [3],                                               \
-    const GrB_Matrix M,         /* mask to scatter into the C bitmap */     \
-    const bool Mask_struct,     /* true: M structural, false: M valued */   \
-    const int assign_kind,      /* row assign, col assign, assign, sub. */  \
-    const int operation,        /* +=2, -=2, or %=2 */                      \
-    const int64_t *M_ek_slicing,    /* size 3*M_ntasks+1 */                 \
-    const int M_ntasks,                                                     \
-    const int M_nthreads                                                    \
-)
-
 #define GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO(GX_bitmap_M_scatter_whole) \
 void GX_bitmap_M_scatter_whole  /* scatter M into the C bitmap */           \
 (                                                                           \
@@ -123,13 +100,6 @@ void GX_memset                  /* parallel memset */                       \
     const int c,                /* value to to set */                       \
     size_t n,                   /* # of bytes to set */                     \
     int nthreads                /* max # of threads to use */               \
-)
-
-#define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
-void GX_qsort_1    /* sort array A of size 1-by-n */                        \
-(                                                                           \
-    int64_t *restrict A_0,      /* size n array */                          \
-    const int64_t n                                                         \
 )
 
 #define GB_CALLBACK_WERK_POP_PROTO(GX_werk_pop)                             \
@@ -282,25 +252,35 @@ GrB_Info GX_subassign_08n_slice                                             \
     GB_Werk Werk                                                            \
 )
 
-#define GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO(GX_subassign_symbolic)         \
-GrB_Info GX_subassign_symbolic                                              \
+#define GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO(GX_bitmap_assign_to_full)   \
+void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
 (                                                                           \
-    /* output */                                                            \
-    GrB_Matrix S,           /* S = symbolic(C(I,J)), static header */       \
-    /* inputs, not modified: */                                             \
-    const GrB_Matrix C,     /* matrix to extract the pattern of */          \
-    const GrB_Index *I,     /* index list for S = C(I,J), or GrB_ALL, etc */\
-    const int64_t ni,       /* length of I, or special */                   \
-    const GrB_Index *J,     /* index list for S = C(I,J), or GrB_ALL, etc */\
-    const int64_t nj,       /* length of J, or special */                   \
-    const bool S_must_not_be_jumbled,                                       \
-    GB_Werk Werk                                                            \
+    GrB_Matrix C,                                                           \
+    int nthreads_max                                                        \
 )
 
-#define GB_CALLBACK_MATRIX_FREE_PROTO(GX_Matrix_free)                       \
-void GX_Matrix_free             /* free a matrix */                         \
+#define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
+void GX_qsort_1    /* sort array A of size 1-by-n */                        \
 (                                                                           \
-    GrB_Matrix *Ahandle         /* handle of matrix to free */              \
+    int64_t *restrict A_0,      /* size n array */                          \
+    const int64_t n                                                         \
+)
+
+#define GB_CALLBACK_QSORT_1B_ANY_PROTO(GX_qsort_1b)                         \
+void GX_qsort_1b                                                            \
+(                                                                           \
+    int64_t *restrict A_0,       /* size n array */                         \
+    GB_void *restrict A_1,       /* size n array */                         \
+    const size_t xsize,          /* size of entries in A_1 */               \
+    const int64_t n                                                         \
+)
+
+#define GB_CALLBACK_QSORT_1B_SIZE_PROTO(GX_qsort_1b_size,a1_t)              \
+void GX_qsort_1b_size                                                       \
+(                                                                           \
+    int64_t *restrict A_0,       /* size n array */                         \
+    a1_t *restrict A_1,          /* size n array */                         \
+    const int64_t n                                                         \
 )
 
 #endif

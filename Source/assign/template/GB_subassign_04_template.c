@@ -22,17 +22,10 @@
 {
 
     //--------------------------------------------------------------------------
-    // S = C(I,J)
-    //--------------------------------------------------------------------------
-
-    GB_EMPTY_TASKLIST ;
-    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
-
-    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
     GB_GET_S ;
     GB_GET_ACCUM_MATRIX ;
@@ -60,12 +53,12 @@
     //--------------------------------------------------------------------------
 
     if (GB_A_IS_BITMAP)
-    {
+    { 
         // all of IxJ must be examined
         GB_SUBASSIGN_IXJ_SLICE ;
     }
     else
-    {
+    { 
         // traverse all A+S
         GB_SUBASSIGN_TWO_SLICE (A, S) ;
     }

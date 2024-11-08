@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #define GB_FREE_ALL         \
     GB_Matrix_free (&C) ;
 
@@ -182,7 +180,7 @@ GrB_Info GB_split_full              // split a full matrix
 
                 if (info == GrB_NO_VALUE)
                 { 
-                    // user-defined types
+                    GBURBLE ("(generic split) ") ;
                     #define GB_C_TYPE GB_void
                     #define GB_A_TYPE GB_void
                     #undef  GB_COPY

@@ -2,7 +2,7 @@
 // GB_macrofy_apply: construct all macros for apply methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // extract the apply scode
     //--------------------------------------------------------------------------
 
+    int A_mat       = GB_RSHIFT (scode, 38, 1) ;
     int A_zombies   = GB_RSHIFT (scode, 37, 1) ;
     int A_iso       = GB_RSHIFT (scode, 36, 1) ;
 
@@ -89,6 +90,9 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     GB_macrofy_type (fp, "Z", "_", ztype_name) ;
     GB_macrofy_type (fp, "X", "_", xtype_name) ;
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
+    fprintf (fp, "#define GB_DECLAREZ(zwork) %s zwork\n", ztype_name) ;
+    fprintf (fp, "#define GB_DECLAREX(xwork) %s xwork\n", xtype_name) ;
+    fprintf (fp, "#define GB_DECLAREY(ywork) %s ywork\n", ytype_name) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the unary operator
@@ -106,6 +110,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     bool no_typecast_of_A = (atype == xtype) || (xtype == NULL) ;
 
     // Cx [pC] = op (Ax [pA], i, j, y)
+    bool did_uop = false ;
     char *pA = A_iso ? "0" : "pA" ;
     char *i = i_dep  ? "i" : " " ;
     char *j = j_dep  ? "j" : " " ;
@@ -114,8 +119,20 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     if (ctype == ztype && no_typecast_of_A)
     { 
         // no typecasting
-        fprintf (fp, " GB_UNARYOP (Cx [pC], Ax [%s], %s, %s, %s)\n",
-            pA, i, j, y) ;
+        if (unop_ecode == GB_IDENTITY_unop_code)
+        { 
+            // identity operator, no typecasting
+            fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;
+            fprintf (fp, "#define GB_UOP(Cx,pC,Ax,pA,A_iso)") ;
+            fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;
+            did_uop = true ;
+        }
+        else
+        { 
+            // any operator, no typecsting
+            fprintf (fp, " GB_UNARYOP (Cx [pC], Ax [%s], %s, %s, %s)\n",
+                pA, i, j, y) ;
+        }
     }
     else if (ctype == ztype)
     { 
@@ -150,6 +167,13 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
             "}\n", pA, i, j, y) ;
     }
 
+    // Cx [pC] = op (Ax [pA]), only operator does not depend on i, j, or y
+    if (!did_uop && !i_dep && !j_dep && !y_dep)
+    { 
+        fprintf (fp, "#define GB_UOP(Cx,pC,Ax,pA,A_iso)") ;
+        fprintf (fp, " GB_UNOP(Cx,pC,Ax,pA, , , , )\n") ;
+    }
+
     //--------------------------------------------------------------------------
     // macros for the C array or matrix
     //--------------------------------------------------------------------------
@@ -168,16 +192,26 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     }
 
     //--------------------------------------------------------------------------
-    // construct the macros for A
+    // construct the macros for A array or matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-        atype, asparsity, acode, A_iso, A_zombies) ;
+    if (A_mat)
+    {
+        // C or Cx = op(A) for a matrix A
+        GB_macrofy_input (fp, "a", "A", "A", true, xtype,
+            atype, asparsity, acode, A_iso, A_zombies) ;
+    }
+    else
+    {
+        // Cx = op(Ax) for unary op only
+        fprintf (fp, "\n// A type:\n") ;
+        GB_macrofy_type (fp, "A", "_", atype->name) ;
+    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"include/GB_apply_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"include/GB_kernel_shared_definitions.h\"\n") ;
 }
 

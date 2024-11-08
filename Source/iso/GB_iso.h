@@ -53,12 +53,12 @@ GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
     GB_void *scalar         // scalar value, of size A->type->size, or NULL
 ) ;
 
-void GB_expand_iso          // expand an iso scalar into an entire array
+GrB_Info GB_iso_expand      // expand an iso scalar into an entire array
 (
     void *restrict X,       // output array to expand into
     int64_t n,              // # of entries in X
     void *restrict scalar,  // scalar to expand into X
-    size_t size             // size of the scalar and each entry of X
+    GrB_Type xtype          // the type of the X and the scalar
 ) ;
 
 bool GB_all_entries_are_iso // return true if A is iso, false otherwise

@@ -2,12 +2,10 @@
 // GB_subassign_zombie: C(I,J)<!,repl> = empty ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: not needed.  Only one variant possible.
 
 // Method 00: C(I,J)<!,repl> = empty ; using S
 
@@ -52,15 +50,15 @@ GrB_Info GB_subassign_zombie
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // S = C(I,J), but do not construct the S->H hyper_hash
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     struct GB_Matrix_opaque S_header ;
-    GrB_Matrix S = NULL ;
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
     GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, false, Werk)) ;
     ASSERT (GB_JUMBLED_OK (S)) ;        // S can be returned as jumbled

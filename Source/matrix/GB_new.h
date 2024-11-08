@@ -85,5 +85,10 @@ void GB_phybix_free             // free all content of a matrix
     GrB_Matrix A                // matrix with content to free
 ) ;
 
+void GB_Matrix_free             // free a matrix
+(
+    GrB_Matrix *Ahandle         // handle of matrix to free
+) ;
+
 #endif
 

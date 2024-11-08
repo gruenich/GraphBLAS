@@ -66,6 +66,14 @@ void GB_macrofy_family
             GB_macrofy_user_type (fp, type1) ;
             break ;
 
+        case GB_jit_masker_family  : 
+            GB_macrofy_masker (fp, scode, type1) ;
+            break ;
+
+        case GB_jit_subref_family  : 
+            GB_macrofy_subref (fp, scode, type1) ;
+            break ;
+
         default: ;
     }
 }

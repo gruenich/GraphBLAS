@@ -2,7 +2,7 @@
 // GB_subassign_25_template: C<M> = A where C is empty and A is dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -127,9 +127,8 @@
                 //--------------------------------------------------------------
 
                 int64_t j = GBH_M (Mh, k) ;
-                GB_GET_PA (pM_start, pM_end, tid, k,
-                    kfirst, klast, pstart_Mslice,
-                    GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
+                GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast,
+                    pstart_Mslice, Mp [k], Mp [k+1]) ;
 
                 //--------------------------------------------------------------
                 // C<M(:,j)> = A(:,j)
@@ -146,8 +145,8 @@
                     { 
                         // C(i,j) = A(i,j)
                         #ifndef GB_ISO_ASSIGN
-                        GB_COPY_aij_to_C (Cx, pM, Ax, p,
-                            GB_A_ISO, cwork, GB_C_ISO) ;
+                        GB_COPY_aij_to_C (Cx, pM, Ax, p, GB_A_ISO, cwork,
+                            GB_C_ISO) ;
                         #endif
                     }
                     else
@@ -194,9 +193,8 @@
                     //----------------------------------------------------------
 
                     int64_t j = GBH_M (Mh, k) ;
-                    GB_GET_PA (pM_start, pM_end, tid, k,
-                        kfirst, klast, pstart_Mslice,
-                        GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
+                    GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast,
+                        pstart_Mslice, Mp [k], Mp [k+1]) ;
 
                     //----------------------------------------------------------
                     // C<M(:,j)> = A(:,j)

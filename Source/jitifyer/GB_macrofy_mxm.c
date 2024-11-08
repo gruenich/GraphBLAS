@@ -339,7 +339,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
             fprintf (fp, "#define GB_IS_SECONDJ_MULTIPLIER 1\n") ;
             break ;
 
-        default: ; 
+        default: ;
     }
 
     //--------------------------------------------------------------------------

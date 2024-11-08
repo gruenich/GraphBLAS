@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.
-
 // Method 26: C(:,j1:j2) = A ; append columns, no S
 
 // M:           NULL
@@ -44,6 +42,7 @@ GrB_Info GB_subassign_26
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (GB_IS_HYPERSPARSE (C)) ;
     ASSERT (GB_IS_SPARSE (A)) ;
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
@@ -57,7 +56,6 @@ GrB_Info GB_subassign_26
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     const size_t csize = C->type->size ;
     int64_t Cnvec = C->nvec ;
     int64_t cnz = C->nvals ;

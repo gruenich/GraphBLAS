@@ -37,7 +37,7 @@ GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
         {
             // construct the IDENTITY_UDT operator.  It will have a NULL
             // function pointer so it cannot be used in a generic kernel.  It
-            // will have a nonzero hash, and will thus not be treated as a a
+            // will have a nonzero hash, and will thus not be treated as a
             // built-in operator in the JIT kernels.  The name of the operator
             // is the name of its type.
             if (op == NULL) return (NULL) ;

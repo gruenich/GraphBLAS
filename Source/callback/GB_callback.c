@@ -13,7 +13,6 @@
 GB_callback_struct GB_callback =
 {
     .GB_AxB_saxpy3_cumsum_func      = GB_AxB_saxpy3_cumsum,
-    .GB_bitmap_M_scatter_func       = GB_bitmap_M_scatter,
     .GB_bitmap_M_scatter_whole_func = GB_bitmap_M_scatter_whole,
     .GB_bix_alloc_func              = GB_bix_alloc,
     .GB_ek_slice_func               = GB_ek_slice,
@@ -33,7 +32,15 @@ GB_callback_struct GB_callback =
     .GB_subassign_IxJ_slice_func    = GB_subassign_IxJ_slice,
     .GB_Pending_ensure_func         = GB_Pending_ensure,
     .GB_subassign_08n_slice_func    = GB_subassign_08n_slice,
-    .GB_subassign_symbolic_func     = GB_subassign_symbolic,
-    .GB_Matrix_free_func            = GB_Matrix_free
+    .GB_bitmap_assign_to_full_func  = GB_bitmap_assign_to_full,
+
+    // added for subref:
+    .GB_qsort_1b_func               = GB_qsort_1b,
+    .GB_qsort_1b_size1_func         = GB_qsort_1b_size1,
+    .GB_qsort_1b_size2_func         = GB_qsort_1b_size2,
+    .GB_qsort_1b_size4_func         = GB_qsort_1b_size4,
+    .GB_qsort_1b_size8_func         = GB_qsort_1b_size8,
+    .GB_qsort_1b_size16_func        = GB_qsort_1b_size16
+
 } ;
 

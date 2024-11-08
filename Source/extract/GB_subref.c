@@ -2,7 +2,7 @@
 // GB_subref: C = A(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // output
     GrB_Matrix C,               // output matrix, static header
     // input, not modified
-    bool C_iso,                 // if true, return C as iso, regardless of A 
+    bool C_iso,                 // if true, return C as iso, regardless of A
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
     const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.

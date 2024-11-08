@@ -2,12 +2,12 @@
 // GB_assign_zombie4: delete entries in C(i,:) for C_replace_phase
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but 96 variants. Could use one for each mask type (6: 1, 2,
+// JIT: possible: 96 variants. Could use one for each mask type (6: 1, 2,
 // 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse/
 // hyper), mask comp (2), C sparsity (2: sparse/hyper): 6*4*2*2 = 96 variants,
 // so a JIT kernel is reasonable.

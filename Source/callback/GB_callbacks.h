@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_callbacks.h: prototypes for kernel callbacks for PreJIT
+// GB_callbacks.h: prototypes for kernel callbacks
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -20,7 +20,6 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc) ;
 GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1) ; 
 GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push) ;
 GB_CALLBACK_WERK_POP_PROTO (GB_werk_pop) ;
-GB_CALLBACK_BITMAP_M_SCATTER_PROTO (GB_bitmap_M_scatter) ;
 GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO (GB_bitmap_M_scatter_whole) ;
 
 // added for assign:
@@ -31,8 +30,15 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice) ;
 GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice) ;
 GB_CALLBACK_PENDING_ENSURE_PROTO (GB_Pending_ensure) ;
 GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice) ;
-GB_CALLBACK_SUBASSIGN_SYMBOLIC_PROTO (GB_subassign_symbolic) ;
-GB_CALLBACK_MATRIX_FREE_PROTO (GB_Matrix_free) ;
+GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO (GB_bitmap_assign_to_full) ;
+
+// added for subref:
+GB_CALLBACK_QSORT_1B_ANY_PROTO (GB_qsort_1b) ;
+GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size1, uint8_t) ;
+GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size2, uint16_t) ;
+GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size4, uint32_t) ;
+GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size8, uint64_t) ;
+GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size16, GB_blob16) ;
 
 #endif
 

@@ -2,14 +2,14 @@
 // GB_subassign_05d_template: C<M> = x where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
-// M:           present
+// M:           present, can be sparse, hypersparse, bitmap, or full
 // Mask_comp:   false
 // Mask_struct: true or false
 // C_replace:   false
@@ -20,7 +20,7 @@
 // C can have any sparsity structure, but it must be entirely dense with
 // all entries present.
 
-#undef  GB_FREE_ALL        
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
@@ -45,7 +45,6 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
-    // GB_GET_M:
     const int64_t *restrict Mp = M->p ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
@@ -55,7 +54,6 @@
     const size_t Mvlen = M->vlen ;
     const size_t msize = M->type->size ;
 
-    // GB_GET_C (subset):
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t Cvlen = C->vlen ;
 
@@ -95,7 +93,8 @@
             // C<M(:,j)> = x
             //------------------------------------------------------------------
 
-            if (Mx == NULL && Mb == NULL)
+            if (Mx == NULL && Mb == NULL)   // FIXME
+//          if (GB_MASK_STRUCT && !GB_M_IS_BITMAP)  <--- use this instead
             {
                 // mask is structural and not bitmap
                 GB_PRAGMA_SIMD_VECTORIZE
@@ -125,6 +124,6 @@
     GB_FREE_ALL ;
 }
 
-#undef  GB_FREE_ALL        
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 

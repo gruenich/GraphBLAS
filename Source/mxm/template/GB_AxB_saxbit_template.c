@@ -133,10 +133,6 @@
         if (M_is_sparse_or_hyper)
         { 
             // Cb [pC] += 2 for each entry M(i,j) in the mask
-//          GB_bitmap_M_scatter (C,
-//              NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
-//              M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_PLUS_2,
-//              M_ek_slicing, M_ntasks, M_nthreads) ;
             GB_bitmap_M_scatter_whole (C, M, Mask_struct,
                 GB_BITMAP_M_SCATTER_PLUS_2,
                 M_ek_slicing, M_ntasks, M_nthreads) ;
@@ -407,10 +403,6 @@
     if (M_is_sparse_or_hyper)
     { 
         // Cb [pC] -= 2 for each entry M(i,j) in the mask
-//      GB_bitmap_M_scatter (C,
-//          NULL, 0, GB_ALL, NULL, NULL, 0, GB_ALL, NULL,
-//          M, Mask_struct, GB_ASSIGN, GB_BITMAP_M_SCATTER_MINUS_2,
-//          M_ek_slicing, M_ntasks, M_nthreads) ;
         GB_bitmap_M_scatter_whole (C, M, Mask_struct,
             GB_BITMAP_M_SCATTER_MINUS_2, M_ek_slicing, M_ntasks, M_nthreads) ;
     }

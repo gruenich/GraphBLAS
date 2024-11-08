@@ -7,9 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // The matrix A is converted from sparse/hypersparse to bitmap.
+
 // FUTURE: A could also be typecasted and/or a unary operator applied,
 // via the JIT kernel.
 
@@ -233,6 +232,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
             if (info == GrB_NO_VALUE)
             { 
                 // with user-defined types of other sizes
+                GBURBLE ("(generic convert) ") ;
                 #define GB_A_TYPE GB_void
                 #undef  GB_COPY
                 #define GB_COPY(Axnew,pnew,Ax,p)                         \

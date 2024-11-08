@@ -2,13 +2,13 @@
 // GB_assign_zombie3: delete entries in C(:,j) for C_replace_phase
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but 36 variants possible, one for each mask type (6: 1, 2,
-// 4, 8, 16 bytes and structural), for each matrix type (3: bitmap/full/sparse
+// JIT: possible: 48 variants, one for each mask type (6: 1, 2,
+// 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse
 // & hyper), mask comp (2).  No variants needed for C.
 
 // For GrB_Row_assign or GrB_Col_assign, C(I,j)<#M,repl>=any must delete all
@@ -19,7 +19,8 @@
 // GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
 
 // C must be sparse or hypersparse.
-// M can have any sparsity structure: hypersparse, sparse, bitmap, or full
+// M can have any sparsity structure: hypersparse, sparse, bitmap, or full,
+// and is always present.
 
 // C->iso is not affected.
 
@@ -53,6 +54,7 @@ GrB_Info GB_assign_zombie3
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
+    ASSERT (M != NULL) ;
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // Method 19: C(I,J)<!M,repl> += scalar ; using S
 
 // M:           present
@@ -24,7 +22,7 @@
 
 #include "assign/GB_subassign_methods.h"
 #include "jitifyer/GB_stringify.h"
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_Matrix_free (&S) ;
 
 GrB_Info GB_subassign_19
 (
@@ -48,6 +46,7 @@ GrB_Info GB_subassign_19
     #define A NULL
     const void *scalar,
     const GrB_Type scalar_type,
+    #define assign_kind GB_SUBASSIGN
     GB_Werk Werk
 )
 {
@@ -56,16 +55,25 @@ GrB_Info GB_subassign_19
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;
     ASSERT (!GB_IS_BITMAP (C)) ; ASSERT (!GB_IS_FULL (C)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
-
     GB_UNJUMBLE (M) ;
+
+    //--------------------------------------------------------------------------
+    // S = C(I,J)
+    //--------------------------------------------------------------------------
+
+    struct GB_Matrix_opaque S_header ;
+    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
 
     //--------------------------------------------------------------------------
     // via the JIT or PreJIT kernel
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_subassign_jit (C,
+    info = GB_subassign_jit (C,
         /* C_replace: */ true,
         I, ni, nI, Ikind, Icolon,
         J, nj, nJ, Jkind, Jcolon,
@@ -75,10 +83,12 @@ GrB_Info GB_subassign_19
         accum,
         /* A: */ NULL,
         scalar, scalar_type,
+        S,
         GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_19, "subassign_19",
         Werk) ;
     if (info != GrB_NO_VALUE)
     { 
+        GB_FREE_ALL ;
         return (info) ;
     }
 
@@ -86,6 +96,7 @@ GrB_Info GB_subassign_19
     // via the generic kernel
     //--------------------------------------------------------------------------
 
+    GBURBLE ("(generic assign) ") ;
     #define GB_GENERIC
     #define GB_SCALAR_ASSIGN 1
     #include "assign/include/GB_assign_shared_definitions.h"

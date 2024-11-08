@@ -23,17 +23,10 @@
 {
 
     //--------------------------------------------------------------------------
-    // S = C(I,J)
-    //--------------------------------------------------------------------------
-
-    GB_EMPTY_TASKLIST ;
-    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-    GB_OK (GB_subassign_symbolic (S, C, I, ni, J, nj, true, Werk)) ;
-
-    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
+    GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;

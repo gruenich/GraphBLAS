@@ -26,7 +26,6 @@
     //--------------------------------------------------------------------------
 
     GB_EMPTY_TASKLIST ;
-
     GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;
     const int64_t *restrict Ch = C->h ;
@@ -57,7 +56,7 @@
     // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled 
+    GB_SUBASSIGN_ONE_SLICE (M) ;    // M cannot be jumbled
 
     //--------------------------------------------------------------------------
     // phase 1: undelete zombies, update entries, and count pending tuples

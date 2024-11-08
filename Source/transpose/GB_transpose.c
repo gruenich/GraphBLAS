@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // CALLS:     GB_builder
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or

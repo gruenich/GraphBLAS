@@ -508,6 +508,7 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
     const GrB_Type scalar_type,                                         \
+    const GrB_Matrix S,                                                 \
     const int assign_kind,                                              \
     GB_Werk Werk,                                                       \
     const int nthreads_max,                                             \
@@ -578,6 +579,96 @@ GrB_Info GB_jit_kernel_union                                            \
     const bool M_is_A,                                                  \
     const bool M_is_B,                                                  \
     const void *theta                                                   \
+)
+
+#define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
+GrB_Info GB_jit_kernel_masker1                                          \
+(                                                                       \
+    int64_t *Rp,                                                        \
+    int64_t *Rnvec_nonempty,                                            \
+    GB_task_struct *restrict TaskList,                                  \
+    const int R_ntasks,                                                 \
+    const int R_nthreads,                                               \
+    const int64_t Rnvec,                                                \
+    const int64_t *restrict Rh,                                         \
+    const int64_t *restrict R_to_M,                                     \
+    const int64_t *restrict R_to_C,                                     \
+    const int64_t *restrict R_to_Z,                                     \
+    const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_Matrix C,                                                 \
+    const GrB_Matrix Z                                                  \
+)
+
+#define GB_JIT_KERNEL_MASKER_PHASE2_PROTO(GB_jit_kernel_masker2)        \
+GrB_Info GB_jit_kernel_masker2                                          \
+(                                                                       \
+    GrB_Matrix R,                                                       \
+    const GB_task_struct *restrict TaskList,                            \
+    const int R_ntasks,                                                 \
+    const int R_nthreads,                                               \
+    const int64_t *restrict R_to_M,                                     \
+    const int64_t *restrict R_to_C,                                     \
+    const int64_t *restrict R_to_Z,                                     \
+    const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_Matrix C,                                                 \
+    const GrB_Matrix Z,                                                 \
+    const int64_t *restrict C_ek_slicing,                               \
+    const int C_nthreads,                                               \
+    const int C_ntasks,                                                 \
+    const int64_t *restrict M_ek_slicing,                               \
+    const int M_nthreads,                                               \
+    const int M_ntasks                                                  \
+)
+
+#define GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(GB_jit_kernel_subref_sparse)  \
+GrB_Info GB_jit_kernel_subref_sparse                                    \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GB_task_struct *restrict TaskList,                            \
+    const int ntasks,                                                   \
+    const int nthreads,                                                 \
+    const bool post_sort,                                               \
+    const int64_t *Mark,                                                \
+    const int64_t *Inext,                                               \
+    const int64_t *restrict Ap_start,                                   \
+    const int64_t *restrict Ap_end,                                     \
+    const int64_t nI,                                                   \
+    const int64_t Icolon [3],                                           \
+    const GrB_Matrix A,                                                 \
+    const GrB_Index *I,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
+#define GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(GB_jit_kernel_bitmap_subref)  \
+GrB_Info GB_jit_kernel_bitmap_subref                                    \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    GrB_Matrix A,                                                       \
+    const GrB_Index *I,                                                 \
+    const int64_t nI,                                                   \
+    const int Ikind,                                                    \
+    const int64_t Icolon [3],                                           \
+    const GrB_Index *J,                                                 \
+    const int64_t nJ,                                                   \
+    const int Jkind,                                                    \
+    const int64_t Jcolon [3],                                           \
+    GB_Werk Werk,                                                       \
+    const int nthreads_max,                                             \
+    double chunk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
+#define GB_JIT_KERNEL_ISO_EXPAND_PROTO(GB_jit_kernel_iso_expand)        \
+GrB_Info GB_jit_kernel_iso_expand                                       \
+(                                                                       \
+    void *restrict X,                                                   \
+    const int64_t n,                                                    \
+    const void *restrict scalar,                                        \
+    const int nthreads                                                  \
 )
 
 //------------------------------------------------------------------------------
@@ -732,6 +823,11 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
 #define JIT_UOP(g)  GB_JIT_KERNEL_USER_OP_PROTO(g) ;
 #define JIT_UTYP(g) GB_JIT_KERNEL_USER_TYPE_PROTO(g) ;
+#define JIT_MAS1(g) GB_JIT_KERNEL_MASKER_PHASE1_PROTO(g) ;
+#define JIT_MAS2(g) GB_JIT_KERNEL_MASKER_PHASE2_PROTO(g) ;
+#define JIT_SREF(g) GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(g) ;
+#define JIT_BREF(g) GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(g) ;
+#define JIT_ISOE(g) GB_JIT_KERNEL_ISO_EXPAND(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------

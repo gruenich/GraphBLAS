@@ -377,13 +377,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_Z_HAS_ATOMIC_UPDATE 1\n") ;
         if (omp_atomic_version == 4)
         { 
-            // OpenMP 4.0 has an omp pragram but not OpenMP 2.0. 
+            // OpenMP 4.0 has an omp pragram but not OpenMP 2.0.
             fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE "
                 "(!GB_COMPILER_MSC)\n") ;
         }
         else if (omp_atomic_version == 2)
         { 
-            // this update has an omp pragm 
+            // this update has an omp pragma
             fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE 1\n") ;
         }
     }

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.
-
 // Extract the value of single scalar, x = A(row,col), typecasting from the
 // type of A to the type of x, as needed.
 

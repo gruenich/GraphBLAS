@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // The column selectors can be done in a single pass.
 
 #include "select/GB_select.h"

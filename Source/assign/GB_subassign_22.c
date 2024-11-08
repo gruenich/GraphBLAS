@@ -2,12 +2,10 @@
 // GB_subassign_22: C += scalar where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: done.
 
 // Method 22: C += scalar, where C is full
 
@@ -49,6 +47,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT_MATRIX_OK (C, "C for C+=scalar", GB0) ;
     ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -67,7 +67,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     // get the operator
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     if (accum->opcode == GB_FIRST_binop_code || C->iso)
     { 
         // nothing to do
@@ -155,6 +154,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
             /* accum: */ accum,
             /* A: */ NULL,
             /* scalar, scalar_type: */ ywork, accum->ytype,
+            /* S: */ NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22",
             Werk) ;
     }

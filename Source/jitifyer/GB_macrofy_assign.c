@@ -26,8 +26,12 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // extract the assign scode
     //--------------------------------------------------------------------------
 
-    // assign_kind, Ikind, and Jkind (2 hex digits)
-    int C_repl      = GB_RSHIFT (scode, 46, 1) ;
+    // S sparsity (2 bits, 1 hex digit)
+    int ssparsity   = GB_RSHIFT (scode, 48, 2) ;
+
+    // assign_kind, Ikind, Jkind, and S present (2 hex digits)
+    int S_present   = GB_RSHIFT (scode, 47, 1) ;
+    int C_replace   = GB_RSHIFT (scode, 46, 1) ;
     int assign_kind = GB_RSHIFT (scode, 44, 2) ;
     int Ikind       = GB_RSHIFT (scode, 42, 2) ;
     int Jkind       = GB_RSHIFT (scode, 40, 2) ;
@@ -73,12 +77,19 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case 2 : M_sparsity = GxB_BITMAP      ; break ;
         case 3 : M_sparsity = GxB_FULL        ; break ;
     }
-    GB_assign_describe (description, SLEN, C_repl, Ikind, Jkind,
+
+    switch (assign_kind)
+    {
+        case GB_ASSIGN     : fprintf (fp, "// assign: "     ) ; break ;
+        case GB_SUBASSIGN  : fprintf (fp, "// subassign: "  ) ; break ;
+        case GB_ROW_ASSIGN : fprintf (fp, "// row assign: " ) ; break ;
+        case GB_COL_ASSIGN : fprintf (fp, "// col assign: " ) ; break ;
+        default:;
+    }
+    GB_assign_describe (description, SLEN, C_replace, Ikind, Jkind,
         M_is_null, M_sparsity, Mask_comp, Mask_struct, accum, s_assign,
         assign_kind) ;
-    fprintf (fp, "// assign/subassign: %s\n", description) ;
-
-    fprintf (fp, "#define GB_SCALAR_ASSIGN %d\n", s_assign ? 1 : 0) ;
+    fprintf (fp, "%s\n", description) ;
 
     fprintf (fp, "#define GB_ASSIGN_KIND ") ;
     switch (assign_kind)
@@ -89,6 +100,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case GB_COL_ASSIGN : fprintf (fp, "GB_COL_ASSIGN\n" ) ; break ;
         default:;
     }
+
+    fprintf (fp, "#define GB_SCALAR_ASSIGN %d\n", s_assign ? 1 : 0) ;
 
     fprintf (fp, "#define GB_I_KIND ") ;
     switch (Ikind)
@@ -110,7 +123,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         default:;
     }
 
-    fprintf (fp, "#define GB_C_REPLACE %d\n", C_repl) ;
+    fprintf (fp, "#define GB_C_REPLACE %d\n", C_replace) ;
 
     //--------------------------------------------------------------------------
     // describe the accum operator
@@ -390,11 +403,14 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         if (accum != NULL)
         { 
             // accum is present
-            // ywork = (ytype) scalar 
+            // ywork = (ytype) scalar
             GB_macrofy_cast_input (fp, "GB_COPY_scalar_to_ywork", "ywork",
                 "scalar", "(*((GB_A_TYPE *) scalar))", ytype, atype) ;
             did_scalar_to_ywork = true ;
         }
+        GB_macrofy_sparsity (fp, "A", -1) ; // unused macros
+        fprintf (fp, "#define GB_A_NVALS(e) int64_t e = 1 ; /* unused */\n") ;
+        fprintf (fp, "#define GB_A_NHELD(e) int64_t e = 1 ; /* unused */\n") ;
     }
     else
     {
@@ -404,14 +420,13 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         if (accum != NULL)
         { 
             // accum is present
-            // ywork = (ytype) A(i,j) 
+            // ywork = (ytype) A(i,j)
             fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso) "
                 "GB_GETA (ywork, Ax, pA, A_iso)\n") ;
             did_aij_to_ywork = true ;
         }
     }
 
-#if 0
     if (!did_scalar_to_ywork)
     {
         fprintf (fp, "#define GB_COPY_scalar_to_ywork(ywork,scalar)"
@@ -423,7 +438,21 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         fprintf (fp, "#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)"
             " /* unused */\n") ;
     }
-#endif
+
+    //--------------------------------------------------------------------------
+    // construct the macros for S
+    //--------------------------------------------------------------------------
+
+    if (S_present)
+    {
+        GB_macrofy_sparsity (fp, "S", ssparsity) ;
+        fprintf (fp, "#define GB_S_CONSTRUCTED 1\n") ;
+    }
+    else
+    {
+        fprintf (fp, "\n// S matrix: not constructed\n")  ;
+        fprintf (fp, "#define GB_S_CONSTRUCTED 0\n") ;
+    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions

@@ -47,7 +47,6 @@ void GB_macrofy_input
     {
         GB_macrofy_sparsity (fp, Aname, asparsity) ;
         GB_macrofy_nvals (fp, Aname, asparsity, A_iso_code) ;
-        fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
         if (azombies >= 0)
         { 
             // if negative, do not create the macro at all.  Typically this
@@ -55,16 +54,18 @@ void GB_macrofy_input
             // delete zombies, it means A always has zombies.
             fprintf (fp, "#define GB_A_HAS_ZOMBIES %d\n", azombies) ;
         }
-        if (A_is_pattern)
-        { 
-            // values of A are not accessed
-            fprintf (fp, "#define GB_%s_IS_PATTERN 1\n", Aname) ;
-            GB_macrofy_type (fp, Aname, "_", "void") ;
-        }
-        else
-        { 
-            GB_macrofy_type (fp, Aname, "_", atype->name) ;
-        }
+    }
+
+    fprintf (fp, "#define GB_%s_ISO %d\n", Aname, A_iso_code) ;
+    if (A_is_pattern)
+    { 
+        // values of A are not accessed
+        fprintf (fp, "#define GB_%s_IS_PATTERN 1\n", Aname) ;
+        GB_macrofy_type (fp, Aname, "_", "void") ;
+    }
+    else
+    { 
+        GB_macrofy_type (fp, Aname, "_", atype->name) ;
     }
 
     //--------------------------------------------------------------------------
@@ -78,11 +79,8 @@ void GB_macrofy_input
         // no need to access the values of A
         //----------------------------------------------------------------------
 
-        if (do_matrix_macros)
-        { 
-            // aij is not needed as input to the operator
-            GB_macrofy_type (fp, Aname, "2", "void") ;
-        }
+        // aij is not needed as input to the operator
+        GB_macrofy_type (fp, Aname, "2", "void") ;
 
         fprintf (fp, "#define GB_DECLARE%s(%s)\n", Amacro, aname) ;
         fprintf (fp, "#define GB_GET%s(%s,%sx,p,iso)\n", Amacro, aname, Aname) ;
@@ -107,10 +105,7 @@ void GB_macrofy_input
         //      float aij ;
         //      float w [32] ;
 
-        if (do_matrix_macros)
-        { 
-            GB_macrofy_type (fp, Aname, "2", a2type->name) ;
-        }
+        GB_macrofy_type (fp, Aname, "2", a2type->name) ;
 
         fprintf (fp, "#define GB_DECLARE%s(%s) %s %s\n",
             Amacro, aname, a2type->name, aname) ;
