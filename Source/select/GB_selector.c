@@ -160,6 +160,8 @@ GrB_Info GB_selector
 
     info = GrB_NO_VALUE ;
 
+    // FIXME: pass in a T matrix, below, not C:
+
 #if 0
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if (!in_place_A /* Fixme for CUDA: remove this condition, and let the CUDA
@@ -176,6 +178,9 @@ GrB_Info GB_selector
         info = GB_select_sparse (C, C_iso, op, flipij, A, ithunk, athunk,
             ythunk, Werk) ;
     }
+ 
+    // FIXME: handle in_place_A case here, not in select_sparse:
+    // transplant from T to either C (not in place) or A (in place)
 
     return (info) ;
 }
