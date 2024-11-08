@@ -337,7 +337,6 @@
 #define GB_ewise_fulln_jit GM_ewise_fulln_jit
 #define GB_ewise GM_ewise
 #define GB_ewise_slice GM_ewise_slice
-#define GB_expand_iso GM_expand_iso
 #define GB_export GM_export
 #define GB_extract GM_extract
 #define GB_extractTuples GM_extractTuples
@@ -516,6 +515,8 @@
 #define GB_IndexUnaryOp_check GM_IndexUnaryOp_check
 #define GB_init GM_init
 #define GB_is_diagonal GM_is_diagonal
+#define GB_iso_expand GM_iso_expand
+#define GB_iso_expand_jit GM_iso_expand_jit
 #define GB_is_shallow GM_is_shallow
 #define GB_ix_realloc GM_ix_realloc
 #define GB_jitifyer_alloc_space GM_jitifyer_alloc_space
@@ -834,6 +835,7 @@
 #define GB_JITpackage_336 GM_JITpackage_336
 #define GB_JITpackage_337 GM_JITpackage_337
 #define GB_JITpackage_338 GM_JITpackage_338
+#define GB_JITpackage_339 GM_JITpackage_339
 #define GB_JITpackage_33 GM_JITpackage_33
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35

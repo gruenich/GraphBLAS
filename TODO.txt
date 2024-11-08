@@ -17,11 +17,6 @@ add to apply family:
     no typecasting
     GB_qsort_1b is also use by the subref_sparse JIT kernel
 
-* GB_expand_iso
-    no operator (use identity op, no typecast)
-    no typecast
-    one matrix, one data type: A
-
 * GB_convert_bitmap_worker
     no operator (use identity op, xtype and ztype can differ)
     one matrix A

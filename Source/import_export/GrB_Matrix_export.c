@@ -196,7 +196,7 @@ static GrB_Info GB_export_worker  // export a matrix
             { 
                 // expand the iso A->x into the non-iso array Ax
                 ASSERT (nvals > 0) ;
-                GB_expand_iso (Ax, nvals, A->x, A->type->size) ;
+                GB_OK (GB_iso_expand (Ax, nvals, A->x, A->type)) ;
             }
             else
             { 

@@ -219,10 +219,10 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             if (A->iso)
             { 
                 // typecast the scalar and expand it into X
-                size_t xsize = GB_code_size (xcode, asize) ;
+                const size_t xsize = xtype->size ;
                 GB_void scalar [GB_VLA(xsize)] ;
                 GB_cast_scalar (scalar, xcode, A->x, acode, asize) ;
-                GB_expand_iso (X, anz, scalar, xsize) ;
+                GB_OK (GB_iso_expand (X, anz, scalar, xtype)) ;
             }
             else if (xcode == acode)
             { 

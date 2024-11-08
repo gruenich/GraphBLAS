@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#define GB_FREE_ALL ;
 
 GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
 (
@@ -21,6 +22,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to convert to non-iso", GB0) ;
     if (!A->iso)
     { 
@@ -69,7 +71,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     if (initialize)
     { 
         // Ax [0:anz-1] = scalar
-        GB_expand_iso (A->x, anz, scalar, asize) ;
+        GB_OK (GB_iso_expand (A->x, anz, scalar, A->type)) ;
     }
     else
     { 

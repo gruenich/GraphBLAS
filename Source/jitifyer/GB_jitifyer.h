@@ -166,7 +166,7 @@ typedef enum
 
     // future:: utilities:
     GB_JIT_KERNEL_CONVERT_BITMAP = 85, // GB_convert_bitmap_worker
-    GB_JIT_KERNEL_ISO_EXPAND     = 86, // GB_expand_iso
+    GB_JIT_KERNEL_ISO_EXPAND     = 86, // GB_iso_expand
     GB_JIT_KERNEL_SORT           = 87, // GB_sort
     GB_JIT_KERNEL_UNJUMBLE       = 88, // GB_unjumble
 

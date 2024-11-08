@@ -216,8 +216,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     if (C_in_iso)
     { 
         // allocate but do not initialize C->x unless A or B are hypersparse.
-        // The initialization must be done if dot4 doesn't do the work;
-        // see GB_expand_iso below.
+        // The initialization must be done if dot4 doesn't do the work; see
+        // below for the check for (info == GrB_NO_VALUE).
         GB_OK (GB_convert_any_to_non_iso (C, initialized)) ;
     }
 
@@ -280,7 +280,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
             GB_void cscalar [GB_VLA(csize)] ;
             int64_t cnz = GB_nnz_held (C) ;
             memcpy (cscalar, C->x, csize) ;
-            GB_expand_iso (C->x, cnz, cscalar, csize) ;
+            GB_OK (GB_iso_expand (C->x, cnz, cscalar, C->type)) ;
+            info = GrB_NO_VALUE ;
         }
         GBURBLE ("(punt) ") ;
     }

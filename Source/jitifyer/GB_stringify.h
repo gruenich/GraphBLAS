@@ -1674,6 +1674,20 @@ GrB_Info GB_subref_bitmap_jit
 ) ;
 
 //------------------------------------------------------------------------------
+// iso_expand
+//------------------------------------------------------------------------------
+
+GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
+(
+    void *restrict X,               // output array to expand into
+    const int64_t n,                // # of entries in X
+    const void *restrict scalar,    // scalar to expand into X
+    const GrB_Type xtype,           // the type of the X and the scalar
+    const GB_Operator op,           // identity operator
+    const int nthreads              // # of threads to use
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 

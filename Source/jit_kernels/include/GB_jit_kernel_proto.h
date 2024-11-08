@@ -662,6 +662,15 @@ GrB_Info GB_jit_kernel_bitmap_subref                                    \
     const GB_callback_struct *restrict my_callback                      \
 )
 
+#define GB_JIT_KERNEL_ISO_EXPAND_PROTO(GB_jit_kernel_iso_expand)        \
+GrB_Info GB_jit_kernel_iso_expand                                       \
+(                                                                       \
+    void *restrict X,                                                   \
+    const int64_t n,                                                    \
+    const void *restrict scalar,                                        \
+    const int nthreads                                                  \
+)
+
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------
@@ -818,6 +827,7 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_MAS2(g) GB_JIT_KERNEL_MASKER_PHASE2_PROTO(g) ;
 #define JIT_SREF(g) GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(g) ;
 #define JIT_BREF(g) GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(g) ;
+#define JIT_ISOE(g) GB_JIT_KERNEL_ISO_EXPAND(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------
