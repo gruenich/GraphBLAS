@@ -50,7 +50,6 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     int64_t cvdim = C->vdim ;
     bool csc = C->is_csc ;
     size_t csize = ctype->size ;
-    GB_Type_code ccode = ctype->code ;
 
     float hyper_switch = C->hyper_switch ;
     float bitmap_switch = C->bitmap_switch ;
@@ -131,7 +130,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
                 (GrB_Index *) ((csc ? Wi : Wj) + pC),
                 (GrB_Index *) ((csc ? Wj : Wi) + pC),
                 (C_iso) ? NULL : (Wx + pC * csize),
-                (GrB_Index *) (&anz), ccode, A, Werk)) ;
+                (GrB_Index *) (&anz), ctype, A, Werk)) ;
 
             //------------------------------------------------------------------
             // adjust the indices to reflect their new place in C
