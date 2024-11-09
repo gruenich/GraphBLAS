@@ -46,9 +46,15 @@
 #define GB_partition GB_partition_1b
 #define GB_quicksort GB_quicksort_1b
 
-#include "sort/factory/GB_qsort_template.c"
+#include "sort/template/GB_qsort_template.c"
 
-GB_CALLBACK_QSORT_1B_ANY_PROTO (GB_qsort_1b)
+void GB_qsort_1b    // sort array A of size 2-by-n, using 1 key (A [0][])
+(
+    int64_t *restrict A_0,       // size n array
+    GB_void *restrict A_1,       // size n array
+    const size_t xsize,          // size of entries in A_1
+    const int64_t n
+)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
@@ -91,10 +97,14 @@ GB_CALLBACK_QSORT_1B_ANY_PROTO (GB_qsort_1b)
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size1
 
-#include "sort/factory/GB_qsort_template.c"
+#include "sort/template/GB_qsort_template.c"
 
-// GB_qsort_1b with A_1 with sizeof = 1
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size1, uint8_t)
+void GB_qsort_1b_size1  // GB_qsort_1b with A_1 with sizeof = 1
+(
+    int64_t *restrict A_0,       // size n array
+    uint8_t *restrict A_1,       // size n array
+    const int64_t n
+)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
@@ -113,10 +123,14 @@ GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size1, uint8_t)
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size2
 
-#include "sort/factory/GB_qsort_template.c"
+#include "sort/template/GB_qsort_template.c"
 
-// GB_qsort_1b with A_1 with sizeof = 2
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size2, uint16_t)
+void GB_qsort_1b_size2  // GB_qsort_1b with A_1 with sizeof = 2
+(
+    int64_t *restrict A_0,       // size n array
+    uint16_t *restrict A_1,      // size n array
+    const int64_t n
+)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
@@ -136,10 +150,14 @@ GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size2, uint16_t)
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size4
 
-#include "sort/factory/GB_qsort_template.c"
+#include "sort/template/GB_qsort_template.c"
 
-// GB_qsort_1b with A_1 with sizeof = 4
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size4, uint32_t)
+void GB_qsort_1b_size4  // GB_qsort_1b with A_1 with sizeof = 4
+(
+    int64_t *restrict A_0,       // size n array
+    uint32_t *restrict A_1,      // size n array
+    const int64_t n
+)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
@@ -159,10 +177,14 @@ GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size4, uint32_t)
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size8
 
-#include "sort/factory/GB_qsort_template.c"
+#include "sort/template/GB_qsort_template.c"
 
-// GB_qsort_1b with A_1 with sizeof = 8
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size8, uint64_t)
+void GB_qsort_1b_size8  // GB_qsort_1b with A_1 with sizeof = 8
+(
+    int64_t *restrict A_0,       // size n array
+    uint64_t *restrict A_1,      // size n array
+    const int64_t n
+)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
@@ -181,10 +203,14 @@ GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size8, uint64_t)
 #undef  GB_quicksort
 #define GB_quicksort GB_quicksort_1b_size16
 
-#include "sort/factory/GB_qsort_template.c"
+#include "sort/template/GB_qsort_template.c"
 
-// GB_qsort_1b with A_1 with sizeof = 16
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size16, GB_blob16)
+void GB_qsort_1b_size16 // GB_qsort_1b with A_1 with sizeof = 16
+(
+    int64_t *restrict A_0,       // size n array
+    GB_blob16 *restrict A_1,     // size n array
+    const int64_t n
+)
 { 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;

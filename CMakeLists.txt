@@ -237,6 +237,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/select
     Source/split
     Source/slice
+    Source/sort
     Source/transpose
     Source/type
     Source/wait

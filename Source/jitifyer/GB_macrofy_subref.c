@@ -91,58 +91,10 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_nvals (fp, "C", csparsity, false) ;
     GB_macrofy_type (fp, "C", "_", ctype->name) ;
 
+    GrB_Type atype = ctype ;        // C and A have the same type
     GB_macrofy_sparsity (fp, "A", asparsity) ;
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
-
-    //--------------------------------------------------------------------------
-    // construct the qsort macros (sparse case only)
-    //--------------------------------------------------------------------------
-
-    if (asparsity <= 1)
-    {
-        fprintf (fp,
-            "\n// qsort:\n#define GB_QSORT_1B(Ci,Cx,pC,clen) \\\n    ") ;
-
-        switch (ctype->size)
-        {
-            case GB_1BYTE : 
-                fprintf (fp, "GB_qsort_1b_size1 (Ci+pC, Cx+pC, clen)\n"
-                    "#define GB_GET_QSORT_CALLBACK "
-                    "GB_GET_CALLBACK (GB_qsort_1b_size1)\n") ;
-                break ;
-
-            case GB_2BYTE : 
-                fprintf (fp, "GB_qsort_1b_size2 (Ci+pC, Cx+pC, clen)\n"
-                    "#define GB_GET_QSORT_CALLBACK "
-                    "GB_GET_CALLBACK (GB_qsort_1b_size2)\n") ;
-                break ;
-
-            case GB_4BYTE : 
-                fprintf (fp, "GB_qsort_1b_size4 (Ci+pC, Cx+pC, clen)\n"
-                    "#define GB_GET_QSORT_CALLBACK "
-                    "GB_GET_CALLBACK (GB_qsort_1b_size2)\n") ;
-                break ;
-
-            case GB_8BYTE : 
-                fprintf (fp, "GB_qsort_1b_size8 (Ci+pC, Cx+pC, clen)\n"
-                    "#define GB_GET_QSORT_CALLBACK "
-                    "GB_GET_CALLBACK (GB_qsort_1b_size8)\n") ;
-                break ;
-
-            case GB_16BYTE  : 
-                fprintf (fp, "GB_qsort_1b_size16 (Ci+pC, Cx+pC, clen)\n"
-                    "#define GB_GET_QSORT_CALLBACK "
-                    "GB_GET_CALLBACK (GB_qsort_1b_size16)\n") ;
-                break ;
-
-            default : 
-                fprintf (fp,    
-                    "GB_qsort_1b (Ci+pC, Cx+pC, sizeof (GB_C_TYPE), clen)\n"
-                    "#define GB_GET_QSORT_CALLBACK "
-                    "GB_GET_CALLBACK (GB_qsort_1b)\n") ;
-                break ;
-        }
-    }
+    GB_macrofy_type (fp, "A", "_", atype->name) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

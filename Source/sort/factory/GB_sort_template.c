@@ -43,7 +43,7 @@ static inline int64_t GB_SORT (partition)
 {
 
     // select a pivot at random
-    int64_t pivot = ((n < GB_RAND_MAX) ? GB_rand15 (seed) : GB_rand (seed)) % n;
+    uint64_t pivot = GB_rand (seed) % ((uint64_t) n) ;
 
     // Pivot = A [pivot]
     GB_GET (Pivot0, A_0, pivot) ;       // Pivot0 = A_0 [pivot]

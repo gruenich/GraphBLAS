@@ -34,13 +34,5 @@ GB_callback_struct GB_callback =
     .GB_subassign_08n_slice_func    = GB_subassign_08n_slice,
     .GB_bitmap_assign_to_full_func  = GB_bitmap_assign_to_full,
 
-    // added for subref:
-    .GB_qsort_1b_func               = GB_qsort_1b,
-    .GB_qsort_1b_size1_func         = GB_qsort_1b_size1,
-    .GB_qsort_1b_size2_func         = GB_qsort_1b_size2,
-    .GB_qsort_1b_size4_func         = GB_qsort_1b_size4,
-    .GB_qsort_1b_size8_func         = GB_qsort_1b_size8,
-    .GB_qsort_1b_size16_func        = GB_qsort_1b_size16
-
 } ;
 
