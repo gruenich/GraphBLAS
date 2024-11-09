@@ -1688,6 +1688,20 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
 ) ;
 
 //------------------------------------------------------------------------------
+// unjumble
+//------------------------------------------------------------------------------
+
+GrB_Info GB_unjumble_jit
+(
+    // input/output:
+    const GrB_Matrix A,
+    const GB_Operator op,           // identity op, unused
+    const int64_t *A_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 

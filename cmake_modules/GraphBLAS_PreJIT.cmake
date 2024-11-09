@@ -113,6 +113,8 @@ foreach ( PSRC ${PRE1} )
         list ( APPEND PREPRO "JIT_BREF (" ${F} ")\n" )
     elseif ( ${F} MATCHES "^GB_jit__iso_expand" )
         list ( APPEND PREPRO "JIT_ISOE (" ${F} ")\n" )
+    elseif ( ${F} MATCHES "^GB_jit__unjumble" )
+        list ( APPEND PREPRO "JIT_UNJU (" ${F} ")\n" )
     endif ( )
 endforeach ( )
 

@@ -548,6 +548,8 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
         else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
 
+        else if (IS ("unjumble"     )) c = GB_JIT_KERNEL_UNJUMBLE ;
+
         // add CUDA PreJIT kernels here (future):
 //      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
         else

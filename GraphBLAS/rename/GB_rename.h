@@ -840,6 +840,8 @@
 #define GB_JITpackage_340 GM_JITpackage_340
 #define GB_JITpackage_341 GM_JITpackage_341
 #define GB_JITpackage_342 GM_JITpackage_342
+#define GB_JITpackage_343 GM_JITpackage_343
+#define GB_JITpackage_344 GM_JITpackage_344
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
@@ -1249,6 +1251,7 @@
 #define GB_UnaryOp_check GM_UnaryOp_check
 #define GB_union_jit GM_union_jit
 #define GB_unjumble GM_unjumble
+#define GB_unjumble_jit GM_unjumble_jit
 #define GB_unop_code_iso GM_unop_code_iso
 #define GB_unop_identity GM_unop_identity
 #define GB_unop_iso GM_unop_iso

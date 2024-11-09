@@ -671,6 +671,15 @@ GrB_Info GB_jit_kernel_iso_expand                                       \
     const int nthreads                                                  \
 )
 
+#define GB_JIT_KERNEL_UNJUMBLE_PROTO(GB_jit_kernel_unjumble)            \
+GrB_Info GB_jit_kernel_unjumble                                         \
+(                                                                       \
+    const GrB_Matrix A,                                                 \
+    const int64_t *A_slice,                                             \
+    const int ntasks,                                                   \
+    const int nthreads                                                  \
+)
+
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------
@@ -828,6 +837,7 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_SREF(g) GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(g) ;
 #define JIT_BREF(g) GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(g) ;
 #define JIT_ISOE(g) GB_JIT_KERNEL_ISO_EXPAND(g) ;
+#define JIT_UNJU(g) GB_JIT_KERNEL_UNJUMBLE(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------
