@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A is sparse or hypersparse.  Axnew and Ab have the same type as A,
+// A is sparse or hypersparse.  Cx and Cb have the same type as A,
 // and represent a bitmap format.
 
 {
@@ -21,9 +21,9 @@
     const int64_t *restrict Ai = A->i ;
     const int64_t avlen = A->vlen ;
 
-    #if defined ( GB_A_TYPE )
+    #ifdef GB_A_TYPE
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
-          GB_A_TYPE *restrict Axnew = (GB_A_TYPE *) Ax_new ;
+          GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_new ;
     #endif
 
     //--------------------------------------------------------------------------

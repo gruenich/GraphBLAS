@@ -1103,6 +1103,22 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     const int A_nthreads
 ) ;
 
+GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
+(
+    // input:
+    const int64_t *restrict Cp,     // vector pointers for CSC/CSR form
+    // outputs:
+    int64_t *restrict Ci,           // indices for CSC/CSR or triplet form
+    int64_t *restrict Cj,           // vector indices for triplet form
+    GB_void *restrict Cx,           // values for CSC/CSR or triplet form
+    // inputs: not modified
+    const GrB_Type ctype,           // type of Cx
+    GB_Operator op,
+    const GrB_Matrix A,             // matrix to extract; not modified
+    const int64_t *restrict W,      // workspace
+    int nthreads                    // # of threads to use
+) ;
+
 GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
 (
     // input/output

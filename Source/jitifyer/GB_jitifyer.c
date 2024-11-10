@@ -475,7 +475,7 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("concat_bitmap")) c = GB_JIT_KERNEL_CONCAT_BITMAP ;
         else if (IS ("concat_full"  )) c = GB_JIT_KERNEL_CONCAT_FULL ;
         else if (IS ("concat_sparse")) c = GB_JIT_KERNEL_CONCAT_SPARSE ;
-        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERTS2B ;
+        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERT_S2B ;
         else if (IS ("emult_02"     )) c = GB_JIT_KERNEL_EMULT2 ;
         else if (IS ("emult_03"     )) c = GB_JIT_KERNEL_EMULT3 ;
         else if (IS ("emult_04"     )) c = GB_JIT_KERNEL_EMULT4 ;
@@ -549,6 +549,9 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
 
         else if (IS ("unjumble"     )) c = GB_JIT_KERNEL_UNJUMBLE ;
+        else if (IS ("convert_b2s"  )) c = GB_JIT_KERNEL_CONVERT_B2S ;
+        else if (IS ("kroner"       )) c = GB_JIT_KERNEL_KRONER ;
+        else if (IS ("sort"         )) c = GB_JIT_KERNEL_SORT ;
 
         // add CUDA PreJIT kernels here (future):
 //      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;

@@ -110,7 +110,6 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     bool no_typecast_of_A = (atype == xtype) || (xtype == NULL) ;
 
     // Cx [pC] = op (Ax [pA], i, j, y)
-    bool did_uop = false ;
     char *pA = A_iso ? "0" : "pA" ;
     char *i = i_dep  ? "i" : " " ;
     char *j = j_dep  ? "j" : " " ;
@@ -123,9 +122,6 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
         { 
             // identity operator, no typecasting
             fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;
-            fprintf (fp, "#define GB_UOP(Cx,pC,Ax,pA,A_iso)") ;
-            fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;
-            did_uop = true ;
         }
         else
         { 
@@ -167,26 +163,20 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
             "}\n", pA, i, j, y) ;
     }
 
-    // Cx [pC] = op (Ax [pA]), only operator does not depend on i, j, or y
-    if (!did_uop && !i_dep && !j_dep && !y_dep)
-    { 
-        fprintf (fp, "#define GB_UOP(Cx,pC,Ax,pA,A_iso)") ;
-        fprintf (fp, " GB_UNOP(Cx,pC,Ax,pA, , , , )\n") ;
-    }
-
     //--------------------------------------------------------------------------
     // macros for the C array or matrix
     //--------------------------------------------------------------------------
 
     if (C_mat)
     { 
-        // C = op(A'), for unary op with transpose
+        // C = op(A) where C is a matrix
         GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, false,
             false) ;
     }
     else
     { 
-        // Cx = op(A) for unary or index unary op apply, no transpose
+        // Cx = op(A) where Cx is an array of type ztype
+        ASSERT (ctype == ztype) ;
         fprintf (fp, "\n// C type:\n") ;
         GB_macrofy_type (fp, "C", "_", ctype->name) ;
     }
@@ -203,7 +193,8 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     }
     else
     {
-        // Cx = op(Ax) for unary op only
+        // Cx = op(Ax) for arrays Cx and Ax (no typecast of A to xtype)
+        ASSERT (no_typecast_of_A) ;
         fprintf (fp, "\n// A type:\n") ;
         GB_macrofy_type (fp, "A", "_", atype->name) ;
     }

@@ -83,16 +83,22 @@ typedef enum
     GB_JIT_KERNEL_TRANSBIND1    = 23, // GB_transpose_op, bind1st
     GB_JIT_KERNEL_TRANSBIND2    = 24, // GB_transpose_op, bind2nd
 
+    GB_JIT_KERNEL_KRONER        = 83, // GB_kroner  FIXME: do the JIT
+
     // apply (unary and idxunary op) methods:
     GB_JIT_KERNEL_APPLYUNOP     = 25, // GB_apply_op, GB_cast_array
     GB_JIT_KERNEL_TRANSUNOP     = 26, // GB_transpose_op, GB_transpose_ix
-    GB_JIT_KERNEL_CONVERTS2B    = 27, // GB_convert_2sb
+    GB_JIT_KERNEL_CONVERT_S2B   = 27, // GB_convert_s2b
     GB_JIT_KERNEL_CONCAT_SPARSE = 28, // GB_concat_sparse
     GB_JIT_KERNEL_CONCAT_FULL   = 29, // GB_concat_full
     GB_JIT_KERNEL_CONCAT_BITMAP = 30, // GB_concat_bitmap
     GB_JIT_KERNEL_SPLIT_SPARSE  = 31, // GB_split_sparse
     GB_JIT_KERNEL_SPLIT_FULL    = 32, // GB_split_full
     GB_JIT_KERNEL_SPLIT_BITMAP  = 33, // GB_split_bitmap
+
+    GB_JIT_KERNEL_CONVERT_B2S    = 85, // GB_convert_b2s
+    GB_JIT_KERNEL_ISO_EXPAND     = 86, // GB_iso_expand
+    GB_JIT_KERNEL_UNJUMBLE       = 88, // GB_unjumble
 
     // build method:
     GB_JIT_KERNEL_BUILD         = 34, // GB_builder
@@ -157,18 +163,8 @@ typedef enum
     GB_JIT_KERNEL_SUBREF_SPARSE = 81, // GB_subref_sparse
     GB_JIT_KERNEL_BITMAP_SUBREF = 82, // GB_bitmap_subref
 
-    //--------------------------------------------------------------------------
-    // future:: the following kernels have not been implemented yet
-    //--------------------------------------------------------------------------
-
-    // future:: Kronecker:
-    GB_JIT_KERNEL_KRONER        = 83, // GB_kroner
-
-    // future:: utilities:
-    GB_JIT_KERNEL_CONVERT_BITMAP = 85, // GB_convert_bitmap_worker
-    GB_JIT_KERNEL_ISO_EXPAND     = 86, // GB_iso_expand
-    GB_JIT_KERNEL_SORT           = 87, // GB_sort
-    GB_JIT_KERNEL_UNJUMBLE       = 88, // GB_unjumble
+    // sort methods:
+    GB_JIT_KERNEL_SORT           = 87, // GB_sort   // FIXME: do the JIT
 
     //--------------------------------------------------------------------------
     // future:: CUDA kernels

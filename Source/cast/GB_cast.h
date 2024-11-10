@@ -80,9 +80,9 @@ static inline void GB_cast_one  // z = 1 with typecasting zcode
 GrB_Info GB_cast_array          // typecast an array
 (
     GB_void *Cx,                // output array
-    const GB_Type_code code1,   // type code for Cx
+    const GB_Type_code ccode,   // type code for Cx
     GrB_Matrix A,
-    const int nthreads          // number of threads to use
+    const int A_nthreads        // number of threads to use
 ) ;
 
 GrB_Info GB_cast_matrix         // copy or typecast the values from A into C
