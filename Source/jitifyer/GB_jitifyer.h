@@ -32,8 +32,8 @@ typedef enum
 {
     GB_jit_reduce_family    = 1,    // kcode 1
     GB_jit_mxm_family       = 2,    // kcodes 2 to 9
-    GB_jit_ewise_family     = 3,    // kcodes 10 to 24
-    GB_jit_apply_family     = 4,    // kcodes 25 to 33
+    GB_jit_ewise_family     = 3,    // kcodes 10 to 24, 83
+    GB_jit_apply_family     = 4,    // kcodes 25 to 33, 84 to 86
     GB_jit_build_family     = 5,    // kcode 34
     GB_jit_select_family    = 6,    // kcodes 35 to 37
     GB_jit_user_op_family   = 7,    // kcode 38
@@ -41,6 +41,7 @@ typedef enum
     GB_jit_assign_family    = 9,    // kcodes 40 to 78
     GB_jit_masker_family    = 10,   // kcodes 79 to 80
     GB_jit_subref_family    = 11,   // kcodes 81 to 82
+    GB_jit_sort_family      = 12,   // kcode 87
 }
 GB_jit_family ;
 
@@ -82,7 +83,6 @@ typedef enum
     GB_JIT_KERNEL_APPLYBIND2    = 22, // GB_apply_op, bind2nd
     GB_JIT_KERNEL_TRANSBIND1    = 23, // GB_transpose_op, bind1st
     GB_JIT_KERNEL_TRANSBIND2    = 24, // GB_transpose_op, bind2nd
-
     GB_JIT_KERNEL_KRONER        = 83, // GB_kroner  FIXME: do the JIT
 
     // apply (unary and idxunary op) methods:
@@ -95,10 +95,9 @@ typedef enum
     GB_JIT_KERNEL_SPLIT_SPARSE  = 31, // GB_split_sparse
     GB_JIT_KERNEL_SPLIT_FULL    = 32, // GB_split_full
     GB_JIT_KERNEL_SPLIT_BITMAP  = 33, // GB_split_bitmap
-
-    GB_JIT_KERNEL_CONVERT_B2S    = 85, // GB_convert_b2s
-    GB_JIT_KERNEL_ISO_EXPAND     = 86, // GB_iso_expand
-    GB_JIT_KERNEL_UNJUMBLE       = 88, // GB_unjumble
+    GB_JIT_KERNEL_CONVERT_B2S   = 84, // GB_convert_b2s
+    GB_JIT_KERNEL_ISO_EXPAND    = 85, // GB_iso_expand
+    GB_JIT_KERNEL_UNJUMBLE      = 86, // GB_unjumble
 
     // build method:
     GB_JIT_KERNEL_BUILD         = 34, // GB_builder
@@ -118,7 +117,6 @@ typedef enum
     GB_JIT_KERNEL_SUBASSIGN_22  = 42, // GB_subassign_22
     GB_JIT_KERNEL_SUBASSIGN_23  = 43, // GB_subassign_23
     GB_JIT_KERNEL_SUBASSIGN_25  = 44, // GB_subassign_25
-
     GB_JIT_KERNEL_SUBASSIGN_01  = 45, // GB_subassign_01
     GB_JIT_KERNEL_SUBASSIGN_02  = 46, // GB_subassign_02
     GB_JIT_KERNEL_SUBASSIGN_03  = 47, // GB_subassign_03
@@ -137,7 +135,6 @@ typedef enum
     GB_JIT_KERNEL_SUBASSIGN_15  = 60, // GB_subassign_15
     GB_JIT_KERNEL_SUBASSIGN_17  = 61, // GB_subassign_17
     GB_JIT_KERNEL_SUBASSIGN_19  = 62, // GB_subassign_19
-
     GB_JIT_KERNEL_BITMAP_ASSIGN_1        = 63, // GB_bitmap_assign_1
     GB_JIT_KERNEL_BITMAP_ASSIGN_1_WHOLE  = 64, // GB_bitmap_assign_1_whole
     GB_JIT_KERNEL_BITMAP_ASSIGN_2        = 65, // GB_bitmap_assign_2
@@ -164,7 +161,7 @@ typedef enum
     GB_JIT_KERNEL_BITMAP_SUBREF = 82, // GB_bitmap_subref
 
     // sort methods:
-    GB_JIT_KERNEL_SORT           = 87, // GB_sort   // FIXME: do the JIT
+    GB_JIT_KERNEL_SORT          = 87, // GB_sort   // FIXME: do the JIT
 
     //--------------------------------------------------------------------------
     // future:: CUDA kernels
@@ -409,9 +406,6 @@ GrB_Info GB_jitifyer_set_error_log_worker (const char *new_error_log) ;
 
 bool GB_jitifyer_get_use_cmake (void) ;
 void GB_jitifyer_set_use_cmake (bool use_cmake) ;
-
-// bool GB_jitifyer_get_error_fallback (void) ;
-// void GB_jitifyer_set_error_fallback (bool error_fallback) ;
 
 void GB_jitifyer_sanitize (char *string, size_t len) ;
 

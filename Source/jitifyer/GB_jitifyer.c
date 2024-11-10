@@ -48,13 +48,6 @@ static bool GB_jit_use_cmake =
     false ;     // otherwise, default is to skip cmake and compile directly
     #endif
 
-#if 0
-// GB_jit_error_fallback: if false, a JIT compiler error returns GxB_JIT_ERROR.
-// If true (default case in 9.3.x and before), it returns GrB_NO_VALUE, and the
-// generic kernel takes over as a fallback.
-// static bool     GB_jit_error_fallback = false ;
-#endif
-
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
@@ -1272,32 +1265,6 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
 }
 
 //------------------------------------------------------------------------------
-// GB_jitifyer_get_error_fallback: return true/false if JIT error fallback
-//------------------------------------------------------------------------------
-
-//  bool GB_jitifyer_get_error_fallback (void)
-//  { 
-//      bool error_fallback ;
-//      #pragma omp critical (GB_jitifyer_worker)
-//      {
-//          error_fallback = GB_jit_error_fallback ;
-//      }
-//      return (error_fallback) ;
-//  }
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_set_error_fallback: set controls true/false, JIT error fallback
-//------------------------------------------------------------------------------
-
-//  void GB_jitifyer_set_error_fallback (bool error_fallback)
-//  { 
-//      #pragma omp critical (GB_jitifyer_worker)
-//      {
-//          GB_jit_error_fallback = error_fallback ;
-//      }
-//  }
-
-//------------------------------------------------------------------------------
 // GB_jitifyer_get_use_cmake: return true/false if cmake is in use
 //------------------------------------------------------------------------------
 
@@ -2101,7 +2068,6 @@ GrB_Info GB_jitifyer_load_worker
             // remove the compiled library
             remove (GB_jit_temp) ;
             GBURBLE ("\n(jit failure: compiler error; compilation disabled)\n");
-//          return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
             return (GxB_JIT_ERROR) ;
         }
 
@@ -2132,7 +2098,6 @@ GrB_Info GB_jitifyer_load_worker
         // remove the compiled library
         remove (GB_jit_temp) ;
         GBURBLE ("\n(jit failure: load error; compilation disabled)\n") ;
-//      return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
         return (GxB_JIT_ERROR) ;
     }
 

@@ -7,23 +7,6 @@ add to ewise family:
 * GB_kroner
 
 -------------------------------------------------------------------------
-add to apply family:
--------------------------------------------------------------------------
-
-* GB_unjumble for user-defined data types (GB_qsort_1b)
-    no operator (use identity op, no typecast)
-    one matrix A
-    single data type; just move data
-    no typecasting
-    GB_qsort_1b is also use by the subref_sparse JIT kernel
-
-* GB_convert_bitmap_worker
-    no operator (use identity op, xtype and ztype can differ)
-    one matrix A
-    single data type, just move data
-    no typecasting, but could add it (see GB_extractTuples)
-
--------------------------------------------------------------------------
 new sort family:
 -------------------------------------------------------------------------
 
@@ -59,7 +42,7 @@ JIT: possible
     use assign family
 
 -------------------------------------------------------------------------
-could use factory cases for these methods:
+could use factory cases for these methods: (tagged "JIT: not needed;...")
 -------------------------------------------------------------------------
 
 * GB_extract_vector_list

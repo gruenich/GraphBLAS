@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed: 24 factory cases (mask types, M bitmap/full, B bitmap/full)
+// JIT: not needed: factory cases: mask types, M bitmap/full, B bitmap/full,
+// A sparse/hyper
 
 // Symbolic analysis phase for GB_emult_02 and GB_emult_03.
 
