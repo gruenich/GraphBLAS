@@ -10,8 +10,6 @@
 #ifndef GB_SORT_KERNELS_H
 #define GB_SORT_KERNELS_H
 
-#define GB_BASECASE (64 * 1024)
-
 //------------------------------------------------------------------------------
 // GB_lt_1: sorting comparator function, one key
 //------------------------------------------------------------------------------
@@ -102,21 +100,6 @@
 (                                                                           \
     (A_0 [a] == B_0 [b])                                                    \
 )
-
-//------------------------------------------------------------------------------
-// random number generator for quicksort
-//------------------------------------------------------------------------------
-
-// https://en.wikipedia.org/wiki/Xorshift
-
-static inline uint64_t GB_rand (uint64_t *state)
-{
-    uint64_t x = (*state) ;
-    x ^= x << 7 ;
-    x ^= x >> 9 ;
-    (*state) = x ;
-    return (x) ;
-}
 
 #endif
 

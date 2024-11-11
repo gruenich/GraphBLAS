@@ -11,9 +11,9 @@
 //  GB_SORT (func)      defined as GB_sort_func_TYPE_ascend or _descend,
 //                      GB_msort_ISO_ascend or _descend,
 //                      or GB_msort_func_UDT
-//  GB_TYPE             bool, int8_, ... or GB_void for UDT or ISO
+//  GB_C_TYPE           bool, int8_, ... or GB_void for UDT or ISO
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
-//  GB_SIZE             size of each entry: sizeof (GB_TYPE) for built-in
+//  GB_SIZE             size of each entry: sizeof (GB_C_TYPE) for built-in
 //  GB_GET(x,X,i)       x = X [i] for built-in, memcpy for UDT
 //  GB_COPY(A,i,C,k)    A[i] = C [k]
 //  GB_SWAP(A,i,k)      swap A[i] and A[k]
@@ -29,12 +29,12 @@
 
 static inline int64_t GB_SORT (partition)
 (
-    GB_TYPE *restrict A_0,  // size n arrays to partition
-    int64_t *restrict A_1,  // size n array
-    const int64_t n,        // size of the array(s) to partition
-    uint64_t *seed          // random number seed, modified on output
+    GB_C_TYPE *restrict A_0,    // size n arrays to partition
+    int64_t   *restrict A_1,    // size n array
+    const int64_t n,            // size of the array(s) to partition
+    uint64_t *seed              // random number seed, modified on output
     #if GB_SORT_UDT
-    , size_t csize              // size of GB_TYPE
+    , size_t csize              // size of GB_C_TYPE
     , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
@@ -112,12 +112,12 @@ static inline int64_t GB_SORT (partition)
 
 static void GB_SORT (quicksort)    // sort A [0:n-1]
 (
-    GB_TYPE *restrict A_0,  // size n arrays to sort
-    int64_t *restrict A_1,  // size n array
-    const int64_t n,        // size of the array(s) to sort
-    uint64_t *seed          // random number seed
+    GB_C_TYPE *restrict A_0,    // size n arrays to sort
+    int64_t   *restrict A_1,    // size n array
+    const int64_t n,            // size of the array(s) to sort
+    uint64_t *seed              // random number seed
     #if GB_SORT_UDT
-    , size_t csize              // size of GB_TYPE
+    , size_t csize              // size of GB_C_TYPE
     , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
@@ -193,15 +193,15 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
 
 static int64_t GB_SORT (binary_search)  // return pleft
 (
-    const GB_TYPE *restrict Z_0,        // Pivot is Z [pivot]
-    const int64_t *restrict Z_1,
+    const GB_C_TYPE *restrict Z_0,      // Pivot is Z [pivot]
+    const int64_t   *restrict Z_1,
     const int64_t pivot,
-    const GB_TYPE *restrict X_0,        // search in X [p_start..p_end_-1]
-    const int64_t *restrict X_1,
+    const GB_C_TYPE *restrict X_0,      // search in X [p_start..p_end_-1]
+    const int64_t   *restrict X_1,
     const int64_t p_start,
     const int64_t p_end
     #if GB_SORT_UDT
-    , size_t csize              // size of GB_TYPE
+    , size_t csize              // size of GB_C_TYPE
     , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
@@ -305,16 +305,16 @@ static void GB_SORT (create_merge_tasks)
     const int t0,                    // first task tid to create
     const int ntasks,                // # of tasks to create
     const int64_t pS_start,          // merge into S [pS_start...]
-    const GB_TYPE *restrict L_0,     // Left = L [pL_start...pL_end-1]
-    const int64_t *restrict L_1,
+    const GB_C_TYPE *restrict L_0,   // Left = L [pL_start...pL_end-1]
+    const int64_t   *restrict L_1,
     const int64_t pL_start,
     const int64_t pL_end,
-    const GB_TYPE *restrict R_0,     // Right = R [pR_start...pR_end-1]
-    const int64_t *restrict R_1,
+    const GB_C_TYPE *restrict R_0,   // Right = R [pR_start...pR_end-1]
+    const int64_t   *restrict R_1,
     const int64_t pR_start,
     const int64_t pR_end
     #if GB_SORT_UDT
-    , size_t csize              // size of GB_TYPE
+    , size_t csize              // size of GB_C_TYPE
     , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
@@ -439,16 +439,16 @@ static void GB_SORT (create_merge_tasks)
 
 static void GB_SORT (merge)
 (
-    GB_TYPE *restrict S_0,              // output of length nleft + nright
+    GB_C_TYPE *restrict S_0,            // output of length nleft + nright
     int64_t *restrict S_1,
-    const GB_TYPE *restrict Left_0,     // left input of length nleft
-    const int64_t *restrict Left_1,
+    const GB_C_TYPE *restrict Left_0,   // left input of length nleft
+    const int64_t   *restrict Left_1,
     const int64_t nleft,
-    const GB_TYPE *restrict Right_0,    // right input of length nright
-    const int64_t *restrict Right_1,
+    const GB_C_TYPE *restrict Right_0,  // right input of length nright
+    const int64_t   *restrict Right_1,
     const int64_t nright
     #if GB_SORT_UDT
-    , size_t csize              // size of GB_TYPE
+    , size_t csize              // size of GB_C_TYPE
     , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
@@ -506,16 +506,16 @@ static void GB_SORT (merge)
 
 static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
 (
-    GB_TYPE *restrict A_0,      // size n array
-    int64_t *restrict A_1,      // size n array
-    GB_TYPE *restrict W_0,      // workspace of size n * GB_SIZE bytes
-    int64_t *restrict W,        // int64_t workspace of size n+6*ntasks+1
+    GB_C_TYPE *restrict A_0,    // size n array
+    int64_t   *restrict A_1,    // size n array
+    GB_C_TYPE *restrict W_0,    // workspace of size n * GB_SIZE bytes
+    int64_t   *restrict W,      // int64_t workspace of size n+6*ntasks+1
     const int64_t n,
     const int kk,
     const int ntasks,
     const int nthreads          // # of threads to use
     #if GB_SORT_UDT
-    , size_t csize              // size of GB_TYPE
+    , size_t csize              // size of GB_C_TYPE
     , size_t xsize              // size of op->xtype
     , GxB_binary_function flt   // function to test for < (ascend), > (descend)
     , GB_cast_function fcast    // cast entry to inputs of flt
@@ -655,14 +655,20 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
     GB_FREE_WORK (&W, W_size) ;                 \
 }
 
+#ifdef GB_JIT_KERNEL
+GB_JIT_GLOBAL GB_JIT_KERNEL_SORT_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_SORT_PROTO (GB_jit_kernel)
+#else
 static GrB_Info GB_SORT (matrix)
 (
     GrB_Matrix C,               // matrix sorted in-place
     #if GB_SORT_UDT
     GrB_BinaryOp op,            // comparator for user-defined types only
     #endif
+    int nthreads,               // # of threads to use
     GB_Werk Werk
 )
+#endif
 {
 
     //--------------------------------------------------------------------------
@@ -676,25 +682,31 @@ static GrB_Info GB_SORT (matrix)
     ASSERT (op->xtype == op->ytype) ;
     #endif
 
-    GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
-    if (C->iso || cnz <= 1)
-    { 
-        // nothing to do
-        return (GrB_SUCCESS) ;
-    }
+    //--------------------------------------------------------------------------
+    // get callback functions
+    //--------------------------------------------------------------------------
+
+    #ifdef GB_JIT_KERNEL
+    GB_GET_CALLBACK (GB_malloc_memory) ;
+    GB_GET_CALLBACK (GB_free_memory) ;
+    GB_GET_CALLBACK (GB_werk_pop) ;
+    GB_GET_CALLBACK (GB_werk_push) ;
+    GB_GET_CALLBACK (GB_p_slice) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // get input
     //--------------------------------------------------------------------------
 
+    GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
     int64_t cnvec = C->nvec ;
     int64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
-    GB_TYPE *restrict Cx = (GB_TYPE *) C->x ;
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
     // workspace
-    GB_TYPE *restrict W_0 = NULL ; size_t W_0_size = 0 ;
-    int64_t *restrict W   = NULL ; size_t W_size   = 0 ;
+    GB_C_TYPE *restrict W_0 = NULL ; size_t W_0_size = 0 ;
+    int64_t   *restrict W   = NULL ; size_t W_size   = 0 ;
     int64_t *restrict C_skipped = NULL ;
     size_t C_skipped_size = 0 ;
     GB_WERK_DECLARE (SortTasks, int64_t) ;
@@ -715,9 +727,6 @@ static GrB_Info GB_SORT (matrix)
 
     // slice the C matrix into tasks for phase 1
 
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
-    int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, cnvec) ;
     ntasks = GB_IMAX (ntasks, 1) ;
@@ -844,7 +853,7 @@ static GrB_Info GB_SORT (matrix)
     //--------------------------------------------------------------------------
 
     W   = GB_MALLOC_WORK (max_length + 6*ntasks2 + 1, int64_t, &W_size) ;
-    W_0 = (GB_TYPE *) GB_MALLOC_WORK (max_length * GB_SIZE, GB_void,
+    W_0 = (GB_C_TYPE *) GB_MALLOC_WORK (max_length * GB_SIZE, GB_void,
         &W_0_size) ;
     if (W == NULL || W_0 == NULL)
     { 
@@ -882,5 +891,5 @@ static GrB_Info GB_SORT (matrix)
 }
 
 #undef GB_SORT
-#undef GB_TYPE
+#undef GB_C_TYPE
 

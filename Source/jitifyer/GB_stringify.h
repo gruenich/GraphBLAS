@@ -1718,6 +1718,54 @@ GrB_Info GB_unjumble_jit
 ) ;
 
 //------------------------------------------------------------------------------
+// sort
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_sort       // encode a sort problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop
+) ;
+
+void GB_enumify_sort        // enumerate a GxB_sort problem
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire operation
+    // input:
+    GrB_Matrix C,           // matrix to sort
+    // comparator op:
+    GrB_BinaryOp binaryop   // the binary operator for the comparator
+) ;
+
+GrB_Info GB_sort_jit
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    int nthreads,
+    GB_Werk Werk
+) ;
+
+void GB_macrofy_sort            // construct all macros for GxB_sort
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    GrB_BinaryOp binaryop,      // binaryop to macrofy
+    GrB_Type ctype
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 

@@ -58,20 +58,24 @@ void GB_macrofy_family
             GB_macrofy_select (fp, scode, (GrB_IndexUnaryOp) op, type1) ;
             break ;
 
-        case GB_jit_user_op_family  : 
+        case GB_jit_user_op_family : 
             GB_macrofy_user_op (fp, op) ;
             break ;
 
-        case GB_jit_user_type_family  : 
+        case GB_jit_user_type_family : 
             GB_macrofy_user_type (fp, type1) ;
             break ;
 
-        case GB_jit_masker_family  : 
+        case GB_jit_masker_family : 
             GB_macrofy_masker (fp, scode, type1) ;
             break ;
 
-        case GB_jit_subref_family  : 
+        case GB_jit_subref_family : 
             GB_macrofy_subref (fp, scode, type1) ;
+            break ;
+
+        case GB_jit_sort_family : 
+            GB_macrofy_sort (fp, scode, op, type1) ;
             break ;
 
         default: ;

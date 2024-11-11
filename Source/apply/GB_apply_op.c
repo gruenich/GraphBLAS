@@ -498,29 +498,30 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         size_t xsize = op->xtype->size ;
         size_t ysize = op->ytype->size ;
 
-        GB_Type_code scode = scalar->type->code ;
+        GB_Type_code scalar_code = scalar->type->code ;
         xcode = op->xtype->code ;
         ycode = op->ytype->code ;
 
         // typecast the scalar to the operator input
         size_t ssize_cast ;
-        GB_Type_code scode_cast ;
+        GB_Type_code scalar_code_cast ;
         if (binop_bind1st)
         { 
             ssize_cast = xsize ;
-            scode_cast = xcode ;
+            scalar_code_cast = xcode ;
         }
         else
         { 
             ssize_cast = ysize ;
-            scode_cast = ycode ;
+            scalar_code_cast = ycode ;
         }
         GB_void swork [GB_VLA(ssize_cast)] ;
         GB_void *scalarx = (GB_void *) scalar->x ;
-        if (scode_cast != scode)
+        if (scalar_code_cast != scalar_code)
         { 
             // typecast the scalar to the operator input, in swork
-            GB_cast_function cast_s = GB_cast_factory (scode_cast, scode) ;
+            GB_cast_function cast_s =
+                GB_cast_factory (scalar_code_cast, scalar_code) ;
             cast_s (swork, scalar->x, ssize) ;
             scalarx = swork ;
         }
@@ -715,15 +716,15 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         size_t ssize = scalar->type->size ;
         size_t ysize = op->ytype->size ;
 
-        GB_Type_code scode = scalar->type->code ;
+        GB_Type_code scalar_code = scalar->type->code ;
         GB_Type_code ycode = op->ytype->code ;
 
         GB_void ywork [GB_VLA(ysize)] ;
         GB_void *ythunk = (GB_void *) scalar->x ;
-        if (ycode != scode)
+        if (ycode != scalar_code)
         { 
             // typecast the scalar to the operator input, in ywork
-            GB_cast_function cast_s = GB_cast_factory (ycode, scode) ;
+            GB_cast_function cast_s = GB_cast_factory (ycode, scalar_code) ;
             cast_s (ywork, scalar->x, ssize) ;
             ythunk = ywork ;
         }

@@ -156,7 +156,7 @@ GrB_Info GB_assign_prep
     const GrB_Index nCols_in,       // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
-    const GB_Type_code scode,       // type code of scalar to expand
+    const GB_Type_code scalar_code, // type code of scalar to expand
     GB_Werk Werk
 ) ;
 

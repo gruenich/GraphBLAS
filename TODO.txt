@@ -7,17 +7,6 @@ add to ewise family:
 * GB_kroner
 
 -------------------------------------------------------------------------
-new sort family:
--------------------------------------------------------------------------
-
-* GB_sort: sort for user defined types and comparator operators
-    one matrix A
-    binary op (not index binary op), for x < y as z=f(x,y), z is bool,
-        with xtype == ytype
-    single data type A:  move data, and typecast A to to x and y
-    typecast A to xtype/ytype if needed
-
--------------------------------------------------------------------------
 JIT: possible
 -------------------------------------------------------------------------
 

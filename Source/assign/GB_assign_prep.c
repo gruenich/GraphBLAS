@@ -88,7 +88,7 @@ GrB_Info GB_assign_prep
     const GrB_Index nCols_in,       // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
-    const GB_Type_code scode,       // type code of scalar to expand
+    const GB_Type_code scalar_code, // type code of scalar to expand
     GB_Werk Werk
 )
 {
@@ -110,7 +110,7 @@ GrB_Info GB_assign_prep
     ASSERT (!GB_is_shallow (C)) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign_prep", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
-    ASSERT (scode <= GB_UDT_code) ;
+    ASSERT (scalar_code <= GB_UDT_code) ;
 
     GrB_Matrix Cwork = NULL ;
     GrB_Matrix Mwork = NULL ;
@@ -159,7 +159,7 @@ GrB_Info GB_assign_prep
         ASSERT (scalar != NULL) ;
         ASSERT (A == NULL) ;
         ASSERT ((*assign_kind) == GB_ASSIGN || (*assign_kind) == GB_SUBASSIGN) ;
-        scalar_type = GB_code_type (scode, ctype) ;
+        scalar_type = GB_code_type (scalar_code, ctype) ;
         atype = scalar_type ;
     }
     else
@@ -200,18 +200,18 @@ GrB_Info GB_assign_prep
         // C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
         GB_OK (GB_BinaryOp_compatible (accum, ctype, ctype,
             (scalar_expansion) ? NULL : atype,
-            (scalar_expansion) ? scode : GB_ignore_code, Werk)) ;
+            (scalar_expansion) ? scalar_code : GB_ignore_code, Werk)) ;
     }
 
     // C<M>(Rows,Cols) = T, so C and T must be compatible.
     // also C<M>(Rows,Cols) = accum(C,T) for entries in T but not C
     if (scalar_expansion)
     {
-        if (!GB_code_compatible (ctype->code, scode))
+        if (!GB_code_compatible (ctype->code, scalar_code))
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH, "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                GB_code_string (scode), ctype->name) ;
+                GB_code_string (scalar_code), ctype->name) ;
         }
     }
     else

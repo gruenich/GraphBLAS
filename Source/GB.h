@@ -35,7 +35,6 @@
 #include "slice/GB_task_methods.h"
 #include "transplant/GB_transplant.h"
 #include "type/GB_type.h"
-#include "slice/GB_slice.h"
 #include "math/GB_uint64_multiply.h"
 #include "math/GB_int64_multiply.h"
 #include "math/GB_size_t_multiply.h"

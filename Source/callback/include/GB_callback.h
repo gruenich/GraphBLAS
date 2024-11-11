@@ -36,6 +36,9 @@ typedef GB_CALLBACK_PENDING_ENSURE_PROTO ((*GB_Pending_ensure_f)) ;
 typedef GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO ((*GB_subassign_08n_slice_f)) ;
 typedef GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO ((*GB_bitmap_assign_to_full_f)) ;
 
+// added for sort:
+typedef GB_CALLBACK_P_SLICE_PROTO ((*GB_p_slice_f)) ;
+
 //------------------------------------------------------------------------------
 // GB_callback: a struct to pass to kernels to give them their callback methods
 //------------------------------------------------------------------------------
@@ -64,6 +67,8 @@ typedef struct
     GB_subassign_08n_slice_f    GB_subassign_08n_slice_func ;
     GB_bitmap_assign_to_full_f  GB_bitmap_assign_to_full_func ;
 
+    // added for sort:
+    GB_p_slice_f                GB_p_slice_func ;
 }
 GB_callback_struct ;
 

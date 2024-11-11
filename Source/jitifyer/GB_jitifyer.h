@@ -161,7 +161,7 @@ typedef enum
     GB_JIT_KERNEL_BITMAP_SUBREF = 82, // GB_bitmap_subref
 
     // sort methods:
-    GB_JIT_KERNEL_SORT          = 87, // GB_sort   // FIXME: do the JIT
+    GB_JIT_KERNEL_SORT          = 87, // GB_sort
 
     //--------------------------------------------------------------------------
     // future:: CUDA kernels

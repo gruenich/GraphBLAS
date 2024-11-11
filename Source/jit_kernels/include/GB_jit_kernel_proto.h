@@ -696,7 +696,13 @@ GrB_Info GB_jit_kernel_convert_b2s                                      \
 TODO
 
 #define GB_JIT_KERNEL_SORT_PROTO(GB_jit_kernel_sort)                    \
-TODO
+GrB_Info GB_jit_kernel_sort                                             \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    int nthreads,                                                       \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
+)
 
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes

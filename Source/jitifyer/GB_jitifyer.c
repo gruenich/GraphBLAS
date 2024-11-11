@@ -1858,6 +1858,10 @@ GrB_Info GB_jitifyer_load2_worker
             scode_digits = 4 ;
             break ;
 
+        case GB_jit_sort_family  : 
+            scode_digits = 4 ;
+            break ;
+
         default: ;
     }
 

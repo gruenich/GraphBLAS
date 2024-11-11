@@ -309,6 +309,7 @@
 #define GB_encodify_mxm GM_encodify_mxm
 #define GB_encodify_reduce GM_encodify_reduce
 #define GB_encodify_select GM_encodify_select
+#define GB_encodify_sort GM_encodify_sort
 #define GB_encodify_subref GM_encodify_subref
 #define GB_encodify_user_op GM_encodify_user_op
 #define GB_encodify_user_type GM_encodify_user_type
@@ -326,12 +327,12 @@
 #define GB_enumify_mxm GM_enumify_mxm
 #define GB_enumify_reduce GM_enumify_reduce
 #define GB_enumify_select GM_enumify_select
+#define GB_enumify_sort GM_enumify_sort
 #define GB_enumify_sparsity GM_enumify_sparsity
 #define GB_enumify_subref GM_enumify_subref
 #define GB_enumify_terminal GM_enumify_terminal
 #define GB_enumify_unop GM_enumify_unop
 #define GB_ERR_getErrorString GM_ERR_getErrorString
-#define GB_e_slice GM_e_slice
 #define GB_ewise_fulla GM_ewise_fulla
 #define GB_ewise_fulla_jit GM_ewise_fulla_jit
 #define GB_ewise_fulln GM_ewise_fulln
@@ -845,6 +846,9 @@
 #define GB_JITpackage_344 GM_JITpackage_344
 #define GB_JITpackage_345 GM_JITpackage_345
 #define GB_JITpackage_346 GM_JITpackage_346
+#define GB_JITpackage_347 GM_JITpackage_347
+#define GB_JITpackage_348 GM_JITpackage_348
+#define GB_JITpackage_349 GM_JITpackage_349
 #define GB_JITpackage_34 GM_JITpackage_34
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
@@ -1030,6 +1034,7 @@
 #define GB_macrofy_query GM_macrofy_query
 #define GB_macrofy_reduce GM_macrofy_reduce
 #define GB_macrofy_select GM_macrofy_select
+#define GB_macrofy_sort GM_macrofy_sort
 #define GB_macrofy_sparsity GM_macrofy_sparsity
 #define GB_macrofy_string GM_macrofy_string
 #define GB_macrofy_subref GM_macrofy_subref
@@ -1182,6 +1187,7 @@
 #define GB_signum GM_signum
 #define GB_slice_vector GM_slice_vector
 #define GB_sort GM_sort
+#define GB_sort_jit GM_sort_jit
 #define GB_sparsity_control GM_sparsity_control
 #define GB_split_bitmap GM_split_bitmap
 #define GB_split_bitmap_jit GM_split_bitmap_jit
