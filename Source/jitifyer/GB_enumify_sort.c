@@ -72,7 +72,7 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     //--------------------------------------------------------------------------
 
     int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, opcode, xcode, false) ;
+    GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the sort scode

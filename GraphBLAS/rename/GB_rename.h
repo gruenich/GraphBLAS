@@ -850,6 +850,9 @@
 #define GB_JITpackage_348 GM_JITpackage_348
 #define GB_JITpackage_349 GM_JITpackage_349
 #define GB_JITpackage_34 GM_JITpackage_34
+#define GB_JITpackage_350 GM_JITpackage_350
+#define GB_JITpackage_351 GM_JITpackage_351
+#define GB_JITpackage_352 GM_JITpackage_352
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37
@@ -925,6 +928,7 @@
 #define GB_JITpackage_index_get GM_JITpackage_index_get
 #define GB_JITpackage_nfiles_get GM_JITpackage_nfiles_get
 #define GB_kroner GM_kroner
+#define GB_kroner_jit GM_kroner_jit
 #define GB_kron GM_kron
 #define GB_LZ4_attach_dictionary GM_LZ4_attach_dictionary
 #define GB_LZ4_attach_HC_dictionary GM_LZ4_attach_HC_dictionary

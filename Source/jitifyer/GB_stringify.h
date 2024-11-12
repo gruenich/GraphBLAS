@@ -147,6 +147,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // input:
     bool is_eWiseMult,      // if true, method is emult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool is_kron,           // if true, method is kron
     bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, C is iso on output
@@ -701,7 +702,8 @@ void GB_enumify_binop
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code zcode, // op->xtype->code of the operator
-    bool for_semiring   // true for A*B, false for A+B or A.*B
+    bool for_semiring,  // true for A*B, false for A+B or A.*B
+    bool for_kron       // true for kronecker
 ) ;
 
 void GB_macrofy_binop
@@ -715,6 +717,7 @@ void GB_macrofy_binop
                                 // or binary op for GrB_Matrix_build, or
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
+    bool is_kron,               // if true: binop for kronecker
     int ecode,
     bool C_iso,                 // if true: C is iso
     GrB_BinaryOp op,            // NULL if C is iso
@@ -1763,6 +1766,22 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     uint64_t scode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype
+) ;
+
+//------------------------------------------------------------------------------
+// kronecker product
+//------------------------------------------------------------------------------
+
+GrB_Info GB_kroner_jit
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const bool flipij,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
 ) ;
 
 //------------------------------------------------------------------------------

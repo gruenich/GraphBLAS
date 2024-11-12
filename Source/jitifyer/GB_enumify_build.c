@@ -62,7 +62,7 @@ void GB_enumify_build       // enumerate a GB_build problem
     //--------------------------------------------------------------------------
 
     int dup_ecode ;
-    GB_enumify_binop (&dup_ecode, dup_opcode, xcode, false) ;
+    GB_enumify_binop (&dup_ecode, dup_opcode, xcode, false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the build_code

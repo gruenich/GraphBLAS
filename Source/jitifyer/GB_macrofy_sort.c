@@ -57,8 +57,8 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     //--------------------------------------------------------------------------
 
     fprintf (fp, "\n// binary operator:\n") ;
-    GB_macrofy_binop (fp, "GB_BINOP", false, false, false, true, binop_ecode,
-        false, binaryop, NULL, NULL, NULL) ;
+    GB_macrofy_binop (fp, "GB_BINOP", false, false, false, true, false,
+        binop_ecode, false, binaryop, NULL, NULL, NULL) ;
 
     //--------------------------------------------------------------------------
     // macros for the C matrix

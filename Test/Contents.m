@@ -177,7 +177,6 @@
 %   test189  - test large assignment
 
 %   test191  - test split
-%   test191b - test split
 %   test192  - test GrB_assign C<C,struct>=scalar
 %   test193  - test GxB_Matrix_diag and GrB_Matrix_diag
 %   test194  - test GxB_Vector_diag
@@ -220,7 +219,6 @@
 %   test231  - test GrB_select with idxunp
 %   test232  - test assign with GrB_Scalar
 %   test234  - test GxB_eWiseUnion
-%   test234b - test GxB_eWiseUnion
 %   test235  - test GxB_eWiseUnion and GrB_eWiseAdd
 %   test236  - test GxB_Matrix_sort and GxB_Vector_sort
 %   test237  - test GrB_mxm (saxpy4)

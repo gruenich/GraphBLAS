@@ -693,7 +693,14 @@ GrB_Info GB_jit_kernel_convert_b2s                                      \
 )
 
 #define GB_JIT_KERNEL_KRONER_PROTO(GB_jit_kernel_kroner)                \
-TODO
+GrB_Info GB_jit_kernel_kroner                                           \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GrB_Matrix A,                                                 \
+    const GrB_Matrix B,                                                 \
+    const int nthreads,                                                 \
+    const void *theta                                                   \
+)
 
 #define GB_JIT_KERNEL_SORT_PROTO(GB_jit_kernel_sort)                    \
 GrB_Info GB_jit_kernel_sort                                             \

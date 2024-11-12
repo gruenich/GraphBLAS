@@ -1,6 +1,8 @@
 Nov XX, 2024: version 9.4.1 (FIXME)
 
-    * new JIT kernels added: FIXME describe here
+    * new JIT kernels added: for GrB_assign, GrB_extract, GxB_sort,
+        GrB_kronecker, stand-alone mask phase, and utilities (convert to/from
+        sparse/bitmap, unjumble)
 
 Oct 15, 2024: version 9.4.0 (BETA)
 

@@ -2,7 +2,7 @@
 // GB_jitifyer.h: definitions for the CPU and CUDA jitifyer
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ typedef enum
     GB_JIT_KERNEL_APPLYBIND2    = 22, // GB_apply_op, bind2nd
     GB_JIT_KERNEL_TRANSBIND1    = 23, // GB_transpose_op, bind1st
     GB_JIT_KERNEL_TRANSBIND2    = 24, // GB_transpose_op, bind2nd
-    GB_JIT_KERNEL_KRONER        = 83, // GB_kroner  FIXME: do the JIT
+    GB_JIT_KERNEL_KRONER        = 83, // GB_kroner
 
     // apply (unary and idxunary op) methods:
     GB_JIT_KERNEL_APPLYUNOP     = 25, // GB_apply_op, GB_cast_array

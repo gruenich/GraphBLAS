@@ -35,7 +35,7 @@
 }
 
 #include "mxm/GB_mxm.h"
-#include "slice/factory/GB_search_for_vector_template.c"
+#include "slice/include/GB_search_for_vector.h"
 
 //------------------------------------------------------------------------------
 // GB_AxB_dot3_slice
