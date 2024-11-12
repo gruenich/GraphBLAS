@@ -82,79 +82,92 @@ GrB_Info GB_unjumble        // unjumble a matrix
     // sort the vectors
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
+    GrB_Info info = GrB_NO_VALUE ;
 
-    switch (asize)
+    #ifndef GBCOMPACT
+    GB_IF_FACTORY_KERNELS_ENABLED
     {
-        case 0 : // iso matrices of any type; only sort the pattern
-            #define GB_QSORT \
-                GB_qsort_1 (Ai+pA_start, aknz) ;
-            #include "wait/template/GB_unjumbled_template.c"
-            break ;
-
-        case GB_1BYTE : // bool, uint8, int8, and user defined types of size 1
+        switch (asize)
         {
-            uint8_t *Ax = (uint8_t *) A->x ;
-            #define GB_QSORT \
-                GB_qsort_1b_size1 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "wait/template/GB_unjumbled_template.c"
-        }
-        break ;
-
-        case GB_2BYTE : // uint16, int16, and user-defined types of size 2
-        {
-            uint16_t *Ax = (uint16_t *) A->x ;
-            #define GB_QSORT \
-                GB_qsort_1b_size2 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "wait/template/GB_unjumbled_template.c"
-        }
-        break ;
-
-        case GB_4BYTE : // uint32, int32, float, and 4-byte user
-        {
-            uint32_t *Ax = (uint32_t *) A->x ;
-            #define GB_QSORT \
-                GB_qsort_1b_size4 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "wait/template/GB_unjumbled_template.c"
-        }
-        break ;
-
-        case GB_8BYTE : // uint64, int64, double, float complex, and 8-byte user
-        {
-            uint64_t *Ax = (uint64_t *) A->x ;
-            #define GB_QSORT \
-                GB_qsort_1b_size8 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "wait/template/GB_unjumbled_template.c"
-        }
-        break ;
-
-        case GB_16BYTE : // double complex, and user-defined types of size 16
-        {
-            GB_blob16 *Ax = (GB_blob16 *) A->x ;
-            #define GB_QSORT \
-                GB_qsort_1b_size16 (Ai+pA_start, Ax+pA_start, aknz) ;
-            #include "wait/template/GB_unjumbled_template.c"
-        }
-        break ;
-
-        default : // user-defined types of arbitrary size
-        {
-            // via the JIT kernel
-            struct GB_UnaryOp_opaque op_header ;
-            GB_Operator op = GB_unop_identity (A->type, &op_header) ;
-            info = GB_unjumble_jit (A, op, A_slice, nthreads, ntasks) ;
-
-            // via the generic kernel
-            if (info == GrB_NO_VALUE)
-            { 
-                GB_void *Ax = (GB_void *) A->x ;
-                #define GB_QSORT \
-                    GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;
+            case 0 : // iso matrices of any type; only sort the pattern
+            {
+                #define GB_QSORT GB_qsort_1 (Ai+pA_start, aknz) ;
                 #include "wait/template/GB_unjumbled_template.c"
                 info = GrB_SUCCESS ;
             }
+            break ;
+
+            case GB_1BYTE : // bool, uint8, int8, and user types of size 1
+            {
+                uint8_t *Ax = (uint8_t *) A->x ;
+                #define GB_QSORT \
+                    GB_qsort_1b_size1 (Ai+pA_start, Ax+pA_start, aknz) ;
+                #include "wait/template/GB_unjumbled_template.c"
+                info = GrB_SUCCESS ;
+            }
+            break ;
+
+            case GB_2BYTE : // uint16, int16, and user types of size 2
+            {
+                uint16_t *Ax = (uint16_t *) A->x ;
+                #define GB_QSORT \
+                    GB_qsort_1b_size2 (Ai+pA_start, Ax+pA_start, aknz) ;
+                #include "wait/template/GB_unjumbled_template.c"
+                info = GrB_SUCCESS ;
+            }
+            break ;
+
+            case GB_4BYTE : // uint32, int32, float, and 4-byte user
+            {
+                uint32_t *Ax = (uint32_t *) A->x ;
+                #define GB_QSORT \
+                    GB_qsort_1b_size4 (Ai+pA_start, Ax+pA_start, aknz) ;
+                #include "wait/template/GB_unjumbled_template.c"
+                info = GrB_SUCCESS ;
+            }
+            break ;
+
+            case GB_8BYTE : // uint64, int64, double, float complex, 8-byte user
+            {
+                uint64_t *Ax = (uint64_t *) A->x ;
+                #define GB_QSORT \
+                    GB_qsort_1b_size8 (Ai+pA_start, Ax+pA_start, aknz) ;
+                #include "wait/template/GB_unjumbled_template.c"
+                info = GrB_SUCCESS ;
+            }
+            break ;
+
+            case GB_16BYTE : // double complex, and user types of size 16
+            {
+                GB_blob16 *Ax = (GB_blob16 *) A->x ;
+                #define GB_QSORT \
+                    GB_qsort_1b_size16 (Ai+pA_start, Ax+pA_start, aknz) ;
+                #include "wait/template/GB_unjumbled_template.c"
+                info = GrB_SUCCESS ;
+            }
+            break ;
+
+            default:;
         }
-        break ;
+    }
+    #endif
+
+    if (info == GrB_NO_VALUE)
+    { 
+        // via the JIT kernel
+        struct GB_UnaryOp_opaque op_header ;
+        GB_Operator op = GB_unop_identity (A->type, &op_header) ;
+        info = GB_unjumble_jit (A, op, A_slice, nthreads, ntasks) ;
+
+        // via the generic kernel
+        if (info == GrB_NO_VALUE)
+        { 
+            GB_void *Ax = (GB_void *) A->x ;
+            #define GB_QSORT \
+                GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;
+            #include "wait/template/GB_unjumbled_template.c"
+            info = GrB_SUCCESS ;
+        }
     }
 
     //--------------------------------------------------------------------------

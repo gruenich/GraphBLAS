@@ -248,12 +248,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
         }
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // the JIT kernel has failed
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // prune empty vectors from Rh

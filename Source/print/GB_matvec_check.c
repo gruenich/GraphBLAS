@@ -473,7 +473,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR0 (", memory: %.1f MB\n", s) ;
     }
     else
-    { 
+    {
         double s = ((double) memsize) / ((double) K*K*K) ;
         GBPR0 (", memory: %.1f GB\n", s) ;
     }

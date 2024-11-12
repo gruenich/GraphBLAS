@@ -62,12 +62,6 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     const GB_Type_code acode = A->type->code ;
     const size_t asize = A->type->size ;
 
-    // X and A must be compatible
-    if (!GB_Type_compatible (xtype, A->type))
-    { 
-        return (GrB_DOMAIN_MISMATCH) ;
-    }
-
     const int64_t anz = GB_nnz (A) ;
     if (anz == 0)
     { 
@@ -138,7 +132,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (A->iso && X != NULL)
         { 
-            // A is iso but a no-iso X has been requested;
+            // A is iso but a non-iso X has been requested;
             // typecast the iso scalar and expand it into X
             const size_t xsize = xtype->size ;
             GB_void scalar [GB_VLA(xsize)] ;
@@ -194,7 +188,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         {
             if (A->iso)
             { 
-                // A is iso but a no-iso X has been requested;
+                // A is iso but a non-iso X has been requested;
                 // typecast the iso scalar and expand it into X
                 const size_t xsize = xtype->size ;
                 GB_void scalar [GB_VLA(xsize)] ;
