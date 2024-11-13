@@ -1,5 +1,5 @@
 function test286
-%TEST285 test kron with idxop
+%TEST286 test kron with idxop
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -20,3 +20,4 @@ for atrans = 0:1
 end
 
 fprintf ('\ntest286: all tests passed\n') ;
+

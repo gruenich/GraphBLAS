@@ -64,6 +64,7 @@
 %   GB_spec_vdiag                 - a mimic of GxB_Vector_diag
 %   GB_spec_zeros                 - all-zero matrix of a given type.
 %   GB_spec_getmask               - return the mask, typecasted to logical
+%   GB_spec_kron_idx              - C = kron(A,B), using the mykronidx operator
 
 %   GB_user_op                    - apply a complex binary and unary operator
 %   GB_user_opsall                - return list of complex operators
@@ -102,6 +103,7 @@
 %   test74   - test GrB_mxm: all built-in semirings
 %   test75b  - GrB_mxm and GrB_vxm on all semirings (shorter test than test75)
 %   test76   - test GxB_resize
+%   test78   - test subref
 
 %   test80   - rerun test06 with different matrices
 %   test81   - test GrB_Matrix_extract with index range, stride, & backwards
@@ -274,6 +276,8 @@
 %   test282  - test argmax with index binary op
 %   test283  - test index binary op
 %   test284  - test GrB_mxm using indexop-based semirings
+%   test285  - test GrB_assign (bitmap case, C<!M>+=A, whole matrix)
+%   test286  - test kron with idxop
 
 % Helper functions
 
