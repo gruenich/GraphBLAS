@@ -3002,7 +3002,9 @@ void f
 ) ; \end{verbatim}}
 
 The following binary operators (\verb'GrB_BinaryOp' objects) are pre-defined,
-where $N$ can be \verb'INT32' or \verb'INT64':
+where $N$ can be \verb'INT32' or \verb'INT64'.  These operators do not use
+\verb'theta'.  Instead, the offset of 1 in \verb'GxB_FIRSTI1' is fixed into
+the operator itself.
 
 \vspace{0.2in}
 {\footnotesize
