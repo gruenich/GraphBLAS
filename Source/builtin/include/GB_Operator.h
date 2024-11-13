@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// GrB_UnaryOp, GrB_IndexUnaryOp, GrB_BinaryOp, GzB_IndexBinaryOp, and
+// GrB_UnaryOp, GrB_IndexUnaryOp, GrB_BinaryOp, GxB_IndexBinaryOp, and
 // GxB_SelectOp all use the same internal structure.
 
     int64_t magic ;         // for detecting uninitialized objects
@@ -43,7 +43,7 @@
                             // binary op created from an IndexBinaryOp;
                             // NULL otherwise
 
-    GzB_index_binary_function idxbinop_function ;   // function pointer
+    GxB_index_binary_function idxbinop_function ;   // function pointer
 
     void *theta ;           // theta for binary op created from an index binary
                             // op, NULL otherwise (even for an index binary op)

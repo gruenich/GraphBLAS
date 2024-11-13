@@ -67,9 +67,9 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
-        // user-defined GzB_IndexBinaryOp not allowed here
+        // user-defined GxB_IndexBinaryOp not allowed here
         GB_ERROR (GrB_DOMAIN_MISMATCH, "%s",
-            "User-defined GzB_IndexBinaryOps cannot be used in GrB_apply") ;
+            "User-defined GxB_IndexBinaryOps cannot be used in GrB_apply") ;
     }
     else if (op_is_unop)
     {

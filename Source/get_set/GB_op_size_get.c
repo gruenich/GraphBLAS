@@ -54,7 +54,7 @@ GrB_Info GB_op_size_get
             s = GB_type_name_get (op->ztype) ;
             break ;
 
-        case GzB_THETA_TYPE_STRING : 
+        case GxB_THETA_TYPE_STRING : 
             s = GB_type_name_get (op->theta_type) ;
             break ;
 

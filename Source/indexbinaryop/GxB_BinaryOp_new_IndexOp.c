@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GzB_BinaryOp_new_IndexOp: create a new user-defined binary op
+// GxB_BinaryOp_new_IndexOp: create a new user-defined binary op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -9,11 +9,11 @@
 
 #include "GB.h"
 
-// GzB_BinaryOp_new_IndexOp: create a new binary op from an index binary op
-GrB_Info GzB_BinaryOp_new_IndexOp
+// GxB_BinaryOp_new_IndexOp: create a new binary op from an index binary op
+GrB_Info GxB_BinaryOp_new_IndexOp
 (
     GrB_BinaryOp *binop_handle,     // handle of binary op to create
-    GzB_IndexBinaryOp idxbinop,     // based on this index binary op
+    GxB_IndexBinaryOp idxbinop,     // based on this index binary op
     GrB_Scalar theta                // theta value to bind to the new binary op
 )
 {
@@ -22,7 +22,7 @@ GrB_Info GzB_BinaryOp_new_IndexOp
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GzB_BinaryOp_new_IndexOp (&binop, idxbinop, theta)") ;
+    GB_WHERE1 ("GxB_BinaryOp_new_IndexOp (&binop, idxbinop, theta)") ;
     GB_RETURN_IF_NULL (binop_handle) ;
     (*binop_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (idxbinop) ;

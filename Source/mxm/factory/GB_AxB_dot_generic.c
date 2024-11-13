@@ -26,7 +26,7 @@
     ASSERT (!C->iso) ;
 
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
-    GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
+    GxB_index_binary_function fmult_idx = mult->idxbinop_function ;
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
     bool op_is_builtin_positional =

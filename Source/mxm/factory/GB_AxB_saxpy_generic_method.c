@@ -99,7 +99,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     ASSERT (mult->ztype == C->type) ;
 
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
-    GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
+    GxB_index_binary_function fmult_idx = mult->idxbinop_function ;
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
 

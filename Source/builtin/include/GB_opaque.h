@@ -298,7 +298,7 @@ typedef enum
 
     GB_USER_idxbinop_code = 140,
 
-    // true if opcode is for a GzB_IndexBinaryOp
+    // true if opcode is for a GxB_IndexBinaryOp
     #define GB_IS_INDEXBINARYOP_CODE(opcode) ((opcode) == GB_USER_idxbinop_code)
 
     //==========================================================================
@@ -404,7 +404,7 @@ struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
     #include "include/GB_Operator.h"
 } ;
 
-struct GB_IndexBinaryOp_opaque   // content of GzB_IndexBinaryOp
+struct GB_IndexBinaryOp_opaque   // content of GxB_IndexBinaryOp
 {
     #include "include/GB_Operator.h"
 } ;

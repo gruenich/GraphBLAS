@@ -90,7 +90,7 @@ GrB_Info GB_emult_generic       // generic emult
         || op_is_builtin_positional) ;
 
     const GxB_binary_function fop = op->binop_function ; // NULL if positional
-    const GzB_index_binary_function fop_idx = op->idxbinop_function ;
+    const GxB_index_binary_function fop_idx = op->idxbinop_function ;
     const size_t csize = ctype->size ;
     const size_t asize = A->type->size ;
     const size_t bsize = B->type->size ;

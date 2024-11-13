@@ -103,7 +103,7 @@ include             general-purpose header files that do not fit into any
                     settings, and GB_include.h which is a primary internal
                     include file.
 
-indexbinaryop       GzB_IndexBinaryOp object
+indexbinaryop       GxB_IndexBinaryOp object
 
 indexunaryop        GrB_IndexUnaryOp object
 

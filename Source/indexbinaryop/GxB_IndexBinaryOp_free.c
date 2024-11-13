@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GzB_IndexBinaryOp_free: free an index_binary operator
+// GxB_IndexBinaryOp_free: free an index_binary operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -9,9 +9,9 @@
 
 #include "GB.h"
 
-GrB_Info GzB_IndexBinaryOp_free     // free a user-created index binary operator
+GrB_Info GxB_IndexBinaryOp_free     // free a user-created index binary operator
 (
-    GzB_IndexBinaryOp *op           // handle of index binary operator to free
+    GxB_IndexBinaryOp *op           // handle of index binary operator to free
 )
 { 
     return (GB_Op_free ((GB_Operator *) op)) ;

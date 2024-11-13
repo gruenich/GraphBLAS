@@ -255,7 +255,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         const int64_t bsize = B->type->size ;
 
         GxB_binary_function fmult = op->binop_function ;
-        GzB_index_binary_function fmult_idx = op->idxbinop_function ;
+        GxB_index_binary_function fmult_idx = op->idxbinop_function ;
         const void *theta = op->theta ;
         GB_cast_function cast_A = NULL, cast_B = NULL ;
         if (!A_is_pattern)

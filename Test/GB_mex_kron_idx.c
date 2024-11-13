@@ -49,7 +49,7 @@ void mykronidx (double *z,
     GrB_Matrix_free_(&C) ;          \
     GrB_Scalar_free_(&Theta) ;      \
     GrB_BinaryOp_free (&mult) ;     \
-    GzB_IndexBinaryOp_free (&Iop) ; \
+    GxB_IndexBinaryOp_free (&Iop) ; \
     GrB_Descriptor_free (&desc) ;   \
     GB_mx_put_global (true) ;       \
 }
@@ -70,7 +70,7 @@ void mexFunction
     GrB_Matrix C = NULL ;
     GrB_Scalar Theta = NULL ;
     GrB_BinaryOp mult = NULL ;
-    GzB_IndexBinaryOp Iop = NULL ;
+    GxB_IndexBinaryOp Iop = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_Index anrows = 0, ancols = 0, bnrows = 0, bncols = 0 ;
 
@@ -128,8 +128,8 @@ void mexFunction
     OK (GrB_Matrix_set_INT32 (C, C_is_csc, GrB_STORAGE_ORIENTATION_HINT)) ;
 
     // create the index binary op
-    OK (GzB_IndexBinaryOp_new (&Iop,
-        (GzB_index_binary_function) mykronidx,
+    OK (GxB_IndexBinaryOp_new (&Iop,
+        (GxB_index_binary_function) mykronidx,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_INT64,
         "mykronidx", MYKRONIDX_DEFN)) ;
 
@@ -137,7 +137,7 @@ void mexFunction
     int64_t theta = 0 ;
     OK (GrB_Scalar_new (&Theta, GrB_INT64)) ;
     OK (GrB_Scalar_setElement_INT64 (Theta, theta)) ;
-    OK (GzB_BinaryOp_new_IndexOp (&mult, Iop, Theta)) ;
+    OK (GxB_BinaryOp_new_IndexOp (&mult, Iop, Theta)) ;
 
     // C = kron(A,B)
     METHOD (GrB_Matrix_kronecker_BinaryOp_ (C, NULL, NULL, mult, A, B, desc)) ;

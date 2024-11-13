@@ -465,7 +465,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     {
 
         GxB_binary_function fadd = op->binop_function ;
-        GzB_index_binary_function fadd_idx = op->idxbinop_function ;
+        GxB_index_binary_function fadd_idx = op->idxbinop_function ;
 
         #include "generic/GB_generic.h"
         GB_BURBLE_MATRIX (C, "(generic add: %s) ", op->name) ;

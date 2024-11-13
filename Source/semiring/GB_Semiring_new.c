@@ -10,7 +10,7 @@
 // The semiring struct is already allocated on input.
 
 // The multiply operator can be any GrB_BinaryOp, including ones created from a
-// GzB_IndexBinaryOp.
+// GxB_IndexBinaryOp.
 
 #include "GB.h"
 #include "semiring/GB_Semiring_new.h"
