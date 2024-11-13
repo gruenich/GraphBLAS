@@ -74,6 +74,7 @@ GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
     FILE *f                 // file for output
 ) ;
 
+#ifndef GB_CUDA_FOLDER
 GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
 (
     const GxB_SelectOp op,  // GraphBLAS operator to print and check
@@ -81,6 +82,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     int pr,                 // print level
     FILE *f                 // file for output
 ) ;
+#endif
 
 GrB_Info GB_Operator_check  // check a GraphBLAS operator
 (
