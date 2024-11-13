@@ -155,13 +155,15 @@ GrB_Info GB_unjumble        // unjumble a matrix
     if (info == GrB_NO_VALUE)
     { 
         // via the JIT kernel
+        GBURBLE ("(unjumble: jit kernel) ") ;
         struct GB_UnaryOp_opaque op_header ;
         GB_Operator op = GB_unop_identity (A->type, &op_header) ;
-        info = GB_unjumble_jit (A, op, A_slice, nthreads, ntasks) ;
+        info = GB_unjumble_jit (A, op, A_slice, ntasks, nthreads) ;
 
         // via the generic kernel
         if (info == GrB_NO_VALUE)
         { 
+            GBURBLE ("(unjumble: generic kernel) ") ;
             GB_void *Ax = (GB_void *) A->x ;
             #define GB_QSORT \
                 GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;

@@ -88,7 +88,6 @@ F100 = {4,4,0} ;
 J4040 = {4,0,4,0} ;
 F1100 = {1,1,0,0} ;
 
-
 %{
 J4 = {4,0} ;          % JIT     on
 F1 = {1,0} ;          % factory on
@@ -118,6 +117,8 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test286'    ,t, J40  , F00  ) ; % kron with index binary op
+logstat ('test78'     ,t, J40  , F00  ) ; % subref
 logstat ('test285'    ,t, J40  , F00  ) ; % GB_mex_assign (bitmap, 7_whole)
 logstat ('test247'    ,t, J40  , F10  ) ; % GrB_mxm: fine Hash method
 logstat ('test109'    ,t, J4040, F1100) ; % terminal monoid with user-defn type
@@ -284,7 +285,7 @@ logstat ('test240'    ,t, J40  , F10  ) ; % dot4, saxpy4, and saxpy5
 logstat ('test237'    ,t, J40  , F10  ) ; % GrB_mxm (saxpy4)
 logstat ('test237'    ,s, J40  , F10  ) ; % GrB_mxm (saxpy4) (1 task)
 logstat ('test184'    ,t, J4   , F1   ) ; % special cases: mxm, transp, build
-logstat ('test236'    ,t, J40  , F10  ) ; % GxB_*_sort
+logstat ('test236'    ,t, J4   , F1   ) ; % GxB_*_sort
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 %===============================================================================

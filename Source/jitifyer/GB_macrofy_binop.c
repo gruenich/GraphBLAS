@@ -78,15 +78,15 @@ void GB_macrofy_binop
             fprintf (fp, "#define %s(z,x,y) ", macro_name) ;
         }
         else if (is_kron)
-        { 
+        {
             // operator for kronecker
             if (flipij)
             { 
-                fprintf (fp, "#define %s(z,x,jx,ix,y,jy,iy)\n", macro_name) ;
+                fprintf (fp, "#define %s(z,x,jx,ix,y,jy,iy) ", macro_name) ;
             }
             else
             { 
-                fprintf (fp, "#define %s(z,x,ix,jx,y,iy,jy)\n", macro_name) ;
+                fprintf (fp, "#define %s(z,x,ix,jx,y,iy,jy) ", macro_name) ;
             }
         }
         else if (flipxy)
@@ -96,7 +96,7 @@ void GB_macrofy_binop
             fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
         }
         else if (flipij)
-        {
+        { 
             // i,j flipped ewise operator (just flip ij, do not flip xy)
             ASSERT (is_ewise) ;
             fprintf (fp, "#define %s(z,x,y,j,i) ", macro_name) ;
@@ -113,11 +113,11 @@ void GB_macrofy_binop
             ASSERT (!is_monoid_or_build) ;
             if (is_kron)
             { 
-                fprintf (fp, " %s (&(z), &(x),ix,jx &(y),iy,jy, theta)\n",
+                fprintf (fp, " %s (&(z), &(x),ix,jx, &(y),iy,jy, theta)\n",
                     op->name) ;
             }
             else
-            {
+            { 
                 const char *xindices = is_ewise ? "i,j" : "i,k" ;
                 const char *yindices = is_ewise ? "i,j" : "k,j" ;
                 fprintf (fp, " %s (&(z), &(x),%s, &(y),%s, theta)\n",
