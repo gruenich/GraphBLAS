@@ -210,6 +210,7 @@ configure_file ( "Config/README.md.in"
 include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     xxHash lz4 zstd zstd/zstd_subset JITpackage Demo/Include rmm_wrap
     # include all Source/* folders that have include/ or template/ subfolders:
+    Source/add
     Source/apply
     Source/assign
     Source/builder
@@ -218,12 +219,13 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/concat
     Source/convert
     Source/cumsum
-    Source/ewise
-    Source/add
     Source/emult
+    Source/ewise
+    Source/extract
     Source/hyper
     Source/ij
     Source/jit_kernels
+    Source/kronecker
     Source/mask
     Source/math
     Source/matrix

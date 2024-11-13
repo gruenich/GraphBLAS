@@ -170,10 +170,10 @@
         //
         // One of the above options is required.  To use the JIT, these two
         // options must also be added at run time via
-        // GrB_set (GrB_Global, GxB_JIT_C_COMPILER_FLAGS, "...")
-        // where "..." would be all the flags required to compile a JIT kernel,
-        // including "-O3 -fopenmp" and so on, as well as one of the above two
-        // options.
+        // GrB_set (GrB_Global, GxB_JIT_C_COMPILER_FLAGS, "[flags]")
+        // where "[flags]" would be all the flags required to compile a JIT
+        // kernel, including "-O3 -fopenmp" and so on, as well as one of the
+        // above two options.
     #else
         // Let the cmake configuration script determine the complex type
         // that is available:
@@ -250,13 +250,13 @@
 // can use tests like this:
 //
 //      #if GxB_SPEC_VERSION >= GxB_VERSION (2,0,3)
-//      ... use features in GraphBLAS specification 2.0.3 ...
+//          use features in GraphBLAS specification 2.0.3
 //      #else
-//      ... only use features in early specifications
+//          only use features in early specifications
 //      #endif
 //
 //      #if GxB_IMPLEMENTATION > GxB_VERSION (1,4,0)
-//      ... use features from version 1.4.0 of a GraphBLAS package
+//          use features from version 1.4.0 of a GraphBLAS package
 //      #endif
 
 // X_GRAPHBLAS: names this particular implementation:
@@ -1337,7 +1337,7 @@ typedef struct GB_Semiring_opaque *GrB_Semiring ;
 // GrB_Scalar: a GraphBLAS scalar
 //==============================================================================
 
-typedef struct GB_Scalar_opaque *GrB_Scalar ;   // use this instead
+typedef struct GB_Scalar_opaque *GrB_Scalar ;
 
 //==============================================================================
 // GrB_Vector: a GraphBLAS vector
@@ -1452,20 +1452,6 @@ typedef enum
     GxB_JIT_ON = 4,     // full JIT: able to compile, load, and run
 }
 GxB_JIT_Control ;
-
-typedef enum
-{
-    GxB_BY_ROW = 0,     // CSR: compressed sparse row format
-    GxB_BY_COL = 1,     // CSC: compressed sparse column format
-    GxB_NO_FORMAT = -1  // format not defined
-}
-GxB_Format_Value ;
-
-// The default format is by row.  These constants are defined as GB_GLOBAL
-// const, so that if SuiteSparse:GraphBLAS is recompiled with a different
-// default format, and the application is relinked but not recompiled, it will
-// acquire the new default values.
-GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 
 // the default hyper_switch parameter
 GB_GLOBAL const double GxB_HYPER_DEFAULT ;
@@ -1916,7 +1902,7 @@ GB_GLOBAL GrB_Monoid
 // with ANY as the multiply operator, but they are not predefined below.
 
 // Likewise, additional built-in operators can be used as multiplicative
-// operators for floating-point semirings (POW, ATAN2, HYPOT, ...) and many
+// operators for floating-point semirings (POW, ATAN2, HYPOT, etc) and many
 // more semirings can be constructed from bitwise monoids and many integer
 // binary (non-bitwise) multiplicative operators, but these are not
 // pre-defined.
@@ -1934,6 +1920,8 @@ GB_GLOBAL GrB_Monoid
 // identical, as are FIRSTJ1 and SECONDI1.  These semirings still appear as
 // predefined, for convenience.
 
+// 124 of the GxB_* semirings are now superceded by GrB_* semirings.
+
 GB_GLOBAL GrB_Semiring
 
 //------------------------------------------------------------------------------
@@ -1941,28 +1929,28 @@ GB_GLOBAL GrB_Semiring
 //------------------------------------------------------------------------------
 
     // semirings with multiply op: z = FIRST (x,y), all types x,y,z the same:
-    GxB_MIN_FIRST_INT8     , GxB_MAX_FIRST_INT8     , GxB_PLUS_FIRST_INT8    , GxB_TIMES_FIRST_INT8   , GxB_ANY_FIRST_INT8     ,
-    GxB_MIN_FIRST_INT16    , GxB_MAX_FIRST_INT16    , GxB_PLUS_FIRST_INT16   , GxB_TIMES_FIRST_INT16  , GxB_ANY_FIRST_INT16    ,
-    GxB_MIN_FIRST_INT32    , GxB_MAX_FIRST_INT32    , GxB_PLUS_FIRST_INT32   , GxB_TIMES_FIRST_INT32  , GxB_ANY_FIRST_INT32    ,
-    GxB_MIN_FIRST_INT64    , GxB_MAX_FIRST_INT64    , GxB_PLUS_FIRST_INT64   , GxB_TIMES_FIRST_INT64  , GxB_ANY_FIRST_INT64    ,
-    GxB_MIN_FIRST_UINT8    , GxB_MAX_FIRST_UINT8    , GxB_PLUS_FIRST_UINT8   , GxB_TIMES_FIRST_UINT8  , GxB_ANY_FIRST_UINT8    ,
-    GxB_MIN_FIRST_UINT16   , GxB_MAX_FIRST_UINT16   , GxB_PLUS_FIRST_UINT16  , GxB_TIMES_FIRST_UINT16 , GxB_ANY_FIRST_UINT16   ,
-    GxB_MIN_FIRST_UINT32   , GxB_MAX_FIRST_UINT32   , GxB_PLUS_FIRST_UINT32  , GxB_TIMES_FIRST_UINT32 , GxB_ANY_FIRST_UINT32   ,
-    GxB_MIN_FIRST_UINT64   , GxB_MAX_FIRST_UINT64   , GxB_PLUS_FIRST_UINT64  , GxB_TIMES_FIRST_UINT64 , GxB_ANY_FIRST_UINT64   ,
-    GxB_MIN_FIRST_FP32     , GxB_MAX_FIRST_FP32     , GxB_PLUS_FIRST_FP32    , GxB_TIMES_FIRST_FP32   , GxB_ANY_FIRST_FP32     ,
-    GxB_MIN_FIRST_FP64     , GxB_MAX_FIRST_FP64     , GxB_PLUS_FIRST_FP64    , GxB_TIMES_FIRST_FP64   , GxB_ANY_FIRST_FP64     ,
+    GxB_PLUS_FIRST_INT8    , GxB_TIMES_FIRST_INT8   , GxB_ANY_FIRST_INT8     ,
+    GxB_MAX_FIRST_INT16    , GxB_PLUS_FIRST_INT16   , GxB_TIMES_FIRST_INT16  , GxB_ANY_FIRST_INT16    ,
+    GxB_MAX_FIRST_INT32    , GxB_PLUS_FIRST_INT32   , GxB_TIMES_FIRST_INT32  , GxB_ANY_FIRST_INT32    ,
+    GxB_MAX_FIRST_INT64    , GxB_PLUS_FIRST_INT64   , GxB_TIMES_FIRST_INT64  , GxB_ANY_FIRST_INT64    ,
+    GxB_MAX_FIRST_UINT8    , GxB_PLUS_FIRST_UINT8   , GxB_TIMES_FIRST_UINT8  , GxB_ANY_FIRST_UINT8    ,
+    GxB_MAX_FIRST_UINT16   , GxB_PLUS_FIRST_UINT16  , GxB_TIMES_FIRST_UINT16 , GxB_ANY_FIRST_UINT16   ,
+    GxB_MAX_FIRST_UINT32   , GxB_PLUS_FIRST_UINT32  , GxB_TIMES_FIRST_UINT32 , GxB_ANY_FIRST_UINT32   ,
+    GxB_MAX_FIRST_UINT64   , GxB_PLUS_FIRST_UINT64  , GxB_TIMES_FIRST_UINT64 , GxB_ANY_FIRST_UINT64   ,
+    GxB_MAX_FIRST_FP32     , GxB_PLUS_FIRST_FP32    , GxB_TIMES_FIRST_FP32   , GxB_ANY_FIRST_FP32     ,
+    GxB_MAX_FIRST_FP64     , GxB_PLUS_FIRST_FP64    , GxB_TIMES_FIRST_FP64   , GxB_ANY_FIRST_FP64     ,
 
     // semirings with multiply op: z = SECOND (x,y), all types x,y,z the same:
-    GxB_MIN_SECOND_INT8    , GxB_MAX_SECOND_INT8    , GxB_PLUS_SECOND_INT8   , GxB_TIMES_SECOND_INT8  , GxB_ANY_SECOND_INT8    ,
-    GxB_MIN_SECOND_INT16   , GxB_MAX_SECOND_INT16   , GxB_PLUS_SECOND_INT16  , GxB_TIMES_SECOND_INT16 , GxB_ANY_SECOND_INT16   ,
-    GxB_MIN_SECOND_INT32   , GxB_MAX_SECOND_INT32   , GxB_PLUS_SECOND_INT32  , GxB_TIMES_SECOND_INT32 , GxB_ANY_SECOND_INT32   ,
-    GxB_MIN_SECOND_INT64   , GxB_MAX_SECOND_INT64   , GxB_PLUS_SECOND_INT64  , GxB_TIMES_SECOND_INT64 , GxB_ANY_SECOND_INT64   ,
-    GxB_MIN_SECOND_UINT8   , GxB_MAX_SECOND_UINT8   , GxB_PLUS_SECOND_UINT8  , GxB_TIMES_SECOND_UINT8 , GxB_ANY_SECOND_UINT8   ,
-    GxB_MIN_SECOND_UINT16  , GxB_MAX_SECOND_UINT16  , GxB_PLUS_SECOND_UINT16 , GxB_TIMES_SECOND_UINT16, GxB_ANY_SECOND_UINT16  ,
-    GxB_MIN_SECOND_UINT32  , GxB_MAX_SECOND_UINT32  , GxB_PLUS_SECOND_UINT32 , GxB_TIMES_SECOND_UINT32, GxB_ANY_SECOND_UINT32  ,
-    GxB_MIN_SECOND_UINT64  , GxB_MAX_SECOND_UINT64  , GxB_PLUS_SECOND_UINT64 , GxB_TIMES_SECOND_UINT64, GxB_ANY_SECOND_UINT64  ,
-    GxB_MIN_SECOND_FP32    , GxB_MAX_SECOND_FP32    , GxB_PLUS_SECOND_FP32   , GxB_TIMES_SECOND_FP32  , GxB_ANY_SECOND_FP32    ,
-    GxB_MIN_SECOND_FP64    , GxB_MAX_SECOND_FP64    , GxB_PLUS_SECOND_FP64   , GxB_TIMES_SECOND_FP64  , GxB_ANY_SECOND_FP64    ,
+    GxB_PLUS_SECOND_INT8   , GxB_TIMES_SECOND_INT8  , GxB_ANY_SECOND_INT8    ,
+    GxB_PLUS_SECOND_INT16  , GxB_TIMES_SECOND_INT16 , GxB_ANY_SECOND_INT16   ,
+    GxB_PLUS_SECOND_INT32  , GxB_TIMES_SECOND_INT32 , GxB_ANY_SECOND_INT32   ,
+    GxB_PLUS_SECOND_INT64  , GxB_TIMES_SECOND_INT64 , GxB_ANY_SECOND_INT64   ,
+    GxB_PLUS_SECOND_UINT8  , GxB_TIMES_SECOND_UINT8 , GxB_ANY_SECOND_UINT8   ,
+    GxB_PLUS_SECOND_UINT16 , GxB_TIMES_SECOND_UINT16, GxB_ANY_SECOND_UINT16  ,
+    GxB_PLUS_SECOND_UINT32 , GxB_TIMES_SECOND_UINT32, GxB_ANY_SECOND_UINT32  ,
+    GxB_PLUS_SECOND_UINT64 , GxB_TIMES_SECOND_UINT64, GxB_ANY_SECOND_UINT64  ,
+    GxB_PLUS_SECOND_FP32   , GxB_TIMES_SECOND_FP32  , GxB_ANY_SECOND_FP32    ,
+    GxB_PLUS_SECOND_FP64   , GxB_TIMES_SECOND_FP64  , GxB_ANY_SECOND_FP64    ,
 
     // semirings with multiply op: z = PAIR (x,y), all types x,y,z the same:
     // (note that min_pair, max_pair, times_pair are all identical to any_pair, and are marked below)
@@ -1978,40 +1966,40 @@ GB_GLOBAL GrB_Semiring
     GxB_MIN_PAIR_FP64  /**/, GxB_MAX_PAIR_FP64  /**/, GxB_PLUS_PAIR_FP64     , GxB_TIMES_PAIR_FP64  /**/, GxB_ANY_PAIR_FP64    ,
 
     // semirings with multiply op: z = MIN (x,y), all types x,y,z the same:
-    GxB_MIN_MIN_INT8       , GxB_MAX_MIN_INT8       , GxB_PLUS_MIN_INT8      , GxB_TIMES_MIN_INT8     , GxB_ANY_MIN_INT8       ,
-    GxB_MIN_MIN_INT16      , GxB_MAX_MIN_INT16      , GxB_PLUS_MIN_INT16     , GxB_TIMES_MIN_INT16    , GxB_ANY_MIN_INT16      ,
-    GxB_MIN_MIN_INT32      , GxB_MAX_MIN_INT32      , GxB_PLUS_MIN_INT32     , GxB_TIMES_MIN_INT32    , GxB_ANY_MIN_INT32      ,
-    GxB_MIN_MIN_INT64      , GxB_MAX_MIN_INT64      , GxB_PLUS_MIN_INT64     , GxB_TIMES_MIN_INT64    , GxB_ANY_MIN_INT64      ,
-    GxB_MIN_MIN_UINT8      , GxB_MAX_MIN_UINT8      , GxB_PLUS_MIN_UINT8     , GxB_TIMES_MIN_UINT8    , GxB_ANY_MIN_UINT8      ,
-    GxB_MIN_MIN_UINT16     , GxB_MAX_MIN_UINT16     , GxB_PLUS_MIN_UINT16    , GxB_TIMES_MIN_UINT16   , GxB_ANY_MIN_UINT16     ,
-    GxB_MIN_MIN_UINT32     , GxB_MAX_MIN_UINT32     , GxB_PLUS_MIN_UINT32    , GxB_TIMES_MIN_UINT32   , GxB_ANY_MIN_UINT32     ,
-    GxB_MIN_MIN_UINT64     , GxB_MAX_MIN_UINT64     , GxB_PLUS_MIN_UINT64    , GxB_TIMES_MIN_UINT64   , GxB_ANY_MIN_UINT64     ,
-    GxB_MIN_MIN_FP32       , GxB_MAX_MIN_FP32       , GxB_PLUS_MIN_FP32      , GxB_TIMES_MIN_FP32     , GxB_ANY_MIN_FP32       ,
-    GxB_MIN_MIN_FP64       , GxB_MAX_MIN_FP64       , GxB_PLUS_MIN_FP64      , GxB_TIMES_MIN_FP64     , GxB_ANY_MIN_FP64       ,
+    GxB_MIN_MIN_INT8       , GxB_TIMES_MIN_INT8     , GxB_ANY_MIN_INT8       ,
+    GxB_MIN_MIN_INT16      , GxB_TIMES_MIN_INT16    , GxB_ANY_MIN_INT16      ,
+    GxB_MIN_MIN_INT32      , GxB_TIMES_MIN_INT32    , GxB_ANY_MIN_INT32      ,
+    GxB_MIN_MIN_INT64      , GxB_TIMES_MIN_INT64    , GxB_ANY_MIN_INT64      ,
+    GxB_MIN_MIN_UINT8      , GxB_TIMES_MIN_UINT8    , GxB_ANY_MIN_UINT8      ,
+    GxB_MIN_MIN_UINT16     , GxB_TIMES_MIN_UINT16   , GxB_ANY_MIN_UINT16     ,
+    GxB_MIN_MIN_UINT32     , GxB_TIMES_MIN_UINT32   , GxB_ANY_MIN_UINT32     ,
+    GxB_MIN_MIN_UINT64     , GxB_TIMES_MIN_UINT64   , GxB_ANY_MIN_UINT64     ,
+    GxB_MIN_MIN_FP32       , GxB_TIMES_MIN_FP32     , GxB_ANY_MIN_FP32       ,
+    GxB_MIN_MIN_FP64       , GxB_TIMES_MIN_FP64     , GxB_ANY_MIN_FP64       ,
 
     // semirings with multiply op: z = MAX (x,y), all types x,y,z the same:
-    GxB_MIN_MAX_INT8       , GxB_MAX_MAX_INT8       , GxB_PLUS_MAX_INT8      , GxB_TIMES_MAX_INT8     , GxB_ANY_MAX_INT8       ,
-    GxB_MIN_MAX_INT16      , GxB_MAX_MAX_INT16      , GxB_PLUS_MAX_INT16     , GxB_TIMES_MAX_INT16    , GxB_ANY_MAX_INT16      ,
-    GxB_MIN_MAX_INT32      , GxB_MAX_MAX_INT32      , GxB_PLUS_MAX_INT32     , GxB_TIMES_MAX_INT32    , GxB_ANY_MAX_INT32      ,
-    GxB_MIN_MAX_INT64      , GxB_MAX_MAX_INT64      , GxB_PLUS_MAX_INT64     , GxB_TIMES_MAX_INT64    , GxB_ANY_MAX_INT64      ,
-    GxB_MIN_MAX_UINT8      , GxB_MAX_MAX_UINT8      , GxB_PLUS_MAX_UINT8     , GxB_TIMES_MAX_UINT8    , GxB_ANY_MAX_UINT8      ,
-    GxB_MIN_MAX_UINT16     , GxB_MAX_MAX_UINT16     , GxB_PLUS_MAX_UINT16    , GxB_TIMES_MAX_UINT16   , GxB_ANY_MAX_UINT16     ,
-    GxB_MIN_MAX_UINT32     , GxB_MAX_MAX_UINT32     , GxB_PLUS_MAX_UINT32    , GxB_TIMES_MAX_UINT32   , GxB_ANY_MAX_UINT32     ,
-    GxB_MIN_MAX_UINT64     , GxB_MAX_MAX_UINT64     , GxB_PLUS_MAX_UINT64    , GxB_TIMES_MAX_UINT64   , GxB_ANY_MAX_UINT64     ,
-    GxB_MIN_MAX_FP32       , GxB_MAX_MAX_FP32       , GxB_PLUS_MAX_FP32      , GxB_TIMES_MAX_FP32     , GxB_ANY_MAX_FP32       ,
-    GxB_MIN_MAX_FP64       , GxB_MAX_MAX_FP64       , GxB_PLUS_MAX_FP64      , GxB_TIMES_MAX_FP64     , GxB_ANY_MAX_FP64       ,
+    GxB_MAX_MAX_INT8       , GxB_PLUS_MAX_INT8      , GxB_TIMES_MAX_INT8     , GxB_ANY_MAX_INT8       ,
+    GxB_MAX_MAX_INT16      , GxB_PLUS_MAX_INT16     , GxB_TIMES_MAX_INT16    , GxB_ANY_MAX_INT16      ,
+    GxB_MAX_MAX_INT32      , GxB_PLUS_MAX_INT32     , GxB_TIMES_MAX_INT32    , GxB_ANY_MAX_INT32      ,
+    GxB_MAX_MAX_INT64      , GxB_PLUS_MAX_INT64     , GxB_TIMES_MAX_INT64    , GxB_ANY_MAX_INT64      ,
+    GxB_MAX_MAX_UINT8      , GxB_PLUS_MAX_UINT8     , GxB_TIMES_MAX_UINT8    , GxB_ANY_MAX_UINT8      ,
+    GxB_MAX_MAX_UINT16     , GxB_PLUS_MAX_UINT16    , GxB_TIMES_MAX_UINT16   , GxB_ANY_MAX_UINT16     ,
+    GxB_MAX_MAX_UINT32     , GxB_PLUS_MAX_UINT32    , GxB_TIMES_MAX_UINT32   , GxB_ANY_MAX_UINT32     ,
+    GxB_MAX_MAX_UINT64     , GxB_PLUS_MAX_UINT64    , GxB_TIMES_MAX_UINT64   , GxB_ANY_MAX_UINT64     ,
+    GxB_MAX_MAX_FP32       , GxB_PLUS_MAX_FP32      , GxB_TIMES_MAX_FP32     , GxB_ANY_MAX_FP32       ,
+    GxB_MAX_MAX_FP64       , GxB_PLUS_MAX_FP64      , GxB_TIMES_MAX_FP64     , GxB_ANY_MAX_FP64       ,
 
     // semirings with multiply op: z = PLUS (x,y), all types x,y,z the same:
-    GxB_MIN_PLUS_INT8      , GxB_MAX_PLUS_INT8      , GxB_PLUS_PLUS_INT8     , GxB_TIMES_PLUS_INT8    , GxB_ANY_PLUS_INT8      ,
-    GxB_MIN_PLUS_INT16     , GxB_MAX_PLUS_INT16     , GxB_PLUS_PLUS_INT16    , GxB_TIMES_PLUS_INT16   , GxB_ANY_PLUS_INT16     ,
-    GxB_MIN_PLUS_INT32     , GxB_MAX_PLUS_INT32     , GxB_PLUS_PLUS_INT32    , GxB_TIMES_PLUS_INT32   , GxB_ANY_PLUS_INT32     ,
-    GxB_MIN_PLUS_INT64     , GxB_MAX_PLUS_INT64     , GxB_PLUS_PLUS_INT64    , GxB_TIMES_PLUS_INT64   , GxB_ANY_PLUS_INT64     ,
-    GxB_MIN_PLUS_UINT8     , GxB_MAX_PLUS_UINT8     , GxB_PLUS_PLUS_UINT8    , GxB_TIMES_PLUS_UINT8   , GxB_ANY_PLUS_UINT8     ,
-    GxB_MIN_PLUS_UINT16    , GxB_MAX_PLUS_UINT16    , GxB_PLUS_PLUS_UINT16   , GxB_TIMES_PLUS_UINT16  , GxB_ANY_PLUS_UINT16    ,
-    GxB_MIN_PLUS_UINT32    , GxB_MAX_PLUS_UINT32    , GxB_PLUS_PLUS_UINT32   , GxB_TIMES_PLUS_UINT32  , GxB_ANY_PLUS_UINT32    ,
-    GxB_MIN_PLUS_UINT64    , GxB_MAX_PLUS_UINT64    , GxB_PLUS_PLUS_UINT64   , GxB_TIMES_PLUS_UINT64  , GxB_ANY_PLUS_UINT64    ,
-    GxB_MIN_PLUS_FP32      , GxB_MAX_PLUS_FP32      , GxB_PLUS_PLUS_FP32     , GxB_TIMES_PLUS_FP32    , GxB_ANY_PLUS_FP32      ,
-    GxB_MIN_PLUS_FP64      , GxB_MAX_PLUS_FP64      , GxB_PLUS_PLUS_FP64     , GxB_TIMES_PLUS_FP64    , GxB_ANY_PLUS_FP64      ,
+    GxB_PLUS_PLUS_INT8     , GxB_TIMES_PLUS_INT8    , GxB_ANY_PLUS_INT8      ,
+    GxB_PLUS_PLUS_INT16    , GxB_TIMES_PLUS_INT16   , GxB_ANY_PLUS_INT16     ,
+    GxB_PLUS_PLUS_INT32    , GxB_TIMES_PLUS_INT32   , GxB_ANY_PLUS_INT32     ,
+    GxB_PLUS_PLUS_INT64    , GxB_TIMES_PLUS_INT64   , GxB_ANY_PLUS_INT64     ,
+    GxB_PLUS_PLUS_UINT8    , GxB_TIMES_PLUS_UINT8   , GxB_ANY_PLUS_UINT8     ,
+    GxB_PLUS_PLUS_UINT16   , GxB_TIMES_PLUS_UINT16  , GxB_ANY_PLUS_UINT16    ,
+    GxB_PLUS_PLUS_UINT32   , GxB_TIMES_PLUS_UINT32  , GxB_ANY_PLUS_UINT32    ,
+    GxB_PLUS_PLUS_UINT64   , GxB_TIMES_PLUS_UINT64  , GxB_ANY_PLUS_UINT64    ,
+    GxB_PLUS_PLUS_FP32     , GxB_TIMES_PLUS_FP32    , GxB_ANY_PLUS_FP32      ,
+    GxB_PLUS_PLUS_FP64     , GxB_TIMES_PLUS_FP64    , GxB_ANY_PLUS_FP64      ,
 
     // semirings with multiply op: z = MINUS (x,y), all types x,y,z the same:
     GxB_MIN_MINUS_INT8     , GxB_MAX_MINUS_INT8     , GxB_PLUS_MINUS_INT8    , GxB_TIMES_MINUS_INT8   , GxB_ANY_MINUS_INT8     ,
@@ -2026,16 +2014,16 @@ GB_GLOBAL GrB_Semiring
     GxB_MIN_MINUS_FP64     , GxB_MAX_MINUS_FP64     , GxB_PLUS_MINUS_FP64    , GxB_TIMES_MINUS_FP64   , GxB_ANY_MINUS_FP64     ,
 
     // semirings with multiply op: z = TIMES (x,y), all types x,y,z the same:
-    GxB_MIN_TIMES_INT8     , GxB_MAX_TIMES_INT8     , GxB_PLUS_TIMES_INT8    , GxB_TIMES_TIMES_INT8   , GxB_ANY_TIMES_INT8     ,
-    GxB_MIN_TIMES_INT16    , GxB_MAX_TIMES_INT16    , GxB_PLUS_TIMES_INT16   , GxB_TIMES_TIMES_INT16  , GxB_ANY_TIMES_INT16    ,
-    GxB_MIN_TIMES_INT32    , GxB_MAX_TIMES_INT32    , GxB_PLUS_TIMES_INT32   , GxB_TIMES_TIMES_INT32  , GxB_ANY_TIMES_INT32    ,
-    GxB_MIN_TIMES_INT64    , GxB_MAX_TIMES_INT64    , GxB_PLUS_TIMES_INT64   , GxB_TIMES_TIMES_INT64  , GxB_ANY_TIMES_INT64    ,
-    GxB_MIN_TIMES_UINT8    , GxB_MAX_TIMES_UINT8    , GxB_PLUS_TIMES_UINT8   , GxB_TIMES_TIMES_UINT8  , GxB_ANY_TIMES_UINT8    ,
-    GxB_MIN_TIMES_UINT16   , GxB_MAX_TIMES_UINT16   , GxB_PLUS_TIMES_UINT16  , GxB_TIMES_TIMES_UINT16 , GxB_ANY_TIMES_UINT16   ,
-    GxB_MIN_TIMES_UINT32   , GxB_MAX_TIMES_UINT32   , GxB_PLUS_TIMES_UINT32  , GxB_TIMES_TIMES_UINT32 , GxB_ANY_TIMES_UINT32   ,
-    GxB_MIN_TIMES_UINT64   , GxB_MAX_TIMES_UINT64   , GxB_PLUS_TIMES_UINT64  , GxB_TIMES_TIMES_UINT64 , GxB_ANY_TIMES_UINT64   ,
-    GxB_MIN_TIMES_FP32     , GxB_MAX_TIMES_FP32     , GxB_PLUS_TIMES_FP32    , GxB_TIMES_TIMES_FP32   , GxB_ANY_TIMES_FP32     ,
-    GxB_MIN_TIMES_FP64     , GxB_MAX_TIMES_FP64     , GxB_PLUS_TIMES_FP64    , GxB_TIMES_TIMES_FP64   , GxB_ANY_TIMES_FP64     ,
+    GxB_TIMES_TIMES_INT8   , GxB_ANY_TIMES_INT8     ,
+    GxB_TIMES_TIMES_INT16  , GxB_ANY_TIMES_INT16    ,
+    GxB_TIMES_TIMES_INT32  , GxB_ANY_TIMES_INT32    ,
+    GxB_TIMES_TIMES_INT64  , GxB_ANY_TIMES_INT64    ,
+    GxB_TIMES_TIMES_UINT8  , GxB_ANY_TIMES_UINT8    ,
+    GxB_TIMES_TIMES_UINT16 , GxB_ANY_TIMES_UINT16   ,
+    GxB_TIMES_TIMES_UINT32 , GxB_ANY_TIMES_UINT32   ,
+    GxB_TIMES_TIMES_UINT64 , GxB_ANY_TIMES_UINT64   ,
+    GxB_TIMES_TIMES_FP32   , GxB_ANY_TIMES_FP32     ,
+    GxB_TIMES_TIMES_FP64   , GxB_ANY_TIMES_FP64     ,
 
     // semirings with multiply op: z = DIV (x,y), all types x,y,z the same:
     GxB_MIN_DIV_INT8       , GxB_MAX_DIV_INT8       , GxB_PLUS_DIV_INT8      , GxB_TIMES_DIV_INT8     , GxB_ANY_DIV_INT8       ,
@@ -2274,8 +2262,8 @@ GB_GLOBAL GrB_Semiring
     GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , GxB_ANY_FIRST_BOOL     ,
     GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     , GxB_ANY_SECOND_BOOL    ,
     GxB_LOR_PAIR_BOOL/**/  , GxB_LAND_PAIR_BOOL/**/ , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL/**/   , GxB_ANY_PAIR_BOOL      ,
-    GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        , GxB_ANY_LOR_BOOL       ,
-    GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       , GxB_ANY_LAND_BOOL      ,
+    GxB_LOR_LOR_BOOL                                , GxB_LXOR_LOR_BOOL                               , GxB_ANY_LOR_BOOL       ,
+                             GxB_LAND_LAND_BOOL                              , GxB_EQ_LAND_BOOL       , GxB_ANY_LAND_BOOL      ,
     GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       , GxB_ANY_LXOR_BOOL      ,
     GxB_LOR_EQ_BOOL        , GxB_LAND_EQ_BOOL       , GxB_LXOR_EQ_BOOL       , GxB_EQ_EQ_BOOL         , GxB_ANY_EQ_BOOL        ,
     GxB_LOR_GT_BOOL        , GxB_LAND_GT_BOOL       , GxB_LXOR_GT_BOOL       , GxB_EQ_GT_BOOL         , GxB_ANY_GT_BOOL        ,
@@ -2408,12 +2396,6 @@ GB_GLOBAL GrB_Semiring
 // GrB_* semirings
 //------------------------------------------------------------------------------
 
-// The v1.3 C API for GraphBLAS adds the following 124 predefined semirings,
-// with GrB_* names.  They are identical to 124 GxB_* semirings defined above,
-// with the same name, except that GrB_LXNOR_LOR_SEMIRING_BOOL is identical to
-// GxB_EQ_LOR_BOOL (since GrB_EQ_BOOL == GrB_LXNOR).  The old names are listed
-// below alongside each new name; the new GrB_* names are preferred.
-
 // 12 kinds of GrB_* semirings are available for all 10 real non-boolean types:
 
     // PLUS_TIMES, PLUS_MIN,
@@ -2424,9 +2406,6 @@ GB_GLOBAL GrB_Semiring
 
     // LOR_LAND, LAND_LOR, LXOR_LAND, LXNOR_LOR.
 
-// GxB_* semirings corresponding to the equivalent GrB_* semiring are
-// Historical.
-
 GB_GLOBAL GrB_Semiring
 
     //--------------------------------------------------------------------------
@@ -2434,165 +2413,165 @@ GB_GLOBAL GrB_Semiring
     //--------------------------------------------------------------------------
 
     // PLUS_TIMES semirings for all 10 real, non-boolean types:
-    GrB_PLUS_TIMES_SEMIRING_INT8,       // GxB_PLUS_TIMES_INT8
-    GrB_PLUS_TIMES_SEMIRING_INT16,      // GxB_PLUS_TIMES_INT16
-    GrB_PLUS_TIMES_SEMIRING_INT32,      // GxB_PLUS_TIMES_INT32
-    GrB_PLUS_TIMES_SEMIRING_INT64,      // GxB_PLUS_TIMES_INT64
-    GrB_PLUS_TIMES_SEMIRING_UINT8,      // GxB_PLUS_TIMES_UINT8
-    GrB_PLUS_TIMES_SEMIRING_UINT16,     // GxB_PLUS_TIMES_UINT16
-    GrB_PLUS_TIMES_SEMIRING_UINT32,     // GxB_PLUS_TIMES_UINT32
-    GrB_PLUS_TIMES_SEMIRING_UINT64,     // GxB_PLUS_TIMES_UINT64
-    GrB_PLUS_TIMES_SEMIRING_FP32,       // GxB_PLUS_TIMES_FP32
-    GrB_PLUS_TIMES_SEMIRING_FP64,       // GxB_PLUS_TIMES_FP64
+    GrB_PLUS_TIMES_SEMIRING_INT8,
+    GrB_PLUS_TIMES_SEMIRING_INT16,
+    GrB_PLUS_TIMES_SEMIRING_INT32,
+    GrB_PLUS_TIMES_SEMIRING_INT64,
+    GrB_PLUS_TIMES_SEMIRING_UINT8,
+    GrB_PLUS_TIMES_SEMIRING_UINT16,
+    GrB_PLUS_TIMES_SEMIRING_UINT32,
+    GrB_PLUS_TIMES_SEMIRING_UINT64,
+    GrB_PLUS_TIMES_SEMIRING_FP32,
+    GrB_PLUS_TIMES_SEMIRING_FP64,
 
     // PLUS_MIN semirings for all 10 real, non-boolean types:
-    GrB_PLUS_MIN_SEMIRING_INT8,         // GxB_PLUS_MIN_INT8
-    GrB_PLUS_MIN_SEMIRING_INT16,        // GxB_PLUS_MIN_INT16
-    GrB_PLUS_MIN_SEMIRING_INT32,        // GxB_PLUS_MIN_INT32
-    GrB_PLUS_MIN_SEMIRING_INT64,        // GxB_PLUS_MIN_INT64
-    GrB_PLUS_MIN_SEMIRING_UINT8,        // GxB_PLUS_MIN_UINT8
-    GrB_PLUS_MIN_SEMIRING_UINT16,       // GxB_PLUS_MIN_UINT16
-    GrB_PLUS_MIN_SEMIRING_UINT32,       // GxB_PLUS_MIN_UINT32
-    GrB_PLUS_MIN_SEMIRING_UINT64,       // GxB_PLUS_MIN_UINT64
-    GrB_PLUS_MIN_SEMIRING_FP32,         // GxB_PLUS_MIN_FP32
-    GrB_PLUS_MIN_SEMIRING_FP64,         // GxB_PLUS_MIN_FP64
+    GrB_PLUS_MIN_SEMIRING_INT8,
+    GrB_PLUS_MIN_SEMIRING_INT16,
+    GrB_PLUS_MIN_SEMIRING_INT32,
+    GrB_PLUS_MIN_SEMIRING_INT64,
+    GrB_PLUS_MIN_SEMIRING_UINT8,
+    GrB_PLUS_MIN_SEMIRING_UINT16,
+    GrB_PLUS_MIN_SEMIRING_UINT32,
+    GrB_PLUS_MIN_SEMIRING_UINT64,
+    GrB_PLUS_MIN_SEMIRING_FP32,
+    GrB_PLUS_MIN_SEMIRING_FP64,
 
     //--------------------------------------------------------------------------
     // 50 semirings with MIN monoids
     //--------------------------------------------------------------------------
 
     // MIN_PLUS semirings for all 10 real, non-boolean types:
-    GrB_MIN_PLUS_SEMIRING_INT8,         // GxB_MIN_PLUS_INT8
-    GrB_MIN_PLUS_SEMIRING_INT16,        // GxB_MIN_PLUS_INT16
-    GrB_MIN_PLUS_SEMIRING_INT32,        // GxB_MIN_PLUS_INT32
-    GrB_MIN_PLUS_SEMIRING_INT64,        // GxB_MIN_PLUS_INT64
-    GrB_MIN_PLUS_SEMIRING_UINT8,        // GxB_MIN_PLUS_UINT8
-    GrB_MIN_PLUS_SEMIRING_UINT16,       // GxB_MIN_PLUS_UINT16
-    GrB_MIN_PLUS_SEMIRING_UINT32,       // GxB_MIN_PLUS_UINT32
-    GrB_MIN_PLUS_SEMIRING_UINT64,       // GxB_MIN_PLUS_UINT64
-    GrB_MIN_PLUS_SEMIRING_FP32,         // GxB_MIN_PLUS_FP32
-    GrB_MIN_PLUS_SEMIRING_FP64,         // GxB_MIN_PLUS_FP64
+    GrB_MIN_PLUS_SEMIRING_INT8,
+    GrB_MIN_PLUS_SEMIRING_INT16,
+    GrB_MIN_PLUS_SEMIRING_INT32,
+    GrB_MIN_PLUS_SEMIRING_INT64,
+    GrB_MIN_PLUS_SEMIRING_UINT8,
+    GrB_MIN_PLUS_SEMIRING_UINT16,
+    GrB_MIN_PLUS_SEMIRING_UINT32,
+    GrB_MIN_PLUS_SEMIRING_UINT64,
+    GrB_MIN_PLUS_SEMIRING_FP32,
+    GrB_MIN_PLUS_SEMIRING_FP64,
 
     // MIN_TIMES semirings for all 10 real, non-boolean types:
-    GrB_MIN_TIMES_SEMIRING_INT8,        // GxB_MIN_TIMES_INT8
-    GrB_MIN_TIMES_SEMIRING_INT16,       // GxB_MIN_TIMES_INT16
-    GrB_MIN_TIMES_SEMIRING_INT32,       // GxB_MIN_TIMES_INT32
-    GrB_MIN_TIMES_SEMIRING_INT64,       // GxB_MIN_TIMES_INT64
-    GrB_MIN_TIMES_SEMIRING_UINT8,       // GxB_MIN_TIMES_UINT8
-    GrB_MIN_TIMES_SEMIRING_UINT16,      // GxB_MIN_TIMES_UINT16
-    GrB_MIN_TIMES_SEMIRING_UINT32,      // GxB_MIN_TIMES_UINT32
-    GrB_MIN_TIMES_SEMIRING_UINT64,      // GxB_MIN_TIMES_UINT64
-    GrB_MIN_TIMES_SEMIRING_FP32,        // GxB_MIN_TIMES_FP32
-    GrB_MIN_TIMES_SEMIRING_FP64,        // GxB_MIN_TIMES_FP64
+    GrB_MIN_TIMES_SEMIRING_INT8,
+    GrB_MIN_TIMES_SEMIRING_INT16,
+    GrB_MIN_TIMES_SEMIRING_INT32,
+    GrB_MIN_TIMES_SEMIRING_INT64,
+    GrB_MIN_TIMES_SEMIRING_UINT8,
+    GrB_MIN_TIMES_SEMIRING_UINT16,
+    GrB_MIN_TIMES_SEMIRING_UINT32,
+    GrB_MIN_TIMES_SEMIRING_UINT64,
+    GrB_MIN_TIMES_SEMIRING_FP32,
+    GrB_MIN_TIMES_SEMIRING_FP64,
 
     // MIN_FIRST semirings for all 10 real, non-boolean types:
-    GrB_MIN_FIRST_SEMIRING_INT8,        // GxB_MIN_FIRST_INT8
-    GrB_MIN_FIRST_SEMIRING_INT16,       // GxB_MIN_FIRST_INT16
-    GrB_MIN_FIRST_SEMIRING_INT32,       // GxB_MIN_FIRST_INT32
-    GrB_MIN_FIRST_SEMIRING_INT64,       // GxB_MIN_FIRST_INT64
-    GrB_MIN_FIRST_SEMIRING_UINT8,       // GxB_MIN_FIRST_UINT8
-    GrB_MIN_FIRST_SEMIRING_UINT16,      // GxB_MIN_FIRST_UINT16
-    GrB_MIN_FIRST_SEMIRING_UINT32,      // GxB_MIN_FIRST_UINT32
-    GrB_MIN_FIRST_SEMIRING_UINT64,      // GxB_MIN_FIRST_UINT64
-    GrB_MIN_FIRST_SEMIRING_FP32,        // GxB_MIN_FIRST_FP32
-    GrB_MIN_FIRST_SEMIRING_FP64,        // GxB_MIN_FIRST_FP64
+    GrB_MIN_FIRST_SEMIRING_INT8,
+    GrB_MIN_FIRST_SEMIRING_INT16,
+    GrB_MIN_FIRST_SEMIRING_INT32,
+    GrB_MIN_FIRST_SEMIRING_INT64,
+    GrB_MIN_FIRST_SEMIRING_UINT8,
+    GrB_MIN_FIRST_SEMIRING_UINT16,
+    GrB_MIN_FIRST_SEMIRING_UINT32,
+    GrB_MIN_FIRST_SEMIRING_UINT64,
+    GrB_MIN_FIRST_SEMIRING_FP32,
+    GrB_MIN_FIRST_SEMIRING_FP64,
 
     // MIN_SECOND semirings for all 10 real, non-boolean types:
-    GrB_MIN_SECOND_SEMIRING_INT8,       // GxB_MIN_SECOND_INT8
-    GrB_MIN_SECOND_SEMIRING_INT16,      // GxB_MIN_SECOND_INT16
-    GrB_MIN_SECOND_SEMIRING_INT32,      // GxB_MIN_SECOND_INT32
-    GrB_MIN_SECOND_SEMIRING_INT64,      // GxB_MIN_SECOND_INT64
-    GrB_MIN_SECOND_SEMIRING_UINT8,      // GxB_MIN_SECOND_UINT8
-    GrB_MIN_SECOND_SEMIRING_UINT16,     // GxB_MIN_SECOND_UINT16
-    GrB_MIN_SECOND_SEMIRING_UINT32,     // GxB_MIN_SECOND_UINT32
-    GrB_MIN_SECOND_SEMIRING_UINT64,     // GxB_MIN_SECOND_UINT64
-    GrB_MIN_SECOND_SEMIRING_FP32,       // GxB_MIN_SECOND_FP32
-    GrB_MIN_SECOND_SEMIRING_FP64,       // GxB_MIN_SECOND_FP64
+    GrB_MIN_SECOND_SEMIRING_INT8,
+    GrB_MIN_SECOND_SEMIRING_INT16,
+    GrB_MIN_SECOND_SEMIRING_INT32,
+    GrB_MIN_SECOND_SEMIRING_INT64,
+    GrB_MIN_SECOND_SEMIRING_UINT8,
+    GrB_MIN_SECOND_SEMIRING_UINT16,
+    GrB_MIN_SECOND_SEMIRING_UINT32,
+    GrB_MIN_SECOND_SEMIRING_UINT64,
+    GrB_MIN_SECOND_SEMIRING_FP32,
+    GrB_MIN_SECOND_SEMIRING_FP64,
 
     // MIN_MAX semirings for all 10 real, non-boolean types:
-    GrB_MIN_MAX_SEMIRING_INT8,          // GxB_MIN_MAX_INT8
-    GrB_MIN_MAX_SEMIRING_INT16,         // GxB_MIN_MAX_INT16
-    GrB_MIN_MAX_SEMIRING_INT32,         // GxB_MIN_MAX_INT32
-    GrB_MIN_MAX_SEMIRING_INT64,         // GxB_MIN_MAX_INT64
-    GrB_MIN_MAX_SEMIRING_UINT8,         // GxB_MIN_MAX_UINT8
-    GrB_MIN_MAX_SEMIRING_UINT16,        // GxB_MIN_MAX_UINT16
-    GrB_MIN_MAX_SEMIRING_UINT32,        // GxB_MIN_MAX_UINT32
-    GrB_MIN_MAX_SEMIRING_UINT64,        // GxB_MIN_MAX_UINT64
-    GrB_MIN_MAX_SEMIRING_FP32,          // GxB_MIN_MAX_FP32
-    GrB_MIN_MAX_SEMIRING_FP64,          // GxB_MIN_MAX_FP64
+    GrB_MIN_MAX_SEMIRING_INT8,
+    GrB_MIN_MAX_SEMIRING_INT16,
+    GrB_MIN_MAX_SEMIRING_INT32,
+    GrB_MIN_MAX_SEMIRING_INT64,
+    GrB_MIN_MAX_SEMIRING_UINT8,
+    GrB_MIN_MAX_SEMIRING_UINT16,
+    GrB_MIN_MAX_SEMIRING_UINT32,
+    GrB_MIN_MAX_SEMIRING_UINT64,
+    GrB_MIN_MAX_SEMIRING_FP32,
+    GrB_MIN_MAX_SEMIRING_FP64,
 
     //--------------------------------------------------------------------------
     // 50 semirings with MAX monoids
     //--------------------------------------------------------------------------
 
     // MAX_PLUS semirings for all 10 real, non-boolean types
-    GrB_MAX_PLUS_SEMIRING_INT8,         // GxB_MAX_PLUS_INT8
-    GrB_MAX_PLUS_SEMIRING_INT16,        // GxB_MAX_PLUS_INT16
-    GrB_MAX_PLUS_SEMIRING_INT32,        // GxB_MAX_PLUS_INT32
-    GrB_MAX_PLUS_SEMIRING_INT64,        // GxB_MAX_PLUS_INT64
-    GrB_MAX_PLUS_SEMIRING_UINT8,        // GxB_MAX_PLUS_UINT8
-    GrB_MAX_PLUS_SEMIRING_UINT16,       // GxB_MAX_PLUS_UINT16
-    GrB_MAX_PLUS_SEMIRING_UINT32,       // GxB_MAX_PLUS_UINT32
-    GrB_MAX_PLUS_SEMIRING_UINT64,       // GxB_MAX_PLUS_UINT64
-    GrB_MAX_PLUS_SEMIRING_FP32,         // GxB_MAX_PLUS_FP32
-    GrB_MAX_PLUS_SEMIRING_FP64,         // GxB_MAX_PLUS_FP64
+    GrB_MAX_PLUS_SEMIRING_INT8,
+    GrB_MAX_PLUS_SEMIRING_INT16,
+    GrB_MAX_PLUS_SEMIRING_INT32,
+    GrB_MAX_PLUS_SEMIRING_INT64,
+    GrB_MAX_PLUS_SEMIRING_UINT8,
+    GrB_MAX_PLUS_SEMIRING_UINT16,
+    GrB_MAX_PLUS_SEMIRING_UINT32,
+    GrB_MAX_PLUS_SEMIRING_UINT64,
+    GrB_MAX_PLUS_SEMIRING_FP32,
+    GrB_MAX_PLUS_SEMIRING_FP64,
 
     // MAX_TIMES semirings for all 10 real, non-boolean types:
-    GrB_MAX_TIMES_SEMIRING_INT8,        // GxB_MAX_TIMES_INT8
-    GrB_MAX_TIMES_SEMIRING_INT16,       // GxB_MAX_TIMES_INT16
-    GrB_MAX_TIMES_SEMIRING_INT32,       // GxB_MAX_TIMES_INT32
-    GrB_MAX_TIMES_SEMIRING_INT64,       // GxB_MAX_TIMES_INT64
-    GrB_MAX_TIMES_SEMIRING_UINT8,       // GxB_MAX_TIMES_UINT8
-    GrB_MAX_TIMES_SEMIRING_UINT16,      // GxB_MAX_TIMES_UINT16
-    GrB_MAX_TIMES_SEMIRING_UINT32,      // GxB_MAX_TIMES_UINT32
-    GrB_MAX_TIMES_SEMIRING_UINT64,      // GxB_MAX_TIMES_UINT64
-    GrB_MAX_TIMES_SEMIRING_FP32,        // GxB_MAX_TIMES_FP32
-    GrB_MAX_TIMES_SEMIRING_FP64,        // GxB_MAX_TIMES_FP64
+    GrB_MAX_TIMES_SEMIRING_INT8,
+    GrB_MAX_TIMES_SEMIRING_INT16,
+    GrB_MAX_TIMES_SEMIRING_INT32,
+    GrB_MAX_TIMES_SEMIRING_INT64,
+    GrB_MAX_TIMES_SEMIRING_UINT8,
+    GrB_MAX_TIMES_SEMIRING_UINT16,
+    GrB_MAX_TIMES_SEMIRING_UINT32,
+    GrB_MAX_TIMES_SEMIRING_UINT64,
+    GrB_MAX_TIMES_SEMIRING_FP32,
+    GrB_MAX_TIMES_SEMIRING_FP64,
 
     // MAX_FIRST semirings for all 10 real, non-boolean types:
-    GrB_MAX_FIRST_SEMIRING_INT8,        // GxB_MAX_FIRST_INT8
-    GrB_MAX_FIRST_SEMIRING_INT16,       // GxB_MAX_FIRST_INT16
-    GrB_MAX_FIRST_SEMIRING_INT32,       // GxB_MAX_FIRST_INT32
-    GrB_MAX_FIRST_SEMIRING_INT64,       // GxB_MAX_FIRST_INT64
-    GrB_MAX_FIRST_SEMIRING_UINT8,       // GxB_MAX_FIRST_UINT8
-    GrB_MAX_FIRST_SEMIRING_UINT16,      // GxB_MAX_FIRST_UINT16
-    GrB_MAX_FIRST_SEMIRING_UINT32,      // GxB_MAX_FIRST_UINT32
-    GrB_MAX_FIRST_SEMIRING_UINT64,      // GxB_MAX_FIRST_UINT64
-    GrB_MAX_FIRST_SEMIRING_FP32,        // GxB_MAX_FIRST_FP32
-    GrB_MAX_FIRST_SEMIRING_FP64,        // GxB_MAX_FIRST_FP64
+    GrB_MAX_FIRST_SEMIRING_INT8,
+    GrB_MAX_FIRST_SEMIRING_INT16,
+    GrB_MAX_FIRST_SEMIRING_INT32,
+    GrB_MAX_FIRST_SEMIRING_INT64,
+    GrB_MAX_FIRST_SEMIRING_UINT8,
+    GrB_MAX_FIRST_SEMIRING_UINT16,
+    GrB_MAX_FIRST_SEMIRING_UINT32,
+    GrB_MAX_FIRST_SEMIRING_UINT64,
+    GrB_MAX_FIRST_SEMIRING_FP32,
+    GrB_MAX_FIRST_SEMIRING_FP64,
 
     // MAX_SECOND semirings for all 10 real, non-boolean types:
-    GrB_MAX_SECOND_SEMIRING_INT8,       // GxB_MAX_SECOND_INT8
-    GrB_MAX_SECOND_SEMIRING_INT16,      // GxB_MAX_SECOND_INT16
-    GrB_MAX_SECOND_SEMIRING_INT32,      // GxB_MAX_SECOND_INT32
-    GrB_MAX_SECOND_SEMIRING_INT64,      // GxB_MAX_SECOND_INT64
-    GrB_MAX_SECOND_SEMIRING_UINT8,      // GxB_MAX_SECOND_UINT8
-    GrB_MAX_SECOND_SEMIRING_UINT16,     // GxB_MAX_SECOND_UINT16
-    GrB_MAX_SECOND_SEMIRING_UINT32,     // GxB_MAX_SECOND_UINT32
-    GrB_MAX_SECOND_SEMIRING_UINT64,     // GxB_MAX_SECOND_UINT64
-    GrB_MAX_SECOND_SEMIRING_FP32,       // GxB_MAX_SECOND_FP32
-    GrB_MAX_SECOND_SEMIRING_FP64,       // GxB_MAX_SECOND_FP64
+    GrB_MAX_SECOND_SEMIRING_INT8,
+    GrB_MAX_SECOND_SEMIRING_INT16,
+    GrB_MAX_SECOND_SEMIRING_INT32,
+    GrB_MAX_SECOND_SEMIRING_INT64,
+    GrB_MAX_SECOND_SEMIRING_UINT8,
+    GrB_MAX_SECOND_SEMIRING_UINT16,
+    GrB_MAX_SECOND_SEMIRING_UINT32,
+    GrB_MAX_SECOND_SEMIRING_UINT64,
+    GrB_MAX_SECOND_SEMIRING_FP32,
+    GrB_MAX_SECOND_SEMIRING_FP64,
 
     // MAX_MIN semirings for all 10 real, non-boolean types:
-    GrB_MAX_MIN_SEMIRING_INT8,          // GxB_MAX_MIN_INT8
-    GrB_MAX_MIN_SEMIRING_INT16,         // GxB_MAX_MIN_INT16
-    GrB_MAX_MIN_SEMIRING_INT32,         // GxB_MAX_MIN_INT32
-    GrB_MAX_MIN_SEMIRING_INT64,         // GxB_MAX_MIN_INT64
-    GrB_MAX_MIN_SEMIRING_UINT8,         // GxB_MAX_MIN_UINT8
-    GrB_MAX_MIN_SEMIRING_UINT16,        // GxB_MAX_MIN_UINT16
-    GrB_MAX_MIN_SEMIRING_UINT32,        // GxB_MAX_MIN_UINT32
-    GrB_MAX_MIN_SEMIRING_UINT64,        // GxB_MAX_MIN_UINT64
-    GrB_MAX_MIN_SEMIRING_FP32,          // GxB_MAX_MIN_FP32
-    GrB_MAX_MIN_SEMIRING_FP64,          // GxB_MAX_MIN_FP64
+    GrB_MAX_MIN_SEMIRING_INT8,
+    GrB_MAX_MIN_SEMIRING_INT16,
+    GrB_MAX_MIN_SEMIRING_INT32,
+    GrB_MAX_MIN_SEMIRING_INT64,
+    GrB_MAX_MIN_SEMIRING_UINT8,
+    GrB_MAX_MIN_SEMIRING_UINT16,
+    GrB_MAX_MIN_SEMIRING_UINT32,
+    GrB_MAX_MIN_SEMIRING_UINT64,
+    GrB_MAX_MIN_SEMIRING_FP32,
+    GrB_MAX_MIN_SEMIRING_FP64,
 
     //--------------------------------------------------------------------------
     // 4 boolean semirings:
     //--------------------------------------------------------------------------
 
-    GrB_LOR_LAND_SEMIRING_BOOL,         // GxB_LOR_LAND_BOOL
-    GrB_LAND_LOR_SEMIRING_BOOL,         // GxB_LAND_LOR_BOOL
-    GrB_LXOR_LAND_SEMIRING_BOOL,        // GxB_LXOR_LAND_BOOL
-    GrB_LXNOR_LOR_SEMIRING_BOOL ;       // GxB_EQ_LOR_BOOL (note EQ == LXNOR)
+    GrB_LOR_LAND_SEMIRING_BOOL,
+    GrB_LAND_LOR_SEMIRING_BOOL,
+    GrB_LXOR_LAND_SEMIRING_BOOL,
+    GrB_LXNOR_LOR_SEMIRING_BOOL ;
 
 //==============================================================================
 // GxB_fprint and GxB_print: print the contents of a GraphBLAS object
@@ -2621,6 +2600,20 @@ typedef enum
     GrB_COO_FORMAT = 2      // triplet format (like input to GrB*build)
 }
 GrB_Format ;
+
+typedef enum
+{
+    GxB_BY_ROW = 0,         // matrix is held by row
+    GxB_BY_COL = 1,         // matrix is held by column
+    GxB_NO_FORMAT = -1      // row/column storage is not defined
+}
+GxB_Format_Value ;
+
+// The default format is by row.  These constants are defined as GB_GLOBAL
+// const, so that if SuiteSparse:GraphBLAS is recompiled with a different
+// default format, and the application is relinked but not recompiled, it will
+// acquire the new default values.
+GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 
 //==============================================================================
 // serialize/deserialize compression levels
@@ -2670,22 +2663,6 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 ) ;
 
 GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
-
-//==============================================================================
-// GrB_getVersion: GraphBLAS C API version
-//==============================================================================
-
-// GrB_getVersion provides a runtime access of the C API Version.  Can also be
-// done with two calls to GrB_Global_get_INT32 with the v2.1 C API:
-//
-//      GrB_get (GrB_GLOBAL, &version,    GrB_API_VER_MAJOR) ;
-//      GrB_get (GrB_GLOBAL, &subversion, GrB_API_VER_MINOR) ;
-
-GrB_Info GrB_getVersion         // runtime access to C API version number
-(
-    unsigned int *version,      // returns GRB_VERSION
-    unsigned int *subversion    // returns GRB_SUBVERSION
-) ;
 
 //==============================================================================
 // GrB_Descriptor: the GraphBLAS descriptor
@@ -5019,34 +4996,6 @@ GrB_Info GxB_Context_disengage      // disengage a Context
     GxB_Context Context             // Context to disengage
 ) ;
 
-#if GxB_STDC_VERSION >= 201112L
-#define GxB_set(arg1,...)                                       \
-    _Generic                                                    \
-    (                                                           \
-        (arg1),                                                 \
-            default:           GxB_Global_Option_set ,          \
-            GxB_Option_Field : GxB_Global_Option_set ,          \
-            GrB_Vector       : GxB_Vector_Option_set ,          \
-            GrB_Matrix       : GxB_Matrix_Option_set ,          \
-            GrB_Descriptor   : GxB_Desc_set          ,          \
-            GxB_Context      : GxB_Context_set                  \
-    )                                                           \
-    (arg1, __VA_ARGS__)
-
-#define GxB_get(arg1,...)                                       \
-    _Generic                                                    \
-    (                                                           \
-        (arg1),                                                 \
-            default:           GxB_Global_Option_get ,          \
-            GxB_Option_Field : GxB_Global_Option_get ,          \
-            GrB_Vector       : GxB_Vector_Option_get ,          \
-            GrB_Matrix       : GxB_Matrix_Option_get ,          \
-            GrB_Descriptor   : GxB_Desc_get          ,          \
-            GxB_Context      : GxB_Context_get                  \
-    )                                                           \
-    (arg1, __VA_ARGS__)
-#endif
-
 //==============================================================================
 // GrB_set and GrB_get
 //==============================================================================
@@ -5073,11 +5022,16 @@ GrB_Info GrB_Matrix_get_INT32  (GrB_Matrix, int32_t * , GrB_Field) ;
 GrB_Info GrB_Matrix_get_SIZE   (GrB_Matrix, size_t *  , GrB_Field) ;
 GrB_Info GrB_Matrix_get_VOID   (GrB_Matrix, void *    , GrB_Field) ;
 
-GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field,
+    size_t) ;
+GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field,
+    size_t) ;
+GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , GrB_Field,
+    size_t) ;
+GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field,
+    size_t) ;
+GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field,
+    size_t) ;
 
 GrB_Info GrB_UnaryOp_get_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
 GrB_Info GrB_UnaryOp_get_String (GrB_UnaryOp, char *    , GrB_Field) ;
@@ -5594,6 +5548,7 @@ GrB_Info GrB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
 GrB_Info GrB_Vector_error       (const char **error, const GrB_Vector     v) ;
 GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix     A) ;
 GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor d) ;
+GrB_Info GxB_Context_error      (const char **error, const GxB_Context    c) ;
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -9111,7 +9066,6 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
                   GrB_BinaryOp     : GxB_BinaryOp_fprint     ,  \
                   GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
                   GzB_IndexBinaryOp: GzB_IndexBinaryOp_fprint,  \
-                  GxB_SelectOp     : GxB_SelectOp_fprint     ,  \
                   GrB_Monoid       : GxB_Monoid_fprint       ,  \
                   GrB_Semiring     : GxB_Semiring_fprint     ,  \
                   GrB_Scalar       : GxB_Scalar_fprint       ,  \
@@ -9234,7 +9188,7 @@ GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
     //          GrB_Index Ap [nrows+1], Aj [nvals] ; <type> Ax [nvals] ;
     //
     //      The column indices of entries in the ith row of the matrix are held
-    //      in Aj [Ap [i] ... Ap[i+1]], and the corresponding values are held
+    //      in Aj [Ap [i] to Ap[i+1]-1], and the corresponding values are held
     //      in the same positions in Ax.  Column indices must be in the range 0
     //      to ncols-1.  If jumbled is false, the column indices must appear in
     //      sorted order within each row.  No duplicate column indices may
@@ -9269,7 +9223,7 @@ GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
     //          GrB_Index Ap [ncols+1], Ai [nvals] ; <type> Ax [nvals] ;
     //
     //      The row indices of entries in the jth column of the matrix are held
-    //      in Ai [Ap [j] ... Ap[j+1]], and the corresponding values are held
+    //      in Ai [Ap [j] to Ap[j+1]-1], and the corresponding values are held
     //      in the same positions in Ax.  Row indices must be in the range 0 to
     //      nrows-1.  If jumbled is false, the row indices must appear in
     //      sorted order within each column.  No duplicate row indices may
@@ -9315,7 +9269,7 @@ GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
     //      the matrix.  It
     //      must appear in sorted order, and no duplicates may appear.  If i =
     //      Ah [k] is the kth row, then the column indices of the ith
-    //      row appear in Aj [Ap [k] ... Ap [k+1]], and the corresponding
+    //      row appear in Aj [Ap [k] to Ap [k+1]-1], and the corresponding
     //      values appear in the same locations in Ax.  Column indices must be
     //      in the range 0 to ncols-1, and must appear in sorted order within
     //      each row.  No duplicate column indices may appear in any row.  nvec
@@ -9360,7 +9314,7 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
     //      The Ah array is a list of the column indices of non-empty columns.
     //      It must appear in sorted order, and no duplicates may appear.  If j
     //      = Ah [k] is the kth non-empty column, then the row indices of the
-    //      jth column appear in Ai [Ap [k] ... Ap [k+1]], and the
+    //      jth column appear in Ai [Ap [k] to Ap [k+1]-1], and the
     //      corresponding values appear in the same locations in Ax.  Row
     //      indices must be in the range 0 to nrows-1, and must appear in
     //      sorted order within each column.  No duplicate row indices may
@@ -9722,10 +9676,9 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 //          &iso, &nvec, &jumbled, descriptor) ;
 //
 //      // use the unpacked contents of A here, but do not change Ah or nvec.
-//      ...
 //
 //      // to pack the data back into A:
-//      GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y
+//      GxB_Matrix_pack_HyperCSC (A, etc) ;     // pack most of A, except A->Y
 //      GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y
 
 // The same process is used with GxB_Matrix_unpack_HyperCSR.
@@ -10545,7 +10498,7 @@ outer loop), and one entry at a time within the row (in the inner loop):
     GxB_Iterator_new (&iterator) ;
     // attach it to the matrix A, known to be type GrB_FP64
     GrB_Info info = GxB_rowIterator_attach (iterator, A, NULL) ;
-    if (info < 0) { handle the failure ... }
+    if (info < 0) { handle the failure }
     // seek to A(0,:)
     info = GxB_rowIterator_seekRow (iterator, 0) ;
     while (info != GxB_EXHAUSTED)
@@ -10579,7 +10532,7 @@ parallel iteration using 4 threads (work may be imbalanced however):
         GxB_Iterator iterator ;
         GxB_Iterator_new (&iterator) ;
         GrB_Info info = GxB_rowIterator_attach (iterator, A, NULL) ;
-        if (info < 0) { handle the failure ... }
+        if (info < 0) { handle the failure }
         // seek to A(row1,:)
         info = GxB_rowIterator_seekRow (iterator, row1) ;
         while (info != GxB_EXHAUSTED)
@@ -10615,9 +10568,9 @@ parallel iteration using 4 threads (work may be imbalanced however):
 
 // The contents of an iterator must not be directly accessed by the user
 // application.  Only the functions and macros provided here may access
-// "iterator->..." contents.  The iterator is defined here only so that macros
+// "iterator->" contents.  The iterator is defined here only so that macros
 // can be used to speed up the use of the iterator methods.  User applications
-// must not use "iterator->..." directly.
+// must not use "iterator->" directly.
 
 struct GB_Iterator_opaque
 {
@@ -11100,7 +11053,7 @@ GrB_Index GxB_colIterator_getRowIndex (GxB_Iterator iterator) ;
     GxB_Iterator_new (&iterator) ;
     // attach it to the matrix A, known to be type GrB_FP64
     GrB_Info info = GxB_Matrix_Iterator_attach (iterator, A, NULL) ;
-    if (info < 0) { handle the failure ... }
+    if (info < 0) { handle the failure }
     // seek to the first entry
     info = GxB_Matrix_Iterator_seek (iterator, 0) ;
     while (info != GxB_EXHAUSTED)
@@ -11231,7 +11184,7 @@ single thread iteration of a whole vector, one entry at at time
     GxB_Iterator_new (&iterator) ;
     // attach it to the vector v, known to be type GrB_FP64
     GrB_Info info = GxB_Vector_Iterator_attach (iterator, v, NULL) ;
-    if (info < 0) { handle the failure ... }
+    if (info < 0) { handle the failure }
     // seek to the first entry
     info = GxB_Vector_Iterator_seek (iterator, 0) ;
     while (info != GxB_EXHAUSTED)
@@ -11499,27 +11452,42 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 
 // When a GxB_* function or symbol is added to the C API Specification, the new
 // GrB_* name should be used instead.  The old GxB_* name will be kept in
-// working order for historical reasons; it might no longer be mentioned in the
-// user guide.  Historical functions and symbols listed below would only be
-// removed in the rare case that they cause a serious conflict with future
-// methods.
+// working order for historical backward compatibility; it might no longer be
+// mentioned in the user guide.  Historical functions and symbols listed below
+// would only be removed in the rare case that they cause a serious conflict
+// with future methods.  Replacements for these historical objects and
+// functions are listed below.  If tagged "as-is" then only the name is
+// changed.  Otherwise, refer to the older SuiteSparse:GraphBLAS user guides on
+// the usage of these historical methods, and upgrade to the newer methods
+// present in this version of GraphBLAS.
 
+// GrB_getVersion: use GrB_get instead
+GrB_Info GrB_getVersion (unsigned int *, unsigned int *) ;
+
+// GxB_INDEX_MAX: use GrB_INDEX_MAX+1 instead
 #define GxB_INDEX_MAX ((GrB_Index) (1ULL << 60))
 
+// GxB_ABS_*: use GrB_ABS_* instead (as-is)
 GB_GLOBAL GrB_UnaryOp
     GxB_ABS_BOOL,  GxB_ABS_INT8,   GxB_ABS_INT16,  GxB_ABS_INT32, GxB_ABS_INT64,
     GxB_ABS_UINT8, GxB_ABS_UINT16, GxB_ABS_UINT32, GxB_ABS_UINT64, GxB_ABS_FP32,
     GxB_ABS_FP64 ;
 
+// GxB_SelectOp: use GrB_IndexUnaryOp instead
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
-
 GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
     GxB_EQ_ZERO, GxB_GT_ZERO, GxB_GE_ZERO, GxB_LT_ZERO, GxB_LE_ZERO,
     GxB_NE_THUNK, GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK,
     GxB_LE_THUNK ;
+GrB_Info GxB_SelectOp_xtype (GrB_Type *, GxB_SelectOp) ;
+GrB_Info GxB_SelectOp_ttype (GrB_Type *, GxB_SelectOp) ;
+GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
+    GxB_Print_Level pr, FILE *f) ;
 
+// GxB_Scalar: use GrB_Scalar instead (as-is)
 typedef struct GB_Scalar_opaque *GxB_Scalar ;
 
+// GxB_* monoids: GrB_* monoids instead (as-is)
 GB_GLOBAL GrB_Monoid
     GxB_MIN_INT8_MONOID,     GxB_MIN_INT16_MONOID,    GxB_MIN_INT32_MONOID,
     GxB_MIN_INT64_MONOID,    GxB_MIN_UINT8_MONOID,    GxB_MIN_UINT16_MONOID,
@@ -11537,6 +11505,57 @@ GB_GLOBAL GrB_Monoid
     GxB_TIMES_FP64_MONOID,   GxB_LOR_BOOL_MONOID,     GxB_LAND_BOOL_MONOID,
     GxB_LXOR_BOOL_MONOID,    GxB_LXNOR_BOOL_MONOID,   GxB_EQ_BOOL_MONOID ;
 
+// GxB_* semirings: use the GrB_* semirings instead (as-is)
+GB_GLOBAL GrB_Semiring
+
+    GxB_PLUS_TIMES_INT8,   GxB_PLUS_MIN_INT8,     GxB_MIN_PLUS_INT8,
+    GxB_PLUS_TIMES_INT16,  GxB_PLUS_MIN_INT16,    GxB_MIN_PLUS_INT16,
+    GxB_PLUS_TIMES_INT32,  GxB_PLUS_MIN_INT32,    GxB_MIN_PLUS_INT32,
+    GxB_PLUS_TIMES_INT64,  GxB_PLUS_MIN_INT64,    GxB_MIN_PLUS_INT64,
+    GxB_PLUS_TIMES_UINT8,  GxB_PLUS_MIN_UINT8,    GxB_MIN_PLUS_UINT8,
+    GxB_PLUS_TIMES_UINT16, GxB_PLUS_MIN_UINT16,   GxB_MIN_PLUS_UINT16,
+    GxB_PLUS_TIMES_UINT32, GxB_PLUS_MIN_UINT32,   GxB_MIN_PLUS_UINT32,
+    GxB_PLUS_TIMES_UINT64, GxB_PLUS_MIN_UINT64,   GxB_MIN_PLUS_UINT64,
+    GxB_PLUS_TIMES_FP32,   GxB_PLUS_MIN_FP32,     GxB_MIN_PLUS_FP32,
+    GxB_PLUS_TIMES_FP64,   GxB_PLUS_MIN_FP64,     GxB_MIN_PLUS_FP64,
+
+    GxB_MIN_TIMES_INT8,    GxB_MIN_FIRST_INT8,    GxB_MIN_SECOND_INT8,
+    GxB_MIN_TIMES_INT16,   GxB_MIN_FIRST_INT16,   GxB_MIN_SECOND_INT16,
+    GxB_MIN_TIMES_INT32,   GxB_MIN_FIRST_INT32,   GxB_MIN_SECOND_INT32,
+    GxB_MIN_TIMES_INT64,   GxB_MIN_FIRST_INT64,   GxB_MIN_SECOND_INT64,
+    GxB_MIN_TIMES_UINT8,   GxB_MIN_FIRST_UINT8,   GxB_MIN_SECOND_UINT8,
+    GxB_MIN_TIMES_UINT16,  GxB_MIN_FIRST_UINT16,  GxB_MIN_SECOND_UINT16,
+    GxB_MIN_TIMES_UINT32,  GxB_MIN_FIRST_UINT32,  GxB_MIN_SECOND_UINT32,
+    GxB_MIN_TIMES_UINT64,  GxB_MIN_FIRST_UINT64,  GxB_MIN_SECOND_UINT64,
+    GxB_MIN_TIMES_FP32,    GxB_MIN_FIRST_FP32,    GxB_MIN_SECOND_FP32,
+    GxB_MIN_TIMES_FP64,    GxB_MIN_FIRST_FP64,    GxB_MIN_SECOND_FP64,
+
+    GxB_MIN_MAX_INT8,      GxB_MAX_PLUS_INT8,     GxB_MAX_TIMES_INT8,
+    GxB_MIN_MAX_INT16,     GxB_MAX_PLUS_INT16,    GxB_MAX_TIMES_INT16,
+    GxB_MIN_MAX_INT32,     GxB_MAX_PLUS_INT32,    GxB_MAX_TIMES_INT32,
+    GxB_MIN_MAX_INT64,     GxB_MAX_PLUS_INT64,    GxB_MAX_TIMES_INT64,
+    GxB_MIN_MAX_UINT8,     GxB_MAX_PLUS_UINT8,    GxB_MAX_TIMES_UINT8,
+    GxB_MIN_MAX_UINT16,    GxB_MAX_PLUS_UINT16,   GxB_MAX_TIMES_UINT16,
+    GxB_MIN_MAX_UINT32,    GxB_MAX_PLUS_UINT32,   GxB_MAX_TIMES_UINT32,
+    GxB_MIN_MAX_UINT64,    GxB_MAX_PLUS_UINT64,   GxB_MAX_TIMES_UINT64,
+    GxB_MIN_MAX_FP32,      GxB_MAX_PLUS_FP32,     GxB_MAX_TIMES_FP32,
+    GxB_MIN_MAX_FP64,      GxB_MAX_PLUS_FP64,     GxB_MAX_TIMES_FP64,
+
+    GxB_MAX_FIRST_INT8,    GxB_MAX_SECOND_INT8,   GxB_MAX_MIN_INT8,
+    GxB_MAX_FIRST_INT16,   GxB_MAX_SECOND_INT16,  GxB_MAX_MIN_INT16,
+    GxB_MAX_FIRST_INT32,   GxB_MAX_SECOND_INT32,  GxB_MAX_MIN_INT32,
+    GxB_MAX_FIRST_INT64,   GxB_MAX_SECOND_INT64,  GxB_MAX_MIN_INT64,
+    GxB_MAX_FIRST_UINT8,   GxB_MAX_SECOND_UINT8,  GxB_MAX_MIN_UINT8,
+    GxB_MAX_FIRST_UINT16,  GxB_MAX_SECOND_UINT16, GxB_MAX_MIN_UINT16,
+    GxB_MAX_FIRST_UINT32,  GxB_MAX_SECOND_UINT32, GxB_MAX_MIN_UINT32,
+    GxB_MAX_FIRST_UINT64,  GxB_MAX_SECOND_UINT64, GxB_MAX_MIN_UINT64,
+    GxB_MAX_FIRST_FP32,    GxB_MAX_SECOND_FP32,   GxB_MAX_MIN_FP32,
+    GxB_MAX_FIRST_FP64,    GxB_MAX_SECOND_FP64,   GxB_MAX_MIN_FP64,
+
+    GxB_LOR_LAND_BOOL,     GxB_LAND_LOR_BOOL,     GxB_LXOR_LAND_BOOL,
+    GxB_EQ_LOR_BOOL ; // use GrB_LXNOR_LOR_SEMIRING_BOOL instead (as-is)
+
+// GxB_Desc*get/set and GrB_Descriptor_set: use GrB_get/set instead.
 GrB_Info GrB_Descriptor_set (GrB_Descriptor, GrB_Desc_Field, GrB_Desc_Value) ;
 GrB_Info GxB_Descriptor_get (GrB_Desc_Value *, GrB_Descriptor, GrB_Desc_Field) ;
 GrB_Info GxB_Desc_set       (GrB_Descriptor, GrB_Desc_Field, ...) ;
@@ -11546,14 +11565,17 @@ GrB_Info GxB_Desc_get       (GrB_Descriptor, GrB_Desc_Field, ...) ;
 GrB_Info GxB_Desc_get_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t *) ;
 GrB_Info GxB_Desc_get_FP64  (GrB_Descriptor, GrB_Desc_Field, double *) ;
 
+// GxB_Type_* queries: use GrB_get instead
 GrB_Info GxB_Type_name (char *, const GrB_Type) ;
 GrB_Info GxB_Type_size (size_t *, const GrB_Type) ;
 
+// GxB_UnaryOp_* queries: use GrB_get_instead
 GrB_Info GxB_UnaryOp_ztype (GrB_Type *, GrB_UnaryOp) ;
 GrB_Info GxB_UnaryOp_ztype_name (char *, const GrB_UnaryOp) ;
 GrB_Info GxB_UnaryOp_xtype (GrB_Type *, GrB_UnaryOp) ;
 GrB_Info GxB_UnaryOp_xtype_name (char *, const GrB_UnaryOp) ;
 
+// GxB_BinaryOp_* queries: use GrB_get_instead
 GrB_Info GxB_BinaryOp_ztype (GrB_Type *, GrB_BinaryOp) ;
 GrB_Info GxB_BinaryOp_ztype_name (char *, const GrB_BinaryOp) ;
 GrB_Info GxB_BinaryOp_xtype (GrB_Type *, GrB_BinaryOp) ;
@@ -11561,29 +11583,30 @@ GrB_Info GxB_BinaryOp_xtype_name (char *, const GrB_BinaryOp) ;
 GrB_Info GxB_BinaryOp_ytype (GrB_Type *, GrB_BinaryOp) ;
 GrB_Info GxB_BinaryOp_ytype_name (char *, const GrB_BinaryOp) ;
 
-GrB_Info GxB_SelectOp_xtype (GrB_Type *, GxB_SelectOp) ;
-GrB_Info GxB_SelectOp_ttype (GrB_Type *, GxB_SelectOp) ;
-
+// GxB_IndexUnaryOp_* queries: use GrB_get instead
 GrB_Info GxB_IndexUnaryOp_ztype_name (char *, const GrB_IndexUnaryOp) ;
 GrB_Info GxB_IndexUnaryOp_xtype_name (char *, const GrB_IndexUnaryOp) ;
 GrB_Info GxB_IndexUnaryOp_ytype_name (char *, const GrB_IndexUnaryOp) ;
 
+// GxB_Monoid_* queries: use GrB_get instead
 GrB_Info GxB_Monoid_operator (GrB_BinaryOp *, GrB_Monoid) ;
 GrB_Info GxB_Monoid_identity (void *, GrB_Monoid) ;
 GrB_Info GxB_Monoid_terminal (bool *, void *, GrB_Monoid) ;
 
+// GxB_Semiring_* queries: use GrB_get instead
 GrB_Info GxB_Semiring_add (GrB_Monoid *, GrB_Semiring) ;
 GrB_Info GxB_Semiring_multiply (GrB_BinaryOp *, GrB_Semiring) ;
 
+// GxB_Scalar_* queries: use GrB_get instead
 GrB_Info GxB_Scalar_type (GrB_Type *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_type_name (char *, const GrB_Scalar) ;
 
+// GxB_Scalar_* methods: use GrB_Scalar_* instead (as-is)
 GrB_Info GxB_Scalar_new   (GrB_Scalar *, GrB_Type) ;
 GrB_Info GxB_Scalar_dup   (GrB_Scalar *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_clear (GrB_Scalar ) ;
 GrB_Info GxB_Scalar_nvals (GrB_Index *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_free  (GrB_Scalar *) ;
-
 GrB_Info GxB_Scalar_setElement_BOOL   (GrB_Scalar, bool) ;
 GrB_Info GxB_Scalar_setElement_INT8   (GrB_Scalar, int8_t) ;
 GrB_Info GxB_Scalar_setElement_INT16  (GrB_Scalar, int16_t) ;
@@ -11596,7 +11619,6 @@ GrB_Info GxB_Scalar_setElement_UINT64 (GrB_Scalar, uint64_t) ;
 GrB_Info GxB_Scalar_setElement_FP32   (GrB_Scalar, float) ;
 GrB_Info GxB_Scalar_setElement_FP64   (GrB_Scalar, double) ;
 GrB_Info GxB_Scalar_setElement_UDT    (GrB_Scalar, void *) ;
-
 GrB_Info GxB_Scalar_extractElement_BOOL   (bool     *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_extractElement_INT8   (int8_t   *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_extractElement_INT16  (int16_t  *, const GrB_Scalar) ;
@@ -11609,13 +11631,22 @@ GrB_Info GxB_Scalar_extractElement_UINT64 (uint64_t *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_extractElement_FP32   (float    *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_extractElement_FP64   (double   *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_extractElement_UDT    (void     *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_wait (GrB_Scalar *) ;
+GrB_Info GxB_Scalar_error (const char **, const GrB_Scalar) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GxB_Scalar_setElement(s,x) GrB_Scalar_setElement (s, x)
+#define GxB_Scalar_extractElement(x,s) GrB_Scalar_extractElement (x, s)
+#endif
 
+// GxB_Vector_* queries: use GrB_get instead
 GrB_Info GxB_Vector_type (GrB_Type *, const GrB_Vector) ;
 GrB_Info GxB_Vector_type_name (char *, const GrB_Vector) ;
 
+// GxB_Matrix_* queries: use GrB_get instead
 GrB_Info GxB_Matrix_type (GrB_Type *, const GrB_Matrix) ;
 GrB_Info GxB_Matrix_type_name (char *, const GrB_Matrix) ;
 
+// GxB_*_Option_set/get: use GrB_get/set instead
 GrB_Info GxB_Matrix_Option_set       (GrB_Matrix, GxB_Option_Field, ...) ;
 GrB_Info GxB_Matrix_Option_set_INT32 (GrB_Matrix, GxB_Option_Field, int32_t) ;
 GrB_Info GxB_Matrix_Option_set_FP64  (GrB_Matrix, GxB_Option_Field, double) ;
@@ -11648,11 +11679,35 @@ GrB_Info GxB_Context_get_INT32 (GxB_Context, GxB_Context_Field, int32_t *) ;
 GrB_Info GxB_Context_get_FP64  (GxB_Context, GxB_Context_Field, double *) ;
 GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
 
-GrB_Info GxB_Scalar_wait (GrB_Scalar *) ;
+// GxB_get/set: use GrB_get/set instead
+#if GxB_STDC_VERSION >= 201112L
+#define GxB_set(arg1,...)                                       \
+    _Generic                                                    \
+    (                                                           \
+        (arg1),                                                 \
+            default:           GxB_Global_Option_set ,          \
+            GxB_Option_Field : GxB_Global_Option_set ,          \
+            GrB_Vector       : GxB_Vector_Option_set ,          \
+            GrB_Matrix       : GxB_Matrix_Option_set ,          \
+            GrB_Descriptor   : GxB_Desc_set          ,          \
+            GxB_Context      : GxB_Context_set                  \
+    )                                                           \
+    (arg1, __VA_ARGS__)
+#define GxB_get(arg1,...)                                       \
+    _Generic                                                    \
+    (                                                           \
+        (arg1),                                                 \
+            default:           GxB_Global_Option_get ,          \
+            GxB_Option_Field : GxB_Global_Option_get ,          \
+            GrB_Vector       : GxB_Vector_Option_get ,          \
+            GrB_Matrix       : GxB_Matrix_Option_get ,          \
+            GrB_Descriptor   : GxB_Desc_get          ,          \
+            GxB_Context      : GxB_Context_get                  \
+    )                                                           \
+    (arg1, __VA_ARGS__)
+#endif
 
-GrB_Info GxB_Scalar_error       (const char **, const GrB_Scalar) ;
-GrB_Info GxB_Context_error      (const char **, const GxB_Context) ;
-
+// GxB_*_apply_BinaryOp*: GrB_*_apply_BinaryOp*_Scalar instead (as-is)
 GrB_Info GxB_Vector_apply_BinaryOp1st (GrB_Vector, const GrB_Vector,
     const GrB_BinaryOp, const GrB_BinaryOp, const GrB_Scalar, const GrB_Vector,
     const GrB_Descriptor) ;
@@ -11666,13 +11721,16 @@ GrB_Info GxB_Matrix_apply_BinaryOp2nd (GrB_Matrix, const GrB_Matrix,
     const GrB_BinaryOp, const GrB_BinaryOp, const GrB_Matrix, const GrB_Scalar,
     const GrB_Descriptor) ;
 
+// GxB_kron: use GrB_Matrix_kronecker_BinaryOp instead (as-is)
 GrB_Info GxB_kron (GrB_Matrix, const GrB_Matrix, const GrB_BinaryOp,
     const GrB_BinaryOp, const GrB_Matrix, const GrB_Matrix,
     const GrB_Descriptor) ;
 
+// GxB_*_resize: use GrB_*_resize instead (as-is)
 GrB_Info GxB_Matrix_resize (GrB_Matrix, GrB_Index, GrB_Index) ;
 GrB_Info GxB_Vector_resize (GrB_Vector, GrB_Index) ;
 
+// GxB_*_import/export_[FORMAT]: use GxB_*_pack/unpack_[FORMAT] instead
 GrB_Info GxB_Matrix_import_CSR (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
     GrB_Index **, GrB_Index **, void **, GrB_Index, GrB_Index, GrB_Index, bool,
     bool, const GrB_Descriptor) ;
@@ -11697,7 +11755,6 @@ GrB_Info GxB_Matrix_import_FullR (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
     void **, GrB_Index, bool, const GrB_Descriptor) ;
 GrB_Info GxB_Matrix_import_FullC (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
     void **, GrB_Index, bool, const GrB_Descriptor) ;
-
 GrB_Info GxB_Vector_import_CSC (GrB_Vector *, GrB_Type, GrB_Index, GrB_Index **,
     void **, GrB_Index, GrB_Index, bool, GrB_Index, bool,
     const GrB_Descriptor) ;
@@ -11705,7 +11762,6 @@ GrB_Info GxB_Vector_import_Bitmap (GrB_Vector *, GrB_Type, GrB_Index, int8_t **,
     void **, GrB_Index, GrB_Index, bool, GrB_Index, const GrB_Descriptor) ;
 GrB_Info GxB_Vector_import_Full (GrB_Vector *, GrB_Type, GrB_Index, void **,
     GrB_Index, bool, const GrB_Descriptor) ;
-
 GrB_Info GxB_Matrix_export_CSR (GrB_Matrix *, GrB_Type *, GrB_Index *,
     GrB_Index *, GrB_Index **, GrB_Index **, void **, GrB_Index *, GrB_Index *,
     GrB_Index *, bool *, bool *, const GrB_Descriptor) ;
@@ -11730,7 +11786,6 @@ GrB_Info GxB_Matrix_export_FullR (GrB_Matrix *, GrB_Type *, GrB_Index *,
     GrB_Index *, void **, GrB_Index *, bool *, const GrB_Descriptor) ;
 GrB_Info GxB_Matrix_export_FullC (GrB_Matrix *, GrB_Type *, GrB_Index *,
     GrB_Index *, void **, GrB_Index *, bool *, const GrB_Descriptor) ;
-
 GrB_Info GxB_Vector_export_CSC (GrB_Vector *, GrB_Type *, GrB_Index *,
     GrB_Index **, void **, GrB_Index *, GrB_Index *, bool *, GrB_Index *,
     bool *, const GrB_Descriptor) ;
@@ -11740,25 +11795,21 @@ GrB_Info GxB_Vector_export_Bitmap (GrB_Vector *, GrB_Type *, GrB_Index *,
 GrB_Info GxB_Vector_export_Full (GrB_Vector *, GrB_Type *, GrB_Index *,
     void **, GrB_Index *, bool *, const GrB_Descriptor) ;
 
+// GxB_select: use GrB_select instead
 GrB_Info GxB_Vector_select (GrB_Vector w, const GrB_Vector mask,
     const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Vector u,
     const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
 GrB_Info GxB_Matrix_select (GrB_Matrix C, const GrB_Matrix Mask,
     const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Matrix A,
     const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
-
-GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
-    GxB_Print_Level pr, FILE *f) ;
-
-GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
-
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_Scalar_setElement(s,x) GrB_Scalar_setElement (s, x)
-#define GxB_Scalar_extractElement(x,s) GrB_Scalar_extractElement (x, s)
-#define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic \
-((C), GrB_Vector:GxB_Vector_select , GrB_Matrix:GxB_Matrix_select ) \
-(C, Mask, accum, op, A, Thunk, desc)
+#define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic ((C),             \
+    GrB_Vector : GxB_Vector_select ,                                        \
+    GrB_Matrix : GxB_Matrix_select ) (C, Mask, accum, op, A, Thunk, desc)
 #endif
+
+// GxB_deserialize_* queries: use GrB_get instead
+GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
 
 #endif  // GB_CUDA_FOLDER
 #if defined ( __cplusplus )

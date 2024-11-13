@@ -8550,6 +8550,14 @@ control to \verb'GxB_JIT_LOAD' or \verb'GxB_JIT_ON', the setting is changed to
 \verb'GxB_JIT_RUN' instead.  This is not an error condition.  The resulting
 setting can be queried via \verb'GrB_get', if desired.
 
+If your copy of GraphBLAS has many PreJIT kernels compiled into it, or uses
+many run-time JIT kernels, turning of the JIT with \verb'GxB_JIT_OFF' can be
+costly.  This setting clears the entire JIT hash table.  Renabling the JIT and
+using it will require the JIT table to be repopulated, including a check of
+each PreJIT kernel the first time they are used.  If you wish to temporarily
+disable the JIT, consider switching the JIT control to \verb'GxB_JIT_PAUSE' and
+then back to \verb'GxB_JIT_RUN' to reenable the JIT.
+
 %----------------------------------------
 \subsubsection{JIT error handling}
 %----------------------------------------

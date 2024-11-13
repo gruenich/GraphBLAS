@@ -39,7 +39,7 @@ FUTURE plans for GraphBLAS:
     JIT: requires GxB_BinaryOp_new to give the string that defines the op.
     Allow use of
         GrB_BinaryOp_new (...)
-        GrB_set (op, GxB_DEFN, "string"
+        GrB_set (op, GxB_DEFN, "string")
     also for all ops
 
     candidates for kernel fusion:
@@ -52,7 +52,4 @@ FUTURE plans for GraphBLAS:
         * performance monitor, or revised burble, to detect generic cases
         * check if vectorization of GrB_mxm is effective when using clang
         * see how HNSW vector search could be implemented in GraphBLAS
-
-    vanilla mode: provide a way to compile GraphBLAS so it only provides GrB*
-        methods, not GxB, for testing LAGraph.
 

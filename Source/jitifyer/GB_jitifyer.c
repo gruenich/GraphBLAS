@@ -280,7 +280,7 @@ void GB_jitifyer_sanitize (char *string, size_t len)
 // GraphBLAS can continue without the JIT.
 
 GrB_Info GB_jitifyer_init (void)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // initialize the JIT control
@@ -539,8 +539,9 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("masker_phase2")) c = GB_JIT_KERNEL_MASKER_PHASE2 ;
 
         else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
-        else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
+        else if (IS ("subref_bitmap")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
 
+        else if (IS ("iso_expand"   )) c = GB_JIT_KERNEL_ISO_EXPAND ;
         else if (IS ("unjumble"     )) c = GB_JIT_KERNEL_UNJUMBLE ;
         else if (IS ("convert_b2s"  )) c = GB_JIT_KERNEL_CONVERT_B2S ;
         else if (IS ("kroner"       )) c = GB_JIT_KERNEL_KRONER ;
@@ -855,7 +856,7 @@ GxB_JIT_Control GB_jitifyer_get_control (void)
 //------------------------------------------------------------------------------
 
 void GB_jitifyer_set_control (int control)
-{
+{ 
     #pragma omp critical (GB_jitifyer_worker)
     {
         control = GB_IMAX (control, (int) GxB_JIT_OFF) ;
