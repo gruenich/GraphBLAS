@@ -239,10 +239,17 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT32) ;
 GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 
 //------------------------------------------------------------------------------
-// built-in index binary operators
+// built-in binary operators based on an internal index-binary op
 //------------------------------------------------------------------------------
 
-// helper macros to define index binary operators
+// This macro creates the FIRSTI, SECONDI, and related GrB_BinaryOps.  They
+// are built as if they came from a built-in index binary op, but the
+// corresponding GzB_IndexBinaryOp is not actually defined.  Instead, it is
+// entirely encapsulated inside these GrB_BinaryOps.  None of these ops use
+// their theta value; the offset of +1 for FIRSTI1 is built into the operator
+// itself as z=ix+1; it is not computed as z = (ix)+theta with theta = 1.
+
+// helper macros to define binary operators based on an index-binary op
 #define GXB_OP2_POS(op,name,theta)                                          \
     extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z,                         \
         const void *x, GrB_Index ix, GrB_Index jx,                          \
