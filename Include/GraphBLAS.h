@@ -30,13 +30,6 @@
 // with the name GxB_* are user-accessible in SuiteSparse:GraphBLAS but cannot
 // be guaranteed to appear in all GraphBLAS implementations.
 
-// Regarding "historical" functions and symbols:  when a GxB_* function or
-// symbol is added to the C API Specification, the new GrB_* name should be
-// used instead.  The old GxB_* name will be kept in working order for
-// historical reasons; it might no longer be mentioned in the user guide.
-// Historical functions and symbols would only be removed in the rare case that
-// they cause a serious conflict with future methods.
-
 #ifndef GRAPHBLAS_H
 #define GRAPHBLAS_H
 
@@ -338,11 +331,6 @@ typedef uint64_t GrB_Index ;
 // matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in SuiteSparse:GrB.
 #define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
 
-// GxB_INDEX_MAX is historical; use GrB_INDEX_MAX+1 instead.  It differs by one
-// from GrB_INDEX_MAX, since it defined the largest valid matrix or vector
-// dimension.
-#define GxB_INDEX_MAX ((GrB_Index) (1ULL << 60))
-
 //==============================================================================
 // GraphBLAS error and informational codes
 //==============================================================================
@@ -516,7 +504,7 @@ typedef enum
 {
     // for all GrB_Descriptor fields:
     GrB_DEFAULT = 0,    // default behavior of the method
-    GxB_DEFAULT = 0,    // historical; use GrB_DEFAULT instead
+    GxB_DEFAULT = 0,    // Historical; use GrB_DEFAULT instead
 
     // for GrB_OUTP only:
     GrB_REPLACE = 1,    // clear the output before assigning new values to it
@@ -687,22 +675,6 @@ GB_GLOBAL GrB_UnaryOp
     // suffix since z and x are only boolean.  This operator is identical to
     // GxB_LNOT_BOOL; it just has a different name.
     GrB_LNOT ;
-
-// GxB_ABS is now in the v1.3 spec, the following names are historical:
-GB_GLOBAL GrB_UnaryOp
-
-    // z = abs(x)
-    GxB_ABS_BOOL,
-    GxB_ABS_INT8,
-    GxB_ABS_INT16,
-    GxB_ABS_INT32,
-    GxB_ABS_INT64,
-    GxB_ABS_UINT8,
-    GxB_ABS_UINT16,
-    GxB_ABS_UINT32,
-    GxB_ABS_UINT64,
-    GxB_ABS_FP32,
-    GxB_ABS_FP64 ;
 
 //------------------------------------------------------------------------------
 // Unary operators for floating-point types only
@@ -1243,17 +1215,6 @@ typedef void (*GzB_index_binary_function) (void *,
     const void *) ;
 
 //==============================================================================
-// GxB_SelectOp: select operators (DEPRECATED: do not use)
-//==============================================================================
-
-// historical; use GrB_select and GrB_IndexUnaryOp instead:
-typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
-GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
-    GxB_EQ_ZERO, GxB_GT_ZERO, GxB_GE_ZERO, GxB_LT_ZERO, GxB_LE_ZERO,
-    GxB_NE_THUNK, GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK,
-    GxB_LE_THUNK ;
-
-//==============================================================================
 // GrB_IndexUnaryOp: a unary operator that depends on the row/col indices
 //==============================================================================
 
@@ -1376,7 +1337,6 @@ typedef struct GB_Semiring_opaque *GrB_Semiring ;
 // GrB_Scalar: a GraphBLAS scalar
 //==============================================================================
 
-typedef struct GB_Scalar_opaque *GxB_Scalar ;   // historical: use GrB_Scalar
 typedef struct GB_Scalar_opaque *GrB_Scalar ;   // use this instead
 
 //==============================================================================
@@ -1413,22 +1373,22 @@ typedef enum            // for global options or matrix options
     GxB_HYPER_HASH = 7048,      // hyper_hash control (global int64 value,
                                 // or bool per matrix)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
-    GxB_FORMAT = 7002,          // historical; use GrB_STORAGE_ORIENTATION_HINT
+    GxB_FORMAT = 7002,          // Historical; use GrB_STORAGE_ORIENTATION_HINT
 
     //------------------------------------------------------------
     // GrB_get for GrB_GLOBAL:
     //------------------------------------------------------------
 
-    GxB_MODE = 7003,                 // historical; use GrB_BLOCKING_MODE
-    GxB_LIBRARY_NAME = 7004,         // historical; use GrB_NAME
-    GxB_LIBRARY_VERSION = 7005,      // historical; use GrB_LIBRARY_VER_*
+    GxB_MODE = 7003,                 // Historical; use GrB_BLOCKING_MODE
+    GxB_LIBRARY_NAME = 7004,         // Historical; use GrB_NAME
+    GxB_LIBRARY_VERSION = 7005,      // Historical; use GrB_LIBRARY_VER_*
     GxB_LIBRARY_DATE = 7006,         // date of the library (char *)
     GxB_LIBRARY_ABOUT = 7007,        // about the library (char *)
     GxB_LIBRARY_URL = 7008,          // URL for the library (char *)
     GxB_LIBRARY_LICENSE = 7009,      // license of the library (char *)
     GxB_LIBRARY_COMPILE_DATE = 7010, // date library was compiled (char *)
     GxB_LIBRARY_COMPILE_TIME = 7011, // time library was compiled (char *)
-    GxB_API_VERSION = 7012,          // historical; use GrB_API_VER_*
+    GxB_API_VERSION = 7012,          // Historical; use GrB_API_VER_*
     GxB_API_DATE = 7013,             // date of the API (char *)
     GxB_API_ABOUT = 7014,            // about the API (char *)
     GxB_API_URL = 7015,              // URL for the API (char *)
@@ -1472,7 +1432,7 @@ typedef enum            // for global options or matrix options
     //------------------------------------------------------------
 
     GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
-    GxB_IS_HYPER = 7035,            // historical; use GxB_SPARSITY_STATUS
+    GxB_IS_HYPER = 7035,            // Historical; use GxB_SPARSITY_STATUS
 
     //------------------------------------------------------------
     // GrB_get/GrB_set for GrB_Matrix:
@@ -1493,7 +1453,6 @@ typedef enum
 }
 GxB_JIT_Control ;
 
-// GxB_FORMAT is historical, but it can be by row or by column:
 typedef enum
 {
     GxB_BY_ROW = 0,     // CSR: compressed sparse row format
@@ -1759,18 +1718,6 @@ GB_GLOBAL GrB_Monoid
     // 10 MIN monoids: (not for complex types)
     //--------------------------------------------------------------------------
 
-    // GxB_MIN monoids, historical, use GrB_MIN_MONOID_* instead:
-    GxB_MIN_INT8_MONOID,        // identity: INT8_MAX     terminal: INT8_MIN
-    GxB_MIN_INT16_MONOID,       // identity: INT16_MAX    terminal: INT16_MIN
-    GxB_MIN_INT32_MONOID,       // identity: INT32_MAX    terminal: INT32_MIN
-    GxB_MIN_INT64_MONOID,       // identity: INT64_MAX    terminal: INT32_MIN
-    GxB_MIN_UINT8_MONOID,       // identity: UINT8_MAX    terminal: 0
-    GxB_MIN_UINT16_MONOID,      // identity: UINT16_MAX   terminal: 0
-    GxB_MIN_UINT32_MONOID,      // identity: UINT32_MAX   terminal: 0
-    GxB_MIN_UINT64_MONOID,      // identity: UINT64_MAX   terminal: 0
-    GxB_MIN_FP32_MONOID,        // identity: INFINITY     terminal: -INFINITY
-    GxB_MIN_FP64_MONOID,        // identity: INFINITY     terminal: -INFINITY
-
     // preferred names from the v1.3 spec:
     GrB_MIN_MONOID_INT8,        // identity: INT8_MAX     terminal: INT8_MIN
     GrB_MIN_MONOID_INT16,       // identity: INT16_MAX    terminal: INT16_MIN
@@ -1787,18 +1734,6 @@ GB_GLOBAL GrB_Monoid
     // 10 MAX monoids:
     //--------------------------------------------------------------------------
 
-    // GxB_MAX monoids, historical, use GrB_MAX_MONOID_* instead:
-    GxB_MAX_INT8_MONOID,        // identity: INT8_MIN     terminal: INT8_MAX
-    GxB_MAX_INT16_MONOID,       // identity: INT16_MIN    terminal: INT16_MAX
-    GxB_MAX_INT32_MONOID,       // identity: INT32_MIN    terminal: INT32_MAX
-    GxB_MAX_INT64_MONOID,       // identity: INT64_MIN    terminal: INT64_MAX
-    GxB_MAX_UINT8_MONOID,       // identity: 0            terminal: UINT8_MAX
-    GxB_MAX_UINT16_MONOID,      // identity: 0            terminal: UINT16_MAX
-    GxB_MAX_UINT32_MONOID,      // identity: 0            terminal: UINT32_MAX
-    GxB_MAX_UINT64_MONOID,      // identity: 0            terminal: UINT64_MAX
-    GxB_MAX_FP32_MONOID,        // identity: -INFINITY    terminal: INFINITY
-    GxB_MAX_FP64_MONOID,        // identity: -INFINITY    terminal: INFINITY
-
     // preferred names from the v1.3 spec:
     GrB_MAX_MONOID_INT8,        // identity: INT8_MIN     terminal: INT8_MAX
     GrB_MAX_MONOID_INT16,       // identity: INT16_MIN    terminal: INT16_MAX
@@ -1814,18 +1749,6 @@ GB_GLOBAL GrB_Monoid
     //--------------------------------------------------------------------------
     // 12 PLUS monoids:
     //--------------------------------------------------------------------------
-
-    // GxB_PLUS monoids, historical, use GrB_PLUS_MONOID_* instead:
-    GxB_PLUS_INT8_MONOID,       // identity: 0
-    GxB_PLUS_INT16_MONOID,      // identity: 0
-    GxB_PLUS_INT32_MONOID,      // identity: 0
-    GxB_PLUS_INT64_MONOID,      // identity: 0
-    GxB_PLUS_UINT8_MONOID,      // identity: 0
-    GxB_PLUS_UINT16_MONOID,     // identity: 0
-    GxB_PLUS_UINT32_MONOID,     // identity: 0
-    GxB_PLUS_UINT64_MONOID,     // identity: 0
-    GxB_PLUS_FP32_MONOID,       // identity: 0
-    GxB_PLUS_FP64_MONOID,       // identity: 0
 
     // preferred names from the v1.3 spec:
     GrB_PLUS_MONOID_INT8,       // identity: 0
@@ -1846,18 +1769,6 @@ GB_GLOBAL GrB_Monoid
     //--------------------------------------------------------------------------
     // 12 TIMES monoids: identity value is 1, int* and uint* are terminal
     //--------------------------------------------------------------------------
-
-    // GxB_TIMES monoids, historical, use GrB_TIMES_MONOID_* instead:
-    GxB_TIMES_INT8_MONOID,      // identity: 1            terminal: 0
-    GxB_TIMES_INT16_MONOID,     // identity: 1            terminal: 0
-    GxB_TIMES_INT32_MONOID,     // identity: 1            terminal: 0
-    GxB_TIMES_INT64_MONOID,     // identity: 1            terminal: 0
-    GxB_TIMES_UINT8_MONOID,     // identity: 1            terminal: 0
-    GxB_TIMES_UINT16_MONOID,    // identity: 1            terminal: 0
-    GxB_TIMES_UINT32_MONOID,    // identity: 1            terminal: 0
-    GxB_TIMES_UINT64_MONOID,    // identity: 1            terminal: 0
-    GxB_TIMES_FP32_MONOID,      // identity: 1
-    GxB_TIMES_FP64_MONOID,      // identity: 1
 
     // preferred names from the v1.3 spec:
     GrB_TIMES_MONOID_INT8,      // identity: 1            terminal: 0
@@ -1896,13 +1807,6 @@ GB_GLOBAL GrB_Monoid
     //--------------------------------------------------------------------------
     // 4 Boolean monoids: (see also the GxB_ANY_BOOL_MONOID above)
     //--------------------------------------------------------------------------
-
-    // GxB_* boolean monoids, historical, use GrB_* instead:
-    GxB_LOR_BOOL_MONOID,        // identity: false        terminal: true
-    GxB_LAND_BOOL_MONOID,       // identity: true         terminal: false
-    GxB_LXOR_BOOL_MONOID,       // identity: false
-    GxB_LXNOR_BOOL_MONOID,      // identity: true
-    GxB_EQ_BOOL_MONOID,         // (another name for GrB_LXNOR_MONOID_BOOL)
 
     // preferred names from the v1.3 spec:
     GrB_LOR_MONOID_BOOL,        // identity: false        terminal: true
@@ -2521,7 +2425,7 @@ GB_GLOBAL GrB_Semiring
     // LOR_LAND, LAND_LOR, LXOR_LAND, LXNOR_LOR.
 
 // GxB_* semirings corresponding to the equivalent GrB_* semiring are
-// historical.
+// Historical.
 
 GB_GLOBAL GrB_Semiring
 
@@ -2792,16 +2696,6 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     GrB_Descriptor *descriptor  // handle of descriptor to create
 ) ;
 
-// historical methods; use GrB_set and GrB_get instead:
-GrB_Info GrB_Descriptor_set (GrB_Descriptor, GrB_Desc_Field, GrB_Desc_Value) ;
-GrB_Info GxB_Descriptor_get (GrB_Desc_Value *, GrB_Descriptor, GrB_Desc_Field) ;
-GrB_Info GxB_Desc_set       (GrB_Descriptor, GrB_Desc_Field, ...) ;
-GrB_Info GxB_Desc_set_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t) ;
-GrB_Info GxB_Desc_set_FP64  (GrB_Descriptor, GrB_Desc_Field, double) ;
-GrB_Info GxB_Desc_get       (GrB_Descriptor, GrB_Desc_Field, ...) ;
-GrB_Info GxB_Desc_get_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t *) ;
-GrB_Info GxB_Desc_get_FP64  (GrB_Descriptor, GrB_Desc_Field, double *) ;
-
 GrB_Info GrB_Descriptor_free    // free a descriptor
 (
     GrB_Descriptor *descriptor  // handle of descriptor to free
@@ -2904,10 +2798,6 @@ GrB_Info GxB_Type_new           // create a new named GraphBLAS type
     const char *type_defn       // typedef for the type (no max length)
 ) ;
 
-// historical; use GrB_get instead:
-GrB_Info GxB_Type_name (char *type_name, const GrB_Type type) ;
-GrB_Info GxB_Type_size (size_t *size, const GrB_Type type) ;
-
 GrB_Info GxB_Type_from_name     // return the built-in GrB_Type from a name
 (
     GrB_Type *type,             // built-in type, or NULL if user-defined.
@@ -2946,12 +2836,6 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     const char *unop_defn           // definition of the user function
 ) ;
 
-// historical; use GrB_get instead:
-GrB_Info GxB_UnaryOp_ztype (GrB_Type *ztype, GrB_UnaryOp unaryop) ;
-GrB_Info GxB_UnaryOp_ztype_name (char *type_name, const GrB_UnaryOp unaryop) ;
-GrB_Info GxB_UnaryOp_xtype (GrB_Type *xtype, GrB_UnaryOp unaryop) ;
-GrB_Info GxB_UnaryOp_xtype_name (char *type_name, const GrB_UnaryOp unaryop) ;
-
 GrB_Info GrB_UnaryOp_free           // free a user-created unary operator
 (
     GrB_UnaryOp *unaryop            // handle of unary operator to free
@@ -2982,14 +2866,6 @@ GrB_Info GxB_BinaryOp_new
     const char *binop_name,         // name of the user function
     const char *binop_defn          // definition of the user function
 ) ;
-
-// historical; use GrB_get instead:
-GrB_Info GxB_BinaryOp_ztype (GrB_Type *ztype, GrB_BinaryOp op) ;
-GrB_Info GxB_BinaryOp_ztype_name (char *type_name, const GrB_BinaryOp op) ;
-GrB_Info GxB_BinaryOp_xtype (GrB_Type *xtype, GrB_BinaryOp op) ;
-GrB_Info GxB_BinaryOp_xtype_name (char *type_name, const GrB_BinaryOp op) ;
-GrB_Info GxB_BinaryOp_ytype (GrB_Type *ytype, GrB_BinaryOp op) ;
-GrB_Info GxB_BinaryOp_ytype_name (char *type_name, const GrB_BinaryOp op) ;
 
 GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 (
@@ -3027,14 +2903,6 @@ GrB_Info GzB_BinaryOp_new_IndexOp
 ) ;
 
 //==============================================================================
-// GxB_SelectOp: select operators (DEPRECATED: do not use)
-//==============================================================================
-
-// historical; use GrB_select and GrB_IndexUnaryOp instead:
-GrB_Info GxB_SelectOp_xtype (GrB_Type *xtype, GxB_SelectOp selectop) ;
-GrB_Info GxB_SelectOp_ttype (GrB_Type *ttype, GxB_SelectOp selectop) ;
-
-//==============================================================================
 // GrB_IndexUnaryOp: a unary operator that depends on the row/col indices
 //==============================================================================
 
@@ -3059,11 +2927,6 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     const char *idxop_name,         // name of the user function
     const char *idxop_defn          // definition of the user function
 ) ;
-
-// historical; use GrB_get instead:
-GrB_Info GxB_IndexUnaryOp_ztype_name (char *, const GrB_IndexUnaryOp op) ;
-GrB_Info GxB_IndexUnaryOp_xtype_name (char *, const GrB_IndexUnaryOp op) ;
-GrB_Info GxB_IndexUnaryOp_ytype_name (char *, const GrB_IndexUnaryOp op) ;
 
 GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 (
@@ -3335,11 +3198,6 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
     (monoid, op, identity, terminal)
 #endif
 
-// historical; use GrB_get instead:
-GrB_Info GxB_Monoid_operator (GrB_BinaryOp *op, GrB_Monoid monoid) ;
-GrB_Info GxB_Monoid_identity (void *identity, GrB_Monoid monoid) ;
-GrB_Info GxB_Monoid_terminal (bool *, void *terminal, GrB_Monoid monoid) ;
-
 GrB_Info GrB_Monoid_free            // free a user-created monoid
 (
     GrB_Monoid *monoid              // handle of monoid to free
@@ -3358,10 +3216,6 @@ GrB_Info GrB_Semiring_new           // create a semiring
     GrB_Monoid add,                 // add monoid of the semiring
     GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;
-
-// historical; use GrB_get instead:
-GrB_Info GxB_Semiring_add (GrB_Monoid *add, GrB_Semiring semiring) ;
-GrB_Info GxB_Semiring_multiply (GrB_BinaryOp *multiply, GrB_Semiring semiring) ;
 
 GrB_Info GrB_Semiring_free          // free a user-created semiring
 (
@@ -3398,10 +3252,6 @@ GrB_Info GrB_Scalar_nvals   // get the number of entries in a GrB_Scalar
     const GrB_Scalar s      // GrB_Scalar to query
 ) ;
 
-// historical; use GrB_get instead:
-GrB_Info GxB_Scalar_type (GrB_Type *type, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_type_name (char *type_name, const GrB_Scalar s) ;
-
 GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 (
     size_t *size,           // # of bytes used by the scalar s
@@ -3412,13 +3262,6 @@ GrB_Info GrB_Scalar_free    // free a GrB_Scalar
 (
     GrB_Scalar *s           // handle of GrB_Scalar to free
 ) ;
-
-// historical names identical to GrB_Scalar_methods above:
-GrB_Info GxB_Scalar_new   (GrB_Scalar *s, GrB_Type type) ;
-GrB_Info GxB_Scalar_dup   (GrB_Scalar *s, const GrB_Scalar t) ;
-GrB_Info GxB_Scalar_clear (GrB_Scalar s) ;
-GrB_Info GxB_Scalar_nvals (GrB_Index *nvals, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_free  (GrB_Scalar *s) ;
 
 //------------------------------------------------------------------------------
 // GrB_Scalar_setElement
@@ -3511,20 +3354,6 @@ GrB_Info GrB_Scalar_setElement_UDT      // s = x
     void *x                             // user scalar to assign to s
 ) ;
 
-// historical names identical to GrB_Scalar_methods above:
-GrB_Info GxB_Scalar_setElement_BOOL   (GrB_Scalar s, bool     x) ;
-GrB_Info GxB_Scalar_setElement_INT8   (GrB_Scalar s, int8_t   x) ;
-GrB_Info GxB_Scalar_setElement_INT16  (GrB_Scalar s, int16_t  x) ;
-GrB_Info GxB_Scalar_setElement_INT32  (GrB_Scalar s, int32_t  x) ;
-GrB_Info GxB_Scalar_setElement_INT64  (GrB_Scalar s, int64_t  x) ;
-GrB_Info GxB_Scalar_setElement_UINT8  (GrB_Scalar s, uint8_t  x) ;
-GrB_Info GxB_Scalar_setElement_UINT16 (GrB_Scalar s, uint16_t x) ;
-GrB_Info GxB_Scalar_setElement_UINT32 (GrB_Scalar s, uint32_t x) ;
-GrB_Info GxB_Scalar_setElement_UINT64 (GrB_Scalar s, uint64_t x) ;
-GrB_Info GxB_Scalar_setElement_FP32   (GrB_Scalar s, float    x) ;
-GrB_Info GxB_Scalar_setElement_FP64   (GrB_Scalar s, double   x) ;
-GrB_Info GxB_Scalar_setElement_UDT    (GrB_Scalar s, void    *x) ;
-
 // Type-generic version:  x can be any supported C type or void * for a
 // user-defined type.
 
@@ -3544,9 +3373,6 @@ GrB_Info GrB_Scalar_setElement          // s = x
             GB_CASES (GrB, Scalar_setElement)       \
     )                                               \
     (s, x)
-
-// historical; use GrB_Scalar_setElement instead:
-#define GxB_Scalar_setElement(s,x) GrB_Scalar_setElement (s, x)
 #endif
 
 //------------------------------------------------------------------------------
@@ -3640,20 +3466,6 @@ GrB_Info GrB_Scalar_extractElement_UDT      // x = s
     const GrB_Scalar s              // GrB_Scalar to extract an entry from
 ) ;
 
-// historical names identical to GrB_Scalar_methods above:
-GrB_Info GxB_Scalar_extractElement_BOOL   (bool     *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_INT8   (int8_t   *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_INT16  (int16_t  *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_INT32  (int32_t  *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_INT64  (int64_t  *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_UINT8  (uint8_t  *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_UINT16 (uint16_t *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_UINT32 (uint32_t *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_UINT64 (uint64_t *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_FP32   (float    *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_FP64   (double   *x, const GrB_Scalar s) ;
-GrB_Info GxB_Scalar_extractElement_UDT    (void     *x, const GrB_Scalar s) ;
-
 // Type-generic version:  x can be a pointer to any supported C type or void *
 // for a user-defined type.
 
@@ -3675,9 +3487,6 @@ GrB_Info GrB_Scalar_extractElement  // x = s
             GB_PCASES (GrB, Scalar_extractElement)      \
     )                                                   \
     (x, s)
-
-// historical; use GrB_Scalar_extractElement instead:
-#define GxB_Scalar_extractElement(x,s) GrB_Scalar_extractElement (x, s)
 #endif
 
 //==============================================================================
@@ -3717,10 +3526,6 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     GrB_Index *nvals,       // vector has nvals entries
     const GrB_Vector v      // vector to query
 ) ;
-
-// historical; use GrB_get instead:
-GrB_Info GxB_Vector_type (GrB_Type *type, const GrB_Vector v) ;
-GrB_Info GxB_Vector_type_name (char *type_name, const GrB_Vector v) ;
 
 GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 (
@@ -4385,10 +4190,6 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     GrB_Index *nvals,       // matrix has nvals entries
     const GrB_Matrix A      // matrix to query
 ) ;
-
-// historical; use GrB_get instead:
-GrB_Info GxB_Matrix_type (GrB_Type *type, const GrB_Matrix A) ;
-GrB_Info GxB_Matrix_type_name (char *type_name, const GrB_Matrix A) ;
 
 GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 (
@@ -5218,43 +5019,6 @@ GrB_Info GxB_Context_disengage      // disengage a Context
     GxB_Context Context             // Context to disengage
 ) ;
 
-//==============================================================================
-// GxB_set and GxB_get: historical; use GrB_set and GrB_get instead
-//==============================================================================
-
-// historical: use GrB_set and GrB_get instead of these methods:
-GrB_Info GxB_Matrix_Option_set       (GrB_Matrix, GxB_Option_Field, ...) ;
-GrB_Info GxB_Matrix_Option_set_INT32 (GrB_Matrix, GxB_Option_Field, int32_t) ;
-GrB_Info GxB_Matrix_Option_set_FP64  (GrB_Matrix, GxB_Option_Field, double) ;
-GrB_Info GxB_Matrix_Option_get       (GrB_Matrix, GxB_Option_Field, ...) ;
-GrB_Info GxB_Matrix_Option_get_INT32 (GrB_Matrix, GxB_Option_Field, int32_t *) ;
-GrB_Info GxB_Matrix_Option_get_FP64  (GrB_Matrix, GxB_Option_Field, double *) ;
-GrB_Info GxB_Vector_Option_set       (GrB_Vector, GxB_Option_Field, ...) ;
-GrB_Info GxB_Vector_Option_set_INT32 (GrB_Vector, GxB_Option_Field, int32_t) ;
-GrB_Info GxB_Vector_Option_set_FP64  (GrB_Vector, GxB_Option_Field, double) ;
-GrB_Info GxB_Vector_Option_get       (GrB_Vector, GxB_Option_Field, ...) ;
-GrB_Info GxB_Vector_Option_get_INT32 (GrB_Vector, GxB_Option_Field, int32_t *) ;
-GrB_Info GxB_Vector_Option_get_FP64  (GrB_Vector, GxB_Option_Field, double *) ;
-GrB_Info GxB_Global_Option_set             (GxB_Option_Field, ...) ;
-GrB_Info GxB_Global_Option_set_INT32       (GxB_Option_Field, int32_t) ;
-GrB_Info GxB_Global_Option_set_FP64        (GxB_Option_Field, double) ;
-GrB_Info GxB_Global_Option_set_FP64_ARRAY  (GxB_Option_Field, double *) ;
-GrB_Info GxB_Global_Option_set_INT64_ARRAY (GxB_Option_Field, int64_t *) ;
-GrB_Info GxB_Global_Option_set_CHAR        (GxB_Option_Field, const char *) ;
-GrB_Info GxB_Global_Option_set_FUNCTION    (GxB_Option_Field, void *) ;
-GrB_Info GxB_Global_Option_get             (GxB_Option_Field, ...) ;
-GrB_Info GxB_Global_Option_get_INT32       (GxB_Option_Field, int32_t *) ;
-GrB_Info GxB_Global_Option_get_FP64        (GxB_Option_Field, double *) ;
-GrB_Info GxB_Global_Option_get_INT64       (GxB_Option_Field, int64_t *) ;
-GrB_Info GxB_Global_Option_get_CHAR        (GxB_Option_Field, const char **) ;
-GrB_Info GxB_Global_Option_get_FUNCTION    (GxB_Option_Field, void **) ;
-GrB_Info GxB_Context_set_INT32 (GxB_Context, GxB_Context_Field, int32_t) ;
-GrB_Info GxB_Context_set_FP64  (GxB_Context, GxB_Context_Field, double) ;
-GrB_Info GxB_Context_set       (GxB_Context, GxB_Context_Field, ...) ;
-GrB_Info GxB_Context_get_INT32 (GxB_Context, GxB_Context_Field, int32_t *) ;
-GrB_Info GxB_Context_get_FP64  (GxB_Context, GxB_Context_Field, double *) ;
-GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
-
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                       \
     _Generic                                                    \
@@ -5807,9 +5571,6 @@ GrB_Info GxB_Context_wait      (GxB_Context    Context , GrB_WaitMode waitmode);
     (object, waitmode)
 #endif
 
-// NOTE: GxB_Scalar_wait is historical; use GrB_Scalar_wait instead
-GrB_Info GxB_Scalar_wait (GrB_Scalar *s) ;
-
 //==============================================================================
 // GrB_error: error handling
 //==============================================================================
@@ -5833,10 +5594,6 @@ GrB_Info GrB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
 GrB_Info GrB_Vector_error       (const char **error, const GrB_Vector     v) ;
 GrB_Info GrB_Matrix_error       (const char **error, const GrB_Matrix     A) ;
 GrB_Info GrB_Descriptor_error   (const char **error, const GrB_Descriptor d) ;
-
-// GxB_Scalar_error is historical: use GrB_Scalar_error instead
-GrB_Info GxB_Scalar_error       (const char **error, const GrB_Scalar     s) ;
-GrB_Info GxB_Context_error      (const char **error, const GxB_Context Context);
 
 // GrB_error (error,object) polymorphic function:
 #if GxB_STDC_VERSION >= 201112L
@@ -7268,18 +7025,6 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_Scalar    // w<mask> = accum (w, op(x,u))
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
-// historical: identical to GrB_Vector_apply_BinaryOp1st_Scalar
-GrB_Info GxB_Vector_apply_BinaryOp1st           // w<mask> = accum (w, op(x,u))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp op,          // operator to apply to the entries
-    const GrB_Scalar x,             // first input:  scalar x
-    const GrB_Vector u,             // second input: vector u
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
 GrB_Info GrB_Vector_apply_BinaryOp1st_BOOL      // w<mask> = accum (w, op(x,u))
 (
     GrB_Vector w,                   // input/output vector for results
@@ -7442,18 +7187,6 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_UDT       // w<mask> = accum (w, op(x,u))
 // input to a scalar y, w<mask> = accum (w, op (u,y)).
 
 GrB_Info GrB_Vector_apply_BinaryOp2nd_Scalar    // w<mask> = accum (w, op(u,y))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp op,          // operator to apply to the entries
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Scalar y,             // second input: scalar y
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-// historical: identical to GrB_Vector_apply_BinaryOp2nd_Scalar
-GrB_Info GxB_Vector_apply_BinaryOp2nd           // w<mask> = accum (w, op(u,y))
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -7807,18 +7540,6 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
-// historical: identical to GrB_Matrix_apply_BinaryOp1st_Scalar
-GrB_Info GxB_Matrix_apply_BinaryOp1st           // C<M>=accum(C,op(x,A))
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp op,          // operator to apply to the entries
-    const GrB_Scalar x,             // first input:  scalar x
-    const GrB_Matrix A,             // second input: matrix A
-    const GrB_Descriptor desc       // descriptor for C, mask, and A
-) ;
-
 GrB_Info GrB_Matrix_apply_BinaryOp1st_BOOL      // C<M>=accum(C,op(x,A))
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -7981,18 +7702,6 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_UDT       // C<M>=accum(C,op(x,A))
 // to a scalar y, C<Mask> = accum (C, op (A,y)), or op(A',y).
 
 GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp op,          // operator to apply to the entries
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar y,             // second input: scalar y
-    const GrB_Descriptor desc       // descriptor for C, mask, and A
-) ;
-
-// historical: identical to GrB_Matrix_apply_BinaryOp2nd_Scalar
-GrB_Info GxB_Matrix_apply_BinaryOp2nd           // C<M>=accum(C,op(A,y))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
@@ -8769,22 +8478,6 @@ GrB_Info GrB_Matrix_select_UDT      // C<M>=accum(C,op(A))
 #endif
 
 //==============================================================================
-// GxB_select: matrix and vector selection (DEPRECATED: use GrB_select instead)
-//==============================================================================
-
-GrB_Info GxB_Vector_select (GrB_Vector w, const GrB_Vector mask,
-    const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Vector u,
-    const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
-GrB_Info GxB_Matrix_select (GrB_Matrix C, const GrB_Matrix Mask,
-    const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Matrix A,
-    const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
-#if GxB_STDC_VERSION >= 201112L
-#define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic \
-((C), GrB_Vector:GxB_Vector_select , GrB_Matrix:GxB_Matrix_select ) \
-(C, Mask, accum, op, A, Thunk, desc)
-#endif
-
-//==============================================================================
 // GrB_reduce: matrix and vector reduction
 //==============================================================================
 
@@ -9188,18 +8881,6 @@ GrB_Info GrB_transpose              // C<Mask> = accum (C, A')
 // GrB_kronecker:  Kronecker product
 //==============================================================================
 
-// GxB_kron is historical; use GrB_kronecker instead
-GrB_Info GxB_kron                   // C<Mask> = accum(C,kron(A,B)) (historical)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp op,          // defines '*' for T=kron(A,B)
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
-) ;
-
 GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -9265,25 +8946,9 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
     GrB_Index nrows_new         // new number of rows in vector
 ) ;
 
-// GxB_*_resize are identical to the GrB_*resize methods above
-GrB_Info GxB_Matrix_resize      // change the size of a matrix (historical)
-(
-    GrB_Matrix C,               // matrix to modify
-    GrB_Index nrows_new,        // new number of rows in matrix
-    GrB_Index ncols_new         // new number of columns in matrix
-) ;
-
-GrB_Info GxB_Vector_resize      // change the size of a vector (historical)
-(
-    GrB_Vector w,               // vector to modify
-    GrB_Index nrows_new         // new number of rows in vector
-) ;
-
 // GxB_resize is a generic function for resizing a matrix or vector:
-
 // GrB_Vector_resize (u,nrows_new)
 // GrB_Matrix_resize (A,nrows_new,ncols_new)
-
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_resize(arg1,...)                                \
     _Generic                                                \
@@ -9379,9 +9044,6 @@ GrB_Info GzB_IndexBinaryOp_fprint   // print and check a GzB_IndexBinaryOp
     GxB_Print_Level pr,             // print level
     FILE *f                         // file for output
 ) ;
-
-GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
-    GxB_Print_Level pr, FILE *f) ;
 
 GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
 (
@@ -9540,42 +9202,16 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 // GrB_Vector is already in this particular format, then the export takes O(1)
 // time and no memory copying is performed.
 
-// If the import is not successful, the GxB_Matrix_import_* functions return A
-// as NULL, GxB_Vector_import returns v as NULL, and the user input arrays are
-// neither modified nor freed.  They are still owned by the user application.
-
 // If the input data is untrusted, use the following descriptor setting for
-// GxB_Matrix_import* and GxB_Matrix_pack*.  The import/pack will be slower,
-// but secure.  GrB_Matrix_import uses the slow, secure method, since it has
-// no descriptor input.
+// GxB_Matrix_pack*.  The import/pack will be slower, but secure.
+// GrB_Matrix_import uses the slow, secure method, since it has no descriptor
+// input.
 //
 //      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
-
-// As of v5.2.0, GxB_*import* and GxB_*export* are declared historical.  Use
-// GxB_*pack* and GxB_*unpack* instead.  The GxB import/export will be kept
-// but only documented here, not in the User Guide.
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_pack_CSR: pack a CSR matrix
 //------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_import_CSR  // historical: use GxB_Matrix_pack_CSR
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    bool jumbled,       // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
 
 GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
 (
@@ -9612,24 +9248,6 @@ GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
 // GxB_Matrix_pack_CSC: pack a CSC matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Matrix_import_CSC  // historical: use GxB_Matrix_pack_CSC
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    bool jumbled,       // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
@@ -9664,27 +9282,6 @@ GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
 //------------------------------------------------------------------------------
 // GxB_Matrix_pack_HyperCSR: pack a hypersparse CSR matrix
 //------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_import_HyperCSR // historical: use GxB_Matrix_pack_HyperCSR
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of rows that appear in Ah
-    bool jumbled,       // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
 
 GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
 (
@@ -9730,27 +9327,6 @@ GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
 //------------------------------------------------------------------------------
 // GxB_Matrix_pack_HyperCSC: pack a hypersparse CSC matrix
 //------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_import_HyperCSC // historical: use GxB_Matrix_pack_HyperCSC
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // column indices, Ah_size >= nvec*sizeof(int64_t)
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of columns that appear in Ah
-    bool jumbled,       // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
 
 GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
 (
@@ -9798,22 +9374,6 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
 // GxB_Matrix_pack_BitmapR: pack a bitmap matrix, held by row
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Matrix_import_BitmapR // historical: use GxB_Matrix_pack_BitmapR
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
@@ -9840,22 +9400,6 @@ GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
 //------------------------------------------------------------------------------
 // GxB_Matrix_pack_BitmapC: pack a bitmap matrix, held by column
 //------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_import_BitmapC // historical: use GxB_Matrix_pack_BitmapC
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
 
 GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
 (
@@ -9884,19 +9428,6 @@ GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
 // GxB_Matrix_pack_FullR:  pack a full matrix, held by row
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Matrix_import_FullR // historical: use GxB_Matrix_pack_FullR
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
@@ -9918,19 +9449,6 @@ GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
 // GxB_Matrix_pack_FullC: pack a full matrix, held by column
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Matrix_import_FullC // historical: use GxB_Matrix_pack_FullC
-(
-    GrB_Matrix *A,      // handle of matrix to create
-    GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
@@ -9951,22 +9469,6 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
 //------------------------------------------------------------------------------
 // GxB_Vector_pack_CSC: import/pack a vector in CSC format
 //------------------------------------------------------------------------------
-
-GrB_Info GxB_Vector_import_CSC // historical: use GxB_Vector_pack_CSC
-(
-    GrB_Vector *v,      // handle of vector to create
-    GrB_Type type,      // type of vector to create
-    GrB_Index n,        // vector length
-    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
-    void **vx,          // values, vx_size >= nvals(v) * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vi_size,  // size of vi in bytes
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in vector
-    bool jumbled,       // if true, indices may be unsorted
-    const GrB_Descriptor desc
-) ;
 
 GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
 (
@@ -9990,21 +9492,6 @@ GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
 // GxB_Vector_pack_Bitmap: pack a vector in bitmap format
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Vector_import_Bitmap // historical: GxB_Vector_pack_Bitmap
-(
-    GrB_Vector *v,      // handle of vector to create
-    GrB_Type type,      // type of vector to create
-    GrB_Index n,        // vector length
-    int8_t **vb,        // bitmap, vb_size >= n
-    void **vx,          // values, vx_size >= n * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vb_size,  // size of vb in bytes
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
 (
     GrB_Vector v,       // vector to create (type and length unchanged)
@@ -10024,18 +9511,6 @@ GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
 //------------------------------------------------------------------------------
 // GxB_Vector_pack_Full: pack a vector in full format
 //------------------------------------------------------------------------------
-
-GrB_Info GxB_Vector_import_Full // historical: use GxB_Vector_pack_Full
-(
-    GrB_Vector *v,      // handle of vector to create
-    GrB_Type type,      // type of vector to create
-    GrB_Index n,        // vector length
-    void **vx,          // values, vx_size >= nvals(v) * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    const GrB_Descriptor desc
-) ;
 
 GrB_Info GxB_Vector_pack_Full // pack a full vector
 (
@@ -10067,7 +9542,7 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
 // On successful export, the input GrB_Matrix A is freed, and the output arrays
 // Ah, Ap, Ai, Aj, and/or Ax are returned to the user application as arrays
 // allocated by the ANSI C malloc function.  The four formats are the same as
-// the import formats for GxB_Matrix_import/pack.
+// the import formats for GxB_Matrix_pack.
 //
 // If jumbled is NULL on input, this indicates to GxB_*export/unpack* that the
 // exported/unpacked matrix cannot be returned in a jumbled format.  In this
@@ -10087,23 +9562,6 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
 // If the export/unpack is not successful, the export/unpack functions do not
 // modify matrix or vector and the user arrays are returned as NULL.
 
-GrB_Info GxB_Matrix_export_CSR  // historical: use GxB_Matrix_unpack_CSR
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Aj,     // column indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    bool *jumbled,      // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
@@ -10118,23 +9576,6 @@ GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Matrix_export_CSC  // historical: use GxB_Matrix_unpack_CSC
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ai,     // row indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
@@ -10146,26 +9587,6 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
     GrB_Index *Ax_size, // size of Ax in bytes
     bool *iso,          // if true, A is iso
     bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_export_HyperCSR //historical: use GxB_Matrix_unpack_HyperCSR
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Ah,     // row indices
-    GrB_Index **Aj,     // column indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of rows that appear in Ah
-    bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 ) ;
 
@@ -10186,26 +9607,6 @@ GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Matrix_export_HyperCSC //historical: use GxB_Matrix_unpack_HyperCSC
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ah,     // column indices
-    GrB_Index **Ai,     // row indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of columns that appear in Ah
-    bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
@@ -10223,39 +9624,9 @@ GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Matrix_export_BitmapR // historical: use GxB_Matrix_unpack_BitmapR
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
-    int8_t **Ab,        // bitmap
-    void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap
-    void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_export_BitmapC // historical: use GxB_Matrix_unpack_BitmapC
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
     int8_t **Ab,        // bitmap
     void **Ax,          // values
     GrB_Index *Ab_size, // size of Ab in bytes
@@ -10277,33 +9648,9 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Matrix_export_FullR // historical: use GxB_Matrix_unpack_FullR
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
-    void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_export_FullC // historical: use GxB_Matrix_unpack_FullC
-(
-    GrB_Matrix *A,      // handle of matrix to export and free
-    GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
     bool *iso,          // if true, A is iso
@@ -10316,21 +9663,6 @@ GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
     void **Ax,          // values
     GrB_Index *Ax_size, // size of Ax in bytes
     bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Vector_export_CSC // historical: use GxB_Vector_unpack_CSC
-(
-    GrB_Vector *v,      // handle of vector to export and free
-    GrB_Type *type,     // type of vector exported
-    GrB_Index *n,       // length of the vector
-    GrB_Index **vi,     // indices
-    void **vx,          // values
-    GrB_Index *vi_size, // size of vi in bytes
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    GrB_Index *nvals,   // # of entries in vector
-    bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
 ) ;
 
@@ -10347,20 +9679,6 @@ GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Vector_export_Bitmap // historical: use GxB_Vector_unpack_Bitmap
-(
-    GrB_Vector *v,      // handle of vector to export and free
-    GrB_Type *type,     // type of vector exported
-    GrB_Index *n,       // length of the vector
-    int8_t **vb,        // bitmap
-    void **vx,          // values
-    GrB_Index *vb_size, // size of vb in bytes
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    GrB_Index *nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
 GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
 (
     GrB_Vector v,       // vector to unpack (type and length unchanged)
@@ -10370,17 +9688,6 @@ GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
     GrB_Index *vx_size, // size of vx in bytes
     bool *iso,          // if true, v is iso
     GrB_Index *nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Vector_export_Full // historical: use GxB_Vector_unpack_Full
-(
-    GrB_Vector *v,      // handle of vector to export and free
-    GrB_Type *type,     // type of vector exported
-    GrB_Index *n,       // length of the vector
-    void **vx,          // values
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
     const GrB_Descriptor desc
 ) ;
 
@@ -10421,8 +9728,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 //      GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y
 //      GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y
 
-// The same process is used with GxB_Matrix_unpack_HyperCSR,
-// an the GxB_Matrix_export_Hyper* and GxB_Matrix_import_Hyper* methods.
+// The same process is used with GxB_Matrix_unpack_HyperCSR.
 
 // If A is not hypersparse on input to GxB_unpack_HyperHash, or if A is
 // hypersparse but does yet not have a hyper_hash, then Y is returned as NULL.
@@ -11131,9 +10437,6 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     GrB_Index blob_size,    // size of the blob
     const GrB_Descriptor desc       // to control # of threads used
 ) ;
-
-// historical; use GrB_get with GxB_JIT_C_NAME instead.
-GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
 
 //==============================================================================
 // GxB_Vector_sort and GxB_Matrix_sort: sort a matrix or vector
@@ -12190,9 +11493,277 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
         (iterator)->type_size)                                              \
 )
 
+//==============================================================================
+//=== Historical methods =======================================================
+//==============================================================================
+
+// When a GxB_* function or symbol is added to the C API Specification, the new
+// GrB_* name should be used instead.  The old GxB_* name will be kept in
+// working order for historical reasons; it might no longer be mentioned in the
+// user guide.  Historical functions and symbols listed below would only be
+// removed in the rare case that they cause a serious conflict with future
+// methods.
+
+#define GxB_INDEX_MAX ((GrB_Index) (1ULL << 60))
+
+GB_GLOBAL GrB_UnaryOp
+    GxB_ABS_BOOL,  GxB_ABS_INT8,   GxB_ABS_INT16,  GxB_ABS_INT32, GxB_ABS_INT64,
+    GxB_ABS_UINT8, GxB_ABS_UINT16, GxB_ABS_UINT32, GxB_ABS_UINT64, GxB_ABS_FP32,
+    GxB_ABS_FP64 ;
+
+typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
+
+GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
+    GxB_EQ_ZERO, GxB_GT_ZERO, GxB_GE_ZERO, GxB_LT_ZERO, GxB_LE_ZERO,
+    GxB_NE_THUNK, GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK,
+    GxB_LE_THUNK ;
+
+typedef struct GB_Scalar_opaque *GxB_Scalar ;
+
+GB_GLOBAL GrB_Monoid
+    GxB_MIN_INT8_MONOID,     GxB_MIN_INT16_MONOID,    GxB_MIN_INT32_MONOID,
+    GxB_MIN_INT64_MONOID,    GxB_MIN_UINT8_MONOID,    GxB_MIN_UINT16_MONOID,
+    GxB_MIN_UINT32_MONOID,   GxB_MIN_UINT64_MONOID,   GxB_MIN_FP32_MONOID,
+    GxB_MIN_FP64_MONOID,     GxB_MAX_INT8_MONOID,     GxB_MAX_INT16_MONOID,
+    GxB_MAX_INT32_MONOID,    GxB_MAX_INT64_MONOID,    GxB_MAX_UINT8_MONOID,
+    GxB_MAX_UINT16_MONOID,   GxB_MAX_UINT32_MONOID,   GxB_MAX_UINT64_MONOID,
+    GxB_MAX_FP32_MONOID,     GxB_MAX_FP64_MONOID,     GxB_PLUS_INT8_MONOID,
+    GxB_PLUS_INT16_MONOID,   GxB_PLUS_INT32_MONOID,   GxB_PLUS_INT64_MONOID,
+    GxB_PLUS_UINT8_MONOID,   GxB_PLUS_UINT16_MONOID,  GxB_PLUS_UINT32_MONOID,
+    GxB_PLUS_UINT64_MONOID,  GxB_PLUS_FP32_MONOID,    GxB_PLUS_FP64_MONOID,
+    GxB_TIMES_INT8_MONOID,   GxB_TIMES_INT16_MONOID,  GxB_TIMES_INT32_MONOID,
+    GxB_TIMES_INT64_MONOID,  GxB_TIMES_UINT8_MONOID,  GxB_TIMES_UINT16_MONOID,
+    GxB_TIMES_UINT32_MONOID, GxB_TIMES_UINT64_MONOID, GxB_TIMES_FP32_MONOID,
+    GxB_TIMES_FP64_MONOID,   GxB_LOR_BOOL_MONOID,     GxB_LAND_BOOL_MONOID,
+    GxB_LXOR_BOOL_MONOID,    GxB_LXNOR_BOOL_MONOID,   GxB_EQ_BOOL_MONOID ;
+
+GrB_Info GrB_Descriptor_set (GrB_Descriptor, GrB_Desc_Field, GrB_Desc_Value) ;
+GrB_Info GxB_Descriptor_get (GrB_Desc_Value *, GrB_Descriptor, GrB_Desc_Field) ;
+GrB_Info GxB_Desc_set       (GrB_Descriptor, GrB_Desc_Field, ...) ;
+GrB_Info GxB_Desc_set_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t) ;
+GrB_Info GxB_Desc_set_FP64  (GrB_Descriptor, GrB_Desc_Field, double) ;
+GrB_Info GxB_Desc_get       (GrB_Descriptor, GrB_Desc_Field, ...) ;
+GrB_Info GxB_Desc_get_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t *) ;
+GrB_Info GxB_Desc_get_FP64  (GrB_Descriptor, GrB_Desc_Field, double *) ;
+
+GrB_Info GxB_Type_name (char *, const GrB_Type) ;
+GrB_Info GxB_Type_size (size_t *, const GrB_Type) ;
+
+GrB_Info GxB_UnaryOp_ztype (GrB_Type *, GrB_UnaryOp) ;
+GrB_Info GxB_UnaryOp_ztype_name (char *, const GrB_UnaryOp) ;
+GrB_Info GxB_UnaryOp_xtype (GrB_Type *, GrB_UnaryOp) ;
+GrB_Info GxB_UnaryOp_xtype_name (char *, const GrB_UnaryOp) ;
+
+GrB_Info GxB_BinaryOp_ztype (GrB_Type *, GrB_BinaryOp) ;
+GrB_Info GxB_BinaryOp_ztype_name (char *, const GrB_BinaryOp) ;
+GrB_Info GxB_BinaryOp_xtype (GrB_Type *, GrB_BinaryOp) ;
+GrB_Info GxB_BinaryOp_xtype_name (char *, const GrB_BinaryOp) ;
+GrB_Info GxB_BinaryOp_ytype (GrB_Type *, GrB_BinaryOp) ;
+GrB_Info GxB_BinaryOp_ytype_name (char *, const GrB_BinaryOp) ;
+
+GrB_Info GxB_SelectOp_xtype (GrB_Type *, GxB_SelectOp) ;
+GrB_Info GxB_SelectOp_ttype (GrB_Type *, GxB_SelectOp) ;
+
+GrB_Info GxB_IndexUnaryOp_ztype_name (char *, const GrB_IndexUnaryOp) ;
+GrB_Info GxB_IndexUnaryOp_xtype_name (char *, const GrB_IndexUnaryOp) ;
+GrB_Info GxB_IndexUnaryOp_ytype_name (char *, const GrB_IndexUnaryOp) ;
+
+GrB_Info GxB_Monoid_operator (GrB_BinaryOp *, GrB_Monoid) ;
+GrB_Info GxB_Monoid_identity (void *, GrB_Monoid) ;
+GrB_Info GxB_Monoid_terminal (bool *, void *, GrB_Monoid) ;
+
+GrB_Info GxB_Semiring_add (GrB_Monoid *, GrB_Semiring) ;
+GrB_Info GxB_Semiring_multiply (GrB_BinaryOp *, GrB_Semiring) ;
+
+GrB_Info GxB_Scalar_type (GrB_Type *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_type_name (char *, const GrB_Scalar) ;
+
+GrB_Info GxB_Scalar_new   (GrB_Scalar *, GrB_Type) ;
+GrB_Info GxB_Scalar_dup   (GrB_Scalar *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_clear (GrB_Scalar ) ;
+GrB_Info GxB_Scalar_nvals (GrB_Index *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_free  (GrB_Scalar *) ;
+
+GrB_Info GxB_Scalar_setElement_BOOL   (GrB_Scalar, bool) ;
+GrB_Info GxB_Scalar_setElement_INT8   (GrB_Scalar, int8_t) ;
+GrB_Info GxB_Scalar_setElement_INT16  (GrB_Scalar, int16_t) ;
+GrB_Info GxB_Scalar_setElement_INT32  (GrB_Scalar, int32_t) ;
+GrB_Info GxB_Scalar_setElement_INT64  (GrB_Scalar, int64_t) ;
+GrB_Info GxB_Scalar_setElement_UINT8  (GrB_Scalar, uint8_t) ;
+GrB_Info GxB_Scalar_setElement_UINT16 (GrB_Scalar, uint16_t) ;
+GrB_Info GxB_Scalar_setElement_UINT32 (GrB_Scalar, uint32_t) ;
+GrB_Info GxB_Scalar_setElement_UINT64 (GrB_Scalar, uint64_t) ;
+GrB_Info GxB_Scalar_setElement_FP32   (GrB_Scalar, float) ;
+GrB_Info GxB_Scalar_setElement_FP64   (GrB_Scalar, double) ;
+GrB_Info GxB_Scalar_setElement_UDT    (GrB_Scalar, void *) ;
+
+GrB_Info GxB_Scalar_extractElement_BOOL   (bool     *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_INT8   (int8_t   *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_INT16  (int16_t  *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_INT32  (int32_t  *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_INT64  (int64_t  *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_UINT8  (uint8_t  *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_UINT16 (uint16_t *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_UINT32 (uint32_t *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_UINT64 (uint64_t *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_FP32   (float    *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_FP64   (double   *, const GrB_Scalar) ;
+GrB_Info GxB_Scalar_extractElement_UDT    (void     *, const GrB_Scalar) ;
+
+GrB_Info GxB_Vector_type (GrB_Type *, const GrB_Vector) ;
+GrB_Info GxB_Vector_type_name (char *, const GrB_Vector) ;
+
+GrB_Info GxB_Matrix_type (GrB_Type *, const GrB_Matrix) ;
+GrB_Info GxB_Matrix_type_name (char *, const GrB_Matrix) ;
+
+GrB_Info GxB_Matrix_Option_set       (GrB_Matrix, GxB_Option_Field, ...) ;
+GrB_Info GxB_Matrix_Option_set_INT32 (GrB_Matrix, GxB_Option_Field, int32_t) ;
+GrB_Info GxB_Matrix_Option_set_FP64  (GrB_Matrix, GxB_Option_Field, double) ;
+GrB_Info GxB_Matrix_Option_get       (GrB_Matrix, GxB_Option_Field, ...) ;
+GrB_Info GxB_Matrix_Option_get_INT32 (GrB_Matrix, GxB_Option_Field, int32_t *) ;
+GrB_Info GxB_Matrix_Option_get_FP64  (GrB_Matrix, GxB_Option_Field, double *) ;
+GrB_Info GxB_Vector_Option_set       (GrB_Vector, GxB_Option_Field, ...) ;
+GrB_Info GxB_Vector_Option_set_INT32 (GrB_Vector, GxB_Option_Field, int32_t) ;
+GrB_Info GxB_Vector_Option_set_FP64  (GrB_Vector, GxB_Option_Field, double) ;
+GrB_Info GxB_Vector_Option_get       (GrB_Vector, GxB_Option_Field, ...) ;
+GrB_Info GxB_Vector_Option_get_INT32 (GrB_Vector, GxB_Option_Field, int32_t *) ;
+GrB_Info GxB_Vector_Option_get_FP64  (GrB_Vector, GxB_Option_Field, double *) ;
+GrB_Info GxB_Global_Option_set             (GxB_Option_Field, ...) ;
+GrB_Info GxB_Global_Option_set_INT32       (GxB_Option_Field, int32_t) ;
+GrB_Info GxB_Global_Option_set_FP64        (GxB_Option_Field, double) ;
+GrB_Info GxB_Global_Option_set_FP64_ARRAY  (GxB_Option_Field, double *) ;
+GrB_Info GxB_Global_Option_set_INT64_ARRAY (GxB_Option_Field, int64_t *) ;
+GrB_Info GxB_Global_Option_set_CHAR        (GxB_Option_Field, const char *) ;
+GrB_Info GxB_Global_Option_set_FUNCTION    (GxB_Option_Field, void *) ;
+GrB_Info GxB_Global_Option_get             (GxB_Option_Field, ...) ;
+GrB_Info GxB_Global_Option_get_INT32       (GxB_Option_Field, int32_t *) ;
+GrB_Info GxB_Global_Option_get_FP64        (GxB_Option_Field, double *) ;
+GrB_Info GxB_Global_Option_get_INT64       (GxB_Option_Field, int64_t *) ;
+GrB_Info GxB_Global_Option_get_CHAR        (GxB_Option_Field, const char **) ;
+GrB_Info GxB_Global_Option_get_FUNCTION    (GxB_Option_Field, void **) ;
+GrB_Info GxB_Context_set_INT32 (GxB_Context, GxB_Context_Field, int32_t) ;
+GrB_Info GxB_Context_set_FP64  (GxB_Context, GxB_Context_Field, double) ;
+GrB_Info GxB_Context_set       (GxB_Context, GxB_Context_Field, ...) ;
+GrB_Info GxB_Context_get_INT32 (GxB_Context, GxB_Context_Field, int32_t *) ;
+GrB_Info GxB_Context_get_FP64  (GxB_Context, GxB_Context_Field, double *) ;
+GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
+
+GrB_Info GxB_Scalar_wait (GrB_Scalar *) ;
+
+GrB_Info GxB_Scalar_error       (const char **, const GrB_Scalar) ;
+GrB_Info GxB_Context_error      (const char **, const GxB_Context) ;
+
+GrB_Info GxB_Vector_apply_BinaryOp1st (GrB_Vector, const GrB_Vector,
+    const GrB_BinaryOp, const GrB_BinaryOp, const GrB_Scalar, const GrB_Vector,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Vector_apply_BinaryOp2nd (GrB_Vector, const GrB_Vector,
+    const GrB_BinaryOp, const GrB_BinaryOp, const GrB_Vector, const GrB_Scalar,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_apply_BinaryOp1st (GrB_Matrix, const GrB_Matrix,
+    const GrB_BinaryOp, const GrB_BinaryOp, const GrB_Scalar, const GrB_Matrix,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_apply_BinaryOp2nd (GrB_Matrix, const GrB_Matrix,
+    const GrB_BinaryOp, const GrB_BinaryOp, const GrB_Matrix, const GrB_Scalar,
+    const GrB_Descriptor) ;
+
+GrB_Info GxB_kron (GrB_Matrix, const GrB_Matrix, const GrB_BinaryOp,
+    const GrB_BinaryOp, const GrB_Matrix, const GrB_Matrix,
+    const GrB_Descriptor) ;
+
+GrB_Info GxB_Matrix_resize (GrB_Matrix, GrB_Index, GrB_Index) ;
+GrB_Info GxB_Vector_resize (GrB_Vector, GrB_Index) ;
+
+GrB_Info GxB_Matrix_import_CSR (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
+    GrB_Index **, GrB_Index **, void **, GrB_Index, GrB_Index, GrB_Index, bool,
+    bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_BitmapR (GrB_Matrix *, GrB_Type, GrB_Index,
+    GrB_Index, int8_t **, void **, GrB_Index, GrB_Index, bool, GrB_Index,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_CSC (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
+    GrB_Index **, GrB_Index **, void **, GrB_Index, GrB_Index, GrB_Index, bool,
+    bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_HyperCSR (GrB_Matrix *, GrB_Type, GrB_Index,
+    GrB_Index, GrB_Index **, GrB_Index **, GrB_Index **, void **, GrB_Index,
+    GrB_Index, GrB_Index, GrB_Index, bool, GrB_Index, bool,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_HyperCSC (GrB_Matrix *, GrB_Type, GrB_Index,
+    GrB_Index, GrB_Index **, GrB_Index **, GrB_Index **, void **, GrB_Index,
+    GrB_Index, GrB_Index, GrB_Index, bool, GrB_Index, bool,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_BitmapC (GrB_Matrix *, GrB_Type, GrB_Index,
+    GrB_Index, int8_t **, void **, GrB_Index, GrB_Index, bool, GrB_Index,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_FullR (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
+    void **, GrB_Index, bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_import_FullC (GrB_Matrix *, GrB_Type, GrB_Index, GrB_Index,
+    void **, GrB_Index, bool, const GrB_Descriptor) ;
+
+GrB_Info GxB_Vector_import_CSC (GrB_Vector *, GrB_Type, GrB_Index, GrB_Index **,
+    void **, GrB_Index, GrB_Index, bool, GrB_Index, bool,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Vector_import_Bitmap (GrB_Vector *, GrB_Type, GrB_Index, int8_t **,
+    void **, GrB_Index, GrB_Index, bool, GrB_Index, const GrB_Descriptor) ;
+GrB_Info GxB_Vector_import_Full (GrB_Vector *, GrB_Type, GrB_Index, void **,
+    GrB_Index, bool, const GrB_Descriptor) ;
+
+GrB_Info GxB_Matrix_export_CSR (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, GrB_Index **, GrB_Index **, void **, GrB_Index *, GrB_Index *,
+    GrB_Index *, bool *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_CSC (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, GrB_Index **, GrB_Index **, void **, GrB_Index *, GrB_Index *,
+    GrB_Index *, bool *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_HyperCSR (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, GrB_Index **, GrB_Index **, GrB_Index **, void **,
+    GrB_Index *, GrB_Index *, GrB_Index *, GrB_Index *, bool *, GrB_Index *,
+    bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_HyperCSC (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, GrB_Index **, GrB_Index **, GrB_Index **, void **, GrB_Index *,
+    GrB_Index *, GrB_Index *, GrB_Index *, bool *, GrB_Index *, bool *,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_BitmapR (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, int8_t **, void **, GrB_Index *, GrB_Index *, bool *,
+    GrB_Index *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_BitmapC (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, int8_t **, void **, GrB_Index *, GrB_Index *, bool *,
+    GrB_Index *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_FullR (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, void **, GrB_Index *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_export_FullC (GrB_Matrix *, GrB_Type *, GrB_Index *,
+    GrB_Index *, void **, GrB_Index *, bool *, const GrB_Descriptor) ;
+
+GrB_Info GxB_Vector_export_CSC (GrB_Vector *, GrB_Type *, GrB_Index *,
+    GrB_Index **, void **, GrB_Index *, GrB_Index *, bool *, GrB_Index *,
+    bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Vector_export_Bitmap (GrB_Vector *, GrB_Type *, GrB_Index *,
+    int8_t **, void **, GrB_Index *, GrB_Index *, bool *, GrB_Index *,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Vector_export_Full (GrB_Vector *, GrB_Type *, GrB_Index *,
+    void **, GrB_Index *, bool *, const GrB_Descriptor) ;
+
+GrB_Info GxB_Vector_select (GrB_Vector w, const GrB_Vector mask,
+    const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Vector u,
+    const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
+GrB_Info GxB_Matrix_select (GrB_Matrix C, const GrB_Matrix Mask,
+    const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Matrix A,
+    const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
+
+GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
+    GxB_Print_Level pr, FILE *f) ;
+
+GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GxB_Scalar_setElement(s,x) GrB_Scalar_setElement (s, x)
+#define GxB_Scalar_extractElement(x,s) GrB_Scalar_extractElement (x, s)
+#define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic \
+((C), GrB_Vector:GxB_Vector_select , GrB_Matrix:GxB_Matrix_select ) \
+(C, Mask, accum, op, A, Thunk, desc)
+#endif
+
 #endif  // GB_CUDA_FOLDER
 #if defined ( __cplusplus )
 }
 #endif
+
 #endif
 
