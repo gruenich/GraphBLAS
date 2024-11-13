@@ -18,8 +18,8 @@ typedef GB_JIT_KERNEL_CONVERT_S2B_PROTO ((*GB_jit_dl_function)) ;
 GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
 (
     // output:
-    GB_void *Ax_new,
-    int8_t *Ab,
+    GB_void *Cx,
+    int8_t *Cb,
     // input:
     GB_Operator op,
     const GrB_Matrix A,
@@ -36,7 +36,7 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_CONVERTS2B, GxB_FULL, false, A->type, op, false,
+        GB_JIT_KERNEL_CONVERT_S2B, GxB_FULL, false, A->type, op, false,
         GB_sparsity (A), true, A->type, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
@@ -55,6 +55,6 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Ax_new, Ab, A, A_ek_slicing, A_ntasks, A_nthreads)) ;
+    return (GB_jit_kernel (Cx, Cb, A, A_ek_slicing, A_ntasks, A_nthreads)) ;
 }
 

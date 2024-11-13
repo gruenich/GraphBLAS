@@ -23,7 +23,7 @@
 // A may be jumbled.
 
 #include "slice/GB_ek_slice.h"
-#include "slice/factory/GB_ek_slice_search.c"
+#include "slice/factory/GB_ek_slice_search.h"
 
 GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
 {

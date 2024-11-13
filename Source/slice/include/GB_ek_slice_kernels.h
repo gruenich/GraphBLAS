@@ -2,13 +2,28 @@
 // GB_ek_slice_kernels.h: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #ifndef GB_EK_SLICE_KERNELS_H
 #define GB_EK_SLICE_KERNELS_H
+
+static inline void GB_e_slice
+(
+    int64_t *Slice,         // array of size ntasks+1
+    int64_t e,              // number items to partition amongst the tasks
+    const int ntasks        // # of tasks
+)
+{
+    Slice [0] = 0 ;
+    for (int tid = 1 ; tid < ntasks ; tid++)
+    { 
+        Slice [tid] = (int64_t) GB_PART (tid, e, ntasks) ;
+    }
+    Slice [ntasks] = e ;
+}
 
 //------------------------------------------------------------------------------
 // GB_ek_slice_ntasks: determine # of threads and tasks to use for GB_ek_slice

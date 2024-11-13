@@ -44,7 +44,7 @@
 // not done here.  If dup is not associative, the GraphBLAS spec states that
 // the results are not defined.
 
-// The dup operator cannot be based on a GzB_IndexBinaryOp.
+// The dup operator cannot be based on a GxB_IndexBinaryOp.
 
 // SuiteSparse:GraphBLAS provides a well-defined order of assembly, however.
 // For a CSC format, entries in [I,J,X] are first sorted in increasing order of

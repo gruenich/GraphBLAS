@@ -36,7 +36,7 @@ uint64_t GB_encodify_subref     // encode an subref problem
 
     if (C->type->hash == UINT64_MAX)
     { 
-        // cannot JIT this accum operator or type
+        // cannot JIT this type
         memset (encoding, 0, sizeof (GB_jit_encoding)) ;
         (*suffix) = NULL ;
         return (UINT64_MAX) ;

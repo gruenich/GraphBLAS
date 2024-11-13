@@ -1,10 +1,14 @@
-Nov XX, 2024: version 9.4.1 (FIXME)
+Nov 15, 2024: version 9.4.1 (BETA)
 
-    * new JIT kernels added: for GrB_assign, GxB_subassign, and GB_masker
+    * new JIT kernels added: for GrB_assign, GrB_extract, GxB_sort,
+        GrB_kronecker, stand-alone mask phase, and utilities (convert to/from
+        sparse/bitmap, unjumble).  All kernels formerly tagged "JIT: needed"
+        are now finished.
+    * GxB_IndexBinaryOp: finalized and named as GxB_*.
 
 Oct 15, 2024: version 9.4.0 (BETA)
 
-    * new operator and associated methods: added the GxB_IndexBinaryOp
+    * new operator and associated methods: added the draft G*B_IndexBinaryOp
     * JIT error-handling behavior changed:  if a compiler error occurs in the
         JIT, GxB_JIT_ERROR is now returned.  Previously, GraphBLAS would fall
         back to a generic method if such an error occurred.

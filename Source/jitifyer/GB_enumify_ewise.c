@@ -24,6 +24,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // input:
     bool is_eWiseMult,      // if true, method is emult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool is_kronecker,      // if true, method is kron
     bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, C is iso on output
@@ -141,12 +142,13 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // enumify the binary operator
     //--------------------------------------------------------------------------
 
-    int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, opcode, xcode, false) ;
-
     int is_union  = (is_eWiseUnion) ? 1 : 0 ;
     int is_emult  = (is_eWiseMult ) ? 1 : 0 ;
+    int is_kron   = (is_kronecker ) ? 1 : 0 ;
     int copy_to_C = (can_copy_to_C) ? 1 : 0 ;
+
+    int binop_ecode ;
+    GB_enumify_binop (&binop_ecode, opcode, xcode, false, is_kron) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -190,11 +192,12 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 52 (13 hex digits)
+    // total scode bits: 53 (14 hex digits)
 
     (*scode) =
                                                // range        bits
-                // method (4 bits) (1 hex digit)
+                // method (5 bits) (2 hex digits)
+                GB_LSHIFT (is_kron    , 52) |  // 0 or 1       1
                 GB_LSHIFT (flipij     , 51) |  // 0 or 1       1
                 GB_LSHIFT (is_emult   , 50) |  // 0 or 1       1
                 GB_LSHIFT (is_union   , 49) |  // 0 or 1       1

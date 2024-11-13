@@ -7,13 +7,15 @@
 
 //------------------------------------------------------------------------------
 
+// The op does not do any typecasting: ztype == xtype
+
 #include "GB.h"
 #include "unaryop/GB_unop.h"
 #include "include/GB_unused.h"
 
 GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
 (
-    GrB_Type type,              // operator type
+    GrB_Type type,              // operator type (both z and x)
     GrB_UnaryOp op              // header for IDENTITY_UDT operator
 )
 {

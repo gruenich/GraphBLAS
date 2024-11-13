@@ -285,8 +285,8 @@ GrB_Info GB_jit_kernel_concat_sparse                                    \
 #define GB_JIT_KERNEL_CONVERT_S2B_PROTO(GB_jit_kernel_convert_s2b)      \
 GrB_Info GB_jit_kernel_convert_s2b                                      \
 (                                                                       \
-    GB_void *Ax_new,                                                    \
-    int8_t *restrict Ab,                                                \
+    GB_void *restrict Cx_new,                                           \
+    int8_t *restrict Cb,                                                \
     const GrB_Matrix A,                                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
@@ -671,6 +671,46 @@ GrB_Info GB_jit_kernel_iso_expand                                       \
     const int nthreads                                                  \
 )
 
+#define GB_JIT_KERNEL_UNJUMBLE_PROTO(GB_jit_kernel_unjumble)            \
+GrB_Info GB_jit_kernel_unjumble                                         \
+(                                                                       \
+    const GrB_Matrix A,                                                 \
+    const int64_t *A_slice,                                             \
+    const int ntasks,                                                   \
+    const int nthreads                                                  \
+)
+
+#define GB_JIT_KERNEL_CONVERT_B2S_PROTO(GB_jit_kernel_convert_b2s)      \
+GrB_Info GB_jit_kernel_convert_b2s                                      \
+(                                                                       \
+    const int64_t *restrict Cp,                                         \
+    int64_t *restrict Ci,                                               \
+    int64_t *restrict Cj,                                               \
+    GB_void *restrict Cx_new,                                           \
+    const GrB_Matrix A,                                                 \
+    const int64_t *restrict W,                                          \
+    const int nthreads                                                  \
+)
+
+#define GB_JIT_KERNEL_KRONER_PROTO(GB_jit_kernel_kroner)                \
+GrB_Info GB_jit_kernel_kroner                                           \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GrB_Matrix A,                                                 \
+    const GrB_Matrix B,                                                 \
+    const int nthreads,                                                 \
+    const void *theta                                                   \
+)
+
+#define GB_JIT_KERNEL_SORT_PROTO(GB_jit_kernel_sort)                    \
+GrB_Info GB_jit_kernel_sort                                             \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    int nthreads,                                                       \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
 //------------------------------------------------------------------------------
 // CUDA JIT prototypes
 //------------------------------------------------------------------------------
@@ -801,6 +841,7 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_CONF(g) GB_JIT_KERNEL_CONCAT_FULL_PROTO(g) ;
 #define JIT_CONS(g) GB_JIT_KERNEL_CONCAT_SPARSE_PROTO(g) ;
 #define JIT_CS2B(g) GB_JIT_KERNEL_CONVERT_S2B_PROTO(g) ;
+#define JIT_CB2S(g) GB_JIT_KERNEL_CONVERT_B2S_PROTO(g) ;
 #define JIT_EM2(g)  GB_JIT_KERNEL_EMULT_02_PROTO(g) ;
 #define JIT_EM3(g)  GB_JIT_KERNEL_EMULT_03_PROTO(g) ;
 #define JIT_EM4(g)  GB_JIT_KERNEL_EMULT_04_PROTO(g) ;
@@ -827,7 +868,10 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_MAS2(g) GB_JIT_KERNEL_MASKER_PHASE2_PROTO(g) ;
 #define JIT_SREF(g) GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(g) ;
 #define JIT_BREF(g) GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(g) ;
-#define JIT_ISOE(g) GB_JIT_KERNEL_ISO_EXPAND(g) ;
+#define JIT_ISOE(g) GB_JIT_KERNEL_ISO_EXPAND_PROTO(g) ;
+#define JIT_UNJU(g) GB_JIT_KERNEL_UNJUMBLE_PROTO(g) ;
+#define JIT_SORT(g) GB_JIT_KERNEL_SORT_PROTO(g) ;
+#define JIT_KRON(g) GB_JIT_KERNEL_KRONER_PROTO(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------

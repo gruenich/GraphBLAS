@@ -266,21 +266,16 @@ void GX_qsort_1    /* sort array A of size 1-by-n */                        \
     const int64_t n                                                         \
 )
 
-#define GB_CALLBACK_QSORT_1B_ANY_PROTO(GX_qsort_1b)                         \
-void GX_qsort_1b                                                            \
+#define GB_CALLBACK_P_SLICE_PROTO(GX_p_slice)                               \
+void GX_p_slice                     /* slice Ap */                          \
 (                                                                           \
-    int64_t *restrict A_0,       /* size n array */                         \
-    GB_void *restrict A_1,       /* size n array */                         \
-    const size_t xsize,          /* size of entries in A_1 */               \
-    const int64_t n                                                         \
-)
-
-#define GB_CALLBACK_QSORT_1B_SIZE_PROTO(GX_qsort_1b_size,a1_t)              \
-void GX_qsort_1b_size                                                       \
-(                                                                           \
-    int64_t *restrict A_0,       /* size n array */                         \
-    a1_t *restrict A_1,          /* size n array */                         \
-    const int64_t n                                                         \
+    /* output: */                                                           \
+    int64_t *restrict Slice,        /* size ntasks+1 */                     \
+    /* input: */                                                            \
+    const int64_t *restrict Ap,     /* array size n+1 (full/bitmap: NULL)*/ \
+    const int64_t n,                                                        \
+    const int ntasks,               /* # of tasks */                        \
+    const bool perfectly_balanced                                           \
 )
 
 #endif

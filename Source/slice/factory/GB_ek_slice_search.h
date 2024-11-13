@@ -2,14 +2,14 @@
 // GB_ek_slice_search.c: find the first and last vectors in a slice
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #ifndef GB_EK_SLICE_SEARCH_H
 #define GB_EK_SLICE_SEARCH_H
-#include "slice/factory/GB_search_for_vector_template.c"
+#include "slice/include/GB_search_for_vector.h"
 
 static inline void GB_ek_slice_search
 (
@@ -18,8 +18,8 @@ static inline void GB_ek_slice_search
     int ntasks,
     const int64_t *restrict pstart_slice,    // size ntasks+1
     const int64_t *restrict Ap,              // size anvec
-    int64_t anvec,                              // # of vectors in A
-    int64_t avlen,                              // vector length of A
+    int64_t anvec,                           // # of vectors in A
+    int64_t avlen,                           // vector length of A
     // output:
     int64_t *restrict kfirst_slice,          // size ntasks
     int64_t *restrict klast_slice            // size ntasks

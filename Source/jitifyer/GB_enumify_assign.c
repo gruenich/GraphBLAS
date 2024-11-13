@@ -109,7 +109,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     // accum_ecode is 255 if no accum is present
 
     int accum_ecode ;
-    GB_enumify_binop (&accum_ecode, accum_opcode, xcode, false) ;
+    GB_enumify_binop (&accum_ecode, accum_opcode, xcode, false, false) ;
 
     //--------------------------------------------------------------------------
     // enumify the types

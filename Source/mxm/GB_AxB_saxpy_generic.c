@@ -77,8 +77,6 @@ GrB_Info GB_AxB_saxpy_generic
     GrB_Info info = GrB_NO_VALUE ;
     GrB_BinaryOp mult = semiring->multiply ;
     GB_Opcode opcode = mult->opcode ;
-    GxB_binary_function fmult = mult->binop_function ;
-//  GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
 
     //--------------------------------------------------------------------------
     // C = A*B via saxpy3 or bitmap method, function pointers, and typecasting
@@ -93,8 +91,8 @@ GrB_Info GB_AxB_saxpy_generic
 
         GB_BURBLE_MATRIX (C, "(generic first C=A*B) ") ;
         // t = A(i,k)
-        // fmult is not used and can be NULL.  This is required for
-        // GB_reduce_to_vector for user-defined types.
+        // mult->binop_function is not used and can be NULL.  This is required
+        // for GB_reduce_to_vector for user-defined types.
         ASSERT (!flipxy) ;
         ASSERT (B_is_pattern) ;
         if (saxpy_method == GB_SAXPY_METHOD_3)
@@ -124,8 +122,9 @@ GrB_Info GB_AxB_saxpy_generic
 
         GB_BURBLE_MATRIX (C, "(generic second C=A*B) ") ;
         // t = B(i,k)
-        // fmult is not used and can be NULL.  This is required for
-        // GB_reduce_to_vector for user-defined types.
+        // mult->binop_function is not used and can be NULL.  This is required
+        // for GB_reduce_to_vector for user-defined types.
+
         ASSERT (!flipxy) ;
         ASSERT (A_is_pattern) ;
         if (saxpy_method == GB_SAXPY_METHOD_3)
@@ -146,7 +145,7 @@ GrB_Info GB_AxB_saxpy_generic
         }
 
     }
-    else if (fmult != NULL)
+    else if (mult->binop_function != NULL)
     {
 
         //----------------------------------------------------------------------

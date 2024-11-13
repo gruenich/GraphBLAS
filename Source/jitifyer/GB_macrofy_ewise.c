@@ -28,6 +28,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     // flipij and method (one hex digit)
+    bool is_kron    = GB_RSHIFT (scode, 52, 1) ;
     bool flipij     = GB_RSHIFT (scode, 51, 1) ;
 //  bool is_emult   = GB_RSHIFT (scode, 50, 1) ;
 //  bool is_union   = GB_RSHIFT (scode, 49, 1) ;
@@ -135,8 +136,9 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     fprintf (fp, "\n// binary operator%s%s:\n",
         flipij ? " (flipped ij)" : "",
         flipxy ? " (flipped xy)" : "") ;
-    GB_macrofy_binop (fp, "GB_BINOP", flipij, flipxy, false, true, binop_ecode,
-        C_iso, binaryop, NULL, NULL, NULL) ;
+    GB_macrofy_binop (fp, is_kron ? "GB_KRONOP" : "GB_BINOP",
+        flipij, flipxy, false, true, is_kron,
+        binop_ecode, C_iso, binaryop, NULL, NULL, NULL) ;
 
     if (binaryop->opcode == GB_SECOND_binop_code)
     { 
@@ -156,23 +158,39 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
         C_in_iso) ;
 
-    fprintf (fp, "#define GB_EWISEOP(Cx,p,aij,bij,i,j)") ;
-    if (C_iso)
+    if (is_kron)
     { 
-        fprintf (fp, "\n") ;
-    }
-    else if (ctype == ztype)
-    { 
-        fprintf (fp, " GB_BINOP (Cx [p], aij, bij, i, j)\n") ;
+        fprintf (fp, "#define GB_KRONECKER_OP(Cx,p,a,ia,ja,b,ib,jb)") ;
+        if (C_iso)
+        { 
+            fprintf (fp, "\n") ;
+        }
+        else
+        { 
+            ASSERT (ctype == ztype) ;
+            fprintf (fp, " GB_KRONOP (Cx [p], a,ia,ja, b,ib,jb)\n") ;
+        }
     }
     else
-    { 
-        fprintf (fp, " \\\n"
-            "{                                      \\\n"
-            "    GB_Z_TYPE z ;                      \\\n"
-            "    GB_BINOP (z, aij, bij, i, j) ;     \\\n"
-            "    GB_PUTC (z, Cx, p) ;               \\\n"
-            "}\n") ;
+    {
+        fprintf (fp, "#define GB_EWISEOP(Cx,p,aij,bij,i,j)") ;
+        if (C_iso)
+        { 
+            fprintf (fp, "\n") ;
+        }
+        else if (ctype == ztype)
+        { 
+            fprintf (fp, " GB_BINOP (Cx [p], aij, bij, i, j)\n") ;
+        }
+        else
+        { 
+            fprintf (fp, " \\\n"
+                "{                                      \\\n"
+                "    GB_Z_TYPE z ;                      \\\n"
+                "    GB_BINOP (z, aij, bij, i, j) ;     \\\n"
+                "    GB_PUTC (z, Cx, p) ;               \\\n"
+                "}\n") ;
+        }
     }
 
     //--------------------------------------------------------------------------

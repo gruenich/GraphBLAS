@@ -131,12 +131,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
         info = GrB_SUCCESS ;
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // the JIT kernel has failed
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of Rp and fine tasks in TaskList

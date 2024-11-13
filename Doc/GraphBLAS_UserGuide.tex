@@ -1420,7 +1420,7 @@ with an operator) acts on matrices and/or vectors in a semiring.
 \verb'GrB_UnaryOp'   & a unary operator $z=f(x)$, where $z$ and $x$ are scalars\\
 \verb'GrB_BinaryOp'  & a binary operator $z=f(x,y)$, where $z$, $x$, and $y$ are scalars\\
 \verb'GrB_IndexUnaryOp'  & an index-unary operator \\
-\verb'GzB_IndexBinaryOp'  & an index-binary operator \\
+\verb'GxB_IndexBinaryOp'  & an index-binary operator \\
 \verb'GrB_Monoid'    & an associative and commutative binary operator  \\
                      & and its identity value \\
 \verb'GrB_Semiring'  & a monoid that defines the ``plus'' and a binary operator\\
@@ -2403,7 +2403,7 @@ of their inputs, just their position in a matrix or vector.  For a vector, $j$
 is always 0, and $i$ is the index into the vector.  There are two types $N$
 available: \verb'INT32' and \verb'INT64', which is the type of the output $z$.
 User-defined index-based operators are not defined by \verb'GrB_BinaryOp_new',
-but by \verb'GzB_BinaryOp_new_IndexOp' instead.  See Section~\ref{idxbinaryop}
+but by \verb'GxB_BinaryOp_new_IndexOp' instead.  See Section~\ref{idxbinaryop}
 for details.
 
 \vspace{0.2in}
@@ -2952,7 +2952,7 @@ input.  It does nothing at all if passed a built-in index-unary operator.
 
 \newpage
 %===============================================================================
-\subsection{GraphBLAS index-binary operators: {\sf GzB\_IndexBinaryOp}}
+\subsection{GraphBLAS index-binary operators: {\sf GxB\_IndexBinaryOp}}
 %===============================================================================
 \label{idxbinaryop}
 
@@ -3002,7 +3002,9 @@ void f
 ) ; \end{verbatim}}
 
 The following binary operators (\verb'GrB_BinaryOp' objects) are pre-defined,
-where $N$ can be \verb'INT32' or \verb'INT64':
+where $N$ can be \verb'INT32' or \verb'INT64'.  These operators do not use
+\verb'theta'.  Instead, the offset of 1 in \verb'GxB_FIRSTI1' is fixed into
+the operator itself.
 
 \vspace{0.2in}
 {\footnotesize
@@ -3025,7 +3027,7 @@ GraphBLAS name            & types (domains)  & $z=f(x,y)$    & description \\
 }
 
 \vspace{0.2in}
-The following methods operate on the \verb'GzB_IndexBinaryOp' object:
+The following methods operate on the \verb'GxB_IndexBinaryOp' object:
 
 \vspace{0.1in}
 \noindent
@@ -3034,12 +3036,12 @@ The following methods operate on the \verb'GzB_IndexBinaryOp' object:
 \hline
 GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GzB_IndexBinaryOp_new'   & create a named user-defined index-binary operator   & \ref{idxbinop_new_named} \\
-\verb'GzB_IndexBinaryOp_wait'  & wait for a user-defined index-binary operator  & \ref{idxbinop_wait} \\
+\verb'GxB_IndexBinaryOp_new'   & create a named user-defined index-binary operator   & \ref{idxbinop_new_named} \\
+\verb'GxB_IndexBinaryOp_wait'  & wait for a user-defined index-binary operator  & \ref{idxbinop_wait} \\
 \verb'GrB_get'           & get properties of an operator    & \ref{get_set_idxbinop} \\
 \verb'GrB_set'           & set the operator name/definition & \ref{get_set_idxbinop} \\
-\verb'GzB_IndexBinaryOp_free'  & free a user-defined index-binary operator      & \ref{idxbinop_free} \\
-\verb'GzB_BinaryOp_new_IndexOp' & create a new index-based \verb'GrB_BinaryOp' & \ref{binop_new_idxop} \\
+\verb'GxB_IndexBinaryOp_free'  & free a user-defined index-binary operator      & \ref{idxbinop_free} \\
+\verb'GxB_BinaryOp_new_IndexOp' & create a new index-based \verb'GrB_BinaryOp' & \ref{binop_new_idxop} \\
 \hline
 \end{tabular}
 }
@@ -3047,17 +3049,17 @@ GraphBLAS function   & purpose                                      & Section \\
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GzB\_IndexBinaryOp\_new:} create a user-defined index-binary operator}
+\subsubsection{{\sf GxB\_IndexBinaryOp\_new:} create a user-defined index-binary operator}
 %-------------------------------------------------------------------------------
 \label{idxbinop_new_named}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GzB_IndexBinaryOp_new
+GrB_Info GxB_IndexBinaryOp_new
 (
-    GzB_IndexBinaryOp *op,          // handle for the new index binary operator
-    GzB_index_binary_function function, // pointer to the index binary function
+    GxB_IndexBinaryOp *op,          // handle for the new index binary operator
+    GxB_index_binary_function function, // pointer to the index binary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype,                 // type of input y
@@ -3067,7 +3069,7 @@ GrB_Info GzB_IndexBinaryOp_new
 ) ;
 \end{verbatim} }\end{mdframed}
 
-Creates a named \verb'GzB_IndexBinaryOp'.  Only the first 127 characters of
+Creates a named \verb'GxB_IndexBinaryOp'.  Only the first 127 characters of
 \verb'idxbinop_name' are used.  The \verb'ixdbinop_defn' is a string containing
 the entire function itself.
 
@@ -3111,13 +3113,13 @@ is returned.
     GrB_Scalar Theta ;                  // unused, but cannot be NULL
     GrB_Scalar_new (&Theta, GrB_BOOL) ;
     GrB_Scalar_setElement_BOOL (Theta, 0) ;
-    GzB_IndexBinaryOp Iop ;
+    GxB_IndexBinaryOp Iop ;
     GrB_BinaryOp Bop ;
     GrB_Type Tuple ;
     GxB_Type_new (&Tuple, sizeof (tuple_fp64), "tuple_fp64", FP64_K) ;
-    GzB_IndexBinaryOp_new (&Iop, make_fp64, Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
+    GxB_IndexBinaryOp_new (&Iop, make_fp64, Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
         "make_fp64", MAKE_FP64)) ;
-    OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+    OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
     tuple_fp64 id ;
     memset (&id, 0, sizeof (tuple_fp64)) ;
     id.k = INT64_MAX ;
@@ -3139,16 +3141,16 @@ is returned.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GzB\_IndexBinaryOp\_wait:} wait for an index-binary operator}
+\subsubsection{{\sf GxB\_IndexBinaryOp\_wait:} wait for an index-binary operator}
 %-------------------------------------------------------------------------------
 \label{idxbinop_wait}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GzB_IndexBinaryOp_wait
+GrB_Info GxB_IndexBinaryOp_wait
 (
-    GzB_IndexBinaryOp op,
+    GxB_IndexBinaryOp op,
     GrB_WaitMode waitmode
 ) ;
 \end{verbatim}
@@ -3161,7 +3163,7 @@ SuiteSparse:GraphBLAS currently does nothing except to ensure that the
 
 % \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GzB\_IndexBinaryOp\_free:} free a user-defined index-binary operator}
+\subsubsection{{\sf GxB\_IndexBinaryOp\_free:} free a user-defined index-binary operator}
 %-------------------------------------------------------------------------------
 \label{idxbinop_free}
 
@@ -3170,16 +3172,16 @@ SuiteSparse:GraphBLAS currently does nothing except to ensure that the
 \begin{verbatim}
 GrB_Info GrB_free               // free a user-created index-binary operator
 (
-    GzB_IndexBinaryOp *op       // handle of IndexBinaryOp to free
+    GxB_IndexBinaryOp *op       // handle of IndexBinaryOp to free
 ) ;
 \end{verbatim}
 }\end{mdframed}
 
-\verb'GzB_IndexBinaryOp_free' frees a user-defined index-binary operator.  Either usage:
+\verb'GxB_IndexBinaryOp_free' frees a user-defined index-binary operator.  Either usage:
 
     {\small
     \begin{verbatim}
-    GzB_IndexBinaryOp_free (&op) ;
+    GxB_IndexBinaryOp_free (&op) ;
     GrB_free (&op) ; \end{verbatim}}
 
 \noindent
@@ -3190,17 +3192,17 @@ the method does nothing at all if passed a built-in index-binary operator.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GzB\_BinaryOp\_new\_IndexOp:} create a index-based binary operator}
+\subsubsection{{\sf GxB\_BinaryOp\_new\_IndexOp:} create a index-based binary operator}
 %-------------------------------------------------------------------------------
 \label{binop_new_idxop}
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GzB_BinaryOp_new_IndexOp
+GrB_Info GxB_BinaryOp_new_IndexOp
 (
     GrB_BinaryOp *binop,            // handle of binary op to create
-    GzB_IndexBinaryOp idxbinop,     // based on this index binary op
+    GxB_IndexBinaryOp idxbinop,     // based on this index binary op
     GrB_Scalar theta                // theta value to bind to the new binary op
 ) ;
 \end{verbatim}
@@ -3218,7 +3220,7 @@ any GraphBLAS operation.  It also cannot be used in other places where a binary
 operator appears, including \verb'GrB_*_build', \verb'GrB_apply',
 \verb'GrB_reduce' and \verb'GrB_*_sort'.
 
-The \verb'GzB_BinaryOp_new_IndexOp' method creates this index-based binary
+The \verb'GxB_BinaryOp_new_IndexOp' method creates this index-based binary
 operator.  It takes two input parameters:  an index-binary operator, and a
 scalar \verb'Theta'.  The value of \verb'Theta' is copied into this new binary
 operator, and the value cannot be changed.  To change \verb'Theta', the binary
@@ -3386,7 +3388,7 @@ If \verb'op' is a built-in operator with a known identity value, then the
 instead.
 %
 The \verb'op' cannot be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Monoid\_wait:} wait for a monoid}
@@ -3478,7 +3480,7 @@ based on this user-defined operator with a terminal value of zero and an
 identity of \verb'+INFINITY'.
 %
 The \verb'op' cannot be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -3662,7 +3664,7 @@ use is preferred, for portability to other GraphBLAS implementations.
 \end{itemize}
 %
 The \verb'multiply' operator can be any a binary operator, including one
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Semiring\_wait:} wait for a semiring}
@@ -4229,7 +4231,7 @@ any duplicates are ignored.  If duplicates appear, the last one in the
 list of tuples is taken and the prior ones ignored.  This is not an error.
 %
 The \verb'dup' operator cannot be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \begin{alert}
 {\bf SPEC:} Results are defined even if \verb'dup' is non-associative and/or
@@ -4897,7 +4899,7 @@ for assembling duplicates (summation), and it can only build double, double
 complex, and logical sparse matrices.
 %
 The \verb'dup' operator cannot be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -7527,7 +7529,7 @@ GrB_Info GxB_sort
 Refer to Section \ref{matrix_sort} for details.
 %
 The \verb'op' cannot be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_sort:} sort the rows/columns of a matrix}
@@ -7586,7 +7588,7 @@ may be \verb'NULL', in which case that particular output matrix is not
 computed.
 %
 The \verb'op' cannot be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \newpage
 %===============================================================================
@@ -8550,6 +8552,14 @@ control to \verb'GxB_JIT_LOAD' or \verb'GxB_JIT_ON', the setting is changed to
 \verb'GxB_JIT_RUN' instead.  This is not an error condition.  The resulting
 setting can be queried via \verb'GrB_get', if desired.
 
+If your copy of GraphBLAS has many PreJIT kernels compiled into it, or uses
+many run-time JIT kernels, turning of the JIT with \verb'GxB_JIT_OFF' can be
+costly.  This setting clears the entire JIT hash table.  Renabling the JIT and
+using it will require the JIT table to be repopulated, including a check of
+each PreJIT kernel the first time they are used.  If you wish to temporarily
+disable the JIT, consider switching the JIT control to \verb'GxB_JIT_PAUSE' and
+then back to \verb'GxB_JIT_RUN' to reenable the JIT.
+
 %----------------------------------------
 \subsubsection{JIT error handling}
 %----------------------------------------
@@ -8937,11 +8947,6 @@ then reconstruct the kernels there as needed.
 \subsection{Future plans for the {\sf JIT} and {\sf PreJIT}}
 %-------------------------------------------------------------------------------
 \label{jit_future}
-
-\subsubsection{More JIT kernels}
-I have 82 JIT kernels but could write about another 5 to 11 for
-\verb'GrB_extract', \verb'GrB_kronecker', and other kernels.  Grep the source
-code for \verb'JIT: needed' or \verb'JIT: possible' for a list.
 
 \subsubsection{Kernel fusion}
 The introduction of the JIT and its related PreJIT kernels allow for the future
@@ -9534,7 +9539,7 @@ If given a semiring (\verb'GrB_Semiring'), the multiply operator of the
 semiring is used as the \verb'multiply' binary operator.
 %
 The \verb'multiply' operator may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 The next and final step is ${\bf w \langle m \rangle  = w \odot t}$, as
 described in Section~\ref{accummask}, except that all the terms are column
@@ -9581,7 +9586,7 @@ If given a semiring (\verb'GrB_Semiring'), the multiply operator of the
 semiring is used as the \verb'multiply' binary operator.
 %
 The \verb'multiply' operator may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \vspace{0.05in}
 The operation can be expressed in MATLAB notation as:
@@ -9707,7 +9712,7 @@ given a semiring (\verb'GrB_Semiring'), the additive operator of the monoid of
 the semiring is used as the \verb'add' binary operator.
 %
 The \verb'add' operator may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 The final step is ${\bf w \langle m \rangle  = w \odot t}$, as described in
 Section~\ref{accummask}, except that all the terms are column vectors instead
@@ -9750,7 +9755,7 @@ given a semiring (\verb'GrB_Semiring'), the additive operator of the monoid of
 the semiring is used as the \verb'add' binary operator.
 %
 The \verb'add' operator may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \vspace{0.05in}
 The operation can be expressed in MATLAB notation as:
@@ -9858,7 +9863,7 @@ if \verb'v(i)' is present but \verb'u(i)' is not, then \verb't(i)=alpha+v(i)',
 where \verb'+' denotes the binary operator, \verb'add'.
 %
 The \verb'add' operator may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -9895,7 +9900,7 @@ if \verb'B(i,j)' is present but \verb'A(i,j)' is not, then \verb'T(i,j)=alpha+B(
 where \verb'+' denotes the binary operator, \verb'add'.
 %
 The \verb'add' operator may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \newpage
 %===============================================================================
@@ -11390,7 +11395,7 @@ type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Vector_apply'.
 
 The \verb'op' can be any binary operator except that it cannot be a
-user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
+user-defined \verb'GrB_BinaryOp' created by \verb'GxB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
 used, however.  The equivalent index-unary operators are used in their place.
@@ -11424,7 +11429,7 @@ type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Vector_apply'.
 
 The \verb'op' can be any binary operator except that it cannot be a
-user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
+user-defined \verb'GrB_BinaryOp' created by \verb'GxB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
 used, however.  The equivalent index-unary operators are used in their place.
@@ -11485,7 +11490,7 @@ type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Matrix_apply'.
 
 The \verb'op' can be any binary operator except that it cannot be a
-user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
+user-defined \verb'GrB_BinaryOp' created by \verb'GxB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
 used, however.  The equivalent index-unary operators are used in their place.
@@ -11519,7 +11524,7 @@ type, a \verb'void *' for user-defined types, or a \verb'GrB_Scalar'.
 It is otherwise identical to \verb'GrB_Matrix_apply'.
 
 The \verb'op' can be any binary operator except that it cannot be a
-user-defined \verb'GrB_BinaryOp' created by \verb'GzB_BinaryOp_new_IndexOp'.
+user-defined \verb'GrB_BinaryOp' created by \verb'GxB_BinaryOp_new_IndexOp'.
 For backward compatibility with prior versions of SuiteSparse:GraphBLAS,
 built-in index-based binary operators such as \verb'GxB_FIRSTI_INT32' may be
 used, however.  The equivalent index-unary operators are used in their place.
@@ -11936,7 +11941,7 @@ The operator \verb'op' may be a \verb'GrB_BinaryOp', a \verb'GrB_Monoid', or a
 the semiring is used.
 %
 The \verb'op' may be a binary operator
-created by \verb'GzB_BinaryOp_new_IndexOp'.
+created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11960,7 +11965,7 @@ provided:
 \verb'GxB_UnaryOp_fprint'      & print and check a \verb'GrB_UnaryOp' \\
 \verb'GxB_BinaryOp_fprint'     & print and check a \verb'GrB_BinaryOp' \\
 \verb'GxB_IndexUnaryOp_fprint' & print and check a \verb'GrB_IndexUnaryOp' \\
-\verb'GzB_IndexBinaryOp_fprint'& print and check a \verb'GzB_IndexBinaryOp' \\
+\verb'GxB_IndexBinaryOp_fprint'& print and check a \verb'GxB_IndexBinaryOp' \\
 \verb'GxB_Monoid_fprint'       & print and check a \verb'GrB_Monoid' \\
 \verb'GxB_Semiring_fprint'     & print and check a \verb'GrB_Semiring' \\
 \verb'GxB_Descriptor_fprint'   & print and check a \verb'GrB_Descriptor' \\
@@ -12175,15 +12180,15 @@ the \verb'GrB_TRIL' index-unary operator to the file \verb'f'.
 
 \newpage
 %===============================================================================
-\subsection{{\sf GzB\_IndexBinaryOp\_fprint:} Print a {\sf GrB\_IndexBinaryOp}}
+\subsection{{\sf GxB\_IndexBinaryOp\_fprint:} Print a {\sf GxB\_IndexBinaryOp}}
 %===============================================================================
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GzB_IndexBinaryOp_fprint   // print and check a GzB_IndexBinaryOp
+GrB_Info GxB_IndexBinaryOp_fprint   // print and check a GxB_IndexBinaryOp
 (
-    GzB_IndexBinaryOp op,           // object to print and check
+    GxB_IndexBinaryOp op,           // object to print and check
     const char *name,               // name of the object
     GxB_Print_Level pr,             // print level
     FILE *f                         // file for output
@@ -14820,19 +14825,23 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Nov XX, 2024: version 9.4.1 (BETA)    % FIXME
+\item Nov 15, 2024: version 9.4.1 (BETA)
 
     \begin{itemize}
     \item More JIT kernels: all JIT kernels for \verb'GrB_assign',
-    \verb'GxB_subassign', and the stand-alone mask phase (an internal method
-    that computes $\bf C \langle M \rangle Z$) have been created.
+    \verb'GxB_subassign',  \verb'GrB_extract', \verb'GxB_sort'
+    \verb'GrB_kronecker', the stand-alone mask phase (an internal method that
+    computes $\bf C \langle M \rangle = Z$), and utilities have been created.
+    All kernels formerly tagged in the code as \verb'JIT: needed' are now
+    finished.
+    \item \verb'GxB_IndexBinaryOp': finalized and named as \verb'GxB_*'.
     \end{itemize}
 
 \item Oct 15, 2024: version 9.4.0 (BETA)
 
     \begin{itemize}
     \item new operator and associated methods:
-        added the \verb'GxB_IndexBinaryOp'
+        added the draft \verb'G*B_IndexBinaryOp'.
     \item JIT error-handling behavior changed:  if a compiler error occurs in
         the JIT, \verb'GxB_JIT_ERROR' is now returned.  Previously, GraphBLAS
         would fall back to a generic method if such an error occurred.

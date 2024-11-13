@@ -22,7 +22,7 @@ void GB_enumify_monoid  // enumerate a monoid
 )
 { 
 
-    GB_enumify_binop (add_ecode, add_opcode, zcode, false) ;
+    GB_enumify_binop (add_ecode, add_opcode, zcode, false, false) ;
     ASSERT (GB_IMPLIES (zcode != 0, *add_ecode < 32)) ;
     GB_enumify_identity (id_ecode, add_opcode, zcode) ;
     GB_enumify_terminal (term_ecode, add_opcode, zcode) ;

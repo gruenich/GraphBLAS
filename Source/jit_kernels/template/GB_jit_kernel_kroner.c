@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GzB_IndexBinaryOp_free: free an index_binary operator
+// GB_jit_kernel_kroner.c: kronecker product
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -7,13 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "include/GB_search_for_vector.h"
 
-GrB_Info GzB_IndexBinaryOp_free     // free a user-created index binary operator
-(
-    GzB_IndexBinaryOp *op           // handle of index binary operator to free
-)
-{ 
-    return (GB_Op_free ((GB_Operator *) op)) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_KRONER_PROTO (GB_jit_kernel) ;
+GB_JIT_GLOBAL GB_JIT_KERNEL_KRONER_PROTO (GB_jit_kernel)
+{
+    #include "template/GB_kroner_template.c"
+    return (GrB_SUCCESS) ;
 }
 

@@ -239,16 +239,23 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT32) ;
 GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 
 //------------------------------------------------------------------------------
-// built-in index binary operators
+// built-in binary operators based on an internal index-binary op
 //------------------------------------------------------------------------------
 
-// helper macros to define index binary operators
-#define GXB_OP2_POS(op,name,theta)                                          \
+// This macro creates the FIRSTI, SECONDI, and related GrB_BinaryOps.  They
+// are built as if they came from a built-in index binary op, but the
+// corresponding GxB_IndexBinaryOp is not actually defined.  Instead, it is
+// entirely encapsulated inside these GrB_BinaryOps.  None of these ops use
+// their theta value; the offset of +1 for FIRSTI1 is built into the operator
+// itself as z=ix+1; it is not computed as z = (ix)+theta with theta = 1.
+
+// helper macros to define binary operators based on an index-binary op
+#define GXB_OP2_POS(op,name)                                                \
     extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z,                         \
         const void *x, GrB_Index ix, GrB_Index jx,                          \
         const void *y, GrB_Index iy, GrB_Index jy,                          \
         const void *theta_parameter) ;                                      \
-    GB_TYPE GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)) = theta ;           \
+    GB_TYPE GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)) = 0 ;               \
     struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =                 \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
@@ -261,8 +268,8 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         GB_ ## op ## _binop_code,   /* opcode */                            \
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         & GB_OPAQUE (GB_XTYPE),     /* theta_type */                        \
-        (GzB_index_binary_function) (& GB_FUNC_T (op, GB_XTYPE)), /* func */\
-        & GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)),     /* theta */      \
+        (GxB_index_binary_function) (& GB_FUNC_T (op, GB_XTYPE)), /* func */\
+        & GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)),     /* theta = 0 */  \
         0                           /* theta_size */                        \
     } ;                                                                     \
     GrB_BinaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))

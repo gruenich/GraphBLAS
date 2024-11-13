@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // cij = op (aij)
-#define GB_COPY(Axnew,pnew,Ax,p) GB_UNOP (Axnew, pnew, Ax, p, A_iso, i, j, y)
+#define GB_COPY(Cx,pC,Ax,pA) GB_UNOP (Cx, pC, Ax, pA, 0, , , )
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_CONVERT_S2B_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_CONVERT_S2B_PROTO (GB_jit_kernel)

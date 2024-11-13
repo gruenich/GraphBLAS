@@ -32,13 +32,8 @@ GB_CALLBACK_PENDING_ENSURE_PROTO (GB_Pending_ensure) ;
 GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice) ;
 GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO (GB_bitmap_assign_to_full) ;
 
-// added for subref:
-GB_CALLBACK_QSORT_1B_ANY_PROTO (GB_qsort_1b) ;
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size1, uint8_t) ;
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size2, uint16_t) ;
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size4, uint32_t) ;
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size8, uint64_t) ;
-GB_CALLBACK_QSORT_1B_SIZE_PROTO (GB_qsort_1b_size16, GB_blob16) ;
+// added for sort:
+GB_CALLBACK_P_SLICE_PROTO (GB_p_slice) ;
 
 #endif
 

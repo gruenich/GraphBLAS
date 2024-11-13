@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GzB_IndexBinaryOp_new: create a new user-defined index_binary operator
+// GxB_IndexBinaryOp_new: create a new user-defined index_binary operator
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -23,10 +23,10 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-GrB_Info GzB_IndexBinaryOp_new
+GrB_Info GxB_IndexBinaryOp_new
 (
-    GzB_IndexBinaryOp *op_handle,   // handle for the new index binary operator
-    GzB_index_binary_function function, // pointer to the index binary function
+    GxB_IndexBinaryOp *op_handle,   // handle for the new index binary operator
+    GxB_index_binary_function function, // pointer to the index binary function
     GrB_Type ztype,                 // type of output z
     GrB_Type xtype,                 // type of input x
     GrB_Type ytype,                 // type of input y
@@ -40,7 +40,7 @@ GrB_Info GzB_IndexBinaryOp_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GzB_IndexBinaryOp_new (op, function, ztype, xtype, ytype"
+    GB_WHERE1 ("GxB_IndexBinaryOp_new (op, function, ztype, xtype, ytype"
         ", theta_type, name, defn)") ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;
@@ -54,7 +54,7 @@ GrB_Info GzB_IndexBinaryOp_new
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    GzB_IndexBinaryOp op = GB_CALLOC (1, struct GB_IndexBinaryOp_opaque,
+    GxB_IndexBinaryOp op = GB_CALLOC (1, struct GB_IndexBinaryOp_opaque,
         &header_size) ;
     if (op == NULL)
     { 
@@ -111,7 +111,7 @@ GrB_Info GzB_IndexBinaryOp_new
 
     if (function == NULL)
     {
-        GB_BURBLE_START ("GzB_IndexBinaryOp_new") ;
+        GB_BURBLE_START ("GxB_IndexBinaryOp_new") ;
         void *user_function ;
         info = GB_user_op_jit (&user_function, (GB_Operator) op) ;
         if (info != GrB_SUCCESS)
@@ -123,7 +123,7 @@ GrB_Info GzB_IndexBinaryOp_new
             // and cannot be compiled by the JIT).
             return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
-        op->idxbinop_function = (GzB_index_binary_function) user_function ;
+        op->idxbinop_function = (GxB_index_binary_function) user_function ;
         GB_BURBLE_END ;
     }
 

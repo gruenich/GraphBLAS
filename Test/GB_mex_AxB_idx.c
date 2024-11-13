@@ -26,7 +26,7 @@
     GrB_Scalar_free (&Theta) ;                  \
     GrB_Descriptor_free (&desc) ;               \
     GrB_BinaryOp_free (&mult) ;                 \
-    GzB_IndexBinaryOp_free (&Iop) ;             \
+    GxB_IndexBinaryOp_free (&Iop) ;             \
     GrB_Monoid_free (&monoid) ;                 \
     GrB_Semiring_free (&semiring) ;             \
     GB_mx_put_global (true) ;                   \
@@ -140,7 +140,7 @@ void mexFunction
     GrB_Matrix A = NULL, B = NULL, C = NULL ;
     GrB_Scalar Theta = NULL ;
     GrB_BinaryOp mult = NULL ;
-    GzB_IndexBinaryOp Iop = NULL ;
+    GxB_IndexBinaryOp Iop = NULL ;
     GrB_Semiring semiring = NULL ;
     GrB_Index anrows = 0, ancols = 0, bnrows = 0, bncols = 0 ;
     GrB_Descriptor desc = NULL ;
@@ -266,64 +266,64 @@ void mexFunction
         if (MATCH (multname, "firsti" ))
         {
             theta = 0 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) firsti_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) firsti_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "firsti_theta", FIRSTI_THETA)) ;
         }
         else if (MATCH (multname, "firsti1"))
         {
             theta = 1 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) firsti_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) firsti_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "firsti_theta", FIRSTI_THETA)) ;
         }
         else if (MATCH (multname, "firstj" ))
         {
             theta = 0 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) firstj_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) firstj_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "firstj_theta", FIRSTJ_THETA)) ;
         }
         else if (MATCH (multname, "firstj1"))
         {
             theta = 1 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) firstj_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) firstj_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "firstj_theta", FIRSTJ_THETA)) ;
         }
         else if (MATCH (multname, "secondi" ))
         {
             theta = 0 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) secondi_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) secondi_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "secondi_theta", SECONDI_THETA)) ;
         }
         else if (MATCH (multname, "secondi1"))
         {
             theta = 1 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) secondi_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) secondi_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "secondi_theta", SECONDI_THETA)) ;
         }
         else if (MATCH (multname, "secondj" ))
         {
             theta = 0 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) secondj_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) secondj_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "secondj_theta", SECONDJ_THETA)) ;
         }
         else if (MATCH (multname, "secondj1"))
         {
             theta = 1 ;
-            OK (GzB_IndexBinaryOp_new (&Iop,
-                (GzB_index_binary_function) secondj_theta,
+            OK (GxB_IndexBinaryOp_new (&Iop,
+                (GxB_index_binary_function) secondj_theta,
                 GrB_INT64, GrB_FP64, GrB_FP64, GrB_INT64,
                 "secondj_theta", SECONDJ_THETA)) ;
         }
@@ -335,7 +335,7 @@ void mexFunction
         // create the mult binary op
         OK (GrB_Scalar_new (&Theta, GrB_INT64)) ;
         OK (GrB_Scalar_setElement_INT64 (Theta, theta)) ;
-        OK (GzB_BinaryOp_new_IndexOp (&mult, Iop, Theta)) ;
+        OK (GxB_BinaryOp_new_IndexOp (&mult, Iop, Theta)) ;
     }
 
     // create the semiring

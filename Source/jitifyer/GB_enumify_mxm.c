@@ -134,7 +134,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     //--------------------------------------------------------------------------
 
     int mult_ecode ;
-    GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
+    GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true, false) ;
 
     //--------------------------------------------------------------------------
     // enumify the monoid

@@ -36,13 +36,8 @@ typedef GB_CALLBACK_PENDING_ENSURE_PROTO ((*GB_Pending_ensure_f)) ;
 typedef GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO ((*GB_subassign_08n_slice_f)) ;
 typedef GB_CALLBACK_BITMAP_ASSIGN_TO_FULL_PROTO ((*GB_bitmap_assign_to_full_f)) ;
 
-// added for subref:
-typedef GB_CALLBACK_QSORT_1B_ANY_PROTO  ((*GB_qsort_1b_f)) ;
-typedef GB_CALLBACK_QSORT_1B_SIZE_PROTO ((*GB_qsort_1b_size1_f), uint8_t) ;
-typedef GB_CALLBACK_QSORT_1B_SIZE_PROTO ((*GB_qsort_1b_size2_f), uint16_t) ;
-typedef GB_CALLBACK_QSORT_1B_SIZE_PROTO ((*GB_qsort_1b_size4_f), uint32_t) ;
-typedef GB_CALLBACK_QSORT_1B_SIZE_PROTO ((*GB_qsort_1b_size8_f), uint64_t) ;
-typedef GB_CALLBACK_QSORT_1B_SIZE_PROTO ((*GB_qsort_1b_size16_f), GB_blob16) ;
+// added for sort:
+typedef GB_CALLBACK_P_SLICE_PROTO ((*GB_p_slice_f)) ;
 
 //------------------------------------------------------------------------------
 // GB_callback: a struct to pass to kernels to give them their callback methods
@@ -72,14 +67,8 @@ typedef struct
     GB_subassign_08n_slice_f    GB_subassign_08n_slice_func ;
     GB_bitmap_assign_to_full_f  GB_bitmap_assign_to_full_func ;
 
-    // added for subref:
-    GB_qsort_1b_f               GB_qsort_1b_func ;
-    GB_qsort_1b_size1_f         GB_qsort_1b_size1_func ;
-    GB_qsort_1b_size2_f         GB_qsort_1b_size2_func ;
-    GB_qsort_1b_size4_f         GB_qsort_1b_size4_func ;
-    GB_qsort_1b_size8_f         GB_qsort_1b_size8_func ;
-    GB_qsort_1b_size16_f        GB_qsort_1b_size16_func ;
-
+    // added for sort:
+    GB_p_slice_f                GB_p_slice_func ;
 }
 GB_callback_struct ;
 

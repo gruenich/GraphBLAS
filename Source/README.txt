@@ -26,7 +26,7 @@ aliased             methods for determining if any components of a matrix
 
 apply               GrB_apply
 
-assign              GrB_assgn and GxB_assign
+assign              GrB_assign and GxB_assign
 
 binaryop            GrB_BinaryOp object
 
@@ -103,7 +103,7 @@ include             general-purpose header files that do not fit into any
                     settings, and GB_include.h which is a primary internal
                     include file.
 
-indexbinaryop       GzB_IndexBinaryOp object
+indexbinaryop       GxB_IndexBinaryOp object
 
 indexunaryop        GrB_IndexUnaryOp object
 

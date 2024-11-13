@@ -1352,15 +1352,15 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // types are the same, but all of them are built-in since
                 // user-defined types cannot be typecasted.
 
-                const GB_Type_code scode = stype->code ;
+                const GB_Type_code Scode = stype->code ;
                 const size_t ssize = stype->size ;
-                GB_cast_function cast_S_to_T = GB_cast_factory (tcode, scode) ;
-                GB_cast_function cast_S_to_Y = GB_cast_factory (ycode, scode) ;
+                GB_cast_function cast_S_to_T = GB_cast_factory (tcode, Scode) ;
+                GB_cast_function cast_S_to_Y = GB_cast_factory (ycode, Scode) ;
                 GB_cast_function cast_T_to_X = GB_cast_factory (xcode, tcode) ;
                 GB_cast_function cast_Z_to_T = GB_cast_factory (tcode, zcode) ;
 
                 // all types must be built-in
-                ASSERT (scode <= GB_FC64_code) ;
+                ASSERT (Scode <= GB_FC64_code) ;
                 ASSERT (tcode <= GB_FC64_code) ;
                 ASSERT (xcode <= GB_FC64_code) ;
                 ASSERT (ycode <= GB_FC64_code) ;

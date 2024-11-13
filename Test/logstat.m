@@ -71,7 +71,11 @@ else
     end
 end
 
-n = grblines ;  % total # of lines in the test coverage
+try
+    n = grblines ;  % total # of lines in the test coverage
+catch
+    n = 0 ;
+end
 
 for control_trial = 1:length (jit_controls)
     for trial = 1:length (threads)

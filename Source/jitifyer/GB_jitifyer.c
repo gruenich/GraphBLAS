@@ -48,13 +48,6 @@ static bool GB_jit_use_cmake =
     false ;     // otherwise, default is to skip cmake and compile directly
     #endif
 
-#if 0
-// GB_jit_error_fallback: if false, a JIT compiler error returns GxB_JIT_ERROR.
-// If true (default case in 9.3.x and before), it returns GrB_NO_VALUE, and the
-// generic kernel takes over as a fallback.
-// static bool     GB_jit_error_fallback = false ;
-#endif
-
 // path to user cache folder:
 static char    *GB_jit_cache_path = NULL ;
 static size_t   GB_jit_cache_path_allocated = 0 ;
@@ -287,7 +280,7 @@ void GB_jitifyer_sanitize (char *string, size_t len)
 // GraphBLAS can continue without the JIT.
 
 GrB_Info GB_jitifyer_init (void)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // initialize the JIT control
@@ -475,7 +468,7 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("concat_bitmap")) c = GB_JIT_KERNEL_CONCAT_BITMAP ;
         else if (IS ("concat_full"  )) c = GB_JIT_KERNEL_CONCAT_FULL ;
         else if (IS ("concat_sparse")) c = GB_JIT_KERNEL_CONCAT_SPARSE ;
-        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERTS2B ;
+        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERT_S2B ;
         else if (IS ("emult_02"     )) c = GB_JIT_KERNEL_EMULT2 ;
         else if (IS ("emult_03"     )) c = GB_JIT_KERNEL_EMULT3 ;
         else if (IS ("emult_04"     )) c = GB_JIT_KERNEL_EMULT4 ;
@@ -546,7 +539,13 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("masker_phase2")) c = GB_JIT_KERNEL_MASKER_PHASE2 ;
 
         else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
-        else if (IS ("bitmap_subref")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
+        else if (IS ("subref_bitmap")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
+
+        else if (IS ("iso_expand"   )) c = GB_JIT_KERNEL_ISO_EXPAND ;
+        else if (IS ("unjumble"     )) c = GB_JIT_KERNEL_UNJUMBLE ;
+        else if (IS ("convert_b2s"  )) c = GB_JIT_KERNEL_CONVERT_B2S ;
+        else if (IS ("kroner"       )) c = GB_JIT_KERNEL_KRONER ;
+        else if (IS ("sort"         )) c = GB_JIT_KERNEL_SORT ;
 
         // add CUDA PreJIT kernels here (future):
 //      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
@@ -857,7 +856,7 @@ GxB_JIT_Control GB_jitifyer_get_control (void)
 //------------------------------------------------------------------------------
 
 void GB_jitifyer_set_control (int control)
-{
+{ 
     #pragma omp critical (GB_jitifyer_worker)
     {
         control = GB_IMAX (control, (int) GxB_JIT_OFF) ;
@@ -1265,32 +1264,6 @@ GrB_Info GB_jitifyer_set_C_libraries_worker (const char *new_C_libraries)
     // allocate workspace
     return (GB_jitifyer_alloc_space ( )) ;
 }
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_get_error_fallback: return true/false if JIT error fallback
-//------------------------------------------------------------------------------
-
-//  bool GB_jitifyer_get_error_fallback (void)
-//  { 
-//      bool error_fallback ;
-//      #pragma omp critical (GB_jitifyer_worker)
-//      {
-//          error_fallback = GB_jit_error_fallback ;
-//      }
-//      return (error_fallback) ;
-//  }
-
-//------------------------------------------------------------------------------
-// GB_jitifyer_set_error_fallback: set controls true/false, JIT error fallback
-//------------------------------------------------------------------------------
-
-//  void GB_jitifyer_set_error_fallback (bool error_fallback)
-//  { 
-//      #pragma omp critical (GB_jitifyer_worker)
-//      {
-//          GB_jit_error_fallback = error_fallback ;
-//      }
-//  }
 
 //------------------------------------------------------------------------------
 // GB_jitifyer_get_use_cmake: return true/false if cmake is in use
@@ -1849,7 +1822,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            scode_digits = 13 ;
+            scode_digits = 14 ;
             break ;
 
         case GB_jit_mxm_family    : 
@@ -1883,6 +1856,10 @@ GrB_Info GB_jitifyer_load2_worker
             break ;
 
         case GB_jit_subref_family  : 
+            scode_digits = 4 ;
+            break ;
+
+        case GB_jit_sort_family  : 
             scode_digits = 4 ;
             break ;
 
@@ -2096,7 +2073,6 @@ GrB_Info GB_jitifyer_load_worker
             // remove the compiled library
             remove (GB_jit_temp) ;
             GBURBLE ("\n(jit failure: compiler error; compilation disabled)\n");
-//          return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
             return (GxB_JIT_ERROR) ;
         }
 
@@ -2127,7 +2103,6 @@ GrB_Info GB_jitifyer_load_worker
         // remove the compiled library
         remove (GB_jit_temp) ;
         GBURBLE ("\n(jit failure: load error; compilation disabled)\n") ;
-//      return (GB_jit_error_fallback ? GrB_NO_VALUE : GxB_JIT_ERROR) ;
         return (GxB_JIT_ERROR) ;
     }
 

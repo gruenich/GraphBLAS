@@ -147,6 +147,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // input:
     bool is_eWiseMult,      // if true, method is emult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool is_kron,           // if true, method is kron
     bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, C is iso on output
@@ -701,7 +702,8 @@ void GB_enumify_binop
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code zcode, // op->xtype->code of the operator
-    bool for_semiring   // true for A*B, false for A+B or A.*B
+    bool for_semiring,  // true for A*B, false for A+B or A.*B
+    bool for_kron       // true for kronecker
 ) ;
 
 void GB_macrofy_binop
@@ -715,6 +717,7 @@ void GB_macrofy_binop
                                 // or binary op for GrB_Matrix_build, or
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
+    bool is_kron,               // if true: binop for kronecker
     int ecode,
     bool C_iso,                 // if true: C is iso
     GrB_BinaryOp op,            // NULL if C is iso
@@ -1101,6 +1104,22 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
+) ;
+
+GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
+(
+    // input:
+    const int64_t *restrict Cp,     // vector pointers for CSC/CSR form
+    // outputs:
+    int64_t *restrict Ci,           // indices for CSC/CSR or triplet form
+    int64_t *restrict Cj,           // vector indices for triplet form
+    GB_void *restrict Cx,           // values for CSC/CSR or triplet form
+    // inputs: not modified
+    const GrB_Type ctype,           // type of Cx
+    GB_Operator op,
+    const GrB_Matrix A,             // matrix to extract; not modified
+    const int64_t *restrict W,      // workspace
+    int nthreads                    // # of threads to use
 ) ;
 
 GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
@@ -1685,6 +1704,84 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
     const GrB_Type xtype,           // the type of the X and the scalar
     const GB_Operator op,           // identity operator
     const int nthreads              // # of threads to use
+) ;
+
+//------------------------------------------------------------------------------
+// unjumble
+//------------------------------------------------------------------------------
+
+GrB_Info GB_unjumble_jit
+(
+    // input/output:
+    const GrB_Matrix A,
+    const GB_Operator op,           // identity op, unused
+    const int64_t *A_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+//------------------------------------------------------------------------------
+// sort
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_sort       // encode a sort problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop
+) ;
+
+void GB_enumify_sort        // enumerate a GxB_sort problem
+(
+    // output:
+    uint64_t *scode,        // unique encoding of the entire operation
+    // input:
+    GrB_Matrix C,           // matrix to sort
+    // comparator op:
+    GrB_BinaryOp binaryop   // the binary operator for the comparator
+) ;
+
+GrB_Info GB_sort_jit
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    int nthreads,
+    GB_Werk Werk
+) ;
+
+void GB_macrofy_sort            // construct all macros for GxB_sort
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t scode,
+    GrB_BinaryOp binaryop,      // binaryop to macrofy
+    GrB_Type ctype
+) ;
+
+//------------------------------------------------------------------------------
+// kronecker product
+//------------------------------------------------------------------------------
+
+GrB_Info GB_kroner_jit
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const bool flipij,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
 ) ;
 
 //------------------------------------------------------------------------------
