@@ -53,10 +53,6 @@
                 GB_CASE_UINT16 (_bor)
                 GB_CASE_UINT32 (_bor)
                 GB_CASE_UINT64 (_bor)
-//              case GB_UINT8_code  : GB_AxB_WORKER (_bor, GB_MNAME, _uint8 )
-//              case GB_UINT16_code : GB_AxB_WORKER (_bor, GB_MNAME, _uint16)
-//              case GB_UINT32_code : GB_AxB_WORKER (_bor, GB_MNAME, _uint32)
-//              case GB_UINT64_code : GB_AxB_WORKER (_bor, GB_MNAME, _uint64)
                 default: ;
             }
             break ;
@@ -71,10 +67,6 @@
                 GB_CASE_UINT16 (_band)
                 GB_CASE_UINT32 (_band)
                 GB_CASE_UINT64 (_band)
-//              case GB_UINT8_code  : GB_AxB_WORKER (_band, GB_MNAME, _uint8 )
-//              case GB_UINT16_code : GB_AxB_WORKER (_band, GB_MNAME, _uint16)
-//              case GB_UINT32_code : GB_AxB_WORKER (_band, GB_MNAME, _uint32)
-//              case GB_UINT64_code : GB_AxB_WORKER (_band, GB_MNAME, _uint64)
                 default: ;
             }
             break ;
@@ -89,10 +81,6 @@
                 GB_CASE_UINT16 (_bxor)
                 GB_CASE_UINT32 (_bxor)
                 GB_CASE_UINT64 (_bxor)
-//              case GB_UINT8_code  : GB_AxB_WORKER (_bxor, GB_MNAME, _uint8 )
-//              case GB_UINT16_code : GB_AxB_WORKER (_bxor, GB_MNAME, _uint16)
-//              case GB_UINT32_code : GB_AxB_WORKER (_bxor, GB_MNAME, _uint32)
-//              case GB_UINT64_code : GB_AxB_WORKER (_bxor, GB_MNAME, _uint64)
                 default: ;
             }
             break ;
@@ -107,10 +95,6 @@
                 GB_CASE_UINT16 (_bxnor)
                 GB_CASE_UINT32 (_bxnor)
                 GB_CASE_UINT64 (_bxnor)
-//              case GB_UINT8_code  : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint8 )
-//              case GB_UINT16_code : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint16)
-//              case GB_UINT32_code : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint32)
-//              case GB_UINT64_code : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint64)
                 default: ;
             }
             break ;
