@@ -39,15 +39,16 @@
             cij = (GB_C_TYPE) (t & 0x1L) ;
         }
         #elif GB_IS_PLUS_PAIR_8_SEMIRING
-        { 
+        {
             // (PLUS int8, uint8 monoids)_PAIR semirings
+            // only used by the JIT if int8 and uint8 FactoryKernels disabled
             uint64_t t = ((uint64_t) cij) + ainz ;
             cij = (GB_C_TYPE) (t & 0xFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_16_SEMIRING
         {
             // (PLUS int16, uint16 monoids)_PAIR semirings
-            // this is only used by the JIT
+            // only used by the JIT if int16 and uint16 FactoryKernels disabled
             uint64_t t = ((uint64_t) cij) + ainz ;
             cij = (GB_C_TYPE) (t & 0xFFFFL) ;
         }

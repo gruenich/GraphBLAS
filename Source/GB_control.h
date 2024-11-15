@@ -98,11 +98,11 @@
    #define GxB_NO_INT16     1
 // #define GxB_NO_INT32     1
 // #define GxB_NO_INT64     1
-// #define GxB_NO_INT8      1
+   #define GxB_NO_INT8      1
    #define GxB_NO_UINT16    1
 // #define GxB_NO_UINT32    1
 // #define GxB_NO_UINT64    1
-// #define GxB_NO_UINT8     1
+   #define GxB_NO_UINT8     1
 
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the unary operators
@@ -1126,40 +1126,40 @@
 //      MAX:    MIN, PLUS, TIMES, FIRST, SECOND
 
 // builtin GrB_*:
-// #define GxB_NO_MAX_MIN_FP32          1
-// #define GxB_NO_MAX_MIN_FP64          1
-// #define GxB_NO_MAX_MIN_INT16         1
-// #define GxB_NO_MAX_MIN_INT32         1
-// #define GxB_NO_MAX_MIN_INT64         1
-// #define GxB_NO_MAX_MIN_INT8          1
-// #define GxB_NO_MAX_MIN_UINT16        1
-// #define GxB_NO_MAX_MIN_UINT32        1
-// #define GxB_NO_MAX_MIN_UINT64        1
-// #define GxB_NO_MAX_MIN_UINT8         1
+   #define GxB_NO_MAX_MIN_FP32          1
+   #define GxB_NO_MAX_MIN_FP64          1
+   #define GxB_NO_MAX_MIN_INT16         1
+   #define GxB_NO_MAX_MIN_INT32         1
+   #define GxB_NO_MAX_MIN_INT64         1
+   #define GxB_NO_MAX_MIN_INT8          1
+   #define GxB_NO_MAX_MIN_UINT16        1
+   #define GxB_NO_MAX_MIN_UINT32        1
+   #define GxB_NO_MAX_MIN_UINT64        1
+   #define GxB_NO_MAX_MIN_UINT8         1
 
 // builtin GrB_*:
-// #define GxB_NO_MAX_PLUS_FP32         1
-// #define GxB_NO_MAX_PLUS_FP64         1
-// #define GxB_NO_MAX_PLUS_INT16        1
-// #define GxB_NO_MAX_PLUS_INT32        1
-// #define GxB_NO_MAX_PLUS_INT64        1
-// #define GxB_NO_MAX_PLUS_INT8         1
-// #define GxB_NO_MAX_PLUS_UINT16       1
-// #define GxB_NO_MAX_PLUS_UINT32       1
-// #define GxB_NO_MAX_PLUS_UINT64       1
-// #define GxB_NO_MAX_PLUS_UINT8        1
+   #define GxB_NO_MAX_PLUS_FP32         1
+   #define GxB_NO_MAX_PLUS_FP64         1
+   #define GxB_NO_MAX_PLUS_INT16        1
+   #define GxB_NO_MAX_PLUS_INT32        1
+   #define GxB_NO_MAX_PLUS_INT64        1
+   #define GxB_NO_MAX_PLUS_INT8         1
+   #define GxB_NO_MAX_PLUS_UINT16       1
+   #define GxB_NO_MAX_PLUS_UINT32       1
+   #define GxB_NO_MAX_PLUS_UINT64       1
+   #define GxB_NO_MAX_PLUS_UINT8        1
 
 // builtin GrB_*:
-// #define GxB_NO_MAX_TIMES_FP32        1
-// #define GxB_NO_MAX_TIMES_FP64        1
-// #define GxB_NO_MAX_TIMES_INT16       1
-// #define GxB_NO_MAX_TIMES_INT32       1
-// #define GxB_NO_MAX_TIMES_INT64       1
-// #define GxB_NO_MAX_TIMES_INT8        1
-// #define GxB_NO_MAX_TIMES_UINT16      1
-// #define GxB_NO_MAX_TIMES_UINT32      1
-// #define GxB_NO_MAX_TIMES_UINT64      1
-// #define GxB_NO_MAX_TIMES_UINT8       1
+   #define GxB_NO_MAX_TIMES_FP32        1
+   #define GxB_NO_MAX_TIMES_FP64        1
+   #define GxB_NO_MAX_TIMES_INT16       1
+   #define GxB_NO_MAX_TIMES_INT32       1
+   #define GxB_NO_MAX_TIMES_INT64       1
+   #define GxB_NO_MAX_TIMES_INT8        1
+   #define GxB_NO_MAX_TIMES_UINT16      1
+   #define GxB_NO_MAX_TIMES_UINT32      1
+   #define GxB_NO_MAX_TIMES_UINT64      1
+   #define GxB_NO_MAX_TIMES_UINT8       1
 
 // builtin GrB_*: also needed by GrB_reduce to vector
 // #define GxB_NO_MAX_FIRST_FP32        1
@@ -1296,16 +1296,16 @@
 //      MIN:    MAX, PLUS, TIMES, FIRST, SECOND
 
 // builtin GrB_*:
-// #define GxB_NO_MIN_MAX_FP32          1
-// #define GxB_NO_MIN_MAX_FP64          1
-// #define GxB_NO_MIN_MAX_INT16         1
-// #define GxB_NO_MIN_MAX_INT32         1
-// #define GxB_NO_MIN_MAX_INT64         1
-// #define GxB_NO_MIN_MAX_INT8          1
-// #define GxB_NO_MIN_MAX_UINT16        1
-// #define GxB_NO_MIN_MAX_UINT32        1
-// #define GxB_NO_MIN_MAX_UINT64        1
-// #define GxB_NO_MIN_MAX_UINT8         1
+   #define GxB_NO_MIN_MAX_FP32          1
+   #define GxB_NO_MIN_MAX_FP64          1
+   #define GxB_NO_MIN_MAX_INT16         1
+   #define GxB_NO_MIN_MAX_INT32         1
+   #define GxB_NO_MIN_MAX_INT64         1
+   #define GxB_NO_MIN_MAX_INT8          1
+   #define GxB_NO_MIN_MAX_UINT16        1
+   #define GxB_NO_MIN_MAX_UINT32        1
+   #define GxB_NO_MIN_MAX_UINT64        1
+   #define GxB_NO_MIN_MAX_UINT8         1
 
 // builtin GrB_*:
 // #define GxB_NO_MIN_PLUS_FP32         1
@@ -1320,16 +1320,16 @@
 // #define GxB_NO_MIN_PLUS_UINT8        1
 
 // builtin GrB_*:
-// #define GxB_NO_MIN_TIMES_FP32        1
-// #define GxB_NO_MIN_TIMES_FP64        1
-// #define GxB_NO_MIN_TIMES_INT16       1
-// #define GxB_NO_MIN_TIMES_INT32       1
-// #define GxB_NO_MIN_TIMES_INT64       1
-// #define GxB_NO_MIN_TIMES_INT8        1
-// #define GxB_NO_MIN_TIMES_UINT16      1
-// #define GxB_NO_MIN_TIMES_UINT32      1
-// #define GxB_NO_MIN_TIMES_UINT64      1
-// #define GxB_NO_MIN_TIMES_UINT8       1
+   #define GxB_NO_MIN_TIMES_FP32        1
+   #define GxB_NO_MIN_TIMES_FP64        1
+   #define GxB_NO_MIN_TIMES_INT16       1
+   #define GxB_NO_MIN_TIMES_INT32       1
+   #define GxB_NO_MIN_TIMES_INT64       1
+   #define GxB_NO_MIN_TIMES_INT8        1
+   #define GxB_NO_MIN_TIMES_UINT16      1
+   #define GxB_NO_MIN_TIMES_UINT32      1
+   #define GxB_NO_MIN_TIMES_UINT64      1
+   #define GxB_NO_MIN_TIMES_UINT8       1
 
 // builtin GrB_*: also needed by GrB_reduce to vector
 // #define GxB_NO_MIN_FIRST_FP32        1
@@ -1478,27 +1478,27 @@
 // #define GxB_NO_PLUS_PAIR_UINT8       1
 
 // builtin GrB_*:
-// #define GxB_NO_PLUS_MIN_FP32         1
-// #define GxB_NO_PLUS_MIN_FP64         1
-// #define GxB_NO_PLUS_MIN_INT16        1
-// #define GxB_NO_PLUS_MIN_INT32        1
-// #define GxB_NO_PLUS_MIN_INT64        1
-// #define GxB_NO_PLUS_MIN_INT8         1
-// #define GxB_NO_PLUS_MIN_UINT16       1
-// #define GxB_NO_PLUS_MIN_UINT32       1
-// #define GxB_NO_PLUS_MIN_UINT64       1
-// #define GxB_NO_PLUS_MIN_UINT8        1
+   #define GxB_NO_PLUS_MIN_FP32         1
+   #define GxB_NO_PLUS_MIN_FP64         1
+   #define GxB_NO_PLUS_MIN_INT16        1
+   #define GxB_NO_PLUS_MIN_INT32        1
+   #define GxB_NO_PLUS_MIN_INT64        1
+   #define GxB_NO_PLUS_MIN_INT8         1
+   #define GxB_NO_PLUS_MIN_UINT16       1
+   #define GxB_NO_PLUS_MIN_UINT32       1
+   #define GxB_NO_PLUS_MIN_UINT64       1
+   #define GxB_NO_PLUS_MIN_UINT8        1
 
-// #define GxB_NO_PLUS_MAX_FP32         1
-// #define GxB_NO_PLUS_MAX_FP64         1
-// #define GxB_NO_PLUS_MAX_INT16        1
-// #define GxB_NO_PLUS_MAX_INT32        1
-// #define GxB_NO_PLUS_MAX_INT64        1
-// #define GxB_NO_PLUS_MAX_INT8         1
-// #define GxB_NO_PLUS_MAX_UINT16       1
-// #define GxB_NO_PLUS_MAX_UINT32       1
-// #define GxB_NO_PLUS_MAX_UINT64       1
-// #define GxB_NO_PLUS_MAX_UINT8        1
+   #define GxB_NO_PLUS_MAX_FP32         1
+   #define GxB_NO_PLUS_MAX_FP64         1
+   #define GxB_NO_PLUS_MAX_INT16        1
+   #define GxB_NO_PLUS_MAX_INT32        1
+   #define GxB_NO_PLUS_MAX_INT64        1
+   #define GxB_NO_PLUS_MAX_INT8         1
+   #define GxB_NO_PLUS_MAX_UINT16       1
+   #define GxB_NO_PLUS_MAX_UINT32       1
+   #define GxB_NO_PLUS_MAX_UINT64       1
+   #define GxB_NO_PLUS_MAX_UINT8        1
 
 // not GrB_*, used in LAGraph: sparse deep neural network
 // #define GxB_NO_PLUS_PLUS_FP32        1
