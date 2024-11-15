@@ -237,7 +237,6 @@ if (is_any_pair)
     unsigned = true ;
     bits = 0 ;
     zname = 'iso' ;
-    % FIXME
 else
     [fname, unsigned, bits] = codegen_type (xytype) ;
     [zname, ~, ~] = codegen_type (ztype) ;
