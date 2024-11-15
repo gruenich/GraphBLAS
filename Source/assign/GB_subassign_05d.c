@@ -23,6 +23,7 @@
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_as__include.h"
 #endif
 #define GB_GENERIC
@@ -115,23 +116,7 @@ GrB_Info GB_subassign_05d
         // required.
 
         // C<M> = x
-        switch (ccode)
-        {
-            case GB_BOOL_code   : GB_WORKER (_bool  )
-            case GB_INT8_code   : GB_WORKER (_int8  )
-            case GB_INT16_code  : GB_WORKER (_int16 )
-            case GB_INT32_code  : GB_WORKER (_int32 )
-            case GB_INT64_code  : GB_WORKER (_int64 )
-            case GB_UINT8_code  : GB_WORKER (_uint8 )
-            case GB_UINT16_code : GB_WORKER (_uint16)
-            case GB_UINT32_code : GB_WORKER (_uint32)
-            case GB_UINT64_code : GB_WORKER (_uint64)
-            case GB_FP32_code   : GB_WORKER (_fp32  )
-            case GB_FP64_code   : GB_WORKER (_fp64  )
-            case GB_FC32_code   : GB_WORKER (_fc32  )
-            case GB_FC64_code   : GB_WORKER (_fc64  )
-            default: ;
-        }
+        #include "assign/factory/GB_assign_factory.c"
     }
     #endif
 

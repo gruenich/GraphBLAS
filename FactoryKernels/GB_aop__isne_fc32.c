@@ -9,8 +9,15 @@
 
 // C(I,J)<M> += A
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_FC32)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_aop__include.h"
 
@@ -37,16 +44,16 @@
 
 // C(i,j) += (ytype) A(i,j)
 #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)    \
-{                                                       \
-    if (A_iso)                                          \
-    {                                                   \
-        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;   \
-    }                                                   \
-    else                                                \
-    {                                                   \
-        /* A and Y have the same type here */           \
-        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA], C_iso) ; \
-    }                                                   \
+{                                                           \
+    if (A_iso)                                              \
+    {                                                       \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;       \
+    }                                                       \
+    else                                                    \
+    {                                                       \
+        /* A and Y have the same type here */               \
+        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA], C_iso) ;     \
+    }                                                       \
 }
 
 // disable this operator and use the generic case if these conditions hold
@@ -106,4 +113,6 @@ GrB_Info GB (_subassign_22__isne_fc32)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

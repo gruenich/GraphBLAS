@@ -10,6 +10,7 @@ f = fopen ('control.m4', 'w') ;
 fprintf (f, 'm4_divert(-1)\n') ;
 
 [aname, unsigned, bits] = codegen_type (atype) ;
+codegen_type_enabled (f, aname) ;
 
 name = sprintf ('%s_%s', opname, aname) ;
 is_any = isequal (opname, 'any') ;

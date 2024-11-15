@@ -27,7 +27,7 @@ GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
     const int64_t *restrict W,      // workspace
     int nthreads                    // # of threads to use
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

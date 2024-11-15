@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_FP32)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
@@ -106,4 +113,6 @@ GrB_Info GB (_AaddB__pair_fp32)
 //------------------------------------------------------------------------------
 // eWiseUnion: C=A+B, C<M>=A+B, C<!M>=A+B
 //------------------------------------------------------------------------------
+
+#endif
 

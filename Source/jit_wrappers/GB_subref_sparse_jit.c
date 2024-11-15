@@ -35,7 +35,7 @@ GrB_Info GB_subref_sparse_jit
     const GrB_Matrix A,
     const GrB_Index *I
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

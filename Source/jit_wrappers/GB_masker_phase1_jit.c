@@ -34,7 +34,7 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     const GrB_Matrix C,
     const GrB_Matrix Z
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

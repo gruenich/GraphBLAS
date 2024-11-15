@@ -18,7 +18,7 @@ void GB_macrofy_preface
     char *CUDA_preface,     // user-provided preface for CUDA JIT kernels
     GB_jit_kcode kcode
 )
-{
+{ 
 
     const char *date = GxB_IMPLEMENTATION_DATE ;
     int len = (int) strlen (date) ;

@@ -10,6 +10,7 @@ f = fopen ('control.m4', 'w') ;
 fprintf (f, 'm4_divert(-1)\n') ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
+codegen_type_enabled (f, fname) ;
 fprintf ('%-11s:  fname: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
 
 % function names

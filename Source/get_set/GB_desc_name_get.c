@@ -21,7 +21,7 @@ const char *GB_desc_name_get
 (
     GrB_Descriptor desc
 )
-{
+{ 
 
     DNAME (GrB_NULL        ) ;
     DNAME (GrB_DESC_T1     ) ;

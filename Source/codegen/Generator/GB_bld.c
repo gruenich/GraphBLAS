@@ -7,8 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+GB_type_enabled
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_bld__include.h"
 
 // dup operator: Tx [k] += Sx [i], no typecast here
@@ -54,4 +56,6 @@ GrB_Info GB (_bld)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

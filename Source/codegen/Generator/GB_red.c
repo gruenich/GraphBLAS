@@ -7,8 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+GB_type_enabled
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_red__include.h"
 
 // reduction operator and type:
@@ -70,4 +72,6 @@ GrB_Info GB (_red)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

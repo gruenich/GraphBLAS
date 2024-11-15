@@ -11,6 +11,7 @@ fprintf (f, 'm4_divert(-1)\n') ;
 assert (~isequal (binop, 'any')) ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
+codegen_type_enabled (f, fname) ;
 
 name = sprintf ('%s_%s', binop, fname) ;
 

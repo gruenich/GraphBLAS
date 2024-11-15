@@ -92,6 +92,7 @@
 #include "mxm/GB_AxB_saxpy_generic.h"
 #include "mxm/GB_AxB__include1.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_AxB__include2.h"
 #endif
 #include "include/GB_unused.h"
