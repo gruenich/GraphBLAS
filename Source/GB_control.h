@@ -630,8 +630,8 @@
    #define GxB_NO_POW_UINT64    1
 // #define GxB_NO_POW_FP32      1
 // #define GxB_NO_POW_FP64      1
-// #define GxB_NO_POW_FC32      1
-// #define GxB_NO_POW_FC64      1
+   #define GxB_NO_POW_FC32      1
+   #define GxB_NO_POW_FC64      1
    #define GxB_NO_POW_BOOL      1
 
    #define GxB_NO_BOR_INT8      1
