@@ -26,7 +26,7 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     // A matrix:
     GrB_Matrix A
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // get the type of C (same as the type of A) and enumify it

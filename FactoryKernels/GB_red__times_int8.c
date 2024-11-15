@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_INT8)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_red__include.h"
 
 // reduction operator and type:
@@ -74,4 +81,6 @@ GrB_Info GB (_red__times_int8)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_INT32)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
@@ -323,4 +330,6 @@ GrB_Info GB (_AemultB_bitmap__second_int32)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

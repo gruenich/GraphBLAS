@@ -9,8 +9,10 @@
 
 // C(I,J)<M> = A
 
-#include "GB.h"
 #include "GB_control.h"
+GB_type_enabled
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_as__include.h"
 
@@ -103,4 +105,6 @@ GrB_Info GB (_subassign_25)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

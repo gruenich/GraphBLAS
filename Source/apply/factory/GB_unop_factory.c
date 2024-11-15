@@ -2,7 +2,7 @@
 // GB_unop_factory.c:  switch factory for unary operators and 2 types
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -15,6 +15,97 @@
 // If the op is user-defined, or if the combinations of z and x type are not
 // handled by the built-in operator, then this switch factory falls through
 // with no action taken.
+
+#if defined (GxB_NO_BOOL)
+#define GB_CASE_BOOL(op,zname,ztype)
+#else
+#define GB_CASE_BOOL(op,zname,ztype) \
+    case GB_BOOL_code:   GB_WORKER (op, zname, ztype, _bool  , bool    )
+#endif
+
+#if defined (GxB_NO_INT8)
+#define GB_CASE_INT8(op,zname,ztype)
+#else
+#define GB_CASE_INT8(op,zname,ztype) \
+    case GB_INT8_code:   GB_WORKER (op, zname, ztype, _int8  , int8_t  )
+#endif
+
+#if defined (GxB_NO_INT16)
+#define GB_CASE_INT16(op,zname,ztype)
+#else
+#define GB_CASE_INT16(op,zname,ztype) \
+    case GB_INT16_code:  GB_WORKER (op, zname, ztype, _int16 , int16_t )
+#endif
+
+#if defined (GxB_NO_INT32)
+#define GB_CASE_INT32(op,zname,ztype)
+#else
+#define GB_CASE_INT32(op,zname,ztype) \
+    case GB_INT32_code:  GB_WORKER (op, zname, ztype, _int32 , int32_t )
+#endif
+
+#if defined (GxB_NO_INT64)
+#define GB_CASE_INT64(op,zname,ztype)
+#else
+#define GB_CASE_INT64(op,zname,ztype) \
+    case GB_INT64_code:  GB_WORKER (op, zname, ztype, _int64 , int64_t )
+#endif
+
+#if defined (GxB_NO_UINT8)
+#define GB_CASE_UINT8(op,zname,ztype)
+#else
+#define GB_CASE_UINT8(op,zname,ztype) \
+    case GB_UINT8_code:  GB_WORKER (op, zname, ztype, _uint8 , uint8_t )
+#endif
+
+#if defined (GxB_NO_UINT16)
+#define GB_CASE_UINT16(op,zname,ztype)
+#else
+#define GB_CASE_UINT16(op,zname,ztype) \
+    case GB_UINT16_code: GB_WORKER (op, zname, ztype, _uint16, uint16_t)
+#endif
+
+#if defined (GxB_NO_UINT32)
+#define GB_CASE_UINT32(op,zname,ztype)
+#else
+#define GB_CASE_UINT32(op,zname,ztype) \
+    case GB_UINT32_code: GB_WORKER (op, zname, ztype, _uint32, uint32_t)
+#endif
+
+#if defined (GxB_NO_UINT64)
+#define GB_CASE_UINT64(op,zname,ztype)
+#else
+#define GB_CASE_UINT64(op,zname,ztype) \
+    case GB_UINT64_code: GB_WORKER (op, zname, ztype, _uint64, uint64_t)
+#endif
+
+#if defined (GxB_NO_FP32)
+#define GB_CASE_FP32(op,zname,ztype)
+#else
+#define GB_CASE_FP32(op,zname,ztype) \
+    case GB_FP32_code:   GB_WORKER (op, zname, ztype, _fp32  , float   )
+#endif
+
+#if defined (GxB_NO_FP64)
+#define GB_CASE_FP64(op,zname,ztype)
+#else
+#define GB_CASE_FP64(op,zname,ztype) \
+    case GB_FP64_code:   GB_WORKER (op, zname, ztype, _fp64  , double  )
+#endif
+
+#if defined (GxB_NO_FC32)
+#define GB_CASE_FC32(op,zname,ztype)
+#else
+#define GB_CASE_FC32(op,zname,ztype) \
+    case GB_FC32_code:   GB_WORKER (op, zname, ztype, _fc32  , GxB_FC32_t)
+#endif
+
+#if defined (GxB_NO_FC64)
+#define GB_CASE_FC64(op,zname,ztype)
+#else
+#define GB_CASE_FC64(op,zname,ztype) \
+    case GB_FC64_code:   GB_WORKER (op, zname, ztype, _fc64  , GxB_FC64_t)
+#endif
 
 {
     // switch factory for two types, controlled by code1 and code2
@@ -44,7 +135,7 @@
     }
     else if ((code1 == GB_FP32_code && code2 == GB_FC32_code) ||
              (code1 == GB_FP64_code && code2 == GB_FC64_code))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // z = f (x) where z is real and x is complex (same base type)
@@ -57,8 +148,8 @@
 
                 switch (code2)
                 {
-                    case GB_FC32_code : GB_WORKER (_abs, _fp32, float , _fc32, GxB_FC32_t)
-                    case GB_FC64_code : GB_WORKER (_abs, _fp64, double, _fc64, GxB_FC64_t)
+                    GB_CASE_FC32 (_abs, _fp32, float )
+                    GB_CASE_FC64 (_abs, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -67,8 +158,8 @@
 
                 switch (code2)
                 {
-                    case GB_FC32_code : GB_WORKER (_creal, _fp32, float , _fc32, GxB_FC32_t)
-                    case GB_FC64_code : GB_WORKER (_creal, _fp64, double, _fc64, GxB_FC64_t)
+                    GB_CASE_FC32 (_creal, _fp32, float )
+                    GB_CASE_FC64 (_creal, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -77,8 +168,8 @@
 
                 switch (code2)
                 {
-                    case GB_FC32_code : GB_WORKER (_cimag, _fp32, float , _fc32, GxB_FC32_t)
-                    case GB_FC64_code : GB_WORKER (_cimag, _fp64, double, _fc64, GxB_FC64_t)
+                    GB_CASE_FC32 (_cimag, _fp32, float )
+                    GB_CASE_FC64 (_cimag, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -87,8 +178,8 @@
 
                 switch (code2)
                 {
-                    case GB_FC32_code : GB_WORKER (_carg, _fp32, float , _fc32, GxB_FC32_t)
-                    case GB_FC64_code : GB_WORKER (_carg, _fp64, double, _fc64, GxB_FC64_t)
+                    GB_CASE_FC32 (_carg, _fp32, float )
+                    GB_CASE_FC64 (_carg, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -98,7 +189,7 @@
 
     }
     else if (code1 == GB_BOOL_code && (code2 >= GB_FP32_code && code2 <= GB_FC64_code))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // z = f (x) where z is boolean and x is floating-point
@@ -111,10 +202,10 @@
 
                 switch (code2)
                 {
-                    case GB_FP32_code   : GB_WORKER (_isinf, _bool, bool, _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_isinf, _bool, bool, _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_isinf, _bool, bool, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_isinf, _bool, bool, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_isinf, _bool, bool)
+                    GB_CASE_FP64 (_isinf, _bool, bool)
+                    GB_CASE_FC32 (_isinf, _bool, bool)
+                    GB_CASE_FC64 (_isinf, _bool, bool)
                     default: ;
                 }
                 break ;
@@ -123,10 +214,10 @@
 
                 switch (code2)
                 {
-                    case GB_FP32_code   : GB_WORKER (_isnan, _bool, bool, _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_isnan, _bool, bool, _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_isnan, _bool, bool, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_isnan, _bool, bool, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_isnan, _bool, bool)
+                    GB_CASE_FP64 (_isnan, _bool, bool)
+                    GB_CASE_FC32 (_isnan, _bool, bool)
+                    GB_CASE_FC64 (_isnan, _bool, bool)
                     default: ;
                 }
                 break ;
@@ -135,10 +226,10 @@
 
                 switch (code2)
                 {
-                    case GB_FP32_code   : GB_WORKER (_isfinite, _bool, bool, _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_isfinite, _bool, bool, _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_isfinite, _bool, bool, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_isfinite, _bool, bool, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_isfinite, _bool, bool)
+                    GB_CASE_FP64 (_isfinite, _bool, bool)
+                    GB_CASE_FC32 (_isfinite, _bool, bool)
+                    GB_CASE_FC64 (_isfinite, _bool, bool)
                     default: ;
                 }
                 break ;
@@ -149,7 +240,7 @@
 
     }
     else if (code1 == code2)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // z = f (x) with no typecasting
@@ -162,19 +253,19 @@
 
                 switch (code1)
                 {
-                    case GB_BOOL_code   : GB_WORKER (_ainv, _bool  , bool      , _bool  , bool      )
-                    case GB_INT8_code   : GB_WORKER (_ainv, _int8  , int8_t    , _int8  , int8_t    )
-                    case GB_INT16_code  : GB_WORKER (_ainv, _int16 , int16_t   , _int16 , int16_t   )
-                    case GB_INT32_code  : GB_WORKER (_ainv, _int32 , int32_t   , _int32 , int32_t   )
-                    case GB_INT64_code  : GB_WORKER (_ainv, _int64 , int64_t   , _int64 , int64_t   )
-                    case GB_UINT8_code  : GB_WORKER (_ainv, _uint8 , uint8_t   , _uint8 , uint8_t   )
-                    case GB_UINT16_code : GB_WORKER (_ainv, _uint16, uint16_t  , _uint16, uint16_t  )
-                    case GB_UINT32_code : GB_WORKER (_ainv, _uint32, uint32_t  , _uint32, uint32_t  )
-                    case GB_UINT64_code : GB_WORKER (_ainv, _uint64, uint64_t  , _uint64, uint64_t  )
-                    case GB_FP32_code   : GB_WORKER (_ainv, _fp32  , float     , _fp32  , float     )
-                    case GB_FP64_code   : GB_WORKER (_ainv, _fp64  , double    , _fp64  , double    )
-                    case GB_FC32_code   : GB_WORKER (_ainv, _fc32  , GxB_FC32_t, _fc32  , GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_ainv, _fc64  , GxB_FC64_t, _fc64  , GxB_FC64_t)
+                    GB_CASE_BOOL   (_ainv, _bool  , bool      )
+                    GB_CASE_INT8   (_ainv, _int8  , int8_t    )
+                    GB_CASE_INT16  (_ainv, _int16 , int16_t   )
+                    GB_CASE_INT32  (_ainv, _int32 , int32_t   )
+                    GB_CASE_INT64  (_ainv, _int64 , int64_t   )
+                    GB_CASE_UINT8  (_ainv, _uint8 , uint8_t   )
+                    GB_CASE_UINT16 (_ainv, _uint16, uint16_t  )
+                    GB_CASE_UINT32 (_ainv, _uint32, uint32_t  )
+                    GB_CASE_UINT64 (_ainv, _uint64, uint64_t  )
+                    GB_CASE_FP32   (_ainv, _fp32  , float     )
+                    GB_CASE_FP64   (_ainv, _fp64  , double    )
+                    GB_CASE_FC32   (_ainv, _fc32  , GxB_FC32_t)
+                    GB_CASE_FC64   (_ainv, _fc64  , GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -183,19 +274,19 @@
 
                 switch (code1)
                 {
-                    case GB_BOOL_code   : GB_WORKER (_minv, _bool  , bool      , _bool  , bool      )
-                    case GB_INT8_code   : GB_WORKER (_minv, _int8  , int8_t    , _int8  , int8_t    )
-                    case GB_INT16_code  : GB_WORKER (_minv, _int16 , int16_t   , _int16 , int16_t   )
-                    case GB_INT32_code  : GB_WORKER (_minv, _int32 , int32_t   , _int32 , int32_t   )
-                    case GB_INT64_code  : GB_WORKER (_minv, _int64 , int64_t   , _int64 , int64_t   )
-                    case GB_UINT8_code  : GB_WORKER (_minv, _uint8 , uint8_t   , _uint8 , uint8_t   )
-                    case GB_UINT16_code : GB_WORKER (_minv, _uint16, uint16_t  , _uint16, uint16_t  )
-                    case GB_UINT32_code : GB_WORKER (_minv, _uint32, uint32_t  , _uint32, uint32_t  )
-                    case GB_UINT64_code : GB_WORKER (_minv, _uint64, uint64_t  , _uint64, uint64_t  )
-                    case GB_FP32_code   : GB_WORKER (_minv, _fp32  , float     , _fp32  , float     )
-                    case GB_FP64_code   : GB_WORKER (_minv, _fp64  , double    , _fp64  , double    )
-                    case GB_FC32_code   : GB_WORKER (_minv, _fc32  , GxB_FC32_t, _fc32  , GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_minv, _fc64  , GxB_FC64_t, _fc64  , GxB_FC64_t)
+                    GB_CASE_BOOL   (_minv, _bool  , bool      )
+                    GB_CASE_INT8   (_minv, _int8  , int8_t    )
+                    GB_CASE_INT16  (_minv, _int16 , int16_t   )
+                    GB_CASE_INT32  (_minv, _int32 , int32_t   )
+                    GB_CASE_INT64  (_minv, _int64 , int64_t   )
+                    GB_CASE_UINT8  (_minv, _uint8 , uint8_t   )
+                    GB_CASE_UINT16 (_minv, _uint16, uint16_t  )
+                    GB_CASE_UINT32 (_minv, _uint32, uint32_t  )
+                    GB_CASE_UINT64 (_minv, _uint64, uint64_t  )
+                    GB_CASE_FP32   (_minv, _fp32  , float     )
+                    GB_CASE_FP64   (_minv, _fp64  , double    )
+                    GB_CASE_FC32   (_minv, _fc32  , GxB_FC32_t)
+                    GB_CASE_FC64   (_minv, _fc64  , GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -204,17 +295,17 @@
 
                 switch (code1)
                 {
-                    case GB_BOOL_code   : GB_WORKER (_abs, _bool  , bool      , _bool  , bool    )
-                    case GB_INT8_code   : GB_WORKER (_abs, _int8  , int8_t    , _int8  , int8_t  )
-                    case GB_INT16_code  : GB_WORKER (_abs, _int16 , int16_t   , _int16 , int16_t )
-                    case GB_INT32_code  : GB_WORKER (_abs, _int32 , int32_t   , _int32 , int32_t )
-                    case GB_INT64_code  : GB_WORKER (_abs, _int64 , int64_t   , _int64 , int64_t )
-                    case GB_UINT8_code  : GB_WORKER (_abs, _uint8 , uint8_t   , _uint8 , uint8_t )
-                    case GB_UINT16_code : GB_WORKER (_abs, _uint16, uint16_t  , _uint16, uint16_t)
-                    case GB_UINT32_code : GB_WORKER (_abs, _uint32, uint32_t  , _uint32, uint32_t)
-                    case GB_UINT64_code : GB_WORKER (_abs, _uint64, uint64_t  , _uint64, uint64_t)
-                    case GB_FP32_code   : GB_WORKER (_abs, _fp32  , float     , _fp32  , float   )
-                    case GB_FP64_code   : GB_WORKER (_abs, _fp64  , double    , _fp64  , double  )
+                    GB_CASE_BOOL   (_abs, _bool  , bool    )
+                    GB_CASE_INT8   (_abs, _int8  , int8_t  )
+                    GB_CASE_INT16  (_abs, _int16 , int16_t )
+                    GB_CASE_INT32  (_abs, _int32 , int32_t )
+                    GB_CASE_INT64  (_abs, _int64 , int64_t )
+                    GB_CASE_UINT8  (_abs, _uint8 , uint8_t )
+                    GB_CASE_UINT16 (_abs, _uint16, uint16_t)
+                    GB_CASE_UINT32 (_abs, _uint32, uint32_t)
+                    GB_CASE_UINT64 (_abs, _uint64, uint64_t)
+                    GB_CASE_FP32   (_abs, _fp32  , float   )
+                    GB_CASE_FP64   (_abs, _fp64  , double  )
                     default: ;
                 }
                 break ;
@@ -223,17 +314,17 @@
 
                 switch (code1)
                 {
-                    case GB_BOOL_code   : GB_WORKER (_lnot, _bool  , bool    , _bool  , bool    )
-                    case GB_INT8_code   : GB_WORKER (_lnot, _int8  , int8_t  , _int8  , int8_t  )
-                    case GB_INT16_code  : GB_WORKER (_lnot, _int16 , int16_t , _int16 , int16_t )
-                    case GB_INT32_code  : GB_WORKER (_lnot, _int32 , int32_t , _int32 , int32_t )
-                    case GB_INT64_code  : GB_WORKER (_lnot, _int64 , int64_t , _int64 , int64_t )
-                    case GB_UINT8_code  : GB_WORKER (_lnot, _uint8 , uint8_t , _uint8 , uint8_t )
-                    case GB_UINT16_code : GB_WORKER (_lnot, _uint16, uint16_t, _uint16, uint16_t)
-                    case GB_UINT32_code : GB_WORKER (_lnot, _uint32, uint32_t, _uint32, uint32_t)
-                    case GB_UINT64_code : GB_WORKER (_lnot, _uint64, uint64_t, _uint64, uint64_t)
-                    case GB_FP32_code   : GB_WORKER (_lnot, _fp32  , float   , _fp32  , float   )
-                    case GB_FP64_code   : GB_WORKER (_lnot, _fp64  , double  , _fp64  , double  )
+                    GB_CASE_BOOL   (_lnot, _bool  , bool    )
+                    GB_CASE_INT8   (_lnot, _int8  , int8_t  )
+                    GB_CASE_INT16  (_lnot, _int16 , int16_t )
+                    GB_CASE_INT32  (_lnot, _int32 , int32_t )
+                    GB_CASE_INT64  (_lnot, _int64 , int64_t )
+                    GB_CASE_UINT8  (_lnot, _uint8 , uint8_t )
+                    GB_CASE_UINT16 (_lnot, _uint16, uint16_t)
+                    GB_CASE_UINT32 (_lnot, _uint32, uint32_t)
+                    GB_CASE_UINT64 (_lnot, _uint64, uint64_t)
+                    GB_CASE_FP32   (_lnot, _fp32  , float   )
+                    GB_CASE_FP64   (_lnot, _fp64  , double  )
                     default: ;
                 }
                 break ;
@@ -242,14 +333,14 @@
 
                 switch (code1)
                 {
-                    case GB_INT8_code   : GB_WORKER (_bnot, _int8  , int8_t  , _int8  , int8_t  )
-                    case GB_INT16_code  : GB_WORKER (_bnot, _int16 , int16_t , _int16 , int16_t )
-                    case GB_INT32_code  : GB_WORKER (_bnot, _int32 , int32_t , _int32 , int32_t )
-                    case GB_INT64_code  : GB_WORKER (_bnot, _int64 , int64_t , _int64 , int64_t )
-                    case GB_UINT8_code  : GB_WORKER (_bnot, _uint8 , uint8_t , _uint8 , uint8_t )
-                    case GB_UINT16_code : GB_WORKER (_bnot, _uint16, uint16_t, _uint16, uint16_t)
-                    case GB_UINT32_code : GB_WORKER (_bnot, _uint32, uint32_t, _uint32, uint32_t)
-                    case GB_UINT64_code : GB_WORKER (_bnot, _uint64, uint64_t, _uint64, uint64_t)
+                    GB_CASE_INT8   (_bnot, _int8  , int8_t  )
+                    GB_CASE_INT16  (_bnot, _int16 , int16_t )
+                    GB_CASE_INT32  (_bnot, _int32 , int32_t )
+                    GB_CASE_INT64  (_bnot, _int64 , int64_t )
+                    GB_CASE_UINT8  (_bnot, _uint8 , uint8_t )
+                    GB_CASE_UINT16 (_bnot, _uint16, uint16_t)
+                    GB_CASE_UINT32 (_bnot, _uint32, uint32_t)
+                    GB_CASE_UINT64 (_bnot, _uint64, uint64_t)
                     default: ;
                 }
                 break ;
@@ -258,10 +349,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_sqrt, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_sqrt, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_sqrt, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_sqrt, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_sqrt, _fp32, float     )
+                    GB_CASE_FP64 (_sqrt, _fp64, double    )
+                    GB_CASE_FC32 (_sqrt, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_sqrt, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -270,10 +361,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_log, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_log, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_log, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_log, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_log, _fp32, float     )
+                    GB_CASE_FP64 (_log, _fp64, double    )
+                    GB_CASE_FC32 (_log, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_log, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -283,10 +374,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_exp, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_exp, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_exp, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_exp, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_exp, _fp32, float     )
+                    GB_CASE_FP64 (_exp, _fp64, double    )
+                    GB_CASE_FC32 (_exp, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_exp, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -296,10 +387,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_sin, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_sin, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_sin, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_sin, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_sin, _fp32, float     )
+                    GB_CASE_FP64 (_sin, _fp64, double    )
+                    GB_CASE_FC32 (_sin, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_sin, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -308,10 +399,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_cos, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_cos, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_cos, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_cos, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_cos, _fp32, float     )
+                    GB_CASE_FP64 (_cos, _fp64, double    )
+                    GB_CASE_FC32 (_cos, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_cos, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -320,10 +411,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_tan, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_tan, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_tan, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_tan, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_tan, _fp32, float     )
+                    GB_CASE_FP64 (_tan, _fp64, double    )
+                    GB_CASE_FC32 (_tan, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_tan, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -333,10 +424,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_asin, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_asin, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_asin, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_asin, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_asin, _fp32, float     )
+                    GB_CASE_FP64 (_asin, _fp64, double    )
+                    GB_CASE_FC32 (_asin, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_asin, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -345,10 +436,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_acos, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_acos, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_acos, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_acos, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_acos, _fp32, float     )
+                    GB_CASE_FP64 (_acos, _fp64, double    )
+                    GB_CASE_FC32 (_acos, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_acos, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -357,10 +448,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_atan, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_atan, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_atan, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_atan, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_atan, _fp32, float     )
+                    GB_CASE_FP64 (_atan, _fp64, double    )
+                    GB_CASE_FC32 (_atan, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_atan, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -370,10 +461,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_sinh, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_sinh, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_sinh, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_sinh, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_sinh, _fp32, float     )
+                    GB_CASE_FP64 (_sinh, _fp64, double    )
+                    GB_CASE_FC32 (_sinh, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_sinh, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -382,10 +473,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_cosh, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_cosh, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_cosh, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_cosh, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_cosh, _fp32, float     )
+                    GB_CASE_FP64 (_cosh, _fp64, double    )
+                    GB_CASE_FC32 (_cosh, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_cosh, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -394,10 +485,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_tanh, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_tanh, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_tanh, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_tanh, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_tanh, _fp32, float     )
+                    GB_CASE_FP64 (_tanh, _fp64, double    )
+                    GB_CASE_FC32 (_tanh, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_tanh, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -407,10 +498,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_asinh, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_asinh, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_asinh, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_asinh, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_asinh, _fp32, float     )
+                    GB_CASE_FP64 (_asinh, _fp64, double    )
+                    GB_CASE_FC32 (_asinh, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_asinh, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -419,10 +510,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_acosh, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_acosh, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_acosh, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_acosh, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_acosh, _fp32, float     )
+                    GB_CASE_FP64 (_acosh, _fp64, double    )
+                    GB_CASE_FC32 (_acosh, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_acosh, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -431,10 +522,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_atanh, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_atanh, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_atanh, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_atanh, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_atanh, _fp32, float     )
+                    GB_CASE_FP64 (_atanh, _fp64, double    )
+                    GB_CASE_FC32 (_atanh, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_atanh, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -443,10 +534,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_signum, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_signum, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_signum, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_signum, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_signum, _fp32, float     )
+                    GB_CASE_FP64 (_signum, _fp64, double    )
+                    GB_CASE_FC32 (_signum, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_signum, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -455,10 +546,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_ceil, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_ceil, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_ceil, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_ceil, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_ceil, _fp32, float     )
+                    GB_CASE_FP64 (_ceil, _fp64, double    )
+                    GB_CASE_FC32 (_ceil, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_ceil, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -467,10 +558,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_floor, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_floor, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_floor, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_floor, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_floor, _fp32, float     )
+                    GB_CASE_FP64 (_floor, _fp64, double    )
+                    GB_CASE_FC32 (_floor, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_floor, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -479,10 +570,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_round, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_round, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_round, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_round, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_round, _fp32, float     )
+                    GB_CASE_FP64 (_round, _fp64, double    )
+                    GB_CASE_FC32 (_round, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_round, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -491,10 +582,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_trunc, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_trunc, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_trunc, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_trunc, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_trunc, _fp32, float     )
+                    GB_CASE_FP64 (_trunc, _fp64, double    )
+                    GB_CASE_FC32 (_trunc, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_trunc, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -504,10 +595,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_exp2, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_exp2, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_exp2, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_exp2, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_exp2, _fp32, float     )
+                    GB_CASE_FP64 (_exp2, _fp64, double    )
+                    GB_CASE_FC32 (_exp2, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_exp2, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -516,10 +607,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_expm1, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_expm1, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_expm1, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_expm1, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_expm1, _fp32, float     )
+                    GB_CASE_FP64 (_expm1, _fp64, double    )
+                    GB_CASE_FC32 (_expm1, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_expm1, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -528,10 +619,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_log10, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_log10, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_log10, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_log10, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_log10, _fp32, float     )
+                    GB_CASE_FP64 (_log10, _fp64, double    )
+                    GB_CASE_FC32 (_log10, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_log10, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -540,10 +631,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_log1p, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_log1p, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_log1p, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_log1p, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_log1p, _fp32, float     )
+                    GB_CASE_FP64 (_log1p, _fp64, double    )
+                    GB_CASE_FC32 (_log1p, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_log1p, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -552,10 +643,10 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_log2, _fp32, float     , _fp32, float     )
-                    case GB_FP64_code   : GB_WORKER (_log2, _fp64, double    , _fp64, double    )
-                    case GB_FC32_code   : GB_WORKER (_log2, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_log2, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FP32 (_log2, _fp32, float     )
+                    GB_CASE_FP64 (_log2, _fp64, double    )
+                    GB_CASE_FC32 (_log2, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_log2, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -564,8 +655,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_lgamma, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_lgamma, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_lgamma, _fp32, float )
+                    GB_CASE_FP64 (_lgamma, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -574,8 +665,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_tgamma, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_tgamma, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_tgamma, _fp32, float )
+                    GB_CASE_FP64 (_tgamma, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -584,8 +675,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_erf, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_erf, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_erf, _fp32, float )
+                    GB_CASE_FP64 (_erf, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -594,8 +685,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_erfc, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_erfc, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_erfc, _fp32, float )
+                    GB_CASE_FP64 (_erfc, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -604,8 +695,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_cbrt, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_cbrt, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_cbrt, _fp32, float )
+                    GB_CASE_FP64 (_cbrt, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -614,8 +705,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_frexpx, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_frexpx, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_frexpx, _fp32, float )
+                    GB_CASE_FP64 (_frexpx, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -624,8 +715,8 @@
 
                 switch (code1)
                 {
-                    case GB_FP32_code   : GB_WORKER (_frexpe, _fp32, float     , _fp32, float )
-                    case GB_FP64_code   : GB_WORKER (_frexpe, _fp64, double    , _fp64, double)
+                    GB_CASE_FP32 (_frexpe, _fp32, float )
+                    GB_CASE_FP64 (_frexpe, _fp64, double)
                     default: ;
                 }
                 break ;
@@ -634,8 +725,8 @@
 
                 switch (code1)
                 {
-                    case GB_FC32_code   : GB_WORKER (_conj, _fc32, GxB_FC32_t, _fc32, GxB_FC32_t)
-                    case GB_FC64_code   : GB_WORKER (_conj, _fc64, GxB_FC64_t, _fc64, GxB_FC64_t)
+                    GB_CASE_FC32 (_conj, _fc32, GxB_FC32_t)
+                    GB_CASE_FC64 (_conj, _fc64, GxB_FC64_t)
                     default: ;
                 }
                 break ;
@@ -644,4 +735,18 @@
         }
     }
 }
+
+#undef GB_CASE_BOOL
+#undef GB_CASE_INT8
+#undef GB_CASE_INT16
+#undef GB_CASE_INT32
+#undef GB_CASE_INT64
+#undef GB_CASE_UINT8
+#undef GB_CASE_UINT16
+#undef GB_CASE_UINT32
+#undef GB_CASE_UINT64
+#undef GB_CASE_FP32
+#undef GB_CASE_FP64
+#undef GB_CASE_FC32
+#undef GB_CASE_FC64
 

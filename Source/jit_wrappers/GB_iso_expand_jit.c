@@ -21,7 +21,7 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
     const GB_Operator op,           // identity operator
     const int nthreads              // # of threads to use
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

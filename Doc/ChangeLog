@@ -4,6 +4,11 @@ Nov 15, 2024: version 9.4.1 (BETA)
         GrB_kronecker, stand-alone mask phase, and utilities (convert to/from
         sparse/bitmap, unjumble).  All kernels formerly tagged "JIT: needed"
         are now finished.
+    * removed Factory kernels for: types int8 and uint8, and semirings:
+        max_min, max_plus, max_times, min_max, min_times, plus_min, plus_max,
+        non-Boolean land/lor/lxor/lxnor, and integer times_first/second,
+        to reduce size of compiled library.  JIT kernels will be used instead
+        for these types and semirings.
     * GxB_IndexBinaryOp: finalized and named as GxB_*.
 
 Oct 15, 2024: version 9.4.0 (BETA)

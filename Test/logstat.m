@@ -205,3 +205,7 @@ for control_trial = 1:length (jit_controls)
     end
 end
 
+% f = fopen ('log.txt', 'a') ;
+% fprintf (f,'\n') ;
+% fclose (f) ;
+

@@ -337,7 +337,7 @@ logstat ('test284'    ,t, J40  , F11  ) ; % semirings w/ index binary ops
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
 logstat ('test180'    ,s, J40  , F10  ) ; % assign and subassign (1 thread)
 logstat ('test188'    ,t, J4   , F1   ) ; % concat
-logstat ('test151b'   ,t, J4   , F1   ) ; % bshift operator
+logstat ('test151b'   ,t, J40  , F10  ) ; % bshift operator
 logstat ('test14b'    ,t, J4   , F0   ) ; % GrB_reduce
 logstat ('test14'     ,t, J4   , F1   ) ; % GrB_reduce
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack

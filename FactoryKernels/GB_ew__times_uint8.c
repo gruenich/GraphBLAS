@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_UINT8)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
@@ -366,11 +373,11 @@ GrB_Info GB (_bind2nd__times_uint8)
 
 // cij = op (x, aij)
 #undef  GB_APPLY_OP
-#define GB_APPLY_OP(pC,pA)                      \
-{                                               \
-    GB_DECLAREB (aij) ;                         \
-    GB_GETB (aij, Ax, pA, false) ;              \
-    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ;         \
+#define GB_APPLY_OP(pC,pA)              \
+{                                       \
+    GB_DECLAREB (aij) ;                 \
+    GB_GETB (aij, Ax, pA, false) ;      \
+    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ; \
 }
 
 GrB_Info GB (_bind1st_tran__times_uint8)
@@ -401,11 +408,11 @@ GrB_Info GB (_bind1st_tran__times_uint8)
 
 // cij = op (aij, y)
 #undef  GB_APPLY_OP
-#define GB_APPLY_OP(pC,pA)                      \
-{                                               \
-    GB_DECLAREA (aij) ;                         \
-    GB_GETA (aij, Ax, pA, false) ;              \
-    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ;         \
+#define GB_APPLY_OP(pC,pA)              \
+{                                       \
+    GB_DECLAREA (aij) ;                 \
+    GB_GETA (aij, Ax, pA, false) ;      \
+    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ; \
 }
 
 GrB_Info GB (_bind2nd_tran__times_uint8)
@@ -427,4 +434,6 @@ GrB_Info GB (_bind2nd_tran__times_uint8)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

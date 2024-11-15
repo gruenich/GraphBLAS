@@ -825,7 +825,9 @@ end
 if (is_any_pair)
     % never disable the any_pair_iso semiring
     fprintf (f, 'm4_define(`GB_disable'', `#define GB_DISABLE 0'')\n') ;
+    fprintf (f, 'm4_define(`GB_type_enabled'', `#define GB_TYPE_ENABLED 1'')\n');
 else
+    codegen_type_enabled (f, fname) ;
     disable  = sprintf ('defined(GxB_NO_%s)', upper (addop)) ;
     if (~isequal (addop, multop))
         disable = [disable (sprintf (' || defined(GxB_NO_%s)', upper (multop)))] ;

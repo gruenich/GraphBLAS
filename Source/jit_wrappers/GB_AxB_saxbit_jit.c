@@ -37,7 +37,7 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
     GB_void *restrict Wcx,
     int8_t *restrict Wf
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem

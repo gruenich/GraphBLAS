@@ -31,6 +31,13 @@ else
     fprintf (f, 'm4_define(`if_uop_apply_enabled'', `0'')\n') ;
 end
 
+if (is_identity)
+    % identity ops are never disabled
+    fprintf (f, 'm4_define(`GB_type_enabled'', `#define GB_TYPE_ENABLED 1'')\n');
+else
+    codegen_type_enabled (f, xname) ;
+end
+
 % function names
 fprintf (f, 'm4_define(`_uop_tran'', `_uop_tran__%s'')\n', name) ;
 

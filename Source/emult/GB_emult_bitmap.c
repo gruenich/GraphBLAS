@@ -63,6 +63,7 @@
 #include "slice/GB_ek_slice.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
 
