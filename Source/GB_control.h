@@ -217,12 +217,12 @@
 // #define GxB_NO_BCLR      1
 // #define GxB_NO_BSHIFT    1
 
-// #define GxB_NO_ATAN2     1
-// #define GxB_NO_HYPOT     1
-// #define GxB_NO_FMOD      1
-// #define GxB_NO_REMAINDER 1
-// #define GxB_NO_COPYSIGN  1
-// #define GxB_NO_LDEXP     1
+   #define GxB_NO_ATAN2     1
+   #define GxB_NO_HYPOT     1
+   #define GxB_NO_FMOD      1
+   #define GxB_NO_REMAINDER 1
+   #define GxB_NO_COPYSIGN  1
+   #define GxB_NO_LDEXP     1
 
 // #define GxB_NO_CMPLX     1
 // #define GxB_NO_POW       1
@@ -1695,8 +1695,8 @@
    #define GxB_NO_TIMES_TIMES_UINT8     1
 
 // needed by GrB_reduce to vector
-// #define GxB_NO_TIMES_FIRST_FP32      1
-// #define GxB_NO_TIMES_FIRST_FP64      1
+   #define GxB_NO_TIMES_FIRST_FP32      1
+   #define GxB_NO_TIMES_FIRST_FP64      1
    #define GxB_NO_TIMES_FIRST_INT16     1
    #define GxB_NO_TIMES_FIRST_INT32     1
    #define GxB_NO_TIMES_FIRST_INT64     1
@@ -1707,8 +1707,8 @@
    #define GxB_NO_TIMES_FIRST_UINT8     1
 
 // needed by GrB_reduce to vector
-// #define GxB_NO_TIMES_SECOND_FP32     1
-// #define GxB_NO_TIMES_SECOND_FP64     1
+   #define GxB_NO_TIMES_SECOND_FP32     1
+   #define GxB_NO_TIMES_SECOND_FP64     1
    #define GxB_NO_TIMES_SECOND_INT16    1
    #define GxB_NO_TIMES_SECOND_INT32    1
    #define GxB_NO_TIMES_SECOND_INT64    1
@@ -1826,12 +1826,12 @@
 // #define GxB_NO_PLUS_TIMES_FC64       1
 
 // needed by GrB_reduce to vector, or s = sum (A) in @GrB interface
-// #define GxB_NO_PLUS_FIRST_FC32       1
-// #define GxB_NO_PLUS_FIRST_FC64       1
+   #define GxB_NO_PLUS_FIRST_FC32       1
+   #define GxB_NO_PLUS_FIRST_FC64       1
 
 // needed by GrB_reduce to vector, or s = sum (A) in @GrB interface
-// #define GxB_NO_PLUS_SECOND_FC32      1
-// #define GxB_NO_PLUS_SECOND_FC64      1
+   #define GxB_NO_PLUS_SECOND_FC32      1
+   #define GxB_NO_PLUS_SECOND_FC64      1
 
    #define GxB_NO_PLUS_PAIR_FC32        1
    #define GxB_NO_PLUS_PAIR_FC64        1
@@ -1851,20 +1851,19 @@
    #define GxB_NO_TIMES_PLUS_FC32       1
    #define GxB_NO_TIMES_PLUS_FC64       1
 
-// GxB_TIMES_TIMES_FC32 is required for testing (GraphBLAS/Test and Tcov),
-// so it is not disabled when GraphBLAS is compiled for MATLAB.
    #ifndef GBMATLAB
+   // required for test coverage
    #define GxB_NO_TIMES_TIMES_FC32      1
    #endif
    #define GxB_NO_TIMES_TIMES_FC64      1
 
 // needed by GrB_reduce to vector, or s = prod (A) in @GrB interface
-// #define GxB_NO_TIMES_FIRST_FC32      1
-// #define GxB_NO_TIMES_FIRST_FC64      1
+   #define GxB_NO_TIMES_FIRST_FC32      1
+   #define GxB_NO_TIMES_FIRST_FC64      1
 
 // needed by GrB_reduce to vector, or s = prod (A) in @GrB interface
-// #define GxB_NO_TIMES_SECOND_FC32     1
-// #define GxB_NO_TIMES_SECOND_FC64     1
+   #define GxB_NO_TIMES_SECOND_FC32     1
+   #define GxB_NO_TIMES_SECOND_FC64     1
 
    #define GxB_NO_TIMES_MINUS_FC32      1
    #define GxB_NO_TIMES_MINUS_FC64      1
@@ -2238,8 +2237,10 @@
 //      mult:    (FIRSTI, FIRSTI1, FIRSTJ, FIRSTJ1, SECONDJ, SECONDJ1) x
 //      types:   (int32, int64)
 
-// enable GxB_MIN_FIRSTI_INT32 for test coverage:
-// #define GxB_NO_MIN_FIRSTI_INT32      1
+   #ifndef GBMATLAB
+   // required for test coverage
+   #define GxB_NO_MIN_FIRSTI_INT32      1
+   #endif
    #define GxB_NO_MIN_FIRSTI_INT64      1
    #define GxB_NO_MIN_FIRSTI1_INT32     1
    #define GxB_NO_MIN_FIRSTI1_INT64     1
