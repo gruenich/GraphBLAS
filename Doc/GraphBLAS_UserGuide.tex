@@ -14837,8 +14837,10 @@ GraphBLAS folder.
     \item
     removed Factory kernels for: types int8 and uint8, and semirings:
         max\_min, max\_plus, max\_times, min\_max, min\_times, plus\_min,
-        plus\_max, to reduce size of compiled library.  JIT kernels will be
-        used instead for these types and semirings.
+        plus\_max,
+        non-Boolean land/lor/lxor/lxnor, and integer times\_first/second,
+        to reduce size of compiled library.
+        JIT kernels will be used instead for these types and semirings.
     \item \verb'GxB_IndexBinaryOp': finalized and named as \verb'GxB_*'.
     \end{itemize}
 

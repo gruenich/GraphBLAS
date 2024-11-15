@@ -748,14 +748,13 @@
 
 // 6 semirings with the EQ monoid
 
-// #define GxB_NO_EQ_EQ_BOOL            1
-// #define GxB_NO_EQ_LAND_BOOL          1
+   #define GxB_NO_EQ_EQ_BOOL            1
+   #define GxB_NO_EQ_LAND_BOOL          1
 // builtin: GrB_LXNOR_LOR_SEMIRING_BOOL == GxB_EQ_LOR_BOOL:
-// #define GxB_NO_EQ_LOR_BOOL           1
-// #define GxB_NO_EQ_LXOR_BOOL          1
-// FIRST and SECOND are needed by GrB_reduce to vector:
-// #define GxB_NO_EQ_FIRST_BOOL         1
-// #define GxB_NO_EQ_SECOND_BOOL        1
+   #define GxB_NO_EQ_LOR_BOOL           1
+   #define GxB_NO_EQ_LXOR_BOOL          1
+   #define GxB_NO_EQ_FIRST_BOOL         1
+   #define GxB_NO_EQ_SECOND_BOOL        1
 
    #define GxB_NO_EQ_EQ_FP32            1
    #define GxB_NO_EQ_EQ_FP64            1
@@ -841,14 +840,13 @@
 
 // 6 semirings with the LAND monoid
 
-// #define GxB_NO_LAND_EQ_BOOL          1
-// #define GxB_NO_LAND_LAND_BOOL        1
+   #define GxB_NO_LAND_EQ_BOOL          1
+   #define GxB_NO_LAND_LAND_BOOL        1
 // builtin: GrB_LAND_LOR_SEMIRING_BOOL == GxB_LAND_LOR_BOOL:
 // #define GxB_NO_LAND_LOR_BOOL         1
-// #define GxB_NO_LAND_LXOR_BOOL        1
-// FIRST and SECOND are needed by GrB_reduce to vector:
-// #define GxB_NO_LAND_FIRST_BOOL       1
-// #define GxB_NO_LAND_SECOND_BOOL      1
+   #define GxB_NO_LAND_LXOR_BOOL        1
+   #define GxB_NO_LAND_FIRST_BOOL       1
+   #define GxB_NO_LAND_SECOND_BOOL      1
 
    #define GxB_NO_LAND_EQ_FP32          1
    #define GxB_NO_LAND_EQ_FP64          1
@@ -935,14 +933,13 @@
 
 // 6 semirings with the LOR monoid
 
-// #define GxB_NO_LOR_EQ_BOOL           1
+   #define GxB_NO_LOR_EQ_BOOL           1
 // builtin GrB_LOR_LAND_SEMIRING_BOOL == GxB_LOR_LAND_BOOL:
 // #define GxB_NO_LOR_LAND_BOOL         1
-// #define GxB_NO_LOR_LOR_BOOL          1
-// #define GxB_NO_LOR_LXOR_BOOL         1
-// FIRST and SECOND are needed by GrB_reduce to vector:
-// #define GxB_NO_LOR_FIRST_BOOL        1
-// #define GxB_NO_LOR_SECOND_BOOL       1
+   #define GxB_NO_LOR_LOR_BOOL          1
+   #define GxB_NO_LOR_LXOR_BOOL         1
+   #define GxB_NO_LOR_FIRST_BOOL        1
+   #define GxB_NO_LOR_SECOND_BOOL       1
 
    #define GxB_NO_LOR_EQ_FP32           1
    #define GxB_NO_LOR_EQ_FP64           1
@@ -1028,15 +1025,17 @@
 
 // 7 semirings with the LXOR monoid (PAIR is unique to this monoid)
 
-// #define GxB_NO_LXOR_EQ_BOOL          1
+   #define GxB_NO_LXOR_EQ_BOOL          1
 // builtin: GrB_LXOR_LAND_SEMIRING_BOOL == GxB_LXOR_LAND_BOOL:
-// #define GxB_NO_LXOR_LAND_BOOL        1
-// #define GxB_NO_LXOR_LOR_BOOL         1
-// #define GxB_NO_LXOR_LXOR_BOOL        1
-// FIRST and SECOND are needed by GrB_reduce to vector:
-// #define GxB_NO_LXOR_FIRST_BOOL       1
-// #define GxB_NO_LXOR_SECOND_BOOL      1
-// #define GxB_NO_LXOR_PAIR_BOOL        1
+   #define GxB_NO_LXOR_LAND_BOOL        1
+   #define GxB_NO_LXOR_LOR_BOOL         1
+   #define GxB_NO_LXOR_LXOR_BOOL        1
+   #define GxB_NO_LXOR_FIRST_BOOL       1
+   #define GxB_NO_LXOR_SECOND_BOOL      1
+   #ifndef GBMATLAB
+   // required for test coverage
+   #define GxB_NO_LXOR_PAIR_BOOL        1
+   #endif
 
    #define GxB_NO_LXOR_EQ_FP32          1
    #define GxB_NO_LXOR_EQ_FP64          1
@@ -1698,26 +1697,26 @@
 // needed by GrB_reduce to vector
 // #define GxB_NO_TIMES_FIRST_FP32      1
 // #define GxB_NO_TIMES_FIRST_FP64      1
-// #define GxB_NO_TIMES_FIRST_INT16     1
-// #define GxB_NO_TIMES_FIRST_INT32     1
-// #define GxB_NO_TIMES_FIRST_INT64     1
-// #define GxB_NO_TIMES_FIRST_INT8      1
-// #define GxB_NO_TIMES_FIRST_UINT16    1
-// #define GxB_NO_TIMES_FIRST_UINT32    1
-// #define GxB_NO_TIMES_FIRST_UINT64    1
-// #define GxB_NO_TIMES_FIRST_UINT8     1
+   #define GxB_NO_TIMES_FIRST_INT16     1
+   #define GxB_NO_TIMES_FIRST_INT32     1
+   #define GxB_NO_TIMES_FIRST_INT64     1
+   #define GxB_NO_TIMES_FIRST_INT8      1
+   #define GxB_NO_TIMES_FIRST_UINT16    1
+   #define GxB_NO_TIMES_FIRST_UINT32    1
+   #define GxB_NO_TIMES_FIRST_UINT64    1
+   #define GxB_NO_TIMES_FIRST_UINT8     1
 
 // needed by GrB_reduce to vector
 // #define GxB_NO_TIMES_SECOND_FP32     1
 // #define GxB_NO_TIMES_SECOND_FP64     1
-// #define GxB_NO_TIMES_SECOND_INT16    1
-// #define GxB_NO_TIMES_SECOND_INT32    1
-// #define GxB_NO_TIMES_SECOND_INT64    1
-// #define GxB_NO_TIMES_SECOND_INT8     1
-// #define GxB_NO_TIMES_SECOND_UINT16   1
-// #define GxB_NO_TIMES_SECOND_UINT32   1
-// #define GxB_NO_TIMES_SECOND_UINT64   1
-// #define GxB_NO_TIMES_SECOND_UINT8    1
+   #define GxB_NO_TIMES_SECOND_INT16    1
+   #define GxB_NO_TIMES_SECOND_INT32    1
+   #define GxB_NO_TIMES_SECOND_INT64    1
+   #define GxB_NO_TIMES_SECOND_INT8     1
+   #define GxB_NO_TIMES_SECOND_UINT16   1
+   #define GxB_NO_TIMES_SECOND_UINT32   1
+   #define GxB_NO_TIMES_SECOND_UINT64   1
+   #define GxB_NO_TIMES_SECOND_UINT8    1
 
    #define GxB_NO_TIMES_DIV_FP32        1
    #define GxB_NO_TIMES_DIV_FP64        1
