@@ -635,27 +635,14 @@ void GB_macrofy_mask
 // enumify and macrofy a monoid
 //------------------------------------------------------------------------------
 
-void GB_enumify_monoid  // enumerate a monoid
-(
-    // outputs:
-    int *add_ecode,     // binary op as an enum
-    int *id_ecode,      // identity value as an enum
-    int *term_ecode,    // terminal value as an enum
-    // inputs:
-    int add_opcode,     // must be a built-in binary operator from a monoid
-    int zcode           // type of the monoid (x, y, and z)
-) ;
-
 void GB_macrofy_monoid  // construct the macros for a monoid
 (
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
     int add_ecode,      // binary op as an enum
-    int id_ecode,       // identity value as an enum
-    int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
-    bool disable_terminal_condition,    // if true, the monoid is assumed
+    bool disable_terminal_condition,    // if true, a builtin monoid is assumed
                         // to be non-terminal.  For the (times, firstj, int64)
                         // semiring, times is normally a terminal monoid, but
                         // it's not worth exploiting in GrB_mxm.
@@ -698,12 +685,12 @@ void GB_macrofy_query
 void GB_enumify_binop
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 110; -1 on failure
+    int *ecode,         // enumerated operator, range 0 to 255
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
-    GB_Type_code zcode, // op->xtype->code of the operator
-    bool for_semiring,  // true for A*B, false for A+B or A.*B
-    bool for_kron       // true for kronecker
+    GB_Type_code xcode, // op->xtype->code of the operator
+    bool for_semiring,  // true for A*B multiplier, false otherwise
+    bool is_kron        // true for kronecker
 ) ;
 
 void GB_macrofy_binop
@@ -829,13 +816,13 @@ void GB_macrofy_output
 // monoid identity and terminal values
 //------------------------------------------------------------------------------
 
-void GB_enumify_identity       // return enum of identity value
+void GB_enumify_identity
 (
     // output:
-    int *ecode,             // enumerated identity, 0 to 17 (-1 if fail)
-    // input:
-    GB_Opcode opcode,       // built-in binary opcode of a monoid
-    GB_Type_code zcode      // type code used in the opcode we want
+    int *ecode,             // enumerated identity, 0 to 31
+    // inputs:
+    int add_ecode,          // add_ecode from GB_enumify_binop
+    GB_Type_code zcode      // type code of the operator
 ) ;
 
 const char *GB_macrofy_id // return string encoding the value
@@ -860,13 +847,13 @@ void GB_macrofy_bytes
     bool is_identity        // true for the identity value
 ) ;
 
-void GB_enumify_terminal       // return enum of terminal value
+void GB_enumify_terminal
 (
     // output:
-    int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
+    int *ecode,             // enumerated terminal, 0 to 31
     // input:
-    GB_Opcode opcode,           // built-in binary opcode of a monoid
-    GB_Type_code zcode          // type code used in the opcode we want
+    int add_ecode,          // add_ecode from GB_enumify_binop
+    GB_Type_code zcode      // type code of the operator
 ) ;
 
 //------------------------------------------------------------------------------

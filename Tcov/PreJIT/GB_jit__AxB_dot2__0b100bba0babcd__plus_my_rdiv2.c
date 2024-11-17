@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__2c1f100bba0baacf__plus_my_rdiv2.c
+// GB_jit__AxB_dot2__0b100bba0babcd__plus_my_rdiv2.c
 //------------------------------------------------------------------------------
-// SuiteSparse:GraphBLAS v9.3.0, Timothy A. Davis, (c) 2017-2024,
+// SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // The above copyright and license do not apply to any
@@ -99,33 +99,33 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 #define GB_DECLAREA(a) float a
 #define GB_GETA(a,Ax,p,iso) a = Ax [p]
 
-// B matrix: full
+// B matrix: sparse
 #define GB_B_IS_HYPER  0
-#define GB_B_IS_SPARSE 0
+#define GB_B_IS_SPARSE 1
 #define GB_B_IS_BITMAP 0
-#define GB_B_IS_FULL   1
-#define GBP_B(Bp,k,vlen) ((k) * (vlen))
+#define GB_B_IS_FULL   0
+#define GBP_B(Bp,k,vlen) Bp [k]
 #define GBH_B(Bh,k)      (k)
-#define GBI_B(Bi,p,vlen) ((p) % (vlen))
+#define GBI_B(Bi,p,vlen) Bi [p]
 #define GBB_B(Bb,p)      1
-#define GB_B_NVALS(e) int64_t e = (B->vlen * B->vdim)
+#define GB_B_NVALS(e) int64_t e = B->nvals
 #define GB_B_NHELD(e) GB_B_NVALS(e)
 #define GB_B_ISO 0
-#define GB_B_TYPE float
+#define GB_B_TYPE double
 #define GB_B2TYPE double
 #define GB_DECLAREB(b) double b
-#define GB_GETB(b,Bx,p,iso) b = (double) (Bx [p])
+#define GB_GETB(b,Bx,p,iso) b = Bx [p]
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__2c1f100bba0baacf__plus_my_rdiv2
-#define GB_jit_query  GB_jit__AxB_dot2__2c1f100bba0baacf__plus_my_rdiv2_query
+#define GB_jit_kernel GB_jit__AxB_dot2__0b100bba0babcd__plus_my_rdiv2
+#define GB_jit_query  GB_jit__AxB_dot2__0b100bba0babcd__plus_my_rdiv2_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0x422f36dae3aeca51 ;
+    (*hash) = 0xa6f4e8099e406afd ;
     v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
     v [1] = GxB_IMPLEMENTATION_MINOR ;
     v [2] = GxB_IMPLEMENTATION_SUB ;

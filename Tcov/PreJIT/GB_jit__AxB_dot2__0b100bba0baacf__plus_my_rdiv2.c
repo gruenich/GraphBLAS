@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__2c1f100bba0babcf__plus_my_rdiv2.c
+// GB_jit__AxB_dot2__0b100bba0baacf__plus_my_rdiv2.c
 //------------------------------------------------------------------------------
-// SuiteSparse:GraphBLAS v9.3.0, Timothy A. Davis, (c) 2017-2024,
+// SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // The above copyright and license do not apply to any
@@ -111,21 +111,21 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 #define GB_B_NVALS(e) int64_t e = (B->vlen * B->vdim)
 #define GB_B_NHELD(e) GB_B_NVALS(e)
 #define GB_B_ISO 0
-#define GB_B_TYPE double
+#define GB_B_TYPE float
 #define GB_B2TYPE double
 #define GB_DECLAREB(b) double b
-#define GB_GETB(b,Bx,p,iso) b = Bx [p]
+#define GB_GETB(b,Bx,p,iso) b = (double) (Bx [p])
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__2c1f100bba0babcf__plus_my_rdiv2
-#define GB_jit_query  GB_jit__AxB_dot2__2c1f100bba0babcf__plus_my_rdiv2_query
+#define GB_jit_kernel GB_jit__AxB_dot2__0b100bba0baacf__plus_my_rdiv2
+#define GB_jit_query  GB_jit__AxB_dot2__0b100bba0baacf__plus_my_rdiv2_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0x98afaa59c37fb8bb ;
+    (*hash) = 0x9616ba8f084461c2 ;
     v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
     v [1] = GxB_IMPLEMENTATION_MINOR ;
     v [2] = GxB_IMPLEMENTATION_SUB ;

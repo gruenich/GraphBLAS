@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__2c1f046bbb0bbbcd.c
+// GB_jit__AxB_dot2__0b046bbb0bbbcd.c
 //------------------------------------------------------------------------------
-// SuiteSparse:GraphBLAS v9.3.0, Timothy A. Davis, (c) 2017-2024,
+// SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // The above copyright and license do not apply to any
@@ -100,14 +100,14 @@
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__2c1f046bbb0bbbcd
-#define GB_jit_query  GB_jit__AxB_dot2__2c1f046bbb0bbbcd_query
+#define GB_jit_kernel GB_jit__AxB_dot2__0b046bbb0bbbcd
+#define GB_jit_query  GB_jit__AxB_dot2__0b046bbb0bbbcd_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0xdf8cbb0c0ac7ce22 ;
+    (*hash) = 0x8ab6eac879743338 ;
     v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
     v [1] = GxB_IMPLEMENTATION_MINOR ;
     v [2] = GxB_IMPLEMENTATION_SUB ;

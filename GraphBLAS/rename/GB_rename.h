@@ -323,7 +323,6 @@
 #define GB_enumify_identity GM_enumify_identity
 #define GB_enumify_masker GM_enumify_masker
 #define GB_enumify_mask GM_enumify_mask
-#define GB_enumify_monoid GM_enumify_monoid
 #define GB_enumify_mxm GM_enumify_mxm
 #define GB_enumify_reduce GM_enumify_reduce
 #define GB_enumify_select GM_enumify_select

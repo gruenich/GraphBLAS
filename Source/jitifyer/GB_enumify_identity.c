@@ -15,30 +15,46 @@ void GB_enumify_identity
     // output:
     int *ecode,             // enumerated identity, 0 to 31
     // inputs:
-    GB_Opcode opcode,       // built-in binary opcode of a monoid
+    int add_ecode,          // add_ecode from GB_enumify_binop
     GB_Type_code zcode      // type code of the operator
 )
 { 
 
     int e = 31 ;            // default: use the monoid->identity bytes
 
-    switch (opcode)
+    switch (add_ecode)
     {
 
-        case GB_PLUS_binop_code     : e = 0 ; break ; // 0
+        // plus
+        case  9 :       // x + y, single complex
+        case 10 :       // x + y, double complex
+        case 11 :       // x + y
+            e = 0 ;     // identity is 0
+            break ;
 
-        case GB_TIMES_binop_code    : e = 1 ; break ; // 1
+        // times
+        case 12 :       // x * y, single complex
+        case 13 :       // x * y, double complex
+        case 14 :       // x * y
+            e = 1 ;     // identity is 1
+            break ;
 
-        case GB_LAND_binop_code     : 
-        case GB_EQ_binop_code       :   // LXNOR
-            e = (zcode == GB_BOOL_code) ? 2 : (31) ; break ; // true
+        // land and eq (lxnor)
+        case 18 :       // x && y
+        case 15 :       // x == y
+            e = (zcode == GB_BOOL_code) ? 2 : (31) ; // true
+            break ;
 
-        case GB_LOR_binop_code      : 
-        case GB_LXOR_binop_code     : 
-            e = (zcode == GB_BOOL_code) ? 3 : (31) ; break ; // false
+        // lor and lxor
+        case 17 :       // x || y
+        case 16 :       // x ^ y
+            e = (zcode == GB_BOOL_code) ? 3 : (31) ; // false
+            break ;
 
-        case GB_MIN_binop_code :
-
+        // min
+        case  3 :       // fminf (x,y)
+        case  4 :       // fmin (x,y)
+        case  5 :       // GB_MIN (x,y)
             switch (zcode)
             {
                 case GB_BOOL_code   : e =  2 ; break ; // true
@@ -56,8 +72,10 @@ void GB_enumify_identity
             }
             break ;
 
-        case GB_MAX_binop_code :
-
+        // max
+        case  6 :       // fmaxf (x,y)
+        case  7 :       // fmax (x,y)
+        case  8 :       // GB_MAX (x,y)
             switch (zcode)
             {
                 case GB_BOOL_code   : e =  3 ; break ; // false
@@ -75,14 +93,21 @@ void GB_enumify_identity
             }
             break ;
 
-        case GB_ANY_binop_code      : e = 18 ; break ; // 0, for ANY op only
+        // any
+        case  1 :       // first (x,y)
+        case  2 :       // any (x,y)
+            e = 18 ;    // 0, for ANY op only
+            break ;
 
-        case GB_BOR_binop_code      : 
-        case GB_BXOR_binop_code     : e = 0 ; break ; // 0
+        // bor and bxor
+        case 19 :       // bitwise or
+        case 21 :       // bitwise xor
+            e = 0 ;     // 0
+            break ;
 
-        case GB_BAND_binop_code     : 
-        case GB_BXNOR_binop_code    : 
-
+        // band and bxnor
+        case 20 :       // bitwise and
+        case 22 :       // bitwise xnor
             switch (zcode)
             {
                 case GB_UINT8_code  : e = 19 ; break ; // 0xFF

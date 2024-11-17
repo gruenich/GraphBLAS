@@ -1829,12 +1829,12 @@ GrB_Info GB_jitifyer_load2_worker
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
-            scode_digits = 16 ;
+            scode_digits = 14 ;
             break ;
 
         case GB_jit_reduce_family : 
             op1 = (GB_Operator) monoid->op ;
-            scode_digits = 7 ;
+            scode_digits = 5 ;
             break ;
 
         case GB_jit_select_family : 

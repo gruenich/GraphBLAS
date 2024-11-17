@@ -31,12 +31,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // extract the semiring scode
     //--------------------------------------------------------------------------
 
-    // monoid (4 hex digits)
-//  int unused      = GB_RSHIFT (scode, 63, 1) ;
-    int add_ecode   = GB_RSHIFT (scode, 58, 5) ;
-    int id_ecode    = GB_RSHIFT (scode, 53, 5) ;
-    int term_ecode  = GB_RSHIFT (scode, 48, 5) ;
-//  bool is_term    = (term_ecode < 30) ;
+    // monoid (5 bits, 2 hex digits)
+    int add_ecode   = GB_RSHIFT (scode, 48, 5) ;
 
     // C in, A, B iso-valued and flipxy (one hex digit)
     bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
@@ -71,12 +67,19 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     GrB_Monoid monoid = semiring->add ;
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_BinaryOp addop = monoid->op ;
+    GB_Opcode mult_opcode = mult->opcode ;
+    GB_Opcode add_opcode  = addop->opcode ;
 
     bool C_iso = (ccode == 0) ;
 
     if (C_iso)
     { 
         // C is iso; no operators are used
+        add_opcode = GB_ANY_binop_code ;
+        mult_opcode = GB_PAIR_binop_code ;
+        xcode = 0 ;
+        ycode = 0 ;
+        zcode = 0 ;
         fprintf (fp, "// semiring: symbolic only (C is iso)\n") ;
     }
     else
@@ -110,13 +113,13 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     // turn off terminal condition for builtin monoids coupled with positional
     // multiply operators
-    bool is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (mult->opcode) ;
+    bool is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (mult_opcode) ;
 
     fprintf (fp, "\n// monoid:\n") ;
     const char *u_expr, *g_expr ;
     GB_macrofy_type (fp, "Z", "_", (zcode == 0) ? "GB_void" : ztype->name) ;
-    GB_macrofy_monoid (fp, add_ecode, id_ecode, term_ecode, C_iso, monoid,
-        is_positional, &u_expr, &g_expr) ;
+    GB_macrofy_monoid (fp, add_ecode, C_iso, monoid, is_positional,
+        &u_expr, &g_expr) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply operator
@@ -138,9 +141,9 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     bool is_bool   = (zcode == GB_BOOL_code) ;
     bool is_float  = (zcode == GB_FP32_code) ;
     bool is_double = (zcode == GB_FP64_code) ;
-    bool is_first  = (mult->opcode == GB_FIRST_binop_code) ;
-    bool is_second = (mult->opcode == GB_SECOND_binop_code) ;
-    bool is_pair   = (mult->opcode == GB_PAIR_binop_code) ;
+    bool is_first  = (mult_opcode == GB_FIRST_binop_code) ;
+    bool is_second = (mult_opcode == GB_SECOND_binop_code) ;
+    bool is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
 
     if (C_iso)
     { 
@@ -214,14 +217,19 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     fprintf (fp, "\n// special cases:\n") ;
 
-    if (mult->opcode == GB_PAIR_binop_code)
+    if (C_iso)
+    { 
+        // ANY_PAIR_* (C is iso in this case, type is BOOL)
+        fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
+    }
+    else if (mult_opcode == GB_PAIR_binop_code)
     {
 
         //----------------------------------------------------------------------
         // ANY_PAIR, PLUS_PAIR, and related semirings
         //----------------------------------------------------------------------
 
-        bool is_plus = (addop->opcode == GB_PLUS_binop_code) ;
+        bool is_plus = (add_opcode == GB_PLUS_binop_code) ;
         if (is_plus && (zcode >= GB_INT8_code && zcode <= GB_FP64_code))
         { 
 
@@ -254,42 +262,37 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
                 default:;
             }
         }
-        else if (C_iso)
-        { 
-            // ANY_PAIR_* (C is iso in this case, type is BOOL)
-            fprintf (fp, "#define GB_IS_ANY_PAIR_SEMIRING 1\n") ;
-        }
-        else if (addop->opcode == GB_LXOR_binop_code)
+        else if (add_opcode == GB_LXOR_binop_code)
         { 
             // semiring is lxor_pair_bool
             fprintf (fp, "#define GB_IS_LXOR_PAIR_SEMIRING 1\n") ;
         }
 
     }
-    else if (mult->opcode == GB_FIRSTJ_binop_code
-          || mult->opcode == GB_FIRSTJ1_binop_code
-          || mult->opcode == GB_SECONDI_binop_code
-          || mult->opcode == GB_SECONDI1_binop_code)
+    else if (mult_opcode == GB_FIRSTJ_binop_code
+          || mult_opcode == GB_FIRSTJ1_binop_code
+          || mult_opcode == GB_SECONDI_binop_code
+          || mult_opcode == GB_SECONDI1_binop_code)
     { 
 
         //----------------------------------------------------------------------
         // MIN_FIRSTJ and MAX_FIRSTJ
         //----------------------------------------------------------------------
 
-        if (addop->opcode == GB_MIN_binop_code)
+        if (add_opcode == GB_MIN_binop_code)
         { 
             // semiring is min_firstj or min_firstj1
             fprintf (fp, "#define GB_IS_MIN_FIRSTJ_SEMIRING 1\n") ;
         }
-        else if (addop->opcode == GB_MAX_binop_code)
+        else if (add_opcode == GB_MAX_binop_code)
         { 
             // semiring is max_firstj or max_firstj1
             fprintf (fp, "#define GB_IS_MAX_FIRSTJ_SEMIRING 1\n") ;
         }
 
     }
-    else if (addop->opcode == GB_PLUS_binop_code &&
-              mult->opcode == GB_TIMES_binop_code &&
+    else if (add_opcode == GB_PLUS_binop_code &&
+              mult_opcode == GB_TIMES_binop_code &&
             (zcode == GB_FP32_code || zcode == GB_FP64_code))
     { 
 
@@ -305,7 +308,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // special case multiply ops
     //--------------------------------------------------------------------------
 
-    switch (mult->opcode)
+    switch (mult_opcode)
     {
         case GB_PAIR_binop_code : 
             fprintf (fp, "#define GB_IS_PAIR_MULTIPLIER 1\n") ;
@@ -363,11 +366,11 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // if flipxy true:   A is typecasted to y, and B is typecasted to x.
 
     GB_macrofy_input (fp, "a", "A", "A", true,
-        flipxy ? mult->ytype : mult->xtype,
+        flipxy ? ytype : xtype,
         atype, asparsity, acode, A_iso_code, -1) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true,
-        flipxy ? mult->xtype : mult->ytype,
+        flipxy ? xtype : ytype,
         btype, bsparsity, bcode, B_iso_code, -1) ;
 
     //--------------------------------------------------------------------------

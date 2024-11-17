@@ -47,6 +47,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // get the semiring
     //--------------------------------------------------------------------------
 
+    ASSERT_SEMIRING_OK (semiring, "semiring for enumify_mxm", GB0) ;
     GrB_Monoid add = semiring->add ;
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_BinaryOp addop = add->op ;
@@ -92,6 +93,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     if (C_iso)
     { 
+        add_opcode = GB_ANY_binop_code ;
+        mult_opcode = GB_PAIR_binop_code ;
         zcode = 0 ;
     }
     else if (zcode == GB_BOOL_code)
@@ -140,8 +143,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the monoid
     //--------------------------------------------------------------------------
 
-    int add_ecode, id_ecode, term_ecode ;
-    GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode) ;
+    int add_ecode ;
+    GB_enumify_binop (&add_ecode, add_opcode, zcode, false, false) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -181,15 +184,12 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // construct the semiring scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 63 (16 hex digits)
+    // total scode bits: 53 (14 hex digits)
 
     (*scode) =
                                                // range        bits
-                // monoid (4 hex digits)
-//              GB_LSHIFT (0          , 63) |  // unused       1
-                GB_LSHIFT (add_ecode  , 58) |  // 0 to 22      5
-                GB_LSHIFT (id_ecode   , 53) |  // 0 to 31      5
-                GB_LSHIFT (term_ecode , 48) |  // 0 to 31      5
+                // monoid (5 bits, 2 hex digits)
+                GB_LSHIFT (add_ecode  , 48) |  // 0 to 22      5
 
                 // C in, A, B iso properties, flipxy (1 hex digit)
                 GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1

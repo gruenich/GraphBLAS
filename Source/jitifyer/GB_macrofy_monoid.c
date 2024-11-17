@@ -15,8 +15,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
     int add_ecode,      // binary op as an enum
-    int id_ecode,       // identity value as an enum
-    int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
     bool disable_terminal_condition,    // if true, a builtin monoid is assumed
@@ -54,41 +52,48 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_DECLARE_IDENTITY(z)\n") ;
         fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z)\n") ;
     }
-    else if (id_ecode <= 28)
+    else
     {
-        // built-in monoid: a simple assignment
-        const char *id_val = GB_macrofy_id (id_ecode, zsize, &has_byte, &byte) ;
-        #define SLEN (256 + GxB_MAX_NAME_LEN)
-        char id [SLEN] ;
-        if (zcode == GB_FC32_code)
-        { 
-            snprintf (id, SLEN, "%s z = GxB_CMPLXF (%s,0)",
-                ztype_name, id_val) ;
-        }
-        else if (zcode == GB_FC64_code)
-        { 
-            snprintf (id, SLEN, "%s z = GxB_CMPLX (%s,0)",
-                ztype_name, id_val) ;
+        int id_ecode ;
+        GB_enumify_identity (&id_ecode, add_ecode, zcode) ;
+
+        if (id_ecode <= 28)
+        {
+            // built-in monoid: a simple assignment
+            const char *id_val = GB_macrofy_id (id_ecode, zsize,
+                &has_byte, &byte) ;
+            #define SLEN (256 + GxB_MAX_NAME_LEN)
+            char id [SLEN] ;
+            if (zcode == GB_FC32_code)
+            { 
+                snprintf (id, SLEN, "%s z = GxB_CMPLXF (%s,0)",
+                    ztype_name, id_val) ;
+            }
+            else if (zcode == GB_FC64_code)
+            { 
+                snprintf (id, SLEN, "%s z = GxB_CMPLX (%s,0)",
+                    ztype_name, id_val) ;
+            }
+            else
+            { 
+                snprintf (id, SLEN, "%s z = %s", ztype_name, id_val) ;
+            }
+            fprintf (fp, "#define GB_DECLARE_IDENTITY(z) %s\n", id) ;
+            fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) const %s\n", id);
+            if (has_byte)
+            { 
+                fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
+                fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) byte) ;
+            }
         }
         else
         { 
-            snprintf (id, SLEN, "%s z = %s", ztype_name, id_val) ;
+            // user-defined monoid:  all we have are the bytes
+            GB_macrofy_bytes (fp, "IDENTITY", "z",
+                ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
+            fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) "
+                "GB_DECLARE_IDENTITY(z)\n") ;
         }
-        fprintf (fp, "#define GB_DECLARE_IDENTITY(z) %s\n", id) ;
-        fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) const %s\n", id) ;
-        if (has_byte)
-        { 
-            fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
-            fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) byte) ;
-        }
-    }
-    else
-    { 
-        // user-defined monoid:  all we have are the bytes
-        GB_macrofy_bytes (fp, "IDENTITY", "z",
-            ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
-        fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) "
-            "GB_DECLARE_IDENTITY(z)\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -109,6 +114,16 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // const.  It is empty if the monoid is not terminal.
 
     bool monoid_is_terminal = false ;
+
+    int term_ecode ;
+    if (C_iso)
+    { 
+        term_ecode = 18 ;
+    }
+    else
+    { 
+        GB_enumify_terminal (&term_ecode, add_ecode, zcode) ;
+    }
 
     bool is_any_monoid = (term_ecode == 18) ;
     if (is_any_monoid || C_iso)

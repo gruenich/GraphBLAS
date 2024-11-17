@@ -158,18 +158,20 @@ void mexFunction
     GB_enumify_binop (&ecode, GB_MINUS_binop_code, GB_BOOL_code, false, false) ;
     CHECK (ecode == 16) ;
 
-    GB_enumify_identity (&ecode, GB_MIN_binop_code, GB_BOOL_code) ;
+    GB_enumify_identity (&ecode, 5, GB_BOOL_code) ;
     CHECK (ecode == 2) ;
-    GB_enumify_identity (&ecode, GB_MAX_binop_code, GB_BOOL_code) ;
+    GB_enumify_identity (&ecode, 8, GB_BOOL_code) ;
     CHECK (ecode == 3) ;
+    GB_enumify_identity (&ecode, 1, GB_BOOL_code) ;
+    CHECK (ecode == 18) ;
 
     ecode = -1 ;
-    GB_enumify_terminal (&ecode, GB_TIMES_binop_code, GB_BOOL_code) ;
+    GB_enumify_terminal (&ecode, 14, GB_BOOL_code) ;
     CHECK (ecode == 3) ;
     ecode = -1 ;
-    GB_enumify_terminal (&ecode, GB_MIN_binop_code, GB_BOOL_code) ;
+    GB_enumify_terminal (&ecode, 5, GB_BOOL_code) ;
     CHECK (ecode == 3) ;
-    GB_enumify_terminal (&ecode, GB_MAX_binop_code, GB_BOOL_code) ;
+    GB_enumify_terminal (&ecode, 8, GB_BOOL_code) ;
     CHECK (ecode == 2) ;
 
     FILE *fp = fopen ("/tmp/GB_tcov_gunk.h", "w") ;

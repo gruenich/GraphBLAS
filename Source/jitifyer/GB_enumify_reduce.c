@@ -61,9 +61,8 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // enumify the monoid
     //--------------------------------------------------------------------------
 
-    int red_ecode, id_ecode, term_ecode ;
-    GB_enumify_monoid (&red_ecode, &id_ecode, &term_ecode, reduce_opcode,
-        zcode) ;
+    int red_ecode ;
+    GB_enumify_binop (&red_ecode, reduce_opcode, zcode, false, false) ;
 
     const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
@@ -85,15 +84,13 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // construct the reduction rcode
     //--------------------------------------------------------------------------
 
-    // total rcode bits: 28 (7 hex digits)
+    // total rcode bits: 18 (5 hex digits)
 
     (*rcode) = 
                                                // range        bits
-                // monoid: 16 bits (4 hex digits)
-                GB_LSHIFT (cheese     , 27) |  // 0 to 1       1
-                GB_LSHIFT (red_ecode  , 22) |  // 0 to 22      5
-                GB_LSHIFT (id_ecode   , 17) |  // 0 to 31      5
-                GB_LSHIFT (term_ecode , 12) |  // 0 to 31      5
+                // monoid: 6 bits (2 hex digits)
+                GB_LSHIFT (cheese     , 17) |  // 0 to 1       1
+                GB_LSHIFT (red_ecode  , 12) |  // 0 to 22      5
 
                 // type of the monoid: 1 hex digit
                 GB_LSHIFT (zcode      ,  8) |  // 0 to 14      4
