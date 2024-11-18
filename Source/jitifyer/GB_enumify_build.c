@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 // Enumify an build operation.
 
 #include "GB.h"
@@ -34,23 +36,6 @@ void GB_enumify_build       // enumerate a GB_build problem
     GB_Type_code zcode = dup->ztype->code ;
     GB_Type_code tcode = ttype->code ;
     GB_Type_code scode = stype->code ;
-
-    //--------------------------------------------------------------------------
-    // rename redundant boolean operators
-    //--------------------------------------------------------------------------
-
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
     if (xcode == GB_BOOL_code)
     { 
         // rename the operator
@@ -60,6 +45,9 @@ void GB_enumify_build       // enumerate a GB_build problem
     //--------------------------------------------------------------------------
     // enumify the dup binary operator
     //--------------------------------------------------------------------------
+
+    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
+    // and do the GB_enumify_binop in the macrofy stage.
 
     int dup_ecode ;
     GB_enumify_binop (&dup_ecode, dup_opcode, xcode, false, false) ;

@@ -639,7 +639,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 (
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
-    int add_ecode,      // binary op as an enum
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
     bool disable_terminal_condition,    // if true, a builtin monoid is assumed
@@ -651,7 +650,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char **g_expression
 ) ;
 
-bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
+bool GB_enumify_cuda_atomic         // returns has_cheeseburger
 (
     // output:
     const char **a,                 // CUDA atomic function name
@@ -659,7 +658,7 @@ bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
     const char **cuda_type,         // CUDA atomic type
     // input:
     GrB_Monoid monoid,  // monoid to query
-    int add_ecode,      // binary op as an enum
+    GB_Opcode add_opcode,
     size_t zsize,       // ztype->size
     int zcode           // ztype->code
 ) ;
@@ -705,9 +704,9 @@ void GB_macrofy_binop
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
     bool is_kron,               // if true: binop for kronecker
-    int ecode,
+    int ecode,                  // binary operator ecode from GB_enumify_binop
     bool C_iso,                 // if true: C is iso
-    GrB_BinaryOp op,            // NULL if C is iso
+    GrB_BinaryOp op,
     // output:
     const char **f_handle,      // basic expression z=f(x,y)
     const char **u_handle,      // update z=f(z,y) for the CPU
@@ -821,7 +820,7 @@ void GB_enumify_identity
     // output:
     int *ecode,             // enumerated identity, 0 to 31
     // inputs:
-    int add_ecode,          // add_ecode from GB_enumify_binop
+    GB_Opcode opcode,       // built-in binary opcode of a monoid
     GB_Type_code zcode      // type code of the operator
 ) ;
 
@@ -847,13 +846,13 @@ void GB_macrofy_bytes
     bool is_identity        // true for the identity value
 ) ;
 
-void GB_enumify_terminal
+void GB_enumify_terminal        // enumify the terminal value
 (
     // output:
-    int *ecode,             // enumerated terminal, 0 to 31
+    int *ecode,                 // enumerated terminal, 0 to 31
     // input:
-    int add_ecode,          // add_ecode from GB_enumify_binop
-    GB_Type_code zcode      // type code of the operator
+    GB_Opcode opcode,           // built-in binary opcode of a monoid
+    GB_Type_code zcode          // type code of the operator
 ) ;
 
 //------------------------------------------------------------------------------

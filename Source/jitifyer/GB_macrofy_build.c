@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -29,7 +31,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // dup, z = f(x,y) (5 hex digits)
     int dup_ecode = GB_RSHIFT (build_code, 20, 8) ;
 //  int zcode     = GB_RSHIFT (build_code, 16, 4) ;
-//  int xcode     = GB_RSHIFT (build_code, 12, 4) ;
+    int xcode     = GB_RSHIFT (build_code, 12, 4) ;
 //  int ycode     = GB_RSHIFT (build_code,  8, 4) ;
 
     // types of S and T (2 hex digits)
@@ -50,6 +52,13 @@ void GB_macrofy_build           // construct all macros for GB_build
     const char *ztype_name = ztype->name ;
     const char *ttype_name = ttype->name ;
     const char *stype_name = stype->name ;
+    GB_Opcode dup_opcode = dup->opcode ;
+    if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+    { 
+        // rename the operator
+        dup_opcode = GB_boolean_rename (dup_opcode) ;
+    }
+
     if (dup->hash == 0)
     { 
         // builtin operator
@@ -60,7 +69,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         // user-defined operator, or created by GB_build
         fprintf (fp,
             "// op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
-            (dup->opcode == GB_SECOND_binop_code) ? "2nd_" : "",
+            (dup_opcode == GB_SECOND_binop_code) ? "2nd_" : "",
             dup->name, ztype_name, xtype_name, ytype_name) ;
     }
 
@@ -82,6 +91,10 @@ void GB_macrofy_build           // construct all macros for GB_build
     //--------------------------------------------------------------------------
     // construct macros for the binary operator
     //--------------------------------------------------------------------------
+
+    int dup_ecode2 ;
+    GB_enumify_binop (&dup_ecode2, dup_opcode, xcode, false, false) ;
+    ASSERT (dup_ecode2 == dup_ecode) ;
 
     fprintf (fp, "\n// binary dup operator:\n") ;
     GB_macrofy_binop (fp, "GB_DUP", false, false, true, false, false,
@@ -107,7 +120,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         //----------------------------------------------------------------------
 
         fprintf (fp, "#define GB_BLD_DUP(Tx,p,Sx,k)") ;
-        if (dup->opcode != GB_FIRST_binop_code)
+        if (dup_opcode != GB_FIRST_binop_code)
         { 
             fprintf (fp, " GB_UPDATE (Tx [p], Sx [k])") ;
         }

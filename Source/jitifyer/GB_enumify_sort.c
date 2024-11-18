@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 // C is sparse or hypersparse, but the algorithm doesn't access C->h, and works
 // identically for both cases.  So the JIT kernel can treat C as if sparse.
 
@@ -45,22 +47,6 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     ASSERT (binaryop->xtype == binaryop->ytype) ;
     ASSERT (binaryop->ztype == GrB_BOOL) ;
 
-    //--------------------------------------------------------------------------
-    // rename redundant boolean operators
-    //--------------------------------------------------------------------------
-
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
     { 
         // rename the operator
@@ -70,6 +56,9 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     //--------------------------------------------------------------------------
     // enumify the binary operator
     //--------------------------------------------------------------------------
+
+    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
+    // and do the GB_enumify_binop in the macrofy stage.
 
     int binop_ecode ;
     GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;

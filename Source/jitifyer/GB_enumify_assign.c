@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 // Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
 // handled; this is done first in GB_assign_prep.
 
@@ -78,28 +80,11 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
         xcode = accum->xtype->code ;
         ycode = accum->ytype->code ;
         zcode = accum->ztype->code ;
-    }
-
-    //--------------------------------------------------------------------------
-    // rename redundant boolean operators
-    //--------------------------------------------------------------------------
-
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
-    if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
-    { 
-        // rename the operator
-        accum_opcode = GB_boolean_rename (accum_opcode) ;
+        if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+        { 
+            // rename the operator
+            accum_opcode = GB_boolean_rename (accum_opcode) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -107,6 +92,9 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     //--------------------------------------------------------------------------
 
     // accum_ecode is 255 if no accum is present
+
+    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
+    // and do the GB_enumify_binop in the macrofy stage.
 
     int accum_ecode ;
     GB_enumify_binop (&accum_ecode, accum_opcode, xcode, false, false) ;

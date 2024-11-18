@@ -10,34 +10,28 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-void GB_enumify_terminal
+void GB_enumify_terminal        // enumify the terminal value
 (
     // output:
-    int *ecode,             // enumerated terminal, 0 to 31
+    int *ecode,                 // enumerated terminal, 0 to 31
     // input:
-    int add_ecode,          // add_ecode from GB_enumify_binop
-    GB_Type_code zcode      // type code of the operator
+    GB_Opcode opcode,           // built-in binary opcode of a monoid
+    GB_Type_code zcode          // type code of the operator
 )
 { 
 
     int e = 31 ;                // default is a non-terminal monoid
 
-    switch (add_ecode)
+    switch (opcode)
     {
 
-        // plus: non-terminal except for boolean lor
-        case  9 :       // x + y, single complex
-        case 10 :       // x + y, double complex
-        case 11 :       // x + y
+        case GB_PLUS_binop_code : 
 
             // boolean PLUS (or) is terminal (true), others are not terminal
             e = (zcode == GB_BOOL_code) ? 2 : 31 ;
             break ;
 
-        // times
-        case 12 :       // x * y, single complex
-        case 13 :       // x * y, double complex
-        case 14 :       // x * y
+        case GB_TIMES_binop_code : 
 
             switch (zcode)
             {
@@ -58,22 +52,17 @@ void GB_enumify_terminal
             }
             break ;
 
-        // lor
-        case 17 :       // x || y
+        case GB_LOR_binop_code      : 
 
                 e = 2 ;                 // true
                 break ;
 
-        // land
-        case 18 :       // x && y
+        case GB_LAND_binop_code     : 
 
                 e = 3 ;                 // false
                 break ;
 
-        // min
-        case  3 :       // fminf (x,y)
-        case  4 :       // fmin (x,y)
-        case  5 :       // GB_MIN (x,y)
+        case GB_MIN_binop_code : 
 
             switch (zcode)
             {
@@ -92,10 +81,7 @@ void GB_enumify_terminal
             }
             break ;
 
-        // max
-        case  6 :       // fmaxf (x,y)
-        case  7 :       // fmax (x,y)
-        case  8 :       // GB_MAX (x,y)
+        case GB_MAX_binop_code : 
 
             switch (zcode)
             {
@@ -114,22 +100,19 @@ void GB_enumify_terminal
             }
             break ;
 
-        // any
-        case  2 :           // any (x,y)
+        case GB_ANY_binop_code : 
 
             e = 18 ;                    // no specific terminal value
             break ;
 
-        // lxor, eq (lxnor), bxor, bxnor: non-terminal
-        case 15 :       // x == y
-        case 16 :       // x ^ y
-        case 22 :       // bitwise xnor
-        case 21 :       // bitwise xor
+        case GB_LXOR_binop_code     : 
+        case GB_EQ_binop_code       :   // LXNOR
+        case GB_BXOR_binop_code     : 
+        case GB_BXNOR_binop_code    : 
         default                     :   // builtin with no terminal value
             break ;
 
-        // bor
-        case 19 :       // bitwise or
+        case GB_BOR_binop_code      : 
 
             switch (zcode)
             {
@@ -141,14 +124,9 @@ void GB_enumify_terminal
             }
             break ;
 
-        // band
-        case 20 :       // bitwise and
+        case GB_BAND_binop_code     : e = 0  ; break ; // 0
 
-            e = 0  ;    // 0
-            break ;
-
-        // user-defined
-        case 0 :        // user-defined monoid
+        case GB_USER_binop_code     :   // user-defined monoid
 
             e = 30 ;
             break ;

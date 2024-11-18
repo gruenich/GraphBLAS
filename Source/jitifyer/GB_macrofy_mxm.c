@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -31,8 +33,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // extract the semiring scode
     //--------------------------------------------------------------------------
 
-    // monoid (5 bits, 2 hex digits)
-    int add_ecode   = GB_RSHIFT (scode, 48, 5) ;
+    // monoid (4 bits, 1 hex digit)
+//  int add_code    = GB_RSHIFT (scode, 48, 5) ;
 
     // C in, A, B iso-valued and flipxy (one hex digit)
     bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
@@ -85,9 +87,16 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     else
     { 
         // general case
+
         fprintf (fp, "// semiring: (%s, %s%s, %s)\n",
             addop->name, mult->name, flipxy ? " (flipped)" : "",
             mult->xtype->name) ;
+    }
+
+    if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+    { 
+        // rename the multiplicative operator
+        mult_opcode = GB_boolean_rename (mult_opcode) ;
     }
 
     //--------------------------------------------------------------------------
@@ -118,12 +127,15 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     fprintf (fp, "\n// monoid:\n") ;
     const char *u_expr, *g_expr ;
     GB_macrofy_type (fp, "Z", "_", (zcode == 0) ? "GB_void" : ztype->name) ;
-    GB_macrofy_monoid (fp, add_ecode, C_iso, monoid, is_positional,
-        &u_expr, &g_expr) ;
+    GB_macrofy_monoid (fp, C_iso, monoid, is_positional, &u_expr, &g_expr) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the multiply operator
     //--------------------------------------------------------------------------
+
+    int mult_ecode2 ;
+    GB_enumify_binop (&mult_ecode2, mult_opcode, xcode, true, false) ;
+    ASSERT (mult_ecode2 == mult_ecode) ;
 
     fprintf (fp, "\n// multiplicative operator%s:\n",
         flipxy ? " (flipped)" : "") ;

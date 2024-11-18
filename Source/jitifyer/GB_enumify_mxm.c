@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -79,18 +81,6 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // rename redundant boolean operators
     //--------------------------------------------------------------------------
 
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
     if (C_iso)
     { 
         add_opcode = GB_ANY_binop_code ;
@@ -136,6 +126,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the multiplier
     //--------------------------------------------------------------------------
 
+    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
+    // and do the GB_enumify_binop in the macrofy stage.
+
     int mult_ecode ;
     GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true, false) ;
 
@@ -143,8 +136,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the monoid
     //--------------------------------------------------------------------------
 
-    int add_ecode ;
-    GB_enumify_binop (&add_ecode, add_opcode, zcode, false, false) ;
+    ASSERT (add_opcode >= GB_USER_binop_code) ;
+    ASSERT (add_opcode <= GB_BXNOR_binop_code) ;
+    int add_code = (add_opcode - GB_USER_binop_code) & 0xF ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -184,12 +178,16 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // construct the semiring scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 53 (14 hex digits)
+    // total scode bits: 52 (13 hex digits): 12 bits to spare.
+
+    // FUTURE: could save 2 more bits by replacing mult_ecode with
+    // (mult_opcode - GB_USER_binop_code), and doing the GB_enumify_binop
+    // later, in the macrofy stage.
 
     (*scode) =
                                                // range        bits
-                // monoid (5 bits, 2 hex digits)
-                GB_LSHIFT (add_ecode  , 48) |  // 0 to 22      5
+                // monoid (4 bits, 1 hex digit)
+                GB_LSHIFT (add_code   , 48) |  // 0 to 13      4
 
                 // C in, A, B iso properties, flipxy (1 hex digit)
                 GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1
@@ -203,7 +201,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
                 GB_LSHIFT (xcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 24) |  // 0 to 14      4
 
-                // mask (one hex digit)
+                // mask (1 hex digit)
                 GB_LSHIFT (mask_ecode , 20) |  // 0 to 13      4
 
                 // types of C, A, and B (3 hex digits)

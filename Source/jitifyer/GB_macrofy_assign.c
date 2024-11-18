@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -39,7 +41,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // binary operator (5 hex digits)
     int accum_ecode = GB_RSHIFT (scode, 32, 8) ;
 //  int zcode       = GB_RSHIFT (scode, 28, 4) ;
-//  int xcode       = GB_RSHIFT (scode, 24, 4) ;
+    int xcode       = GB_RSHIFT (scode, 24, 4) ;
 //  int ycode       = GB_RSHIFT (scode, 20, 4) ;
 
     // mask (one hex digit)
@@ -195,6 +197,17 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     if (accum != NULL)
     {
         fprintf (fp, "\n// accum operator:\n") ;
+
+        GB_Opcode accum_opcode = accum->opcode ;
+        if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+        { 
+            // rename the operator
+            accum_opcode = GB_boolean_rename (accum_opcode) ;
+        }
+        int accum_ecode2 ;
+        GB_enumify_binop (&accum_ecode2, accum_opcode, xcode, false, false) ;
+        ASSERT (accum_ecode2 == accum_ecode) ;
+
         GB_macrofy_binop (fp, "GB_ACCUM_OP", false, false, true, false, false,
             accum_ecode, C_iso, accum, NULL, NULL, NULL) ;
 

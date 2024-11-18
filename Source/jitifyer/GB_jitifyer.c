@@ -1822,14 +1822,14 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            scode_digits = 14 ;
+            scode_digits = 13 ;
             break ;
 
         case GB_jit_mxm_family    : 
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
-            scode_digits = 14 ;
+            scode_digits = 13 ;
             break ;
 
         case GB_jit_reduce_family : 

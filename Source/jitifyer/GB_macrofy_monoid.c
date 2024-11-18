@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -14,7 +16,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 (
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
-    int add_ecode,      // binary op as an enum
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
     bool disable_terminal_condition,    // if true, a builtin monoid is assumed
@@ -27,16 +28,33 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 )
 {
 
+    //--------------------------------------------------------------------------
+    // get the monoid
+    //--------------------------------------------------------------------------
+
     GrB_BinaryOp op = monoid->op ;
     const char *ztype_name = C_iso ? "void" : op->ztype->name ;
     int zcode = C_iso ? 0 : op->ztype->code ;
     size_t zsize = C_iso ? 0 : op->ztype->size ;
     GB_Opcode opcode = C_iso ? 0 : op->opcode ;
 
+    if (C_iso)
+    { 
+        opcode = GB_ANY_binop_code ;
+        zcode = 0 ;
+    }
+    else if (zcode == GB_BOOL_code)
+    { 
+        // rename the monoid
+        opcode = GB_boolean_rename (opcode) ;
+    }
+
     //--------------------------------------------------------------------------
     // create macros for the additive operator
     //--------------------------------------------------------------------------
 
+    int add_ecode ;
+    GB_enumify_binop (&add_ecode, opcode, zcode, false, false) ;
     GB_macrofy_binop (fp, "GB_ADD", false, false, true, false, false,
         add_ecode, C_iso, op, NULL, u_expression, g_expression) ;
 
@@ -55,7 +73,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     else
     {
         int id_ecode ;
-        GB_enumify_identity (&id_ecode, add_ecode, zcode) ;
+        GB_enumify_identity (&id_ecode, opcode, zcode) ;
 
         if (id_ecode <= 28)
         {
@@ -122,7 +140,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     }
     else
     { 
-        GB_enumify_terminal (&term_ecode, add_ecode, zcode) ;
+        GB_enumify_terminal (&term_ecode, opcode, zcode) ;
     }
 
     bool is_any_monoid = (term_ecode == 18) ;
@@ -410,7 +428,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
     GB_enumify_cuda_atomic (&a, &user_monoid_atomically, &cuda_type,
-        monoid, add_ecode, zsize, zcode) ;
+        monoid, opcode, zsize, zcode) ;
 
     if (monoid == NULL || zcode == 0)
     { 

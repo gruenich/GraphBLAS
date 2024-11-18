@@ -73,7 +73,8 @@ void mexFunction
     const char *a, *cuda_type ;
     bool user_monoid_atomically ;
     bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
-        &user_monoid_atomically, &cuda_type, NULL, 0, sizeof (uint32_t), 0) ;
+        &user_monoid_atomically, &cuda_type, NULL, GB_USER_binop_code,
+        sizeof (uint32_t), 0) ;
     CHECK (!has_cheeseburger) ;
     CHECK (user_monoid_atomically) ;
     CHECK (cuda_type == NULL) ;

@@ -11,6 +11,8 @@
 // rowscale, colscale, apply with bind 1st and 2nd, transpose apply with
 // bind 1st and 2nd, etc.
 
+#define GB_DEBUG /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -22,10 +24,10 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // output:
     uint64_t *scode,        // unique encoding of the entire operation
     // input:
-    bool is_eWiseMult,      // if true, method is emult
+    bool is_eWiseMult,      // if true, method is eWiseMult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
-    bool is_kronecker,      // if true, method is kron
-    bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
+    bool is_kronecker,      // if true, method is kronecker
+    bool is_eWiseAdd,       // if true, method is eWiseAdd
     // C matrix:
     bool C_iso,             // if true, C is iso on output
     bool C_in_iso,          // if true, C is iso on input
@@ -49,6 +51,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // get the types of A, B, and M
     //--------------------------------------------------------------------------
 
+    ASSERT_BINARYOP_OK (binaryop, "binaryop to enumify", GB0) ;
     GrB_Type atype = (A == NULL) ? NULL : A->type ;
     GrB_Type btype = (B == NULL) ? NULL : B->type ;
     GrB_Type mtype = (M == NULL) ? NULL : M->type ;
@@ -76,28 +79,11 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
         xcode = binaryop->xtype->code ;
         ycode = binaryop->ytype->code ;
         zcode = binaryop->ztype->code ;
-    }
-
-    //--------------------------------------------------------------------------
-    // rename redundant boolean operators
-    //--------------------------------------------------------------------------
-
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
-    if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
-    { 
-        // rename the operator
-        opcode = GB_boolean_rename (opcode) ;
+        if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+        { 
+            // rename the operator
+            opcode = GB_boolean_rename (opcode) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -132,10 +118,10 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool A_is_pattern = false ;
     bool B_is_pattern = false ;
 
-    if (is_eWiseMult || is_eWiseUnion)
+    if (is_eWiseMult || is_eWiseUnion)  // FIXME:  || is_kronecker
     { 
         A_is_pattern = (xcode == 0) ;   // A is not needed if x is not used
-        B_is_pattern = (ycode == 0) ;   // B is not needed if x is not used
+        B_is_pattern = (ycode == 0) ;   // B is not needed if y is not used
     }
 
     //--------------------------------------------------------------------------
@@ -145,10 +131,8 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     int is_union  = (is_eWiseUnion) ? 1 : 0 ;
     int is_emult  = (is_eWiseMult ) ? 1 : 0 ;
     int is_kron   = (is_kronecker ) ? 1 : 0 ;
-    int copy_to_C = (can_copy_to_C) ? 1 : 0 ;
-
-    int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, opcode, xcode, false, is_kron) ;
+    int is_eadd   = (is_eWiseAdd  ) ? 1 : 0 ;
+    int binop_code = (opcode - GB_USER_binop_code) & 0x3F ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -192,30 +176,35 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 53 (14 hex digits)
+    // total scode bits: 51 (13 hex digits); 13 bits to spare,
+    // or 3 bits per C, M, A, and B matrices.
+
+    // Could reduce 4 bits to 3: only one of the 4 is_* can be true, or all
+    // can be false (5 options, for 3 bits of encodify).  Alternatively,
+    // GB_macrofy_ewise only needs is_kron and is_eadd (2 bits).
 
     (*scode) =
                                                // range        bits
-                // method (5 bits) (2 hex digits)
-                GB_LSHIFT (is_kron    , 52) |  // 0 or 1       1
-                GB_LSHIFT (flipij     , 51) |  // 0 or 1       1
-                GB_LSHIFT (is_emult   , 50) |  // 0 or 1       1
-                GB_LSHIFT (is_union   , 49) |  // 0 or 1       1
-                GB_LSHIFT (copy_to_C  , 48) |  // 0 or 1       1
+                // method (3 bits) (1 hex digit)
+                GB_LSHIFT (is_kron    , 50) |  // 0 or 1       1
+                GB_LSHIFT (is_emult   , 49) |  // 0 or 1       1
+                GB_LSHIFT (is_union   , 48) |  // 0 or 1       1
 
-                // C in, A and B iso properites, flipxy (1 hex digit)
-                GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1
-                GB_LSHIFT (A_iso_code , 46) |  // 0 or 1       1
-                GB_LSHIFT (B_iso_code , 45) |  // 0 or 1       1
-                GB_LSHIFT (flipxy     , 44) |  // 0 or 1       1
+                // C in, A and B iso properites (1 hex digit)
+                GB_LSHIFT (is_eadd    , 47) |  // 0 or 1       1
+                GB_LSHIFT (C_in_iso_cd, 46) |  // 0 or 1       1
+                GB_LSHIFT (A_iso_code , 45) |  // 0 or 1       1
+                GB_LSHIFT (B_iso_code , 44) |  // 0 or 1       1
 
                 // binaryop, z = f(x,y) (5 hex digits)
-                GB_LSHIFT (binop_ecode, 36) |  // 0 to 254     8
+                GB_LSHIFT (flipxy     , 43) |  // 0 or 1       1
+                GB_LSHIFT (flipij     , 42) |  // 0 or 1       1
+                GB_LSHIFT (binop_code , 36) |  // 0 to 52      6
                 GB_LSHIFT (zcode      , 32) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 24) |  // 0 to 14      4
 
-                // mask (one hex digit)
+                // mask (1 hex digit)
                 GB_LSHIFT (mask_ecode , 20) |  // 0 to 13      4
 
                 // types of C, A, and B (3 hex digits)

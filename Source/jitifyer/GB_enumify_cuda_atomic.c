@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-bool GB_enumify_cuda_atomic
+bool GB_enumify_cuda_atomic         // returns has_cheeseburger
 (
     // output:
     const char **a,                 // CUDA atomic function name
@@ -18,7 +18,7 @@ bool GB_enumify_cuda_atomic
     const char **cuda_type,         // CUDA atomic type
     // input:
     GrB_Monoid monoid,  // monoid to query
-    int add_ecode,      // binary op as an enum
+    GB_Opcode add_opcode,
     size_t zsize,       // ztype->size
     int zcode           // ztype->code
 )
@@ -33,12 +33,13 @@ bool GB_enumify_cuda_atomic
     (*cuda_type) = NULL ;
     bool has_cheeseburger = false ;
 
-    switch (add_ecode)
+    switch (add_opcode)
     {
 
         // user defined monoid: can apply GB_ADD via atomicCAS if the ztype has
         // 32 or 64 bits
-        case  0 :
+//      case  0 :
+        case GB_USER_binop_code  :  // user defined binary op
 
             (*user_monoid_atomically) =
                 (zsize == sizeof (uint32_t) ||
@@ -46,8 +47,9 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // FIRST, ANY, SECOND: atomic write (not double complex)
-        case  1 :
-        case  2 :
+//      case  1 :
+//      case  2 :
+        case GB_ANY_binop_code   :  // z = x or y, selected arbitrarily
 
             switch (zcode)
             {
@@ -68,9 +70,10 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // MIN (real only)
-        case  3 :
-        case  4 :
-        case  5 :
+//      case  3 :
+//      case  4 :
+//      case  5 :
+        case GB_MIN_binop_code   :  // z = min(x,y)
 
             switch (zcode)
             {
@@ -89,9 +92,10 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // MAX (real only)
-        case  6 :
-        case  7 :
-        case  8 :
+//      case  6 :
+//      case  7 :
+//      case  8 :
+        case GB_MAX_binop_code   :  // z = max(x,y)
 
             switch (zcode)
             {
@@ -110,9 +114,10 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // PLUS:  all types
-        case  9 :
-        case 10 :
-        case 11 :
+//      case  9 :
+//      case 10 :
+//      case 11 :
+        case GB_PLUS_binop_code  :  // z = x + y
 
             switch (zcode)
             {
@@ -133,8 +138,9 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // TIMES: all real types, and float complex (but not double complex)
-        case 12 : 
-        case 14 : 
+//      case 12 : 
+//      case 14 : 
+        case GB_TIMES_binop_code :  // z = x * y
 
             switch (zcode)
             {
@@ -155,8 +161,10 @@ bool GB_enumify_cuda_atomic
 
         // BOR: z = (x | y), bitwise or,
         // logical LOR (via upscale to uint32_t and BOR)
-        case 17 :
-        case 19 :
+//      case 17 :
+//      case 19 :
+        case GB_LOR_binop_code   :  // z = (x != 0) || (y != 0)
+        case GB_BOR_binop_code   :  // z = (x | y), bitwise or
 
             switch (zcode)
             {
@@ -171,8 +179,10 @@ bool GB_enumify_cuda_atomic
 
         // BAND: z = (x & y), bitwise and
         // logical LAND (via upscale to uint32_t and BAND)
-        case 18 :
-        case 20 :
+//      case 18 :
+//      case 20 :
+        case GB_BAND_binop_code  :  // z = (x & y), bitwise and
+        case GB_LAND_binop_code  :  // z = (x != 0) && (y != 0)
 
             switch (zcode)
             {
@@ -186,8 +196,10 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // BXOR: z = (x ^ y), bitwise xor, and boolean LXOR
-        case 16 :
-        case 21 :
+//      case 16 :
+//      case 21 :
+        case GB_LXOR_binop_code  :  // z = (x != 0) != (y != 0)
+        case GB_BXOR_binop_code  :  // z = (x ^ y), bitwise xor
 
             switch (zcode)
             {
@@ -201,8 +213,10 @@ bool GB_enumify_cuda_atomic
             break ;
 
         // BXNOR: z = ~(x ^ y), bitwise xnor, and boolean LXNOR
-        case 15 :
-        case 22 :
+//      case 15 :
+//      case 22 :
+        case GB_EQ_binop_code    :  // z = (x == y), is LXNOR for bool
+        case GB_BXNOR_binop_code :  // z = ~(x ^ y), bitwise xnor
 
             switch (zcode)
             {
@@ -218,6 +232,10 @@ bool GB_enumify_cuda_atomic
         // all other monoids
         default: break ;
     }
+
+    //--------------------------------------------------------------------------
+    // has_cheeseburger:  true if monoid can be done atomically in CUDA
+    //--------------------------------------------------------------------------
 
     if (monoid == NULL || zcode == 0)
     { 
