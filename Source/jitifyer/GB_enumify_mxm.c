@@ -25,7 +25,7 @@
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:              // future:: may need to become 2 x uint64
-    uint64_t *scode,        // unique encoding of the entire semiring
+    uint64_t *method_code,  // unique encoding of the entire semiring
     // input:
     // C matrix:
     bool C_iso,             // C output iso: if true, semiring is ANY_PAIR_BOOL
@@ -175,14 +175,12 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     GB_enumify_sparsity (&bsparsity, B_sparsity) ;
 
     //--------------------------------------------------------------------------
-    // construct the semiring scode
+    // construct the semiring method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 52 (13 hex digits): 12 bits to spare. FIXME: to 50
-    // which would still be 13 hex digits.  14 bits to spare,
-    // or 3 per input matrix C, M, A, and B, with 2 bits left over.
+    // total method_code bits: 52 (13 hex digits): 12 bits to spare.
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // monoid (4 bits, 1 hex digit)
                 GB_LSHIFT (add_code   , 48) |  // 0 to 13      4

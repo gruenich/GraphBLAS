@@ -15,30 +15,30 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Type rtype
 )
 {
 
     //--------------------------------------------------------------------------
-    // extract the masker scode
+    // extract the masker method_code
     //--------------------------------------------------------------------------
 
     // C and Z iso properties (1 hex digit)
-    int C_iso       = GB_RSHIFT (scode, 17, 1) ;
-    int Z_iso       = GB_RSHIFT (scode, 16, 1) ;
+    int C_iso       = GB_RSHIFT (method_code, 17, 1) ;
+    int Z_iso       = GB_RSHIFT (method_code, 16, 1) ;
 
     // mask (1 hex digit)
-    int mask_ecode  = GB_RSHIFT (scode, 12, 4) ;
+    int mask_ecode  = GB_RSHIFT (method_code, 12, 4) ;
 
     // type of R (1 hex digit)
-    int rcode       = GB_RSHIFT (scode,  8, 4) ;
+    int rcode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // formats of R, M, C, and Z (2 hex digits)
-    int rsparsity   = GB_RSHIFT (scode,  6, 2) ;
-    int msparsity   = GB_RSHIFT (scode,  4, 2) ;
-    int csparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int zsparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int rsparsity   = GB_RSHIFT (method_code,  6, 2) ;
+    int msparsity   = GB_RSHIFT (method_code,  4, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int zsparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for the values of R

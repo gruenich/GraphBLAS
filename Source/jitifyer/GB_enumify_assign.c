@@ -25,7 +25,7 @@
 void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
     GrB_Matrix C,
@@ -129,12 +129,12 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     int C_repl = (C_replace) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the assign scode
+    // construct the assign method_code,
     //--------------------------------------------------------------------------
 
-    // total scode bits: 48 (12 hex digits)
+    // total method_code bits: 48 (12 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
 
                 // C_replace, S present, scalar assign, A iso (1 hex digit)
@@ -149,7 +149,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
 
                 // accum, z = f(x,y) (5 hex digits), and assign_kind
                 GB_LSHIFT (assign_kind, 38) |  // 0 to 3       2
-                GB_LSHIFT (accum_code , 32) |  // 0 to 255     6
+                GB_LSHIFT (accum_code , 32) |  // 0 to 63      6
                 GB_LSHIFT (zcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 24) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 20) |  // 0 to 14      4

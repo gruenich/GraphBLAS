@@ -15,7 +15,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     uint64_t kcode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
@@ -25,37 +25,37 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 {
 
     //--------------------------------------------------------------------------
-    // extract the ewise scode
+    // extract the ewise method_code
     //--------------------------------------------------------------------------
 
     // C in, A, and B iso-valued (1 hex digit)
-    bool C_in_iso   = GB_RSHIFT (scode, 46, 1) ;
-    int A_iso_code  = GB_RSHIFT (scode, 45, 1) ;
-    int B_iso_code  = GB_RSHIFT (scode, 44, 1) ;
+    bool C_in_iso   = GB_RSHIFT (method_code, 46, 1) ;
+    int A_iso_code  = GB_RSHIFT (method_code, 45, 1) ;
+    int B_iso_code  = GB_RSHIFT (method_code, 44, 1) ;
 
     // binary operator (5 hex digits)
-    bool flipxy     = GB_RSHIFT (scode, 43, 1) ;
-    bool flipij     = GB_RSHIFT (scode, 42, 1) ;
-    int binop_code  = GB_RSHIFT (scode, 36, 6) ;
-//  int zcode       = GB_RSHIFT (scode, 32, 4) ;
-    int xcode       = GB_RSHIFT (scode, 28, 4) ;
-    int ycode       = GB_RSHIFT (scode, 24, 4) ;
+    bool flipxy     = GB_RSHIFT (method_code, 43, 1) ;
+    bool flipij     = GB_RSHIFT (method_code, 42, 1) ;
+    int binop_code  = GB_RSHIFT (method_code, 36, 6) ;
+//  int zcode       = GB_RSHIFT (method_code, 32, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 28, 4) ;
+    int ycode       = GB_RSHIFT (method_code, 24, 4) ;
 
     // mask (1 hex digit)
-    int mask_ecode  = GB_RSHIFT (scode, 20, 4) ;
+    int mask_ecode  = GB_RSHIFT (method_code, 20, 4) ;
 
     // types of C, A, and B (3 hex digits)
-    int ccode       = GB_RSHIFT (scode, 16, 4) ;   // if 0: C is iso
-    int acode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
-    int bcode       = GB_RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
+    int ccode       = GB_RSHIFT (method_code, 16, 4) ;   // if 0: C is iso
+    int acode       = GB_RSHIFT (method_code, 12, 4) ;   // if 0: A is pattern
+    int bcode       = GB_RSHIFT (method_code,  8, 4) ;   // if 0: B is pattern
 
     bool C_iso = (ccode == 0) ;
 
     // formats of C, M, A, and B (2 hex digits)
-    int csparsity   = GB_RSHIFT (scode,  6, 2) ;
-    int msparsity   = GB_RSHIFT (scode,  4, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int bsparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  6, 2) ;
+    int msparsity   = GB_RSHIFT (method_code,  4, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int bsparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // get the method

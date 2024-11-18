@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -16,7 +18,7 @@
 void GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool C_iso,
     bool in_place_A,
@@ -97,12 +99,12 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     int inplace = (in_place_A) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the select scode
+    // construct the select method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits:  38 (10 hex digits)
+    // total method_code bits:  38 (10 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // iso of A aand C (2 bits)
                 GB_LSHIFT (C_iso_code , 37) |  // 0 or 1       1
@@ -115,7 +117,7 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1
 
                 // op, z = f(x,i,j,y) (5 hex digits)
-                GB_LSHIFT (idxop_ecode, 24) |  // 231 to 254   8
+                GB_LSHIFT (idxop_ecode, 24) |  // 231 to 254   8    FIXME
                 GB_LSHIFT (zcode      , 20) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 16) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 12) |  // 0 to 14      4

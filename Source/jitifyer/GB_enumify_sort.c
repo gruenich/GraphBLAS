@@ -18,7 +18,7 @@
 void GB_enumify_sort        // enumerate a GxB_sort problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     GrB_Matrix C,           // matrix to sort
     // comparator op:
@@ -64,15 +64,15 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;
 
     //--------------------------------------------------------------------------
-    // construct the sort scode
+    // construct the sort method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 16 (4 hex digits)
+    // total method_code bits: 16 (4 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // binaryop, z = f(x,y) (3 hex digits)
-                GB_LSHIFT (binop_ecode, 12) |  // 0 to 254     8
+                GB_LSHIFT (binop_ecode, 12) |  // 0 to 254     8    FIXME
                 GB_LSHIFT (xcode      ,  8) |  // 1 to 14      4
 
                 // type of C (1 hex digit)

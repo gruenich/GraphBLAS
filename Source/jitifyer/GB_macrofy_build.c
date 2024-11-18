@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -17,7 +15,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t build_code,        // unique encoding of the entire problem
+    uint64_t method_code,       // unique encoding of the entire problem
     GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
     GrB_Type stype              // type of Sx
@@ -25,18 +23,18 @@ void GB_macrofy_build           // construct all macros for GB_build
 {
 
     //--------------------------------------------------------------------------
-    // extract the build_code
+    // extract the method_code
     //--------------------------------------------------------------------------
 
     // dup, z = f(x,y) (5 hex digits)
-    int dup_ecode = GB_RSHIFT (build_code, 20, 8) ;
-//  int zcode     = GB_RSHIFT (build_code, 16, 4) ;
-    int xcode     = GB_RSHIFT (build_code, 12, 4) ;
-//  int ycode     = GB_RSHIFT (build_code,  8, 4) ;
+//  int dup_code  = GB_RSHIFT (method_code, 20, 6) ;
+//  int zcode     = GB_RSHIFT (method_code, 16, 4) ;
+    int xcode     = GB_RSHIFT (method_code, 12, 4) ;
+//  int ycode     = GB_RSHIFT (method_code,  8, 4) ;
 
     // types of S and T (2 hex digits)
-//  int tcode     = GB_RSHIFT (build_code, 4, 4) ;
-//  int scode     = GB_RSHIFT (build_code, 0, 4) ;
+//  int tcode     = GB_RSHIFT (method_code, 4, 4) ;
+//  int scode     = GB_RSHIFT (method_code, 0, 4) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -92,9 +90,8 @@ void GB_macrofy_build           // construct all macros for GB_build
     // construct macros for the binary operator
     //--------------------------------------------------------------------------
 
-    int dup_ecode2 ;
-    GB_enumify_binop (&dup_ecode2, dup_opcode, xcode, false, false) ;
-    ASSERT (dup_ecode2 == dup_ecode) ;
+    int dup_ecode ;
+    GB_enumify_binop (&dup_ecode, dup_opcode, xcode, false, false) ;
 
     fprintf (fp, "\n// binary dup operator:\n") ;
     GB_macrofy_binop (fp, "GB_DUP", false, false, true, false, false,

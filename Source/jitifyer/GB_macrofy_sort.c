@@ -17,22 +17,22 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype
 )
 { 
 
     //--------------------------------------------------------------------------
-    // extract the binaryop scode
+    // extract the binaryop method_code
     //--------------------------------------------------------------------------
 
     // binary operator (3 hex digits)
-    int binop_ecode = GB_RSHIFT (scode, 12, 8) ;
-    int xcode       = GB_RSHIFT (scode,  8, 4) ;
+    int binop_ecode = GB_RSHIFT (method_code, 12, 8) ;
+    int xcode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // type of C (1 hex digit)
-    int ccode       = GB_RSHIFT (scode,  0, 4) ;    // 1 to 14, C is not iso
+    int ccode       = GB_RSHIFT (method_code,  0, 4) ;  // 1 to 14, C is not iso
 
     //--------------------------------------------------------------------------
     // describe the operator

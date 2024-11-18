@@ -20,7 +20,7 @@
 void GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool is_eWiseMult,      // if true, method is eWiseMult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
@@ -167,12 +167,12 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     GB_enumify_sparsity (&bsparsity, B_sparsity) ;
 
     //--------------------------------------------------------------------------
-    // construct the ewise scode
+    // construct the ewise method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 47 (12 hex digits); 17 bits to spare.
+    // total method_code bits: 47 (12 hex digits); 17 bits to spare.
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // C in, A and B iso properites (3 bits) (1 hex digit)
                 GB_LSHIFT (C_in_iso_cd, 46) |  // 0 or 1       1

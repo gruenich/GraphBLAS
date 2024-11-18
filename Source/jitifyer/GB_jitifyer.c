@@ -429,10 +429,10 @@ GrB_Info GB_jitifyer_init (void)
 
         char *name_space = NULL ;
         char *kname = NULL ;
-        uint64_t scode = 0 ;
+        uint64_t method_code = 0 ;
         char *suffix = NULL ;
         GrB_Info info = GB_demacrofy_name (kernel_name, &name_space, &kname,
-            &scode, &suffix) ;
+            &method_code, &suffix) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
         {
@@ -557,7 +557,7 @@ GrB_Info GB_jitifyer_init (void)
 
         #undef IS
         encoding->kcode = c ;
-        encoding->code = scode ;
+        encoding->code = method_code ;
         encoding->suffix_len = (int32_t) GB_STRLEN (suffix) ;
 
         //----------------------------------------------------------------------
@@ -1801,73 +1801,73 @@ GrB_Info GB_jitifyer_load2_worker
     #ifndef NJIT
     GB_Operator op1 = NULL ;
     GB_Operator op2 = NULL ;
-    int scode_digits = 0 ;
+    int method_code_digits = 0 ;
 
     switch (family)
     {
         case GB_jit_apply_family  : 
             op1 = op ;
-            scode_digits = 10 ;
+            method_code_digits = 10 ;
             break ;
 
         case GB_jit_assign_family : 
             op1 = op ;
-            scode_digits = 12 ;
+            method_code_digits = 12 ;
             break ;
 
         case GB_jit_build_family  : 
             op1 = op ;
-            scode_digits = 7 ;
+            method_code_digits = 7 ;
             break ;
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            scode_digits = 12 ;
+            method_code_digits = 12 ;
             break ;
 
         case GB_jit_mxm_family    : 
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
-            scode_digits = 13 ;
+            method_code_digits = 13 ;
             break ;
 
         case GB_jit_reduce_family : 
             op1 = (GB_Operator) monoid->op ;
-            scode_digits = 5 ;
+            method_code_digits = 5 ;
             break ;
 
         case GB_jit_select_family : 
             op1 = op ;
-            scode_digits = 10 ;
+            method_code_digits = 10 ;
             break ;
 
         case GB_jit_user_type_family : 
-            scode_digits = 1 ;
+            method_code_digits = 1 ;
             break ;
 
         case GB_jit_user_op_family : 
-            scode_digits = 1 ;
+            method_code_digits = 1 ;
             op1 = op ;
             break ;
 
         case GB_jit_masker_family  : 
-            scode_digits = 5 ;
+            method_code_digits = 5 ;
             break ;
 
         case GB_jit_subref_family  : 
-            scode_digits = 4 ;
+            method_code_digits = 4 ;
             break ;
 
         case GB_jit_sort_family  : 
-            scode_digits = 4 ;
+            method_code_digits = 4 ;
             break ;
 
         default: ;
     }
 
     char kernel_name [GB_KLEN] ;
-    GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
+    GB_macrofy_name (kernel_name, "GB_jit", kname, method_code_digits,
         encoding->code, suffix) ;
 
     //--------------------------------------------------------------------------

@@ -21,7 +21,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // output:
     FILE *fp,               // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Semiring semiring,  // the semiring to macrofy
     GrB_Type ctype,
     GrB_Type atype,
@@ -30,37 +30,37 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 {
 
     //--------------------------------------------------------------------------
-    // extract the semiring scode
+    // extract the semiring method_code
     //--------------------------------------------------------------------------
 
     // monoid (4 bits, 1 hex digit)
-//  int add_code    = GB_RSHIFT (scode, 48, 5) ;
+//  int add_code    = GB_RSHIFT (method_code, 48, 5) ;
 
     // C in, A, B iso-valued and flipxy (one hex digit)
-    bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
-    int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
-    int B_iso_code  = GB_RSHIFT (scode, 45, 1) ;
-    bool flipxy     = GB_RSHIFT (scode, 44, 1) ;
+    bool C_in_iso   = GB_RSHIFT (method_code, 47, 1) ;
+    int A_iso_code  = GB_RSHIFT (method_code, 46, 1) ;
+    int B_iso_code  = GB_RSHIFT (method_code, 45, 1) ;
+    bool flipxy     = GB_RSHIFT (method_code, 44, 1) ;
 
     // multiplier (5 hex digits)
-    int mult_ecode  = GB_RSHIFT (scode, 36, 8) ;
-    int zcode       = GB_RSHIFT (scode, 32, 4) ;    // if 0: C is iso
-    int xcode       = GB_RSHIFT (scode, 28, 4) ;    // if 0: ignored
-    int ycode       = GB_RSHIFT (scode, 24, 4) ;    // if 0: ignored
+    int mult_ecode  = GB_RSHIFT (method_code, 36, 8) ;
+    int zcode       = GB_RSHIFT (method_code, 32, 4) ;    // if 0: C is iso
+    int xcode       = GB_RSHIFT (method_code, 28, 4) ;    // if 0: ignored
+    int ycode       = GB_RSHIFT (method_code, 24, 4) ;    // if 0: ignored
 
     // mask (one hex digit)
-    int mask_ecode  = GB_RSHIFT (scode, 20, 4) ;
+    int mask_ecode  = GB_RSHIFT (method_code, 20, 4) ;
 
     // types of C, A, and B (3 hex digits)
-    int ccode       = GB_RSHIFT (scode, 16, 4) ;   // if 0: C is iso
-    int acode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
-    int bcode       = GB_RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
+    int ccode       = GB_RSHIFT (method_code, 16, 4) ;   // if 0: C is iso
+    int acode       = GB_RSHIFT (method_code, 12, 4) ;   // if 0: A is pattern
+    int bcode       = GB_RSHIFT (method_code,  8, 4) ;   // if 0: B is pattern
 
     // formats of C, M, A, and B (2 hex digits)
-    int csparsity   = GB_RSHIFT (scode,  6, 2) ;
-    int msparsity   = GB_RSHIFT (scode,  4, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int bsparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  6, 2) ;
+    int msparsity   = GB_RSHIFT (method_code,  4, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int bsparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // construct the semiring name

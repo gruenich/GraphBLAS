@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_demacrofy_name: parse a kernel name for its kname, scode, and suffix
+// GB_demacrofy_name: parse a kernel name for its kname, method_code, and suffix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -15,11 +15,11 @@
 //
 //      namespace__kname__012345
 //
-// where "012345" is a hexadecimal printing of the scode.  Note the double
-// underscores that precede the scode and the suffix.
+// where "012345" is a hexadecimal printing of the method_code.  Note the double
+// underscores that precede the method_code and the suffix.
 //
 // GB_demacrofy_name parses the kernel_name of a PreJIT kernel, extracting
-// the namespace, kname, scode (as a uint64_t), and suffix.  NUL characters
+// the namespace, kname, method_code (as a uint64_t), and suffix.  NUL characters
 // are inserted into kernel_name where the dots appear:
 //
 //      namespace._kname._012345._suffix
@@ -39,7 +39,7 @@ GrB_Info GB_demacrofy_name
     // output
     char **name_space,      // namespace for the kernel_name
     char **kname,           // kname for the kernel_name
-    uint64_t *scode,        // enumify'd code of the kernel
+    uint64_t *method_code,        // enumify'd code of the kernel
     char **suffix           // suffix for the kernel_name (NULL if none)
 )
 {
@@ -51,12 +51,12 @@ GrB_Info GB_demacrofy_name
     ASSERT (kernel_name != NULL) ;
     ASSERT (name_space != NULL) ;
     ASSERT (kname != NULL) ;
-    ASSERT (scode != NULL) ;
+    ASSERT (method_code != NULL) ;
     ASSERT (suffix != NULL) ;
 
     (*name_space) = NULL ;
     (*kname) = NULL ;
-    (*scode) = 0 ;
+    (*method_code) = 0 ;
     (*suffix) = NULL ;  // remains NULL if kernel uses only builtin types/ops
 
     //--------------------------------------------------------------------------
@@ -72,7 +72,7 @@ GrB_Info GB_demacrofy_name
 
     int ndouble = 0 ;
     (*name_space) = kernel_name ;
-    char *scode_string = NULL ;
+    char *method_code_string = NULL ;
 
     for (int k = 1 ; k < len - 1 ; k++)
     {
@@ -92,8 +92,8 @@ GrB_Info GB_demacrofy_name
             }
             else if (ndouble == 2)
             { 
-                // save the start of the scode component of the kernel_name
-                scode_string = &(kernel_name [k]) ;
+                // save start of the method_code component of the kernel_name
+                method_code_string = &(kernel_name [k]) ;
             }
             else if (ndouble == 3)
             { 
@@ -113,17 +113,17 @@ GrB_Info GB_demacrofy_name
     }
 
     //--------------------------------------------------------------------------
-    // parse the scode_string
+    // parse the method_code_string
     //--------------------------------------------------------------------------
 
-    uint64_t scode_result = 0 ;
-    if (sscanf (scode_string, "%" SCNx64, &scode_result) != 1)
+    uint64_t method_code_result = 0 ;
+    if (sscanf (method_code_string, "%" SCNx64, &method_code_result) != 1)
     { 
-        // didn't find the scode: kernel_name is invalid; ignore this kernel
+        // didn't find method_code: kernel_name is invalid; ignore this kernel
         return (GrB_NO_VALUE) ;
     }
 
-    (*scode) = scode_result ;
+    (*method_code) = method_code_result ;
     return (GrB_SUCCESS) ;
 }
 
