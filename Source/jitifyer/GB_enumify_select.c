@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -117,7 +115,7 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1
 
                 // op, z = f(x,i,j,y) (5 hex digits)
-                GB_LSHIFT (idxop_ecode, 24) |  // 231 to 254   8    FIXME
+                GB_LSHIFT (idxop_ecode, 24) |  // 231 to 254   8
                 GB_LSHIFT (zcode      , 20) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 16) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 12) |  // 0 to 14      4

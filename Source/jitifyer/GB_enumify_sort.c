@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 // C is sparse or hypersparse, but the algorithm doesn't access C->h, and works
 // identically for both cases.  So the JIT kernel can treat C as if sparse.
 
@@ -57,22 +55,18 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     // enumify the binary operator
     //--------------------------------------------------------------------------
 
-    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x3F (6 bits),
-    // and do the GB_enumify_binop in the macrofy stage.
-
-    int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;
+    int binop_code = (opcode - GB_USER_binop_code) & 0x3F ;
 
     //--------------------------------------------------------------------------
     // construct the sort method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 16 (4 hex digits)
+    // total method_code bits: 14 (4 hex digits)
 
     (*method_code) =
                                                // range        bits
                 // binaryop, z = f(x,y) (3 hex digits)
-                GB_LSHIFT (binop_ecode, 12) |  // 0 to 254     8    FIXME
+                GB_LSHIFT (binop_code , 12) |  // 0 to 52      6
                 GB_LSHIFT (xcode      ,  8) |  // 1 to 14      4
 
                 // type of C (1 hex digit)

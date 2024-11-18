@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -27,12 +25,12 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // extract the binaryop method_code
     //--------------------------------------------------------------------------
 
-    // binary operator (3 hex digits)
-    int binop_ecode = GB_RSHIFT (method_code, 12, 8) ;
+    // binary operator (14 bits, 3 hex digits)
+//  int binop_code  = GB_RSHIFT (method_code, 12, 6) ;
     int xcode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // type of C (1 hex digit)
-    int ccode       = GB_RSHIFT (method_code,  0, 4) ;  // 1 to 14, C is not iso
+    int ccode       = GB_RSHIFT (method_code,  0, 4) ; // 1 to 14, C is not iso
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -64,9 +62,8 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
         // rename the operator
         opcode = GB_boolean_rename (opcode) ;
     }
-    int binop_ecode2 ;
-    GB_enumify_binop (&binop_ecode2, opcode, xcode, false, false) ;
-    ASSERT (binop_ecode2 == binop_ecode) ;
+    int binop_ecode ;
+    GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;
 
     fprintf (fp, "\n// binary operator:\n") ;
     GB_macrofy_binop (fp, "GB_BINOP", false, false, false, true, false,

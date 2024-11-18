@@ -39,7 +39,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     bool flipij     = GB_RSHIFT (method_code, 32, 1) ;
 
     // op, z = f(x,i,j,y) (5 hex digits)
-    int unop_ecode  = GB_RSHIFT (method_code, 24, 8) ;  // FIXME
+    int unop_ecode  = GB_RSHIFT (method_code, 24, 8) ;
 //  int zcode       = GB_RSHIFT (method_code, 20, 4) ;
     int xcode       = GB_RSHIFT (method_code, 16, 4) ;
     int ycode       = GB_RSHIFT (method_code, 12, 4) ;
@@ -119,7 +119,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     if (ctype == ztype && no_typecast_of_A)
     { 
         // no typecasting
-        if (unop_ecode == GB_IDENTITY_unop_code)
+        if (op->opcode == GB_IDENTITY_unop_code)
         { 
             // identity operator, no typecasting
             fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;
