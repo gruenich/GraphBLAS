@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__0b000bba0bbac7__plus_my_rdiv2.c
+// GB_jit__AxB_dot2__4000bba0bbacf__plus_my_rdiv2.c
 //------------------------------------------------------------------------------
 // SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
@@ -82,16 +82,16 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 #define GB_MASK_COMP   0
 #define GB_NO_MASK     1
 
-// A matrix: sparse
+// A matrix: full
 #define GB_A_IS_HYPER  0
-#define GB_A_IS_SPARSE 1
+#define GB_A_IS_SPARSE 0
 #define GB_A_IS_BITMAP 0
-#define GB_A_IS_FULL   0
-#define GBP_A(Ap,k,vlen) Ap [k]
+#define GB_A_IS_FULL   1
+#define GBP_A(Ap,k,vlen) ((k) * (vlen))
 #define GBH_A(Ah,k)      (k)
-#define GBI_A(Ai,p,vlen) Ai [p]
+#define GBI_A(Ai,p,vlen) ((p) % (vlen))
 #define GBB_A(Ab,p)      1
-#define GB_A_NVALS(e) int64_t e = A->nvals
+#define GB_A_NVALS(e) int64_t e = (A->vlen * A->vdim)
 #define GB_A_NHELD(e) GB_A_NVALS(e)
 #define GB_A_ISO 0
 #define GB_A_TYPE double
@@ -118,15 +118,17 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__0b000bba0bbac7__plus_my_rdiv2
-#define GB_jit_query  GB_jit__AxB_dot2__0b000bba0bbac7__plus_my_rdiv2_query
+#define GB_jit_kernel GB_jit__AxB_dot2__4000bba0bbacf__plus_my_rdiv2
+#define GB_jit_query  GB_jit__AxB_dot2__4000bba0bbacf__plus_my_rdiv2_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0xe4bcf8e6e84824a0 ;
-    v [0] = 9 ; v [1] = 2 ; v [2] = 9 ; // intentionally stale version
+    (*hash) = 0x424842cce4da274b ;
+    v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
+    v [1] = GxB_IMPLEMENTATION_MINOR ;
+    v [2] = GxB_IMPLEMENTATION_SUB ;
     defn [0] = NULL ;
     defn [1] = GB_my_rdiv2_USER_DEFN ;
     defn [2] = NULL ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__0b100bba0baacf__plus_my_rdiv2.c
+// GB_jit__AxB_dot2__4000bbb0bbbcd__plus_my_rdiv.c
 //------------------------------------------------------------------------------
 // SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
@@ -10,7 +10,7 @@
 
 #include "include/GB_jit_kernel.h"
 
-// semiring: (plus, my_rdiv2 (flipped), double)
+// semiring: (plus, my_rdiv, double)
 
 // monoid:
 #define GB_Z_TYPE double
@@ -31,23 +31,29 @@
 #define GB_Z_CUDA_ATOMIC GB_cuda_atomic_add
 #define GB_Z_CUDA_ATOMIC_TYPE double
 
-// multiplicative operator (flipped):
+// multiplicative operator:
 #define GB_X_TYPE double
-#define GB_Y_TYPE float
-#ifndef GB_GUARD_my_rdiv2_DEFINED
-#define GB_GUARD_my_rdiv2_DEFINED
+#define GB_Y_TYPE double
+#ifndef GB_GUARD_my_rdiv_DEFINED
+#define GB_GUARD_my_rdiv_DEFINED
 GB_STATIC_INLINE
-void my_rdiv2 (double *z, const double *x, const float *y)
+void my_rdiv (double *z, const double *x, const double *y)
 {
+    // escape this quote: "
+    /* escape this backslash \ */
+    /* modified for GrB 9.4.1 */
     (*z) = (*y) / (*x) ;
 }
-#define GB_my_rdiv2_USER_DEFN \
-"void my_rdiv2 (double *z, const double *x, const float *y)\n" \
+#define GB_my_rdiv_USER_DEFN \
+"void my_rdiv (double *z, const double *x, const double *y)\n" \
 "{\n" \
+"    // escape this quote: \"\n" \
+"    /* escape this backslash \\ */\n" \
+"    /* modified for GrB 9.4.1 */\n" \
 "    (*z) = (*y) / (*x) ;\n" \
 "}"
 #endif
-#define GB_MULT(z,y,x,j,k,i)  my_rdiv2 (&(z), &(x), &(y))
+#define GB_MULT(z,x,y,i,k,j)  my_rdiv (&(z), &(x), &(y))
 
 // multiply-add operator:
 #define GB_MULTADD(z,x,y,i,k,j)    \
@@ -94,43 +100,43 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 #define GB_A_NVALS(e) int64_t e = (A->vlen * A->vdim)
 #define GB_A_NHELD(e) GB_A_NVALS(e)
 #define GB_A_ISO 0
-#define GB_A_TYPE float
-#define GB_A2TYPE float
-#define GB_DECLAREA(a) float a
+#define GB_A_TYPE double
+#define GB_A2TYPE double
+#define GB_DECLAREA(a) double a
 #define GB_GETA(a,Ax,p,iso) a = Ax [p]
 
-// B matrix: full
+// B matrix: sparse
 #define GB_B_IS_HYPER  0
-#define GB_B_IS_SPARSE 0
+#define GB_B_IS_SPARSE 1
 #define GB_B_IS_BITMAP 0
-#define GB_B_IS_FULL   1
-#define GBP_B(Bp,k,vlen) ((k) * (vlen))
+#define GB_B_IS_FULL   0
+#define GBP_B(Bp,k,vlen) Bp [k]
 #define GBH_B(Bh,k)      (k)
-#define GBI_B(Bi,p,vlen) ((p) % (vlen))
+#define GBI_B(Bi,p,vlen) Bi [p]
 #define GBB_B(Bb,p)      1
-#define GB_B_NVALS(e) int64_t e = (B->vlen * B->vdim)
+#define GB_B_NVALS(e) int64_t e = B->nvals
 #define GB_B_NHELD(e) GB_B_NVALS(e)
 #define GB_B_ISO 0
-#define GB_B_TYPE float
+#define GB_B_TYPE double
 #define GB_B2TYPE double
 #define GB_DECLAREB(b) double b
-#define GB_GETB(b,Bx,p,iso) b = (double) (Bx [p])
+#define GB_GETB(b,Bx,p,iso) b = Bx [p]
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__0b100bba0baacf__plus_my_rdiv2
-#define GB_jit_query  GB_jit__AxB_dot2__0b100bba0baacf__plus_my_rdiv2_query
+#define GB_jit_kernel GB_jit__AxB_dot2__4000bbb0bbbcd__plus_my_rdiv
+#define GB_jit_query  GB_jit__AxB_dot2__4000bbb0bbbcd__plus_my_rdiv_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0x9616ba8f084461c2 ;
+    (*hash) = 0x4b2ea6f2b6a7b0ce ;
     v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
     v [1] = GxB_IMPLEMENTATION_MINOR ;
     v [2] = GxB_IMPLEMENTATION_SUB ;
     defn [0] = NULL ;
-    defn [1] = GB_my_rdiv2_USER_DEFN ;
+    defn [1] = GB_my_rdiv_USER_DEFN ;
     defn [2] = NULL ;
     defn [3] = NULL ;
     defn [4] = NULL ;

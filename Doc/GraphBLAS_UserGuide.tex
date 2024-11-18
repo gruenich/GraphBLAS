@@ -3114,17 +3114,17 @@ is returned.
     GrB_Scalar_new (&Theta, GrB_BOOL) ;
     GrB_Scalar_setElement_BOOL (Theta, 0) ;
     GxB_IndexBinaryOp Iop ;
-    GrB_BinaryOp Bop ;
+    GrB_BinaryOp Bop, MonOp ;
     GrB_Type Tuple ;
     GxB_Type_new (&Tuple, sizeof (tuple_fp64), "tuple_fp64", FP64_K) ;
     GxB_IndexBinaryOp_new (&Iop, make_fp64, Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
         "make_fp64", MAKE_FP64)) ;
-    OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+    GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta) ;
     tuple_fp64 id ;
     memset (&id, 0, sizeof (tuple_fp64)) ;
     id.k = INT64_MAX ;
     id.v = (double) (-INFINITY) ;
-    OK (GxB_BinaryOp_new (&MonOp, max_fp64, Tuple, Tuple, Tuple, "max_fp64", MAX_FP64)) ;
+    GxB_BinaryOp_new (&MonOp, max_fp64, Tuple, Tuple, Tuple, "max_fp64", MAX_FP64) ;
     GrB_Monoid MonOp ;
     GrB_Semiring Semiring ;
     GrB_Monoid_new_UDT (&Monoid, MonOp, &id) ;
@@ -12978,7 +12978,6 @@ the row iterator methods instead.
             double  aij = GxB_Iterator_get_FP64 (iterator) ;
             // move to the next entry in A(:,j)
             info = GxB_colIterator_nextRow (iterator) ;
-            OK (info) ;
         }
         // move to the next column, A(:,j+1), or a subsequent one if j+1 is implicit
         info = GxB_colIterator_nextCol (iterator) ;
@@ -14832,6 +14831,13 @@ GraphBLAS folder.
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+
+\item Nov 18, 2024: version 9.4.2 (BETA)
+
+    \begin{itemize}
+    \item clarified User Guide: regarding when the hyper-hash is built
+    \item JIT: reduced JIT kernel encodings
+    \end{itemize}
 
 \item Nov 15, 2024: version 9.4.1 (BETA)
 

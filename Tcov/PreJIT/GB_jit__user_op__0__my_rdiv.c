@@ -18,7 +18,7 @@ void my_rdiv (double *z, const double *x, const double *y)
 {
     // escape this quote: "
     /* escape this backslash \ */
-    /* modified for GrB 9.3.0 */
+    /* modified for GrB 9.4.1 */
     (*z) = (*y) / (*x) ;
 }
 #define GB_my_rdiv_USER_DEFN \
@@ -26,7 +26,7 @@ void my_rdiv (double *z, const double *x, const double *y)
 "{\n" \
 "    // escape this quote: \"\n" \
 "    /* escape this backslash \\ */\n" \
-"    /* modified for GrB 9.3.0 */\n" \
+"    /* modified for GrB 9.4.1 */\n" \
 "    (*z) = (*y) / (*x) ;\n" \
 "}"
 #define GB_USER_OP_DEFN GB_my_rdiv_USER_DEFN

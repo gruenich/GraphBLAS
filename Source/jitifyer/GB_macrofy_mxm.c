@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -43,7 +41,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     bool flipxy     = GB_RSHIFT (method_code, 44, 1) ;
 
     // multiplier (5 hex digits)
-    int mult_ecode  = GB_RSHIFT (method_code, 36, 8) ;
+    // 2 bits unused here (42 and 43)
+//  int mult_code   = GB_RSHIFT (method_code, 36, 6) ;
     int zcode       = GB_RSHIFT (method_code, 32, 4) ;    // if 0: C is iso
     int xcode       = GB_RSHIFT (method_code, 28, 4) ;    // if 0: ignored
     int ycode       = GB_RSHIFT (method_code, 24, 4) ;    // if 0: ignored
@@ -133,9 +132,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // construct macros for the multiply operator
     //--------------------------------------------------------------------------
 
-    int mult_ecode2 ;
-    GB_enumify_binop (&mult_ecode2, mult_opcode, xcode, true, false) ;
-    ASSERT (mult_ecode2 == mult_ecode) ;
+    int mult_ecode ;
+    GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true, false) ;
 
     fprintf (fp, "\n// multiplicative operator%s:\n",
         flipxy ? " (flipped)" : "") ;

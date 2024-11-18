@@ -2,12 +2,10 @@
 // GB_enumify_mxm: enumerate a GrB_mxm problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-#define GB_DEBUG    /* HACK FIXME */
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -126,11 +124,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the multiplier
     //--------------------------------------------------------------------------
 
-    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x3F (6 bits),
-    // and do the GB_enumify_binop in the macrofy stage.
-
-    int mult_ecode ;
-    GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true, false) ;
+    int mult_code = (mult_opcode - GB_USER_binop_code) & 0x3F ;
 
     //--------------------------------------------------------------------------
     // enumify the monoid
@@ -178,7 +172,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // construct the semiring method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 52 (13 hex digits): 12 bits to spare.
+    // total method_code bits: 50 (13 hex digits): 14 bits to spare.
 
     (*method_code) =
                                                // range        bits
@@ -192,7 +186,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
                 GB_LSHIFT (flipxy     , 44) |  // 0 to 1       1
 
                 // multiplier, z = f(x,y) or f(y,x) (5 hex digits)
-                GB_LSHIFT (mult_ecode , 36) |  // 0 to 254     8   FIXME
+                // 2 bits unused here (42 and 43)
+                GB_LSHIFT (mult_code  , 36) |  // 0 to 52      6
                 GB_LSHIFT (zcode      , 32) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 24) |  // 0 to 14      4
