@@ -11,8 +11,6 @@
 // rowscale, colscale, apply with bind 1st and 2nd, transpose apply with
 // bind 1st and 2nd, etc.
 
-#define GB_DEBUG /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -118,7 +116,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool A_is_pattern = false ;
     bool B_is_pattern = false ;
 
-    if (is_eWiseMult || is_eWiseUnion)  // FIXME:  || is_kronecker
+    if (is_eWiseMult || is_eWiseUnion || is_kronecker)
     { 
         A_is_pattern = (xcode == 0) ;   // A is not needed if x is not used
         B_is_pattern = (ycode == 0) ;   // B is not needed if y is not used
@@ -128,10 +126,6 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // enumify the binary operator
     //--------------------------------------------------------------------------
 
-    int is_union  = (is_eWiseUnion) ? 1 : 0 ;
-    int is_emult  = (is_eWiseMult ) ? 1 : 0 ;
-    int is_kron   = (is_kronecker ) ? 1 : 0 ;
-    int is_eadd   = (is_eWiseAdd  ) ? 1 : 0 ;
     int binop_code = (opcode - GB_USER_binop_code) & 0x3F ;
 
     //--------------------------------------------------------------------------
@@ -176,22 +170,11 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     // construct the ewise scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 51 (13 hex digits); 13 bits to spare,
-    // or 3 bits per C, M, A, and B matrices.
-
-    // Could reduce 4 bits to 3: only one of the 4 is_* can be true, or all
-    // can be false (5 options, for 3 bits of encodify).  Alternatively,
-    // GB_macrofy_ewise only needs is_kron and is_eadd (2 bits).
+    // total scode bits: 47 (12 hex digits); 17 bits to spare.
 
     (*scode) =
                                                // range        bits
-                // method (3 bits) (1 hex digit)
-                GB_LSHIFT (is_kron    , 50) |  // 0 or 1       1
-                GB_LSHIFT (is_emult   , 49) |  // 0 or 1       1
-                GB_LSHIFT (is_union   , 48) |  // 0 or 1       1
-
-                // C in, A and B iso properites (1 hex digit)
-                GB_LSHIFT (is_eadd    , 47) |  // 0 or 1       1
+                // C in, A and B iso properites (3 bits) (1 hex digit)
                 GB_LSHIFT (C_in_iso_cd, 46) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 45) |  // 0 or 1       1
                 GB_LSHIFT (B_iso_code , 44) |  // 0 or 1       1

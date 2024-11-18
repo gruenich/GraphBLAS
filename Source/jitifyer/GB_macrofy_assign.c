@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -28,18 +26,19 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // extract the assign scode
     //--------------------------------------------------------------------------
 
-    // S sparsity (2 bits, 1 hex digit)
-    int ssparsity   = GB_RSHIFT (scode, 48, 2) ;
+    // C_replace, S present, scalar assign, A iso (1 hex digit)
+    int C_replace   = GB_RSHIFT (scode, 47, 1) ;
+    int S_present   = GB_RSHIFT (scode, 46, 1) ;
+    bool s_assign   = GB_RSHIFT (scode, 45, 1) ;
+    int A_iso       = GB_RSHIFT (scode, 44, 1) ;
 
-    // assign_kind, Ikind, Jkind, and S present (2 hex digits)
-    int S_present   = GB_RSHIFT (scode, 47, 1) ;
-    int C_replace   = GB_RSHIFT (scode, 46, 1) ;
-    int assign_kind = GB_RSHIFT (scode, 44, 2) ;
+    // Ikind, Jkind (1 hex digit)
     int Ikind       = GB_RSHIFT (scode, 42, 2) ;
     int Jkind       = GB_RSHIFT (scode, 40, 2) ;
 
-    // binary operator (5 hex digits)
-    int accum_ecode = GB_RSHIFT (scode, 32, 8) ;
+    // accum operator and assign_kind (5 hex digits)
+    int assign_kind = GB_RSHIFT (scode, 38, 2) ;
+//  int accum_code  = GB_RSHIFT (scode, 32, 6) ;
 //  int zcode       = GB_RSHIFT (scode, 28, 4) ;
     int xcode       = GB_RSHIFT (scode, 24, 4) ;
 //  int ycode       = GB_RSHIFT (scode, 20, 4) ;
@@ -51,19 +50,17 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     int ccode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: C is iso
     int acode       = GB_RSHIFT (scode,  8, 4) ;
 
-    bool C_iso = (ccode == 0) ;
-
     // sparsity structures of C, M, and A (2 hex digits),
-    // iso status of A and scalar assignment
     int csparsity   = GB_RSHIFT (scode,  6, 2) ;
     int msparsity   = GB_RSHIFT (scode,  4, 2) ;
-    bool s_assign   = GB_RSHIFT (scode,  3, 1) ;
-    int A_iso       = GB_RSHIFT (scode,  2, 1) ;
+    int ssparsity   = GB_RSHIFT (scode,  2, 2) ;
     int asparsity   = GB_RSHIFT (scode,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the assignment
     //--------------------------------------------------------------------------
+
+    bool C_iso = (ccode == 0) ;
 
     #define SLEN 512
     char description [SLEN] ;
@@ -204,10 +201,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
             // rename the operator
             accum_opcode = GB_boolean_rename (accum_opcode) ;
         }
-        int accum_ecode2 ;
-        GB_enumify_binop (&accum_ecode2, accum_opcode, xcode, false, false) ;
-        ASSERT (accum_ecode2 == accum_ecode) ;
-
+        int accum_ecode ;
+        GB_enumify_binop (&accum_ecode, accum_opcode, xcode, false, false) ;
         GB_macrofy_binop (fp, "GB_ACCUM_OP", false, false, true, false, false,
             accum_ecode, C_iso, accum, NULL, NULL, NULL) ;
 

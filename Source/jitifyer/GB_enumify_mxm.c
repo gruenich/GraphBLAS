@@ -126,7 +126,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the multiplier
     //--------------------------------------------------------------------------
 
-    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
+    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x3F (6 bits),
     // and do the GB_enumify_binop in the macrofy stage.
 
     int mult_ecode ;
@@ -178,11 +178,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // construct the semiring scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 52 (13 hex digits): 12 bits to spare.
-
-    // FUTURE: could save 2 more bits by replacing mult_ecode with
-    // (mult_opcode - GB_USER_binop_code), and doing the GB_enumify_binop
-    // later, in the macrofy stage.
+    // total scode bits: 52 (13 hex digits): 12 bits to spare. FIXME: to 50
+    // which would still be 13 hex digits.  14 bits to spare,
+    // or 3 per input matrix C, M, A, and B, with 2 bits left over.
 
     (*scode) =
                                                // range        bits
@@ -196,7 +194,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
                 GB_LSHIFT (flipxy     , 44) |  // 0 to 1       1
 
                 // multiplier, z = f(x,y) or f(y,x) (5 hex digits)
-                GB_LSHIFT (mult_ecode , 36) |  // 0 to 254     8
+                GB_LSHIFT (mult_ecode , 36) |  // 0 to 254     8   FIXME
                 GB_LSHIFT (zcode      , 32) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 24) |  // 0 to 14      4

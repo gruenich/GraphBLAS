@@ -83,7 +83,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
+    uint64_t *scode,        // unique encoding of the entire problem
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to monoid
@@ -173,10 +173,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     FILE *fp,                   // target file to write, already open
     // input:
     uint64_t scode,
+    uint64_t kcode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
-    GrB_Type atype,
-    GrB_Type btype
+    GrB_Type atype,             // NULL for apply bind1st
+    GrB_Type btype              // NULL for apply bind2nd
 ) ;
 
 GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
@@ -1781,6 +1782,7 @@ void GB_macrofy_family
     // input:
     GB_jit_family family,       // family to macrofy
     uint64_t scode,             // encoding of the specific problem
+    uint64_t kcode,             // kernel code
     GrB_Semiring semiring,      // semiring (for mxm family only)
     GrB_Monoid monoid,          // monoid (for reduce family only)
     GB_Operator op,             // unary/index_unary/binary op

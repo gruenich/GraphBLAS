@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -18,6 +16,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     FILE *fp,                   // target file to write, already open
     // input:
     uint64_t scode,
+    uint64_t kcode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
     GrB_Type atype,             // NULL for apply bind1st
@@ -26,16 +25,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 {
 
     //--------------------------------------------------------------------------
-    // extract the binaryop scode
+    // extract the ewise scode
     //--------------------------------------------------------------------------
 
-    // method (1 hex digit)
-    bool is_kron    = GB_RSHIFT (scode, 50, 1) ;
-//  bool is_emult   = GB_RSHIFT (scode, 49, 1) ;
-//  bool is_union   = GB_RSHIFT (scode, 48, 1) ;
-
     // C in, A, and B iso-valued (1 hex digit)
-    bool is_eadd    = GB_RSHIFT (scode, 47, 1) ;
     bool C_in_iso   = GB_RSHIFT (scode, 46, 1) ;
     int A_iso_code  = GB_RSHIFT (scode, 45, 1) ;
     int B_iso_code  = GB_RSHIFT (scode, 44, 1) ;
@@ -63,6 +56,13 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     int msparsity   = GB_RSHIFT (scode,  4, 2) ;
     int asparsity   = GB_RSHIFT (scode,  2, 2) ;
     int bsparsity   = GB_RSHIFT (scode,  0, 2) ;
+
+    //--------------------------------------------------------------------------
+    // get the method
+    //--------------------------------------------------------------------------
+
+    bool is_eadd = (kcode == GB_JIT_KERNEL_ADD) ;
+    bool is_kron = (kcode == GB_JIT_KERNEL_KRONER) ;
 
     //--------------------------------------------------------------------------
     // describe the operator

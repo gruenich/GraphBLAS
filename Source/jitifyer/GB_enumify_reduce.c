@@ -15,7 +15,7 @@
 void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
+    uint64_t *scode,        // unique encoding of the entire problem
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to monoid
@@ -82,12 +82,12 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the reduction rcode
+    // construct the reduction scode
     //--------------------------------------------------------------------------
 
-    // total rcode bits: 17 (5 hex digits)
+    // total scode bits: 17 (5 hex digits)
 
-    (*rcode) = 
+    (*scode) = 
                                                // range        bits
                 // monoid: 5 bits (2 hex digits)
                 GB_LSHIFT (cheese     , 16) |  // 0 to 1       1

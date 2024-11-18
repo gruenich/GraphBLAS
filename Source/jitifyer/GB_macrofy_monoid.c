@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

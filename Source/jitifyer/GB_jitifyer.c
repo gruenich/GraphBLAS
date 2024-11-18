@@ -1812,7 +1812,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_assign_family : 
             op1 = op ;
-            scode_digits = 13 ;
+            scode_digits = 12 ;
             break ;
 
         case GB_jit_build_family  : 
@@ -1822,7 +1822,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            scode_digits = 13 ;
+            scode_digits = 12 ;
             break ;
 
         case GB_jit_mxm_family    : 
@@ -2017,8 +2017,8 @@ GrB_Info GB_jitifyer_load_worker
             GB_macrofy_preface (fp, kernel_name,
                 GB_jit_C_preface, GB_jit_CUDA_preface, kcode) ;
             // macrofy the kernel operators, types, and matrix formats
-            GB_macrofy_family (fp, family, encoding->code, semiring,
-                monoid, op, type1, type2, type3) ;
+            GB_macrofy_family (fp, family, encoding->code, encoding->kcode,
+                semiring, monoid, op, type1, type2, type3) ;
             // #include the kernel, renaming it for the PreJIT
             fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
                          "#define GB_jit_kernel %s\n"

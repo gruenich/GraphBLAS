@@ -17,6 +17,7 @@ void GB_macrofy_family
     // input:
     GB_jit_family family,       // family to macrofy
     uint64_t scode,             // encoding of the specific problem
+    uint64_t kcode,             // kernel code
     GrB_Semiring semiring,      // semiring (for mxm family only)
     GrB_Monoid monoid,          // monoid (for reduce family only)
     GB_Operator op,             // unary/index_unary/binary op
@@ -42,7 +43,7 @@ void GB_macrofy_family
             break ;
 
         case GB_jit_ewise_family  : 
-            GB_macrofy_ewise (fp, scode, (GrB_BinaryOp) op, type1, type2,
+            GB_macrofy_ewise (fp, scode, kcode, (GrB_BinaryOp) op, type1, type2,
                 type3) ;
             break ;
 

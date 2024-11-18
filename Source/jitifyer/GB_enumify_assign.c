@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 // Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
 // handled; this is done first in GB_assign_prep.
 
@@ -60,11 +58,12 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     ASSERT (atype != NULL) ;
 
     //--------------------------------------------------------------------------
-    // get the types of X, Y, and Z
+    // enumify the accum operator, if present, and get the types of x,y,z
     //--------------------------------------------------------------------------
 
     GB_Opcode accum_opcode ;
     GB_Type_code xcode, ycode, zcode ;
+    int accum_code ;
 
     if (accum == NULL)
     { 
@@ -73,6 +72,8 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
         xcode = 0 ;
         ycode = 0 ;
         zcode = 0 ;
+        // accum_code is 63 if no accum is present
+        accum_code = 0x3F ;
     }
     else
     { 
@@ -85,19 +86,9 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
             // rename the operator
             accum_opcode = GB_boolean_rename (accum_opcode) ;
         }
+        // accum_code is 0 to 52 if accum is present
+        accum_code = (accum_opcode - GB_USER_binop_code) & 0x3F ;
     }
-
-    //--------------------------------------------------------------------------
-    // enumify the accum operator, if present
-    //--------------------------------------------------------------------------
-
-    // accum_ecode is 255 if no accum is present
-
-    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
-    // and do the GB_enumify_binop in the macrofy stage.
-
-    int accum_ecode ;
-    GB_enumify_binop (&accum_ecode, accum_opcode, xcode, false, false) ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -141,22 +132,24 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     // construct the assign scode
     //--------------------------------------------------------------------------
 
-    // total scode bits: 50 (13 hex digits)
+    // total scode bits: 48 (12 hex digits)
 
     (*scode) =
                                                // range        bits
-                /// sparsity of S (1 hex digit)
-                GB_LSHIFT (ssparsity  , 48) |  // 0 to 3       2
 
-                // assign_kind, Ikind, Jkind, S present (2 hex digits)
-                GB_LSHIFT (S_present  , 47) |  // 0 to 1       1
-                GB_LSHIFT (C_repl     , 46) |  // 0 to 1       1
-                GB_LSHIFT (assign_kind, 44) |  // 0 to 3       2
+                // C_replace, S present, scalar assign, A iso (1 hex digit)
+                GB_LSHIFT (C_repl     , 47) |  // 0 to 1       1
+                GB_LSHIFT (S_present  , 46) |  // 0 to 1       1
+                GB_LSHIFT (s_assign   , 45) |  // 0 to 1       1
+                GB_LSHIFT (A_iso_code , 44) |  // 0 or 1       1
+
+                // Ikind, Jkind (1 hex digit)
                 GB_LSHIFT (Ikind      , 42) |  // 0 to 3       2
                 GB_LSHIFT (Jkind      , 40) |  // 0 to 3       2
 
-                // accum, z = f(x,y) (5 hex digits)
-                GB_LSHIFT (accum_ecode, 32) |  // 0 to 255     8
+                // accum, z = f(x,y) (5 hex digits), and assign_kind
+                GB_LSHIFT (assign_kind, 38) |  // 0 to 3       2
+                GB_LSHIFT (accum_code , 32) |  // 0 to 255     6
                 GB_LSHIFT (zcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 24) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 20) |  // 0 to 14      4
@@ -168,13 +161,10 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
                 GB_LSHIFT (ccode      , 12) |  // 0 to 14      4
                 GB_LSHIFT (acode      ,  8) |  // 1 to 14      4
 
-                // sparsity structures of C, M, and A (2 hex digits),
-                // iso status of A and scalar assignment
+                // sparsity structures of C, M, S, and A (2 hex digits),
                 GB_LSHIFT (csparsity  ,  6) |  // 0 to 3       2
                 GB_LSHIFT (msparsity  ,  4) |  // 0 to 3       2
-                GB_LSHIFT (s_assign   ,  3) |  // 0 to 1       1
-                GB_LSHIFT (A_iso_code ,  2) |  // 0 or 1       1
+                GB_LSHIFT (ssparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
-
 }
 

@@ -132,7 +132,8 @@ void mexFunction
         /* C_in_iso: */ false, GxB_SPARSE, GrB_BOOL, /* M: */ NULL,
         false, false, GrB_LAND, false, false, A, B) ;
 //  printf ("ewise  scode: %016" PRIx64 "\n", scode) ;
-    GB_macrofy_ewise (fp, scode, GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
+    GB_macrofy_ewise (fp, scode, GB_JIT_KERNEL_ADD,
+        GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
 
     HEADER ;
     fprintf (fp, "GB_enumify_ewise / GB_macrofy_ewise, C non iso\n") ;
@@ -141,7 +142,8 @@ void mexFunction
         /* C_in_iso: */ false, GxB_SPARSE, GrB_BOOL, /* M: */ NULL,
         false, false, GrB_LAND, false, false, A, B) ;
 //  printf ("ewise  scode: %016" PRIx64 "\n", scode) ;
-    GB_macrofy_ewise (fp, scode, GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
+    GB_macrofy_ewise (fp, scode, GB_JIT_KERNEL_ADD,
+        GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
 
     //--------------------------------------------------------------------------
     // GB_enumify_mxm / GB_macrofy_mxm

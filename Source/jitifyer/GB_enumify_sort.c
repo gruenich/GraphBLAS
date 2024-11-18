@@ -57,7 +57,7 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     // enumify the binary operator
     //--------------------------------------------------------------------------
 
-    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x2F (6 bits),
+    // FIXME: replace with ecode = (opcode-GB_USER_binop_code) & 0x3F (6 bits),
     // and do the GB_enumify_binop in the macrofy stage.
 
     int binop_ecode ;
