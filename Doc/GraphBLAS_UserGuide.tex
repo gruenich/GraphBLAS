@@ -6910,13 +6910,15 @@ unpack then pack a hypersparse CSC matrix:
 The same process is used with \verb'GxB_Matrix_unpack_HyperCSR'.
 
 If \verb'A' is not hypersparse on input to \verb'GxB_unpack_HyperHash', or if
-\verb'A' is hypersparse but does yet not have a hyper-hash, then \verb'Y' is
-returned as \verb'NULL'.  This is not an error condition, and
-\verb'GrB_SUCCESS' is returned.  The hyper-hash of a hypersparse matrix
-\verb'A' is a matrix that provides quick access to the inverse of \verb'Ah'.
-It is not always needed and may not be present.  It is left as pending work to
-be computed when needed.  To ensure that the hyper-hash is constructed for a
-hypersparse matrix \verb'A', use \verb'GrB_Matrix_wait (A, GrB_MATERIALIZE)'
+\verb'A' is hypersparse but does yet not have a hyper-hash and or does not need
+one, then \verb'Y' is returned as \verb'NULL'.  This is not an error condition,
+and \verb'GrB_SUCCESS' is returned.
+
+The hyper-hash of a hypersparse matrix \verb'A' is a matrix that provides quick
+access to the inverse of \verb'Ah'.  It is not always needed and may not be
+present.  It is left as pending work to be computed when needed.  To ensure
+that the hyper-hash is constructed for a hypersparse matrix \verb'A' (if it
+needs one), use \verb'GrB_Matrix_wait (A, GrB_MATERIALIZE)'
 
 If \verb'Y' is moved from \verb'A' and returned as non-\verb'NULL' to the
 caller, then it is the responsibility of the user application to free it, or to
@@ -6925,7 +6927,13 @@ example above.
 
 If this method is called to remove the hyper-hash \verb'Y' from the hypersparse
 matrix \verb'A', and then \verb'GrB_Matrix_wait (A, GrB_MATERIALZE)' is called,
-a new hyper-hash matrix is constructed for \verb'A'.
+a new hyper-hash matrix is constructed for \verb'A' (if it needs one).
+
+Not all hypersparse matrices need the hyper-hash.  The hyper-hash is built
+only if the matrix has more than 1024 non-empty rows (if held by row) or
+columns (if held by column).  This threshold of 1024 can be revised with
+\verb'GrB_set' as a global setting, \verb'GxB_HYPER_HASH'
+(See Section \ref{get_set_global}).
 
 \newpage
 %-------------------------------------------------------------------------------
