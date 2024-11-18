@@ -1,3 +1,8 @@
+Nov 18, 2024: version 9.4.2 (BETA)
+
+    * clarified User Guide: regarding when the hyper-hash is built
+    * JIT: reduced JIT kernel encodings
+
 Nov 15, 2024: version 9.4.1 (BETA)
 
     * new JIT kernels added: for GrB_assign, GrB_extract, GxB_sort,

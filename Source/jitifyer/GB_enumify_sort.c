@@ -16,7 +16,7 @@
 void GB_enumify_sort        // enumerate a GxB_sort problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     GrB_Matrix C,           // matrix to sort
     // comparator op:
@@ -45,22 +45,6 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     ASSERT (binaryop->xtype == binaryop->ytype) ;
     ASSERT (binaryop->ztype == GrB_BOOL) ;
 
-    //--------------------------------------------------------------------------
-    // rename redundant boolean operators
-    //--------------------------------------------------------------------------
-
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
     if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
     { 
         // rename the operator
@@ -71,19 +55,18 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     // enumify the binary operator
     //--------------------------------------------------------------------------
 
-    int binop_ecode ;
-    GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;
+    int binop_code = (opcode - GB_USER_binop_code) & 0x3F ;
 
     //--------------------------------------------------------------------------
-    // construct the sort scode
+    // construct the sort method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 16 (4 hex digits)
+    // total method_code bits: 14 (4 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // binaryop, z = f(x,y) (3 hex digits)
-                GB_LSHIFT (binop_ecode, 12) |  // 0 to 254     8
+                GB_LSHIFT (binop_code , 12) |  // 0 to 52      6
                 GB_LSHIFT (xcode      ,  8) |  // 1 to 14      4
 
                 // type of C (1 hex digit)

@@ -20,7 +20,7 @@ void GB_enumify_binop
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode, // op->xtype->code of the operator
-    bool for_semiring,  // true for A*B, false for A+B or A.*B
+    bool for_semiring,  // true for A*B multiplier, false otherwise
     bool is_kron        // true for kronecker
 )
 { 

@@ -47,8 +47,8 @@ void GB_macrofy_name
     // input
     const char *name_space, // namespace for the kernel_name
     const char *kname,      // kname for the kernel_name
-    int scode_digits,       // # of hexadecimal digits printed
-    uint64_t scode,         // enumify'd code of the kernel
+    int method_code_digits, // # of hexadecimal digits printed
+    uint64_t method_code,   // enumify'd code of the kernel
     const char *suffix      // suffix for the kernel_name (NULL if none)
 ) ;
 
@@ -60,7 +60,7 @@ GrB_Info GB_demacrofy_name
     // output
     char **name_space,      // namespace for the kernel_name
     char **kname,           // kname for the kernel_name
-    uint64_t *scode,        // enumify'd code of the kernel
+    uint64_t *method_code,  // enumify'd code of the kernel
     char **suffix           // suffix for the kernel_name (NULL if none)
 ) ;
 
@@ -83,7 +83,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
+    uint64_t *method_code,  // unique encoding of the entire problem
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to monoid
@@ -143,7 +143,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
 void GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool is_eWiseMult,      // if true, method is emult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
@@ -172,11 +172,12 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
+    uint64_t kcode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
-    GrB_Type atype,
-    GrB_Type btype
+    GrB_Type atype,             // NULL for apply bind1st
+    GrB_Type btype              // NULL for apply bind2nd
 ) ;
 
 GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
@@ -416,7 +417,7 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:              // future:: may need to become 2 x uint64
-    uint64_t *scode,        // unique encoding of the entire semiring
+    uint64_t *method_code,  // unique encoding of the entire semiring
     // input:
     // C matrix:
     bool C_iso,             // C output iso: if true, semiring is ANY_PAIR_BOOL
@@ -440,7 +441,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // output:
     FILE *fp,               // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Semiring semiring,  // the semiring to macrofy
     GrB_Type ctype,
     GrB_Type atype,
@@ -635,27 +636,13 @@ void GB_macrofy_mask
 // enumify and macrofy a monoid
 //------------------------------------------------------------------------------
 
-void GB_enumify_monoid  // enumerate a monoid
-(
-    // outputs:
-    int *add_ecode,     // binary op as an enum
-    int *id_ecode,      // identity value as an enum
-    int *term_ecode,    // terminal value as an enum
-    // inputs:
-    int add_opcode,     // must be a built-in binary operator from a monoid
-    int zcode           // type of the monoid (x, y, and z)
-) ;
-
 void GB_macrofy_monoid  // construct the macros for a monoid
 (
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
-    int add_ecode,      // binary op as an enum
-    int id_ecode,       // identity value as an enum
-    int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
-    bool disable_terminal_condition,    // if true, the monoid is assumed
+    bool disable_terminal_condition,    // if true, a builtin monoid is assumed
                         // to be non-terminal.  For the (times, firstj, int64)
                         // semiring, times is normally a terminal monoid, but
                         // it's not worth exploiting in GrB_mxm.
@@ -664,7 +651,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char **g_expression
 ) ;
 
-bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
+bool GB_enumify_cuda_atomic         // returns has_cheeseburger
 (
     // output:
     const char **a,                 // CUDA atomic function name
@@ -672,7 +659,7 @@ bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
     const char **cuda_type,         // CUDA atomic type
     // input:
     GrB_Monoid monoid,  // monoid to query
-    int add_ecode,      // binary op as an enum
+    GB_Opcode add_opcode,
     size_t zsize,       // ztype->size
     int zcode           // ztype->code
 ) ;
@@ -698,12 +685,12 @@ void GB_macrofy_query
 void GB_enumify_binop
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 110; -1 on failure
+    int *ecode,         // enumerated operator, range 0 to 255
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
-    GB_Type_code zcode, // op->xtype->code of the operator
-    bool for_semiring,  // true for A*B, false for A+B or A.*B
-    bool for_kron       // true for kronecker
+    GB_Type_code xcode, // op->xtype->code of the operator
+    bool for_semiring,  // true for A*B multiplier, false otherwise
+    bool is_kron        // true for kronecker
 ) ;
 
 void GB_macrofy_binop
@@ -718,9 +705,9 @@ void GB_macrofy_binop
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
     bool is_kron,               // if true: binop for kronecker
-    int ecode,
+    int ecode,                  // binary operator ecode from GB_enumify_binop
     bool C_iso,                 // if true: C is iso
-    GrB_BinaryOp op,            // NULL if C is iso
+    GrB_BinaryOp op,
     // output:
     const char **f_handle,      // basic expression z=f(x,y)
     const char **u_handle,      // update z=f(z,y) for the CPU
@@ -829,13 +816,13 @@ void GB_macrofy_output
 // monoid identity and terminal values
 //------------------------------------------------------------------------------
 
-void GB_enumify_identity       // return enum of identity value
+void GB_enumify_identity
 (
     // output:
-    int *ecode,             // enumerated identity, 0 to 17 (-1 if fail)
-    // input:
+    int *ecode,             // enumerated identity, 0 to 31
+    // inputs:
     GB_Opcode opcode,       // built-in binary opcode of a monoid
-    GB_Type_code zcode      // type code used in the opcode we want
+    GB_Type_code zcode      // type code of the operator
 ) ;
 
 const char *GB_macrofy_id // return string encoding the value
@@ -860,13 +847,13 @@ void GB_macrofy_bytes
     bool is_identity        // true for the identity value
 ) ;
 
-void GB_enumify_terminal       // return enum of terminal value
+void GB_enumify_terminal        // enumify the terminal value
 (
     // output:
-    int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
+    int *ecode,                 // enumerated terminal, 0 to 31
     // input:
     GB_Opcode opcode,           // built-in binary opcode of a monoid
-    GB_Type_code zcode          // type code used in the opcode we want
+    GB_Type_code zcode          // type code of the operator
 ) ;
 
 //------------------------------------------------------------------------------
@@ -932,7 +919,7 @@ void GB_macrofy_type
 void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
     const int C_sparsity,   // sparse, hyper, bitmap, or full.  For apply
@@ -982,7 +969,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
     GrB_Type ctype,
@@ -1219,7 +1206,7 @@ uint64_t GB_encodify_build      // encode an build problem
 void GB_enumify_build       // enumerate a GB_build problem
 (
     // output:
-    uint64_t *build_code,   // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     GrB_BinaryOp dup,       // operator for duplicates
     GrB_Type ttype,         // type of Tx
@@ -1231,7 +1218,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t build_code,        // unique encoding of the entire problem
+    uint64_t method_code,       // unique encoding of the entire problem
     GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
     GrB_Type stype              // type of Sx
@@ -1278,7 +1265,7 @@ uint64_t GB_encodify_select     // encode an select problem
 void GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool C_iso,
     bool in_place_A,
@@ -1294,7 +1281,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
     const GrB_IndexUnaryOp op,
     GrB_Type atype
@@ -1358,7 +1345,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
 void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
     GrB_Matrix C,
@@ -1385,7 +1372,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_BinaryOp accum,         // accum operator to macrofy
     GrB_Type ctype,
     GrB_Type atype              // matrix or scalar type
@@ -1583,7 +1570,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
 uint64_t GB_enumify_masker  // enumify a masker problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     const GrB_Matrix R,
     const GrB_Matrix M,
@@ -1598,7 +1585,7 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Type rtype
 ) ;
 
@@ -1628,7 +1615,7 @@ uint64_t GB_encodify_subref     // encode an subref problem
 void GB_enumify_subref      // enumerate a GrB_extract problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // C matrix:
     GrB_Matrix C,
     // index types:
@@ -1645,7 +1632,7 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Type ctype
 ) ;
 
@@ -1741,7 +1728,7 @@ uint64_t GB_encodify_sort       // encode a sort problem
 void GB_enumify_sort        // enumerate a GxB_sort problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     GrB_Matrix C,           // matrix to sort
     // comparator op:
@@ -1763,7 +1750,7 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype
 ) ;
@@ -1794,7 +1781,8 @@ void GB_macrofy_family
     FILE *fp,                   // target file to write, already open
     // input:
     GB_jit_family family,       // family to macrofy
-    uint64_t scode,             // encoding of the specific problem
+    uint64_t method_code,       // encoding of the specific problem
+    uint64_t kcode,             // kernel code
     GrB_Semiring semiring,      // semiring (for mxm family only)
     GrB_Monoid monoid,          // monoid (for reduce family only)
     GB_Operator op,             // unary/index_unary/binary op

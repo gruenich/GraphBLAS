@@ -15,7 +15,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
+    uint64_t kcode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
     GrB_Type atype,             // NULL for apply bind1st
@@ -24,43 +25,44 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 {
 
     //--------------------------------------------------------------------------
-    // extract the binaryop scode
+    // extract the ewise method_code
     //--------------------------------------------------------------------------
 
-    // flipij and method (one hex digit)
-    bool is_kron    = GB_RSHIFT (scode, 52, 1) ;
-    bool flipij     = GB_RSHIFT (scode, 51, 1) ;
-//  bool is_emult   = GB_RSHIFT (scode, 50, 1) ;
-//  bool is_union   = GB_RSHIFT (scode, 49, 1) ;
-    bool copy_to_C  = GB_RSHIFT (scode, 48, 1) ;
-
-    // C in, A, and B iso-valued and flipxy (one hex digit)
-    bool C_in_iso   = GB_RSHIFT (scode, 47, 1) ;
-    int A_iso_code  = GB_RSHIFT (scode, 46, 1) ;
-    int B_iso_code  = GB_RSHIFT (scode, 45, 1) ;
-    bool flipxy     = GB_RSHIFT (scode, 44, 1) ;
+    // C in, A, and B iso-valued (1 hex digit)
+    bool C_in_iso   = GB_RSHIFT (method_code, 46, 1) ;
+    int A_iso_code  = GB_RSHIFT (method_code, 45, 1) ;
+    int B_iso_code  = GB_RSHIFT (method_code, 44, 1) ;
 
     // binary operator (5 hex digits)
-    int binop_ecode = GB_RSHIFT (scode, 36, 8) ;
-//  int zcode       = GB_RSHIFT (scode, 32, 4) ;
-    int xcode       = GB_RSHIFT (scode, 28, 4) ;
-    int ycode       = GB_RSHIFT (scode, 24, 4) ;
+    bool flipxy     = GB_RSHIFT (method_code, 43, 1) ;
+    bool flipij     = GB_RSHIFT (method_code, 42, 1) ;
+    int binop_code  = GB_RSHIFT (method_code, 36, 6) ;
+//  int zcode       = GB_RSHIFT (method_code, 32, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 28, 4) ;
+    int ycode       = GB_RSHIFT (method_code, 24, 4) ;
 
-    // mask (one hex digit)
-    int mask_ecode  = GB_RSHIFT (scode, 20, 4) ;
+    // mask (1 hex digit)
+    int mask_ecode  = GB_RSHIFT (method_code, 20, 4) ;
 
     // types of C, A, and B (3 hex digits)
-    int ccode       = GB_RSHIFT (scode, 16, 4) ;   // if 0: C is iso
-    int acode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: A is pattern
-    int bcode       = GB_RSHIFT (scode,  8, 4) ;   // if 0: B is pattern
+    int ccode       = GB_RSHIFT (method_code, 16, 4) ;   // if 0: C is iso
+    int acode       = GB_RSHIFT (method_code, 12, 4) ;   // if 0: A is pattern
+    int bcode       = GB_RSHIFT (method_code,  8, 4) ;   // if 0: B is pattern
 
     bool C_iso = (ccode == 0) ;
 
     // formats of C, M, A, and B (2 hex digits)
-    int csparsity   = GB_RSHIFT (scode,  6, 2) ;
-    int msparsity   = GB_RSHIFT (scode,  4, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int bsparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  6, 2) ;
+    int msparsity   = GB_RSHIFT (method_code,  4, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int bsparsity   = GB_RSHIFT (method_code,  0, 2) ;
+
+    //--------------------------------------------------------------------------
+    // get the method
+    //--------------------------------------------------------------------------
+
+    bool is_eadd = (kcode == GB_JIT_KERNEL_ADD) ;
+    bool is_kron = (kcode == GB_JIT_KERNEL_KRONER) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -70,9 +72,11 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     const char *xtype_name, *ytype_name, *ztype_name ;
     ASSERT_BINARYOP_OK (binaryop, "binaryop to macrofy", GB0) ;
 
+    GB_Opcode opcode ;
     if (C_iso)
     { 
         // values of C are not computed by the kernel
+        opcode = GB_PAIR_binop_code ;
         xtype_name = "GB_void" ;
         ytype_name = "GB_void" ;
         ztype_name = "GB_void" ;
@@ -84,6 +88,12 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     else
     { 
         // general case
+        opcode = binaryop->opcode ;
+        if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+        { 
+            // rename the operator
+            opcode = GB_boolean_rename (opcode) ;
+        }
         xtype = binaryop->xtype ;
         ytype = binaryop->ytype ;
         ztype = binaryop->ztype ;
@@ -104,13 +114,15 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
             // user-defined operator, or created by GB_wait
             fprintf (fp,
                 "// op: %s%s%s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
-                (binaryop->opcode == GB_SECOND_binop_code) ? "2nd_" : "",
+                (opcode == GB_SECOND_binop_code) ? "2nd_" : "",
                 binaryop->name,
                 flipij ? " (flipped ij)" : "",
                 flipxy ? " (flipped xy)" : "",
                 ztype_name, xtype_name, ytype_name) ;
         }
     }
+
+    ASSERT (opcode == (binop_code + GB_USER_binop_code)) ;
 
     //--------------------------------------------------------------------------
     // construct the typedefs
@@ -133,6 +145,9 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // construct macros for the binary operator
     //--------------------------------------------------------------------------
 
+    int binop_ecode ;
+    GB_enumify_binop (&binop_ecode, opcode, xcode, false, is_kron) ;
+
     fprintf (fp, "\n// binary operator%s%s:\n",
         flipij ? " (flipped ij)" : "",
         flipxy ? " (flipped xy)" : "") ;
@@ -140,15 +155,15 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
         flipij, flipxy, false, true, is_kron,
         binop_ecode, C_iso, binaryop, NULL, NULL, NULL) ;
 
-    if (binaryop->opcode == GB_SECOND_binop_code)
+    if (opcode == GB_SECOND_binop_code)
     { 
         fprintf (fp, "#define GB_OP_IS_SECOND 1\n") ;
     }
 
-    GB_macrofy_cast_copy (fp, "C", "A", (C_iso || !copy_to_C) ? NULL : ctype,
+    GB_macrofy_cast_copy (fp, "C", "A", (C_iso || !is_eadd) ? NULL : ctype,
             (acode == 0 || acode == 15) ? NULL : atype, A_iso_code) ;
 
-    GB_macrofy_cast_copy (fp, "C", "B", (C_iso || !copy_to_C) ? NULL : ctype,
+    GB_macrofy_cast_copy (fp, "C", "B", (C_iso || !is_eadd) ? NULL : ctype,
             (bcode == 0 || bcode == 15) ? NULL : btype, B_iso_code) ;
 
     //--------------------------------------------------------------------------

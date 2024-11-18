@@ -25,11 +25,8 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     //--------------------------------------------------------------------------
 
     // monoid
-//  int cheese      = GB_RSHIFT (rcode, 27, 1) ;
-    int red_ecode   = GB_RSHIFT (rcode, 22, 5) ;
-    int id_ecode    = GB_RSHIFT (rcode, 17, 5) ;
-    int term_ecode  = GB_RSHIFT (rcode, 12, 5) ;
-//  bool is_term    = (term_ecode < 30) ;
+//  int cheese      = GB_RSHIFT (rcode, 16, 1) ;
+//  int red_code    = GB_RSHIFT (rcode, 12, 4) ;
 
     // type of the monoid
     int zcode       = GB_RSHIFT (rcode, 8, 4) ;
@@ -62,8 +59,7 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
 
     fprintf (fp, "\n// monoid:\n") ;
     GB_macrofy_type (fp, "Z", "_", monoid->op->ztype->name) ;
-    GB_macrofy_monoid (fp, red_ecode, id_ecode, term_ecode, false, monoid,
-        false, NULL, NULL) ;
+    GB_macrofy_monoid (fp, false, monoid, false, NULL, NULL) ;
 
     fprintf (fp, "#define GB_GETA_AND_UPDATE(z,Ax,p)") ;
     if (atype == monoid->op->ztype)

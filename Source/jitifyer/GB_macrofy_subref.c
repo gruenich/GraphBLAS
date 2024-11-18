@@ -15,29 +15,29 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Type ctype
 )
 {
 
     //--------------------------------------------------------------------------
-    // extract the subref scode
+    // extract the subref method_code
     //--------------------------------------------------------------------------
 
     // need_qsort, I_has_duplicates (1 hex digit)
-    int ihasdupl    = GB_RSHIFT (scode, 13, 1) ;
-    int needqsort   = GB_RSHIFT (scode, 12, 1) ;
+    int ihasdupl    = GB_RSHIFT (method_code, 13, 1) ;
+    int needqsort   = GB_RSHIFT (method_code, 12, 1) ;
 
     // Ikind, Jkind (1 hex digit)
-    int Ikind       = GB_RSHIFT (scode, 10, 2) ;
-    int Jkind       = GB_RSHIFT (scode,  8, 2) ;
+    int Ikind       = GB_RSHIFT (method_code, 10, 2) ;
+    int Jkind       = GB_RSHIFT (method_code,  8, 2) ;
 
     // type of C and A (1 hex digit)
-    int ccode       = GB_RSHIFT (scode,  4, 4) ;
+    int ccode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-    int csparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the subref

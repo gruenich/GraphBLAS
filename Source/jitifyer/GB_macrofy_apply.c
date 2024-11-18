@@ -15,7 +15,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
     GrB_Type ctype,
@@ -24,32 +24,33 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
 {
 
     //--------------------------------------------------------------------------
-    // extract the apply scode
+    // extract the apply method_code
     //--------------------------------------------------------------------------
 
-    int A_mat       = GB_RSHIFT (scode, 38, 1) ;
-    int A_zombies   = GB_RSHIFT (scode, 37, 1) ;
-    int A_iso       = GB_RSHIFT (scode, 36, 1) ;
+    // A properties (3 bits, 1 digit)
+    int A_mat       = GB_RSHIFT (method_code, 38, 1) ;
+    int A_zombies   = GB_RSHIFT (method_code, 37, 1) ;
+    int A_iso       = GB_RSHIFT (method_code, 36, 1) ;
 
     // C kind, i/j dependency and flipij (4 bits)
-    int C_mat       = GB_RSHIFT (scode, 35, 1) ;
-    int i_dep       = GB_RSHIFT (scode, 34, 1) ;
-    int j_dep       = GB_RSHIFT (scode, 33, 1) ;
-    bool flipij     = GB_RSHIFT (scode, 32, 1) ;
+    int C_mat       = GB_RSHIFT (method_code, 35, 1) ;
+    int i_dep       = GB_RSHIFT (method_code, 34, 1) ;
+    int j_dep       = GB_RSHIFT (method_code, 33, 1) ;
+    bool flipij     = GB_RSHIFT (method_code, 32, 1) ;
 
     // op, z = f(x,i,j,y) (5 hex digits)
-    int unop_ecode  = GB_RSHIFT (scode, 24, 8) ;
-//  int zcode       = GB_RSHIFT (scode, 20, 4) ;
-    int xcode       = GB_RSHIFT (scode, 16, 4) ;
-    int ycode       = GB_RSHIFT (scode, 12, 4) ;
+    int unop_ecode  = GB_RSHIFT (method_code, 24, 8) ;
+//  int zcode       = GB_RSHIFT (method_code, 20, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 16, 4) ;
+    int ycode       = GB_RSHIFT (method_code, 12, 4) ;
 
     // types of C and A (2 hex digits)
-//  int ccode       = GB_RSHIFT (scode,  8, 4) ;
-    int acode       = GB_RSHIFT (scode,  4, 4) ;
+//  int ccode       = GB_RSHIFT (method_code,  8, 4) ;
+    int acode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-    int csparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -118,7 +119,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     if (ctype == ztype && no_typecast_of_A)
     { 
         // no typecasting
-        if (unop_ecode == GB_IDENTITY_unop_code)
+        if (op->opcode == GB_IDENTITY_unop_code)
         { 
             // identity operator, no typecasting
             fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;

@@ -15,7 +15,7 @@
 void GB_enumify_subref      // enumerate a GrB_extract problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // C matrix:
     GrB_Matrix C,
     // index types:
@@ -50,12 +50,12 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int ihasdupl = (I_has_duplicates) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the subref scode
+    // construct the subref method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 14 (4 hex digits)
+    // total method_code bits: 14 (4 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 /// need_qsort, I_has_duplicates (1 hex digit)
                 GB_LSHIFT (ihasdupl   , 13) |  // 0 to 1       1

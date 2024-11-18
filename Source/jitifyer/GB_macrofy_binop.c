@@ -24,9 +24,9 @@ void GB_macrofy_binop
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
     bool is_kron,               // if true: binop for kronecker
-    int ecode,
+    int ecode,                  // binary operator ecode from GB_enumify_binop
     bool C_iso,                 // if true: C is iso
-    GrB_BinaryOp op,            // NULL if C is iso
+    GrB_BinaryOp op,
     // output:
     const char **f_handle,      // basic expression z=f(x,y)
     const char **u_handle,      // update z=f(z,y) for the CPU

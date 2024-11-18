@@ -13,7 +13,7 @@
 uint64_t GB_enumify_masker  // enumify a masker problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     const GrB_Matrix R,     // NULL for phase 1
     const GrB_Matrix M,
@@ -64,12 +64,12 @@ uint64_t GB_enumify_masker  // enumify a masker problem
     GB_enumify_sparsity (&zsparsity, Z_sparsity) ;
 
     //--------------------------------------------------------------------------
-    // construct the masker scode
+    // construct the masker method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 18 (5 hex digits)
+    // total method_code bits: 18 (5 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // C and Z iso properites (1 hex digit)
                 GB_LSHIFT (C_iso_code , 17) |  // 0 or 1       1

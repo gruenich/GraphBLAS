@@ -15,7 +15,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_BinaryOp accum,         // accum operator to macrofy
     GrB_Type ctype,
     GrB_Type atype              // matrix or scalar type
@@ -23,45 +23,44 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
 {
 
     //--------------------------------------------------------------------------
-    // extract the assign scode
+    // extract the assign method_code
     //--------------------------------------------------------------------------
 
-    // S sparsity (2 bits, 1 hex digit)
-    int ssparsity   = GB_RSHIFT (scode, 48, 2) ;
+    // C_replace, S present, scalar assign, A iso (1 hex digit)
+    int C_replace   = GB_RSHIFT (method_code, 47, 1) ;
+    int S_present   = GB_RSHIFT (method_code, 46, 1) ;
+    bool s_assign   = GB_RSHIFT (method_code, 45, 1) ;
+    int A_iso       = GB_RSHIFT (method_code, 44, 1) ;
 
-    // assign_kind, Ikind, Jkind, and S present (2 hex digits)
-    int S_present   = GB_RSHIFT (scode, 47, 1) ;
-    int C_replace   = GB_RSHIFT (scode, 46, 1) ;
-    int assign_kind = GB_RSHIFT (scode, 44, 2) ;
-    int Ikind       = GB_RSHIFT (scode, 42, 2) ;
-    int Jkind       = GB_RSHIFT (scode, 40, 2) ;
+    // Ikind, Jkind (1 hex digit)
+    int Ikind       = GB_RSHIFT (method_code, 42, 2) ;
+    int Jkind       = GB_RSHIFT (method_code, 40, 2) ;
 
-    // binary operator (5 hex digits)
-    int accum_ecode = GB_RSHIFT (scode, 32, 8) ;
-//  int zcode       = GB_RSHIFT (scode, 28, 4) ;
-//  int xcode       = GB_RSHIFT (scode, 24, 4) ;
-//  int ycode       = GB_RSHIFT (scode, 20, 4) ;
+    // accum operator and assign_kind (5 hex digits)
+    int assign_kind = GB_RSHIFT (method_code, 38, 2) ;
+//  int accum_code  = GB_RSHIFT (method_code, 32, 6) ;
+//  int zcode       = GB_RSHIFT (method_code, 28, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 24, 4) ;
+//  int ycode       = GB_RSHIFT (method_code, 20, 4) ;
 
     // mask (one hex digit)
-    int mask_ecode  = GB_RSHIFT (scode, 16, 4) ;
+    int mask_ecode  = GB_RSHIFT (method_code, 16, 4) ;
 
     // types of C and A (or scalar type) (2 hex digits)
-    int ccode       = GB_RSHIFT (scode, 12, 4) ;   // if 0: C is iso
-    int acode       = GB_RSHIFT (scode,  8, 4) ;
-
-    bool C_iso = (ccode == 0) ;
+    int ccode       = GB_RSHIFT (method_code, 12, 4) ;   // if 0: C is iso
+    int acode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // sparsity structures of C, M, and A (2 hex digits),
-    // iso status of A and scalar assignment
-    int csparsity   = GB_RSHIFT (scode,  6, 2) ;
-    int msparsity   = GB_RSHIFT (scode,  4, 2) ;
-    bool s_assign   = GB_RSHIFT (scode,  3, 1) ;
-    int A_iso       = GB_RSHIFT (scode,  2, 1) ;
-    int asparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  6, 2) ;
+    int msparsity   = GB_RSHIFT (method_code,  4, 2) ;
+    int ssparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the assignment
     //--------------------------------------------------------------------------
+
+    bool C_iso = (ccode == 0) ;
 
     #define SLEN 512
     char description [SLEN] ;
@@ -195,6 +194,15 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     if (accum != NULL)
     {
         fprintf (fp, "\n// accum operator:\n") ;
+
+        GB_Opcode accum_opcode = accum->opcode ;
+        if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+        { 
+            // rename the operator
+            accum_opcode = GB_boolean_rename (accum_opcode) ;
+        }
+        int accum_ecode ;
+        GB_enumify_binop (&accum_ecode, accum_opcode, xcode, false, false) ;
         GB_macrofy_binop (fp, "GB_ACCUM_OP", false, false, true, false, false,
             accum_ecode, C_iso, accum, NULL, NULL, NULL) ;
 

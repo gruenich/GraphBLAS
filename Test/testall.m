@@ -214,7 +214,7 @@ logstat ('test157'    ,t, J40  , F10  ) ; % sparsity formats
 logstat ('test182'    ,s, J40  , F10  ) ; % for internal wait
 logstat ('test195'    ,t, J4   , F1   ) ; % saxpy3 slice_balanced
 logstat ('test173'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
-logstat ('test135'    ,t, J40  , F10  ) ; % reduce to scalar
+logstat ('test135'    ,t, J4   , F1   ) ; % reduce to scalar
 logstat ('test84'     ,t, J40  , F10  ) ; % GrB_assign (row/col w/ C CSR/CSC)
 logstat ('test215'    ,t, J4   , F1   ) ; % C<M>=A'*B (dot2, ANY_PAIR)
 logstat ('test80'     ,t, J4   , F1   ) ; % GrB_mxm on all semirings
@@ -222,12 +222,12 @@ logstat ('test200'    ,t, J4   , F1   ) ; % iso full matrix multiply
 logstat ('test283'    ,t, J4   , F1   ) ; % index binary op
 logstat ('test254'    ,t, J44  , F10  ) ; % mask types
 logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
-logstat ('test142'    ,t, J400 , F110 ) ; % GrB_assign with accum
+logstat ('test142'    ,t, J40  , F11  ) ; % GrB_assign with accum
 logstat ('test54'     ,t, J40  , F10  ) ; % assign, extract with begin:inc:end
 logstat ('testcc(1)'  ,t, J40  , F10  ) ; % transpose, builtin complex
 logstat ('testc2(1,1)',t, J44  , F10  ) ; % complex tests (quick case, builtin)
 logstat ('test227'    ,t, J4   , F1   ) ; % kron
-logstat ('test141'    ,t, J00  , F10  ) ; % eWiseAdd with dense matrices
+logstat ('test141'    ,t, J0   , F1   ) ; % eWiseAdd with dense matrices
 logstat ('test179'    ,t, J44  , F10  ) ; % bitmap select
 
 % 1 to 10 seconds, no Werk, debug_off

@@ -158,6 +158,9 @@ void mexFunction
     GB_enumify_binop (&ecode, GB_MINUS_binop_code, GB_BOOL_code, false, false) ;
     CHECK (ecode == 16) ;
 
+    GB_enumify_binop (&ecode, GB_NOP_code, GB_BOOL_code, false, false) ;
+    CHECK (ecode == 255) ;
+
     GB_enumify_identity (&ecode, GB_MIN_binop_code, GB_BOOL_code) ;
     CHECK (ecode == 2) ;
     GB_enumify_identity (&ecode, GB_MAX_binop_code, GB_BOOL_code) ;

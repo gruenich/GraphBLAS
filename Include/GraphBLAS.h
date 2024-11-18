@@ -1,4 +1,4 @@
-// SuiteSparse:GraphBLAS 9.4.1
+// SuiteSparse:GraphBLAS 9.4.2
 //------------------------------------------------------------------------------
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
@@ -268,10 +268,10 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Nov 15, 2024"
+#define GxB_IMPLEMENTATION_DATE "Nov 18, 2024"
 #define GxB_IMPLEMENTATION_MAJOR 9
 #define GxB_IMPLEMENTATION_MINOR 4
-#define GxB_IMPLEMENTATION_SUB   1
+#define GxB_IMPLEMENTATION_SUB   2
 #define GxB_SPEC_DATE "Dec 22, 2023"
 #define GxB_SPEC_MAJOR 2
 #define GxB_SPEC_MINOR 1
@@ -496,7 +496,7 @@ typedef enum
     GxB_AxB_METHOD = 7090,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 7091,          // control sort in GrB_mxm
     GxB_COMPRESSION = 7092,   // select compression for serialize
-    GxB_IMPORT = 7093,        // secure vs fast import
+    GxB_IMPORT = 7093,        // secure vs fast GxB_pack
 }
 GrB_Desc_Field ;
 
@@ -2589,7 +2589,7 @@ typedef enum
 GxB_Print_Level ;
 
 //==============================================================================
-// GrB import/export
+// GrB_import/GrB_export
 //==============================================================================
 
 // The GrB C API specification supports 3 formats:
@@ -3984,8 +3984,8 @@ GrB_Info GrB_Vector_removeElement
 // GrB_Vector_extractTuples
 //------------------------------------------------------------------------------
 
-// Extracts all tuples from a vector, like [I,~,X] = find (v).  If
-// any parameter I and/or X is NULL, then that component is not extracted.  For
+// Extracts all tuples from a vector, like [I,~,X] = find (v).  If any
+// parameter I and/or X is NULL, then that component is not extracted.  For
 // example, to extract just the row indices, pass I as non-NULL, and X as NULL.
 // This is like [I,~,~] = find (v).
 
@@ -9080,61 +9080,58 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 #endif
 
 //==============================================================================
-// Matrix and vector import/export/pack/unpack
+// GxB_pack/GxB_unpack: Matrix and vector pack/unpack
 //==============================================================================
 
-// The import/export/pack/unpack functions allow the user application to create
-// a GrB_Matrix or GrB_Vector object, and to extract its contents, faster and
-// with less memory overhead than the GrB_*_build and GrB_*_extractTuples
-// functions.
+// The pack/unpack functions allow the user application to create a GrB_Matrix
+// or GrB_Vector object, and to extract its contents, faster and with less
+// memory overhead than the GrB_*_build and GrB_*_extractTuples functions.
 
-// The semantics of import/export/pack/unpack are the same as the "move
-// constructor" in C++.  On import, the user provides a set of arrays that have
-// been previously allocated via the ANSI C malloc function.  The arrays define
-// the content of the matrix or vector.  Unlike GrB_*_build, the GraphBLAS
-// library then takes ownership of the user's input arrays and may either (a)
-// incorporate them into its internal data structure for the new GrB_Matrix or
-// GrB_Vector, potentially creating the GrB_Matrix or GrB_Vector in constant
-// time with no memory copying performed, or (b) if the library does not
-// support the import format directly, then it may convert the input to its
-// internal format, and then free the user's input arrays.  GraphBLAS may also
-// choose to use a mix of the two strategies.  In either case, the input arrays
-// are no longer "owned" by the user application.  If A is a GrB_Matrix created
-// by an import/pack, the user input arrays are freed no later than GrB_free
-// (&A), and may be freed earlier, at the discretion of the GraphBLAS library.
-// The data structure of the GrB_Matrix and GrB_Vector remain opaque.
+// The semantics of pack/unpack are the same as the "move constructor" in C++.
+// On pack, the user provides a set of arrays that have been previously
+// allocated via the ANSI C malloc function.  The arrays define the content of
+// the matrix or vector.  Unlike GrB_*_build, the GraphBLAS library then takes
+// ownership of the user's input arrays and may either (a) incorporate them
+// into its internal data structure for the new GrB_Matrix or GrB_Vector,
+// potentially creating the GrB_Matrix or GrB_Vector in constant time with no
+// memory copying performed, or (b) if the library does not support the format
+// directly, then it may convert the input to its internal format, and then
+// free the user's input arrays.  GraphBLAS may also choose to use a mix of the
+// two strategies.  In either case, the input arrays are no longer "owned" by
+// the user application.  If A is a GrB_Matrix created by a pack, the user
+// input arrays are freed no later than GrB_free (&A), and may be freed
+// earlier, at the discretion of the GraphBLAS library.  The data structure of
+// the GrB_Matrix and GrB_Vector remain opaque.
 
-// The export/unpack of a GrB_Matrix or GrB_Vector is symmetric with the import
-// operation.  The export is destructive, where the GrB_Matrix or GrB_Vector no
-// longer exists when the export completes.  The GrB_Matrix or GrB_Vector
-// exists after an unpack operation, just with no entries.  In both export and
-// unpack, the user is returned several arrays that contain the matrix or
-// vector in the requested format.  Ownership of these arrays is given to the
-// user application, which is then responsible for freeing them via the ANSI C
-// free function.  If the output format is supported by the GraphBLAS library,
-// then these arrays may be returned to the user application in O(1) time and
-// with no memory copying performed.  Otherwise, the GraphBLAS library will
-// create the output arrays for the user (via the ANSI C malloc function), fill
-// them with the GrB_Matrix or GrB_Vector data, and then return the newly
-// allocated arrays to the user.
+// The unpack of a GrB_Matrix or GrB_Vector is symmetric with the pack
+// operation.  The GrB_Matrix or GrB_Vector exists after an unpack operation,
+// just with no entries.  For unpack, the user is returned several arrays that
+// contain the matrix or vector in the requested format.  Ownership of these
+// arrays is given to the user application, which is then responsible for
+// freeing them via the ANSI C free function.  If the output format is
+// supported by the GraphBLAS library, then these arrays may be returned to the
+// user application in O(1) time and with no memory copying performed.
+// Otherwise, the GraphBLAS library will create the output arrays for the user
+// (via the ANSI C malloc function), fill them with the GrB_Matrix or
+// GrB_Vector data, and then return the newly allocated arrays to the user.
 
-// Eight different formats are provided for import/export.  For each format,
-// the Ax array has a C-type <type> corresponding to one of the 13 built-in
-// types in GraphBLAS (bool, int*_t, uint*_t, float, double, float complex, or
-// double complex), or a user-defined type.
+// Eight different formats are provided for pack/unpack.  For each format, the
+// Ax array has a C-type <type> corresponding to one of the 13 built-in types
+// in GraphBLAS (bool, int*_t, uint*_t, float, double, float complex, or double
+// complex), or a user-defined type.
 
-// On import/pack, the required user arrays Ah, Ap, Ab, Ai, Aj, and/or Ax must
-// be non-NULL pointers to memory space allocated by the ANSI C malloc (or
-// calloc, or realloc), unless nzmax is zero (in which case the Ab, Ai, Aj, Ax,
-// vb, vi, and vx arrays may all be NULL).  For the import, A (or GrB_Vector v)
-// is undefined on input, just like GrB_*_new, the GrB_Matrix.  If the import
-// is successful, the GrB_Matrix A or GrB_Vector v is created, and the pointers
-// to the user input arrays have been set to NULL.  These user arrays have
-// either been incorporated directly into the GrB_Matrix A or GrB_Vector v, in
-// which case the user input arrays will eventually be freed by GrB_free (&A),
-// or their contents have been copied and the arrays freed.  This decision is
-// made by the GraphBLAS library itself, and the user application has no
-// control over this decision.
+// On pack, the required user arrays Ah, Ap, Ab, Ai, Aj, and/or Ax must be
+// non-NULL pointers to memory space allocated by the ANSI C malloc (or calloc,
+// or realloc), unless nzmax is zero (in which case the Ab, Ai, Aj, Ax, vb, vi,
+// and vx arrays may all be NULL).  For the pack, A (or GrB_Vector v) is
+// undefined on input, just like GrB_*_new, the GrB_Matrix.  If the pack is
+// successful, the GrB_Matrix A or GrB_Vector v is created, and the pointers to
+// the user input arrays have been set to NULL.  These user arrays have either
+// been incorporated directly into the GrB_Matrix A or GrB_Vector v, in which
+// case the user input arrays will eventually be freed by GrB_free (&A), or
+// their contents have been copied and the arrays freed.  This decision is made
+// by the GraphBLAS library itself, and the user application has no control
+// over this decision.
 
 // If any of the arrays Ab, Aj, Ai, Ax, vb, vi, or vx have zero size (with
 // nzmax of zero), they are allowed to be be NULL pointers on input.
@@ -9147,19 +9144,18 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 // No error checking is performed on the content of the user input arrays.  If
 // the user input arrays do not conform to the precise specifications above,
 // results are undefined.  No typecasting of the values of the matrix or vector
-// entries is performed on import or export.
+// entries is performed on pack/unpack
 
 // SuiteSparse:GraphBLAS supports all eight formats natively (CSR, CSC,
 // HyperCSR, and HyperCSC, BitmapR, BitmapC, FullR, FullC).  For vectors, only
-// CSC, BitmapC, and FullC formats are used.  On import, the all eight formats
-// take O(1) time and memory to import.  On export, if the GrB_Matrix or
-// GrB_Vector is already in this particular format, then the export takes O(1)
+// CSC, BitmapC, and FullC formats are used.  On pack, the all eight formats
+// take O(1) time and memory to pack.  On unpack, if the GrB_Matrix or
+// GrB_Vector is already in this particular format, then the unpack takes O(1)
 // time and no memory copying is performed.
 
 // If the input data is untrusted, use the following descriptor setting for
-// GxB_Matrix_pack*.  The import/pack will be slower, but secure.
-// GrB_Matrix_import uses the slow, secure method, since it has no descriptor
-// input.
+// GxB_Matrix_pack*.  The pack will be slower, but secure.  GrB_Matrix_import
+// uses the slow, secure method, since it has no descriptor input.
 //
 //      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
 
@@ -9421,7 +9417,7 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
     //      Ax [i+j*nrows].  All entries in A are present.
 
 //------------------------------------------------------------------------------
-// GxB_Vector_pack_CSC: import/pack a vector in CSC format
+// GxB_Vector_pack_CSC: pack a vector in CSC format
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
@@ -9480,41 +9476,35 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
     // matrix in FullC format.
 
 //------------------------------------------------------------------------------
-// GxB* export/unpack
+// GxB unpack
 //------------------------------------------------------------------------------
 
-// The GxB_*_export/unpack functions are symmetric with the GxB_*_import/pack
-// functions.  The export/unpack functions force completion of any pending
-// operations, prior to the export, except if the only pending operation is to
-// unjumble the matrix.
+// The GxB_*_unpack functions are symmetric with the GxB_*_pack functions.  The
+// unpack functions force completion of any pending operations, prior to the
+// unpack, except if the only pending operation is to unjumble the matrix.
 //
 // If there are no entries in the matrix or vector, then the index arrays (Ai,
 // Aj, or vi) and value arrays (Ax or vx) are returned as NULL.  This is not an
 // error condition.
 //
-// A GrB_Matrix may be exported/unpacked in any one of four different formats.
-// On successful export, the input GrB_Matrix A is freed, and the output arrays
-// Ah, Ap, Ai, Aj, and/or Ax are returned to the user application as arrays
-// allocated by the ANSI C malloc function.  The four formats are the same as
-// the import formats for GxB_Matrix_pack.
+// A GrB_Matrix may be unpacked in any one of four different formats.
 //
-// If jumbled is NULL on input, this indicates to GxB_*export/unpack* that the
-// exported/unpacked matrix cannot be returned in a jumbled format.  In this
-// case, if the matrix is jumbled, it is sorted before exporting it to the
-// caller.
+// If jumbled is NULL on input, this indicates to GxB_*unpack* that the
+// unpacked matrix cannot be returned in a jumbled format.  In this case, if
+// the matrix is jumbled, it is sorted before unpacking it to the caller.
 //
-// If iso is NULL on input, this indicates to the export/unpack methods that
-// the exported/unpacked matrix cannot be returned in a iso format, with an Ax
-// array with just one entry.  In this case, if the matrix is iso, it is
-// expanded before exporting/unpacking it to the caller.
+// If iso is NULL on input, this indicates to the unpack methods that the
+// unpacked matrix cannot be returned in a iso format, with an Ax array with
+// just one entry.  In this case, if the matrix is iso, it is expanded before
+// unpacking it to the caller.
 //
-// For the export/unpack*Full* methods, all entries in the matrix or must be
-// present.  That is, GrB_*_nvals must report nvals equal to nrows*ncols or a
-// matrix.  If this condition does not hold, the matrix/vector is not exported,
-// and GrB_INVALID_VALUE is returned.
+// For the unpack*Full* methods, all entries in the matrix or must be present.
+// That is, GrB_*_nvals must report nvals equal to nrows*ncols or a matrix.  If
+// this condition does not hold, the matrix/vector is not unpack, and
+// GrB_INVALID_VALUE is returned.
 //
-// If the export/unpack is not successful, the export/unpack functions do not
-// modify matrix or vector and the user arrays are returned as NULL.
+// If the unpack is not successful, the unpack functions do not modify matrix
+// or vector and the user arrays are returned as NULL.
 
 GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
 (
@@ -9664,7 +9654,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 
 // GxB_unpack_HyperHash unpacks the hyper_hash from the hypersparse matrix A.
 // Normally, this method is called immediately before calling one of the four
-// methods GxB_Matrix_(export/unpack)_Hyper(CSR/CSC).  For example, to unpack
+// methods GxB_Matrix_unpack_Hyper(CSR/CSC).  For example, to unpack
 // then pack a hypersparse CSC matrix:
 
 //      GrB_Matrix Y = NULL ;
@@ -9708,7 +9698,7 @@ GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
 
 // GxB_pack_HyperHash assigns the input Y matrix as the A->Y hyper_hash of the
 // hypersparse matrix A.  Normally, this method is called immediately after
-// calling one of the four methods GxB_Matrix_(import/pack)_Hyper(CSR/CSC).
+// calling one of the four methods GxB_Matrix_pack_Hyper(CSR/CSC).
 
 // If A is not hypersparse on input to GxB_pack_HyperHash, or if A already has
 // a hyper_hash matrix, or if Y is NULL on input, then nothing happens and Y is
@@ -9732,8 +9722,8 @@ GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
 
 // Results are undefined if the input Y was not created by GxB_unpack_HyperHash
 // (see the example above) or if the Ah contents or nvec of the matrix A are
-// modified after they were exported/unpacked by
-// GxB_Matrix_(export/unpack)_Hyper(CSR/CSC).
+// modified after they were unpacked by
+// GxB_Matrix_unpack_Hyper(CSR/CSC).
 
 GrB_Info GxB_pack_HyperHash         // move Y into A->Y
 (
@@ -9743,7 +9733,7 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
 ) ;
 
 //==============================================================================
-// GrB import/export
+// GrB_import/GrB_export
 //==============================================================================
 
 // The GrB_Matrix_import method copies from user-provided arrays into an

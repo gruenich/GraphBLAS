@@ -17,7 +17,7 @@
 void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
     const int C_sparsity,   // sparse, hyper, bitmap, or full.  For apply
@@ -94,12 +94,12 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     int A_zombies = (A_nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the apply scode
+    // construct the apply method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 39 bits (10 hex digits)
+    // total method_code bits: 39 bits (10 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
                 // A properties (1 hex digit)
                 GB_LSHIFT (A_mat      , 38) |  // 0 or 1       1

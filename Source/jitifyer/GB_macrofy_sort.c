@@ -15,22 +15,22 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype
 )
 { 
 
     //--------------------------------------------------------------------------
-    // extract the binaryop scode
+    // extract the binaryop method_code
     //--------------------------------------------------------------------------
 
-    // binary operator (3 hex digits)
-    int binop_ecode = GB_RSHIFT (scode, 12, 8) ;
-//  int xcode       = GB_RSHIFT (scode,  8, 4) ;
+    // binary operator (14 bits, 3 hex digits)
+//  int binop_code  = GB_RSHIFT (method_code, 12, 6) ;
+    int xcode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // type of C (1 hex digit)
-    int ccode       = GB_RSHIFT (scode,  0, 4) ;    // 1 to 14, C is not iso
+    int ccode       = GB_RSHIFT (method_code,  0, 4) ; // 1 to 14, C is not iso
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -55,6 +55,15 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     //--------------------------------------------------------------------------
     // construct macros for the binary operator
     //--------------------------------------------------------------------------
+
+    GB_Opcode opcode = binaryop->opcode ;
+    if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+    { 
+        // rename the operator
+        opcode = GB_boolean_rename (opcode) ;
+    }
+    int binop_ecode ;
+    GB_enumify_binop (&binop_ecode, opcode, xcode, false, false) ;
 
     fprintf (fp, "\n// binary operator:\n") ;
     GB_macrofy_binop (fp, "GB_BINOP", false, false, false, true, false,

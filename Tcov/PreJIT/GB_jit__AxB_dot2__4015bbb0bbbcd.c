@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__2c1f000bbb0bbbcd__plus_my_rdiv.c
+// GB_jit__AxB_dot2__4015bbb0bbbcd.c
 //------------------------------------------------------------------------------
-// SuiteSparse:GraphBLAS v9.3.0, Timothy A. Davis, (c) 2017-2024,
+// SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // The above copyright and license do not apply to any
@@ -10,7 +10,7 @@
 
 #include "include/GB_jit_kernel.h"
 
-// semiring: (plus, my_rdiv, double)
+// semiring: (plus, rdiv, double)
 
 // monoid:
 #define GB_Z_TYPE double
@@ -34,32 +34,10 @@
 // multiplicative operator:
 #define GB_X_TYPE double
 #define GB_Y_TYPE double
-#ifndef GB_GUARD_my_rdiv_DEFINED
-#define GB_GUARD_my_rdiv_DEFINED
-GB_STATIC_INLINE
-void my_rdiv (double *z, const double *x, const double *y)
-{
-    // escape this quote: "
-    /* escape this backslash \ */
-    (*z) = (*y) / (*x) ;
-}
-#define GB_my_rdiv_USER_DEFN \
-"void my_rdiv (double *z, const double *x, const double *y)\n" \
-"{\n" \
-"    // escape this quote: \"\n" \
-"    /* escape this backslash \\ */\n" \
-"    (*z) = (*y) / (*x) ;\n" \
-"}"
-#endif
-#define GB_MULT(z,x,y,i,k,j)  my_rdiv (&(z), &(x), &(y))
+#define GB_MULT(z,x,y,i,k,j) z = (y) / (x)
 
 // multiply-add operator:
-#define GB_MULTADD(z,x,y,i,k,j)    \
-{                                  \
-   GB_Z_TYPE x_op_y ;              \
-   GB_MULT (x_op_y, x,y,i,k,j) ;   \
-   GB_UPDATE (z, x_op_y) ;         \
-}
+#define GB_MULTADD(z,x,y,i,k,j) z += (y) / (x)
 
 // special cases:
 
@@ -122,19 +100,19 @@ void my_rdiv (double *z, const double *x, const double *y)
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__2c1f000bbb0bbbcd__plus_my_rdiv
-#define GB_jit_query  GB_jit__AxB_dot2__2c1f000bbb0bbbcd__plus_my_rdiv_query
+#define GB_jit_kernel GB_jit__AxB_dot2__4015bbb0bbbcd
+#define GB_jit_query  GB_jit__AxB_dot2__4015bbb0bbbcd_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0x227f98d0b09e286f ;
+    (*hash) = 0x6e48218858a85299 ;
     v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
     v [1] = GxB_IMPLEMENTATION_MINOR ;
     v [2] = GxB_IMPLEMENTATION_SUB ;
     defn [0] = NULL ;
-    defn [1] = GB_my_rdiv_USER_DEFN ;
+    defn [1] = NULL ;
     defn [2] = NULL ;
     defn [3] = NULL ;
     defn [4] = NULL ;

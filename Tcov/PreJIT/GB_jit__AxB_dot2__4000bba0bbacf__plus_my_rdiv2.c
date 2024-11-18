@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// GB_jit__AxB_dot2__2c1f000bba0bbacf__plus_my_rdiv2.c
+// GB_jit__AxB_dot2__4000bba0bbacf__plus_my_rdiv2.c
 //------------------------------------------------------------------------------
-// SuiteSparse:GraphBLAS v9.3.0, Timothy A. Davis, (c) 2017-2024,
+// SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
 // All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // The above copyright and license do not apply to any
@@ -118,14 +118,14 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 
 #include "include/GB_mxm_shared_definitions.h"
 #ifndef GB_JIT_RUNTIME
-#define GB_jit_kernel GB_jit__AxB_dot2__2c1f000bba0bbacf__plus_my_rdiv2
-#define GB_jit_query  GB_jit__AxB_dot2__2c1f000bba0bbacf__plus_my_rdiv2_query
+#define GB_jit_kernel GB_jit__AxB_dot2__4000bba0bbacf__plus_my_rdiv2
+#define GB_jit_query  GB_jit__AxB_dot2__4000bba0bbacf__plus_my_rdiv2_query
 #endif
 #include "template/GB_jit_kernel_AxB_dot2.c"
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
 GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
 {
-    (*hash) = 0x31aff911c5850713 ;
+    (*hash) = 0x424842cce4da274b ;
     v [0] = GxB_IMPLEMENTATION_MAJOR ;      // keep at current version
     v [1] = GxB_IMPLEMENTATION_MINOR ;
     v [2] = GxB_IMPLEMENTATION_SUB ;
