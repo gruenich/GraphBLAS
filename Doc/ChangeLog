@@ -1,9 +1,10 @@
-Nov 18, 2024: version 9.4.2 (BETA)
+Nov 18, 2024: version 9.4.2
 
     * clarified User Guide: regarding when the hyper-hash is built
     * JIT: reduced JIT kernel encodings
+    * also: includes the updates from 9.4.0.beta and 9.4.1.beta listed below
 
-Nov 15, 2024: version 9.4.1 (BETA)
+Nov 15, 2024: version 9.4.1 (only released as BETA)
 
     * new JIT kernels added: for GrB_assign, GrB_extract, GxB_sort,
         GrB_kronecker, stand-alone mask phase, and utilities (convert to/from
@@ -16,7 +17,7 @@ Nov 15, 2024: version 9.4.1 (BETA)
         for these types and semirings.
     * GxB_IndexBinaryOp: finalized and named as GxB_*.
 
-Oct 15, 2024: version 9.4.0 (BETA)
+Oct 15, 2024: version 9.4.0 (only released as BETA)
 
     * new operator and associated methods: added the draft G*B_IndexBinaryOp
     * JIT error-handling behavior changed:  if a compiler error occurs in the
