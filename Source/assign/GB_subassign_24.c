@@ -2,7 +2,7 @@
 // GB_subassign_24: make a deep copy of a sparse or dense matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -36,14 +36,10 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
     ASSERT (!GB_is_shallow (C)) ;
 
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for GB_subassign_24", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
@@ -58,7 +54,11 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
+    // A may remain jumbled
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (!GB_PENDING (A)) ;
 
     C->jumbled = false ;        // prior contents of C are discarded
     const bool C_iso = A->iso ; // C is iso if A is iso

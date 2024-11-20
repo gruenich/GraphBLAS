@@ -56,6 +56,7 @@ GrB_Info GB_op_string_get
         case GrB_INP0_TYPE_STRING : type = op->xtype ; break ;
         case GrB_INP1_TYPE_STRING : type = op->ytype ; break ;
         case GrB_OUTP_TYPE_STRING : type = op->ztype ; break ;
+        case GxB_THETA_TYPE_STRING : type = op->theta_type ; break ;
 
         default : 
             return (GrB_INVALID_VALUE) ;

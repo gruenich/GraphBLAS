@@ -280,7 +280,7 @@ void GB_jitifyer_sanitize (char *string, size_t len)
 // GraphBLAS can continue without the JIT.
 
 GrB_Info GB_jitifyer_init (void)
-{
+{ 
 
     //--------------------------------------------------------------------------
     // initialize the JIT control
@@ -429,10 +429,10 @@ GrB_Info GB_jitifyer_init (void)
 
         char *name_space = NULL ;
         char *kname = NULL ;
-        uint64_t scode = 0 ;
+        uint64_t method_code = 0 ;
         char *suffix = NULL ;
         GrB_Info info = GB_demacrofy_name (kernel_name, &name_space, &kname,
-            &scode, &suffix) ;
+            &method_code, &suffix) ;
 
         if (info != GrB_SUCCESS || !GB_STRING_MATCH (name_space, "GB_jit"))
         {
@@ -468,7 +468,7 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("concat_bitmap")) c = GB_JIT_KERNEL_CONCAT_BITMAP ;
         else if (IS ("concat_full"  )) c = GB_JIT_KERNEL_CONCAT_FULL ;
         else if (IS ("concat_sparse")) c = GB_JIT_KERNEL_CONCAT_SPARSE ;
-        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERTS2B ;
+        else if (IS ("convert_s2b"  )) c = GB_JIT_KERNEL_CONVERT_S2B ;
         else if (IS ("emult_02"     )) c = GB_JIT_KERNEL_EMULT2 ;
         else if (IS ("emult_03"     )) c = GB_JIT_KERNEL_EMULT3 ;
         else if (IS ("emult_04"     )) c = GB_JIT_KERNEL_EMULT4 ;
@@ -484,18 +484,71 @@ GrB_Info GB_jitifyer_init (void)
         else if (IS ("split_bitmap" )) c = GB_JIT_KERNEL_SPLIT_BITMAP ;
         else if (IS ("split_full"   )) c = GB_JIT_KERNEL_SPLIT_FULL ;
         else if (IS ("split_sparse" )) c = GB_JIT_KERNEL_SPLIT_SPARSE ;
+
         else if (IS ("subassign_05d")) c = GB_JIT_KERNEL_SUBASSIGN_05d ;
         else if (IS ("subassign_06d")) c = GB_JIT_KERNEL_SUBASSIGN_06d ;
         else if (IS ("subassign_22" )) c = GB_JIT_KERNEL_SUBASSIGN_22 ;
         else if (IS ("subassign_23" )) c = GB_JIT_KERNEL_SUBASSIGN_23 ;
         else if (IS ("subassign_25" )) c = GB_JIT_KERNEL_SUBASSIGN_25 ;
+
         else if (IS ("trans_bind1st")) c = GB_JIT_KERNEL_TRANSBIND1 ;
         else if (IS ("trans_bind2nd")) c = GB_JIT_KERNEL_TRANSBIND2 ;
         else if (IS ("trans_unop"   )) c = GB_JIT_KERNEL_TRANSUNOP ;
         else if (IS ("union"        )) c = GB_JIT_KERNEL_UNION ;
         else if (IS ("user_op"      )) c = GB_JIT_KERNEL_USEROP ;
         else if (IS ("user_type"    )) c = GB_JIT_KERNEL_USERTYPE ;
-        else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
+
+        // added for v9.4.1:
+        else if (IS ("subassign_01" )) c = GB_JIT_KERNEL_SUBASSIGN_01 ;
+        else if (IS ("subassign_02" )) c = GB_JIT_KERNEL_SUBASSIGN_02 ;
+        else if (IS ("subassign_03" )) c = GB_JIT_KERNEL_SUBASSIGN_03 ;
+        else if (IS ("subassign_04" )) c = GB_JIT_KERNEL_SUBASSIGN_04 ;
+        else if (IS ("subassign_05" )) c = GB_JIT_KERNEL_SUBASSIGN_05 ;
+        else if (IS ("subassign_06n")) c = GB_JIT_KERNEL_SUBASSIGN_06n ;
+        else if (IS ("subassign_06s")) c = GB_JIT_KERNEL_SUBASSIGN_06s ;
+        else if (IS ("subassign_07" )) c = GB_JIT_KERNEL_SUBASSIGN_07 ;
+        else if (IS ("subassign_08n")) c = GB_JIT_KERNEL_SUBASSIGN_08n ;
+        else if (IS ("subassign_08s")) c = GB_JIT_KERNEL_SUBASSIGN_08s ;
+        else if (IS ("subassign_09" )) c = GB_JIT_KERNEL_SUBASSIGN_09 ;
+        else if (IS ("subassign_10" )) c = GB_JIT_KERNEL_SUBASSIGN_10 ;
+        else if (IS ("subassign_11" )) c = GB_JIT_KERNEL_SUBASSIGN_11 ;
+        else if (IS ("subassign_12" )) c = GB_JIT_KERNEL_SUBASSIGN_12 ;
+        else if (IS ("subassign_13" )) c = GB_JIT_KERNEL_SUBASSIGN_13 ;
+        else if (IS ("subassign_15" )) c = GB_JIT_KERNEL_SUBASSIGN_15 ;
+        else if (IS ("subassign_17" )) c = GB_JIT_KERNEL_SUBASSIGN_17 ;
+        else if (IS ("subassign_19" )) c = GB_JIT_KERNEL_SUBASSIGN_19 ;
+
+        else if (IS ("bitmap_assign_1"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_1 ;
+        else if (IS ("bitmap_assign_1_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_1_WHOLE ;
+        else if (IS ("bitmap_assign_2"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_2 ;
+        else if (IS ("bitmap_assign_2_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_2_WHOLE ;
+        else if (IS ("bitmap_assign_3"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_3 ;
+        else if (IS ("bitmap_assign_3_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_3_WHOLE ;
+        else if (IS ("bitmap_assign_4"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_4 ;
+        else if (IS ("bitmap_assign_4_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_4_WHOLE ;
+        else if (IS ("bitmap_assign_5"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_5 ;
+        else if (IS ("bitmap_assign_5_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_5_WHOLE ;
+        else if (IS ("bitmap_assign_6"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_6 ;
+        else if (IS ("bitmap_assign_6b_whole")) c = GB_JIT_KERNEL_BITMAP_ASSIGN_6b_WHOLE ;
+        else if (IS ("bitmap_assign_7"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_7 ;
+        else if (IS ("bitmap_assign_7_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_7_WHOLE ;
+        else if (IS ("bitmap_assign_8"       )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_8 ;
+        else if (IS ("bitmap_assign_8_whole" )) c = GB_JIT_KERNEL_BITMAP_ASSIGN_8_WHOLE  ;
+
+        else if (IS ("masker_phase1")) c = GB_JIT_KERNEL_MASKER_PHASE1 ;
+        else if (IS ("masker_phase2")) c = GB_JIT_KERNEL_MASKER_PHASE2 ;
+
+        else if (IS ("subref_sparse")) c = GB_JIT_KERNEL_SUBREF_SPARSE ;
+        else if (IS ("subref_bitmap")) c = GB_JIT_KERNEL_BITMAP_SUBREF ;
+
+        else if (IS ("iso_expand"   )) c = GB_JIT_KERNEL_ISO_EXPAND ;
+        else if (IS ("unjumble"     )) c = GB_JIT_KERNEL_UNJUMBLE ;
+        else if (IS ("convert_b2s"  )) c = GB_JIT_KERNEL_CONVERT_B2S ;
+        else if (IS ("kroner"       )) c = GB_JIT_KERNEL_KRONER ;
+        else if (IS ("sort"         )) c = GB_JIT_KERNEL_SORT ;
+
+        // add CUDA PreJIT kernels here (future):
+//      else if (IS ("cuda_reduce"  )) c = GB_JIT_CUDA_KERNEL_REDUCE ;
         else
         {
             // PreJIT error: kernel_name is invalid; ignore this kernel
@@ -504,7 +557,7 @@ GrB_Info GB_jitifyer_init (void)
 
         #undef IS
         encoding->kcode = c ;
-        encoding->code = scode ;
+        encoding->code = method_code ;
         encoding->suffix_len = (int32_t) GB_STRLEN (suffix) ;
 
         //----------------------------------------------------------------------
@@ -717,7 +770,7 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
     if (dst == NULL)
     {
         // JITPackage error: out of memory; disable the JIT
-        GB_jit_control = GxB_JIT_RUN ;
+        GB_jit_control = GxB_JIT_PAUSE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -803,7 +856,7 @@ GxB_JIT_Control GB_jitifyer_get_control (void)
 //------------------------------------------------------------------------------
 
 void GB_jitifyer_set_control (int control)
-{
+{ 
     #pragma omp critical (GB_jitifyer_worker)
     {
         control = GB_IMAX (control, (int) GxB_JIT_OFF) ;
@@ -1550,6 +1603,8 @@ GrB_Info GB_jitifyer_load
     if (hash == UINT64_MAX)
     { 
         // The kernel may not be compiled; it does not have a valid definition.
+        // This is not a JIT failure.  It is an expected error if the strings
+        // (name & defn) are NULL, so always fallback to the generic case.
         GBURBLE ("(jit: undefined) ") ;
         return (GrB_NO_VALUE) ;
     }
@@ -1557,6 +1612,7 @@ GrB_Info GB_jitifyer_load
     if ((GB_jit_control == GxB_JIT_OFF) || (GB_jit_control == GxB_JIT_PAUSE))
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
+        // This is not a JIT failure.
         return (GrB_NO_VALUE) ;
     }
 
@@ -1589,6 +1645,9 @@ GrB_Info GB_jitifyer_load
             // No kernels may be loaded or compiled, but existing kernels
             // already loaded may be run (handled above if dl_function was
             // found).  This kernel was not loaded, so punt to generic.
+            // This is not a JIT failure since the JIT control is already
+            // set to 'run', and the kernel is not already loaded.  So always
+            // fallback to the generic kernel.
             return (GrB_NO_VALUE) ;
         }
     }
@@ -1634,6 +1693,11 @@ GrB_Info GB_jitifyer_load2_worker
     // look up the kernel in the hash table
     //--------------------------------------------------------------------------
 
+    // e->prejit_index >= 0 denotes an unchecked prejit kernel:
+    #define GB_PREJIT_CHECKED(i) (-(i)-2)
+    // ensure that e->prejit_index is >= 0, to denote that it's unchecked:
+    #define GB_PREJIT_UNCHECKED(i) (((i) < 0) ? GB_PREJIT_CHECKED(i) : (i))
+
     int64_t k1 = -1, kk = -1 ;
     (*dl_function) = GB_jitifyer_lookup (hash, encoding, suffix, &k1, &kk) ;
     if ((*dl_function) != NULL)
@@ -1654,10 +1718,10 @@ GrB_Info GB_jitifyer_load2_worker
                 monoid, op, type1, type2, type3) ;
             if (ok)
             { 
-                // PreJIT kernel is fine; flag it as checked by flipping
-                // its prejit_index.
+                // PreJIT kernel is fine; flag it as checked by marking
+                // its prejit_index as negative.
                 GBURBLE ("(prejit: ok) ") ;
-                e->prejit_index = GB_FLIP (k1) ;
+                e->prejit_index = GB_PREJIT_CHECKED (k1) ;
                 return (GrB_SUCCESS) ;
             }
             else
@@ -1724,6 +1788,9 @@ GrB_Info GB_jitifyer_load2_worker
         // No kernels may be loaded or compiled, but existing kernels already
         // loaded may be run (handled above if dl_function was found).  This
         // kernel was not loaded, so punt to generic.
+        // This is not a JIT failure since the JIT control is already
+        // set to 'run', and the kernel is not already loaded.  So always
+        // fallback to the generic kernel.
         return (GrB_NO_VALUE) ;
     }
 
@@ -1734,68 +1801,80 @@ GrB_Info GB_jitifyer_load2_worker
     #ifndef NJIT
     GB_Operator op1 = NULL ;
     GB_Operator op2 = NULL ;
-    int scode_digits = 0 ;
+    int method_code_digits = 0 ;
 
     switch (family)
     {
         case GB_jit_apply_family  : 
             op1 = op ;
-            scode_digits = 10 ;
+            method_code_digits = 10 ;
             break ;
 
         case GB_jit_assign_family : 
             op1 = op ;
-            scode_digits = 12 ;
+            method_code_digits = 12 ;
             break ;
 
         case GB_jit_build_family  : 
             op1 = op ;
-            scode_digits = 7 ;
+            method_code_digits = 7 ;
             break ;
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            scode_digits = 13 ;
+            method_code_digits = 12 ;
             break ;
 
         case GB_jit_mxm_family    : 
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
-            scode_digits = 16 ;
+            method_code_digits = 13 ;
             break ;
 
         case GB_jit_reduce_family : 
             op1 = (GB_Operator) monoid->op ;
-            scode_digits = 7 ;
+            method_code_digits = 5 ;
             break ;
 
         case GB_jit_select_family : 
             op1 = op ;
-            scode_digits = 10 ;
+            method_code_digits = 10 ;
             break ;
 
         case GB_jit_user_type_family : 
-            scode_digits = 1 ;
+            method_code_digits = 1 ;
             break ;
 
         case GB_jit_user_op_family : 
-            scode_digits = 1 ;
+            method_code_digits = 1 ;
             op1 = op ;
+            break ;
+
+        case GB_jit_masker_family  : 
+            method_code_digits = 5 ;
+            break ;
+
+        case GB_jit_subref_family  : 
+            method_code_digits = 4 ;
+            break ;
+
+        case GB_jit_sort_family  : 
+            method_code_digits = 4 ;
             break ;
 
         default: ;
     }
 
     char kernel_name [GB_KLEN] ;
-    GB_macrofy_name (kernel_name, "GB_jit", kname, scode_digits,
+    GB_macrofy_name (kernel_name, "GB_jit", kname, method_code_digits,
         encoding->code, suffix) ;
 
     //--------------------------------------------------------------------------
     // lock the kernel
     //--------------------------------------------------------------------------
 
-    // FIXME: add kernel_name to the lock filename.  If the lock fails,
+    // TODO: add kernel_name to the lock filename.  If the lock fails,
     // sleep for 1 second and try again repeatedly, with a timeout limit of
     // (say) 60 seconds.
 
@@ -1806,10 +1885,12 @@ GrB_Info GB_jitifyer_load2_worker
     int fd_klock = -1 ;
     if (!GB_file_open_and_lock (GB_jit_temp, &fp_klock, &fd_klock))
     {
-        // JIT error: unable to lock the kernel
+        // JIT failure: unable to lock the kernel
         // disable the JIT to avoid repeated load errors
         GB_jit_control = GxB_JIT_RUN ;
-        return (GrB_NO_VALUE) ;
+        // report the error: punt to generic or panic
+        GBURBLE ("\n(jit failure: cannot create a file I/O lock)\n") ;
+        return (GxB_JIT_ERROR) ;
     }
 
     //--------------------------------------------------------------------------
@@ -1911,7 +1992,9 @@ GrB_Info GB_jitifyer_load_worker
 
         if (GB_jit_control < GxB_JIT_ON)
         { 
-            // No new kernels may be compiled, so punt to generic.
+            // No new kernels may be compiled, so punt to generic.  This is not
+            // a JIT failure.  It is an expected condition because of the JIT
+            // control, so always allow a fallback to the generic kernel.
             GBURBLE ("(jit: not compiled) ") ;
             return (GrB_NO_VALUE) ;
         }
@@ -1934,8 +2017,8 @@ GrB_Info GB_jitifyer_load_worker
             GB_macrofy_preface (fp, kernel_name,
                 GB_jit_C_preface, GB_jit_CUDA_preface, kcode) ;
             // macrofy the kernel operators, types, and matrix formats
-            GB_macrofy_family (fp, family, encoding->code, semiring,
-                monoid, op, type1, type2, type3) ;
+            GB_macrofy_family (fp, family, encoding->code, encoding->kcode,
+                semiring, monoid, op, type1, type2, type3) ;
             // #include the kernel, renaming it for the PreJIT
             fprintf (fp, "#ifndef GB_JIT_RUNTIME\n"
                          "#define GB_jit_kernel %s\n"
@@ -1985,12 +2068,12 @@ GrB_Info GB_jitifyer_load_worker
         if (dl_handle == NULL)
         { 
             // unable to create the kernel source or open lib*.so file
-            GBURBLE ("(jit: compiler error; compilation disabled) ") ;
             // disable the JIT to avoid repeated compilation errors
             GB_jit_control = GxB_JIT_LOAD ;
             // remove the compiled library
             remove (GB_jit_temp) ;
-            return (GrB_NO_VALUE) ;     // FIXME: use another error code?
+            GBURBLE ("\n(jit failure: compiler error; compilation disabled)\n");
+            return (GxB_JIT_ERROR) ;
         }
 
     }
@@ -2014,26 +2097,27 @@ GrB_Info GB_jitifyer_load_worker
     if ((*dl_function) == NULL)
     {
         // JIT error: dlsym unable to find GB_jit_kernel: punt to generic
-        GBURBLE ("(jit: load error; JIT loading disabled) ") ;
         GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated loading errors
         GB_jit_control = GxB_JIT_RUN ;
         // remove the compiled library
         remove (GB_jit_temp) ;
-        return (GrB_NO_VALUE) ;     // FIXME: use another error code?
+        GBURBLE ("\n(jit failure: load error; compilation disabled)\n") ;
+        return (GxB_JIT_ERROR) ;
     }
 
     // insert the new kernel into the hash table
     if (!GB_jitifyer_insert (hash, encoding, suffix, dl_handle, (*dl_function),
         -1))
     {
-        // JIT error: unable to add kernel to hash table: punt to generic
+        // JIT error: unable to add kernel to hash table
         GB_file_dlclose (dl_handle) ; dl_handle = NULL ;
         // disable the JIT to avoid repeated errors
         GB_jit_control = GxB_JIT_PAUSE ;
         // remove the compiled library
         remove (GB_jit_temp) ;
-        return (GrB_NO_VALUE) ;
+        // report the error: punt to generic or panic
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     return (GrB_SUCCESS) ;
@@ -2138,7 +2222,7 @@ bool GB_jitifyer_insert         // return true if successful, false if failure
         }
         memset (GB_jit_table, 0, siz) ;
         GB_jit_table_size = GB_JITIFIER_INITIAL_SIZE ;
-        GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ; 
+        GB_jit_table_bits = GB_JITIFIER_INITIAL_SIZE - 1 ;
         GB_jit_table_allocated = siz ;
 
     }
@@ -2280,7 +2364,7 @@ void GB_jitifyer_table_free (bool freeall)
                 if (e->dl_handle == NULL)
                 { 
                     // flag the PreJIT kernel as unchecked
-                    e->prejit_index = GB_UNFLIP (e->prejit_index) ;
+                    e->prejit_index = GB_PREJIT_UNCHECKED (e->prejit_index) ;
                 }
                 // free it if permitted
                 if (freeall || (e->dl_handle != NULL &&
@@ -2499,17 +2583,17 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
 
     // compile:
     "sh -c \""                          // execute with POSIX shell
-    // FIXME: use GB_CUDA_COMPILER here:
+    // Fixme for CUDA: use GB_CUDA_COMPILER here:
     "nvcc "                             // compiler command
     "-forward-unknown-to-host-compiler "
     "-DGB_JIT_RUNTIME=1  "              // nvcc flags
-    // FIXME: add GB_CUDA_INC here:
+    // Fixme for CUDA: add GB_CUDA_INC here:
     "-I/usr/local/cuda/include -std=c++17 " 
-    // FIXME: use GB_CUDA_ARCHITECTURES here:
+    // Fixme for CUDA: use GB_CUDA_ARCHITECTURES here:
     " -arch=sm_60 "
     " -fPIC " 
-    // FIXME: add GB_CUDA_FLAGS here:
-    " -O3 "   // HACK FIXME (for CUDA)
+    // Fixme for CUDA: add GB_CUDA_FLAGS here:
+    " -O3 "   // HACK Fixme for CUDA
     "-I'%s/src' "                       // include source directory
     "-I'%s/src/template' "
     "-I'%s/src/include' "

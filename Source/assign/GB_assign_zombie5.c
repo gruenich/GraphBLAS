@@ -2,12 +2,12 @@
 // GB_assign_zombie5: delete entries in C for C_replace_phase
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but 96 variants. Could use one for each mask type (6: 1, 2,
+// JIT: possible: 96 variants. Could use one for each mask type (6: 1, 2,
 // 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse/
 // hyper), mask comp (2), C sparsity (2: sparse/hyper): 6*4*2*2 = 96 variants,
 // so a JIT kernel is reasonable.
@@ -24,9 +24,11 @@
 
 #include "assign/GB_assign.h"
 #include "assign/GB_assign_zombie.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_methods.h"
 #include "slice/GB_ek_slice.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
@@ -140,32 +142,18 @@ GrB_Info GB_assign_zombie5
             // get C(:,j) and determine if j is outside the list J
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ch, k) ;
+            int64_t j = GBH_C (Ch, k) ;
             // j_outside is true if column j is outside the C(I,J) submatrix
             bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
-            int64_t pC_start, pC_end ;
-            GB_get_pA (&pC_start, &pC_end, tid, k,
-                kfirst, klast, pstart_Cslice, Cp, zvlen) ;
+            GB_GET_PA (pC_start, pC_end, tid, k, kfirst, klast, pstart_Cslice,
+                Cp [k], Cp [k+1]) ;
 
             //------------------------------------------------------------------
             // get M(:,j)
             //------------------------------------------------------------------
 
-            // this works for M with any sparsity structure
             int64_t pM_start, pM_end ;
-
-            if (M_is_hyper)
-            { 
-                // M is hypersparse
-                GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx,
-                    M_hash_bits, j, &pM_start, &pM_end) ;
-            }
-            else
-            { 
-                // M is sparse, bitmap, or full
-                pM_start = GBP (Mp, j  , Mvlen) ;
-                pM_end   = GBP (Mp, j+1, Mvlen) ;
-            }
+            GB_LOOKUP_VECTOR_M (j, pM_start, pM_end) ;
 
             bool mjdense = (pM_end - pM_start) == Mvlen ;
 
@@ -202,7 +190,7 @@ GrB_Info GB_assign_zombie5
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;
+                        Ci [pC] = GB_ZOMBIE (i) ;
                     }
                 }
             }

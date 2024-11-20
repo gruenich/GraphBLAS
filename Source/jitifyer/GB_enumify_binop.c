@@ -20,7 +20,8 @@ void GB_enumify_binop
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
     GB_Type_code xcode, // op->xtype->code of the operator
-    bool for_semiring   // true for A*B, false for A+B or A.*B
+    bool for_semiring,  // true for A*B multiplier, false otherwise
+    bool is_kron        // true for kronecker
 )
 { 
 
@@ -30,10 +31,11 @@ void GB_enumify_binop
     {
 
         //----------------------------------------------------------------------
-        // user-defined operator
+        // user-defined operators
         //----------------------------------------------------------------------
 
         case GB_USER_binop_code : 
+        case GB_USER_idxbinop_code : 
 
             e = 0 ; break ;
 
@@ -455,35 +457,35 @@ void GB_enumify_binop
 
         case GB_FIRSTI_binop_code :     // z = i
 
-            e = 134 ; break ;
+            e = is_kron ? 150 : 134 ; break ;
 
         case GB_FIRSTI1_binop_code :    // z = i+1
 
-            e = 137 ; break ;
+            e = is_kron ? 151 : 137 ; break ;
 
         case GB_FIRSTJ_binop_code :     // z = for_semiring ? (k) : (j)
 
-            e = for_semiring ? 135 : 136 ; break ;
+            e = for_semiring ? 135 : (is_kron ? 152 : 136) ; break ;
 
         case GB_FIRSTJ1_binop_code :    // z = for_semiring ? (k+1) : (j+1)
 
-            e = for_semiring ? 138 : 139 ; break ;
+            e = for_semiring ? 138 : (is_kron ? 153 : 139) ; break ;
 
         case GB_SECONDI_binop_code :    // z = for_semiring ? (k) : (i)
 
-            e = for_semiring ? 135 : 134 ; break ;
+            e = for_semiring ? 135 : (is_kron ? 154 : 134) ; break ;
 
         case GB_SECONDI1_binop_code :   // z = for_semiring ? (k+1) : (i+1)
 
-            e = for_semiring ? 138 : 137 ; break ;
+            e = for_semiring ? 138 : (is_kron ? 155 : 137) ; break ;
 
         case GB_SECONDJ_binop_code :    // z = j
 
-            e = 136 ; break ;
+            e = is_kron ? 156 : 136 ; break ;
 
         case GB_SECONDJ1_binop_code :   // z = j+1
 
-            e = 139 ; break ;
+            e = is_kron ? 157 : 139 ; break ;
 
         case GB_NOP_code :              // no operator present
 

@@ -40,7 +40,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
     const size_t ssize = stype->size ;
     const GB_Type_code ccode = ctype->code ;
     const GB_Type_code acode = A->type->code ;
-    const GB_Type_code scode = stype->code ;
+    const GB_Type_code scalar_code = stype->code ;
 
     //--------------------------------------------------------------------------
     // compute the C iso value
@@ -64,7 +64,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
         //----------------------------------------------------------------------
 
         ASSERT_SCALAR_OK (scalar, "scalar for GB_unop_iso", GB0) ;
-        GB_cast_scalar (Cx, ccode, scalar->x, scode, ssize) ;
+        GB_cast_scalar (Cx, ccode, scalar->x, scalar_code, ssize) ;
 
     }
     else
@@ -120,6 +120,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
             size_t xsize = op->xtype->size ;
             size_t ysize = op->ytype->size ;
             GxB_binary_function fop = op->binop_function ;
+            ASSERT (fop != NULL) ;
             GB_void x [GB_VLA(xsize)] ;
             GB_void y [GB_VLA(ysize)] ;
 
@@ -130,7 +131,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
                 // Cx [0] = binop (scalar, A)
                 //--------------------------------------------------------------
 
-                GB_cast_scalar (x, xcode, scalar->x, scode, ssize) ;
+                GB_cast_scalar (x, xcode, scalar->x, scalar_code, ssize) ;
                 GB_cast_scalar (y, ycode, A->x, acode, asize) ;
 
             }
@@ -142,7 +143,7 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
                 //--------------------------------------------------------------
 
                 GB_cast_scalar (x, xcode, A->x, acode, asize) ;
-                GB_cast_scalar (y, ycode, scalar->x, scode, ssize) ;
+                GB_cast_scalar (y, ycode, scalar->x, scalar_code, ssize) ;
 
             }
 

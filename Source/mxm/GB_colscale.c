@@ -7,14 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #include "mxm/GB_mxm.h"
 #include "binaryop/GB_binop.h"
 #include "apply/GB_apply.h"
 #include "slice/GB_ek_slice.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
 #include "include/GB_unused.h"
@@ -78,9 +77,14 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     GrB_Type ztype = mult->ztype ;
     ASSERT (ztype == semiring->add->op->ztype) ;
     GB_Opcode opcode = mult->opcode ;
+    GxB_binary_function fmult = mult->binop_function ;
+
     // GB_reduce_to_vector does not use GB_colscale:
-    ASSERT (!(mult->binop_function == NULL &&
+    ASSERT (!(fmult == NULL &&
         (opcode == GB_FIRST_binop_code || opcode == GB_SECOND_binop_code))) ;
+
+    // user-defined index binaryops do not use GB_colscale:
+    ASSERT (!GB_IS_INDEXBINARYOP_CODE (opcode)) ;
 
     //--------------------------------------------------------------------------
     // determine if C is iso (ignore the monoid since it isn't used)
@@ -104,7 +108,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     // C = A*D, column scale, compute numerical values
     //--------------------------------------------------------------------------
 
-    if (GB_OPCODE_IS_POSITIONAL (opcode))
+    if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
     { 
 
         //----------------------------------------------------------------------
@@ -178,6 +182,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         // determine if the values are accessed
         //----------------------------------------------------------------------
 
+        ASSERT (fmult != NULL) ;
         bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
         bool op_is_second = (opcode == GB_SECOND_binop_code) ;
         bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
@@ -207,11 +212,12 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         }
 
         info = GrB_NO_VALUE ;
-        
+
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_colscale_branch (A, D, semiring, flipxy)) {
+        if (GB_cuda_colscale_branch (A, D, semiring, flipxy))
+        {
             info = GB_cuda_colscale (C, A, D, semiring, flipxy) ;
-        } 
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -291,8 +297,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
             #include "generic/GB_generic.h"
             GB_BURBLE_MATRIX (C, "(generic C=A*D colscale) ") ;
 
-            GxB_binary_function fmult = mult->binop_function ;
-
             size_t csize = C->type->size ;
             size_t asize = A_is_pattern ? 0 : A->type->size ;
             size_t dsize = D_is_pattern ? 0 : D->type->size ;
@@ -351,10 +355,11 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
 
             #include "ewise/include/GB_ewise_shared_definitions.h"
 
+            // conventional binary op
             if (flipxy)
             { 
                 #undef  GB_EWISEOP
-                #define GB_EWISEOP(Cx,p,x,y,i,j) fmult (Cx +((p)*csize),y,x)
+                #define GB_EWISEOP(Cx,p,y,x,j,i) fmult (Cx +((p)*csize),x,y)
                 #include "mxm/template/GB_colscale_template.c"
             }
             else

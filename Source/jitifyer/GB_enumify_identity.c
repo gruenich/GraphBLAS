@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_enumify_identity: return ecode for identity value of an op of a monoid 
+// GB_enumify_identity: return ecode for identity value of an op of a monoid
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

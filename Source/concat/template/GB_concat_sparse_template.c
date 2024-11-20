@@ -51,8 +51,9 @@
             // find the part of the kth vector A(:,j) for this task
             //------------------------------------------------------------------
 
+#if 0
             int64_t pA_start, pA_end ;
-            // as done by GB_get_pA, but also get p0 = Ap [k]
+            // as done by GB_GET_PA, but also get p0 = Ap [k]
             const int64_t p0 = GBP_A (Ap, k, avlen) ;
             const int64_t p1 = GBP_A (Ap, k+1, avlen) ;
             if (k == kfirst)
@@ -73,6 +74,11 @@
                 pA_start = p0 ;
                 pA_end   = p1 ;
             }
+#endif
+
+            const int64_t p0 = GBP_A (Ap, k, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                p0, GBP_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // append A(:,j) onto C(:,j)

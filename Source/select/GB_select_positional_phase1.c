@@ -9,7 +9,7 @@
 
 // A is sparse or hypersparse
 
-// JIT: not needed, but 3 variants possible (A sparse, hyper, or full for DIAG)
+// JIT: not need: use factory; 3 variants (A sparse, hyper, or full for DIAG)
 
 #include "select/GB_select.h"
 #include "slice/GB_ek_slice.h"
@@ -36,7 +36,7 @@ GrB_Info GB_select_positional_phase1
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)
         || (opcode == GB_DIAG_idxunop_code)) ;
-    ASSERT (GB_OPCODE_IS_POSITIONAL (opcode)
+    ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)
         || opcode == GB_NONZOMBIE_idxunop_code) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
 
@@ -51,38 +51,38 @@ GrB_Info GB_select_positional_phase1
 
         case GB_TRIL_idxunop_code      : 
             #define GB_TRIL_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_TRIU_idxunop_code      : 
             #define GB_TRIU_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_DIAG_idxunop_code      : 
             #define GB_DIAG_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_OFFDIAG_idxunop_code   : 
         case GB_DIAGINDEX_idxunop_code : 
             #define GB_OFFDIAG_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_ROWINDEX_idxunop_code  : 
             #define GB_ROWINDEX_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_ROWLE_idxunop_code     : 
             #define GB_ROWLE_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_ROWGT_idxunop_code     : 
             #define GB_ROWGT_SELECTOR
-            #include "select/template/GB_select_positional_phase1_template.c"
+            #include "select/factory/GB_select_positional_phase1_template.c"
             break ;
 
         case GB_NONZOMBIE_idxunop_code : 

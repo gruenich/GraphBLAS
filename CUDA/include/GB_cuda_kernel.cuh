@@ -52,6 +52,7 @@ using namespace cooperative_groups ;
 
 extern "C"
 {
+    #include "include/GB_bytes.h"
     #include "include/GB_pun.h"
     #include "include/GB_partition.h"
     #include "include/GB_binary_search.h"
@@ -65,7 +66,9 @@ extern "C"
     #include "include/GB_memory_macros.h"
     #include "include/GB_printf_kernels.h"
     #include "include/GB_opaque.h"
+    #include "include/GB_static_header.h"
     #include "include/GB_werk.h"
+    #include "include/GB_task_struct.h"
     #include "include/GB_callback_proto.h"
     #include "include/GB_saxpy3task_struct.h"
     #include "include/GB_callback.h"

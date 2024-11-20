@@ -42,7 +42,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
     GrB_Matrix C,
     GrB_Matrix M,
     GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix B,
+    const void *theta
 )
 {
 
@@ -100,6 +101,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 
         int64_t i = Mi [pair_id] ;
         int64_t k = Ci [pair_id]>>4 ;
+        // assert: Ci [pair_id] & 0xF == GB_BUCKET_VSVS
 
         // j = k or j = Mh [k] if C and M are hypersparse
         int64_t j = GBH_M (Mh, k) ;
@@ -150,6 +152,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
 
 
         GB_CIJ_EXIST_POSTCHECK ;
+
+// HACK
+// cij_exists = false ;
+
         if (cij_exists)
         {
             GB_PUTC (cij, Cx, pair_id) ;    // Cx [pair_id] = (GB_C_TYPE) cij
@@ -159,7 +165,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vsvs_kernel
         {
             // cij is a zombie
             my_nzombies++;
-            Ci [pair_id] = GB_FLIP (i) ;
+            Ci [pair_id] = GB_ZOMBIE (i) ;
         }
     }
 

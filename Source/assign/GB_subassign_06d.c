@@ -2,12 +2,10 @@
 // GB_subassign_06d: C(:,:)<A> = A; C is full/bitmap, M and A are aliased
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: done.
 
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
@@ -29,12 +27,15 @@
 // C and A can have any sparsity structure.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -50,27 +51,30 @@ GrB_Info GB_subassign_06d
 {
 
     //--------------------------------------------------------------------------
-    // get inputs
+    // check inputs
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT_MATRIX_OK (C, "C for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (GB_IS_BITMAP (C) || GB_IS_FULL (C)) ;
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
-
     ASSERT_MATRIX_OK (A, "A for subassign method_06d", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    const GB_Type_code ccode = C->type->code ;
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
+
+    const GB_Type_code ccode = C->type->code ;
 
     //--------------------------------------------------------------------------
     // Method 06d: C(:,:)<A> = A ; no S; C is dense, M and A are aliased
@@ -97,7 +101,13 @@ GrB_Info GB_subassign_06d
 
         ASSERT (Mask_struct) ;
         #define GB_ISO_ASSIGN
+        #undef  GB_MASK_STRUCT
+        #define GB_MASK_STRUCT 1
+        #undef  GB_C_ISO
+        #define GB_C_ISO 1
         #include "assign/template/GB_subassign_06d_template.c"
+        #undef  GB_MASK_STRUCT
+        #undef  GB_C_ISO
         info = GrB_SUCCESS ;
 
     }
@@ -130,23 +140,7 @@ GrB_Info GB_subassign_06d
             if (C->type == A->type && ccode < GB_UDT_code)
             { 
                 // C<A> = A
-                switch (ccode)
-                {
-                    case GB_BOOL_code   : GB_WORKER (_bool  )
-                    case GB_INT8_code   : GB_WORKER (_int8  )
-                    case GB_INT16_code  : GB_WORKER (_int16 )
-                    case GB_INT32_code  : GB_WORKER (_int32 )
-                    case GB_INT64_code  : GB_WORKER (_int64 )
-                    case GB_UINT8_code  : GB_WORKER (_uint8 )
-                    case GB_UINT16_code : GB_WORKER (_uint16)
-                    case GB_UINT32_code : GB_WORKER (_uint32)
-                    case GB_UINT64_code : GB_WORKER (_uint64)
-                    case GB_FP32_code   : GB_WORKER (_fp32  )
-                    case GB_FP64_code   : GB_WORKER (_fp64  )
-                    case GB_FC32_code   : GB_WORKER (_fc32  )
-                    case GB_FC64_code   : GB_WORKER (_fc64  )
-                    default: ;
-                }
+                #include "assign/factory/GB_assign_factory.c"
             }
         }
         #endif
@@ -167,6 +161,7 @@ GrB_Info GB_subassign_06d
                 /* accum: */ NULL,
                 /* A: */ A,
                 /* scalar, scalar_type: */ NULL, NULL,
+                /* S: */ NULL,
                 GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_06d, "subassign_06d",
                 Werk) ;
         }
@@ -185,10 +180,12 @@ GrB_Info GB_subassign_06d
             const GB_Type_code acode = A->type->code ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-            #define C_iso false
             #undef  GB_AX_MASK
             #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (Ax, pA, asize)
-
+            #undef  GB_C_ISO
+            #define GB_C_ISO 0
+            #undef  GB_MASK_STRUCT
+            #define GB_MASK_STRUCT Mask_struct
             #include "assign/template/GB_subassign_06d_template.c"
             info = GrB_SUCCESS ;
         }

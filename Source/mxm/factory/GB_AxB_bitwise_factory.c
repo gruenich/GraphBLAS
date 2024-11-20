@@ -11,6 +11,34 @@
 // bitwise semirings.  The multiply operators are bor, band, bxor, or bxnor,
 // as defined by GB_MNAME.
 
+#if defined (GxB_NO_UINT8)
+#define GB_CASE_UINT8(op)
+#else
+#define GB_CASE_UINT8(op) \
+    case GB_UINT8_code:  GB_AxB_WORKER (op, GB_MNAME, _uint8 )
+#endif
+
+#if defined (GxB_NO_UINT16)
+#define GB_CASE_UINT16(op)
+#else
+#define GB_CASE_UINT16(op) \
+    case GB_UINT16_code: GB_AxB_WORKER (op, GB_MNAME, _uint16)
+#endif
+
+#if defined (GxB_NO_UINT32)
+#define GB_CASE_UINT32(op)
+#else
+#define GB_CASE_UINT32(op) \
+    case GB_UINT32_code: GB_AxB_WORKER (op, GB_MNAME, _uint32)
+#endif
+
+#if defined (GxB_NO_UINT64)
+#define GB_CASE_UINT64(op)
+#else
+#define GB_CASE_UINT64(op) \
+    case GB_UINT64_code: GB_AxB_WORKER (op, GB_MNAME, _uint64)
+#endif
+
 {
     switch (add_binop_code)
     {
@@ -21,10 +49,10 @@
 
             switch (zcode)
             {
-                case GB_UINT8_code  : GB_AxB_WORKER (_bor, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_bor, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_bor, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_bor, GB_MNAME, _uint64)
+                GB_CASE_UINT8  (_bor)
+                GB_CASE_UINT16 (_bor)
+                GB_CASE_UINT32 (_bor)
+                GB_CASE_UINT64 (_bor)
                 default: ;
             }
             break ;
@@ -35,10 +63,10 @@
 
             switch (zcode)
             {
-                case GB_UINT8_code  : GB_AxB_WORKER (_band, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_band, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_band, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_band, GB_MNAME, _uint64)
+                GB_CASE_UINT8  (_band)
+                GB_CASE_UINT16 (_band)
+                GB_CASE_UINT32 (_band)
+                GB_CASE_UINT64 (_band)
                 default: ;
             }
             break ;
@@ -49,10 +77,10 @@
 
             switch (zcode)
             {
-                case GB_UINT8_code  : GB_AxB_WORKER (_bxor, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_bxor, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_bxor, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_bxor, GB_MNAME, _uint64)
+                GB_CASE_UINT8  (_bxor)
+                GB_CASE_UINT16 (_bxor)
+                GB_CASE_UINT32 (_bxor)
+                GB_CASE_UINT64 (_bxor)
                 default: ;
             }
             break ;
@@ -63,10 +91,10 @@
 
             switch (zcode)
             {
-                case GB_UINT8_code  : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_bxnor, GB_MNAME, _uint64)
+                GB_CASE_UINT8  (_bxnor)
+                GB_CASE_UINT16 (_bxnor)
+                GB_CASE_UINT32 (_bxnor)
+                GB_CASE_UINT64 (_bxnor)
                 default: ;
             }
             break ;
@@ -76,4 +104,9 @@
 }
 
 #undef GB_MNAME
+
+#undef GB_CASE_UINT8
+#undef GB_CASE_UINT16
+#undef GB_CASE_UINT32
+#undef GB_CASE_UINT64
 

@@ -75,14 +75,15 @@
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0x1L) ;
         }
         #elif GB_IS_PLUS_PAIR_8_SEMIRING
-        { 
+        {
             // (PLUS int8, uint8 monoids)_PAIR semirings
+            // only used by the JIT if int8 and uint8 FactoryKernels disabled
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0xFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_16_SEMIRING
         {
             // (PLUS int16, uint16 monoids)_PAIR semirings
-            // this is only used by the JIT
+            // only used by the JIT if int16 and uint16 FactoryKernels disabled
             cij = (GB_C_TYPE) (((uint64_t) vlen) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_32_SEMIRING
@@ -192,14 +193,15 @@
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0x1L) ;
         }
         #elif GB_IS_PLUS_PAIR_8_SEMIRING
-        { 
+        {
             // (PLUS int8, uint8 monoids)_PAIR semirings
+            // only used by the JIT if int8 and uint8 FactoryKernels disabled
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0xFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_16_SEMIRING
         {
             // (PLUS int16, uint16 monoids)_PAIR semirings
-            // this is only used by the JIT
+            // only used by the JIT if int16 and uint16 FactoryKernels disabled
             cij = (GB_C_TYPE) (((uint64_t) bjnz) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_32_SEMIRING
@@ -408,14 +410,15 @@
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0x1L) ;
         }
         #elif GB_IS_PLUS_PAIR_8_SEMIRING
-        { 
+        {
             // (PLUS int8, uint8 monoids)_PAIR semirings
+            // only used by the JIT if int8 and uint8 FactoryKernels disabled
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_16_SEMIRING
         {
             // (PLUS int16, uint16 monoids)_PAIR semirings
-            // this is only used by the JIT
+            // only used by the JIT if int16 and uint16 FactoryKernels disabled
             cij = (GB_C_TYPE) (((uint64_t) ainz) & 0xFFFFL) ;
         }
         #elif GB_IS_PLUS_PAIR_32_SEMIRING

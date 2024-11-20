@@ -2,12 +2,10 @@
 // GB_subassign_05e: C(:,:)<M,struct> = scalar ; no S, C empty, M structural
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: not needed.
 
 // Method 05e: C(:,:)<M,struct> = scalar ; no S
 
@@ -27,6 +25,8 @@
 // C is always iso, and its iso value has been assigned by GB_assign_prep.
 
 #include "assign/GB_subassign_methods.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
@@ -47,14 +47,11 @@ GrB_Info GB_subassign_05e
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (C->iso) ;
 
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_05e", GB0) ;
     ASSERT_MATRIX_OK (M, "M for subassign method_05e", GB0) ;
     ASSERT (GB_nnz (C) == 0) ;
@@ -84,7 +81,8 @@ GrB_Info GB_subassign_05e
     // set C->iso = true    OK
     GB_OK (GB_dup_worker (&C, true, M, false, C->type)) ;
     C->is_csc = C_is_csc ;
-    GB_cast_scalar (C->x, C->type->code, scalar, scalar_type->code, scalar_type->size) ;
+    GB_cast_scalar (C->x, C->type->code, scalar, scalar_type->code,
+        scalar_type->size) ;
 
     C->jumbled = M->jumbled ;       // C is jumbled if M is jumbled
     ASSERT_MATRIX_OK (C, "C output for subassign method_05e", GB0) ;

@@ -77,5 +77,29 @@
 #undef GB_M_TYPE
 #undef GB_MCAST
 
+// accessing the S matrix for assign methods
+#undef GBP_S
+#undef GBH_S
+#undef GBI_S
+#undef GBB_S
+
+// accessing the Z matrix for masker methods
+#undef GBP_Z
+#undef GBH_Z
+#undef GBI_Z
+#undef GBB_Z
+#undef GBX_Z
+#undef GB_Z_NVALS
+#undef GB_Z_NHELD
+
+// accessing the R matrix for masker methods
+#undef GBP_R
+#undef GBH_R
+#undef GBI_R
+#undef GBB_R
+#undef GBX_R
+#undef GB_R_NVALS
+#undef GB_R_NHELD
+
 #endif
 

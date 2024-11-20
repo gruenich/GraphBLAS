@@ -41,11 +41,12 @@ GrB_Info GB_selector
     GrB_Info info ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_ZOMBIE (GB0)) ;
     // positional op (tril, triu, diag, offdiag, resize, rowindex, ...):
     // can't be jumbled.  nonzombie, entry-valued op, user op: jumbled OK
     GB_Opcode opcode = op->opcode ;
-    ASSERT (GB_IMPLIES (GB_OPCODE_IS_POSITIONAL (opcode), !GB_JUMBLED (A))) ;
+    ASSERT (GB_IMPLIES (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode),
+        !GB_JUMBLED (A))) ;
     ASSERT (C == NULL || (C != NULL && (C->static_header || GBNSTATIC))) ;
 
     bool in_place_A = (C == NULL) ; // GrB_wait and GB_resize only
@@ -159,18 +160,27 @@ GrB_Info GB_selector
 
     info = GrB_NO_VALUE ;
 
+    // FIXME: pass in a T matrix, below, not C:
+
+#if 0
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (GB_cuda_select_branch (A, op))
+    if (!in_place_A /* Fixme for CUDA: remove this condition, and let the CUDA
+        kernel handle the in-place-A condition for GB_wait and GB_resize. */
+        && GB_cuda_select_branch (A, op))
     {
         info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
     }
     #endif
+#endif
 
     if (info == GrB_NO_VALUE)
     {
         info = GB_select_sparse (C, C_iso, op, flipij, A, ithunk, athunk,
             ythunk, Werk) ;
     }
+ 
+    // FIXME: handle in_place_A case here, not in select_sparse:
+    // transplant from T to either C (not in place) or A (in place)
 
     return (info) ;
 }

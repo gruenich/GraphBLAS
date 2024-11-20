@@ -7,21 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
-
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"
 #include "slice/GB_ek_slice.h"
+#include "jitifyer/GB_stringify.h"
 
 //  macros:
 
 //  GB_SORT (func)      defined as GB_sort_func_TYPE_ascend or _descend,
 //                      GB_msort_ISO_ascend or _descend,
 //                      or GB_msort_func_UDT
-//  GB_TYPE             bool, int8_, ... or GB_void for UDT
+//  GB_C_TYPE           bool, int8_, ... or GB_void for UDT
 
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
-//  GB_SIZE             size of each entry: sizeof (GB_TYPE) for built-in
+//  GB_SIZE             size of each entry: sizeof (GB_C_TYPE) for built-in
 //  GB_GET(x,X,i)       x = (op->xtype) X [i]
 //  GB_COPY(A,i,C,k)    A [i] = C [k]
 //  GB_SWAP(A,i,k)      swap A [i] and A [k]
@@ -33,10 +32,15 @@
 
 #define GB_SORT_UDT         0
 #define GB_ADDR(A,i)        ((A) + (i))
-#define GB_GET(x,A,i)       GB_TYPE x = A [i]
+#define GB_GET(x,A,i)       GB_C_TYPE x = A [i]
 #define GB_COPY(A,i,B,j)    A [i] = B [j]
-#define GB_SIZE             sizeof (GB_TYPE)
-#define GB_SWAP(A,i,j)      { GB_TYPE t = A [i] ; A [i] = A [j] ; A [j] = t ; }
+#define GB_SIZE             sizeof (GB_C_TYPE)
+#define GB_SWAP(A,i,j)      \
+{                           \
+    GB_C_TYPE t = A [i] ;   \
+    A [i] = A [j] ;         \
+    A [j] = t ;             \
+}
 
 //------------------------------------------------------------------------------
 // ascending sort for built-in types
@@ -45,49 +49,49 @@
 #define GB_LT(less,a,i,b,j)  \
     less = (((a) < (b)) ? true : (((a) == (b)) ? ((i) < (j)) : false))
 
-#define GB_TYPE             bool
+#define GB_C_TYPE           bool
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_BOOL)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int8_t
+#define GB_C_TYPE           int8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT8)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int16_t
+#define GB_C_TYPE           int16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT16)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int32_t
+#define GB_C_TYPE           int32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT32)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int64_t
+#define GB_C_TYPE           int64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_INT64)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint8_t
+#define GB_C_TYPE           uint8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT8)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint16_t
+#define GB_C_TYPE           uint16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT16)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint32_t
+#define GB_C_TYPE           uint32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT32)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint64_t
+#define GB_C_TYPE           uint64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_UINT64)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             float
+#define GB_C_TYPE           float
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_FP32)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             double
+#define GB_C_TYPE           double
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _ascend_FP64)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
 // descending sort for built-in types
@@ -97,52 +101,52 @@
 #define GB_LT(less,a,i,b,j)  \
     less = (((a) > (b)) ? true : (((a) == (b)) ? ((i) < (j)) : false))
 
-#define GB_TYPE             bool
+#define GB_C_TYPE           bool
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_BOOL)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int8_t
+#define GB_C_TYPE           int8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT8)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int16_t
+#define GB_C_TYPE           int16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT16)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int32_t
+#define GB_C_TYPE           int32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT32)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             int64_t
+#define GB_C_TYPE           int64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_INT64)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint8_t
+#define GB_C_TYPE           uint8_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT8)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint16_t
+#define GB_C_TYPE           uint16_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT16)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint32_t
+#define GB_C_TYPE           uint32_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT32)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             uint64_t
+#define GB_C_TYPE           uint64_t
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_UINT64)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             float
+#define GB_C_TYPE           float
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_FP32)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
-#define GB_TYPE             double
+#define GB_C_TYPE           double
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _descend_FP64)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
-// macros for user-defined types and when typecasting is performed 
+// macros for the generic kernel
 //------------------------------------------------------------------------------
 
 #undef  GB_ADDR
@@ -157,7 +161,7 @@
                             fcast (x, GB_ADDR (A, i), csize)
 #define GB_COPY(A,i,B,j)    memcpy (GB_ADDR (A, i), GB_ADDR (B, j), csize)
 #define GB_SIZE             csize
-#define GB_TYPE             GB_void
+#define GB_C_TYPE           GB_void
 
 #define GB_SWAP(A,i,j)                                                      \
 {                                                                           \
@@ -182,7 +186,7 @@
 #undef  GB_SORT_UDT
 #define GB_SORT_UDT 1
 #define GB_SORT(func)       GB_EVAL3 (GB(sort_), func, _UDT)
-#include "sort/factory/GB_sort_template.c"
+#include "sort/template/GB_sort_template.c"
 
 //------------------------------------------------------------------------------
 // GB_sort
@@ -202,9 +206,6 @@
     if (!C_is_NULL) GB_phybix_free (C) ;    \
     GB_phybix_free (P) ;                    \
 }
-
-// redefine to use the revised GB_FREE_ALL above:
-#include "matrix/GB_static_header.h"
 
 GrB_Info GB_sort
 (
@@ -247,11 +248,13 @@ GrB_Info GB_sort
 
     if (op->ztype != GrB_BOOL || op->xtype != op->ytype || atype != ctype
         || !(ptype == GrB_INT64 || ptype == GrB_UINT64)
-        || !GB_Type_compatible (atype, op->xtype))
+        || !GB_Type_compatible (atype, op->xtype)
+        || GB_IS_INDEXBINARYOP_CODE (op->opcode))
     { 
         // op must return bool, and its inputs x and y must have the same type;
         // the types of A and C must match exactly; P must be INT64 or UINT64;
         // A and C must be typecasted to the input type of the op.
+        // Positional ops are not allowed.
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
@@ -350,10 +353,23 @@ GrB_Info GB_sort
     // sort C in place
     //--------------------------------------------------------------------------
 
+    int64_t cnz = GB_nnz (C) ;
+    int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
+
     GB_Opcode opcode = op->opcode ;
     GB_Type_code acode = atype->code ;
 
-    if ((op->xtype == atype) && (op->ytype == atype) &&
+    if (C->iso || cnz <= 1)
+    { 
+
+        //----------------------------------------------------------------------
+        // C is iso: nothing to do
+        //----------------------------------------------------------------------
+
+        ;
+
+    }
+    else if ((op->xtype == atype) && (op->ytype == atype) &&
         (opcode == GB_LT_binop_code || opcode == GB_GT_binop_code) &&
         (acode < GB_UDT_code))
     {
@@ -368,27 +384,38 @@ GrB_Info GB_sort
             switch (acode)
             {
                 case GB_BOOL_code : 
-                    GB_OK (GB(sort_matrix_ascend_BOOL   )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_BOOL   )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT8_code : 
-                    GB_OK (GB(sort_matrix_ascend_INT8   )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT8   )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT16_code : 
-                    GB_OK (GB(sort_matrix_ascend_INT16  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT16  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT32_code : 
-                    GB_OK (GB(sort_matrix_ascend_INT32  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT32  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT64_code : 
-                    GB_OK (GB(sort_matrix_ascend_INT64  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_INT64  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT8_code : 
-                    GB_OK (GB(sort_matrix_ascend_UINT8  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT8  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT16_code : 
-                    GB_OK (GB(sort_matrix_ascend_UINT16 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT16 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT32_code : 
-                    GB_OK (GB(sort_matrix_ascend_UINT32 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT32 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT64_code : 
-                    GB_OK (GB(sort_matrix_ascend_UINT64 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_UINT64 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_FP32_code : 
-                    GB_OK (GB(sort_matrix_ascend_FP32   )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_FP32   )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_FP64_code : 
-                    GB_OK (GB(sort_matrix_ascend_FP64   )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_ascend_FP64   )(C, nthreads, Werk)) ;
+                    break ;
                 default:;
             }
         }
@@ -398,27 +425,38 @@ GrB_Info GB_sort
             switch (acode)
             {
                 case GB_BOOL_code : 
-                    GB_OK (GB(sort_matrix_descend_BOOL  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_BOOL  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT8_code : 
-                    GB_OK (GB(sort_matrix_descend_INT8  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT8  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT16_code : 
-                    GB_OK (GB(sort_matrix_descend_INT16 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT16 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT32_code : 
-                    GB_OK (GB(sort_matrix_descend_INT32 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT32 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_INT64_code : 
-                    GB_OK (GB(sort_matrix_descend_INT64 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_INT64 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT8_code : 
-                    GB_OK (GB(sort_matrix_descend_UINT8 )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT8 )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT16_code : 
-                    GB_OK (GB(sort_matrix_descend_UINT16)(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT16)(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT32_code : 
-                    GB_OK (GB(sort_matrix_descend_UINT32)(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT32)(C, nthreads, Werk)) ;
+                    break ;
                 case GB_UINT64_code : 
-                    GB_OK (GB(sort_matrix_descend_UINT64)(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_UINT64)(C, nthreads, Werk)) ;
+                    break ;
                 case GB_FP32_code : 
-                    GB_OK (GB(sort_matrix_descend_FP32  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_FP32  )(C, nthreads, Werk)) ;
+                    break ;
                 case GB_FP64_code : 
-                    GB_OK (GB(sort_matrix_descend_FP64  )(C, Werk)) ; break ;
+                    GB_OK (GB(sort_matrix_descend_FP64  )(C, nthreads, Werk)) ;
+                    break ;
                 default:;
             }
         }
@@ -431,14 +469,22 @@ GrB_Info GB_sort
         // typecasting, user-defined types, or unconventional operators
         //----------------------------------------------------------------------
 
-        GB_OK (GB (sort_matrix_UDT) (C, op, Werk)) ;
+        // via the JIT kernel
+        info = GB_sort_jit (C, op, nthreads, Werk) ;
+
+        // via the generic kernel
+        if (info == GrB_NO_VALUE)
+        { 
+            info = GB (sort_matrix_UDT) (C, op, nthreads, Werk) ;
+        }
+
+        GB_OK (info) ;
     }
 
     //--------------------------------------------------------------------------
     // constuct the final indices
     //--------------------------------------------------------------------------
 
-    int64_t cnz = GB_nnz (C) ;
     int64_t cnvec = C->nvec ;
     int64_t *restrict Ti = NULL ;
 
@@ -463,7 +509,6 @@ GrB_Info GB_sort
     int C_nthreads, C_ntasks ;
     GB_SLICE_MATRIX (C, 1) ;
     int64_t *restrict Cp = C->p ;
-    const int64_t cvlen = C->vlen ;
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static,1)
     for (tid = 0 ; tid < C_ntasks ; tid++)
@@ -473,9 +518,8 @@ GrB_Info GB_sort
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             const int64_t pC0 = Cp [k] ;
-            int64_t pC_start, pC_end ;
-            GB_get_pA (&pC_start, &pC_end, tid, k,
-                kfirst, klast, pstart_Cslice, Cp, cvlen) ;
+            GB_GET_PA (pC_start, pC_end, tid, k, kfirst, klast, pstart_Cslice,
+                pC0, Cp [k+1]) ;
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             { 
                 Ti [pC] = pC - pC0 ;

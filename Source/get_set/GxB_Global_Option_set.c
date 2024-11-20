@@ -567,6 +567,16 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+//      case GxB_JIT_ERROR_FALLBACK :
+//
+//          {
+//              va_start (ap, field) ;
+//              int value = va_arg (ap, int) ;
+//              va_end (ap) ;
+//              GB_jitifyer_set_error_fallback ((bool) value) ;
+//          }
+//          break ;
+
         case GxB_JIT_C_CONTROL : 
 
             {

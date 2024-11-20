@@ -16,8 +16,89 @@
 //  13:  any: for all 13 types
 //  26:  first, second: for all 13 types
 
-// FUTUTE: add band, bor, bxor, bxnor for uint [8,16,32,64].
-// Or, just use the JIT.
+#if defined (GxB_NO_INT8)
+#define GB_CASE_INT8(op)
+#else
+#define GB_CASE_INT8(op) \
+    case GB_INT8_code:   GB_BLD_WORKER (op, _int8  , int8_t  )
+#endif
+
+#if defined (GxB_NO_INT16)
+#define GB_CASE_INT16(op)
+#else
+#define GB_CASE_INT16(op) \
+    case GB_INT16_code:  GB_BLD_WORKER (op, _int16 , int16_t )
+#endif
+
+#if defined (GxB_NO_INT32)
+#define GB_CASE_INT32(op)
+#else
+#define GB_CASE_INT32(op) \
+    case GB_INT32_code:  GB_BLD_WORKER (op, _int32 , int32_t )
+#endif
+
+#if defined (GxB_NO_INT64)
+#define GB_CASE_INT64(op)
+#else
+#define GB_CASE_INT64(op) \
+    case GB_INT64_code:  GB_BLD_WORKER (op, _int64 , int64_t )
+#endif
+
+#if defined (GxB_NO_UINT8)
+#define GB_CASE_UINT8(op)
+#else
+#define GB_CASE_UINT8(op) \
+    case GB_UINT8_code:  GB_BLD_WORKER (op, _uint8 , uint8_t )
+#endif
+
+#if defined (GxB_NO_UINT16)
+#define GB_CASE_UINT16(op)
+#else
+#define GB_CASE_UINT16(op) \
+    case GB_UINT16_code: GB_BLD_WORKER (op, _uint16, uint16_t)
+#endif
+
+#if defined (GxB_NO_UINT32)
+#define GB_CASE_UINT32(op)
+#else
+#define GB_CASE_UINT32(op) \
+    case GB_UINT32_code: GB_BLD_WORKER (op, _uint32, uint32_t)
+#endif
+
+#if defined (GxB_NO_UINT64)
+#define GB_CASE_UINT64(op)
+#else
+#define GB_CASE_UINT64(op) \
+    case GB_UINT64_code: GB_BLD_WORKER (op, _uint64, uint64_t)
+#endif
+
+#if defined (GxB_NO_FP32)
+#define GB_CASE_FP32(op)
+#else
+#define GB_CASE_FP32(op) \
+    case GB_FP32_code:   GB_BLD_WORKER (op, _fp32  , float   )
+#endif
+
+#if defined (GxB_NO_FP64)
+#define GB_CASE_FP64(op)
+#else
+#define GB_CASE_FP64(op) \
+    case GB_FP64_code:   GB_BLD_WORKER (op, _fp64  , double  )
+#endif
+
+#if defined (GxB_NO_FC32)
+#define GB_CASE_FC32(op)
+#else
+#define GB_CASE_FC32(op) \
+    case GB_FC32_code:   GB_BLD_WORKER (op, _fc32  , GxB_FC32_t)
+#endif
+
+#if defined (GxB_NO_FC64)
+#define GB_CASE_FC64(op)
+#else
+#define GB_CASE_FC64(op) \
+    case GB_FC64_code:   GB_BLD_WORKER (op, _fc64  , GxB_FC64_t)
+#endif
 
 if (tcode != GB_BOOL_code)
 {
@@ -29,98 +110,98 @@ if (tcode != GB_BOOL_code)
         // non-boolean, associative operators
         //----------------------------------------------------------------------
 
-        case GB_MIN_binop_code   :
+        case GB_MIN_binop_code   : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_min, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_min, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_min, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_min, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_min, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_min, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_min, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_min, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_min, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_min, _fp64,   double  )
+                GB_CASE_INT8   (_min)
+                GB_CASE_INT16  (_min)
+                GB_CASE_INT32  (_min)
+                GB_CASE_INT64  (_min)
+                GB_CASE_UINT8  (_min)
+                GB_CASE_UINT16 (_min)
+                GB_CASE_UINT32 (_min)
+                GB_CASE_UINT64 (_min)
+                GB_CASE_FP32   (_min)
+                GB_CASE_FP64   (_min)
                 default: ;
             }
             break ;
 
-        case GB_MAX_binop_code   :
+        case GB_MAX_binop_code   : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_max, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_max, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_max, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_max, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_max, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_max, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_max, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_max, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_max, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_max, _fp64,   double  )
+                GB_CASE_INT8   (_max)
+                GB_CASE_INT16  (_max)
+                GB_CASE_INT32  (_max)
+                GB_CASE_INT64  (_max)
+                GB_CASE_UINT8  (_max)
+                GB_CASE_UINT16 (_max)
+                GB_CASE_UINT32 (_max)
+                GB_CASE_UINT64 (_max)
+                GB_CASE_FP32   (_max)
+                GB_CASE_FP64   (_max)
                 default: ;
             }
             break ;
 
-        case GB_PLUS_binop_code  :
+        case GB_PLUS_binop_code  : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_plus, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_plus, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_plus, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_plus, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_plus, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_plus, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_plus, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_plus, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_plus, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_plus, _fp64,   double  )
-                case GB_FC32_code   : GB_BLD_WORKER (_plus, _fc32,   GxB_FC32_t)
-                case GB_FC64_code   : GB_BLD_WORKER (_plus, _fc64,   GxB_FC64_t)
+                GB_CASE_INT8   (_plus)
+                GB_CASE_INT16  (_plus)
+                GB_CASE_INT32  (_plus)
+                GB_CASE_INT64  (_plus)
+                GB_CASE_UINT8  (_plus)
+                GB_CASE_UINT16 (_plus)
+                GB_CASE_UINT32 (_plus)
+                GB_CASE_UINT64 (_plus)
+                GB_CASE_FP32   (_plus)
+                GB_CASE_FP64   (_plus)
+                GB_CASE_FC32   (_plus)
+                GB_CASE_FC64   (_plus)
                 default: ;
             }
             break ;
 
-        case GB_TIMES_binop_code :
+        case GB_TIMES_binop_code : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_times, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_times, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_times, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_times, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_times, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_times, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_times, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_times, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_times, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_times, _fp64,   double  )
-                case GB_FC32_code   : GB_BLD_WORKER (_times, _fc32, GxB_FC32_t)
-                case GB_FC64_code   : GB_BLD_WORKER (_times, _fc64, GxB_FC64_t)
+                GB_CASE_INT8   (_times)
+                GB_CASE_INT16  (_times)
+                GB_CASE_INT32  (_times)
+                GB_CASE_INT64  (_times)
+                GB_CASE_UINT8  (_times)
+                GB_CASE_UINT16 (_times)
+                GB_CASE_UINT32 (_times)
+                GB_CASE_UINT64 (_times)
+                GB_CASE_FP32   (_times)
+                GB_CASE_FP64   (_times)
+                GB_CASE_FC32   (_times)
+                GB_CASE_FC64   (_times)
                 default: ;
             }
             break ;
 
-        case GB_ANY_binop_code :
+        case GB_ANY_binop_code : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_any, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_any, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_any, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_any, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_any, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_any, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_any, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_any, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_any, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_any, _fp64,   double  )
-                case GB_FC32_code   : GB_BLD_WORKER (_any, _fc32, GxB_FC32_t)
-                case GB_FC64_code   : GB_BLD_WORKER (_any, _fc64, GxB_FC64_t)
+                GB_CASE_INT8   (_any)
+                GB_CASE_INT16  (_any)
+                GB_CASE_INT32  (_any)
+                GB_CASE_INT64  (_any)
+                GB_CASE_UINT8  (_any)
+                GB_CASE_UINT16 (_any)
+                GB_CASE_UINT32 (_any)
+                GB_CASE_UINT64 (_any)
+                GB_CASE_FP32   (_any)
+                GB_CASE_FP64   (_any)
+                GB_CASE_FC32   (_any)
+                GB_CASE_FC64   (_any)
                 default: ;
             }
             break ;
@@ -129,42 +210,42 @@ if (tcode != GB_BOOL_code)
         // FIRST and SECOND
         //----------------------------------------------------------------------
 
-        case GB_FIRST_binop_code :
+        case GB_FIRST_binop_code : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_first, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_first, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_first, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_first, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_first, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_first, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_first, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_first, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_first, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_first, _fp64,   double  )
-                case GB_FC32_code   : GB_BLD_WORKER (_first, _fc32, GxB_FC32_t)
-                case GB_FC64_code   : GB_BLD_WORKER (_first, _fc64, GxB_FC64_t)
+                GB_CASE_INT8   (_first)
+                GB_CASE_INT16  (_first)
+                GB_CASE_INT32  (_first)
+                GB_CASE_INT64  (_first)
+                GB_CASE_UINT8  (_first)
+                GB_CASE_UINT16 (_first)
+                GB_CASE_UINT32 (_first)
+                GB_CASE_UINT64 (_first)
+                GB_CASE_FP32   (_first)
+                GB_CASE_FP64   (_first)
+                GB_CASE_FC32   (_first)
+                GB_CASE_FC64   (_first)
                 default: ;
             }
             break ;
 
-        case GB_SECOND_binop_code :
+        case GB_SECOND_binop_code : 
 
             switch (tcode)
             {
-                case GB_INT8_code   : GB_BLD_WORKER (_second, _int8,   int8_t  )
-                case GB_INT16_code  : GB_BLD_WORKER (_second, _int16,  int16_t )
-                case GB_INT32_code  : GB_BLD_WORKER (_second, _int32,  int32_t )
-                case GB_INT64_code  : GB_BLD_WORKER (_second, _int64,  int64_t )
-                case GB_UINT8_code  : GB_BLD_WORKER (_second, _uint8,  uint8_t )
-                case GB_UINT16_code : GB_BLD_WORKER (_second, _uint16, uint16_t)
-                case GB_UINT32_code : GB_BLD_WORKER (_second, _uint32, uint32_t)
-                case GB_UINT64_code : GB_BLD_WORKER (_second, _uint64, uint64_t)
-                case GB_FP32_code   : GB_BLD_WORKER (_second, _fp32,   float   )
-                case GB_FP64_code   : GB_BLD_WORKER (_second, _fp64,   double  )
-                case GB_FC32_code   : GB_BLD_WORKER (_second, _fc32, GxB_FC32_t)
-                case GB_FC64_code   : GB_BLD_WORKER (_second, _fc64, GxB_FC64_t)
+                GB_CASE_INT8   (_second)
+                GB_CASE_INT16  (_second)
+                GB_CASE_INT32  (_second)
+                GB_CASE_INT64  (_second)
+                GB_CASE_UINT8  (_second)
+                GB_CASE_UINT16 (_second)
+                GB_CASE_UINT32 (_second)
+                GB_CASE_UINT64 (_second)
+                GB_CASE_FP32   (_second)
+                GB_CASE_FP64   (_second)
+                GB_CASE_FC32   (_second)
+                GB_CASE_FC64   (_second)
                 default: ;
             }
             break ;
@@ -179,6 +260,7 @@ else
     // boolean operators
     //--------------------------------------------------------------------------
 
+    #ifndef GxB_NO_BOOL
     switch (opcode)
     {
         case GB_LOR_binop_code    : GB_BLD_WORKER (_lor,    _bool, bool)
@@ -190,5 +272,19 @@ else
         case GB_SECOND_binop_code : GB_BLD_WORKER (_second, _bool, bool)
         default: ;
     }
+    #endif
 }
+
+#undef GB_CASE_INT8
+#undef GB_CASE_INT16
+#undef GB_CASE_INT32
+#undef GB_CASE_INT64
+#undef GB_CASE_UINT8
+#undef GB_CASE_UINT16
+#undef GB_CASE_UINT32
+#undef GB_CASE_UINT64
+#undef GB_CASE_FP32
+#undef GB_CASE_FP64
+#undef GB_CASE_FC32
+#undef GB_CASE_FC64
 

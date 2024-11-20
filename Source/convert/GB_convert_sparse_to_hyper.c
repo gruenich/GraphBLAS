@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // On input, the matrix may have shallow A->p content; it is safely removed.
 // On output, the matrix is always hypersparse (even if out of memory).  If the
 // input matrix is non-hypersparse, it is given new A->p and A->h that are not
@@ -95,7 +93,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // compute cumulative sum of Counts and nvec_nonempty
         //----------------------------------------------------------------------
 
-        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (Count, ntasks) ;
         int64_t nvec_nonempty = Count [ntasks] ;
         A->nvec_nonempty = nvec_nonempty ;
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #define GB_FREE_WORKSPACE                       \
     if (S != NULL)                              \
     {                                           \
@@ -419,6 +417,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             if (info == GrB_NO_VALUE)
             { 
                 // with typecasting or user-defined types
+                GBURBLE ("(generic concat) ") ;
                 GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
                 size_t asize = A->type->size ;
                 #define GB_C_TYPE GB_void

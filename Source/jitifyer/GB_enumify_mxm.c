@@ -2,7 +2,7 @@
 // GB_enumify_mxm: enumerate a GrB_mxm problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -23,7 +23,7 @@
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:              // future:: may need to become 2 x uint64
-    uint64_t *scode,        // unique encoding of the entire semiring
+    uint64_t *method_code,  // unique encoding of the entire semiring
     // input:
     // C matrix:
     bool C_iso,             // C output iso: if true, semiring is ANY_PAIR_BOOL
@@ -47,6 +47,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // get the semiring
     //--------------------------------------------------------------------------
 
+    ASSERT_SEMIRING_OK (semiring, "semiring for enumify_mxm", GB0) ;
     GrB_Monoid add = semiring->add ;
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_BinaryOp addop = add->op ;
@@ -78,20 +79,10 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // rename redundant boolean operators
     //--------------------------------------------------------------------------
 
-    // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
     if (C_iso)
     { 
+        add_opcode = GB_ANY_binop_code ;
+        mult_opcode = GB_PAIR_binop_code ;
         zcode = 0 ;
     }
     else if (zcode == GB_BOOL_code)
@@ -115,7 +106,7 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     bool op_is_first  = (mult_opcode == GB_FIRST_binop_code ) ;
     bool op_is_second = (mult_opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (mult_opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (mult_opcode) ;
     if (op_is_second || op_is_pair || op_is_positional || C_iso)
     { 
         // x is not used
@@ -133,15 +124,15 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     // enumify the multiplier
     //--------------------------------------------------------------------------
 
-    int mult_ecode ;
-    GB_enumify_binop (&mult_ecode, mult_opcode, xcode, true) ;
+    int mult_code = (mult_opcode - GB_USER_binop_code) & 0x3F ;
 
     //--------------------------------------------------------------------------
     // enumify the monoid
     //--------------------------------------------------------------------------
 
-    int add_ecode, id_ecode, term_ecode ;
-    GB_enumify_monoid (&add_ecode, &id_ecode, &term_ecode, add_opcode, zcode) ;
+    ASSERT (add_opcode >= GB_USER_binop_code) ;
+    ASSERT (add_opcode <= GB_BXNOR_binop_code) ;
+    int add_code = (add_opcode - GB_USER_binop_code) & 0xF ;
 
     //--------------------------------------------------------------------------
     // enumify the types
@@ -178,18 +169,15 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     GB_enumify_sparsity (&bsparsity, B_sparsity) ;
 
     //--------------------------------------------------------------------------
-    // construct the semiring scode
+    // construct the semiring method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 63 (16 hex digits)
+    // total method_code bits: 50 (13 hex digits): 14 bits to spare.
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
-                // monoid (4 hex digits)
-//              GB_LSHIFT (0          , 63) |  // unused       1
-                GB_LSHIFT (add_ecode  , 58) |  // 0 to 22      5
-                GB_LSHIFT (id_ecode   , 53) |  // 0 to 31      5
-                GB_LSHIFT (term_ecode , 48) |  // 0 to 31      5
+                // monoid (4 bits, 1 hex digit)
+                GB_LSHIFT (add_code   , 48) |  // 0 to 13      4
 
                 // C in, A, B iso properties, flipxy (1 hex digit)
                 GB_LSHIFT (C_in_iso_cd, 47) |  // 0 or 1       1
@@ -198,12 +186,13 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
                 GB_LSHIFT (flipxy     , 44) |  // 0 to 1       1
 
                 // multiplier, z = f(x,y) or f(y,x) (5 hex digits)
-                GB_LSHIFT (mult_ecode , 36) |  // 0 to 254     8
+                // 2 bits unused here (42 and 43)
+                GB_LSHIFT (mult_code  , 36) |  // 0 to 52      6
                 GB_LSHIFT (zcode      , 32) |  // 0 to 14      4
                 GB_LSHIFT (xcode      , 28) |  // 0 to 14      4
                 GB_LSHIFT (ycode      , 24) |  // 0 to 14      4
 
-                // mask (one hex digit)
+                // mask (1 hex digit)
                 GB_LSHIFT (mask_ecode , 20) |  // 0 to 13      4
 
                 // types of C, A, and B (3 hex digits)

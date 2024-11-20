@@ -2,13 +2,13 @@
 // GB_assign_zombie3: delete entries in C(:,j) for C_replace_phase
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but 36 variants possible, one for each mask type (6: 1, 2,
-// 4, 8, 16 bytes and structural), for each matrix type (3: bitmap/full/sparse
+// JIT: possible: 48 variants, one for each mask type (6: 1, 2,
+// 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse
 // & hyper), mask comp (2).  No variants needed for C.
 
 // For GrB_Row_assign or GrB_Col_assign, C(I,j)<#M,repl>=any must delete all
@@ -19,14 +19,17 @@
 // GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
 
 // C must be sparse or hypersparse.
-// M can have any sparsity structure: hypersparse, sparse, bitmap, or full
+// M can have any sparsity structure: hypersparse, sparse, bitmap, or full,
+// and is always present.
 
 // C->iso is not affected.
 
 #include "assign/GB_assign.h"
 #include "assign/GB_assign_zombie.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_methods.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 GrB_Info GB_assign_zombie3
 (
@@ -51,6 +54,7 @@ GrB_Info GB_assign_zombie3
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;
+    ASSERT (M != NULL) ;
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;      // binary search on M
     ASSERT (!GB_PENDING (M)) ; 
@@ -64,7 +68,7 @@ GrB_Info GB_assign_zombie3
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     int64_t pC_start, pC_end ;
-    const int64_t cnvec = C->nvec ;
+    const int64_t Cnvec = C->nvec ;
 
     if (Ch != NULL)
     { 
@@ -73,7 +77,7 @@ GrB_Info GB_assign_zombie3
         const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
         const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
         const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
-        GB_hyper_hash_lookup (Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+        GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
             j, &pC_start, &pC_end) ;
     }
     else
@@ -96,9 +100,10 @@ GrB_Info GB_assign_zombie3
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mvlen = M->vlen ;
-    int64_t pM_start = 0 ; // Mp [0]
-    int64_t pM_end = GBP (Mp, 1, Mvlen) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+
+    int64_t pM_start = 0 ; // Mp [0]
+    int64_t pM_end = GBP_M (Mp, 1, Mvlen) ;
     const bool mjdense = (pM_end - pM_start) == Mvlen ;
 
     //--------------------------------------------------------------------------
@@ -155,7 +160,7 @@ GrB_Info GB_assign_zombie3
                     { 
                         // delete C(i,j) by marking it as a zombie
                         nzombies++ ;
-                        Ci [pC] = GB_FLIP (i) ;
+                        Ci [pC] = GB_ZOMBIE (i) ;
                     }
                 }
             }

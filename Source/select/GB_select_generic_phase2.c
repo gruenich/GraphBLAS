@@ -40,7 +40,8 @@ GrB_Info GB_select_generic_phase2
 
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
-    ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
+    ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
+    ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
     ASSERT (!(A->iso) || opcode == GB_USER_idxunop_code) ;
     ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
              opcode <= GB_VALUELE_idxunop_code)
@@ -95,7 +96,7 @@ GrB_Info GB_select_generic_phase2
             #define GB_TEST_VALUE_OF_ENTRY(keep,p)                          \
                 bool keep ;                                                 \
                 fkeep (&keep, x, flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "select/template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2_template.c"
 
         }
         else
@@ -113,7 +114,7 @@ GrB_Info GB_select_generic_phase2
                 GB_void z [GB_VLA(zsize)] ;                                 \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "select/template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2_template.c"
 
         }
 
@@ -143,7 +144,7 @@ GrB_Info GB_select_generic_phase2
 
             #undef  GB_TEST_VALUE_OF_ENTRY
             #define GB_TEST_VALUE_OF_ENTRY(keep,p) bool keep = (i >= 0)
-            #include "select/template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2_template.c"
 
         }
         else if (op->ztype == GrB_BOOL && op->xtype == A->type)
@@ -158,7 +159,7 @@ GrB_Info GB_select_generic_phase2
                 bool keep ;                                                 \
                 fkeep (&keep, Ax +(p)*asize,                                \
                     flipij ? j : i, flipij ? i : j, ythunk) ;
-            #include "select/template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2_template.c"
 
         }
         else
@@ -179,7 +180,7 @@ GrB_Info GB_select_generic_phase2
                 cast_A_to_X (x, Ax +(p)*asize, asize) ;                     \
                 fkeep (z, x, flipij ? j : i, flipij ? i : j, ythunk) ;      \
                 cast_Z_to_bool (&keep, z, zsize) ;
-            #include "select/template/GB_select_phase2.c"
+            #include "select/template/GB_select_phase2_template.c"
 
         }
     }

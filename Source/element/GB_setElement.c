@@ -297,6 +297,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             { 
                 // C(i,j) += scalar
                 GxB_binary_function faccum = accum->binop_function ;
+                ASSERT (faccum != NULL) ;
 
                 GB_cast_function cast_C_to_X, cast_Z_to_Y, cast_Z_to_C ;
                 cast_C_to_X = GB_cast_factory (accum->xtype->code, ctype->code);
@@ -349,8 +350,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // No typecasting can be done.  The new pending tuple must either be
         // the first pending tuple, or its type must match the prior pending
-        // tuples.  See assign/include/GB_assign_shared_definitions.h for a
-        // complete description.
+        // tuples.
 
         //----------------------------------------------------------------------
         // check for wait

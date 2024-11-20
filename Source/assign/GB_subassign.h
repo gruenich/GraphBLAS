@@ -2,7 +2,7 @@
 // GB_subassign.h: definitions for GB_subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
 #ifndef GB_SUBASSIGN_H
 #define GB_SUBASSIGN_H
 #include "ij/GB_ij.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 (
@@ -47,28 +47,6 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
     const GrB_Descriptor desc,      // descriptor for C(Rows,Cols) and M
     GB_Werk Werk
 ) ;
-
-#if 0
-int GB_subassigner_method           // return method to use in GB_subassigner
-(
-    // outputs
-    bool *C_iso_out,                // true if C is iso on output
-    GB_void *cout,                  // iso value of C on output
-    // inputs
-    const GrB_Matrix C,             // input/output matrix for results
-    const bool C_replace,           // C matrix descriptor
-    const GrB_Matrix M,             // optional mask for C(I,J), unused if NULL
-    const bool Mask_comp,           // mask descriptor
-    const bool Mask_struct,         // if true, use the only structure of M
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),A)
-    const GrB_Matrix A,             // input matrix (NULL for scalar expansion)
-    const int Ikind,
-    const int Jkind,
-    const bool scalar_expansion,    // if true, expand scalar to A
-    const void *scalar,
-    const GrB_Type scalar_type      // type of the scalar
-) ;
-#endif
 
 int GB_subassigner_method           // return method to use in GB_subassigner
 (
@@ -178,7 +156,7 @@ GrB_Info GB_assign_prep
     const GrB_Index nCols_in,       // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
-    const GB_Type_code scode,       // type code of scalar to expand
+    const GB_Type_code scalar_code, // type code of scalar to expand
     GB_Werk Werk
 ) ;
 

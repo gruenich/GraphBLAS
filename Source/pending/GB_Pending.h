@@ -11,10 +11,6 @@
 #define GB_PENDING_H
 #include "GB.h"
 
-// FUTURE: remove this once GxB_Matrix_pending is revised (see PR #172)
-// true if a matrix is hypersparse and needs its hyper_hash built
-#define GB_NEED_HYPER_HASH(A) GB_hyper_hash_need (A)
-
 //------------------------------------------------------------------------------
 // GB_Pending functions
 //------------------------------------------------------------------------------
@@ -40,44 +36,6 @@ void GB_Pending_free        // free a list of pending tuples
 (
     GB_Pending *PHandle
 ) ;
-
-//------------------------------------------------------------------------------
-// GB_Pending_ensure: make sure the list of pending tuples is large enough
-//------------------------------------------------------------------------------
-
-// create or reallocate a list of pending tuples
-
-static inline bool GB_Pending_ensure
-(
-    GB_Pending *PHandle,    // input/output
-    bool iso,               // if true, do not allocate Pending->x
-    GrB_Type type,          // type of pending tuples
-    GrB_BinaryOp op,        // operator for assembling pending tuples
-    bool is_matrix,         // true if Pending->j must be allocated
-    int64_t nnew,           // # of pending tuples to add
-    GB_Werk Werk
-)
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (PHandle != NULL) ;
-
-    //--------------------------------------------------------------------------
-    // ensure the list of pending tuples is large enough
-    //--------------------------------------------------------------------------
-
-    if ((*PHandle) == NULL)
-    {
-        return (GB_Pending_alloc (PHandle, iso, type, op, is_matrix, nnew)) ;
-    }
-    else
-    {
-        return (GB_Pending_realloc (PHandle, nnew, Werk)) ;
-    }
-}
 
 //------------------------------------------------------------------------------
 // GB_Pending_add:  add an entry A(i,j) to the list of pending tuples

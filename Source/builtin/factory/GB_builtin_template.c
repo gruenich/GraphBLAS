@@ -303,6 +303,24 @@ GXB_OP2 (POW    , "pow"   ) ;
 #endif
 
 //------------------------------------------------------------------------------
+// binary functions constructed from index_binary functions
+//------------------------------------------------------------------------------
+
+#if defined ( GB_SIGNED_INDEX )
+
+    // z = f (x,ix,jx, y,iy,jy, theta)
+    GXB_OP2_POS (FIRSTI    , "firsti"  ) ;
+    GXB_OP2_POS (FIRSTI1   , "firsti1" ) ;
+    GXB_OP2_POS (FIRSTJ    , "firstj"  ) ;
+    GXB_OP2_POS (FIRSTJ1   , "firstj1" ) ;
+    GXB_OP2_POS (SECONDI   , "secondi" ) ;
+    GXB_OP2_POS (SECONDI1  , "secondi1") ;
+    GXB_OP2_POS (SECONDJ   , "secondj" ) ;
+    GXB_OP2_POS (SECONDJ1  , "secondj1") ;
+
+#endif
+
+//------------------------------------------------------------------------------
 // clear macros for next use of this file
 //------------------------------------------------------------------------------
 

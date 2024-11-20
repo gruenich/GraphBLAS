@@ -15,7 +15,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
     const GrB_IndexUnaryOp op,
     GrB_Type atype
@@ -23,32 +23,32 @@ void GB_macrofy_select          // construct all macros for GrB_select
 {
 
     //--------------------------------------------------------------------------
-    // extract the select scode
+    // extract the select method_code
     //--------------------------------------------------------------------------
 
     // iso of A and C (2 bits)
-    bool C_iso      = GB_RSHIFT (scode, 37, 1) ;
-    bool A_iso      = GB_RSHIFT (scode, 36, 1) ;
+    bool C_iso      = GB_RSHIFT (method_code, 37, 1) ;
+    bool A_iso      = GB_RSHIFT (method_code, 36, 1) ;
 
     // inplace, i/j dependency and flipij (4 bits)
-//  int inplace     = GB_RSHIFT (scode, 35, 1) ;
-    int i_dep       = GB_RSHIFT (scode, 34, 1) ;
-    int j_dep       = GB_RSHIFT (scode, 33, 1) ;
-    bool flipij     = GB_RSHIFT (scode, 32, 1) ;
+//  int inplace     = GB_RSHIFT (method_code, 35, 1) ;
+    int i_dep       = GB_RSHIFT (method_code, 34, 1) ;
+    int j_dep       = GB_RSHIFT (method_code, 33, 1) ;
+    bool flipij     = GB_RSHIFT (method_code, 32, 1) ;
 
     // op, z = f(x,i,j,y) (5 hex digits)
-    int idxop_ecode = GB_RSHIFT (scode, 24, 8) ;
-    int zcode       = GB_RSHIFT (scode, 20, 4) ;
-    int xcode       = GB_RSHIFT (scode, 16, 4) ;
-    int ycode       = GB_RSHIFT (scode, 12, 4) ;
+    int idxop_ecode = GB_RSHIFT (method_code, 24, 8) ;
+    int zcode       = GB_RSHIFT (method_code, 20, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 16, 4) ;
+    int ycode       = GB_RSHIFT (method_code, 12, 4) ;
 
     // types of C and A (2 hex digits)
-//  int ccode       = GB_RSHIFT (scode,  8, 4) ;
-    int acode       = GB_RSHIFT (scode,  4, 4) ;
+//  int ccode       = GB_RSHIFT (method_code,  8, 4) ;
+    int acode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-//  int csparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  0, 2) ;
+//  int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -205,7 +205,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     else
     { 
         // C and A are both non-iso
-        // this would need to typcase if A and C had different types
+        // this would need to typecast if A and C had different types
         ASSERT (!A_iso) ;
         fprintf (fp, " Cx [pC] = Ax [pA]\n") ;
     }

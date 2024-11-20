@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #include "select/GB_select.h"
 #include "slice/GB_ek_slice.h"
 #ifndef GBCOMPACT
@@ -224,9 +222,17 @@ GrB_Info GB_select_sparse
         if (info == GrB_NO_VALUE)
         { 
             // generic entry selector, phase1
+            GBURBLE ("(generic select) ") ;
             info = GB_select_generic_phase1 (Cp, Wfirst, Wlast,
                 A, flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
+    }
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory, or other error
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //==========================================================================
@@ -345,8 +351,9 @@ GrB_Info GB_select_sparse
     }
 
     if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
+    {
+        // sparse select phase 2 cannot fail but this is here in case it does
+        // in the future; this block of code thus cannot be tested.
         GB_FREE_ALL ;
         return (info) ;
     }
@@ -404,7 +411,7 @@ GrB_Info GB_select_sparse
 
         // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It is set to zero in GB_wait.
-        ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_FLIP (GB0)) ;
+        ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_ZOMBIE (GB0)) ;
 
     }
     else

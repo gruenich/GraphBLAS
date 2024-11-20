@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_assert_kernels.h: assertions
+// GB_assert_kernels.h: assertions for JIT kernels
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// These methods are for JIT kernels.
+// For outside of JIT kernels, see ok/GB_assert.h.
 
 //------------------------------------------------------------------------------
 // debugging definitions
@@ -71,6 +74,7 @@
 #undef  ASSERT_TYPE_OK_OR_NULL
 #undef  ASSERT_BINARYOP_OK
 #undef  ASSERT_INDEXUNARYOP_OK
+#undef  ASSERT_INDEXBINARYOP_OK
 #undef  ASSERT_BINARYOP_OK_OR_NULL
 #undef  ASSERT_UNARYOP_OK
 #undef  ASSERT_UNARYOP_OK_OR_NULL
@@ -93,6 +97,7 @@
 #define ASSERT_TYPE_OK_OR_NULL(t,name,pr)
 #define ASSERT_BINARYOP_OK(op,name,pr)
 #define ASSERT_INDEXUNARYOP_OK(op,name,pr)
+#define ASSERT_INDEXBINARYOP_OK(op,name,pr)
 #define ASSERT_BINARYOP_OK_OR_NULL(op,name,pr)
 #define ASSERT_UNARYOP_OK(op,name,pr)
 #define ASSERT_UNARYOP_OK_OR_NULL(op,name,pr)

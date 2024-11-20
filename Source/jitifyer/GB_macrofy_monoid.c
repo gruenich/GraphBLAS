@@ -14,9 +14,6 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 (
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
-    int add_ecode,      // binary op as an enum
-    int id_ecode,       // identity value as an enum
-    int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
     bool disable_terminal_condition,    // if true, a builtin monoid is assumed
@@ -29,18 +26,35 @@ void GB_macrofy_monoid  // construct the macros for a monoid
 )
 {
 
+    //--------------------------------------------------------------------------
+    // get the monoid
+    //--------------------------------------------------------------------------
+
     GrB_BinaryOp op = monoid->op ;
     const char *ztype_name = C_iso ? "void" : op->ztype->name ;
     int zcode = C_iso ? 0 : op->ztype->code ;
     size_t zsize = C_iso ? 0 : op->ztype->size ;
     GB_Opcode opcode = C_iso ? 0 : op->opcode ;
 
+    if (C_iso)
+    { 
+        opcode = GB_ANY_binop_code ;
+        zcode = 0 ;
+    }
+    else if (zcode == GB_BOOL_code)
+    { 
+        // rename the monoid
+        opcode = GB_boolean_rename (opcode) ;
+    }
+
     //--------------------------------------------------------------------------
     // create macros for the additive operator
     //--------------------------------------------------------------------------
 
-    GB_macrofy_binop (fp, "GB_ADD", false, true, false, add_ecode, C_iso,
-        op, NULL, u_expression, g_expression) ;
+    int add_ecode ;
+    GB_enumify_binop (&add_ecode, opcode, zcode, false, false) ;
+    GB_macrofy_binop (fp, "GB_ADD", false, false, true, false, false,
+        add_ecode, C_iso, op, NULL, u_expression, g_expression) ;
 
     //--------------------------------------------------------------------------
     // create macros for the identity value
@@ -54,41 +68,48 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_DECLARE_IDENTITY(z)\n") ;
         fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z)\n") ;
     }
-    else if (id_ecode <= 28)
+    else
     {
-        // built-in monoid: a simple assignment
-        const char *id_val = GB_macrofy_id (id_ecode, zsize, &has_byte, &byte) ;
-        #define SLEN (256 + GxB_MAX_NAME_LEN)
-        char id [SLEN] ;
-        if (zcode == GB_FC32_code)
-        { 
-            snprintf (id, SLEN, "%s z = GxB_CMPLXF (%s,0)",
-                ztype_name, id_val) ;
-        }
-        else if (zcode == GB_FC64_code)
-        { 
-            snprintf (id, SLEN, "%s z = GxB_CMPLX (%s,0)",
-                ztype_name, id_val) ;
+        int id_ecode ;
+        GB_enumify_identity (&id_ecode, opcode, zcode) ;
+
+        if (id_ecode <= 28)
+        {
+            // built-in monoid: a simple assignment
+            const char *id_val = GB_macrofy_id (id_ecode, zsize,
+                &has_byte, &byte) ;
+            #define SLEN (256 + GxB_MAX_NAME_LEN)
+            char id [SLEN] ;
+            if (zcode == GB_FC32_code)
+            { 
+                snprintf (id, SLEN, "%s z = GxB_CMPLXF (%s,0)",
+                    ztype_name, id_val) ;
+            }
+            else if (zcode == GB_FC64_code)
+            { 
+                snprintf (id, SLEN, "%s z = GxB_CMPLX (%s,0)",
+                    ztype_name, id_val) ;
+            }
+            else
+            { 
+                snprintf (id, SLEN, "%s z = %s", ztype_name, id_val) ;
+            }
+            fprintf (fp, "#define GB_DECLARE_IDENTITY(z) %s\n", id) ;
+            fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) const %s\n", id);
+            if (has_byte)
+            { 
+                fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
+                fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) byte) ;
+            }
         }
         else
         { 
-            snprintf (id, SLEN, "%s z = %s", ztype_name, id_val) ;
+            // user-defined monoid:  all we have are the bytes
+            GB_macrofy_bytes (fp, "IDENTITY", "z",
+                ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
+            fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) "
+                "GB_DECLARE_IDENTITY(z)\n") ;
         }
-        fprintf (fp, "#define GB_DECLARE_IDENTITY(z) %s\n", id) ;
-        fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) const %s\n", id) ;
-        if (has_byte)
-        { 
-            fprintf (fp, "#define GB_HAS_IDENTITY_BYTE 1\n") ;
-            fprintf (fp, "#define GB_IDENTITY_BYTE 0x%02x\n", (int) byte) ;
-        }
-    }
-    else
-    { 
-        // user-defined monoid:  all we have are the bytes
-        GB_macrofy_bytes (fp, "IDENTITY", "z",
-            ztype_name, (uint8_t *) (monoid->identity), zsize, true) ;
-        fprintf (fp, "#define GB_DECLARE_IDENTITY_CONST(z) "
-            "GB_DECLARE_IDENTITY(z)\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -109,6 +130,16 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     // const.  It is empty if the monoid is not terminal.
 
     bool monoid_is_terminal = false ;
+
+    int term_ecode ;
+    if (C_iso)
+    { 
+        term_ecode = 18 ;
+    }
+    else
+    { 
+        GB_enumify_terminal (&term_ecode, opcode, zcode) ;
+    }
 
     bool is_any_monoid = (term_ecode == 18) ;
     if (is_any_monoid || C_iso)
@@ -377,13 +408,13 @@ void GB_macrofy_monoid  // construct the macros for a monoid
         fprintf (fp, "#define GB_Z_HAS_ATOMIC_UPDATE 1\n") ;
         if (omp_atomic_version == 4)
         { 
-            // OpenMP 4.0 has an omp pragram but not OpenMP 2.0. 
+            // OpenMP 4.0 has an omp pragram but not OpenMP 2.0.
             fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE "
                 "(!GB_COMPILER_MSC)\n") ;
         }
         else if (omp_atomic_version == 2)
         { 
-            // this update has an omp pragm 
+            // this update has an omp pragma
             fprintf (fp, "#define GB_Z_HAS_OMP_ATOMIC_UPDATE 1\n") ;
         }
     }
@@ -395,7 +426,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
     GB_enumify_cuda_atomic (&a, &user_monoid_atomically, &cuda_type,
-        monoid, add_ecode, zsize, zcode) ;
+        monoid, opcode, zsize, zcode) ;
 
     if (monoid == NULL || zcode == 0)
     { 

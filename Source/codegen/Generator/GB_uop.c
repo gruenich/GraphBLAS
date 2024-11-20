@@ -7,8 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+GB_type_enabled
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_uop__include.h"
 
 // unary operator: z = f(x)
@@ -30,14 +32,14 @@ GB_ctype
     /* aij = Ax [pA] */             \
     GB_DECLAREA (aij) ;             \
     GB_GETA (aij, Ax, pA, false) ;  \
-    /* Cx [pC] = unaryop (aij) */      \
+    /* Cx [pC] = unaryop (aij) */   \
     GB_UNARYOP (Cx [pC], aij) ;     \
 }
 
 // disable this operator and use the generic case if these conditions hold
 GB_disable
 
-#include "apply/include/GB_apply_shared_definitions.h"
+#include "omp/include/GB_kernel_shared_definitions.h"
 
 m4_divert(if_uop_apply_enabled)
 //------------------------------------------------------------------------------
@@ -83,4 +85,6 @@ GrB_Info GB (_uop_tran)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

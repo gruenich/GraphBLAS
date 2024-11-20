@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but some varants possible (matrix sparsity formats)
+// JIT: possible: some varants (matrix sparsity formats)
 
 // If the mask is present but must be discarded, this function returns
 // GrB_NO_VALUE, to indicate that the analysis was terminated early.

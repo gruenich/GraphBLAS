@@ -17,7 +17,6 @@
 #if defined ( GRAPHBLAS_HAS_CUDA )
 #include "rmm_wrap.h"
 #endif
-#include "matrix/GB_static_header.h"
 #include "positional/GB_positional.h"
 #include "math/GB_bitwise.h"
 #include "print/GB_check.h"
@@ -36,7 +35,6 @@
 #include "slice/GB_task_methods.h"
 #include "transplant/GB_transplant.h"
 #include "type/GB_type.h"
-#include "slice/GB_slice.h"
 #include "math/GB_uint64_multiply.h"
 #include "math/GB_int64_multiply.h"
 #include "math/GB_size_t_multiply.h"
@@ -45,7 +43,7 @@
 #include "element/GB_Element.h"
 #include "op/GB_op.h"
 #include "hyper/GB_hyper.h"
-#include "ok/GB_ok.h"
+#include "ok/GB_check_inputs.h"
 #include "cast/GB_cast.h"
 #include "wait/GB_wait.h"
 #include "convert/GB_convert.h"

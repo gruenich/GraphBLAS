@@ -35,7 +35,8 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_SPLIT_SPARSE, GxB_SPARSE, true, C->type, op, false, A) ;
+        GB_JIT_KERNEL_SPLIT_SPARSE, GxB_SPARSE, true, C->type, op, false,
+        GB_sparsity (A), true, A->type, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

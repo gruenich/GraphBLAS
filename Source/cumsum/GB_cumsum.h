@@ -10,6 +10,8 @@
 #ifndef GB_CUMSUM_H
 #define GB_CUMSUM_H
 
+#include "include/GB_cumsum1.h"
+
 void GB_cumsum                      // cumulative sum of an array
 (
     int64_t *restrict count,     // size n+1, input/output

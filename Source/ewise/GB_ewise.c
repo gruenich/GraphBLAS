@@ -20,8 +20,8 @@
 }
 
 #include "ewise/GB_ewise.h"
-#include "ewise/GB_add.h"
-#include "ewise/GB_emult.h"
+#include "add/GB_add.h"
+#include "emult/GB_emult.h"
 #include "transpose/GB_transpose.h"
 #include "mask/GB_accum_mask.h"
 #include "binaryop/GB_binop.h"
@@ -162,14 +162,19 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // handle CSR and CSC formats
     //--------------------------------------------------------------------------
 
+    // The op can be a built-in or user-defined positional operator.
+
     GB_Opcode opcode = op->opcode ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_builtin_positional =
+        GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
+    bool op_is_index_binop = GB_IS_INDEXBINARYOP_CODE (opcode) ;
+    bool op_is_positional = op_is_builtin_positional || op_is_index_binop ;
 
     // CSC/CSR format of T is same as C.  Conform A and B to the format of C.
     bool T_is_csc = C->is_csc ;
     if (T_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose.  For example, if C is CSC and A is
+        // Negate A_transpose.  For example, if C is CSC and A is
         // CSR, and A_transpose is true, then C=A'+B is being computed.  But
         // this is the same as C=A+B where A is treated as if it is CSC.
         A_transpose = !A_transpose ;
@@ -177,7 +182,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     if (T_is_csc != B->is_csc)
     { 
-        // Flip the sense of B_transpose.
+        // Negate B_transpose.
         B_transpose = !B_transpose ;
     }
 
@@ -191,13 +196,20 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         T_is_csc = !T_is_csc ;
     }
 
-    if (!T_is_csc)
+    bool flipij = false ;
+    if (!T_is_csc && op_is_positional)
     {
-        if (op_is_positional)
+        if (op_is_builtin_positional)
         { 
-            // positional ops must be flipped, with i and j swapped
+            // positional ops must be flipped, with i and j swapped.
+            // This can be done for builtin ops (FIRSTI, SECONDJ, etc).
             op = GB_positional_binop_ijflip (op) ;
             opcode = op->opcode ;
+        }
+        else // if (op_is_index_binop)
+        {
+            // user-defined index binary ops must have their i,j flipped
+            flipij = true ;
         }
     }
 
@@ -375,8 +387,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // could be faster to exploit the mask duing GB_add.
 
         GB_OK (GB_add (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
-            &mask_applied, A1, B1, is_eWiseUnion, alpha, beta, op, false,
-            Werk)) ;
+            &mask_applied, A1, B1, is_eWiseUnion, alpha, beta, op, flipij,
+            false, Werk)) ;
 
     }
     else
@@ -394,7 +406,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // pruned by GB_hypermatrix_prune, and thus no longer shallow.
 
         GB_OK (GB_emult (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
-            &mask_applied, A1, B1, op, Werk)) ;
+            &mask_applied, A1, B1, op, flipij, Werk)) ;
 
         //----------------------------------------------------------------------
         // transplant shallow content from AT, BT, or MT

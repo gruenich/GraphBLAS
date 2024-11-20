@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 #define GB_FREE_ALL                 \
 {                                   \
     GB_phybix_free (C) ;            \
@@ -122,7 +120,7 @@ GrB_Info GB_bitmap_expand_to_hyper
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = Ah [pC % cvlen] ;
-                Ci [pC] = (Cb [pC]) ? i : GB_FLIP (i) ;
+                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;
             }
         }
         else
@@ -133,7 +131,7 @@ GrB_Info GB_bitmap_expand_to_hyper
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = pC % cvlen ;
-                Ci [pC] = (Cb [pC]) ? i : GB_FLIP (i) ;
+                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;
             }
         }
     }

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
 // Does the work for GrB_*_reduce_TYPE, both matrix and vector.
 
@@ -28,6 +26,7 @@
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_red__include.h"
 #endif
 #include "monoid/include/GB_monoid_shared_definitions.h"
@@ -269,6 +268,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
             #include "generic/GB_generic.h"
 
             GxB_binary_function freduce = monoid->op->binop_function ;
+            ASSERT (freduce != NULL) ;
 
             // ztype z = identity
             #define GB_DECLARE_IDENTITY(z)                          \
@@ -413,6 +413,7 @@ GrB_Info GB_reduce_to_scalar    // z = reduce_to_scalar (A)
     else
     { 
         GxB_binary_function faccum = accum->binop_function ;
+        ASSERT (faccum != NULL) ;
 
         GB_cast_function cast_C_to_xaccum, cast_Z_to_yaccum, cast_zaccum_to_C ;
         cast_C_to_xaccum = GB_cast_factory (accum->xtype->code, ctype->code) ;

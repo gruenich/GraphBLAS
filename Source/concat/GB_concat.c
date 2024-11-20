@@ -197,8 +197,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     // replace Tile_rows and Tile_cols with their cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Tile_rows, m, NULL, 1, Werk) ;
-    GB_cumsum (Tile_cols, n, NULL, 1, Werk) ;
+    GB_cumsum1 (Tile_rows, m) ;
+    GB_cumsum1 (Tile_cols, n) ;
     int64_t cnrows = Tile_rows [m] ;
     int64_t cncols = Tile_cols [n] ;
     if (cnrows != GB_NROWS (C) || cncols != GB_NCOLS (C))
@@ -226,7 +226,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
         GB_OK (GB_concat_full (C, C_iso, cscalar,
             Tiles, m, n, Tile_rows, Tile_cols, Werk)) ;
     }
-    else if (GB_convert_s2b_test (C->bitmap_switch, cnz, cnrows, cncols))
+    else if (GB_convert_sparse_to_bitmap_test (C->bitmap_switch,
+        cnz, cnrows, cncols))
     { 
         // construct C as bitmap
         GBURBLE ("(%sbitmap concat) ", C_iso ? "iso " : "") ;

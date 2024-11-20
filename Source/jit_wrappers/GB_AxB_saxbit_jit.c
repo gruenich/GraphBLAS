@@ -37,7 +37,7 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
     GB_void *restrict Wcx,
     int8_t *restrict Wf
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // encodify the problem
@@ -72,6 +72,6 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
     return (GB_jit_kernel (C, M, A, B, ntasks, nthreads,
         nfine_tasks_per_vector, use_coarse_tasks, use_atomics,
         M_ek_slicing, M_nthreads, M_ntasks, A_slice, H_slice, Wcx, Wf,
-        nthreads_max, chunk, &GB_callback)) ;
+        nthreads_max, chunk, &GB_callback, semiring->multiply->theta)) ;
 }
 

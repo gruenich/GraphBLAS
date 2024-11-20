@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_BOOL)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_red__include.h"
 
 // reduction operator and type:
@@ -17,12 +24,12 @@
 #define GB_GETA_AND_UPDATE(z,Ax,p) z = (z && Ax [p])
 
 // A matrix (no typecasting to Z type here)
-#define GB_A_TYPE bool
+#define GB_A_TYPE  bool
 #define GB_DECLAREA(aij) bool aij
 #define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]
 
 // monoid properties:
-#define GB_Z_TYPE bool
+#define GB_Z_TYPE  bool
 #define GB_DECLARE_IDENTITY(z) bool z = true
 #define GB_DECLARE_IDENTITY_CONST(z) const bool z = true
 
@@ -74,4 +81,6 @@ GrB_Info GB (_red__land_bool)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

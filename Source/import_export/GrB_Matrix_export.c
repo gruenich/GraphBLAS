@@ -196,7 +196,7 @@ static GrB_Info GB_export_worker  // export a matrix
             { 
                 // expand the iso A->x into the non-iso array Ax
                 ASSERT (nvals > 0) ;
-                GB_expand_iso (Ax, nvals, A->x, A->type->size) ;
+                GB_OK (GB_iso_expand (Ax, nvals, A->x, A->type)) ;
             }
             else
             { 
@@ -211,8 +211,7 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-            GB_OK (GB_extractTuples (Ap, Ai, Ax, &nvals, A->type->code, A,
-                Werk)) ;
+            GB_OK (GB_extractTuples (Ap, Ai, Ax, &nvals, A->type, A, Werk)) ;
             (*Ap_len) = nvals ;
             (*Ai_len) = nvals ;
             (*Ax_len) = nvals ;

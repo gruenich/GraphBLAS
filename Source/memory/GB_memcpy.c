@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // Note that this function uses its own hard-coded chunk size.
 
 #include "GB.h"
@@ -24,7 +22,7 @@ void GB_memcpy                  // parallel memcpy
 )
 {
 
-    // FIXME for CUDA: do:
+    // Fixme for CUDA: do:
     //  cpu <- cpu (already done below)
     //  cpu <- gpu (effectively done below but could be better)
     //  gpu <- cpu (need this)

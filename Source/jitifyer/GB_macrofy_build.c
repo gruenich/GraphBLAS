@@ -15,7 +15,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t build_code,        // unique encoding of the entire problem
+    uint64_t method_code,       // unique encoding of the entire problem
     GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
     GrB_Type stype              // type of Sx
@@ -23,18 +23,18 @@ void GB_macrofy_build           // construct all macros for GB_build
 {
 
     //--------------------------------------------------------------------------
-    // extract the build_code
+    // extract the method_code
     //--------------------------------------------------------------------------
 
     // dup, z = f(x,y) (5 hex digits)
-    int dup_ecode = GB_RSHIFT (build_code, 20, 8) ;
-//  int zcode     = GB_RSHIFT (build_code, 16, 4) ;
-//  int xcode     = GB_RSHIFT (build_code, 12, 4) ;
-//  int ycode     = GB_RSHIFT (build_code,  8, 4) ;
+//  int dup_code  = GB_RSHIFT (method_code, 20, 6) ;
+//  int zcode     = GB_RSHIFT (method_code, 16, 4) ;
+    int xcode     = GB_RSHIFT (method_code, 12, 4) ;
+//  int ycode     = GB_RSHIFT (method_code,  8, 4) ;
 
     // types of S and T (2 hex digits)
-//  int tcode     = GB_RSHIFT (build_code, 4, 4) ;
-//  int scode     = GB_RSHIFT (build_code, 0, 4) ;
+//  int tcode     = GB_RSHIFT (method_code, 4, 4) ;
+//  int scode     = GB_RSHIFT (method_code, 0, 4) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -50,6 +50,13 @@ void GB_macrofy_build           // construct all macros for GB_build
     const char *ztype_name = ztype->name ;
     const char *ttype_name = ttype->name ;
     const char *stype_name = stype->name ;
+    GB_Opcode dup_opcode = dup->opcode ;
+    if (xcode == GB_BOOL_code)  // && (ycode == GB_BOOL_code)
+    { 
+        // rename the operator
+        dup_opcode = GB_boolean_rename (dup_opcode) ;
+    }
+
     if (dup->hash == 0)
     { 
         // builtin operator
@@ -60,7 +67,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         // user-defined operator, or created by GB_build
         fprintf (fp,
             "// op: %s%s, ztype: %s, xtype: %s, ytype: %s\n\n",
-            (dup->opcode == GB_SECOND_binop_code) ? "2nd_" : "",
+            (dup_opcode == GB_SECOND_binop_code) ? "2nd_" : "",
             dup->name, ztype_name, xtype_name, ytype_name) ;
     }
 
@@ -75,17 +82,20 @@ void GB_macrofy_build           // construct all macros for GB_build
     GB_macrofy_type (fp, "X", "_", xtype_name) ;
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
 
-    fprintf (fp, "\n// S and T data types:\n") ;
-    GB_macrofy_type (fp, "T", "_", ttype_name) ;
-    GB_macrofy_type (fp, "S", "_", stype_name) ;
+    fprintf (fp, "\n// Sx and Tx data types:\n") ;
+    GB_macrofy_type (fp, "Tx", "_", ttype_name) ;
+    GB_macrofy_type (fp, "Sx", "_", stype_name) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the binary operator
     //--------------------------------------------------------------------------
 
+    int dup_ecode ;
+    GB_enumify_binop (&dup_ecode, dup_opcode, xcode, false, false) ;
+
     fprintf (fp, "\n// binary dup operator:\n") ;
-    GB_macrofy_binop (fp, "GB_DUP", false, true, false, dup_ecode, false, dup,
-        NULL, NULL, NULL) ;
+    GB_macrofy_binop (fp, "GB_DUP", false, false, true, false, false,
+        dup_ecode, false, dup, NULL, NULL, NULL) ;
 
     fprintf (fp, "\n// build copy/dup methods:\n") ;
 
@@ -107,7 +117,7 @@ void GB_macrofy_build           // construct all macros for GB_build
         //----------------------------------------------------------------------
 
         fprintf (fp, "#define GB_BLD_DUP(Tx,p,Sx,k)") ;
-        if (dup->opcode != GB_FIRST_binop_code)
+        if (dup_opcode != GB_FIRST_binop_code)
         { 
             fprintf (fp, " GB_UPDATE (Tx [p], Sx [k])") ;
         }

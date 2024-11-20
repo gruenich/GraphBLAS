@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.
-
 // Extract the value of single scalar, x = S, typecasting from the
 // type of S to the type of x, as needed.
 
@@ -48,8 +46,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     ASSERT (!GB_ANY_PENDING_WORK (S)) ;
 
     // GB_XCODE and S must be compatible
-    GB_Type_code scode = S->type->code ;
-    if (!GB_code_compatible (GB_XCODE, scode))
+    GB_Type_code scalar_code = S->type->code ;
+    if (!GB_code_compatible (GB_XCODE, scalar_code))
     { 
         return (GrB_DOMAIN_MISMATCH) ;
     }
@@ -67,7 +65,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     //--------------------------------------------------------------------------
 
     #if !defined ( GB_UDT_EXTRACT )
-    if (GB_XCODE == scode)
+    if (GB_XCODE == scalar_code)
     { 
         // copy S into x, no typecasting, for built-in types only.
         GB_XTYPE *restrict Sx = ((GB_XTYPE *) (S->x)) ;
@@ -77,7 +75,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     #endif
     { 
         // typecast S into x
-        GB_cast_scalar (x, GB_XCODE, S->x, scode, S->type->size) ;
+        GB_cast_scalar (x, GB_XCODE, S->x, scalar_code, S->type->size) ;
     }
     #pragma omp flush
     return (GrB_SUCCESS) ;

@@ -2,7 +2,7 @@
 // GB_opaque.h: definitions of opaque objects
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ typedef enum
          (opcode) <= GB_USER_unop_code)
 
     // true if opcode is for a GrB_UnaryOp positional operator
-    #define GB_IS_UNARYOP_CODE_POSITIONAL(opcode) \
+    #define GB_IS_BUILTIN_UNOP_CODE_POSITIONAL(opcode) \
         ((opcode) >= GB_POSITIONI_unop_code && \
          (opcode) <= GB_POSITIONJ1_unop_code)
 
@@ -203,120 +203,116 @@ typedef enum
     //==========================================================================
 
     //--------------------------------------------------------------------------
-    // binary operators z=f(x,y) that return the same type as their inputs
+    // binary ops for 14 valid monoids, including user-defined (72 to 85):
     //--------------------------------------------------------------------------
 
-    GB_FIRST_binop_code     = 72,   // z = x
-    GB_SECOND_binop_code    = 73,   // z = y
-    GB_ANY_binop_code       = 74,   // z = x or y, selected arbitrarily
-    GB_PAIR_binop_code      = 75,   // z = 1
-    GB_MIN_binop_code       = 76,   // z = min(x,y)
-    GB_MAX_binop_code       = 77,   // z = max(x,y)
-    GB_PLUS_binop_code      = 78,   // z = x + y
-    GB_MINUS_binop_code     = 79,   // z = x - y
-    GB_RMINUS_binop_code    = 80,   // z = y - x
-    GB_TIMES_binop_code     = 81,   // z = x * y
-    GB_DIV_binop_code       = 82,   // z = x / y
-    GB_RDIV_binop_code      = 83,   // z = y / x
-    GB_POW_binop_code       = 84,   // z = pow (x,y)
-
-    GB_ISEQ_binop_code      = 85,   // z = (x == y)
-    GB_ISNE_binop_code      = 86,   // z = (x != y)
-    GB_ISGT_binop_code      = 87,   // z = (x >  y)
-    GB_ISLT_binop_code      = 88,   // z = (x <  y)
-    GB_ISGE_binop_code      = 89,   // z = (x >= y)
-    GB_ISLE_binop_code      = 90,   // z = (x <= y)
-
-    GB_LOR_binop_code       = 91,   // z = (x != 0) || (y != 0)
-    GB_LAND_binop_code      = 92,   // z = (x != 0) && (y != 0)
-    GB_LXOR_binop_code      = 93,   // z = (x != 0) != (y != 0)
-
-    GB_BOR_binop_code       = 94,   // z = (x | y), bitwise or
-    GB_BAND_binop_code      = 95,   // z = (x & y), bitwise and
-    GB_BXOR_binop_code      = 96,   // z = (x ^ y), bitwise xor
-    GB_BXNOR_binop_code     = 97,   // z = ~(x ^ y), bitwise xnor
-    GB_BGET_binop_code      = 98,   // z = bitget (x,y)
-    GB_BSET_binop_code      = 99,   // z = bitset (x,y)
-    GB_BCLR_binop_code      =100,   // z = bitclr (x,y)
-    GB_BSHIFT_binop_code    =101,   // z = bitshift (x,y)
+    GB_USER_binop_code      = 72,   // user defined binary op
+    GB_ANY_binop_code       = 73,   // z = x or y, selected arbitrarily
+    GB_MIN_binop_code       = 74,   // z = min(x,y)
+    GB_MAX_binop_code       = 75,   // z = max(x,y)
+    GB_PLUS_binop_code      = 76,   // z = x + y
+    GB_TIMES_binop_code     = 77,   // z = x * y
+    GB_LOR_binop_code       = 78,   // z = (x != 0) || (y != 0)
+    GB_LAND_binop_code      = 79,   // z = (x != 0) && (y != 0)
+    GB_LXOR_binop_code      = 80,   // z = (x != 0) != (y != 0)
+    GB_EQ_binop_code        = 81,   // z = (x == y), is LXNOR for bool
+    GB_BOR_binop_code       = 82,   // z = (x | y), bitwise or
+    GB_BAND_binop_code      = 83,   // z = (x & y), bitwise and
+    GB_BXOR_binop_code      = 84,   // z = (x ^ y), bitwise xor
+    GB_BXNOR_binop_code     = 85,   // z = ~(x ^ y), bitwise xnor
 
     //--------------------------------------------------------------------------
-    // binary operators z=f(x,y) that return bool (TxT -> bool)
+    // other binary operators 
     //--------------------------------------------------------------------------
 
-    GB_EQ_binop_code        = 102,  // z = (x == y), is LXNOR for bool
-    GB_NE_binop_code        = 103,  // z = (x != y)
-    GB_GT_binop_code        = 104,  // z = (x >  y)
-    GB_LT_binop_code        = 105,  // z = (x <  y)
-    GB_GE_binop_code        = 106,  // z = (x >= y)
-    GB_LE_binop_code        = 107,  // z = (x <= y)
+    GB_NE_binop_code        = 86,   // z = (x != y)
+    GB_FIRST_binop_code     = 87,   // z = x
+    GB_SECOND_binop_code    = 88,   // z = y
+    GB_PAIR_binop_code      = 89,   // z = 1
+    GB_MINUS_binop_code     = 90,   // z = x - y
+    GB_RMINUS_binop_code    = 91,   // z = y - x
+    GB_DIV_binop_code       = 92,   // z = x / y
+    GB_RDIV_binop_code      = 93,   // z = y / x
+    GB_POW_binop_code       = 94,   // z = pow (x,y)
+    GB_ISEQ_binop_code      = 95,   // z = (x == y)
+    GB_ISNE_binop_code      = 96,   // z = (x != y)
+    GB_ISGT_binop_code      = 97,   // z = (x >  y)
+    GB_ISLT_binop_code      = 98,   // z = (x <  y)
+    GB_ISGE_binop_code      = 99,   // z = (x >= y)
+    GB_ISLE_binop_code      = 100,  // z = (x <= y)
+    GB_BGET_binop_code      = 101,  // z = bitget (x,y)
+    GB_BSET_binop_code      = 102,  // z = bitset (x,y)
+    GB_BCLR_binop_code      = 103,  // z = bitclr (x,y)
+    GB_BSHIFT_binop_code    = 104,  // z = bitshift (x,y)
+    GB_GT_binop_code        = 105,  // z = (x >  y)
+    GB_LT_binop_code        = 106,  // z = (x <  y)
+    GB_GE_binop_code        = 107,  // z = (x >= y)
+    GB_LE_binop_code        = 108,  // z = (x <= y)
+    GB_ATAN2_binop_code     = 109,  // z = atan2 (x,y)
+    GB_HYPOT_binop_code     = 110,  // z = hypot (x,y)
+    GB_FMOD_binop_code      = 111,  // z = fmod (x,y)
+    GB_REMAINDER_binop_code = 112,  // z = remainder (x,y)
+    GB_COPYSIGN_binop_code  = 113,  // z = copysign (x,y)
+    GB_LDEXP_binop_code     = 114,  // z = ldexp (x,y)
+    GB_CMPLX_binop_code     = 115,  // z = cmplx (x,y)
 
     //--------------------------------------------------------------------------
-    // binary operators for real floating-point types (TxT -> T)
+    // built-in positional binary operators: z is int64, x and y are ignored
     //--------------------------------------------------------------------------
 
-    GB_ATAN2_binop_code     = 108,  // z = atan2 (x,y)
-    GB_HYPOT_binop_code     = 109,  // z = hypot (x,y)
-    GB_FMOD_binop_code      = 110,  // z = fmod (x,y)
-    GB_REMAINDER_binop_code = 111,  // z = remainder (x,y)
-    GB_COPYSIGN_binop_code  = 112,  // z = copysign (x,y)
-    GB_LDEXP_binop_code     = 113,  // z = ldexp (x,y)
-
-    //--------------------------------------------------------------------------
-    // binary operator z=f(x,y) where z is complex, x,y real:
-    //--------------------------------------------------------------------------
-
-    GB_CMPLX_binop_code     = 114,  // z = cmplx (x,y)
-
-    //--------------------------------------------------------------------------
-    // positional binary operators: z is int64, x and y are ignored
-    //--------------------------------------------------------------------------
-
-    GB_FIRSTI_binop_code    = 115,  // z = first_i(A(i,j),y) == i
-    GB_FIRSTI1_binop_code   = 116,  // z = first_i1(A(i,j),y) == i+1
-    GB_FIRSTJ_binop_code    = 117,  // z = first_j(A(i,j),y) == j
-    GB_FIRSTJ1_binop_code   = 118,  // z = first_j1(A(i,j),y) == j+1
-    GB_SECONDI_binop_code   = 119,  // z = second_i(x,B(i,j)) == i
-    GB_SECONDI1_binop_code  = 120,  // z = second_i1(x,B(i,j)) == i+1
-    GB_SECONDJ_binop_code   = 121,  // z = second_j(x,B(i,j)) == j
-    GB_SECONDJ1_binop_code  = 122,  // z = second_j1(x,B(i,j)) == j+1
-
-    GB_USER_binop_code = 123,
+    GB_FIRSTI_binop_code    = 116,  // z = first_i(A(i,j),y) == i
+    GB_FIRSTI1_binop_code   = 117,  // z = first_i1(A(i,j),y) == i+1
+    GB_FIRSTJ_binop_code    = 118,  // z = first_j(A(i,j),y) == j
+    GB_FIRSTJ1_binop_code   = 119,  // z = first_j1(A(i,j),y) == j+1
+    GB_SECONDI_binop_code   = 120,  // z = second_i(x,B(i,j)) == i
+    GB_SECONDI1_binop_code  = 121,  // z = second_i1(x,B(i,j)) == i+1
+    GB_SECONDJ_binop_code   = 122,  // z = second_j(x,B(i,j)) == j
+    GB_SECONDJ1_binop_code  = 123,  // z = second_j1(x,B(i,j)) == j+1
 
     // true if opcode is for a GrB_BinaryOp
     #define GB_IS_BINARYOP_CODE(opcode) \
-        ((opcode) >= GB_FIRST_binop_code && (opcode) <= GB_USER_binop_code)
+        ((opcode) >= GB_USER_binop_code && \
+         (opcode) <= GB_SECONDJ1_binop_code)
 
     // true if opcode is for a GrB_BinaryOp positional operator
-    #define GB_IS_BINARYOP_CODE_POSITIONAL(opcode) \
+    #define GB_IS_BUILTIN_BINOP_CODE_POSITIONAL(opcode) \
         ((opcode) >= GB_FIRSTI_binop_code && \
          (opcode) <= GB_SECONDJ1_binop_code)
+
+    //--------------------------------------------------------------------------
+    // index binary operators:
+    //--------------------------------------------------------------------------
+
+    GB_USER_idxbinop_code = 124,
+
+    // true if opcode is for a GxB_IndexBinaryOp
+    #define GB_IS_INDEXBINARYOP_CODE(opcode) ((opcode) == GB_USER_idxbinop_code)
 
     //==========================================================================
     // built-in GxB_SelectOp operators (DEPRECATED: do not use)
     //==========================================================================
 
     // built-in positional select operators: thunk optional; defaults to zero
-    GB_TRIL_selop_code      = 124,
-    GB_TRIU_selop_code      = 125,
-    GB_DIAG_selop_code      = 126,
-    GB_OFFDIAG_selop_code   = 127,
+    GB_TRIL_selop_code      = 125,
+    GB_TRIU_selop_code      = 126,
+    GB_DIAG_selop_code      = 127,
+    GB_OFFDIAG_selop_code   = 128,
 
     // built-in select operators, no thunk used
-    GB_NONZERO_selop_code   = 128,
-    GB_EQ_ZERO_selop_code   = 129,
-    GB_GT_ZERO_selop_code   = 130,
-    GB_GE_ZERO_selop_code   = 131,
-    GB_LT_ZERO_selop_code   = 132,
-    GB_LE_ZERO_selop_code   = 133,
+    GB_NONZERO_selop_code   = 129,
+    GB_EQ_ZERO_selop_code   = 130,
+    GB_GT_ZERO_selop_code   = 131,
+    GB_GE_ZERO_selop_code   = 132,
+    GB_LT_ZERO_selop_code   = 133,
+    GB_LE_ZERO_selop_code   = 134,
 
     // built-in select operators, thunk optional; defaults to zero
-    GB_NE_THUNK_selop_code  = 134,
-    GB_EQ_THUNK_selop_code  = 135,
-    GB_GT_THUNK_selop_code  = 136,
-    GB_GE_THUNK_selop_code  = 137,
-    GB_LT_THUNK_selop_code  = 138,
-    GB_LE_THUNK_selop_code  = 139
+    GB_NE_THUNK_selop_code  = 135,
+    GB_EQ_THUNK_selop_code  = 136,
+    GB_GT_THUNK_selop_code  = 137,
+    GB_GE_THUNK_selop_code  = 138,
+    GB_LT_THUNK_selop_code  = 139,
+    GB_LE_THUNK_selop_code  = 140
 
     // true if opcode is for a GxB_SelectOp
     #define GB_IS_SELECTOP_CODE(opcode) \
@@ -331,10 +327,11 @@ typedef enum
 GB_Opcode ;
 
 // true if the opcode is a positional operator of any kind
-#define GB_OPCODE_IS_POSITIONAL(opcode)             \
-    (GB_IS_UNARYOP_CODE_POSITIONAL (opcode) ||      \
-     GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) || \
-     GB_IS_BINARYOP_CODE_POSITIONAL (opcode) ||     \
+#define GB_OPCODE_IS_POSITIONAL(opcode)                 \
+    (GB_IS_BUILTIN_UNOP_CODE_POSITIONAL (opcode) ||     \
+     GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode) ||     \
+     GB_IS_INDEXBINARYOP_CODE (opcode) ||               \
+     GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ||    \
      GB_IS_SELECTOP_CODE_POSITIONAL (opcode))
 
 // true if the op is a unary or binary positional operator
@@ -390,6 +387,11 @@ struct GB_IndexUnaryOp_opaque   // content of GrB_IndexUnaryOp
 } ;
 
 struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
+{
+    #include "include/GB_Operator.h"
+} ;
+
+struct GB_IndexBinaryOp_opaque   // content of GxB_IndexBinaryOp
 {
     #include "include/GB_Operator.h"
 } ;
@@ -499,7 +501,7 @@ struct GB_Pending_struct    // list of pending tuples for a matrix
     size_t j_size ;
     GB_void *x ;        // values of pending tuples
     size_t x_size ;
-    GrB_Type type ;     // the type of s
+    GrB_Type type ;     // the type of x
     size_t size ;       // type->size
     GrB_BinaryOp op ;   // operator to assemble pending tuples
 } ;
@@ -582,6 +584,30 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #define GBB_B(Bb,p)      GBB (Bb,p)
 #define GB_B_NVALS(e)    int64_t e = GB_nnz (B)
 #define GB_B_NHELD(e)    int64_t e = GB_nnz_held (B)
+
+// accessing the S matrix
+#define GBP_S(Sp,k,vlen) GBP (Sp,k,vlen)
+#define GBH_S(Sh,k)      GBH (Sh,k)
+#define GBI_S(Si,p,vlen) GBI (Si,p,vlen)
+#define GBB_S(Sb,p)      GBB (Sb,p)
+#define GB_S_NVALS(e)    int64_t e = GB_nnz (S)
+#define GB_S_NHELD(e)    int64_t e = GB_nnz_held (S)
+
+// accessing the R matrix
+#define GBP_R(Rp,k,vlen) GBP (Rp,k,vlen)
+#define GBH_R(Rh,k)      GBH (Rh,k)
+#define GBI_R(Ri,p,vlen) GBI (Ri,p,vlen)
+#define GBB_R(Rb,p)      GBB (Rb,p)
+#define GB_R_NVALS(e)    int64_t e = GB_nnz (R)
+#define GB_R_NHELD(e)    int64_t e = GB_nnz_held (R)
+
+// accessing the Z matrix
+#define GBP_Z(Zp,k,vlen) GBP (Zp,k,vlen)
+#define GBH_Z(Zh,k)      GBH (Zh,k)
+#define GBI_Z(Zi,p,vlen) GBI (Zi,p,vlen)
+#define GBB_Z(Zb,p)      GBB (Zb,p)
+#define GB_Z_NVALS(e)    int64_t e = GB_nnz (Z)
+#define GB_Z_NHELD(e)    int64_t e = GB_nnz_held (Z)
 
 #endif
 

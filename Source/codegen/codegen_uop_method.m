@@ -1,5 +1,5 @@
 function codegen_uop_method (uop, op, ztype, xtype)
-%CODEGEN_UNOP_METHOD create a function to compute C=uop(A)
+%CODEGEN_UOP_METHOD create a function to compute C=uop(A)
 %
 % codegen_uop_method (uop, op, ztype, xtype)
 %
@@ -29,6 +29,13 @@ if (is_identity && no_typecast)
 else
     fprintf (f, 'm4_define(`_uop_apply'', `_uop_apply__%s'')\n', name) ;
     fprintf (f, 'm4_define(`if_uop_apply_enabled'', `0'')\n') ;
+end
+
+if (is_identity)
+    % identity ops are never disabled
+    fprintf (f, 'm4_define(`GB_type_enabled'', `#define GB_TYPE_ENABLED 1'')\n');
+else
+    codegen_type_enabled (f, xname) ;
 end
 
 % function names
@@ -85,4 +92,5 @@ system (cmd) ;
 system ('cat control.m4 Generator/GB_uop.h | m4 -P | awk -f codegen_blank.awk | grep -v SPDX >> ../../FactoryKernels/GB_uop__include.h') ;
 
 delete ('control.m4') ;
+
 

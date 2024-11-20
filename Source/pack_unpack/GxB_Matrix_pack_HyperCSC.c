@@ -27,7 +27,7 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs and get the descriptor

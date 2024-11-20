@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // Note that this function uses its own hard-coded chunk size.
 
 #include "GB.h"

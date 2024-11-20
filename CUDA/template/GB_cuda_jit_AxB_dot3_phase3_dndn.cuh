@@ -36,7 +36,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     GrB_Matrix C,   // result matrix
     GrB_Matrix M,   // mask matrix
     GrB_Matrix A,   // input matrix A
-    GrB_Matrix B    // input matrix B
+    GrB_Matrix B,   // input matrix B
+    const void *theta
 )
 {
 
@@ -192,7 +193,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
         // is always true because vlen > 0 always holds for this kernel.
 
         // FIXME: if kth < 0, C(i,j) is a prezombie, and Ci [pM] already holds
-        // GB_FLIP (i).
+        // GB_ZOMBIE (i).
 
         // write result for this block to global mem
         if (threadIdx.x == 0)
@@ -207,7 +208,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
             {
                 // cij is a zombie
                 zc++ ;
-                Ci [pM] = GB_FLIP (i) ;
+                Ci [pM] = GB_ZOMBIE (i) ;
             }
         }
 

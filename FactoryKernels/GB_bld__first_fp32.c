@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_FP32)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_bld__include.h"
 
 // dup operator: Tx [k] += Sx [i], no typecast here
@@ -16,13 +23,13 @@
 #define GB_BLD_COPY(Tx,k,Sx,i) Tx [k] = Sx [i]
 
 // array types for S and T
-#define GB_S_TYPE float
-#define GB_T_TYPE float
+#define GB_Sx_TYPE float
+#define GB_Tx_TYPE float
 
 // operator types: z = dup (x,y)
-#define GB_Z_TYPE float
-#define GB_X_TYPE float
-#define GB_Y_TYPE float
+#define GB_Z_TYPE  float
+#define GB_X_TYPE  float
+#define GB_Y_TYPE  float
 
 // disable this operator and use the generic case if these conditions hold
 #if (defined(GxB_NO_FIRST) || defined(GxB_NO_FP32) || defined(GxB_NO_FIRST_FP32))
@@ -39,9 +46,9 @@
 
 GrB_Info GB (_bld__first_fp32)
 (
-    GB_T_TYPE *restrict Tx,
+    GB_Tx_TYPE *restrict Tx,
     int64_t  *restrict Ti,
-    const GB_S_TYPE *restrict Sx,
+    const GB_Sx_TYPE *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict I_work,
@@ -58,4 +65,6 @@ GrB_Info GB (_bld__first_fp32)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

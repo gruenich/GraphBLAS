@@ -14,7 +14,7 @@ void GB_macrofy_type
 (
     FILE *fp,
     // input:
-    const char *what,       // typically X, Y, Z, A, B, or C
+    const char *what,       // typically X, Y, Z, A, B, C, Tx, Sx, etc
     const char *what2,      // typically "_" or "2"
     const char *name        // name of the type
 )

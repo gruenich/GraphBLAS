@@ -10,6 +10,7 @@ f = fopen ('control.m4', 'w') ;
 fprintf (f, 'm4_divert(-1)\n') ;
 
 [aname, unsigned, bits] = codegen_type (atype) ;
+codegen_type_enabled (f, aname) ;
 
 name = sprintf ('%s_%s', opname, aname) ;
 is_any = isequal (opname, 'any') ;
@@ -19,12 +20,12 @@ fprintf (f, 'm4_define(`_bld'', `_bld__%s'')\n', name) ;
 
 % the type of A, S, T, X, Y, and Z (no typecasting)
 ztype = atype ;
-fprintf (f, 'm4_define(`GB_atype'', `#define GB_A_TYPE %s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_stype'', `#define GB_S_TYPE %s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_ttype'', `#define GB_T_TYPE %s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_xtype'', `#define GB_X_TYPE %s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_ytype'', `#define GB_Y_TYPE %s'')\n', atype) ;
-fprintf (f, 'm4_define(`GB_ztype'', `#define GB_Z_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_atype'', `#define GB_A_TYPE  %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_stype'', `#define GB_Sx_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ttype'', `#define GB_Tx_TYPE %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_xtype'', `#define GB_X_TYPE  %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ytype'', `#define GB_Y_TYPE  %s'')\n', atype) ;
+fprintf (f, 'm4_define(`GB_ztype'', `#define GB_Z_TYPE  %s'')\n', atype) ;
 
 fprintf (f, 'm4_define(`GB_atype_parameter'', `%s'')\n', atype) ;
 fprintf (f, 'm4_define(`GB_stype_parameter'', `%s'')\n', atype) ;

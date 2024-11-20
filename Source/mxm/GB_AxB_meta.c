@@ -107,17 +107,20 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     GB_Opcode opcode = semiring_in->multiply->opcode  ;
-    bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
+    bool op_is_positional = GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode) ;
     bool op_is_first  = (opcode == GB_FIRST_binop_code) ;
     bool op_is_second = (opcode == GB_SECOND_binop_code) ;
     bool op_is_pair   = (opcode == GB_PAIR_binop_code) ;
     bool allow_scale = true ;
-    if (semiring_in->multiply->binop_function == NULL &&
-        (op_is_first || op_is_second))
+    if ((semiring_in->multiply->binop_function == NULL &&
+        (op_is_first || op_is_second)) || GB_IS_INDEXBINARYOP_CODE (opcode))
     { 
         // GB_rowscale and GB_colscale do not handle the implicit FIRST
-        // operator for GB_reduce_to_vector.  They do handle any other
-        // positional operator (FIRSTI, FIRSTJ, SECONDI, SECONDJ, etc).
+        // operator for GB_reduce_to_vector (where all function pointers are
+        // NULL).  They do handle builtin index binary operator (FIRSTI,
+        // FIRSTJ, SECONDI, SECONDJ, etc), by converting the operation into
+        // GB_apply_op with a built-in unary POSITION* op.  They do not handle
+        // any user-defined index binary operators.
         allow_scale = false ;
     }
 
@@ -225,14 +228,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // CSR, treat it as A' in CSC, and if A' is in CSR, treat it as A in CSC.
     if (!A_in->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // Negate A_transpose
         A_transpose = !A_transpose ;
     }
 
     // B is treated just like A
     if (!B_in->is_csc)
     { 
-        // Flip the sense of B_transpose
+        // Negate B_transpose
         B_transpose = !B_transpose ;
     }
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // CALLS:     GB_builder
 
 // The matrix A has zombies and/or pending tuples placed there by
@@ -52,7 +50,7 @@
 }
 
 #include "select/GB_select.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "binaryop/GB_binop.h"
 #include "pending/GB_Pending.h"
 #include "builder/GB_build.h"
@@ -75,7 +73,7 @@ GrB_Info GB_wait                // finish all pending computations
     struct GB_Matrix_opaque T_header, A1_header, S_header ;
     GrB_Matrix T = NULL, A1 = NULL, S = NULL, Y = NULL ;
 
-    ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to wait", GB_ZOMBIE (GB0)) ;
 
     if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
     { 
@@ -249,7 +247,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     // A zombie is an entry A(i,j) in the matrix that as been marked for
     // deletion, but hasn't been deleted yet.  It is marked by "negating"
-    // replacing its index i with GB_FLIP(i).
+    // replacing its index i with GB_ZOMBIE(i).
 
     // TODO: pass tnz to GB_selector, to pad the reallocated A matrix
     ASSERT_MATRIX_OK (A, "A before zombies removed", GB0) ;
@@ -429,7 +427,8 @@ GrB_Info GB_wait                // finish all pending computations
             int64_t *restrict A1p = A1->p ;
             int64_t *restrict A1h = A1->h ;
             int64_t a1nvec = 0 ;
-            for (int64_t k = kA ; k < anvec ; k++)
+
+            for (int64_t k = kA ; k < anvec ; k++) // TODO:parallel
             {
                 // get A (:,k)
                 int64_t pA_start = Ap [k] ;
@@ -459,7 +458,7 @@ GrB_Info GB_wait                // finish all pending computations
     
             GB_CLEAR_STATIC_HEADER (S, &S_header) ;
             GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A1, T,
-                false, NULL, NULL, op_2nd, true, Werk)) ;
+                false, NULL, NULL, op_2nd, false, true, Werk)) ;
 
             ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
 
@@ -508,7 +507,7 @@ GrB_Info GB_wait                // finish all pending computations
         }
 
         // append the vectors of T to the end of A
-        for (int64_t k = 0 ; k < tnvec ; k++)
+        for (int64_t k = 0 ; k < tnvec ; k++) // TODO:parallel
         { 
             int64_t j = Th [k] ;
             ASSERT (j >= tjfirst) ;
@@ -556,7 +555,7 @@ GrB_Info GB_wait                // finish all pending computations
 
         GB_CLEAR_STATIC_HEADER (S, &S_header) ;
         GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
-            false, NULL, NULL, op_2nd, true, Werk)) ;
+            false, NULL, NULL, op_2nd, false, true, Werk)) ;
         GB_Matrix_free (&T) ;
         ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
 

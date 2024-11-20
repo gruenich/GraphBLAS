@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// GB_assert.h: assertions
+// GB_assert.h: assertions for all of GraphBLAS except JIT kernels.
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// These methods are used in all of GraphBLAS except for JIT kernels.
+// For JIT kernels, see ok/GB_assert_kernels.h.
 
 //------------------------------------------------------------------------------
 // debugging definitions
@@ -83,6 +86,7 @@
 #undef  ASSERT_TYPE_OK_OR_NULL
 #undef  ASSERT_BINARYOP_OK
 #undef  ASSERT_INDEXUNARYOP_OK
+#undef  ASSERT_INDEXBINARYOP_OK
 #undef  ASSERT_BINARYOP_OK_OR_NULL
 #undef  ASSERT_UNARYOP_OK
 #undef  ASSERT_UNARYOP_OK_OR_NULL
@@ -113,6 +117,9 @@
 #define ASSERT_INDEXUNARYOP_OK(op,name,pr)  \
     ASSERT_OK (GB_IndexUnaryOp_check (op, name, pr, NULL))
 
+#define ASSERT_INDEXBINARYOP_OK(op,name,pr)  \
+    ASSERT_OK (GB_IndexBinaryOp_check (op, name, pr, NULL))
+
 #define ASSERT_BINARYOP_OK_OR_NULL(op,name,pr)  \
     ASSERT_OK_OR_NULL (GB_BinaryOp_check (op, name, pr, NULL))
 
@@ -135,7 +142,7 @@
     ASSERT_OK_OR_NULL (GB_Operator_check (op, name, pr, NULL))
 
 #define ASSERT_MONOID_OK(mon,name,pr)  \
-    ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL))
+    ASSERT_OK (GB_Monoid_check (mon, name, pr, NULL, false))
 
 #define ASSERT_SEMIRING_OK(s,name,pr)  \
     ASSERT_OK (GB_Semiring_check (s, name, pr, NULL))
@@ -165,8 +172,8 @@
     ASSERT_OK_OR_NULL (GB_Descriptor_check (d, name, pr, NULL))
 
 #define ASSERT_CONTEXT_OK(c,name,pr)  \
-    ASSERT_OK (GB_context_check (c, name, pr, NULL))
+    ASSERT_OK (GB_Context_check (c, name, pr, NULL))
 
 #define ASSERT_CONTEXT_OK_OR_NULL(c,name,pr)  \
-    ASSERT_OK_OR_NULL (GB_context_check (c, name, pr, NULL))
+    ASSERT_OK_OR_NULL (GB_Context_check (c, name, pr, NULL))
 

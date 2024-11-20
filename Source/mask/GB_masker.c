@@ -50,7 +50,7 @@
 // GB_masker_phase2.
 
 #include "mask/GB_mask.h"
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GB_masker          // R = masker (C, M, Z)
@@ -97,7 +97,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     ASSERT (GB_IMPLIES (M->iso, Mask_struct)) ;
 
     //--------------------------------------------------------------------------
-    // determine the sparsity of R
+    // determine the sparsity of R (sparse or bitmap)
     //--------------------------------------------------------------------------
 
     int R_sparsity = GB_masker_sparsity (C, M, Mask_comp, Z) ;
@@ -121,7 +121,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     //--------------------------------------------------------------------------
 
     // This phase is identical to phase0 of GB_add, except that Ch is never a
-    // deep or shallow copy of Mh.
+    // deep or shallow copy of Mh.  R_sparsity may change to hypersparse.
 
     info = GB_add_phase0 (
         // computed by by phase0:

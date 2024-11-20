@@ -17,14 +17,16 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
+    bool flipij,                // if true: op is f(x,y,j,i) for ewise ops
     bool flipxy,                // if true: op is f(y,x) for a semiring
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build, or
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
-    int ecode,
+    bool is_kron,               // if true: binop for kronecker
+    int ecode,                  // binary operator ecode from GB_enumify_binop
     bool C_iso,                 // if true: C is iso
-    GrB_BinaryOp op,            // NULL if C is iso
+    GrB_BinaryOp op,
     // output:
     const char **f_handle,      // basic expression z=f(x,y)
     const char **u_handle,      // update z=f(z,y) for the CPU
@@ -50,6 +52,10 @@ void GB_macrofy_binop
             }
             fprintf (fp, "#define %s(z,x,y)\n", macro_name) ;
         }
+        else if (is_kron)
+        { 
+            fprintf (fp, "#define %s(z,x,ix,jx,y,iy,jy)\n", macro_name) ;
+        }
         else
         { 
             fprintf (fp, "#define %s(z,x,y,i%s,j)\n", macro_name, karg) ;
@@ -71,11 +77,29 @@ void GB_macrofy_binop
             // additive/build operator: no i,k,j parameters, never flipped
             fprintf (fp, "#define %s(z,x,y) ", macro_name) ;
         }
+        else if (is_kron)
+        {
+            // operator for kronecker
+            if (flipij)
+            { 
+                fprintf (fp, "#define %s(z,x,jx,ix,y,jy,iy) ", macro_name) ;
+            }
+            else
+            { 
+                fprintf (fp, "#define %s(z,x,ix,jx,y,iy,jy) ", macro_name) ;
+            }
+        }
         else if (flipxy)
         { 
-            // flipped multiplicative or ewise operator
-            // note: no positional operands for user-defined ops (yet)
+            // flipped multiplicative operator (flip both xy and ij)
+            ASSERT (!is_ewise) ;
             fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
+        }
+        else if (flipij)
+        { 
+            // i,j flipped ewise operator (just flip ij, do not flip xy)
+            ASSERT (is_ewise) ;
+            fprintf (fp, "#define %s(z,x,y,j,i) ", macro_name) ;
         }
         else
         { 
@@ -83,7 +107,27 @@ void GB_macrofy_binop
             fprintf (fp, "#define %s(z,x,y,i%s,j) ", macro_name, karg) ;
         }
 
-        fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
+        if (GB_IS_INDEXBINARYOP_CODE (op->opcode))
+        { 
+            // user-defined index binary op
+            ASSERT (!is_monoid_or_build) ;
+            if (is_kron)
+            { 
+                fprintf (fp, " %s (&(z), &(x),ix,jx, &(y),iy,jy, theta)\n",
+                    op->name) ;
+            }
+            else
+            { 
+                const char *xindices = is_ewise ? "i,j" : "i,k" ;
+                const char *yindices = is_ewise ? "i,j" : "k,j" ;
+                fprintf (fp, " %s (&(z), &(x),%s, &(y),%s, theta)\n",
+                    op->name, xindices, yindices) ;
+            }
+        }
+        else
+        { 
+            fprintf (fp, " %s (&(z), &(x), &(y))\n", op->name) ;
+        }
 
         if (is_monoid_or_build && op->ztype == op->xtype)
         { 
@@ -691,7 +735,7 @@ void GB_macrofy_binop
             case 149 : f = "z = GxB_CMPLX (1,0)" ; break ;
 
             //------------------------------------------------------------------
-            // positional ops
+            // builtin positional ops
             //------------------------------------------------------------------
 
             // in a semiring:  cij += aik * bkj
@@ -700,12 +744,22 @@ void GB_macrofy_binop
             // in an ewise operation:  cij = aij + bij
             //      firsti is i, firstj is j, secondi i, secondj is j
 
-            case 134 : f = "z = (i)" ; break ;
-            case 135 : f = "z = (k)" ; break ;
-            case 136 : f = "z = (j)" ; break ;
+            case 134 : f = "z = (i)"     ; break ;
+            case 135 : f = "z = (k)"     ; break ;
+            case 136 : f = "z = (j)"     ; break ;
             case 137 : f = "z = (i) + 1" ; break ;
             case 138 : f = "z = (k) + 1" ; break ;
             case 139 : f = "z = (j) + 1" ; break ;
+
+            // for kron, all these ops are unique:
+            case 150 : f = "z = (ix)"    ; break ;      // firsti
+            case 151 : f = "z = (ix)+1"  ; break ;      // firsti1
+            case 152 : f = "z = (jx)"    ; break ;      // firstj
+            case 153 : f = "z = (jx)+1"  ; break ;      // firstj1
+            case 154 : f = "z = (iy)"    ; break ;      // secondi
+            case 155 : f = "z = (iy)+1"  ; break ;      // secondi1
+            case 156 : f = "z = (jy)"    ; break ;      // secondj
+            case 157 : f = "z = (jy)+1"  ; break ;      // secondj1
 
             //------------------------------------------------------------------
             // no-op: same as second operator
@@ -745,6 +799,20 @@ void GB_macrofy_binop
                     fprintf (fp, "#define GB_UPDATE(z,y) %s(z,z,y)\n",
                         macro_name) ;
                 }
+            }
+        }
+        else if (is_kron)
+        { 
+            // operator for kronecker
+            if (flipij)
+            { 
+                fprintf (fp, "#define %s(z,x,jx,ix,y,jy,iy) %s\n",
+                    macro_name, f) ;
+            }
+            else
+            { 
+                fprintf (fp, "#define %s(z,x,ix,jx,y,iy,jy) %s\n",
+                    macro_name, f) ;
             }
         }
         else if (flipxy)

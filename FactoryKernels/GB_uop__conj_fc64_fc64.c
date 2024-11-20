@@ -7,8 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_FC64)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "FactoryKernels/GB_uop__include.h"
 
 // unary operator: z = f(x)
@@ -30,7 +37,7 @@
     /* aij = Ax [pA] */             \
     GB_DECLAREA (aij) ;             \
     GB_GETA (aij, Ax, pA, false) ;  \
-    /* Cx [pC] = unaryop (aij) */      \
+    /* Cx [pC] = unaryop (aij) */   \
     GB_UNARYOP (Cx [pC], aij) ;     \
 }
 
@@ -41,7 +48,7 @@
 #define GB_DISABLE 0
 #endif
 
-#include "apply/include/GB_apply_shared_definitions.h"
+#include "omp/include/GB_kernel_shared_definitions.h"
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
@@ -85,4 +92,6 @@ GrB_Info GB (_uop_tran__conj_fc64_fc64)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

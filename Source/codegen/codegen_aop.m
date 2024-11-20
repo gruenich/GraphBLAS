@@ -1,5 +1,5 @@
 function codegen_aop
-%CODEGEN_ASSIGN create functions for all binary operators for assign/subassign
+%CODEGEN_AOP create functions for all binary operators for assign/subassign
 %
 % This function creates all files of the form GB_aop__*.[ch], including 260
 % functions (GB_aop__*.c) and one include file, GB_aop__include.h.
@@ -112,6 +112,7 @@ codegen_aop_template ('rdiv',         ...
     'GB_FC32_div (yarg, xarg)',         ... % GxB_FC32_t
     'GB_FC64_div (yarg, xarg)') ;       ... % GxB_FC64_t
 
+%{
 codegen_aop_template ('iseq',         ...
     [ ],                                ... % bool
     '((xarg) == (yarg))',               ... % int, uint
@@ -159,6 +160,7 @@ codegen_aop_template ('isle',         ...
     '((xarg) <= (yarg))',               ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
+%}
 
 codegen_aop_template ('eq',           ...
     '((xarg) == (yarg))',               ... % bool
@@ -380,4 +382,5 @@ codegen_aop_method ('pow', 'GB_FC32_pow (xarg, yarg)'  , 'GxB_FC32_t') ;
 codegen_aop_method ('pow', 'GB_FC64_pow (xarg, yarg)'  , 'GxB_FC64_t') ;
 
 fprintf ('\n') ;
+
 

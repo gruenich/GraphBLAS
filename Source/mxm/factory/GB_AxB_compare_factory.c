@@ -26,6 +26,83 @@
 // #ifndef GB_NO_BOOLEAN, resulting in 50 semirings for the NE muliply
 // operator.
 
+#if defined (GxB_NO_BOOL)
+#define GB_CASE_BOOL(op)
+#else
+#define GB_CASE_BOOL(op) \
+    case GB_BOOL_code:   GB_AxB_WORKER (op, GB_MNAME, _bool  )
+#endif
+
+#if defined (GxB_NO_INT8)
+#define GB_CASE_INT8(op)
+#else
+#define GB_CASE_INT8(op) \
+    case GB_INT8_code:   GB_AxB_WORKER (op, GB_MNAME, _int8  )
+#endif
+
+#if defined (GxB_NO_INT16)
+#define GB_CASE_INT16(op)
+#else
+#define GB_CASE_INT16(op) \
+    case GB_INT16_code:  GB_AxB_WORKER (op, GB_MNAME, _int16 )
+#endif
+
+#if defined (GxB_NO_INT32)
+#define GB_CASE_INT32(op)
+#else
+#define GB_CASE_INT32(op) \
+    case GB_INT32_code:  GB_AxB_WORKER (op, GB_MNAME, _int32 )
+#endif
+
+#if defined (GxB_NO_INT64)
+#define GB_CASE_INT64(op)
+#else
+#define GB_CASE_INT64(op) \
+    case GB_INT64_code:  GB_AxB_WORKER (op, GB_MNAME, _int64 )
+#endif
+
+#if defined (GxB_NO_UINT8)
+#define GB_CASE_UINT8(op)
+#else
+#define GB_CASE_UINT8(op) \
+    case GB_UINT8_code:  GB_AxB_WORKER (op, GB_MNAME, _uint8 )
+#endif
+
+#if defined (GxB_NO_UINT16)
+#define GB_CASE_UINT16(op)
+#else
+#define GB_CASE_UINT16(op) \
+    case GB_UINT16_code: GB_AxB_WORKER (op, GB_MNAME, _uint16)
+#endif
+
+#if defined (GxB_NO_UINT32)
+#define GB_CASE_UINT32(op)
+#else
+#define GB_CASE_UINT32(op) \
+    case GB_UINT32_code: GB_AxB_WORKER (op, GB_MNAME, _uint32)
+#endif
+
+#if defined (GxB_NO_UINT64)
+#define GB_CASE_UINT64(op)
+#else
+#define GB_CASE_UINT64(op) \
+    case GB_UINT64_code: GB_AxB_WORKER (op, GB_MNAME, _uint64)
+#endif
+
+#if defined (GxB_NO_FP32)
+#define GB_CASE_FP32(op)
+#else
+#define GB_CASE_FP32(op) \
+    case GB_FP32_code:   GB_AxB_WORKER (op, GB_MNAME, _fp32  )
+#endif
+
+#if defined (GxB_NO_FP64)
+#define GB_CASE_FP64(op)
+#else
+#define GB_CASE_FP64(op) \
+    case GB_FP64_code:   GB_AxB_WORKER (op, GB_MNAME, _fp64  )
+#endif
+
 ASSERT (zcode == GB_BOOL_code) ;
 {
 
@@ -36,109 +113,109 @@ ASSERT (zcode == GB_BOOL_code) ;
     switch (add_binop_code)
     {
 
-        case GB_LOR_binop_code     :
+        case GB_LOR_binop_code     : 
 
             switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
-                case GB_BOOL_code   : GB_AxB_WORKER (_lor, GB_MNAME, _bool  )
+                GB_CASE_BOOL   (_lor)
                 #endif
-                case GB_INT8_code   : GB_AxB_WORKER (_lor, GB_MNAME, _int8  )
-                case GB_INT16_code  : GB_AxB_WORKER (_lor, GB_MNAME, _int16 )
-                case GB_INT32_code  : GB_AxB_WORKER (_lor, GB_MNAME, _int32 )
-                case GB_INT64_code  : GB_AxB_WORKER (_lor, GB_MNAME, _int64 )
-                case GB_UINT8_code  : GB_AxB_WORKER (_lor, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_lor, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_lor, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_lor, GB_MNAME, _uint64)
-                case GB_FP32_code   : GB_AxB_WORKER (_lor, GB_MNAME, _fp32  )
-                case GB_FP64_code   : GB_AxB_WORKER (_lor, GB_MNAME, _fp64  )
+                GB_CASE_INT8   (_lor)
+                GB_CASE_INT16  (_lor)
+                GB_CASE_INT32  (_lor)
+                GB_CASE_INT64  (_lor)
+                GB_CASE_UINT8  (_lor)
+                GB_CASE_UINT16 (_lor)
+                GB_CASE_UINT32 (_lor)
+                GB_CASE_UINT64 (_lor)
+                GB_CASE_FP32   (_lor)
+                GB_CASE_FP64   (_lor)
                 default: ;
             }
             break ;
 
-        case GB_LAND_binop_code    :
+        case GB_LAND_binop_code    : 
 
             switch (xcode)
             {
                 // 10 real, non-boolean types, plus boolean
                 #ifndef GB_NO_BOOLEAN
-                case GB_BOOL_code   : GB_AxB_WORKER (_land, GB_MNAME, _bool  )
+                GB_CASE_BOOL   (_land)
                 #endif
-                case GB_INT8_code   : GB_AxB_WORKER (_land, GB_MNAME, _int8  )
-                case GB_INT16_code  : GB_AxB_WORKER (_land, GB_MNAME, _int16 )
-                case GB_INT32_code  : GB_AxB_WORKER (_land, GB_MNAME, _int32 )
-                case GB_INT64_code  : GB_AxB_WORKER (_land, GB_MNAME, _int64 )
-                case GB_UINT8_code  : GB_AxB_WORKER (_land, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_land, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_land, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_land, GB_MNAME, _uint64)
-                case GB_FP32_code   : GB_AxB_WORKER (_land, GB_MNAME, _fp32  )
-                case GB_FP64_code   : GB_AxB_WORKER (_land, GB_MNAME, _fp64  )
+                GB_CASE_INT8   (_land)
+                GB_CASE_INT16  (_land)
+                GB_CASE_INT32  (_land)
+                GB_CASE_INT64  (_land)
+                GB_CASE_UINT8  (_land)
+                GB_CASE_UINT16 (_land)
+                GB_CASE_UINT32 (_land)
+                GB_CASE_UINT64 (_land)
+                GB_CASE_FP32   (_land)
+                GB_CASE_FP64   (_land)
                 default: ;
             }
             break ;
 
-        case GB_LXOR_binop_code    :
+        case GB_LXOR_binop_code    : 
 
             switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
-                case GB_BOOL_code   : GB_AxB_WORKER (_lxor, GB_MNAME, _bool  )
+                GB_CASE_BOOL   (_lxor)
                 #endif
-                case GB_INT8_code   : GB_AxB_WORKER (_lxor, GB_MNAME, _int8  )
-                case GB_INT16_code  : GB_AxB_WORKER (_lxor, GB_MNAME, _int16 )
-                case GB_INT32_code  : GB_AxB_WORKER (_lxor, GB_MNAME, _int32 )
-                case GB_INT64_code  : GB_AxB_WORKER (_lxor, GB_MNAME, _int64 )
-                case GB_UINT8_code  : GB_AxB_WORKER (_lxor, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_lxor, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_lxor, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_lxor, GB_MNAME, _uint64)
-                case GB_FP32_code   : GB_AxB_WORKER (_lxor, GB_MNAME, _fp32  )
-                case GB_FP64_code   : GB_AxB_WORKER (_lxor, GB_MNAME, _fp64  )
+                GB_CASE_INT8   (_lxor)
+                GB_CASE_INT16  (_lxor)
+                GB_CASE_INT32  (_lxor)
+                GB_CASE_INT64  (_lxor)
+                GB_CASE_UINT8  (_lxor)
+                GB_CASE_UINT16 (_lxor)
+                GB_CASE_UINT32 (_lxor)
+                GB_CASE_UINT64 (_lxor)
+                GB_CASE_FP32   (_lxor)
+                GB_CASE_FP64   (_lxor)
                 default: ;
             }
             break ;
 
-        case GB_EQ_binop_code    :
+        case GB_EQ_binop_code    : 
 
             switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
-                case GB_BOOL_code   : GB_AxB_WORKER (_eq, GB_MNAME, _bool  )
+                GB_CASE_BOOL   (_eq)
                 #endif
-                case GB_INT8_code   : GB_AxB_WORKER (_eq, GB_MNAME, _int8  )
-                case GB_INT16_code  : GB_AxB_WORKER (_eq, GB_MNAME, _int16 )
-                case GB_INT32_code  : GB_AxB_WORKER (_eq, GB_MNAME, _int32 )
-                case GB_INT64_code  : GB_AxB_WORKER (_eq, GB_MNAME, _int64 )
-                case GB_UINT8_code  : GB_AxB_WORKER (_eq, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_eq, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_eq, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_eq, GB_MNAME, _uint64)
-                case GB_FP32_code   : GB_AxB_WORKER (_eq, GB_MNAME, _fp32  )
-                case GB_FP64_code   : GB_AxB_WORKER (_eq, GB_MNAME, _fp64  )
+                GB_CASE_INT8   (_eq)
+                GB_CASE_INT16  (_eq)
+                GB_CASE_INT32  (_eq)
+                GB_CASE_INT64  (_eq)
+                GB_CASE_UINT8  (_eq)
+                GB_CASE_UINT16 (_eq)
+                GB_CASE_UINT32 (_eq)
+                GB_CASE_UINT64 (_eq)
+                GB_CASE_FP32   (_eq)
+                GB_CASE_FP64   (_eq)
                 default: ;
             }
             break ;
 
         #ifndef GB_NO_ANY_MONOID
-        case GB_ANY_binop_code    :
+        case GB_ANY_binop_code    : 
 
             switch (xcode)
             {
                 #ifndef GB_NO_BOOLEAN
-                case GB_BOOL_code   : GB_AxB_WORKER (_any, GB_MNAME, _bool  )
+                GB_CASE_BOOL   (_any)
                 #endif
-                case GB_INT8_code   : GB_AxB_WORKER (_any, GB_MNAME, _int8  )
-                case GB_INT16_code  : GB_AxB_WORKER (_any, GB_MNAME, _int16 )
-                case GB_INT32_code  : GB_AxB_WORKER (_any, GB_MNAME, _int32 )
-                case GB_INT64_code  : GB_AxB_WORKER (_any, GB_MNAME, _int64 )
-                case GB_UINT8_code  : GB_AxB_WORKER (_any, GB_MNAME, _uint8 )
-                case GB_UINT16_code : GB_AxB_WORKER (_any, GB_MNAME, _uint16)
-                case GB_UINT32_code : GB_AxB_WORKER (_any, GB_MNAME, _uint32)
-                case GB_UINT64_code : GB_AxB_WORKER (_any, GB_MNAME, _uint64)
-                case GB_FP32_code   : GB_AxB_WORKER (_any, GB_MNAME, _fp32  )
-                case GB_FP64_code   : GB_AxB_WORKER (_any, GB_MNAME, _fp64  )
+                GB_CASE_INT8   (_any)
+                GB_CASE_INT16  (_any)
+                GB_CASE_INT32  (_any)
+                GB_CASE_INT64  (_any)
+                GB_CASE_UINT8  (_any)
+                GB_CASE_UINT16 (_any)
+                GB_CASE_UINT32 (_any)
+                GB_CASE_UINT64 (_any)
+                GB_CASE_FP32   (_any)
+                GB_CASE_FP64   (_any)
                 default: ;
             }
             break ;
@@ -150,4 +227,16 @@ ASSERT (zcode == GB_BOOL_code) ;
 
 #undef GB_NO_BOOLEAN
 #undef GB_MNAME
+
+#undef GB_CASE_BOOL
+#undef GB_CASE_INT8
+#undef GB_CASE_INT16
+#undef GB_CASE_INT32
+#undef GB_CASE_INT64
+#undef GB_CASE_UINT8
+#undef GB_CASE_UINT16
+#undef GB_CASE_UINT32
+#undef GB_CASE_UINT64
+#undef GB_CASE_FP32
+#undef GB_CASE_FP64
 

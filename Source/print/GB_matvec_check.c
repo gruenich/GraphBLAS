@@ -18,13 +18,14 @@
 
 #include "pending/GB_Pending.h"
 #include "GB.h"
+#include "get_set/GB_get_set.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
     int pr,                 // print level; if negative, ignore nzombie
-                            // conditions and use GB_FLIP(pr) for diagnostics
+                            // conditions and use GB_ZOMBIE(pr) for diagnostics
     FILE *f,                // file for output (or stdout if f is NULL)
     const char *kind        // "matrix" or "vector" (only for printing diag.)
 )
@@ -43,7 +44,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool ignore_zombies = false ;
     if (pr < 0)
     { 
-        pr = GB_FLIP (pr) ;
+        pr = GB_DEZOMBIE (pr) ;
         ignore_zombies = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;
@@ -83,7 +84,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
         else
         { 
-            GBPR0 ("%s", A->type->name) ;
+            if (A->type->name [0] == '\0')
+            { 
+                GBPR0 ("user-defined (type size %zu bytes)", A->type->size) ;
+            }
+            else
+            { 
+                GBPR0 ("%s", A->type->name) ;
+            }
         }
     }
 
@@ -460,7 +468,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR0 (", memory: %.1f KB\n", s) ;
     }
     else if (memsize < K*K*K)
-    {
+    { 
         double s = ((double) memsize) / ((double) K*K) ;
         GBPR0 (", memory: %.1f MB\n", s) ;
     }
@@ -488,6 +496,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             if (info != GrB_SUCCESS) return (info) ;
         }
         GBPR0 ("\n") ;
+    }
+
+    //--------------------------------------------------------------------------
+    // report the GrB_set name
+    //--------------------------------------------------------------------------
+
+    // name given by GrB_set
+    char *given_name = A->user_name ;
+    if (A->user_name_size > 0 && given_name != NULL)
+    { 
+        GBPR0 ("    %s given name: [%s]\n", kind, given_name) ;
     }
 
     //--------------------------------------------------------------------------
@@ -596,7 +615,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
             int64_t i = GBI (A->i, p, A->vlen) ;
             bool is_zombie = GB_IS_ZOMBIE (i) ;
-            i = GB_UNFLIP (i) ;
+            i = GB_UNZOMBIE (i) ;
             if (is_zombie) nzombies++ ;
             bool print_value = false ;
             if (prcol)

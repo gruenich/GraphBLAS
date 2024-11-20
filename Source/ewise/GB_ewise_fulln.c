@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // C can have any sparsity on input; it becomes a full non-iso matrix on output.
 // C can have pending work, which is discarded.
 
@@ -16,6 +14,7 @@
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
 

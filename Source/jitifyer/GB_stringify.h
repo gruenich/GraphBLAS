@@ -47,8 +47,8 @@ void GB_macrofy_name
     // input
     const char *name_space, // namespace for the kernel_name
     const char *kname,      // kname for the kernel_name
-    int scode_digits,       // # of hexadecimal digits printed
-    uint64_t scode,         // enumify'd code of the kernel
+    int method_code_digits, // # of hexadecimal digits printed
+    uint64_t method_code,   // enumify'd code of the kernel
     const char *suffix      // suffix for the kernel_name (NULL if none)
 ) ;
 
@@ -60,7 +60,7 @@ GrB_Info GB_demacrofy_name
     // output
     char **name_space,      // namespace for the kernel_name
     char **kname,           // kname for the kernel_name
-    uint64_t *scode,        // enumify'd code of the kernel
+    uint64_t *method_code,  // enumify'd code of the kernel
     char **suffix           // suffix for the kernel_name (NULL if none)
 ) ;
 
@@ -83,7 +83,7 @@ uint64_t GB_encodify_reduce // encode a GrB_reduce problem
 void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
+    uint64_t *method_code,  // unique encoding of the entire problem
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to monoid
@@ -134,6 +134,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const bool flipxy,
     const GrB_Matrix A,
     const GrB_Matrix B
@@ -142,10 +143,11 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
 void GB_enumify_ewise       // enumerate a GrB_eWise problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool is_eWiseMult,      // if true, method is emult
     bool is_eWiseUnion,     // if true, method is eWiseUnion
+    bool is_kron,           // if true, method is kron
     bool can_copy_to_C,     // if true C(i,j)=A(i,j) can bypass the op
     // C matrix:
     bool C_iso,             // if true, C is iso on output
@@ -158,7 +160,8 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool Mask_comp,         // mask is complemented
     // operator:
     GrB_BinaryOp binaryop,  // the binary operator to enumify
-    bool flipxy,            // multiplier is: op(a,b) or op(b,a)
+    bool flipij,            // multiplier is: op(a,b,i,j) or op(a,b,j,i)
+    bool flipxy,            // multiplier is: op(a,b,i,j) or op(b,a,j,i)
     // A and B:
     GrB_Matrix A,           // NULL for unary apply with binop, bind 1st
     GrB_Matrix B            // NULL for unary apply with binop, bind 2nd
@@ -169,11 +172,12 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
+    uint64_t kcode,
     GrB_BinaryOp binaryop,      // binaryop to macrofy
     GrB_Type ctype,
-    GrB_Type atype,
-    GrB_Type btype
+    GrB_Type atype,             // NULL for apply bind1st
+    GrB_Type btype              // NULL for apply bind2nd
 ) ;
 
 GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
@@ -186,6 +190,7 @@ GrB_Info GB_add_jit      // C=A+B, C<#M>=A+B, add, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -216,6 +221,7 @@ GrB_Info GB_union_jit      // C=A+B, C<#M>=A+B, eWiseUnion, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GB_void *alpha_scalar_in,
@@ -248,6 +254,7 @@ GrB_Info GB_emult_08_jit      // C<#M>=A.*B, emult_08, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict C_to_M,
@@ -268,6 +275,7 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
@@ -286,6 +294,7 @@ GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
@@ -303,6 +312,7 @@ GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
     const GrB_Matrix M,
     const bool Mask_struct,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict Cp_kfirst,
@@ -320,6 +330,7 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     const bool Mask_struct,
     const bool Mask_comp,
     const GrB_BinaryOp binaryop,
+    const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *M_ek_slicing,
@@ -406,7 +417,7 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 void GB_enumify_mxm         // enumerate a GrB_mxm problem
 (
     // output:              // future:: may need to become 2 x uint64
-    uint64_t *scode,        // unique encoding of the entire semiring
+    uint64_t *method_code,  // unique encoding of the entire semiring
     // input:
     // C matrix:
     bool C_iso,             // C output iso: if true, semiring is ANY_PAIR_BOOL
@@ -430,7 +441,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // output:
     FILE *fp,               // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_Semiring semiring,  // the semiring to macrofy
     GrB_Type ctype,
     GrB_Type atype,
@@ -625,27 +636,13 @@ void GB_macrofy_mask
 // enumify and macrofy a monoid
 //------------------------------------------------------------------------------
 
-void GB_enumify_monoid  // enumerate a monoid
-(
-    // outputs:
-    int *add_ecode,     // binary op as an enum
-    int *id_ecode,      // identity value as an enum
-    int *term_ecode,    // terminal value as an enum
-    // inputs:
-    int add_opcode,     // must be a built-in binary operator from a monoid
-    int zcode           // type of the monoid (x, y, and z)
-) ;
-
 void GB_macrofy_monoid  // construct the macros for a monoid
 (
     FILE *fp,           // File to write macros, assumed open already
     // inputs:
-    int add_ecode,      // binary op as an enum
-    int id_ecode,       // identity value as an enum
-    int term_ecode,     // terminal value as an enum (<= 28 is terminal)
     bool C_iso,         // true if C is iso
     GrB_Monoid monoid,  // monoid to macrofy
-    bool disable_terminal_condition,    // if true, the monoid is assumed
+    bool disable_terminal_condition,    // if true, a builtin monoid is assumed
                         // to be non-terminal.  For the (times, firstj, int64)
                         // semiring, times is normally a terminal monoid, but
                         // it's not worth exploiting in GrB_mxm.
@@ -654,7 +651,7 @@ void GB_macrofy_monoid  // construct the macros for a monoid
     const char **g_expression
 ) ;
 
-bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
+bool GB_enumify_cuda_atomic         // returns has_cheeseburger
 (
     // output:
     const char **a,                 // CUDA atomic function name
@@ -662,7 +659,7 @@ bool GB_enumify_cuda_atomic         // return true if CUDA can do it atomically
     const char **cuda_type,         // CUDA atomic type
     // input:
     GrB_Monoid monoid,  // monoid to query
-    int add_ecode,      // binary op as an enum
+    GB_Opcode add_opcode,
     size_t zsize,       // ztype->size
     int zcode           // ztype->code
 ) ;
@@ -688,11 +685,12 @@ void GB_macrofy_query
 void GB_enumify_binop
 (
     // output:
-    int *ecode,         // enumerated operator, range 0 to 110; -1 on failure
+    int *ecode,         // enumerated operator, range 0 to 255
     // input:
     GB_Opcode opcode,   // opcode of GraphBLAS operator to convert into a macro
-    GB_Type_code zcode, // op->xtype->code of the operator
-    bool for_semiring   // true for A*B, false for A+B or A.*B
+    GB_Type_code xcode, // op->xtype->code of the operator
+    bool for_semiring,  // true for A*B multiplier, false otherwise
+    bool is_kron        // true for kronecker
 ) ;
 
 void GB_macrofy_binop
@@ -700,14 +698,16 @@ void GB_macrofy_binop
     FILE *fp,
     // input:
     const char *macro_name,
+    bool flipij,                // if true: op is f(x,y,j,i) for ewise ops
     bool flipxy,                // if true: op is f(y,x) for a semiring
     bool is_monoid_or_build,    // if true: additive operator for monoid,
                                 // or binary op for GrB_Matrix_build, or
                                 // accum operator
     bool is_ewise,              // if true: binop for ewise methods
-    int ecode,
+    bool is_kron,               // if true: binop for kronecker
+    int ecode,                  // binary operator ecode from GB_enumify_binop
     bool C_iso,                 // if true: C is iso
-    GrB_BinaryOp op,            // NULL if C is iso
+    GrB_BinaryOp op,
     // output:
     const char **f_handle,      // basic expression z=f(x,y)
     const char **u_handle,      // update z=f(z,y) for the CPU
@@ -816,13 +816,13 @@ void GB_macrofy_output
 // monoid identity and terminal values
 //------------------------------------------------------------------------------
 
-void GB_enumify_identity       // return enum of identity value
+void GB_enumify_identity
 (
     // output:
-    int *ecode,             // enumerated identity, 0 to 17 (-1 if fail)
-    // input:
+    int *ecode,             // enumerated identity, 0 to 31
+    // inputs:
     GB_Opcode opcode,       // built-in binary opcode of a monoid
-    GB_Type_code zcode      // type code used in the opcode we want
+    GB_Type_code zcode      // type code of the operator
 ) ;
 
 const char *GB_macrofy_id // return string encoding the value
@@ -847,13 +847,13 @@ void GB_macrofy_bytes
     bool is_identity        // true for the identity value
 ) ;
 
-void GB_enumify_terminal       // return enum of terminal value
+void GB_enumify_terminal        // enumify the terminal value
 (
     // output:
-    int *ecode,                 // enumerated terminal, 0 to 31 (-1 if fail)
+    int *ecode,                 // enumerated terminal, 0 to 31
     // input:
     GB_Opcode opcode,           // built-in binary opcode of a monoid
-    GB_Type_code zcode          // type code used in the opcode we want
+    GB_Type_code zcode          // type code of the operator
 ) ;
 
 //------------------------------------------------------------------------------
@@ -878,7 +878,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
     int sparsity
 ) ;
 
-void GB_macrofy_nvals  
+void GB_macrofy_nvals
 (
     FILE *fp,
     // input:
@@ -919,20 +919,25 @@ void GB_macrofy_type
 void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
-    int C_sparsity,         // sparse, hyper, bitmap, or full.  For apply
+    const int C_sparsity,   // sparse, hyper, bitmap, or full.  For apply
                             // without transpose, Cx = op(A) is computed where
                             // Cx is just C->x, so the caller uses 'full' when
                             // C is sparse, hyper, or full.
-    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    const bool C_is_matrix, // true for C=op(A), false for Cx=op(A)
+    const GrB_Type ctype,   // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
-        bool flipij,                // if true, flip i,j for user idxunop
+        const bool flipij,          // if true, flip i,j for user idxunop
     // A matrix:
-    const GrB_Matrix A              // input matrix
+//  const GrB_Matrix A              // input matrix
+    const int A_sparsity,
+    const bool A_is_matrix,
+    const GrB_Type atype,
+    const bool A_iso,
+    const int64_t A_nzombies
 ) ;
 
 void GB_enumify_unop    // enumify a GrB_UnaryOp or GrB_IndexUnaryOp
@@ -964,7 +969,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
     GrB_Type ctype,
@@ -979,12 +984,20 @@ uint64_t GB_encodify_apply      // encode an apply problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
+    // C matrix:
     const int C_sparsity,
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
-    const GB_Operator op,
+    // operator:
+    const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,
-    const GrB_Matrix A
+    // A matrix:
+//  const GrB_Matrix A
+    const int A_sparsity,
+    const bool A_is_matrix,
+    const GrB_Type atype,
+    const bool A_iso,
+    const int64_t A_nzombies
 ) ;
 
 GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
@@ -1078,6 +1091,22 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
+) ;
+
+GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
+(
+    // input:
+    const int64_t *restrict Cp,     // vector pointers for CSC/CSR form
+    // outputs:
+    int64_t *restrict Ci,           // indices for CSC/CSR or triplet form
+    int64_t *restrict Cj,           // vector indices for triplet form
+    GB_void *restrict Cx,           // values for CSC/CSR or triplet form
+    // inputs: not modified
+    const GrB_Type ctype,           // type of Cx
+    GB_Operator op,
+    const GrB_Matrix A,             // matrix to extract; not modified
+    const int64_t *restrict W,      // workspace
+    int nthreads                    // # of threads to use
 ) ;
 
 GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
@@ -1177,7 +1206,7 @@ uint64_t GB_encodify_build      // encode an build problem
 void GB_enumify_build       // enumerate a GB_build problem
 (
     // output:
-    uint64_t *build_code,   // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     GrB_BinaryOp dup,       // operator for duplicates
     GrB_Type ttype,         // type of Tx
@@ -1189,7 +1218,7 @@ void GB_macrofy_build           // construct all macros for GB_build
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t build_code,        // unique encoding of the entire problem
+    uint64_t method_code,       // unique encoding of the entire problem
     GrB_BinaryOp dup,           // dup binary operator to macrofy
     GrB_Type ttype,             // type of Tx
     GrB_Type stype              // type of Sx
@@ -1236,7 +1265,7 @@ uint64_t GB_encodify_select     // encode an select problem
 void GB_enumify_select      // enumerate a GrB_selectproblem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool C_iso,
     bool in_place_A,
@@ -1252,7 +1281,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
     const GrB_IndexUnaryOp op,
     GrB_Type atype
@@ -1316,7 +1345,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
 void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
     GrB_Matrix C,
@@ -1326,13 +1355,15 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
+    bool Mask_struct,       // mask is structural
     // operator:
     GrB_BinaryOp accum,     // the accum operator (may be NULL)
-    // A matrix
+    // A matrix or scalar
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
+    // S matrix:
+    GrB_Matrix S,           // may be MULL
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 ) ;
 
@@ -1341,7 +1372,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     GrB_BinaryOp accum,         // accum operator to macrofy
     GrB_Type ctype,
     GrB_Type atype              // matrix or scalar type
@@ -1363,13 +1394,15 @@ uint64_t GB_encodify_assign     // encode an assign problem
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
+    bool Mask_struct,       // mask is structural
     // operator:
     GrB_BinaryOp accum,     // the accum operator (may be NULL)
     // A matrix or scalar
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
+    // S matrix:
+    GrB_Matrix S,           // may be NULL
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 ) ;
 
@@ -1401,6 +1434,8 @@ GrB_Info GB_subassign_jit
     const GrB_Matrix A,         // NULL for scalar assignment
     const void *scalar,
     const GrB_Type scalar_type,
+    // S matrix:
+    const GrB_Matrix S,         // NULL if not constructed
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
@@ -1465,6 +1500,278 @@ GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
 ) ;
 
 //------------------------------------------------------------------------------
+// masker
+//------------------------------------------------------------------------------
+
+GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
+(
+    // computed by phase1:
+    int64_t *Rp,                    // output of size Rnvec+1
+    int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
+    // tasks from phase1a:
+    GB_task_struct *restrict TaskList,       // array of structs
+    const int R_ntasks,               // # of tasks
+    const int R_nthreads,             // # of threads to use
+    // analysis from phase0:
+    const int64_t Rnvec,
+    const int64_t *restrict Rh,
+    const int64_t *restrict R_to_M,
+    const int64_t *restrict R_to_C,
+    const int64_t *restrict R_to_Z,
+    // original input:
+    const GrB_Matrix M,             // required mask
+    const bool Mask_comp,           // if true, then M is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix C,
+    const GrB_Matrix Z
+) ;
+
+GrB_Info GB_masker_phase2_jit       // phase2 for R = masker (C,M,Z)
+(
+    GrB_Matrix R,                   // output matrix, static header
+    // tasks from phase1a:
+    const GB_task_struct *restrict TaskList,     // array of structs
+    const int R_ntasks,               // # of tasks
+    const int R_nthreads,             // # of threads to use
+    // analysis from phase0:
+    const int64_t *restrict R_to_M,
+    const int64_t *restrict R_to_C,
+    const int64_t *restrict R_to_Z,
+    // original input:
+    const GrB_Matrix M,             // required mask
+    const bool Mask_comp,           // if true, then M is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
+    const GrB_Matrix C,
+    const GrB_Matrix Z,
+    const int64_t *restrict C_ek_slicing,
+    const int C_nthreads,
+    const int C_ntasks,
+    const int64_t *restrict M_ek_slicing,
+    const int M_nthreads,
+    const int M_ntasks
+) ;
+
+uint64_t GB_encodify_masker     // encode a masker problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    const GrB_Matrix R,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix C,
+    const GrB_Matrix Z
+) ;
+
+uint64_t GB_enumify_masker  // enumify a masker problem
+(
+    // output:
+    uint64_t *method_code,  // unique encoding of the entire operation
+    // input:
+    const GrB_Matrix R,
+    const GrB_Matrix M,
+    const bool Mask_struct,
+    const bool Mask_comp,
+    const GrB_Matrix C,
+    const GrB_Matrix Z
+) ;
+
+void GB_macrofy_masker          // construct all macros for GrB_eWise
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t method_code,
+    GrB_Type rtype
+) ;
+
+//------------------------------------------------------------------------------
+// subref methods, C = A(I,J)
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_subref     // encode an subref problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    // C matrix:
+    GrB_Matrix C,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto, or 0 if not used
+    bool need_qsort,        // true if qsort needs to be called
+    bool I_has_duplicates,  // true if I has duplicate entries
+    // A matrix:
+    GrB_Matrix A
+) ;
+
+void GB_enumify_subref      // enumerate a GrB_extract problem
+(
+    // output:
+    uint64_t *method_code,  // unique encoding of the entire operation
+    // C matrix:
+    GrB_Matrix C,
+    // index types:
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto, or 0 if not used
+    bool need_qsort,        // true if qsort needs to be called
+    bool I_has_duplicates,  // true if I has duplicate entries
+    // A matrix:
+    GrB_Matrix A
+) ;
+
+void GB_macrofy_subref          // construct all macros for GrB_extract
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t method_code,
+    GrB_Type ctype
+) ;
+
+GrB_Info GB_subref_sparse_jit
+(
+    // output matrix
+    GrB_Matrix C,                       // same type as A
+    // from phase1:
+    const GB_task_struct *restrict TaskList,  // list of tasks
+    const int ntasks,                   // # of tasks
+    const int nthreads,                 // # of threads to use
+    const bool post_sort,               // true if post-sort needed
+    const int64_t *Mark,                // for I inverse buckets, size A->vlen
+    const int64_t *Inext,               // for I inverse buckets, size nI
+    const bool I_has_duplicates,        // true if I has duplicates
+    // from phase0:
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
+    const bool need_qsort,
+    const int Ikind,
+    const int64_t nI,
+    const int64_t Icolon [3],
+    // original input:
+    const GrB_Matrix A,
+    const GrB_Index *I
+) ;
+
+GrB_Info GB_subref_bitmap_jit
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    GrB_Matrix A,
+    // I:
+    const GrB_Index *I,
+    const int64_t nI,
+    const int Ikind,
+    const int64_t Icolon [3],
+    // J:
+    const GrB_Index *J,
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    GB_Werk Werk
+) ;
+
+//------------------------------------------------------------------------------
+// iso_expand
+//------------------------------------------------------------------------------
+
+GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
+(
+    void *restrict X,               // output array to expand into
+    const int64_t n,                // # of entries in X
+    const void *restrict scalar,    // scalar to expand into X
+    const GrB_Type xtype,           // the type of the X and the scalar
+    const GB_Operator op,           // identity operator
+    const int nthreads              // # of threads to use
+) ;
+
+//------------------------------------------------------------------------------
+// unjumble
+//------------------------------------------------------------------------------
+
+GrB_Info GB_unjumble_jit
+(
+    // input/output:
+    const GrB_Matrix A,
+    const GB_Operator op,           // identity op, unused
+    const int64_t *A_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+//------------------------------------------------------------------------------
+// sort
+//------------------------------------------------------------------------------
+
+uint64_t GB_encodify_sort       // encode a sort problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    // input/output
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop
+) ;
+
+void GB_enumify_sort        // enumerate a GxB_sort problem
+(
+    // output:
+    uint64_t *method_code,  // unique encoding of the entire operation
+    // input:
+    GrB_Matrix C,           // matrix to sort
+    // comparator op:
+    GrB_BinaryOp binaryop   // the binary operator for the comparator
+) ;
+
+GrB_Info GB_sort_jit
+(
+    // input/output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    int nthreads,
+    GB_Werk Werk
+) ;
+
+void GB_macrofy_sort            // construct all macros for GxB_sort
+(
+    // output:
+    FILE *fp,                   // target file to write, already open
+    // input:
+    uint64_t method_code,
+    GrB_BinaryOp binaryop,      // binaryop to macrofy
+    GrB_Type ctype
+) ;
+
+//------------------------------------------------------------------------------
+// kronecker product
+//------------------------------------------------------------------------------
+
+GrB_Info GB_kroner_jit
+(
+    // output:
+    GrB_Matrix C,
+    // input:
+    const GrB_BinaryOp binaryop,
+    const bool flipij,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+) ;
+
+//------------------------------------------------------------------------------
 // macrofy for all methods
 //------------------------------------------------------------------------------
 
@@ -1474,7 +1781,8 @@ void GB_macrofy_family
     FILE *fp,                   // target file to write, already open
     // input:
     GB_jit_family family,       // family to macrofy
-    uint64_t scode,             // encoding of the specific problem
+    uint64_t method_code,       // encoding of the specific problem
+    uint64_t kcode,             // kernel code
     GrB_Semiring semiring,      // semiring (for mxm family only)
     GrB_Monoid monoid,          // monoid (for reduce family only)
     GB_Operator op,             // unary/index_unary/binary op

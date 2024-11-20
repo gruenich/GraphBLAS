@@ -82,7 +82,7 @@ bool GB_convert_bitmap_to_sparse_test    // test for hyper/sparse to bitmap
     int64_t vdim            // A->vdim
 ) ;
 
-bool GB_convert_s2b_test    // test for hyper/sparse to bitmap
+bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
 (
     float bitmap_switch,    // A->bitmap_switch
     int64_t anz,            // # of entries in A = GB_nnz (A)
@@ -112,15 +112,16 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_convert_bitmap_worker   // extract CSC/CSR or triplets from bitmap
+GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
 (
     // outputs:
-    int64_t *restrict Ap,        // vector pointers for CSC/CSR form
-    int64_t *restrict Ai,        // indices for CSC/CSR or triplet form
-    int64_t *restrict Aj,        // vector indices for triplet form
-    GB_void *restrict Ax_new,    // values for CSC/CSR or triplet form
-    int64_t *anvec_nonempty,        // # of non-empty vectors
+    int64_t *restrict Cp,           // vector pointers for CSC/CSR form
+    int64_t *restrict Ci,           // indices for CSC/CSR or triplet form
+    int64_t *restrict Cj,           // vector indices for triplet form
+    GB_void *restrict Cx,           // values for CSC/CSR or triplet form
+    int64_t *cnvec_nonempty,        // # of non-empty vectors
     // inputs: not modified
+    const GrB_Type ctype,           // type of Cx
     const GrB_Matrix A,             // matrix to extract; not modified
     GB_Werk Werk
 ) ;

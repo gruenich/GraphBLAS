@@ -7,8 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
+#define GB_TYPE_ENABLED 1
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "mxm/GB_AxB_saxpy.h"
 #include "include/GB_unused.h"
 #include "assign/GB_bitmap_assign_methods.h"
@@ -347,6 +349,8 @@ GrB_Info GB (_Asaxpy3B__any_pair_iso)
         }
         return (GrB_SUCCESS) ;
     }
+
+#endif
 
 #endif
 

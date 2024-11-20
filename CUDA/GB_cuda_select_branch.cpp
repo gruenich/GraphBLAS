@@ -6,17 +6,18 @@ bool GB_cuda_select_branch
     const GrB_IndexUnaryOp op
 )
 {
-    if (op == NULL)
-    {
-        return false ;
-    }
+    
+    ASSERT (A != NULL && op != NULL) ;
 
     if (A->static_header)
     {
-        // FIXME: explain this
+        // see Source/matrix/GB_static_header.h for details.  If A has a
+        // static header, it cannot be done on the GPU.  However, if GraphBLAS
+        // is compiled to use CUDA, there should be no static headers anyway,
+        // so this is likely dead code.  Just a sanity check.
         return false ;
     }
-    
+
     bool ok = (GB_cuda_type_branch (A->type)) ;
 
     if (op->xtype != NULL)

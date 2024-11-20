@@ -75,23 +75,23 @@ inline void GB_FUNC (MINV) (GB_TYPE *z, const GB_TYPE *x)
     #if defined ( GB_BOOLEAN )
         (*z) = true ;
     #elif defined ( GB_SIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_idiv_int8 (1, (*x)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_idiv_int16 (1, (*x)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_idiv_int32 (1, (*x)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_idiv_int64 (1, (*x)) ;
         #endif
     #elif defined ( GB_UNSIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_idiv_uint8 (1, (*x)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_idiv_uint16 (1, (*x)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_idiv_uint32 (1, (*x)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_idiv_uint64 (1, (*x)) ;
         #endif
     #elif defined ( GB_FLOAT )
@@ -218,8 +218,8 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 // For these operators, the input and output types are the same.
 
-#undef  GB_OP
-#define GB_OP(op,func)                                          \
+#undef  GB_UNOP_DEFINE
+#define GB_UNOP_DEFINE(op,func)                                 \
     GB_UNOP_STRUCT (op, GB_XTYPE) ;                             \
     inline void GB_FUNC (op) (GB_TYPE *z, const GB_TYPE *x)     \
     {                                                           \
@@ -232,44 +232,44 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     // float
     //--------------------------------------------------------------------------
 
-    GB_OP (SQRT  , sqrtf   )
-    GB_OP (LOG   , logf    )
-    GB_OP (EXP   , expf    )
+    GB_UNOP_DEFINE (SQRT  , sqrtf   )
+    GB_UNOP_DEFINE (LOG   , logf    )
+    GB_UNOP_DEFINE (EXP   , expf    )
 
-    GB_OP (SIN   , sinf    )
-    GB_OP (COS   , cosf    )
-    GB_OP (TAN   , tanf    )
+    GB_UNOP_DEFINE (SIN   , sinf    )
+    GB_UNOP_DEFINE (COS   , cosf    )
+    GB_UNOP_DEFINE (TAN   , tanf    )
 
-    GB_OP (ASIN  , asinf   )
-    GB_OP (ACOS  , acosf   )
-    GB_OP (ATAN  , atanf   )
+    GB_UNOP_DEFINE (ASIN  , asinf   )
+    GB_UNOP_DEFINE (ACOS  , acosf   )
+    GB_UNOP_DEFINE (ATAN  , atanf   )
 
-    GB_OP (SINH  , sinhf   )
-    GB_OP (COSH  , coshf   )
-    GB_OP (TANH  , tanhf   )
+    GB_UNOP_DEFINE (SINH  , sinhf   )
+    GB_UNOP_DEFINE (COSH  , coshf   )
+    GB_UNOP_DEFINE (TANH  , tanhf   )
 
-    GB_OP (ASINH , asinhf  )
-    GB_OP (ACOSH , acoshf  )
-    GB_OP (ATANH , atanhf  )
+    GB_UNOP_DEFINE (ASINH , asinhf  )
+    GB_UNOP_DEFINE (ACOSH , acoshf  )
+    GB_UNOP_DEFINE (ATANH , atanhf  )
 
-    GB_OP (SIGNUM, GB_signumf )
-    GB_OP (CEIL  , ceilf   )
-    GB_OP (FLOOR , floorf  )
-    GB_OP (ROUND , roundf  )
-    GB_OP (TRUNC , truncf  )
+    GB_UNOP_DEFINE (SIGNUM, GB_signumf )
+    GB_UNOP_DEFINE (CEIL  , ceilf   )
+    GB_UNOP_DEFINE (FLOOR , floorf  )
+    GB_UNOP_DEFINE (ROUND , roundf  )
+    GB_UNOP_DEFINE (TRUNC , truncf  )
 
-    GB_OP (EXP2  , exp2f   )
-    GB_OP (EXPM1 , expm1f  )
-    GB_OP (LOG10 , log10f  )
-    GB_OP (LOG1P , log1pf  )
-    GB_OP (LOG2  , log2f   )
+    GB_UNOP_DEFINE (EXP2  , exp2f   )
+    GB_UNOP_DEFINE (EXPM1 , expm1f  )
+    GB_UNOP_DEFINE (LOG10 , log10f  )
+    GB_UNOP_DEFINE (LOG1P , log1pf  )
+    GB_UNOP_DEFINE (LOG2  , log2f   )
 
     // real only
-    GB_OP (LGAMMA, lgammaf )
-    GB_OP (TGAMMA, tgammaf )
-    GB_OP (ERF   , erff    )
-    GB_OP (ERFC  , erfcf   )
-    GB_OP (CBRT  , cbrtf   )
+    GB_UNOP_DEFINE (LGAMMA, lgammaf )
+    GB_UNOP_DEFINE (TGAMMA, tgammaf )
+    GB_UNOP_DEFINE (ERF   , erff    )
+    GB_UNOP_DEFINE (ERFC  , erfcf   )
+    GB_UNOP_DEFINE (CBRT  , cbrtf   )
 
 #elif defined ( GB_DOUBLE )
 
@@ -277,44 +277,44 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     // double
     //--------------------------------------------------------------------------
 
-    GB_OP (SQRT  , sqrt    )
-    GB_OP (LOG   , log     )
-    GB_OP (EXP   , exp     )
+    GB_UNOP_DEFINE (SQRT  , sqrt    )
+    GB_UNOP_DEFINE (LOG   , log     )
+    GB_UNOP_DEFINE (EXP   , exp     )
 
-    GB_OP (SIN   , sin     )
-    GB_OP (COS   , cos     )
-    GB_OP (TAN   , tan     )
+    GB_UNOP_DEFINE (SIN   , sin     )
+    GB_UNOP_DEFINE (COS   , cos     )
+    GB_UNOP_DEFINE (TAN   , tan     )
 
-    GB_OP (ASIN  , asin    )
-    GB_OP (ACOS  , acos    )
-    GB_OP (ATAN  , atan    )
+    GB_UNOP_DEFINE (ASIN  , asin    )
+    GB_UNOP_DEFINE (ACOS  , acos    )
+    GB_UNOP_DEFINE (ATAN  , atan    )
 
-    GB_OP (SINH  , sinh    )
-    GB_OP (COSH  , cosh    )
-    GB_OP (TANH  , tanh    )
+    GB_UNOP_DEFINE (SINH  , sinh    )
+    GB_UNOP_DEFINE (COSH  , cosh    )
+    GB_UNOP_DEFINE (TANH  , tanh    )
 
-    GB_OP (ASINH , asinh   )
-    GB_OP (ACOSH , acosh   )
-    GB_OP (ATANH , atanh   )
+    GB_UNOP_DEFINE (ASINH , asinh   )
+    GB_UNOP_DEFINE (ACOSH , acosh   )
+    GB_UNOP_DEFINE (ATANH , atanh   )
 
-    GB_OP (SIGNUM, GB_signum )
-    GB_OP (CEIL  , ceil    )
-    GB_OP (FLOOR , floor   )
-    GB_OP (ROUND , round   )
-    GB_OP (TRUNC , trunc   )
+    GB_UNOP_DEFINE (SIGNUM, GB_signum )
+    GB_UNOP_DEFINE (CEIL  , ceil    )
+    GB_UNOP_DEFINE (FLOOR , floor   )
+    GB_UNOP_DEFINE (ROUND , round   )
+    GB_UNOP_DEFINE (TRUNC , trunc   )
 
-    GB_OP (EXP2  , exp2    )
-    GB_OP (EXPM1 , expm1   )
-    GB_OP (LOG10 , log10   )
-    GB_OP (LOG1P , log1p   )
-    GB_OP (LOG2  , log2    )
+    GB_UNOP_DEFINE (EXP2  , exp2    )
+    GB_UNOP_DEFINE (EXPM1 , expm1   )
+    GB_UNOP_DEFINE (LOG10 , log10   )
+    GB_UNOP_DEFINE (LOG1P , log1p   )
+    GB_UNOP_DEFINE (LOG2  , log2    )
 
     // real only
-    GB_OP (LGAMMA, lgamma )
-    GB_OP (TGAMMA, tgamma )
-    GB_OP (ERF   , erf    )
-    GB_OP (ERFC  , erfc   )
-    GB_OP (CBRT  , cbrt   )
+    GB_UNOP_DEFINE (LGAMMA, lgamma )
+    GB_UNOP_DEFINE (TGAMMA, tgamma )
+    GB_UNOP_DEFINE (ERF   , erf    )
+    GB_UNOP_DEFINE (ERFC  , erfc   )
+    GB_UNOP_DEFINE (CBRT  , cbrt   )
 
 #elif defined ( GB_FLOAT_COMPLEX )
 
@@ -322,39 +322,39 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     // float complex
     //--------------------------------------------------------------------------
 
-    GB_OP (SQRT  , GB_csqrtf   )
-    GB_OP (LOG   , GB_clogf    )
-    GB_OP (EXP   , GB_cexpf    )
+    GB_UNOP_DEFINE (SQRT  , GB_csqrtf   )
+    GB_UNOP_DEFINE (LOG   , GB_clogf    )
+    GB_UNOP_DEFINE (EXP   , GB_cexpf    )
 
-    GB_OP (SIN   , GB_csinf    )
-    GB_OP (COS   , GB_ccosf    )
-    GB_OP (TAN   , GB_ctanf    )
+    GB_UNOP_DEFINE (SIN   , GB_csinf    )
+    GB_UNOP_DEFINE (COS   , GB_ccosf    )
+    GB_UNOP_DEFINE (TAN   , GB_ctanf    )
 
-    GB_OP (ASIN  , GB_casinf   )
-    GB_OP (ACOS  , GB_cacosf   )
-    GB_OP (ATAN  , GB_catanf   )
+    GB_UNOP_DEFINE (ASIN  , GB_casinf   )
+    GB_UNOP_DEFINE (ACOS  , GB_cacosf   )
+    GB_UNOP_DEFINE (ATAN  , GB_catanf   )
 
-    GB_OP (SINH  , GB_csinhf   )
-    GB_OP (COSH  , GB_ccoshf   )
-    GB_OP (TANH  , GB_ctanhf   )
+    GB_UNOP_DEFINE (SINH  , GB_csinhf   )
+    GB_UNOP_DEFINE (COSH  , GB_ccoshf   )
+    GB_UNOP_DEFINE (TANH  , GB_ctanhf   )
 
-    GB_OP (ASINH , GB_casinhf  )
-    GB_OP (ACOSH , GB_cacoshf  )
-    GB_OP (ATANH , GB_catanhf  )
+    GB_UNOP_DEFINE (ASINH , GB_casinhf  )
+    GB_UNOP_DEFINE (ACOSH , GB_cacoshf  )
+    GB_UNOP_DEFINE (ATANH , GB_catanhf  )
 
-    GB_OP (SIGNUM, GB_csignumf )
-    GB_OP (CEIL  , GB_cceilf   )
-    GB_OP (FLOOR , GB_cfloorf  )
-    GB_OP (ROUND , GB_croundf  )
-    GB_OP (TRUNC , GB_ctruncf  )
+    GB_UNOP_DEFINE (SIGNUM, GB_csignumf )
+    GB_UNOP_DEFINE (CEIL  , GB_cceilf   )
+    GB_UNOP_DEFINE (FLOOR , GB_cfloorf  )
+    GB_UNOP_DEFINE (ROUND , GB_croundf  )
+    GB_UNOP_DEFINE (TRUNC , GB_ctruncf  )
 
-    GB_OP (EXP2  , GB_cexp2f   )
-    GB_OP (EXPM1 , GB_cexpm1f  )
-    GB_OP (LOG10 , GB_clog10f  )
-    GB_OP (LOG1P , GB_clog1pf  )
-    GB_OP (LOG2  , GB_clog2f   )
+    GB_UNOP_DEFINE (EXP2  , GB_cexp2f   )
+    GB_UNOP_DEFINE (EXPM1 , GB_cexpm1f  )
+    GB_UNOP_DEFINE (LOG10 , GB_clog10f  )
+    GB_UNOP_DEFINE (LOG1P , GB_clog1pf  )
+    GB_UNOP_DEFINE (LOG2  , GB_clog2f   )
 
-    GB_OP (CONJ  , GB_conjf    )
+    GB_UNOP_DEFINE (CONJ  , GB_conjf    )
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
@@ -362,39 +362,39 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
     // double complex
     //--------------------------------------------------------------------------
 
-    GB_OP (SQRT  , GB_csqrt    )
-    GB_OP (LOG   , GB_clog     )
-    GB_OP (EXP   , GB_cexp     )
+    GB_UNOP_DEFINE (SQRT  , GB_csqrt    )
+    GB_UNOP_DEFINE (LOG   , GB_clog     )
+    GB_UNOP_DEFINE (EXP   , GB_cexp     )
 
-    GB_OP (SIN   , GB_csin     )
-    GB_OP (COS   , GB_ccos     )
-    GB_OP (TAN   , GB_ctan     )
+    GB_UNOP_DEFINE (SIN   , GB_csin     )
+    GB_UNOP_DEFINE (COS   , GB_ccos     )
+    GB_UNOP_DEFINE (TAN   , GB_ctan     )
 
-    GB_OP (ASIN  , GB_casin    )
-    GB_OP (ACOS  , GB_cacos    )
-    GB_OP (ATAN  , GB_catan    )
+    GB_UNOP_DEFINE (ASIN  , GB_casin    )
+    GB_UNOP_DEFINE (ACOS  , GB_cacos    )
+    GB_UNOP_DEFINE (ATAN  , GB_catan    )
 
-    GB_OP (SINH  , GB_csinh    )
-    GB_OP (COSH  , GB_ccosh    )
-    GB_OP (TANH  , GB_ctanh    )
+    GB_UNOP_DEFINE (SINH  , GB_csinh    )
+    GB_UNOP_DEFINE (COSH  , GB_ccosh    )
+    GB_UNOP_DEFINE (TANH  , GB_ctanh    )
 
-    GB_OP (ASINH , GB_casinh   )
-    GB_OP (ACOSH , GB_cacosh   )
-    GB_OP (ATANH , GB_catanh   )
+    GB_UNOP_DEFINE (ASINH , GB_casinh   )
+    GB_UNOP_DEFINE (ACOSH , GB_cacosh   )
+    GB_UNOP_DEFINE (ATANH , GB_catanh   )
 
-    GB_OP (SIGNUM, GB_csignum  )
-    GB_OP (CEIL  , GB_cceil    )
-    GB_OP (FLOOR , GB_cfloor   )
-    GB_OP (ROUND , GB_cround   )
-    GB_OP (TRUNC , GB_ctrunc   )
+    GB_UNOP_DEFINE (SIGNUM, GB_csignum  )
+    GB_UNOP_DEFINE (CEIL  , GB_cceil    )
+    GB_UNOP_DEFINE (FLOOR , GB_cfloor   )
+    GB_UNOP_DEFINE (ROUND , GB_cround   )
+    GB_UNOP_DEFINE (TRUNC , GB_ctrunc   )
 
-    GB_OP (EXP2  , GB_cexp2    )
-    GB_OP (EXPM1 , GB_cexpm1   )
-    GB_OP (LOG10 , GB_clog10   )
-    GB_OP (LOG1P , GB_clog1p   )
-    GB_OP (LOG2  , GB_clog2    )
+    GB_UNOP_DEFINE (EXP2  , GB_cexp2    )
+    GB_UNOP_DEFINE (EXPM1 , GB_cexpm1   )
+    GB_UNOP_DEFINE (LOG10 , GB_clog10   )
+    GB_UNOP_DEFINE (LOG1P , GB_clog1p   )
+    GB_UNOP_DEFINE (LOG2  , GB_clog2    )
 
-    GB_OP (CONJ  , GB_conj     )
+    GB_UNOP_DEFINE (CONJ  , GB_conj     )
 
 #endif
 
@@ -404,8 +404,8 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 // x is float, double, float complex, or double complex
 
-#undef  GB_OP
-#define GB_OP(op,expression,z_t,x_t)                        \
+#undef  GB_UNOP_DEFINE
+#define GB_UNOP_DEFINE(op,expression,z_t,x_t)               \
     GB_UNOP_STRUCT(op, GB_XTYPE) ;                          \
     inline void GB_FUNC (op) (z_t *z, const x_t *x)         \
     {                                                       \
@@ -414,37 +414,37 @@ GB_UNOP_STRUCT (ABS, GB_XTYPE) ;
 
 #if defined ( GB_FLOAT )
 
-    GB_OP (ISINF    , (isinf (*x))    , bool, float)
-    GB_OP (ISNAN    , (isnan (*x))    , bool, float)
-    GB_OP (ISFINITE , (isfinite (*x)) , bool, float)
+    GB_UNOP_DEFINE (ISINF    , (isinf (*x))    , bool, float)
+    GB_UNOP_DEFINE (ISNAN    , (isnan (*x))    , bool, float)
+    GB_UNOP_DEFINE (ISFINITE , (isfinite (*x)) , bool, float)
 
 #elif defined ( GB_DOUBLE )
 
-    GB_OP (ISINF    , (isinf (*x))    , bool, double)
-    GB_OP (ISNAN    , (isnan (*x))    , bool, double)
-    GB_OP (ISFINITE , (isfinite (*x)) , bool, double)
+    GB_UNOP_DEFINE (ISINF    , (isinf (*x))    , bool, double)
+    GB_UNOP_DEFINE (ISNAN    , (isnan (*x))    , bool, double)
+    GB_UNOP_DEFINE (ISFINITE , (isfinite (*x)) , bool, double)
 
 #elif defined ( GB_FLOAT_COMPLEX )
 
-    GB_OP (ISINF    , GB_cisinff (*x)   , bool, GxB_FC32_t)
-    GB_OP (ISNAN    , GB_cisnanf (*x)   , bool, GxB_FC32_t)
-    GB_OP (ISFINITE , GB_cisfinitef (*x), bool, GxB_FC32_t)
+    GB_UNOP_DEFINE (ISINF    , GB_cisinff (*x)   , bool, GxB_FC32_t)
+    GB_UNOP_DEFINE (ISNAN    , GB_cisnanf (*x)   , bool, GxB_FC32_t)
+    GB_UNOP_DEFINE (ISFINITE , GB_cisfinitef (*x), bool, GxB_FC32_t)
 
     // complex only
-    GB_OP (CREAL , GB_crealf (*x), float, GxB_FC32_t)
-    GB_OP (CIMAG , GB_cimagf (*x), float, GxB_FC32_t)
-    GB_OP (CARG  , GB_cargf  (*x), float, GxB_FC32_t)
+    GB_UNOP_DEFINE (CREAL , GB_crealf (*x), float, GxB_FC32_t)
+    GB_UNOP_DEFINE (CIMAG , GB_cimagf (*x), float, GxB_FC32_t)
+    GB_UNOP_DEFINE (CARG  , GB_cargf  (*x), float, GxB_FC32_t)
 
 #elif defined ( GB_DOUBLE_COMPLEX )
 
-    GB_OP (ISINF    , GB_cisinf (*x)    , bool, GxB_FC64_t)
-    GB_OP (ISNAN    , GB_cisnan  (*x)   , bool, GxB_FC64_t)
-    GB_OP (ISFINITE , GB_cisfinite (*x) , bool, GxB_FC64_t)
+    GB_UNOP_DEFINE (ISINF    , GB_cisinf (*x)    , bool, GxB_FC64_t)
+    GB_UNOP_DEFINE (ISNAN    , GB_cisnan  (*x)   , bool, GxB_FC64_t)
+    GB_UNOP_DEFINE (ISFINITE , GB_cisfinite (*x) , bool, GxB_FC64_t)
 
     // complex only
-    GB_OP (CREAL , GB_creal (*x), double, GxB_FC64_t)
-    GB_OP (CIMAG , GB_cimag (*x), double, GxB_FC64_t)
-    GB_OP (CARG  , GB_carg  (*x), double, GxB_FC64_t)
+    GB_UNOP_DEFINE (CREAL , GB_creal (*x), double, GxB_FC64_t)
+    GB_UNOP_DEFINE (CIMAG , GB_cimag (*x), double, GxB_FC64_t)
+    GB_UNOP_DEFINE (CARG  , GB_carg  (*x), double, GxB_FC64_t)
 
 #endif
 
@@ -541,23 +541,23 @@ inline void GB_FUNC (DIV) (GB_Z_X_Y_ARGS)
         // boolean div (== first)
         (*z) = (*x) ;
     #elif defined ( GB_SIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_idiv_int8 ((*x), (*y)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_idiv_int16 ((*x), (*y)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_idiv_int32 ((*x), (*y)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_idiv_int64 ((*x), (*y)) ;
         #endif
     #elif defined ( GB_UNSIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_idiv_uint8 ((*x), (*y)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_idiv_uint16 ((*x), (*y)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_idiv_uint32 ((*x), (*y)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_idiv_uint64 ((*x), (*y)) ;
         #endif
     #elif defined ( GB_FLOAT ) || defined ( GB_DOUBLE )
@@ -576,23 +576,23 @@ inline void GB_FUNC (RDIV) (GB_Z_X_Y_ARGS)
         // boolean rdiv (== second)
         (*z) = (*y) ;
     #elif defined ( GB_SIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_idiv_int8 ((*y), (*x)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_idiv_int16 ((*y), (*x)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_idiv_int32 ((*y), (*x)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_idiv_int64 ((*y), (*x)) ;
         #endif
     #elif defined ( GB_UNSIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_idiv_uint8 ((*y), (*x)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_idiv_uint16 ((*y), (*x)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_idiv_uint32 ((*y), (*x)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_idiv_uint64 ((*y), (*x)) ;
         #endif
     #elif defined ( GB_FLOAT ) || defined ( GB_DOUBLE )
@@ -611,23 +611,23 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
     #if defined ( GB_BOOLEAN )
         (*z) = (*x) || (!(*y)) ;
     #elif defined ( GB_SIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_pow_int8 ((*x), (*y)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_pow_int16 ((*x), (*y)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_pow_int32 ((*x), (*y)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_pow_int64 ((*x), (*y)) ;
         #endif
     #elif defined ( GB_UNSIGNED_INT )
-        #if ( GB_BITS == 8)
+        #if ( GB_X_NBITS == 8)
             (*z) = GB_pow_uint8 ((*x), (*y)) ;
-        #elif ( GB_BITS == 16)
+        #elif ( GB_X_NBITS == 16)
             (*z) = GB_pow_uint16 ((*x), (*y)) ;
-        #elif ( GB_BITS == 32)
+        #elif ( GB_X_NBITS == 32)
             (*z) = GB_pow_uint32 ((*x), (*y)) ;
-        #elif ( GB_BITS == 64)
+        #elif ( GB_X_NBITS == 64)
             (*z) = GB_pow_uint64 ((*x), (*y)) ;
         #endif
     #elif defined ( GB_FLOAT )
@@ -696,31 +696,31 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
     inline void GB_FUNC (BGET) (GB_Z_X_Y_ARGS)
     {
         // bitget (x,y) returns a single bit from x, as 0 or 1, whose position
-        // is given by y.  y = 1 is the least significant bit, and y = GB_BITS
-        // (64 for uint64) is the most significant bit. If y is outside this
-        // range, the result is zero.
+        // is given by y.  y = 1 is the least significant bit, and y =
+        // GB_X_NBITS (64 for uint64, for example) is the most significant bit.
+        // If y is outside this range, the result is zero.
 
         #if defined ( GB_SIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitget_int8 ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitget_int16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitget_int32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitget_int64 ((*x), (*y)) ;
             #endif
 
         #elif defined ( GB_UNSIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitget_uint8 ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitget_uint16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitget_uint32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitget_uint64 ((*x), (*y)) ;
             #endif
 
@@ -731,31 +731,31 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
     inline void GB_FUNC (BSET) (GB_Z_X_Y_ARGS)
     {
         // bitset (x,y) returns x modified by setting a bit from x to 1, whose
-        // position is given by y.  If y is in the range 1 to GB_BITS, then y
-        // gives the position of the bit to set.  If y is outside the range 1
-        // to GB_BITS, then z = x is returned, unmodified.
+        // position is given by y.  If y is in the range 1 to GB_X_NBITS, then
+        // y gives the position of the bit to set.  If y is outside the range 1
+        // to GB_X_NBITS, then z = x is returned, unmodified.
 
         #if defined ( GB_SIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitset_int8  ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitset_int16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitset_int32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitset_int64 ((*x), (*y)) ;
             #endif
 
         #elif defined ( GB_UNSIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitset_uint8  ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitset_uint16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitset_uint32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitset_uint64 ((*x), (*y)) ;
             #endif
 
@@ -766,31 +766,31 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
     inline void GB_FUNC (BCLR) (GB_Z_X_Y_ARGS)
     {
         // bitclr (x,y) returns x modified by setting a bit from x to 0, whose
-        // position is given by y.  If y is in the range 1 to GB_BITS, then y
-        // gives the position of the bit to clear.  If y is outside the range 1
-        // to GB_BITS, then z = x is returned, unmodified.
+        // position is given by y.  If y is in the range 1 to GB_X_NBITS, then
+        // y gives the position of the bit to clear.  If y is outside the range
+        // 1 to GB_X_NBITS, then z = x is returned, unmodified.
 
         #if defined ( GB_SIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitclr_int8  ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitclr_int16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitclr_int32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitclr_int64 ((*x), (*y)) ;
             #endif
 
         #elif defined ( GB_UNSIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitclr_uint8  ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitclr_uint16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitclr_uint32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitclr_uint64 ((*x), (*y)) ;
             #endif
 
@@ -807,25 +807,25 @@ inline void GB_FUNC (POW) (GB_Z_X_Y_ARGS)
 
         #if defined ( GB_SIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitshift_int8 ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitshift_int16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitshift_int32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitshift_int64 ((*x), (*y)) ;
             #endif
 
         #elif defined ( GB_UNSIGNED_INT )
 
-            #if ( GB_BITS == 8)
+            #if ( GB_X_NBITS == 8)
                 (*z) = GB_bitshift_uint8 ((*x), (*y)) ;
-            #elif ( GB_BITS == 16)
+            #elif ( GB_X_NBITS == 16)
                 (*z) = GB_bitshift_uint16 ((*x), (*y)) ;
-            #elif ( GB_BITS == 32)
+            #elif ( GB_X_NBITS == 32)
                 (*z) = GB_bitshift_uint32 ((*x), (*y)) ;
-            #elif ( GB_BITS == 64)
+            #elif ( GB_X_NBITS == 64)
                 (*z) = GB_bitshift_uint64 ((*x), (*y)) ;
             #endif
 
@@ -1228,19 +1228,99 @@ inline void GB_FUNC (NE) (GB_Zbool_X_Y_ARGS)
 #endif
 
 //------------------------------------------------------------------------------
+// builtin index binary operators
+//------------------------------------------------------------------------------
+
+#if defined ( GB_SIGNED_INDEX )
+
+    GB_BINOP_STRUCT (FIRSTI, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTI) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) ix ;
+    }
+
+    GB_BINOP_STRUCT (FIRSTI1, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTI1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) ix) + 1 ;
+    }
+
+    GB_BINOP_STRUCT (FIRSTJ, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTJ) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) jx ;
+    }
+
+    GB_BINOP_STRUCT (FIRSTJ1, GB_XTYPE) ;
+    inline void GB_FUNC (FIRSTJ1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) jx) + 1 ;
+    }
+
+    GB_BINOP_STRUCT (SECONDI, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDI) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) iy ;
+    }
+
+    GB_BINOP_STRUCT (SECONDI1, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDI1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) iy) + 1 ;
+    }
+
+    GB_BINOP_STRUCT (SECONDJ, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDJ) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = (GB_TYPE) jy ;
+    }
+
+    GB_BINOP_STRUCT (SECONDJ1, GB_XTYPE) ;
+    inline void GB_FUNC (SECONDJ1) (GB_TYPE *z,
+        const void *x, GrB_Index ix, GrB_Index jx,
+        const void *y, GrB_Index iy, GrB_Index jy,
+        const void *theta)
+    {
+        (*z) = ((GB_TYPE) jy) + 1 ;
+    }
+
+#endif
+
+//------------------------------------------------------------------------------
 // clear macros for next use of this file
 //------------------------------------------------------------------------------
 
 #undef GB_TYPE
 #undef GB_XTYPE
-#undef GB_OP
+#undef GB_UNOP_DEFINE
 #undef GB_BOOLEAN
 #undef GB_FLOATING_POINT
 #undef GB_UNSIGNED_INT
 #undef GB_SIGNED_INT
 #undef GB_SIGNED_INDEX
 #undef GB_SIGNED_INDEX64
-#undef GB_BITS
+#undef GB_X_NBITS
 #undef GB_REAL
 #undef GB_DOUBLE
 #undef GB_FLOAT

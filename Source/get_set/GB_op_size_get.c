@@ -54,6 +54,10 @@ GrB_Info GB_op_size_get
             s = GB_type_name_get (op->ztype) ;
             break ;
 
+        case GxB_THETA_TYPE_STRING : 
+            s = GB_type_name_get (op->theta_type) ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

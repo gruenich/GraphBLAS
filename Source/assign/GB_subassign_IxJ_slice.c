@@ -2,10 +2,12 @@
 // GB_subassign_IxJ_slice: slice IxJ for subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// Slice IxJ for a scalar assignment method and for bitmap assignments.
 
 // Construct a set of tasks to compute C(I,J)<...> = x or += x, for a subassign
 // method that performs scalar assignment, based on slicing the Cartesian
@@ -16,9 +18,6 @@
 // Otherwise, if not enough coarse tasks can be constructed, then all tasks are
 // fine.  Each fine task computes a slice of C(I(iA_start:iA_end-1), jC) for a
 // single index jC = J(kfirst).
-
-// This method is used by methods 01, 03, 13, 15, 17, 19, which are the 6
-// scalar assignment methods that must iterate over all IxJ.
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
@@ -55,24 +54,7 @@
 // GB_subassign_IxJ_slice
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_IxJ_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
-    // input:
-//  const GrB_Index *I,
-    const int64_t nI,
-//  const int Ikind,
-//  const int64_t Icolon [3],
-//  const GrB_Index *J,
-    const int64_t nJ,
-//  const int Jkind,
-//  const int64_t Jcolon [3],
-    GB_Werk Werk
-)
+GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice)
 {
 
     //--------------------------------------------------------------------------

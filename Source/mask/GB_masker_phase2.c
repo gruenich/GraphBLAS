@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
-
 // GB_masker_phase2 computes R = masker (C,M,Z).  It is preceded first by
 // GB_add_phase0, which computes the list of vectors of R to compute (Rh) and
 // their location in C and Z (R_to_[CZ]).  Next, GB_masker_phase1 counts the
@@ -17,9 +15,10 @@
 // GB_masker_phase2 computes the pattern and values of each vector of R(:,j),
 // entirely in parallel.
 
-// R, M, C, and Z can be standard sparse or hypersparse, as determined by
-// GB_add_phase0.  All cases of the mask M are handled: present and not
-// complemented, and present and complemented.  The mask is always present.
+// R, M, C, and Z can have any sparsity format (except R cannot be full), as
+// determined by GB_add_phase0 and GB_masker_sparsity.  All cases of the mask M
+// are handled: present and not complemented, and present and complemented.
+// The mask is always present.
 
 // This function either frees Rp and Rh, or transplants then into R, as R->p
 // and R->h.  Either way, the caller must not free them.
@@ -29,6 +28,8 @@
 #include "mask/GB_mask.h"
 #include "slice/GB_ek_slice.h"
 #include "include/GB_unused.h"
+#include "jitifyer/GB_stringify.h"
+#include "include/GB_masker_shared_definitions.h"
 
 #undef  GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                   \
@@ -78,6 +79,11 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
+    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
+    int C_nthreads = 0, C_ntasks = 0 ;
+    int M_nthreads = 0, M_ntasks = 0 ;
+
     ASSERT_MATRIX_OK (M, "M for mask phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ; 
     ASSERT (!GB_JUMBLED (M)) ;
@@ -100,9 +106,6 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (C->type == Z->type) ;
 
     ASSERT (R != NULL && (R->static_header || GBNSTATIC)) ;
-
-    GB_WERK_DECLARE (C_ek_slicing, int64_t) ;
-    GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rh_handle != NULL) ;
@@ -177,12 +180,34 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     R->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
-    // generic worker
+    // slice C and M, if needed
+    //--------------------------------------------------------------------------
+
+    if (R_sparsity == GxB_BITMAP)
+    {
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        double chunk = GB_Context_chunk ( ) ;
+        int64_t C_nnz_held = GB_nnz_held (C) ;
+        GB_SLICE_MATRIX_WORK (C, 8, C_nnz_held + C->nvec, C_nnz_held) ;
+        if (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))
+        {
+            int64_t M_nnz_held = GB_nnz_held (M) ;
+            GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // masker phase2 worker
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_2_OF_2
     if (R_iso)
     { 
+
+        //----------------------------------------------------------------------
+        // R iso case
+        //----------------------------------------------------------------------
+
         // R can be iso only if C and/or Z are iso
         GBURBLE ("(iso mask) ") ;
         #define GB_ISO_MASKER
@@ -196,12 +221,34 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
             // C must be iso; copy its iso value into R
             memcpy (R->x, C->x, czsize) ;
         }
-        #include "mask/factory/GB_masker_template.c"
+        #include "mask/template/GB_masker_template.c"
+        info = GrB_SUCCESS ;
     }
     else
     { 
-        #include "mask/factory/GB_masker_template.c"
+
+        //----------------------------------------------------------------------
+        // via the JIT kernel
+        //----------------------------------------------------------------------
+
+        info = GB_masker_phase2_jit (R, TaskList, R_ntasks, R_nthreads,
+            R_to_M, R_to_C, R_to_Z, M, Mask_comp, Mask_struct, C, Z,
+            C_ek_slicing, C_ntasks, C_nthreads,
+            M_ek_slicing, M_ntasks, M_nthreads) ;
+
+        //----------------------------------------------------------------------
+        // via the generic kernel
+        //----------------------------------------------------------------------
+
+        if (info == GrB_NO_VALUE)
+        { 
+            GBURBLE ("(generic masker) ") ;
+            #include "mask/template/GB_masker_template.c"
+            info = GrB_SUCCESS ;
+        }
     }
+
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // prune empty vectors from Rh

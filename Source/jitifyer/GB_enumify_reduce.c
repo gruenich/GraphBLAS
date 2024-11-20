@@ -15,7 +15,7 @@
 void GB_enumify_reduce      // enumerate a GrB_reduce problem
 (
     // output:
-    uint64_t *rcode,        // unique encoding of the entire problem
+    uint64_t *method_code,  // unique encoding of the entire problem
     // input:
     GrB_Monoid monoid,      // the monoid to enumify
     GrB_Matrix A            // input matrix to monoid
@@ -61,15 +61,15 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     // enumify the monoid
     //--------------------------------------------------------------------------
 
-    int red_ecode, id_ecode, term_ecode ;
-    GB_enumify_monoid (&red_ecode, &id_ecode, &term_ecode, reduce_opcode,
-        zcode) ;
+    ASSERT (reduce_opcode >= GB_USER_binop_code) ;
+    ASSERT (reduce_opcode <= GB_BXNOR_binop_code) ;
+    int red_code = (reduce_opcode - GB_USER_binop_code) & 0xF ;
 
     const char *a = NULL, *cuda_type = NULL ;
     bool user_monoid_atomically = false ;
     bool has_cheeseburger = GB_enumify_cuda_atomic (&a,
         &user_monoid_atomically, &cuda_type,
-        monoid, red_ecode, ztype->size, zcode) ;
+        monoid, reduce_opcode, ztype->size, zcode) ;
     int cheese = (has_cheeseburger) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
@@ -82,18 +82,16 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the reduction rcode
+    // construct the reduction method_code
     //--------------------------------------------------------------------------
 
-    // total rcode bits: 28 (7 hex digits)
+    // total method_code bits: 17 (5 hex digits)
 
-    (*rcode) = 
+    (*method_code) = 
                                                // range        bits
-                // monoid: 16 bits (4 hex digits)
-                GB_LSHIFT (cheese     , 27) |  // 0 to 1       1
-                GB_LSHIFT (red_ecode  , 22) |  // 0 to 22      5
-                GB_LSHIFT (id_ecode   , 17) |  // 0 to 31      5
-                GB_LSHIFT (term_ecode , 12) |  // 0 to 31      5
+                // monoid: 5 bits (2 hex digits)
+                GB_LSHIFT (cheese     , 16) |  // 0 to 1       1
+                GB_LSHIFT (red_code   , 12) |  // 0 to 13      4
 
                 // type of the monoid: 1 hex digit
                 GB_LSHIFT (zcode      ,  8) |  // 0 to 14      4

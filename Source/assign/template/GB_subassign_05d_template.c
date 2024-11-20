@@ -2,12 +2,25 @@
 // GB_subassign_05d_template: C<M> = x where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-#undef  GB_FREE_ALL        
+// Method 05d: C(:,:)<M> = scalar ; no S, C is dense
+
+// M:           present, can be sparse, hypersparse, bitmap, or full
+// Mask_comp:   false
+// Mask_struct: true or false
+// C_replace:   false
+// accum:       NULL
+// A:           scalar
+// S:           none
+
+// C can have any sparsity structure, but it must be entirely dense with
+// all entries present.
+
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
 {                                           \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
@@ -32,21 +45,17 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
-    #ifdef GB_JIT_KERNEL
-    #define Mask_struct GB_MASK_STRUCT
-    #else
-    const size_t msize = M->type->size ;
-    #endif
-
     const int64_t *restrict Mp = M->p ;
     const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
-    const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
+    const GB_M_TYPE *restrict
+        Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
     const size_t Mvlen = M->vlen ;
+    const size_t msize = M->type->size ;
 
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
 
     //--------------------------------------------------------------------------
     // C<M> = x
@@ -78,20 +87,22 @@
                 GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
 
             // pC_start points to the start of C(:,j)
-            int64_t pC_start = j * cvlen ;
+            int64_t pC_start = j * Cvlen ;
 
             //------------------------------------------------------------------
             // C<M(:,j)> = x
             //------------------------------------------------------------------
 
-            if (Mx == NULL && Mb == NULL)
+            if (Mx == NULL && Mb == NULL)   // FIXME
+//          if (GB_MASK_STRUCT && !GB_M_IS_BITMAP)  <--- use this instead
             {
+                // mask is structural and not bitmap
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
                     int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
                     // Cx [pC] = cwork
-                    GB_COPY_scalar_to_C (Cx, pC, cwork) ;
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, false) ;
                 }
             }
             else
@@ -103,7 +114,7 @@
                     { 
                         int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
                         // Cx [pC] = cwork
-                        GB_COPY_scalar_to_C (Cx, pC, cwork) ;
+                        GB_COPY_cwork_to_C (Cx, pC, cwork, false) ;
                     }
                 }
             }
@@ -113,6 +124,6 @@
     GB_FREE_ALL ;
 }
 
-#undef  GB_FREE_ALL        
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 

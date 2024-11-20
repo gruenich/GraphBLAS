@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // Sort an index array and remove duplicates:
 
 /*
@@ -138,7 +136,7 @@ GrB_Info GB_ijsort
         Count [tid] = my_count ;
     }
 
-    GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+    GB_cumsum1 (Count, ntasks) ;
     int64_t ni2 = Count [ntasks] ;
 
     //--------------------------------------------------------------------------

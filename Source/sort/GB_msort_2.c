@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // A parallel mergesort of an array of 2-by-n integers.  Each key
 // consists of two integers.
 

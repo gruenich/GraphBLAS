@@ -364,18 +364,18 @@ GB_Pending Pending ;        // list of pending tuples
 //-----------------------------------------------------------------------------
 
 // A "zombie" is the opposite of a pending tuple.  It is an entry A(i,j) that
-// has been marked for deletion, but has not been deleted yet because it is more
-// efficient to delete all zombies all at once, rather than one (or a few) at a
-// time.  An entry A(i,j) is marked as a zombie by 'flipping' its index via
-// GB_FLIP(i).  A flipped index is negative, and the actual index can be
-// obtained by GB_UNFLIP(i).  GB_FLIP(i) is a function that is its own inverse:
-// GB_FLIP(GB_FLIP(x))=x for all x.
+// has been marked for deletion, but has not been deleted yet because it is
+// more efficient to delete all zombies all at once, rather than one (or a few)
+// at a time.  An entry A(i,j) is marked as a zombie by 'zombifying' its index
+// via GB_ZOMBIE(i).  A zombie index is negative, and the actual index can be
+// obtained by GB_UNZOMBIE(i).  GB_ZOMBIE(i) is a function that is its own
+// inverse: GB_ZOMBIE(GB_ZOMBIE(x))=x for all x.
 
 // Using zombies allows entries to be marked for deletion.  Their index is
 // still important, for two reasons: (1) the indices in each vector of the
 // matrix are kept sorted to enable the use of binary search, (2) a zombie may
 // be restored as a regular entry by a subsequent update, via setElement,
-// subassign, or assign.  In this case its index is unflipped and its value
+// subassign, or assign.  In this case its index is dezombied and its value
 // modified.  Had the zombie not been there, the update would have to be placed
 // in the pending tuple list.  It is more efficient to keep the pending tuple
 // lists as short as possible, so zombies are kept as long as possible to
@@ -388,6 +388,32 @@ GB_Pending Pending ;        // list of pending tuples
 // GB_wait.
 
 uint64_t nzombies ;     // number of zombies marked for deletion
+
+//------------------------------------------------------------------------------
+// CUDA memory distribution
+//------------------------------------------------------------------------------
+
+#if 0
+// IN PROGRESS ...
+
+int64_t cuda_memory_hints [4] ; // handle up to 255 GPUs, one bit per GPU,
+    // and one bit for the CPU memory.  If a bit is one, the matrix can reside
+    // on that particular memory space.  Default: all ones (the matrix can
+    // be anywhere).  The A->cuda_memory_hints [...] field would only change
+    // via GrB_set, and not changed as the matrix moves from memory space to
+    // memory space.  A call to GrB_set would trigger a cudaMemAdvise.
+
+// *_memory_location: GraphBLAS' current notion of where the memory space
+// is currently.  If GPU 4 touches p, h, and i, for example, but not b or x,
+// then [phi]_memory_location would all be set to 4.  It the CPU touches the
+// space then it gets set to -1.
+
+int32_t p_memory_location ; // -1: on CPU, k if on GPU k
+int32_t h_memory_location ;
+int32_t b_memory_location ;
+int32_t i_memory_location ;
+int32_t x_memory_location ;
+#endif
 
 //------------------------------------------------------------------------------
 // sparsity control

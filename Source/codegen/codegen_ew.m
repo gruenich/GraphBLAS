@@ -112,6 +112,7 @@ codegen_ew_template ('rdiv',         ...
     'GB_FC32_div (yarg, xarg)',         ... % GxB_FC32_t
     'GB_FC64_div (yarg, xarg)') ;       ... % GxB_FC64_t
 
+%{
 codegen_ew_template ('iseq',         ...
     [ ],                                ... % bool
     '((xarg) == (yarg))',               ... % int, uint
@@ -159,6 +160,7 @@ codegen_ew_template ('isle',         ...
     '((xarg) <= (yarg))',               ... % double
     [ ],                                ... % GxB_FC32_t
     [ ]) ;                              ... % GxB_FC64_t
+%}
 
 codegen_ew_template ('eq',           ...
     '((xarg) == (yarg))',               ... % bool

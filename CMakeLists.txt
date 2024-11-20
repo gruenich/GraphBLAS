@@ -42,7 +42,7 @@ endif ( )
 
 # CUDA is under development for now, and not deployed in production:
   set ( GRAPHBLAS_USE_CUDA OFF )
-# set ( GRAPHBLAS_USE_CUDA ON )     # FIXME: use this for CUDA development
+# set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
 
 include ( SuiteSparsePolicy )
 
@@ -210,6 +210,7 @@ configure_file ( "Config/README.md.in"
 include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     xxHash lz4 zstd zstd/zstd_subset JITpackage Demo/Include rmm_wrap
     # include all Source/* folders that have include/ or template/ subfolders:
+    Source/add
     Source/apply
     Source/assign
     Source/builder
@@ -217,10 +218,17 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/callback
     Source/concat
     Source/convert
+    Source/cumsum
+    Source/emult
     Source/ewise
+    Source/extract
     Source/hyper
+    Source/ij
     Source/jit_kernels
+    Source/kronecker
+    Source/mask
     Source/math
+    Source/matrix
     Source/memory
     Source/monoid
     Source/mxm
@@ -231,6 +239,7 @@ include_directories ( ${PROJECT_SOURCE_DIR} Source Include Config
     Source/select
     Source/split
     Source/slice
+    Source/sort
     Source/transpose
     Source/type
     Source/wait

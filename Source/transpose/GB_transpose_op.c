@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // C = op (A')
 
 // The values of A are typecasted to op->xtype and then passed to the unary
@@ -39,6 +37,7 @@
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_uop__include.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
@@ -217,35 +216,37 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         size_t xsize = op->xtype->size ;
         size_t ysize = op->ytype->size ;
 
-        GB_Type_code scode = scalar->type->code ;
+        GB_Type_code scalar_code = scalar->type->code ;
         xcode = op->xtype->code ;
         ycode = op->ytype->code ;
 
         // typecast the scalar to the operator input
         size_t ssize_cast ;
-        GB_Type_code scode_cast ;
+        GB_Type_code scalar_code_cast ;
         if (binop_bind1st)
         { 
             ssize_cast = xsize ;
-            scode_cast = xcode ;
+            scalar_code_cast = xcode ;
         }
         else
         { 
             ssize_cast = ysize ;
-            scode_cast = ycode ;
+            scalar_code_cast = ycode ;
         }
         GB_void swork [GB_VLA(ssize_cast)] ;
         GB_void *scalarx = (GB_void *) scalar->x ;
-        if (scode_cast != scode)
+        if (scalar_code_cast != scalar_code)
         { 
             // typecast the scalar to the operator input, in swork
-            GB_cast_function cast_s = GB_cast_factory (scode_cast, scode) ;
+            GB_cast_function cast_s =
+                GB_cast_factory (scalar_code_cast, scalar_code) ;
             cast_s (swork, scalar->x, ssize) ;
             scalarx = swork ;
         }
 
         GB_Type_code acode = Atype->code ;
         GxB_binary_function fop = op->binop_function ;
+        ASSERT (fop != NULL) ;
         GB_cast_function cast_A_to_Y = GB_cast_factory (ycode, acode) ;
         GB_cast_function cast_A_to_X = GB_cast_factory (xcode, acode) ;
 
