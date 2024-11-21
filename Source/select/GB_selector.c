@@ -23,6 +23,8 @@
 
 #define GB_FREE_ALL ;
 
+static int run = 0;
+
 GrB_Info GB_selector
 (
     GrB_Matrix C,               // output matrix, NULL or existing header
@@ -160,23 +162,89 @@ GrB_Info GB_selector
 
     info = GrB_NO_VALUE ;
 
-    // FIXME: pass in a T matrix, below, not C:
+    // FIXME: pass in a T matrix, below, not C
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T ;
+    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
 
-#if 0
+    bool compare = false ;
+
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (!in_place_A /* Fixme for CUDA: remove this condition, and let the CUDA
-        kernel handle the in-place-A condition for GB_wait and GB_resize. */
+    if (!in_place_A /* FIXME: Workaround for CUDA kernel not
+        handling in-place condition. Fix by building result
+        in T matrix for both CUDA and CPU and handle in-place case
+        separately at end */
+        && (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) /* It is possible for
+        non-sparse matrices to use the sparse kernel; see check for 
+        use_select_bitmap above. The CUDA select_sparse kernel will not work
+        in this case, so make this go to the CPU. */
         && GB_cuda_select_branch (A, op))
     {
-        info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
+        compare = true ;
+        info = GB_cuda_select_sparse (T, C_iso, op, flipij, A, ythunk) ;
     }
     #endif
-#endif
-
-    if (info == GrB_NO_VALUE)
+    // Failing on TriangleCount, Cached_NDiag
+    if (/* info == GrB_NO_VALUE */ true)
     {
+        run++;
+        bool fallout = false;
+        #define SAME(a, b, fmt, args...)                                            \
+        {                                                                           \
+            if (fallout) {                                                          \
+                printf (fmt, args);                                                 \
+                printf ("\n");                                                      \
+            }                                                                       \
+            else if (a != b) {                                                      \
+                fallout = true;                                                     \
+                printf ("======== [VIDITH]: Hit on run: %d ========\n", run);       \
+                printf (fmt, args) ;                                                \
+                printf ("\n") ;                                                     \
+                printf ("Jumbled? %d\n", A->jumbled) ;                              \
+                printf ("Dumping [Ax, Ai]\n") ;                                     \
+                int pi = 0;                                                         \
+                int pval = A->p[pi];                                                \
+                for (int i = 0; i < A->nvals; i++) {                                \
+                    if (i == pval) {                                                \
+                        printf ("== COL %d ==\n", pi);                              \
+                        pi++;                                                       \
+                        pval = A->p[pi];                                            \
+                    }                                                               \
+                    printf ("(%d): Ax: %0.5f; Ai: %ld\n", i,                        \
+                        ((double*) A->x)[i], A->i[i]) ;                             \
+                }                                                                   \
+                printf ("Dumping Ap\n") ;                                           \
+                for (int i = 0; i < A->plen + 1; i++) {                             \
+                    printf ("(%d): Ap: %ld\n", i, A->p[i]) ;                        \
+                }                                                                   \
+                printf ("Ah exists? %d\n", (A->h != NULL)) ;                        \
+                if (A->h != NULL) {                                                 \
+                    printf ("Dumping Ah\n") ;                                       \
+                    for (int i = 0; i < A->plen; i++) {                             \
+                        printf ("(%d): Ah: %ld\n", i, A->h[i]) ;                    \
+                    }                                                               \
+                }                                                                   \
+                printf ("Op is: %d\n", op->opcode) ;                                \
+                printf ("Thunk is: %0.3f\n", *((double*) Thunk->x));                \
+                printf ("======== [VIDITH]: Done ========\n") ;                     \
+            }                                                                       \
+        }
+
+        // FIXME: Extract in-place handling out of this function
         info = GB_select_sparse (C, C_iso, op, flipij, A, ithunk, athunk,
             ythunk, Werk) ;
+        
+        if (compare) {
+            // SAME (C->plen, T->plen, "hit plens: cpu: %ld, gpu: %ld", C->plen, T->plen) ;
+            SAME (C->vlen, T->vlen, "hit vlen: cpu: %ld, gpu: %ld", C->vlen, T->vlen) ;
+            SAME (C->vdim, T->vdim, "hit vdim: cpu: %ld, gpu: %ld", C->vdim, T->vdim) ;
+            SAME (C->nvec, T->nvec, "hit nvec: cpu: %ld, gpu: %ld", C->nvec, T->nvec) ;
+            SAME (C->nvec_nonempty, T->nvec_nonempty, "hit nvec_nonempty: cpu: %ld, gpu: %ld", C->nvec_nonempty, T->nvec_nonempty) ;
+            SAME (C->nvals, T->nvals, "hit nvals: cpu: %ld, gpu: %ld", C->nvals, T->nvals) ;
+            if (fallout) {
+                exit(-1);
+            }
+        }
     }
  
     // FIXME: handle in_place_A case here, not in select_sparse:
