@@ -54,6 +54,7 @@ GrB_Info GB_cuda_select_sparse
     int32_t number_of_sms = GB_Global_gpu_sm_get (0) ;
     int64_t raw_gridsz = GB_ICEIL (anz, BLOCK_SIZE) ;
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
+    gridsz = std::max (gridsz, 1) ;
 
     // Initialize C to be a user-returnable hypersparse empty matrix.
     // If needed, we handle the hyper->sparse conversion below.
