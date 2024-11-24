@@ -102,5 +102,6 @@ assert (norm (v1 - v2.matrix, 1) / norm (v1,1) < 1e-12)
 % restore # of threads
 nthreads_set (nthreads) ;
 
+GrB.burble (0) ;
 fprintf ('\ntest184: all tests passed\n') ;
 

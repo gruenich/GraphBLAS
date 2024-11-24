@@ -250,14 +250,16 @@ void mexFunction
     GrB_BinaryOp op2 = GxB_TIMES_FC32 ;
     fprintf (fp, "GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
     printf ("GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
-    GB_enumify_build (&method_code, op2, GrB_BOOL, GrB_BOOL) ;
+    GB_enumify_build (&method_code, op2, GrB_BOOL, GrB_BOOL, false, false,
+        false, false) ;
     GB_macrofy_build (fp, method_code, op2, GrB_BOOL, GrB_BOOL) ;
 
     HEADER ;
     op2 = GrB_LAND ;
     fprintf (fp, "GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
     printf ("GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
-    GB_enumify_build (&method_code, op2, GxB_FC32, GxB_FC32) ;
+    GB_enumify_build (&method_code, op2, GxB_FC32, GxB_FC32, false, false,
+        false, false) ;
     GB_macrofy_build (fp, method_code, op2, GxB_FC32, GxB_FC32) ;
 
     //--------------------------------------------------------------------------

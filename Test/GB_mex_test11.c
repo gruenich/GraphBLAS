@@ -71,7 +71,7 @@ void mexFunction
 
     remove ("/tmp/grberr2.txt") ;
     remove ("/tmp/grb_error_log.txt") ;
-    system ("rm -rf /tmp/grb_cache") ;
+    int ignore = system ("rm -rf /tmp/grb_cache") ;
 
     //--------------------------------------------------------------------------
     // determine if GraphBLAS was compiled with GRAPHBLAS_USE_JIT
@@ -280,7 +280,7 @@ if (jit_enabled)
     CHECK (MyType == NULL) ;
 
     printf ("\n------------------------ compile error log (intentional):\n") ;
-    system ("cat /tmp/grb_error_log.txt") ;
+    ignore = system ("cat /tmp/grb_error_log.txt") ;
     printf ("\n-------------------------------------------------------\n\n") ;
 
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_ERROR_LOG, &s)) ;
@@ -294,7 +294,7 @@ if (jit_enabled)
     CHECK (MyType == NULL) ;
 
     printf ("\n------------------------ compile error log (intentional):\n") ;
-    system ("cat /tmp/grberr2.txt") ;
+    ignore = system ("cat /tmp/grberr2.txt") ;
     printf ("\n-------------------------------------------------------\n\n") ;
 
     OK (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
@@ -581,7 +581,7 @@ if (jit_enabled)
     // remove temp files and folders
     remove ("/tmp/grberr2.txt") ;
     remove ("/tmp/grb_error_log.txt") ;
-    system ("rm -rf /tmp/grb_cache") ;
+    ignore = system ("rm -rf /tmp/grb_cache") ;
 
     OK (GxB_set (GxB_BURBLE, false)) ;
     GB_mx_put_global (true) ;

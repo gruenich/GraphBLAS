@@ -131,7 +131,7 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
     {
         if (A1_is_32)
         { 
-            return (GB_msort_2_32_64 (A_0, A_1, n, nthreads)) ;
+            return (GB_msort_2_64_32 (A_0, A_1, n, nthreads)) ;
         }
         else
         {

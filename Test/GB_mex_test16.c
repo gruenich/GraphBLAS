@@ -128,7 +128,8 @@ void mexFunction
         /* assign_kind: */ 0) ;
     CHECK (code == UINT64_MAX) ;
 
-    code = GB_encodify_build (&e, &suffix, 0, mult, GrB_FP32, GrB_FP32) ;
+    code = GB_encodify_build (&e, &suffix, 0, mult, GrB_FP32, GrB_FP32,
+        true, true, true, true) ;
     CHECK (code == UINT64_MAX) ;
 
     //--------------------------------------------------------------------------

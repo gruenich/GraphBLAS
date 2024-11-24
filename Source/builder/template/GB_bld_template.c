@@ -64,7 +64,8 @@
                     for (int64_t t = tstart ; t < tend ; t++)
                     { 
                         // Tx [t] = (ttype) Sx [K_work [t]] ;
-                        GB_BLD_COPY (Tx, t, Sx, K_work [t]) ;
+                        int64_t k = GB_IGET (K_work, t) ;
+                        GB_BLD_COPY (Tx, t, Sx, k) ;
                     }
                 }
             }
@@ -96,30 +97,36 @@
             for (t = tstart ; t < tend ; t++)
             { 
                 // get the tuple and break if it is not a duplicate
-                if (I_work [t] >= 0) break ;//FIXME
+                int64_t i = GB_IGET (I_work, t) ;
+                if (GB_IGET (I_work, t) >= 0)       // FIXME: use uint_max
+                {
+                    break ;
+                }
             }
 
             // scan all tuples and assemble any duplicates
             for ( ; t < tend ; t++)
             {
                 // get the t-th tuple, a unique tuple
-                int64_t i = I_work [t] ;//FIXME
+                int64_t i = GB_IGET (I_work, t) ;
                 ASSERT (i >= 0) ;
                 #ifndef GB_ISO_BUILD
-                int64_t k = (K_work == NULL) ? t : K_work [t] ; // FIXME
+//              int64_t k = (K_work) ? GB_IGET (K_work, t) : t ;
+                int64_t k = GB_K_WORK (t) ;
                 // Tx [my_tnz] = (ttype) Sx [k] ;
                 GB_BLD_COPY (Tx, my_tnz, Sx, k) ;
                 #endif
-                Ti [my_tnz] = i ;       // FIXME
+                GB_ISET (Ti, my_tnz, i) ;   // Ti [my_tnz] = i
 
                 // assemble all duplicates that follow it.  This may assemble
                 // the first duplicates in the next slice(s) (up to but not
                 // including the first unique tuple in the subsequent slice(s)).
-                for ( ; t+1 < nvals && I_work [t+1] < 0 ; t++)//FIXME
+                for ( ; t+1 < nvals && GB_IGET (I_work, t+1) < 0 ; t++)
                 { 
                     // assemble the duplicate tuple
                     #ifndef GB_ISO_BUILD
-                    int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;//FIXME
+//                  int64_t k = (K_work) ? GB_IGET (K_work, t+1) : (t+1) ;
+                    int64_t k = GB_K_WORK (t+1) ;
                     // Tx [my_tnz] += Sx [k], typecasting as needed
                     GB_BLD_DUP (Tx, my_tnz, Sx, k) ;
                     #endif

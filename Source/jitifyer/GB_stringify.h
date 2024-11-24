@@ -1201,7 +1201,11 @@ uint64_t GB_encodify_build      // encode an build problem
     const GB_jit_kcode kcode,   // kernel to encode
     const GrB_BinaryOp dup,     // operator for summing up duplicates
     const GrB_Type ttype,       // type of Tx array
-    const GrB_Type stype        // type of Sx array
+    const GrB_Type stype,       // type of Sx array
+    bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
+    bool I_is_32,               // if true, I_work is uint32_t else uint64_t
+    bool K_is_32,               // if true, K_work is uint32_t else uint64_t
+    bool K_is_null              // if true, K_work is NULL
 ) ;
 
 void GB_enumify_build       // enumerate a GB_build problem
@@ -1211,7 +1215,11 @@ void GB_enumify_build       // enumerate a GB_build problem
     // input:
     GrB_BinaryOp dup,       // operator for duplicates
     GrB_Type ttype,         // type of Tx
-    GrB_Type stype          // type of Sx
+    GrB_Type stype,         // type of Sx
+    bool Ti_is_32,          // if true, Ti is uint32_t, else uint64_t
+    bool I_is_32,           // if true, I_work is uint32_t else uint64_t
+    bool K_is_32,           // if true, K_work is uint32_t else uint64_t
+    bool K_is_null          // if true, K_work is NULL
 ) ;
 
 void GB_macrofy_build           // construct all macros for GB_build
@@ -1229,16 +1237,20 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
 (
     // output:
     GB_void *restrict Tx,
-    int64_t *restrict Ti,
+    void *restrict Ti,
     // input:
+    bool Ti_is_32,                  // if true, Ti is uint32_t, else uint64_t
     const GB_void *restrict Sx,
     const GrB_Type ttype,           // type of Tx
     const GrB_Type stype,           // type of Sx
     const GrB_BinaryOp dup,         // operator for summing duplicates
     const int64_t nvals,            // number of tuples
     const int64_t ndupl,            // number of duplicates
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
+    const void *restrict I_work,
+    bool I_is_32,                   // if true, I_work is uint32_t else uint64_t
+    const void *restrict K_work,
+    bool K_is_32,                   // if true, K_work is uint32_t else uint64_t
+    bool K_is_null,                 // if true, K_work is NULL
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads

@@ -38,6 +38,13 @@
 // these macros are redefined by the JIT kernels to specialize them for each
 // specific matrix format.
 
+// accessing an integer array
+#undef  GB_IGET
+#define GB_IGET(I,k)   I [k]
+
+#undef  GB_ISET
+#define GB_ISET(I,k,i) I [k] = i
+
 // accessing the C matrix
 #undef GBP_C
 #undef GBH_C

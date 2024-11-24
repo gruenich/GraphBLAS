@@ -225,12 +225,12 @@ GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
 GrB_Info GB_jit_kernel_build                                            \
 (                                                                       \
     GB_void *restrict Tx_void,                                          \
-    int64_t *restrict Ti,                                               \
+    void *restrict Ti_void,                                             \
     const GB_void *restrict Sx_void,                                    \
     const int64_t nvals,                                                \
     const int64_t ndupl,                                                \
-    const int64_t *restrict I_work,                                     \
-    const int64_t *restrict K_work,                                     \
+    const void *restrict I_work_void,                                   \
+    const void *restrict K_work_void,                                   \
     const int64_t *restrict tstart_slice,                               \
     const int64_t *restrict tnz_slice,                                  \
     const int nthreads                                                  \

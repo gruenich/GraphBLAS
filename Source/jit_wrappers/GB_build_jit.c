@@ -16,16 +16,20 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
 (
     // output:
     GB_void *restrict Tx,
-    int64_t *restrict Ti,
+    void *restrict Ti,
     // input:
+    bool Ti_is_32,                  // if true, Ti is uint32_t, else uint64_t
     const GB_void *restrict Sx,
     const GrB_Type ttype,           // type of Tx
     const GrB_Type stype,           // type of Sx
     const GrB_BinaryOp dup,         // operator for summing duplicates
     const int64_t nvals,            // number of tuples
     const int64_t ndupl,            // number of duplicates
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
+    const void *restrict I_work,
+    bool I_is_32,                   // if true, I_work is uint32_t else uint64_t
+    const void *restrict K_work,
+    bool K_is_32,                   // if true, K_work is uint32_t else uint64_t
+    bool K_is_null,                 // if true, K_work is NULL
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads
@@ -36,10 +40,13 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     // encodify the problem
     //--------------------------------------------------------------------------
 
+    // FIXME: encode the ndupl==0 condition
+
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_build (&encoding, &suffix,
-        GB_JIT_KERNEL_BUILD, dup, ttype, stype) ;
+        GB_JIT_KERNEL_BUILD, dup, ttype, stype, Ti_is_32, I_is_32, K_is_32,
+        K_is_null) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

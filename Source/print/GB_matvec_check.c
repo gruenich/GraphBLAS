@@ -422,6 +422,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         for (int64_t k = 0 ; k < A->nvec ; k++)
         {
             int64_t j = Ah [k] ;
+//          printf ("Ah [%ld] = %ld\n", k, j) ;
             if (jlast >= j || j < 0 || j >= A->vdim)
             { 
                 GBPR0 ("  ->h [" GBd "] = " GBd " invalid\n", k, j) ;

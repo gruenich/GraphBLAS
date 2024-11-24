@@ -47,12 +47,15 @@
 GrB_Info GB (_bld__first_fp64)
 (
     GB_Tx_TYPE *restrict Tx,
-    int64_t  *restrict Ti,
+    void *restrict Ti,
+    bool Ti_is_32,
     const GB_Sx_TYPE *restrict Sx,
     int64_t nvals,
     int64_t ndupl,
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
+    const void *restrict I_work,
+    bool I_is_32,
+    const void *restrict K_work,
+    bool K_is_32,
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads
@@ -61,6 +64,13 @@ GrB_Info GB (_bld__first_fp64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    const int32_t *restrict I_work32 = (I_is_32) ? I_work : NULL ;
+    const int64_t *restrict I_work64 = (I_is_32) ? NULL : I_work ;
+    const uint32_t *restrict K_work32 = (K_is_32) ? K_work : NULL ;
+    const uint64_t *restrict K_work64 = (K_is_32) ? NULL : K_work ;
+    int32_t *restrict Ti32 = (Ti_is_32) ? Ti : NULL ;
+    int64_t *restrict Ti64 = (Ti_is_32) ? NULL : Ti ;
+    #define GB_K_WORK(t) (K_work ? GB_IGET (K_work, t) : (t))
     #include "builder/template/GB_bld_template.c"
     return (GrB_SUCCESS) ;
     #endif
