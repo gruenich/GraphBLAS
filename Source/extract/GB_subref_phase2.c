@@ -28,8 +28,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // analysis from phase0:
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -58,7 +58,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    GBp_DECL (C, ) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
     Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;
     if (Cp == NULL)
     { 

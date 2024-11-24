@@ -119,18 +119,26 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     //--------------------------------------------------------------------------
 
     const int64_t vlen = A->vlen ;
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ai = A->i ;
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bi = B->i ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
     bool Ch_is_Bh = (Ch != NULL && B->h != NULL && Ch == B->h) ;
 
-    const int64_t *restrict Mp = NULL ;
+    GBp_DECL (M, const) ;
+    GBi_DECL (M, const) ;
+    const uint64_t *restrict Mp = NULL ;
     const int64_t *restrict Mi = NULL ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     if (M != NULL)
     { 
+        GBp_GET (M) ;
+        GBi_GET (M) ;
         Mp = M->p ;
         Mi = M->i ;
         // Ch_is_Mh is true if either true on input (for GB_add, which denotes
@@ -245,7 +253,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
+    GB_cumsum (Cwork, false, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------

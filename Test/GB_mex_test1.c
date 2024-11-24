@@ -559,25 +559,25 @@ void mexFunction
 
     printf ("\nprinting built-in types:\n") ;
     bool       b = true ;
-    int8_t    i8 = 22   ;
+    int8_t    int8 = 22   ;
     uint8_t   u8 = 44   ;
-    int16_t  i16 = 909  ;
+    int16_t  int16 = 909  ;
     uint16_t u16 = 777  ;
-    int32_t  i32 = 3203 ;
+    int32_t  int32 = 3203 ;
     uint32_t u32 = 8080 ;
-    int64_t  i64 = -987 ;
+    int64_t  int64 = -987 ;
     uint64_t u64 = 987  ;
     float    f32 = 3.14 ;
     double   f64 = 99.4 ;
 
     GB_code_check (GB_BOOL_code,   &b  , 5, stdout) ; printf ("\n");
-    GB_code_check (GB_INT8_code,   &i8 , 5, stdout) ; printf ("\n");
+    GB_code_check (GB_INT8_code,   &int8 , 5, stdout) ; printf ("\n");
     GB_code_check (GB_UINT8_code,  &u8 , 5, stdout) ; printf ("\n");
-    GB_code_check (GB_INT16_code,  &i16, 5, stdout) ; printf ("\n");
+    GB_code_check (GB_INT16_code,  &int16, 5, stdout) ; printf ("\n");
     GB_code_check (GB_UINT16_code, &u16, 5, stdout) ; printf ("\n");
-    GB_code_check (GB_INT32_code,  &i32, 5, stdout) ; printf ("\n");
+    GB_code_check (GB_INT32_code,  &int32, 5, stdout) ; printf ("\n");
     GB_code_check (GB_UINT32_code, &u32, 5, stdout) ; printf ("\n");
-    GB_code_check (GB_INT64_code,  &i64, 5, stdout) ; printf ("\n");
+    GB_code_check (GB_INT64_code,  &int64, 5, stdout) ; printf ("\n");
     GB_code_check (GB_UINT64_code, &u64, 5, stdout) ; printf ("\n");
     GB_code_check (GB_FP32_code,   &f32, 5, stdout) ; printf ("\n");
     GB_code_check (GB_FP64_code,   &f64, 5, stdout) ; printf ("\n");

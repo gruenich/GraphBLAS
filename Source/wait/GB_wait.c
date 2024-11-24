@@ -40,7 +40,7 @@
     GB_Matrix_free (&Y) ;               \
     GB_Matrix_free (&T) ;               \
     GB_Matrix_free (&S) ;               \
-    GB_Matrix_free (&A1) ;              \
+    GB_Matrix_free (&W) ;               \
 }
 
 #define GB_FREE_ALL                     \
@@ -70,8 +70,8 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GrB_Info info = GrB_SUCCESS ;
-    struct GB_Matrix_opaque T_header, A1_header, S_header ;
-    GrB_Matrix T = NULL, A1 = NULL, S = NULL, Y = NULL ;
+    struct GB_Matrix_opaque T_header, W_header, S_header ;
+    GrB_Matrix T = NULL, W = NULL, S = NULL, Y = NULL ;
 
     ASSERT_MATRIX_OK (A, "A to wait", GB_ZOMBIE (GB0)) ;
 
@@ -328,12 +328,17 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (A->nvec > 0) ;
 
     // tjfirst = first vector in T
-    int64_t tjfirst = T->h [0] ;
+    GBh_DECL_GET (T, const) ;
+    const int64_t *restrict Th = T->h ;
+    int64_t tjfirst = Th [0] ;
     int64_t anz0 = 0 ;
     int64_t kA = 0 ;
     int64_t jlast ;
 
-    int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, ) ;
+    GBh_DECL_GET (A, ) ;
+    GBi_DECL_GET (A, ) ;
+    uint64_t *restrict Ap = A->p ;
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
@@ -341,18 +346,18 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anvec = A->nvec ;
 
     // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
-    if (A->h != NULL)
+    if (Ah != NULL)
     { 
-        // find tjfirst in A->h 
+        // find tjfirst in Ah
         int64_t pright = anvec - 1 ;
         bool found ;
-        GB_SPLIT_BINARY_SEARCH (tjfirst, A->h, kA, pright, found) ;
-        // A->h [0 ... kA-1] excludes vector tjfirst.  The list
-        // A->h [kA ... anvec-1] includes tjfirst.
+        GB_SPLIT_BINARY_SEARCH (tjfirst, Ah, kA, pright, found) ;
+        // Ah [0 ... kA-1] excludes vector tjfirst.  The list
+        // Ah [kA ... anvec-1] includes tjfirst.
         ASSERT (kA >= 0 && kA <= anvec) ;
-        ASSERT (GB_IMPLIES (kA > 0 && kA < anvec, A->h [kA-1] < tjfirst)) ;
-        ASSERT (GB_IMPLIES (found, A->h [kA] == tjfirst)) ;
-        jlast = (kA > 0) ? A->h [kA-1] : (-1) ;
+        ASSERT (GB_IMPLIES (kA > 0 && kA < anvec, Ah [kA-1] < tjfirst)) ;
+        ASSERT (GB_IMPLIES (found, Ah [kA] == tjfirst)) ;
+        jlast = (kA > 0) ? Ah [kA-1] : (-1) ;
     }
     else
     { 
@@ -360,8 +365,8 @@ GrB_Info GB_wait                // finish all pending computations
         jlast = tjfirst - 1 ;
     }
 
-    // anz1 = nnz (A1) = nnz (A (:, kA:end)), the region modified by T
-    anz0 = A->p [kA] ;
+    // anz1 = nnz (W) = nnz (A (:, kA:end)), the region modified by T
+    anz0 = Ap [kA] ;
     int64_t anz1 = anz - anz0 ;
     bool ignore ;
 
@@ -375,12 +380,12 @@ GrB_Info GB_wait                // finish all pending computations
         // append new tuples to A
         //----------------------------------------------------------------------
 
-        // A is growing incrementally.  It splits into two parts: A = [A0 A1].
-        // where A0 = A (:, 0:kA-1) and A1 = A (:, kA:end).  The
+        // A is growing incrementally.  It splits into two parts: A = [A0 W].
+        // where A0 = A (:, 0:kA-1) and W = A (:, kA:end).  The
         // first part (A0 with anz0 = nnz (A0) entries) is not modified.  The
-        // second part (A1, with anz1 = nnz (A1) entries) overlaps with T.
+        // second part (W, with anz1 = nnz (W) entries) overlaps with T.
         // If anz1 is zero, or small compared to anz0, then it is faster to
-        // leave A0 unmodified, and to update just A1.
+        // leave A0 unmodified, and to update just W.
 
         // TODO: if A also had zombies, GB_selector could pad A so that
         // GB_nnz_max (A) is equal to anz + tnz.
@@ -390,42 +395,47 @@ GrB_Info GB_wait                // finish all pending computations
         { 
             // double the size if not enough space
             GB_OK (GB_ix_realloc (A, 2 * anz_new)) ;
+            GBi_GET (A) ;
             Ai = A->i ;
             Ax = (GB_void *) A->x ;
         }
 
         //----------------------------------------------------------------------
-        // T = A1 + T
+        // T = W + T
         //----------------------------------------------------------------------
 
         if (anz1 > 0)
         {
 
             //------------------------------------------------------------------
-            // extract A1 = A (:, kA:end) as a shallow copy
+            // extract W = A (:, kA:end) as a shallow copy
             //------------------------------------------------------------------
 
-            // A1 = [0, A (:, kA:end)], hypersparse with same dimensions as A
-            GB_CLEAR_STATIC_HEADER (A1, &A1_header) ;
-            GB_OK (GB_new (&A1, // hyper, existing header
+            // W = [0, A (:, kA:end)], hypersparse with same dimensions as A
+            GB_CLEAR_STATIC_HEADER (W, &W_header) ;
+            GB_OK (GB_new (&W, // hyper, existing header
                 A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
                 GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA)) ;
 
-            // the A1->i and A1->x content are shallow copies of A(:,kA:end).
+            // the W->i and W->x content are shallow copies of A(:,kA:end).
             // They are not allocated pointers, but point to space inside
             // Ai and Ax.
 
-            A1->x = (void *) (Ax + (A_iso ? 0 : (asize * anz0))) ;
-            A1->x_size = (A_iso ? 1 : anz1) * asize  ;
-            A1->x_shallow = true ;
-            A1->i = Ai + anz0 ;
-            A1->i_size = anz1 * sizeof (int64_t) ;
-            A1->i_shallow = true ;
-            A1->iso = A_iso ;       // OK
+            W->x = (void *) (Ax + (A_iso ? 0 : (asize * anz0))) ;
+            W->x_size = (A_iso ? 1 : anz1) * asize  ;
+            W->x_shallow = true ;
+            W->i = Ai + anz0 ;
+            W->i_size = anz1 * sizeof (int64_t) ;
+            W->i_shallow = true ;
+            W->iso = A_iso ;       // OK
 
-            // fill the column A1->h and A1->p with A->h and A->p, shifted
-            int64_t *restrict A1p = A1->p ;
-            int64_t *restrict A1h = A1->h ;
+            // fill the column W->h and W->p with A->h and A->p, shifted
+            GBp_DECL_GET (W, ) ;
+            GBh_DECL_GET (W, ) ;
+            uint64_t *restrict Wp = W->p ;
+            int64_t *restrict Wh = W->h ;
+            GBh_DECL_GET (A, ) ;
+            int64_t *restrict Ah = A->h ;
             int64_t a1nvec = 0 ;
 
             for (int64_t k = kA ; k < anvec ; k++) // TODO:parallel
@@ -435,36 +445,36 @@ GrB_Info GB_wait                // finish all pending computations
                 int64_t pA_end = Ap [k+1] ;
                 if (pA_end > pA_start)
                 { 
-                    // add this column to A1 if A (:,k) is not empty
+                    // add this column to W if A (:,k) is not empty
                     int64_t j = GBH (Ah, k) ;
-                    A1p [a1nvec] = pA_start - anz0 ;
-                    A1h [a1nvec] = j ;
+                    Wp [a1nvec] = pA_start - anz0 ;
+                    Wh [a1nvec] = j ;
                     a1nvec++ ;
                 }
             }
 
-            // finalize A1
-            A1p [a1nvec] = anz1 ;
-            A1->nvec = a1nvec ;
-            A1->nvec_nonempty = a1nvec ;
-            A1->nvals = anz1 ;
-            A1->magic = GB_MAGIC ;
+            // finalize W
+            Wp [a1nvec] = anz1 ;
+            W->nvec = a1nvec ;
+            W->nvec_nonempty = a1nvec ;
+            W->nvals = anz1 ;
+            W->magic = GB_MAGIC ;
 
-            ASSERT_MATRIX_OK (A1, "A1 slice for GB_wait", GB0) ;
+            ASSERT_MATRIX_OK (W, "W slice for GB_wait", GB0) ;
 
             //------------------------------------------------------------------
-            // S = A1 + T, with no operator or mask
+            // S = W + T, with no operator or mask
             //------------------------------------------------------------------
     
             GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-            GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A1, T,
+            GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, W, T,
                 false, NULL, NULL, op_2nd, false, true, Werk)) ;
 
-            ASSERT_MATRIX_OK (S, "S = A1+T", GB0) ;
+            ASSERT_MATRIX_OK (S, "S = W+T", GB0) ;
 
-            // free A1 and T
+            // free W and T
             GB_Matrix_free (&T) ;
-            GB_Matrix_free (&A1) ;
+            GB_Matrix_free (&W) ;
 
             //------------------------------------------------------------------
             // replace T with S
@@ -475,7 +485,7 @@ GrB_Info GB_wait                // finish all pending computations
             tnz = GB_nnz (T) ;
 
             //------------------------------------------------------------------
-            // remove A1 from the vectors of A, if A is hypersparse
+            // remove W from the vectors of A, if A is hypersparse
             //------------------------------------------------------------------
 
             if (A->h != NULL)
@@ -488,7 +498,10 @@ GrB_Info GB_wait                // finish all pending computations
         // append T to the end of A0
         //----------------------------------------------------------------------
 
-        const int64_t *restrict Tp = T->p ;
+        GBp_DECL_GET (T, const) ;
+        GBh_DECL_GET (T, const) ;
+        GBi_DECL_GET (T, const) ;
+        const uint64_t *restrict Tp = T->p ;
         const int64_t *restrict Th = T->h ;
         const int64_t *restrict Ti = T->i ;
         int64_t tnvec = T->nvec ;
@@ -576,6 +589,8 @@ GrB_Info GB_wait                // finish all pending computations
             if (S->nvec == anvec)
             {
                 // A and S have the same number of vectors.  Compare Ah and Sh
+                GBh_DECL_GET (A, const) ;
+                GBh_DECL_GET (S, const) ;
                 int64_t *restrict Ah = A->h ;
                 int64_t *restrict Sh = S->h ;
                 bool hsame = true ;

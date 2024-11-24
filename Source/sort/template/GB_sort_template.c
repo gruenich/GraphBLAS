@@ -125,7 +125,7 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
 )
 {
 
-    if (n < 20)
+    if (n < 8)
     {
         // in-place insertion sort on A [0:n-1], where n is small
         for (int64_t k = 1 ; k < n ; k++)
@@ -441,11 +441,11 @@ static void GB_SORT (merge)
 (
     GB_C_TYPE *restrict S_0,            // output of length nleft + nright
     int64_t *restrict S_1,
-    const GB_C_TYPE *restrict Left_0,   // left input of length nleft
-    const int64_t   *restrict Left_1,
+    const GB_C_TYPE *restrict L_0,      // left input of length nleft
+    const int64_t   *restrict L_1,
     const int64_t nleft,
-    const GB_C_TYPE *restrict Right_0,  // right input of length nright
-    const int64_t   *restrict Right_1,
+    const GB_C_TYPE *restrict R_0,      // right input of length nright
+    const int64_t   *restrict R_1,
     const int64_t nright
     #if GB_SORT_UDT
     , size_t csize              // size of GB_C_TYPE
@@ -460,25 +460,25 @@ static void GB_SORT (merge)
     // merge the two inputs, Left and Right, while both inputs exist
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
     {
-        // left0 = Left_0 [pleft]
-        GB_GET (left0, Left_0, pleft) ;
-        // right0 = Right_0 [pright]
-        GB_GET (right0, Right_0, pright) ;
+        // left0 = L_0 [pleft]
+        GB_GET (left0, L_0, pleft) ;
+        // right0 = R_0 [pright]
+        GB_GET (right0, R_0, pright) ;
         bool less ;
-        // less =   (left0, Left_1 [pleft]) < (right0, Right_1 [pright])
-        GB_LT (less, left0, Left_1 [pleft],    right0, Right_1 [pright]) ;
+        // less =   (left0, L_1 [pleft]) < (right0, R_1 [pright])
+        GB_LT (less, left0, L_1 [pleft],    right0, R_1 [pright]) ;
         if (less)
         { 
             // S [p] = Left [pleft++]
-            GB_COPY (S_0, p, Left_0, pleft) ;
-            S_1 [p] = Left_1 [pleft] ;
+            GB_COPY (S_0, p, L_0, pleft) ;
+            S_1 [p] = L_1 [pleft] ;
             pleft++ ;
         }
         else
         { 
             // S [p] = Right [pright++]
-            GB_COPY (S_0, p, Right_0, pright) ;
-            S_1 [p] = Right_1 [pright] ;
+            GB_COPY (S_0, p, R_0, pright) ;
+            S_1 [p] = R_1 [pright] ;
             pright++ ;
         }
     }
@@ -487,16 +487,14 @@ static void GB_SORT (merge)
     if (pleft < nleft)
     { 
         int64_t nremaining = (nleft - pleft) ;
-        memcpy (GB_ADDR (S_0, p),
-                GB_ADDR (Left_0, pleft), nremaining * GB_SIZE) ;
-        memcpy (S_1 + p, Left_1 + pleft, nremaining * sizeof (int64_t)) ;
+        memcpy (GB_ADDR (S_0, p), GB_ADDR (L_0, pleft), nremaining * GB_SIZE) ;
+        memcpy (S_1 + p, L_1 + pleft, nremaining * sizeof (int64_t)) ;
     }
     else if (pright < nright)
     { 
         int64_t nremaining = (nright - pright) ;
-        memcpy (GB_ADDR (S_0, p),
-                GB_ADDR (Right_0, pright), nremaining * GB_SIZE) ;
-        memcpy (S_1 + p, Right_1 + pright, nremaining * sizeof (int64_t)) ;
+        memcpy (GB_ADDR (S_0, p), GB_ADDR (R_0, pright), nremaining * GB_SIZE) ;
+        memcpy (S_1 + p, R_1 + pright, nremaining * sizeof (int64_t)) ;
     }
 }
 
@@ -700,7 +698,9 @@ static GrB_Info GB_SORT (matrix)
 
     GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
     int64_t cnvec = C->nvec ;
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    GBi_DECL_GET (C, const) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
@@ -800,7 +800,7 @@ static GrB_Info GB_SORT (matrix)
     // construct a list of vectors that must still be sorted
     //--------------------------------------------------------------------------
 
-    GB_cumsum1 (C_skip, ntasks) ;
+    GB_cumsum1_64 (C_skip, ntasks) ;
     int64_t total_skipped = C_skip [ntasks] ;
 
     C_skipped = GB_MALLOC_WORK (total_skipped, int64_t, &C_skipped_size) ;

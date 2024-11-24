@@ -19,16 +19,16 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup  // k if j==Ah[k]; -1 if not found
     const int64_t *restrict Ah,     // A->h [0..A->nvec-1]: list of vectors
     const int64_t anvec,
     // input, not modified
-    const int64_t *restrict Ap,     // A->p [0..A->nvec]: pointers to vectors
-    const int64_t *restrict Yp,     // A->Y->p
+    const uint64_t *restrict Ap,     // A->p [0..A->nvec]: pointers to vectors
+    const uint64_t *restrict Yp,     // A->Y->p
     const int64_t *restrict Yi,     // A->Y->i
     const int64_t *restrict Yx,     // A->Y->x
     const int64_t hash_bits,        // A->Y->vdim-1, which is hash table size-1
     const int64_t j,                // find j in Ah [0..anvec-1], using A->Y
 //  const bool no_hyper_hash,       // A->no_hyper_hash
     // output
-    int64_t *restrict pstart,       // start of vector: Ap [k]
-    int64_t *restrict pend          // end of vector: Ap [k+1]
+    int64_t *restrict pstart,       // start of vector: Ap [k]  FIXME
+    int64_t *restrict pend          // end of vector: Ap [k+1]  FIXME
 )
 {
 

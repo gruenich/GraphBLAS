@@ -439,6 +439,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         T->plen = tplen ;
         T->nvec = anz ;
         T->nvec_nonempty = anz ;
+        GBp_DECL_GET (T, ) ;
+        GBi_DECL_GET (T, ) ;
+        uint64_t *restrict Tp = T->p ;
+        int64_t *restrict Ti = T->i ;
 
         // fill the vector pointers T->p
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
@@ -446,10 +450,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (k = 0 ; k < anz ; k++)
         { 
-            T->i [k] = 0 ;
-            T->p [k] = k ;
+            Ti [k] = 0 ;
+            Tp [k] = k ;
         }
-        T->p [anz] = anz ;
+        Tp [anz] = anz ;
 
         T->iso = C_iso ;
         T->nvals = anz ;
@@ -587,6 +591,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // find the non-empty vectors of A, which become entries in T
             //------------------------------------------------------------------
 
+            GBp_DECL_GET (A, const) ;
+            const uint64_t *restrict Ap = A->p ;
+            GBi_DECL_GET (T, ) ;
+                  int64_t *restrict Ti = T->i ;
+
             if (nth == 1)
             {
 
@@ -597,9 +606,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 int64_t k = 0 ;
                 for (int64_t j = 0 ; j < avdim ; j++)
                 {
-                    if (A->p [j] < A->p [j+1])
+                    if (Ap [j] < Ap [j+1])
                     { 
-                        T->i [k++] = j ;
+                        Ti [k++] = j ;
                     }
                 }
                 ASSERT (k == anz) ;
@@ -620,7 +629,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
                     for (int64_t j = jstart ; j < jend ; j++)
                     {
-                        if (A->p [j] < A->p [j+1])
+                        if (Ap [j] < Ap [j+1])
                         { 
                             k++ ;
                         }
@@ -628,7 +637,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     Count [tid] = k ;
                 }
 
-                GB_cumsum1 (Count, ntasks) ;
+                GB_cumsum1_64 (Count, ntasks) ;
                 ASSERT (Count [ntasks] == anz) ;
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
@@ -638,9 +647,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
                     for (int64_t j = jstart ; j < jend ; j++)
                     {
-                        if (A->p [j] < A->p [j+1])
+                        if (Ap [j] < Ap [j+1])
                         { 
-                            T->i [k++] = j ;
+                            Ti [k++] = j ;
                         }
                     }
                 }
@@ -652,7 +661,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             {
                 if (A->p [j] < A->p [j+1])
                 {
-                    ASSERT (T->i [k] == j) ;
+                    ASSERT (Ti [k] == j) ;
                     k++ ;
                 }
             }
@@ -664,11 +673,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // vector pointers of T
         //---------------------------------------------------------------------
 
+
         // T->p = [0 anz]
         ASSERT (T->plen == 1) ;
         ASSERT (T->nvec == 1) ;
         T->nvec_nonempty = (anz == 0) ? 0 : 1 ;
-        T->p [1] = anz ;
+        GBp_DECL_GET (T, ) ;
+        uint64_t *restrict Tp = T->p ;
+        Tp [1] = anz ;
         T->nvals = anz ;
         T->magic = GB_MAGIC ;
         ASSERT (!GB_JUMBLED (T)) ;

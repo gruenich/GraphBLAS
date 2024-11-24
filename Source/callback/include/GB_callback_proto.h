@@ -67,7 +67,7 @@ void GX_ek_slice            /* slice a matrix */                            \
 void GX_ek_slice_merge1     /* merge column counts for the matrix C */      \
 (                                                                           \
     /* input/output: */                                                     \
-    int64_t *restrict Cp,               /* column counts */                 \
+    uint64_t *restrict Cp,               /* column counts */                 \
     /* input: */                                                            \
     const int64_t *restrict Wfirst,     /* size A_ntasks */                 \
     const int64_t *restrict Wlast,      /* size A_ntasks */                 \
@@ -262,7 +262,8 @@ void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
 #define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
 void GX_qsort_1    /* sort array A of size 1-by-n */                        \
 (                                                                           \
-    int64_t *restrict A_0,      /* size n array */                          \
+    void *restrict A_0,             /* size n array */                      \
+    bool is_32,                     /* if true: uint32_t, else uint64_t */  \
     const int64_t n                                                         \
 )
 
@@ -272,7 +273,7 @@ void GX_p_slice                     /* slice Ap */                          \
     /* output: */                                                           \
     int64_t *restrict Slice,        /* size ntasks+1 */                     \
     /* input: */                                                            \
-    const int64_t *restrict Ap,     /* array size n+1 (full/bitmap: NULL)*/ \
+    const uint64_t *restrict Ap,     /* array size n+1 (full/bitmap: NULL)*/ \
     const int64_t n,                                                        \
     const int ntasks,               /* # of tasks */                        \
     const bool perfectly_balanced                                           \

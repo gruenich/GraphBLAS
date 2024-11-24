@@ -56,7 +56,9 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
         // sparsity: sparse / hyper / auto 
         A->i = GB_MALLOC (nzmax, int64_t, &(A->i_size)) ;
         ok = (A->i != NULL) ;
-        if (ok) A->i [0] = 0 ;
+        GBi_DECL_GET (A, ) ;
+        int64_t *Ai = A->i ;
+        if (ok) Ai [0] = 0 ;
     }
 
     if (numeric)

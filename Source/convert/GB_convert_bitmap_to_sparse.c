@@ -47,7 +47,9 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     int64_t cnvec_nonempty ;
     const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    GBp_DECL (C, ) ;
+    GBi_DECL (C, ) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
     int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
     GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
     Cp = GB_MALLOC (avdim+1, int64_t, &Cp_size) ; 

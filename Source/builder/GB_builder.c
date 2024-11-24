@@ -7,6 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: allow the I,J and I_input,J_input arrays to be int32_t.  Requires
+// max(vlen,vdim) < 2^30.  This becomes the 32/64bit size of T->i and T->h.
+// The 32/64 byte size of T->p is determined by nvals.  If >= UINT32_MAX,
+// use uint64_t. for T->p.  Otherwise use uint32_t.  Also allow these 2
+// integer sizes to be overridden by the caller, in either direction.
+
+// 2 variants for caller:  I,J and I_input,J_input: 32/64
+// 4 variants internally:  K 32/64 and resulting T->p
+
+// Or do I need 4 variants?  I and J could be GrB_Vector in the future,
+// of int32/uint32/int64/uint64 type.
+
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
@@ -136,9 +148,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T
     const bool is_csc,              // true if T is CSC, false if CSR
-    int64_t **I_work_handle,        // for (i,k) or (j,i,k) tuples
+    int64_t **I_work_handle,        // for (i,k) or (j,i,k) tuples FIXME
     size_t *I_work_size_handle,
-    int64_t **J_work_handle,        // for (j,i,k) tuples
+    int64_t **J_work_handle,        // for (j,i,k) tuples FIXME
     size_t *J_work_size_handle,
     GB_void **S_work_handle,        // array of values of tuples, size ijslen,
                                     // or size 1 if S is iso
@@ -147,8 +159,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool known_no_duplicates,       // true if tuples known to not have dupl
     int64_t ijslen,                 // size of I_work and J_work arrays
     const bool is_matrix,           // true if T a GrB_Matrix, false if vector
-    const int64_t *restrict I_input,// original indices, size nvals
-    const int64_t *restrict J_input,// original indices, size nvals
+    const int64_t *restrict I_input,// original indices, size nvals FIXME
+    const int64_t *restrict J_input,// original indices, size nvals FIXME
     const GB_void *restrict S_input,// array of values of tuples, size nvals,
                                     // or size 1 if S_input or S_work are iso
     const bool S_iso,               // true if S_input or S_work are iso
@@ -166,6 +178,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (T != NULL) ;            // T is a static or dynamic header on input 
     ASSERT (nvals >= 0) ;
     ASSERT_TYPE_OK (ttype, "ttype for builder", GB0) ;
@@ -204,10 +217,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // J_work may already be NULL on input, if T has one or zero vectors
     // (J_work_handle is always non-NULL however).
 
-    GrB_Info info ;
-    int64_t *restrict I_work = (*I_work_handle) ;
-    int64_t *restrict J_work = (*J_work_handle) ;
-    int64_t *restrict K_work = NULL ; size_t K_work_size = 0 ;
+    // I_work, J_work: 32/64 depends on dimension: A->i_is_32
+    // K_work, 32/64 depends on nvals: A->p_is_32
+    int64_t *restrict I_work = (*I_work_handle) ;               // FIXME
+    int64_t *restrict J_work = (*J_work_handle) ;               // FIXME
+    int64_t *restrict K_work = NULL ; size_t K_work_size = 0 ;  // FIXME
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -265,6 +279,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
     // STEP 1: copy user input and check if valid
     //--------------------------------------------------------------------------
+
+    // FIXME: step 1 has 2 variants: i_is_32
 
     // If the indices are provided by (I_input,J_input), then import them into
     // (I_work,J_work) and check if they are valid, and sorted.   If the input
@@ -346,8 +362,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 for (int64_t k = kstart ; k < kend ; k++)
                 {
                     // get k-th index from user input: (i,j)
-                    int64_t i = I_input [k] ;
-                    int64_t j = J_input [k] ;
+                    int64_t i = I_input [k] ;       // FIXME
+                    int64_t j = J_input [k] ;       // FIXME
 
                     if (i < 0 || i >= vlen || j < 0 || j >= vdim)
                     { 
@@ -365,7 +381,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                         (!(jlast == j && ilast == i)) ;
 
                     // copy the tuple into I_work.  J_work is done later.
-                    I_work [k] = i ;
+                    I_work [k] = i ;        // FIXME
 
                     if (j > jlast)
                     { 
@@ -391,8 +407,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 if (kbad [tid] >= 0)
                 { 
                     // invalid index
-                    int64_t i = I_input [kbad [tid]] ;
-                    int64_t j = J_input [kbad [tid]] ;
+                    int64_t i = I_input [kbad [tid]] ;      // FIXME
+                    int64_t j = J_input [kbad [tid]] ;      // FIXME
                     int64_t row = is_csc ? i : j ;
                     int64_t col = is_csc ? j : i ;
                     int64_t nrows = is_csc ? vlen : vdim ;
@@ -417,7 +433,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (vdim > 1 && !known_sorted)
             {
                 // copy J_input into J_work, so the tuples can be sorted
-                J_work = GB_MALLOC (nvals, int64_t, J_work_size_handle) ;
+                J_work = GB_MALLOC (nvals, int64_t, J_work_size_handle) ;//FIXME
                 (*J_work_handle) = J_work ;
                 if (J_work == NULL)
                 { 
@@ -425,7 +441,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     GB_FREE_WORKSPACE ;
                     return (GrB_OUT_OF_MEMORY) ;
                 }
-                GB_memcpy (J_work, J_input, nvals * sizeof (int64_t), nthreads);
+                GB_memcpy (J_work, J_input, nvals * sizeof (int64_t), //FIXME
+                        nthreads) ;
             }
             else
             { 
@@ -433,7 +450,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // copied into (*J_work_handle), so it will not be freed.
                 // J_input is not modified, even though it is typecast to the
                 // int64_t *J_work, since J_work is not modified in this case.
-                J_work = (int64_t *) J_input ;
+                J_work = (int64_t *) J_input ;  // FIXME
             }
 
         }
@@ -462,7 +479,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 for (int64_t k = kstart ; k < kend ; k++)
                 {
                     // get k-th index from user input: (i)
-                    int64_t i = I_input [k] ;
+                    int64_t i = I_input [k] ;   // FIXME
 
                     if (i < 0 || i >= vlen)
                     { 
@@ -479,7 +496,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                         (!(ilast == i)) ;
 
                     // copy the tuple into the work arrays to be sorted
-                    I_work [k] = i ;
+                    I_work [k] = i ;        // FIXME
 
                     // log the last index seen
                     ilast = i ;
@@ -492,7 +509,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 if (kbad [tid] >= 0)
                 { 
                     // invalid index
-                    int64_t i = I_input [kbad [tid]] ;
+                    int64_t i = I_input [kbad [tid]] ;  // FIXME
                     GB_FREE_WORKSPACE ;
                     GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS,
                         "index (" GBd ") out of bounds, must be < (" GBd ")",
@@ -522,6 +539,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // K_work [k] = k for all k = 0:nvals-1.  K_work is always NULL if Sx and
     // Tx are iso.
 
+    // FIXME: step 2 has 4 variants: i_is_32: (I,J), p_is_32: (K_work)
+
     if (!known_sorted)
     {
 
@@ -532,7 +551,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (!S_iso)
         {
             // create the k part of each tuple
-            K_work = GB_MALLOC_WORK (nvals, int64_t, &K_work_size) ;
+            K_work = GB_MALLOC_WORK (nvals, int64_t, &K_work_size) ;    // FIXME
             if (K_work == NULL)
             { 
                 // out of memory
@@ -567,6 +586,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // sort a set of (j,i,k) tuples
             //------------------------------------------------------------------
 
+            // FIXME: need GB_msort_2 (I,J: 32/64 ), 2 variants
+            // FIXME: need GB_msort_3 (I,J: 32/64, K: 32/64 ), 4 variants
+
             if (S_iso)
             { 
                 // K_work is NULL; only sort (j,i)
@@ -584,8 +606,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 int64_t jlast = -1 ;
                 for (int64_t k = 0 ; k < nvals ; k++)
                 {
-                    int64_t i = I_work [k] ;
-                    int64_t j = J_work [k] ;
+                    int64_t i = I_work [k] ;    // FIXME
+                    int64_t j = J_work [k] ;    // FIXME
                     ASSERT ((jlast < j) || (jlast == j && ilast <= i)) ;
                     ilast = i ;
                     jlast = j ;
@@ -601,14 +623,18 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // sort a set of (i,k) tuples
             //------------------------------------------------------------------
 
+            // FIXME: need GB_msort_1 (I: 32/64), 2 variants
+            // FIXME: need GB_msort_2 (I: 32/64, K: 32/64 ), 4 variants
+            // FIXME: need GB_msort_3 (I,J: 32/64, K: 32/64 ), 4 variants
+
             if (S_iso)
             { 
                 // K_work is NULL; only sort (i)
-                info = GB_msort_1 (I_work, nvals, nthreads) ;
+                info = GB_msort_1 (I_work, nvals, nthreads) ;   // FIXME
             }
             else
             { 
-                info = GB_msort_2 (I_work, K_work, nvals, nthreads) ;
+                info = GB_msort_2 (I_work, K_work, nvals, nthreads) ;   // FIXME
             }
 
             #ifdef GB_DEBUG
@@ -617,7 +643,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 int64_t ilast = -1 ;
                 for (int64_t k = 0 ; k < nvals ; k++)
                 {
-                    int64_t i = I_work [k] ;
+                    int64_t i = I_work [k] ;    // FIXME
                     ASSERT (ilast <= i) ;
                     ilast = i ;
                 }
@@ -642,6 +668,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // duplicates, then only the vectors are counted.  Counting the # of
     // vectors is skipped if already done by Step 1.
 
+    // FIXME: step 3 has 2 variants: i_is_32 (I,J)
+
     if (known_no_duplicates)
     {
 
@@ -658,7 +686,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             int64_t ilast = -1, jlast = -1 ;
             for (int64_t t = 0 ; t < nvals ; t++)
             {
-                int64_t i = GB_I_WORK (t), j = GB_J_WORK (t) ;
+                int64_t i = GB_I_WORK (t), j = GB_J_WORK (t) ;  // FIXME
                 bool is_duplicate = (i == ilast && j == jlast) ;
                 ASSERT (!is_duplicate) ;
                 ilast = i ; jlast = j ;
@@ -704,7 +732,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     for (int64_t t = tstart ; t < tend ; t++)
                     {
                         // get the t-th tuple
-                        int64_t j = J_work [t] ;
+                        int64_t j = J_work [t] ;    // FIXME
                         if (j > jlast)
                         { 
                             // vector j starts in this slice
@@ -730,7 +758,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         for (int tid = 0 ; tid < nthreads ; tid++)
         { 
             int64_t tstart = tstart_slice [tid] ;
-            ilast_slice [tid] = GB_I_WORK (tstart-1) ;
+            ilast_slice [tid] = GB_I_WORK (tstart-1) ;  // FIXME
         }
 
         int tid ;
@@ -743,13 +771,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
             int64_t tstart   = tstart_slice [tid] ;
             int64_t tend     = tstart_slice [tid+1] ;
             int64_t ilast    = ilast_slice [tid] ;
-            int64_t jlast    = GB_J_WORK (tstart-1) ;
+            int64_t jlast    = GB_J_WORK (tstart-1) ;   // FIXME
 
             for (int64_t t = tstart ; t < tend ; t++)
             {
                 // get the t-th tuple
-                int64_t i = I_work [t] ;
-                int64_t j = GB_J_WORK (t) ;
+                int64_t i = I_work [t] ;    // FIXME
+                int64_t j = GB_J_WORK (t) ; // FIXME
 
                 // tuples are now sorted but there may be duplicates
                 ASSERT ((jlast < j) || (jlast == j && ilast <= i)) ;
@@ -758,11 +786,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 if (i == ilast && j == jlast)
                 { 
                     // flag the tuple as a duplicate
-                    I_work [t] = -1 ;
+                    I_work [t] = -1 ;   // FIXME
                     my_ndupl++ ;
                     // the sort places earlier duplicate tuples (with smaller
                     // k) after later ones (with larger k).
-                    ASSERT (GB_K_WORK (t-1) < GB_K_WORK (t)) ;
+                    ASSERT (GB_K_WORK (t-1) < GB_K_WORK (t)) ;  // FIXME
                 }
                 else
                 {
@@ -788,11 +816,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // Replace tnvec_slice with its cumulative sum, after which each slice tid
     // will be responsible for the # vectors in T that range from tnvec_slice
     // [tid] to tnvec_slice [tid+1]-1.
-    GB_cumsum1 (tnvec_slice, nthreads) ;
+    GB_cumsum1_64 (tnvec_slice, nthreads) ;
     int64_t tnvec = tnvec_slice [nthreads] ;
 
     // Replace tnz_slice with its cumulative sum
-    GB_cumsum1 (tnz_slice, nthreads) ;
+    GB_cumsum1_64 (tnz_slice, nthreads) ;
 
     // find the total # of final entries, after assembling duplicates
     int64_t tnz = tnz_slice [nthreads] ;
@@ -801,6 +829,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
+
+    // FIXME: 4 variants for GB_new:  A->p and A->h/i integer sizes
 
     // allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.  The header T always exists on input, as
@@ -841,8 +871,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     // Step 4 scans the J_work indices and constructs T->h and T->p.
 
-    int64_t *restrict Th = T->h ;
-    int64_t *restrict Tp = T->p ;
+    // FIXME: step 4 has 4 variants: i_is_32 (Th) and p_is_32 (Tp)
+
+    GBp_DECL_GET (T, ) ;
+    GBh_DECL_GET (T, ) ;
+    uint64_t *restrict Tp = T->p ;      // FIXME
+    int64_t *restrict Th = T->h ;       // FIXME
 
     if (vdim <= 1)
     {
@@ -854,8 +888,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ASSERT (tnvec == 0 || tnvec == 1) ;
         if (tnvec > 0)
         { 
-            Th [0] = 0 ;
-            Tp [0] = 0 ;
+            Tp [0] = 0 ;        // FIXME
+            Th [0] = 0 ;        // FIXME
         }
 
     }
@@ -879,12 +913,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
             for (int64_t t = tstart ; t < tend ; t++)
             {
                 // get the t-th tuple
-                int64_t j = GB_J_WORK (t) ;
+                int64_t j = GB_J_WORK (t) ;     // FIXME
                 if (j > jlast)
                 { 
                     // vector j starts in this slice
-                    Th [my_tnvec] = j ;
-                    Tp [my_tnvec] = t ;
+                    Th [my_tnvec] = j ;     // FIXME
+                    Tp [my_tnvec] = t ;     // FIXME
                     my_tnvec++ ;
                     jlast = j ;
                 }
@@ -913,16 +947,16 @@ GrB_Info GB_builder                 // build a matrix from tuples
             for (int64_t t = tstart ; t < tend ; t++)
             {
                 // get the t-th tuple
-                int64_t i = I_work [t] ;
-                int64_t j = GB_J_WORK (t) ;
+                int64_t i = I_work [t] ;        // FIXME
+                int64_t j = GB_J_WORK (t) ;     // FIXME
                 if (i >= 0)
                 {
                     // this is a new tuple
                     if (j > jlast)
                     { 
                         // vector j starts in this slice 
-                        Th [my_tnvec] = j ;
-                        Tp [my_tnvec] = my_tnz ;
+                        Th [my_tnvec] = j ;     // FIXME
+                        Tp [my_tnvec] = my_tnz ;        // FIXME
                         my_tnvec++ ;
                         jlast = j ;
                     }
@@ -935,7 +969,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // log the end of the last vector
     T->nvec_nonempty = tnvec ;
     T->nvec = tnvec ;
-    Tp [tnvec] = tnz ;
+    Tp [tnvec] = tnz ;      // FIXME
     T->nvals = tnz ;
     ASSERT (T->nvec == T->plen || (T->plen == 1 && T->nvec == 0)) ;
     T->magic = GB_MAGIC ;
@@ -959,7 +993,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // this cannot fail since the size is shrinking.
             bool ok ;
-            GB_REALLOC (I_work, tnz, int64_t, I_work_size_handle, &ok) ;
+            GB_REALLOC (I_work, tnz, int64_t, I_work_size_handle, &ok) ;// FIXME
             ASSERT (ok) ;
         }
         // transplant I_work into T->i
@@ -971,7 +1005,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     else
     {
         // duplicates exist, so allocate a new T->i.  I_work must be freed later
-        T->i = GB_MALLOC (tnz, int64_t, &(T->i_size)) ;
+        T->i = GB_MALLOC (tnz, int64_t, &(T->i_size)) ; // FIXME
         if (T->i == NULL)
         { 
             // out of memory
@@ -981,7 +1015,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
         }
     }
 
-    int64_t *restrict Ti = T->i ;
+    GBi_DECL_GET (T, ) ;
+    int64_t *restrict Ti = T->i ;   // FIXME
 
     //==========================================================================
     // numerical phase of the build: assemble any duplicates
@@ -1200,6 +1235,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // via the iso kernel
                 //--------------------------------------------------------------
 
+                // FIXME: need to add 32/64 cases to GB_bld_template.c
+
                 // T and Sx are iso; set iso value and delete duplicates
                 memcpy (Tx, Sx, tsize) ;
                 #define GB_ISO_BUILD
@@ -1223,6 +1260,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     //----------------------------------------------------------
                     // define the worker for the switch factory
                     //----------------------------------------------------------
+
+                    // FIXME: pass in p_is_32 and i_is_32 to GB_bld_ kernel
 
                     #define GB_bld(opname,aname) \
                         GB (_bld_ ## opname ## aname)
@@ -1256,6 +1295,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (info == GrB_NO_VALUE)
             { 
+                // FIXME: pass p_is_32 and i_is_32 to GB_build_jit
                 info = GB_build_jit (Tx, Ti, Sx, ttype, stype, dup, nvals,
                     ndupl, I_work, K_work, tstart_slice, tnz_slice, nthreads) ;
             }

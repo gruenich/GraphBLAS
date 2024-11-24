@@ -108,7 +108,7 @@ GrB_Info GB_ijsort
     // sort [I1 I1k]
     //--------------------------------------------------------------------------
 
-    info = GB_msort_2 ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
+    info = GB_msort_2 (I1, I1k, ni, nthreads) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -136,7 +136,7 @@ GrB_Info GB_ijsort
         Count [tid] = my_count ;
     }
 
-    GB_cumsum1 (Count, ntasks) ;
+    GB_cumsum1_64 (Count, ntasks) ;
     int64_t ni2 = Count [ntasks] ;
 
     //--------------------------------------------------------------------------

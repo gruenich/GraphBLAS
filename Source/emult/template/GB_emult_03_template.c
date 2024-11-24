@@ -16,7 +16,10 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int64_t vlen = B->vlen ;
@@ -45,7 +48,9 @@
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
-    const int64_t  *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    GBi_DECL_GET (C, ) ;
+    const uint64_t  *restrict Cp = C->p ;
           int64_t  *restrict Ci = C->i ;
 
     #ifdef GB_JIT_KERNEL

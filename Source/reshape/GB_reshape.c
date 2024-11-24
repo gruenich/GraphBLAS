@@ -11,6 +11,8 @@
 // matrix C is nrows_new-by-ncols_new, then nrows*ncols must equal
 // nrows_new*ncols_new.
 
+// FIXME: i_is_32 might need to change, based on MAX(nrows_new,ncols_new)
+
 #include "GB.h"
 #include "reshape/GB_reshape.h"
 #include "transpose/GB_transpose.h"
@@ -184,9 +186,12 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         //----------------------------------------------------------------------
 
         int64_t nvals = GB_nnz (T) ;
-        int64_t *Tp = T->p ;
-        int64_t *Th = T->h ;
-        int64_t *Ti = T->i ;
+        GBp_DECL_GET (T, ) ;
+        GBh_DECL_GET (T, ) ;
+        GBi_DECL_GET (T, ) ;
+        uint64_t *restrict Tp = T->p ;
+        int64_t *restrict Th = T->h ;
+        int64_t *restrict Ti = T->i ;
         bool T_iso = T->iso ;
         int64_t tvlen = T->vlen ;
         bool T_jumbled = T->jumbled ;
@@ -284,7 +289,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                         // convert (iold,jold) to a 1D index
                         int64_t index_1d = iold + jold * tvlen ;
                         // save the new 1D index
-                        I_work [p] = index_1d ;
+                        I_work [p] = index_1d ;     // FIXME
                     }
                 }
             }
@@ -316,8 +321,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                         int64_t inew = index_1d % vlen_new ;
                         int64_t jnew = (index_1d - inew) / vlen_new ;
                         // save the new indices
-                        I_work [p] = inew ;
-                        J_work [p] = jnew ;
+                        I_work [p] = inew ;     // FIXME
+                        J_work [p] = jnew ;     // FIXME
                     }
                 }
             }

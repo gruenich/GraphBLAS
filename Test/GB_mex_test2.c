@@ -93,7 +93,8 @@ void mexFunction
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
     CHECK (scalar->i != NULL) ;
-    scalar->i [0] = GB_ZOMBIE (0) ;
+    int64_t *Si = scalar->i ;
+    Si [0] = GB_ZOMBIE (0) ;
     scalar->nzombies = 1 ;
     OK (GxB_Scalar_fprint (scalar, "scalar with zombie", 3, NULL)) ;
     expected = GrB_NO_VALUE ;
@@ -376,8 +377,9 @@ void mexFunction
 
     // jumble the matrix
     C->jumbled = true ;
-    C->i [0] = 1 ;
-    C->i [1] = 0 ;
+    int64_t *Ci = C->i ;
+    Ci [0] = 1 ;
+    Ci [1] = 0 ;
     OK (GxB_Matrix_fprint (C, "wild matrix jumbled", GxB_SHORT, NULL)) ;
 
     // unjumble the matrix

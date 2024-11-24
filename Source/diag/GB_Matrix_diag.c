@@ -134,7 +134,10 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (vnz, chunk, nthreads_max) ;
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    GBh_DECL_GET (C, ) ;
+    GBi_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
 
@@ -193,6 +196,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         // C->x = (ctype) V->x
         GB_OK (GB_cast_matrix (C, V)) ;
 
+        GBi_DECL_GET (V, ) ;
         int64_t *restrict Vi = V->i ;
 
         // construct Cp, Ch, and Ci

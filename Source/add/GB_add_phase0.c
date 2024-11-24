@@ -196,22 +196,30 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
 
     int64_t n = A->vdim ;
     int64_t Anvec = A->nvec ;
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
 
     int64_t Bnvec = B->nvec ;
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     bool B_is_hyper = (Bh != NULL) ;
 
     int64_t Mnvec = 0 ;
-    const int64_t *restrict Mp = NULL ;
+    GBp_DECL (M, const) ;
+    GBh_DECL (M, const) ;
+    const uint64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     if (M != NULL)
     { 
         Mnvec = M->nvec ;
+        GBp_GET (M) ;
+        GBh_GET (M) ;
         Mp = M->p ;
         Mh = M->h ;
     }
@@ -259,12 +267,16 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             GB_OK (GB_hyper_hash_build (A, Werk)) ;
             GB_OK (GB_hyper_hash_build (B, Werk)) ;
 
-            const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+            GB_Yp_DECL_GET (A, const) ;
+            GB_Yi_DECL_GET (A, const) ;
+            const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
             const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
             const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
             const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-            const int64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+            GB_Yp_DECL_GET (B, const) ;
+            GB_Yi_DECL_GET (B, const) ;
+            const uint64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
             const int64_t *restrict B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
             const int64_t *restrict B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
             const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
@@ -388,7 +400,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
         // cumulative sum of entries in Ch for each task
         //----------------------------------------------------------------------
 
-        GB_cumsum1 (kC_start, ntasks) ;
+        GB_cumsum1_64 (kC_start, ntasks) ;
         Cnvec = kC_start [ntasks] ;
 
         //----------------------------------------------------------------------
@@ -657,7 +669,9 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             // create the M->Y hyper_hash
             GB_OK (GB_hyper_hash_build (M, Werk)) ;
 
-            const int64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+            GB_Yp_DECL_GET (M, const) ;
+            GB_Yi_DECL_GET (M, const) ;
+            const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
             const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
             const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
             const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;

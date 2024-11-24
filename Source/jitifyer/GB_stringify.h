@@ -31,6 +31,7 @@ void GB_macrofy_preface
 // left and right shift
 //------------------------------------------------------------------------------
 
+// FIXME: move these into the math/include folder
 #define GB_LSHIFT(x,k) (((uint64_t) x) << k)
 #define GB_RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
 

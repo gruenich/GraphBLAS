@@ -28,10 +28,13 @@
     // get A, B, M, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
-    const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
     const int64_t vlen = A->vlen ;
 
     #ifdef GB_JIT_KENEL
@@ -46,10 +49,13 @@
     const bool A_is_full = GB_IS_FULL (A) ;
     #endif
 
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
 
     #ifdef GB_JIT_KENEL
     #define B_is_hyper  GB_B_IS_HYPER
@@ -63,10 +69,13 @@
     const bool B_is_full = GB_IS_FULL (B) ;
     #endif
 
-    const int64_t *restrict Mp = NULL ;
+    GBp_DECL (M, const) ;
+    GBh_DECL (M, const) ;
+    GBi_DECL (M, const) ;
+    const uint64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
-    const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
+    const int8_t  *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
 
     #ifdef GB_JIT_KENEL
@@ -90,10 +99,13 @@
     size_t msize = 0 ;
     if (M_is_present)
     { 
+        GBp_GET (M) ;
+        GBh_GET (M) ;
+        GBi_GET (M) ;
         Mp = M->p ;
         Mh = M->h ;
-        Mb = M->b ;
         Mi = M->i ;
+        Mb = M->b ;
         Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
     }
@@ -119,7 +131,10 @@
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
-    const int64_t  *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    GBh_DECL_GET (C, const) ;
+    GBi_DECL_GET (C, ) ;
+    const uint64_t  *restrict Cp = C->p ;
     const int64_t  *restrict Ch = C->h ;
           int64_t  *restrict Ci = C->i ;
     #endif

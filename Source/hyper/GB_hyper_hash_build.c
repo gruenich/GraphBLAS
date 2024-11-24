@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME:  the hyperhash Y->p and Y->i need to be 64-bit integers if A->i
+// is 64-bit, or 32-bit otherwise.
+
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_FREE (&I_work, I_work_size) ;    \
@@ -51,6 +54,7 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     // A->Y is (A->vdim)-by-(hash table size for A->h), with one vector per
     // hash bucket.
 
+    GBh_DECL_GET (A, const) ;
     const int64_t *restrict Ah = A->h ;
     int64_t anvec = A->nvec ;
     // this ensures a load factor of 0.5 to 1:
@@ -62,8 +66,7 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     int64_t hash_bits = (yvdim - 1) ;   // yvdim is always a power of 2
 
     GB_OK (GB_new (&(A->Y), // new dynamic header, do not allocate any content
-        GrB_UINT64, yvlen, yvdim, GB_Ap_null, true, GxB_SPARSE,
-        -1, 0)) ;
+        GrB_UINT64, yvlen, yvdim, GB_Ap_null, true, GxB_SPARSE, -1, 0)) ;
     GrB_Matrix Y = A->Y ;
 
     //--------------------------------------------------------------------------

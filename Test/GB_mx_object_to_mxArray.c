@@ -135,7 +135,8 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
             ASSERT (cnz == 0) ;
             C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),
                 &(C->i_size)) ;
-            C->i [0] = 0 ;
+            int64_t *Ci = C->i ;
+            Ci [0] = 0 ;
             C->i_shallow = false ;
         }
         if (C->p == NULL)

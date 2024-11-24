@@ -155,7 +155,7 @@ void mexFunction
         if (fmt == GxB_BY_COL)
         { 
             // A is 1-by-ancols and held by column: transpose it
-            A_copy = gb_new (atype, mnz, 1, GxB_BY_COL, 
+            A_copy = gb_new (atype, mnz, 1, GxB_BY_COL,
                 GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL) ;
             OK1 (A_copy, GrB_transpose (A_copy, NULL, NULL, A, NULL)) ;
             OK1 (A_copy, GrB_Matrix_wait (A_copy, GrB_MATERIALIZE)) ;
@@ -187,17 +187,17 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // Tim: use a shallow variant of GxB*export to access content of M and A
-    GrB_Index *Ai =            							
-        (GrB_Index *) A->i ;   	             	 	                 	
+    GBi_DECL_GET (A,) ;
+    GrB_Index *Ai =  (GrB_Index *) A->i ;
     void *Ax = A->x ;          		 	 	 	 	 	
-    char nil [16] =            		 	 	 	 	 	
-     "iso logassign  " ;       		 	 	 	 	 	
-    if (Ax == NULL) Ax = &nil ;							
+    char nil [16] = "iso logassign  " ;
+    if (Ax == NULL) Ax = &nil ;
 
     //--------------------------------------------------------------------------
     // extract the pattern of M
     //--------------------------------------------------------------------------
 
+    GBi_DECL_GET (M,) ;
     GrB_Index *Mi = (GrB_Index *) (M->i) ;
     GrB_Index *Mj = mxMalloc (MAX (mnz, 1) * sizeof (GrB_Index)) ;
     OK (GrB_Matrix_extractTuples_BOOL (NULL, Mj, NULL, &mnz, M)) ;

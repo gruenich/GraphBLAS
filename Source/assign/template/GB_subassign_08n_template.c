@@ -87,13 +87,16 @@
     GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
+    GBp_DECL_GET (C, const) ;
+    GBh_DECL_GET (C, const) ;
+    const uint64_t *restrict Cp = C->p ;
     const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_C_HYPER_HASH ;
     GB_GET_MASK ;
     GB_GET_ACCUM_MATRIX ;
-    const int64_t *Ah = A->h ;
+    GBh_DECL_GET (A, const) ;
+    const int64_t *restrict Ah = A->h ;
 
     //--------------------------------------------------------------------------
     // Method 08n: C(I,J)<M> += A ; no S

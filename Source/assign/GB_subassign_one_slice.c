@@ -80,15 +80,20 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     // get M and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
+    GBp_DECL_GET (M, const) ;
+    GBh_DECL_GET (M, const) ;
+    GBi_DECL_GET (M, const) ;
+    const uint64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
-//  const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
     const int64_t mnz = GB_nnz_held (M) ;
     const int64_t Mnvec = M->nvec ;
     const int64_t Mvlen = M->vlen ;
 
-    const int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    GBh_DECL_GET (C, const) ;
+    GBi_DECL_GET (C, const) ;
+    const uint64_t *restrict Cp = C->p ;
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Ci = C->i ;
     const bool C_is_hyper = (Ch != NULL) ;

@@ -78,7 +78,8 @@ GrB_Info GB_AxB_dot3_one_slice
     // get M
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
+    GBp_DECL_GET (M, const) ;
+    const uint64_t *restrict Mp = M->p ;
     const int64_t mnz = GB_nnz_held (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;

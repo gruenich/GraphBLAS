@@ -83,7 +83,9 @@ bool GB_is_diagonal             // true if A is diagonal
     // examine each vector of A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ai = A->i ;
 
     int diagonal = true ;

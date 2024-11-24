@@ -26,8 +26,10 @@
 
     GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
+    GBp_DECL_GET (C, const) ;
+    GBh_DECL_GET (C, const) ;
+    const uint64_t *restrict Cp = C->p ;
     const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     const int64_t Cnvec = C->nvec ;
     GB_GET_S ;

@@ -114,6 +114,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     ASSERT ((*C_sparsity) == GxB_SPARSE || (*C_sparsity) == GxB_HYPERSPARSE) ;
 
+    GBp_DECL (C, const) ;
     const int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
     int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
     int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
@@ -127,20 +128,24 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     int64_t Anvec = A->nvec ;
     int64_t vlen  = A->vlen ;
+    GBh_DECL_GET (A, const) ;
     const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = (Ah != NULL) ;
 
     int64_t Bnvec = B->nvec ;
+    GBh_DECL_GET (B, const) ;
     const int64_t *restrict Bh = B->h ;
     bool B_is_hyper = (Bh != NULL) ;
 
     int64_t Mnvec = 0 ;
+    GBh_DECL (M, const) ;
     const int64_t *restrict Mh = NULL ;
     bool M_is_hyper = false ;
 
     if (M != NULL)
     { 
         Mnvec = M->nvec ;
+        GBh_GET (M) ;
         Mh = M->h ;
         M_is_hyper = (Mh != NULL) ;
     }
@@ -423,8 +428,11 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // create the M->Y hyper_hash
         GB_OK (GB_hyper_hash_build (M, Werk)) ;
 
-        const int64_t *restrict Mp = M->p ;
-        const int64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+        GBp_DECL_GET (M, const) ;
+        const uint64_t *restrict Mp = M->p ;
+        GB_Yp_DECL_GET (M, const) ;
+        GB_Yi_DECL_GET (M, const) ;
+        const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
         const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
         const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
         const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
@@ -461,8 +469,11 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // create the A->Y hyper_hash
         GB_OK (GB_hyper_hash_build (A, Werk)) ;
 
-        const int64_t *restrict Ap = A->p ;
-        const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+        GBp_DECL_GET (A, const) ;
+        const uint64_t *restrict Ap = A->p ;
+        GB_Yp_DECL_GET (A, const) ;
+        GB_Yi_DECL_GET (A, const) ;
+        const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
         const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
         const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
         const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
@@ -499,8 +510,11 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // create the B->Y hyper_hash
         GB_OK (GB_hyper_hash_build (B, Werk)) ;
 
-        const int64_t *restrict Bp = B->p ;
-        const int64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+        GBp_DECL_GET (B, const) ;
+        const uint64_t *restrict Bp = B->p ;
+        GB_Yp_DECL_GET (B, const) ;
+        GB_Yi_DECL_GET (B, const) ;
+        const uint64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
         const int64_t *restrict B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
         const int64_t *restrict B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
         const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;

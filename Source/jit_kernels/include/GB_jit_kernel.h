@@ -43,7 +43,6 @@
 #undef GBH_C
 #undef GBI_C
 #undef GBB_C
-#undef GBX_C
 #undef GB_C_NVALS
 #undef GB_C_NHELD
 
@@ -52,7 +51,6 @@
 #undef GBH_A
 #undef GBI_A
 #undef GBB_A
-#undef GBX_A
 #undef GB_A_NVALS
 #undef GB_A_NHELD
 
@@ -61,7 +59,6 @@
 #undef GBH_B
 #undef GBI_B
 #undef GBB_B
-#undef GBX_B
 #undef GB_B_NVALS
 #undef GB_B_NHELD
 
@@ -70,7 +67,6 @@
 #undef GBH_M
 #undef GBI_M
 #undef GBB_M
-#undef GBX_M
 #undef GB_M_NVALS
 #undef GB_M_NHELD
 
@@ -88,7 +84,6 @@
 #undef GBH_Z
 #undef GBI_Z
 #undef GBB_Z
-#undef GBX_Z
 #undef GB_Z_NVALS
 #undef GB_Z_NHELD
 
@@ -97,7 +92,6 @@
 #undef GBH_R
 #undef GBI_R
 #undef GBB_R
-#undef GBX_R
 #undef GB_R_NVALS
 #undef GB_R_NHELD
 

@@ -113,6 +113,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     GB_CHECK_MAGIC (A) ;
 
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
+
     //--------------------------------------------------------------------------
     // print the header
     //--------------------------------------------------------------------------
@@ -383,17 +391,17 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("  ->p is NULL, invalid %s\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
-        if (A->p [0] != 0)
+        if (Ap [0] != 0)
         { 
-            GBPR0 ("  ->p [0] = " GBd " invalid\n", A->p [0]) ;
+            GBPR0 ("  ->p [0] = " GBd " invalid\n", Ap [0]) ;
             return (GrB_INVALID_OBJECT) ;
         }
         int64_t nzmax = A->i_size / sizeof (int64_t) ;
         for (int64_t j = 0 ; j < A->nvec ; j++)
         {
-            if (A->p [j+1] < A->p [j] || A->p [j+1] > nzmax)
+            if (Ap [j+1] < Ap [j] || Ap [j+1] > nzmax)
             { 
-                GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j+1, A->p [j+1]) ;
+                GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j+1, Ap [j+1]) ;
                 return (GrB_INVALID_OBJECT) ;
             }
         }
@@ -413,7 +421,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         int64_t jlast = -1 ;
         for (int64_t k = 0 ; k < A->nvec ; k++)
         {
-            int64_t j = A->h [k] ;
+            int64_t j = Ah [k] ;
             if (jlast >= j || j < 0 || j >= A->vdim)
             { 
                 GBPR0 ("  ->h [" GBd "] = " GBd " invalid\n", k, j) ;
@@ -573,9 +581,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     for (int64_t k = 0 ; k < A->nvec ; k++)
     {
         int64_t ilast = -1 ;
-        int64_t j = GBH (A->h, k) ;
-        int64_t p = GBP (A->p, k, A->vlen) ;
-        int64_t pend = GBP (A->p, k+1, A->vlen) ;
+        int64_t j = GBH (Ah, k) ;
+        int64_t p = GBP (Ap, k, A->vlen) ;
+        int64_t pend = GBP (Ap, k+1, A->vlen) ;
 
         // count the entries in A(:,j)
         int64_t ajnz = pend - p ;
@@ -584,7 +592,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             ajnz = 0 ;
             for (int64_t p2 = p ; p2 < pend ; p2++)
             {
-                int8_t ab = A->b [p2] ;
+                int8_t ab = Ab [p2] ;
                 if (ab < 0 || ab > 1)
                 { 
                     // bitmap with value other than 0, 1
@@ -609,11 +617,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // for each entry in A(:,j), the kth vector of A
         for ( ; p < pend ; p++)
         {
-            if (!GBB (A->b, p)) continue ;
+            if (!GBB (Ab, p)) continue ;
             anz_actual++ ;
             icount++ ;
 
-            int64_t i = GBI (A->i, p, A->vlen) ;
+            int64_t i = GBI (Ai, p, A->vlen) ;
             bool is_zombie = GB_IS_ZOMBIE (i) ;
             i = GB_UNZOMBIE (i) ;
             if (is_zombie) nzombies++ ;
@@ -871,6 +879,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (Y != NULL)
     {
 
+        GBp_DECL_GET (Y, const) ;
+        GBi_DECL_GET (Y, const) ;
+        const uint64_t *restrict Yp = Y->p ;
+        const int64_t *restrict Yi = Y->i ;
+
         if (!is_hyper)
         { 
             // A->Y is optional, but A must be hypersparse for A->Y to exist
@@ -900,12 +913,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         for (int64_t k = 0 ; k < A->nvec ; k++)
         {
             // look for j in the hyper_hash; it must be at position k
-            int64_t j = A->h [k] ;
+            int64_t j = Ah [k] ;
             int64_t jhash = GB_HASHF2 (j, hash_bits) ;
             bool found = false ;
-            for (int64_t p = Y->p [jhash] ; p < Y->p [jhash+1] ; p++)
+            for (int64_t p = Yp [jhash] ; p < Yp [jhash+1] ; p++)
             {
-                if (j == Y->i [p])
+                if (j == Yi [p])
                 {
                     if (k != Yx [p])
                     { 

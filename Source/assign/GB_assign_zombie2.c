@@ -37,7 +37,9 @@ GrB_Info GB_assign_zombie2
     // get C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    GBi_DECL_GET (C, ) ;
+    const uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
     const int64_t Cnvec = C->nvec ;
     int64_t nzombies = C->nzombies ;

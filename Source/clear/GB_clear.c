@@ -121,11 +121,15 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
             GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        A->p [0] = 0 ;
+        GBp_DECL_GET (A, const) ;
+        GBh_DECL_GET (A, const) ;
+        uint64_t *restrict Ap = A->p ;
+        int64_t *restrict Ah = A->h ;
+        Ap [0] = 0 ;
         if (plen > 0)
         { 
-            A->p [1] = 0 ;
-            A->h [0] = 0 ;
+            Ap [1] = 0 ;
+            Ah [0] = 0 ;
         }
     }
 

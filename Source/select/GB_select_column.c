@@ -48,10 +48,13 @@ GrB_Info GB_select_column
     // get A
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
-    int64_t *restrict Ah = A->h ;
-    int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
-    GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
+    const GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
     bool A_is_hyper = (Ah != NULL) ;
@@ -158,7 +161,10 @@ GrB_Info GB_select_column
     ASSERT (info == GrB_SUCCESS) ;
     int nth2 = GB_nthreads (cnvec, chunk, nth) ;
 
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    GBh_DECL_GET (C, ) ;
+    GBi_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     GB_void *restrict Cx = (GB_void *) C->x ;

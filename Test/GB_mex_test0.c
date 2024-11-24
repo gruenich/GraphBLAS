@@ -850,7 +850,8 @@ void mexFunction
     bool scalar_is_full = GB_IS_FULL (a_scalar) ;
     if (!scalar_is_full)
     {
-        a_scalar->i [0] = GB_ZOMBIE (0) ;
+        int64_t *Ai = a_scalar->i ;
+        Ai [0] = GB_ZOMBIE (0) ;
         a_scalar->nzombies = 1 ;
     }
 
@@ -4139,11 +4140,12 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
     CHECK (!GB_IS_FULL (v)) ;
-    v->i [0] = 1 ;
-    v->i [1] = 0 ;
+    int64_t *Vi = v->i ;
+    Vi [0] = 1 ;
+    Vi [1] = 0 ;
     ERR (GxB_Vector_fprint (v, "v jumbled", G3, ff)) ;
-    v->i [0] = 0 ;
-    v->i [1] = 1 ;
+    Vi [0] = 0 ;
+    Vi [1] = 1 ;
     OK (GxB_Vector_fprint (v, "v fixed", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -4166,7 +4168,8 @@ void mexFunction
     v->vdim = 1 ;
 
     CHECK (!GB_IS_FULL (v)) ;
-    v->p [0] = 1 ;
+    uint64_t *Vp = v->p ;
+    Vp [0] = 1 ;
     ERR (GB_Vector_check (v, "v p[0] invalid", G1, ff)) ;
 
     mxFree (v->p) ;
@@ -4210,9 +4213,10 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    A->p [0] = 1 ;
+    uint64_t *Ap = A->p ;
+    Ap [0] = 1 ;
     ERR (GB_Matrix_check (A, "p[0] invalid", G1, ff)) ;
-    A->p [0] = 0 ;
+    Ap [0] = 0 ;
 
     A->vlen = -1 ;
     ERR (GB_Matrix_check (A, "invalid dimensions", G1, ff)) ;
@@ -4288,19 +4292,20 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pi", G0, NULL)) ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    A->p [0] = 1 ;
+    Ap = A->p ;
+    Ap [0] = 1 ;
     ERR (GB_Matrix_check (A, "Ap[0] invalid", G1, NULL)) ;
-    A->p [0] = 0 ;
+    Ap [0] = 0 ;
 
-    int64_t isave = A->p [1] ;
-    A->p [1] = -1 ;
+    int64_t isave = Ap [1] ;
+    Ap [1] = -1 ;
     ERR (GB_Matrix_check (A, "Ap[1] invalid", G1, NULL)) ;
-    A->p [1] = isave ;
+    Ap [1] = isave ;
 
-    isave = A->p [4] ;
-    A->p [4] += 999 ;
+    isave = Ap [4] ;
+    Ap [4] += 999 ;
     ERR (GB_Matrix_check (A, "Ap[ncols] invalid", G1, NULL)) ;
-    A->p [4] = isave ;
+    Ap [4] = isave ;
 
     isave = A->nzombies ;
     A->nzombies = -1 ;
@@ -4312,10 +4317,11 @@ void mexFunction
     ERR (GB_Matrix_check (A, "too many zombies", G1, NULL)) ;
     A->nzombies = isave ;
 
-    isave = A->i [0] ;
-    A->i [0] = -1 ;
+    int64_t *Ai = A->i ;
+    isave = Ai [0] ;
+    Ai [0] = -1 ;
     ERR (GB_Matrix_check (A, "row index invalid", G3, NULL)) ;
-    A->i [0] = isave ;
+    Ai [0] = isave ;
 
     isave = A->nzombies ;
     A->nzombies = 1 ;
@@ -4402,8 +4408,9 @@ void mexFunction
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (!GB_IS_BITMAP (A)) ;
-    A->i [0] = 1 ;
-    A->i [1] = 0 ;
+    Ai = A->i ;
+    Ai [0] = 1 ;
+    Ai [1] = 0 ;
 
     info = GB_Matrix_check (A, "jumbled", G3, NULL) ;
     printf ("jumbled info %d\n", info) ;
@@ -4415,8 +4422,9 @@ void mexFunction
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (!GB_IS_BITMAP (A)) ;
-    A->i [0] = 0 ;
-    A->i [1] = 1 ;
+    Ai = A->i ;
+    Ai [0] = 0 ;
+    Ai [1] = 1 ;
     OK (GB_Matrix_check (A, "OK", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
@@ -4493,14 +4501,15 @@ void mexFunction
 
     // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
     CHECK (GB_IS_HYPERSPARSE (A)) ;
-    isave = A->p [1] ;
-    A->p [1] = 0 ;
+    Ap = A->p ;
+    isave = Ap [1] ;
+    Ap [1] = 0 ;
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
     ERR (GB_Matrix_check (A, "A with bad nvec_nonempty", G1, NULL)) ;
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "A", G1, ff)) ;
     CHECK (GB_IS_HYPERSPARSE (A)) ;
-    A->p [1] = isave ;
+    Ap [1] = isave ;
     OK (GB_Matrix_check (A, "A fixed", G0, NULL)) ;
 
     double hratio = 0.5;
@@ -4777,10 +4786,11 @@ void mexFunction
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (A->h != NULL) ;
-    int64_t jsave = A->h [0] ;
-    A->h [0] = -1 ;
+    int64_t *Ah = A->h ;
+    int64_t jsave = Ah [0] ;
+    Ah [0] = -1 ;
     ERR (GB_Matrix_check (A, "h[0] invalid", G1, NULL)) ;
-    A->h [0] = jsave ;
+    Ah [0] = jsave ;
     OK (GB_Matrix_check (A, "h[0] restored", G1, NULL)) ;
 
     GrB_Matrix Eleven ;
@@ -5410,7 +5420,8 @@ void mexFunction
 
     printf ("\n----------------------------- import/export\n") ;
     OK (GxB_Matrix_fprint (A, "A to import/export", GxB_COMPLETE, stdout)) ;
-    GrB_Index *Ap, *Ai, *Aj, *Ah, nrows, ncols, nvecs ;
+    int64_t *Aj ;
+    GrB_Index nrows, ncols, nvecs ;
     double *Ax ;
     GrB_Type atype ;
     bool jumbled, iso ;

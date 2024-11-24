@@ -33,8 +33,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // from phase0:
     int64_t **Ch_handle,
     size_t Ch_size,
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -60,8 +60,10 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
+    GBp_DECL (C, const) ;
+    GBh_DECL (C, const) ;
+    const uint64_t *restrict Cp = (*Cp_handle) ;
     const int64_t *restrict Ch = (*Ch_handle) ;
-    const int64_t *restrict Cp = (*Cp_handle) ;
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
@@ -114,6 +116,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_2_OF_2
+    GBi_DECL_GET (C, ) ;
     int64_t *restrict Ci = C->i ;
     int64_t *restrict Cx = (int64_t *) C->x ;
     #define GB_I_KIND Ikind
@@ -140,7 +143,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
             }
         #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
         #define GB_QSORT_1B(Ci,Cx,pC,clen) \
-            GB_qsort_1b_size8 (Ci + pC, (uint64_t *) (Cx + pC), clen) ;
+            GB_qsort_1b_64_size8 (Ci + pC, (uint64_t *) (Cx + pC), clen) ;
         #define GB_SYMBOLIC
         #include "extract/template/GB_subref_template.c"
 
@@ -188,7 +191,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
             #define GB_COPY_ENTRY(pC,pA)                                    \
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, csize) ;
             #define GB_QSORT_1B(Ci,Cx,pC,clen) \
-                GB_qsort_1b (Ci+(pC), (GB_void *) (Cx+(pC)*csize), csize, clen);
+                GB_qsort_1b_64_generic (Ci+(pC), (GB_void *) (Cx+(pC)*csize), \
+                    csize, clen) ;
             #include "extract/template/GB_subref_template.c"
             info = GrB_SUCCESS ;
         }

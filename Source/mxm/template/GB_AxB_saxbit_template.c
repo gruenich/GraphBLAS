@@ -53,10 +53,13 @@
     ASSERT (!GB_IS_SPARSE (B)) ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
 
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
-    const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
@@ -77,10 +80,13 @@
     const bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
     #endif
 
-    const int64_t *restrict Mp = NULL ;
+    GBp_DECL (M, const) ;
+    GBh_DECL (M, const) ;
+    GBi_DECL (M, const) ;
+    const uint64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
-    const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
+    const int8_t  *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
@@ -120,10 +126,13 @@
     {
         ASSERT (C->vlen == M->vlen) ;
         ASSERT (C->vdim == M->vdim) ;
+        GBp_GET (M) ;
+        GBh_GET (M) ;
+        GBi_GET (M) ;
         Mp = M->p ;
         Mh = M->h ;
-        Mb = M->b ;
         Mi = M->i ;
+        Mb = M->b ;
         Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
         mnvec = M->nvec ;

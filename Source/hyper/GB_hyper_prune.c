@@ -43,8 +43,11 @@ GrB_Info GB_hyper_prune
     (*p_Ah) = NULL ;    (*p_Ah_size) = 0 ;
     (*p_nvec) = -1 ;
 
-    int64_t *restrict W  = NULL ; size_t W_size  = 0 ;
-    int64_t *restrict Ap = NULL ; size_t Ap_size = 0 ;
+    int64_t *restrict W  = NULL ; size_t W_size  = 0 ;      // FIXME
+
+    GBp_DECL (A, ) ;
+    GBh_DECL (A, ) ;
+    uint64_t *restrict Ap = NULL ; size_t Ap_size = 0 ;
     int64_t *restrict Ah = NULL ; size_t Ah_size = 0 ;
 
     //--------------------------------------------------------------------------
@@ -79,7 +82,7 @@ GrB_Info GB_hyper_prune
     }
 
     int64_t nvec ;
-    GB_cumsum (W, nvec_old, &nvec, nthreads, Werk) ;
+    GB_cumsum (W, false, nvec_old, &nvec, nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate the result

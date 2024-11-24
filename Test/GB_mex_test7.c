@@ -134,9 +134,10 @@ void mexFunction
     OK (GxB_pack_HyperHash (A, &Y, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A hypersparse (pack did nothing)", 3, NULL)) ;
 
-    A->Y->i [0] = 99 ;
+    int64_t *Yi = A->Y->i ;
+    Yi [0] = 99 ;
     ERR (GxB_Matrix_fprint (A, "A->Y invalid (not found) ", 3, NULL)) ;
-    A->Y->i [0] = 0 ;
+    Yi [0] = 0 ;
 
     int64_t *Yx = A->Y->x ;
     Yx [0] = 99 ;
@@ -252,7 +253,8 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "A->Y with many collisions", 2, NULL)) ;
 
     CHECK (A->Y != NULL) ;
-    CHECK (A->Y->p [1] == 257) ;
+    uint64_t *Yp = A->Y->p ;
+    CHECK (Yp [1] == 257) ;
 
     OK (GrB_mxm (C1, A, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A,
         GrB_DESC_T0)) ;

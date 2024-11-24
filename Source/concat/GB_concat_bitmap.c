@@ -170,7 +170,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
                         {
                             #undef  GB_COPY
                             #define GB_COPY(pC,pA,A_iso)            \
-                                Cx [pC] = GBX (Ax, pA, A_iso) ;
+                                Cx [pC] = Ax [A_iso ? 0 : pA] ;
 
                             case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                                 #define GB_C_TYPE uint8_t

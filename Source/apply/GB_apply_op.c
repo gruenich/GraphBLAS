@@ -84,8 +84,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     GB_Opcode opcode ;
     bool op_is_unop = false ;
     bool op_is_binop = false ;
-    bool is64 = false ;
-    bool is32 = false ;
+    bool opz64 = false ;
+    bool opz32 = false ;
 
     if (op != NULL)
     { 
@@ -93,8 +93,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         op_is_unop = GB_IS_UNARYOP_CODE (opcode) ;
         op_is_binop = GB_IS_BINARYOP_CODE (opcode) ;
         ASSERT (!GB_IS_INDEXBINARYOP_CODE (opcode)) ;
-        is64 = (op->ztype == GrB_INT64) ;
-        is32 = (op->ztype == GrB_INT32) ;
+        opz64 = (op->ztype == GrB_INT64) ;
+        opz32 = (op->ztype == GrB_INT32) ;
 
         if (GB_IS_BUILTIN_BINOP_CODE_POSITIONAL (opcode))
         {
@@ -105,25 +105,25 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 case GB_FIRSTI_binop_code    : // z = first_i(A(i,j),y) == i
                 case GB_SECONDI_binop_code   : // z = second_i(x,A(i,j)) == i
                     // rename FIRSTI and SECONDI to POSITIONI
-                    op1 = is64 ? GxB_POSITIONI_INT64 : GxB_POSITIONI_INT32 ;
+                    op1 = opz64 ? GxB_POSITIONI_INT64 : GxB_POSITIONI_INT32 ;
                     break ;
 
                 case GB_FIRSTI1_binop_code   : // z = first_i1(A(i,j),y) == i+1
                 case GB_SECONDI1_binop_code  : // z = second_i1(x,A(i,j)) == i+1
                     // rename FIRSTI1 and SECONDI1 to POSITIONI1
-                    op1 = is64 ? GxB_POSITIONI1_INT64 : GxB_POSITIONI1_INT32 ;
+                    op1 = opz64 ? GxB_POSITIONI1_INT64 : GxB_POSITIONI1_INT32 ;
                     break ;
 
                 case GB_FIRSTJ_binop_code    : // z = first_j(A(i,j),y) == j
                 case GB_SECONDJ_binop_code   : // z = second_j(x,A(i,j)) == j
                     // rename FIRSTJ and SECONDJ to POSITIONJ
-                    op1 = is64 ? GxB_POSITIONJ_INT64 : GxB_POSITIONJ_INT32 ;
+                    op1 = opz64 ? GxB_POSITIONJ_INT64 : GxB_POSITIONJ_INT32 ;
                     break ;
 
                 case GB_FIRSTJ1_binop_code   : // z = first_j1(A(i,j),y) == j+1
                 case GB_SECONDJ1_binop_code  : // z = second_j1(x,A(i,j)) == j+1
                     // rename FIRSTJ1 and SECONDJ1 to POSITIONJ1
-                    op1 = is64 ? GxB_POSITIONJ1_INT64 : GxB_POSITIONJ1_INT32 ;
+                    op1 = opz64 ? GxB_POSITIONJ1_INT64 : GxB_POSITIONJ1_INT32 ;
                     break ;
 
                 default:;
@@ -192,8 +192,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         if (info == GrB_NO_VALUE)
         {
             // get A and C
+            GBp_DECL_GET (A, const) ;
+            GBh_DECL_GET (A, const) ;
+            GBi_DECL_GET (A, const) ;
+            const uint64_t *restrict Ap = A->p ;
             const int64_t *restrict Ah = A->h ;
-            const int64_t *restrict Ap = A->p ;
             const int64_t *restrict Ai = A->i ;
             int64_t avlen = A->vlen ;
 
@@ -201,7 +204,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             // Cx = positional_op (A)
             //------------------------------------------------------------------
 
-            if (is64)
+            if (opz64)
             { 
 
                 //--------------------------------------------------------------
@@ -247,7 +250,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
                 }
 
             }
-            else if (is32)
+            else if (opz32)
             { 
 
                 //--------------------------------------------------------------
@@ -755,8 +758,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GB_BURBLE_N (anz, "(generic apply: user-defined idxunop) ") ;
 
             // get A and C
+            GBp_DECL_GET (A, const) ;
+            GBh_DECL_GET (A, const) ;
+            GBi_DECL_GET (A, const) ;
+            const uint64_t *restrict Ap = A->p ;
             const int64_t *restrict Ah = A->h ;
-            const int64_t *restrict Ap = A->p ;
             const int64_t *restrict Ai = A->i ;
             int64_t avlen = A->vlen ;
             GB_Type_code acode = Atype->code ;

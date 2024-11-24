@@ -91,5 +91,15 @@ GrB_Info GB_cast_matrix         // copy or typecast the values from A into C
     GrB_Matrix A
 ) ;
 
+void GB_cast_int                // parallel memcpy/cast of integer arrays
+(
+    void *dest,                 // destination
+    GB_Type_code dest_code,     // destination type: int32/64, or uint32/64
+    const void *src,            // source
+    GB_Type_code src_code,      // source type: int32/64, or uint32/64
+    size_t n,                   // # of entries to copy
+    int nthreads_max            // max # of threads to use
+) ;
+
 #endif
 

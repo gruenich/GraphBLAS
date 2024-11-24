@@ -101,7 +101,8 @@ GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
     int64_t anz = GB_nnz_held (A) ;
-    const int64_t *Ap = A->p ;      // NULL if bitmap or full
+    GBp_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;      // NULL if bitmap or full
 
     //--------------------------------------------------------------------------
     // allocate result

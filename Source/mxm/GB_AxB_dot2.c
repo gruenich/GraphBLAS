@@ -125,8 +125,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
     bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
     bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
-    GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;
-    GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;
+    GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;    // FIXME
+    GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;    // FIXME
 
     if (A_is_hyper)
     { 

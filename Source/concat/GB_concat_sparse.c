@@ -75,7 +75,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         hyper_switch, cvdim, cnz, true, C_iso)) ;
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    GBi_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
@@ -195,8 +197,10 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             { 
                 // A is sparse or hyper
                 int64_t k ;
-                int64_t *restrict Ah = A->h ;
-                int64_t *restrict Ap = A->p ;
+                GBp_DECL_GET (A, const) ;
+                GBh_DECL_GET (A, const) ;
+                const uint64_t *restrict Ap = A->p ;
+                const int64_t *restrict Ah = A->h ;
                 #pragma omp parallel for num_threads(nth) schedule(static)
                 for (k = 0 ; k < anvec ; k++)
                 {
@@ -229,7 +233,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         Cp [k] = s ;
     }
 
-    GB_cumsum (Cp, cvdim, &(C->nvec_nonempty), nthreads_max, Werk) ;
+    GB_cumsum (Cp, false, cvdim, &(C->nvec_nonempty), nthreads_max, Werk) ;
     ASSERT (cnz == Cp [cvdim]) ;
     C->nvals = cnz ;
 
@@ -310,7 +314,10 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             ASSERT (avdim == A->vdim) ;
             ASSERT (avlen == A->vlen) ;
             int A_nthreads, A_ntasks ;
-            const int64_t *restrict Ap = A->p ;
+            GBp_DECL_GET (A, const) ;
+            GBh_DECL_GET (A, const) ;
+            GBi_DECL_GET (A, const) ;
+            const uint64_t *restrict Ap = A->p ;
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             const bool A_iso = A->iso ;
@@ -352,7 +359,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                         {
                             #undef  GB_COPY
                             #define GB_COPY(pC,pA,A_iso)    \
-                                Cx [pC] = GBX (Ax, pA, A_iso) ;
+                                Cx [pC] = Ax [A_iso ? 0 : pA] ;
 
                             case GB_1BYTE : // uint8, int8, bool, or 1-byte user
                                 #define GB_C_TYPE uint8_t

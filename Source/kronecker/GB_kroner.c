@@ -98,7 +98,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // get inputs
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int64_t avlen = A->vlen ;
@@ -106,7 +109,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
 
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int64_t bvlen = B->vlen ;
@@ -171,7 +177,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // compute the column counts of C: Cp and Ch if C is hypersparse
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    GBh_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
 
     if (!C_is_full)
@@ -198,7 +206,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             }
         }
 
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
+        GB_cumsum (Cp, false, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
         C->nvals = Cp [cnvec] ;
         if (C_is_hyper) C->nvec = cnvec ;
     }

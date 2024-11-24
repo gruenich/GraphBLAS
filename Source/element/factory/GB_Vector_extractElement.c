@@ -62,7 +62,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
 
     int64_t pleft ;
     bool found ;
-    const int64_t *restrict Vp = V->p ;
+    GBp_DECL_GET (V, const) ;
+    const uint64_t *restrict Vp = V->p ;
 
     if (Vp != NULL)
     { 
@@ -70,6 +71,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
         pleft = 0 ;
         int64_t pright = Vp [1] - 1 ;
         // Time taken for this step is at most O(log(nnz(V))).
+        GBi_DECL_GET (V, const) ;
         const int64_t *restrict Vi = V->i ;
         GB_BINARY_SEARCH (i, Vi, pleft, pright, found) ;
     }

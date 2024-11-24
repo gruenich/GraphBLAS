@@ -42,6 +42,9 @@ FUTURE plans for GraphBLAS:
         GrB_set (op, GxB_DEFN, "string")
     also for all ops
 
+    monoids with terminal conditions (as a function), not just a terminal
+        value
+
     candidates for kernel fusion:
         * triangle counting: mxm then reduce to scalar
         * lcc: mxm then reduce to vector

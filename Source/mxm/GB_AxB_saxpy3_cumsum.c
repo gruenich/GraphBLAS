@@ -22,7 +22,8 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_FULL (C)) ;
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
     ASSERT (Cp != NULL) ;
@@ -128,7 +129,7 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     // fine tasks or coarse tasks, and where j == GBH (Bh, kk) 
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+    GB_cumsum (Cp, false, cnvec, &(C->nvec_nonempty), nth, Werk) ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks

@@ -133,8 +133,10 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
         GBURBLE ("(iso diag) ") ;
     }
 
-    V->p [0] = 0 ;
-    V->p [1] = vnz ;
+    GBp_DECL_GET (V, ) ;
+    uint64_t *restrict Vp = V->p ;
+    Vp [0] = 0 ;
+    Vp [1] = vnz ;
     V->nvals = vnz ;
     if (k >= 0)
     { 

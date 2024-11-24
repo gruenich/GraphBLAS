@@ -51,16 +51,16 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *restrict Zp = NULL ; size_t Zp_size = 0 ;
+    uint64_t *restrict Zp = NULL ; size_t Zp_size = 0 ;     // FIXME
     GB_WERK_DECLARE (Work, int64_t) ;
     int64_t *restrict Wfirst = NULL ;
     int64_t *restrict Wlast = NULL ;
     int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
-    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;     // FIXME
+    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;      // FIXME
+    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;      // FIXME
     GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
 
     GB_Opcode opcode = op->opcode ;
@@ -83,7 +83,10 @@ GrB_Info GB_select_sparse
     // the case when A is bitmap is always handled above by GB_select_bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;
 
-    int64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
     GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
@@ -396,6 +399,7 @@ GrB_Info GB_select_sparse
             GB_FREE (&Ap, Ap_size) ;
             A->p = Cp ; Cp = NULL ; A->p_size = Cp_size ;
             A->plen = cplen ;
+            Ap = A->p ;
         }
 
         ASSERT (Cp == NULL) ;
@@ -407,7 +411,7 @@ GrB_Info GB_select_sparse
         A->nvec_nonempty = C_nvec_nonempty ;
         A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
         A->iso = C_iso ;                // OK: burble already done above
-        A->nvals = A->p [A->nvec] ;
+        A->nvals = Ap [A->nvec] ;
 
         // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It is set to zero in GB_wait.
@@ -460,16 +464,20 @@ GrB_Info GB_select_sparse
         }
 
         // note that C->Y is not yet constructed
-        C->p = Cp ; Cp = NULL ; C->p_size = Cp_size ;
-        C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;
-        C->i = Ci ; Ci = NULL ; C->i_size = Ci_size ;
-        C->x = Cx ; Cx = NULL ; C->x_size = Cx_size ;
+        C->p = Cp ; C->p_size = Cp_size ;
+        C->h = Ch ; C->h_size = Ch_size ;
+        C->i = Ci ; C->i_size = Ci_size ;
+        C->x = Cx ; C->x_size = Cx_size ;
         C->plen = cplen ;
         C->magic = GB_MAGIC ;
         C->nvec_nonempty = C_nvec_nonempty ;
         C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
         C->iso = C_iso ;            // OK: burble already done above
-        C->nvals = C->p [C->nvec] ;
+        C->nvals = Cp [C->nvec] ;
+        Cp = NULL ;
+        Ch = NULL ;
+        Ci = NULL ;
+        Cx = NULL ;
 
         ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
     }

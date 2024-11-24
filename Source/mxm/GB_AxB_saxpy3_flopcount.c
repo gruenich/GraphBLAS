@@ -131,9 +131,13 @@ GrB_Info GB_AxB_saxpy3_flopcount
     //--------------------------------------------------------------------------
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
-    const int64_t *restrict Mp = NULL ;
+    GBp_DECL (M, const) ;
+    GBh_DECL (M, const) ;
+    const uint64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
-    const int64_t *restrict M_Yp = NULL ;
+    GB_Yp_DECL (M, const) ;
+    GB_Yi_DECL (M, const) ;
+    const uint64_t *restrict M_Yp = NULL ;
     const int64_t *restrict M_Yi = NULL ;
     const int64_t *restrict M_Yx = NULL ;
     int64_t mnvec = 0 ;
@@ -143,8 +147,10 @@ GrB_Info GB_AxB_saxpy3_flopcount
     bool M_is_dense = false ;
     if (M != NULL)
     { 
-        Mh = M->h ;
+        GBp_GET (M) ;
+        GBh_GET (M) ;
         Mp = M->p ;
+        Mh = M->h ;
         mnvec = M->nvec ;
         mvlen = M->vlen ;
         M_is_dense = GB_IS_BITMAP (M) || GB_as_if_full (M) ;
@@ -152,6 +158,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
         { 
             // mask is present, and hypersparse
             ASSERT_MATRIX_OK (M->Y, "M->Y hyper_hash", GB0) ;
+            GB_Yp_GET (M) ;
+            GB_Yi_GET (M) ;
             M_Yp = M->Y->p ;
             M_Yi = M->Y->i ;
             M_Yx = M->Y->x ;
@@ -163,20 +171,27 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // get A and B: any sparsity structure
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    GB_Yp_DECL_GET (A, const) ;
+    GB_Yi_DECL_GET (A, const) ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse_or_hyper = B_is_hyper || GB_IS_SPARSE (B) ;
@@ -462,7 +477,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     // Bflops = cumsum ([0 Bflops]) ;
     ASSERT (Bflops [bnvec] == 0) ;
-    GB_cumsum (Bflops, bnvec, NULL, B_nthreads, Werk) ;
+    GB_cumsum (Bflops, false, bnvec, NULL, B_nthreads, Werk) ;
     // Bflops [bnvec] is now the total flop count, including the time to
     // compute A*B and to handle the mask.  total_Mwork is part of this total
     // flop count, but is also returned separtely.

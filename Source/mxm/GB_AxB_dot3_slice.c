@@ -86,7 +86,8 @@ GrB_Info GB_AxB_dot3_slice
     // get C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    const uint64_t *restrict Cp = C->p ;
     int64_t *restrict Cwork = C->i ;
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
@@ -99,7 +100,7 @@ GrB_Info GB_AxB_dot3_slice
     // FUTURE:: handle possible int64_t overflow
 
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_cumsum (Cwork, cnz, NULL, nthreads, Werk) ;
+    GB_cumsum (Cwork, false, cnz, NULL, nthreads, Werk) ;
     double total_work = (double) Cwork [cnz] ;
 
     //--------------------------------------------------------------------------

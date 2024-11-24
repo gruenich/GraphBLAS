@@ -62,10 +62,10 @@ GrB_Info GB_Iterator_attach
     iterator->avlen = A->vlen ;
     iterator->avdim = A->vdim ;
     iterator->anvec = A->nvec ;
-    iterator->Ap = A->p ;
-    iterator->Ah = A->h ;
+    iterator->Ap = A->p ;       // FIXME
+    iterator->Ah = A->h ;       // FIXME
+    iterator->Ai = A->i ;       // FIXME
     iterator->Ab = A->b ;
-    iterator->Ai = A->i ;
     iterator->Ax = A->x ;
     iterator->type_size = A->type->size ;
     iterator->A_sparsity = GB_sparsity (A) ;

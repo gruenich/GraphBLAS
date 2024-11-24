@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME add case for A->i 32 bit
+
 #include "sort/GB_sort.h"
 #include "unaryop/GB_unop.h"
 #include "jitifyer/GB_stringify.h"
@@ -50,7 +52,9 @@ GrB_Info GB_unjumble        // unjumble a matrix
 
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, ) ;
+    const uint64_t *restrict Ap = A->p ;
     int64_t *restrict Ai = A->i ;
     const size_t asize = (A->iso) ? 0 : A->type->size ;
 
@@ -91,7 +95,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
         // iso matrices of any type; only sort the pattern
         //----------------------------------------------------------------------
 
-        #define GB_QSORT GB_qsort_1 (Ai+pA_start, aknz) ;
+        #define GB_QSORT GB_qsort_1_64 (Ai+pA_start, aknz) ;
         #include "wait/template/GB_unjumbled_template.c"
         info = GrB_SUCCESS ;
     }
@@ -112,7 +116,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
                 {
                     uint8_t *Ax = (uint8_t *) A->x ;
                     #define GB_QSORT \
-                        GB_qsort_1b_size1 (Ai+pA_start, Ax+pA_start, aknz) ;
+                        GB_qsort_1b_64_size1 (Ai+pA_start, Ax+pA_start, aknz) ;
                     #include "wait/template/GB_unjumbled_template.c"
                     info = GrB_SUCCESS ;
                 }
@@ -122,7 +126,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
                 {
                     uint16_t *Ax = (uint16_t *) A->x ;
                     #define GB_QSORT \
-                        GB_qsort_1b_size2 (Ai+pA_start, Ax+pA_start, aknz) ;
+                        GB_qsort_1b_64_size2 (Ai+pA_start, Ax+pA_start, aknz) ;
                     #include "wait/template/GB_unjumbled_template.c"
                     info = GrB_SUCCESS ;
                 }
@@ -132,7 +136,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
                 {
                     uint32_t *Ax = (uint32_t *) A->x ;
                     #define GB_QSORT \
-                        GB_qsort_1b_size4 (Ai+pA_start, Ax+pA_start, aknz) ;
+                        GB_qsort_1b_64_size4 (Ai+pA_start, Ax+pA_start, aknz) ;
                     #include "wait/template/GB_unjumbled_template.c"
                     info = GrB_SUCCESS ;
                 }
@@ -143,7 +147,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
                 {
                     uint64_t *Ax = (uint64_t *) A->x ;
                     #define GB_QSORT \
-                        GB_qsort_1b_size8 (Ai+pA_start, Ax+pA_start, aknz) ;
+                        GB_qsort_1b_64_size8 (Ai+pA_start, Ax+pA_start, aknz) ;
                     #include "wait/template/GB_unjumbled_template.c"
                     info = GrB_SUCCESS ;
                 }
@@ -153,7 +157,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
                 {
                     GB_blob16 *Ax = (GB_blob16 *) A->x ;
                     #define GB_QSORT \
-                        GB_qsort_1b_size16 (Ai+pA_start, Ax+pA_start, aknz) ;
+                        GB_qsort_1b_64_size16 (Ai+pA_start, Ax+pA_start, aknz) ;
                     #include "wait/template/GB_unjumbled_template.c"
                     info = GrB_SUCCESS ;
                 }
@@ -186,7 +190,8 @@ GrB_Info GB_unjumble        // unjumble a matrix
         GBURBLE ("(unjumble: generic kernel) ") ;
         GB_void *Ax = (GB_void *) A->x ;
         #define GB_QSORT \
-            GB_qsort_1b (Ai+pA_start, Ax+pA_start*asize, asize, aknz) ;
+            GB_qsort_1b_64_generic (Ai+pA_start, Ax+pA_start*asize, asize,  \
+                aknz) ;
         #include "wait/template/GB_unjumbled_template.c"
         info = GrB_SUCCESS ;
     }

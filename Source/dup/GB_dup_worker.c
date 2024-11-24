@@ -53,11 +53,14 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     int64_t anz = GB_nnz_held (A) ;
-    int64_t *Ap = A->p ;
-    int64_t *Ah = A->h ;
-    int64_t *Ai = A->i ;
-    int8_t  *Ab = A->b ;
-    GB_void *Ax = (GB_void *) A->x ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
+    const GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
     int64_t anvec_nonempty = A->nvec_nonempty ;

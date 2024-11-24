@@ -197,11 +197,12 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     int64_t nrows = mxGetM (Amatrix) ;
     int64_t ncols = mxGetN (Amatrix) ;
-    int64_t *Mp, *Mi, anz, anzmax ;
+    uint64_t *Mp ;
+    int64_t *Mi, anz, anzmax ;
 
     if (A_is_sparse)
     {
-        Mp = (int64_t *) mxGetJc (Amatrix) ;
+        Mp = (uint64_t *) mxGetJc (Amatrix) ;
         Mi = (int64_t *) mxGetIr (Amatrix) ;
         anz = Mp [ncols] ;
         anzmax = mxGetNzmax (Amatrix) ;
@@ -291,9 +292,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         if (sparsity != GxB_FULL)
         {
+            int64_t *Ap = A->p ;
             memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;
             memcpy (A->i, Mi, anz * sizeof (int64_t)) ;
-            A->nvals = A->p [ncols] ;
+            A->nvals = Ap [ncols] ;
         }
         A->magic = GB_MAGIC ;
 
@@ -323,7 +325,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             A->i_size = GB_IMAX (anz, 1) * sizeof (int64_t) ;
             A->p_shallow = true ;
             A->i_shallow = true ;
-            A->nvals = A->p [ncols] ;
+            int64_t *Ap = A->p ;
+            A->nvals = Ap [ncols] ;
         }
         else
         {

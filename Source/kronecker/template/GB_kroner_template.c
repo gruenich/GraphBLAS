@@ -20,21 +20,29 @@
     //--------------------------------------------------------------------------
 
     #ifdef GB_JIT_KERNEL
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int64_t avlen = A->vlen ;
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const int64_t bnvec = B->nvec ;
     GB_C_NVALS (cnz) ;
-    const int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, const) ;
+    const uint64_t *restrict Cp = C->p ;
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
     #endif
 
+    GBi_DECL_GET (C, ) ;
     int64_t *restrict Ci = C->i ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     const GB_B_TYPE *restrict Bx = (GB_A_TYPE *) B->x ;

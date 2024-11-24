@@ -46,7 +46,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Info info ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    GBp_DECL (C, ) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
 
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT_TYPE_OK (xtype, "xtype to extract", GB0) ;

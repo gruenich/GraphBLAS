@@ -252,7 +252,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
             if (is_sparse_vector)
             { 
                 // GxB_Vector_import_CSC passes in Ap as NULL
-                (*A)->p [1] = nvals ;
+                uint64_t *restrict Ap = (*A)->p ;       // FIXME
+                Ap [1] = nvals ;
             }
             else
             { 

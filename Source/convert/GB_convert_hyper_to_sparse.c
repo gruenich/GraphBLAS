@@ -67,8 +67,10 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         ASSERT (A->nvec == 0 || A->nvec == 1) ;
         if (A->nvec == 0)
         { 
-            A->p [0] = 0 ;
-            A->p [1] = 0 ;
+            GBp_DECL_GET (A, ) ;
+            uint64_t *restrict Ap = A->p ;
+            Ap [0] = 0 ;
+            Ap [1] = 0 ;
             A->nvec = 1 ;
         }
         A->nvec_nonempty = (anz > 0) ? 1 : 0 ;
@@ -257,7 +259,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     // A is now sparse
     //--------------------------------------------------------------------------
 
-    ASSERT (anz == A->p [n]) ;
     ASSERT (anz == GB_nnz (A)) ;
     ASSERT_MATRIX_OK (A, "A converted to sparse", GB0) ;
     ASSERT (GB_IS_SPARSE (A)) ;

@@ -213,9 +213,11 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         // correct value, so that blobs written by v7.2.0 and earlier can be
         // read by v7.2.1 and later.  For both variants, ignore nvals in the
         // blob and use Cp [nvec] when C is sparse or hypersparse.
+        GBp_DECL_GET (C, const) ;
+        const uint64_t *restrict Cp = C->p ;
         ASSERT (GB_IMPLIES (version > GxB_VERSION (7,2,0),
-            C->nvals == C->p [C->nvec])) ;
-        C->nvals = C->p [C->nvec] ;
+            C->nvals == Cp [C->nvec])) ;
+        C->nvals = Cp [C->nvec] ;
     }
     C->magic = GB_MAGIC ;
 

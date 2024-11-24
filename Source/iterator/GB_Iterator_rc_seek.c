@@ -72,6 +72,7 @@ GrB_Info GB_Iterator_rc_seek
                 // find k so that j = Ah [k], or if not found, return k as the
                 // smallest value so that j < Ah [k]. 
                 k = 0 ;
+                GBh_DECL (A, const) ;
                 const int64_t *restrict Ah = iterator->Ah ;
                 if (j > 0)
                 { 

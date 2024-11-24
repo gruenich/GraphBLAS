@@ -12,19 +12,20 @@
 // constructs the pattern and values of C.  There are 3 kinds of subref:
 //
 //      symbolic:  C(i,j) is the position of A(I(i),J(j)) in the matrix A,
-//                  in this case, A can have zombies
+//                  in this case, A can have zombies.
+//                  C never has zombies, even if A does.
 //      iso:       C = A(I,J), extracting the pattern only, not the values
-//      numeric:   C = A(I,J), extracting the pattern and values,
+//      numeric:   C = A(I,J), extracting the pattern and values
 
 #if defined ( GB_SYMBOLIC )
 
     // symbolic method must tolerate zombies
-    #define GB_Ai(p) GBI_UNZOMBIE (Ai, p, avlen)
+    #define GB_AI(p) GBI_UNZOMBIE (Ai, p, avlen)
 
 #else
 
     // iso and non-iso numeric methods will not see any zombies
-    #define GB_Ai(p) GBI_A (Ai, p, avlen)
+    #define GB_AI(p) GBI_A (Ai, p, avlen)
 
 #endif
 
@@ -40,6 +41,7 @@
     // get A and I
     //--------------------------------------------------------------------------
 
+    GBi_DECL_GET (A, const) ;
     const int64_t *restrict Ai = A->i ;
     const int64_t avlen = A->vlen ;
 
@@ -201,7 +203,7 @@
                     { 
                         int64_t inew = k + pI ;
                         ASSERT (inew == GB_ijlist (I, inew, GB_I_KIND, Icolon));
-                        ASSERT (inew == GB_Ai (pA + inew)) ;
+                        ASSERT (inew == GB_AI (pA + inew)) ;
                         Ci [pC + k] = inew ;
                     }
                     GB_COPY_RANGE (pC, pA + pI, ilen) ;
@@ -225,7 +227,7 @@
                         // C(inew,kC) =  A(i,kA), and it always exists.
                         int64_t inew = k + pI ;
                         int64_t i = GB_ijlist (I, inew, GB_I_KIND, Icolon) ;
-                        ASSERT (i == GB_Ai (pA + i)) ;
+                        ASSERT (i == GB_AI (pA + i)) ;
                         Ci [pC + k] = inew ;
                         GB_COPY_ENTRY (pC + k, pA + i) ;
                     }
@@ -246,7 +248,7 @@
                     ASSERT (!fine_task) ;
                     ASSERT (alen == 1) ;
                     ASSERT (nI == 1) ;
-                    ASSERT (GB_Ai (pA) == GB_ijlist (I, 0, GB_I_KIND, Icolon)) ;
+                    ASSERT (GB_AI (pA) == GB_ijlist (I, 0, GB_I_KIND, Icolon)) ;
                     #if defined ( GB_ANALYSIS_PHASE )
                     clen = 1 ;
                     #else
@@ -277,7 +279,7 @@
                         for (int64_t k = 0 ; k < alen ; k++)
                         { 
                             // symbolic C(:,kC) = A(:,kA) where A has zombies
-                            int64_t i = GB_Ai (pA + k) ;
+                            int64_t i = GB_AI (pA + k) ;
                             ASSERT (i == GB_ijlist (I, i, GB_I_KIND, Icolon)) ;
                             Ci [pC + k] = i ;
                         }
@@ -301,7 +303,7 @@
                     #else
                     for (int64_t k = 0 ; k < alen ; k++)
                     { 
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         int64_t inew = i - ibegin ;
                         ASSERT (i == GB_ijlist (I, inew, GB_I_KIND, Icolon)) ;
                         Ci [pC + k] = inew ;
@@ -354,7 +356,7 @@
                         #endif
                         if (found)
                         { 
-                            ASSERT (i == GB_Ai (pleft)) ;
+                            ASSERT (i == GB_AI (pleft)) ;
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;
                             #else
@@ -382,7 +384,7 @@
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present; see if it is in ibegin:iinc:iend
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         ASSERT (ibegin <= i && i <= iend) ;
                         i = i - ibegin ;
                         if (i % iinc == 0)
@@ -416,7 +418,7 @@
                     for (int64_t k = alen - 1 ; k >= 0 ; k--)
                     {
                         // A(i,kA) present; see if it is in ibegin:iinc:iend
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         ASSERT (iend <= i && i <= ibegin) ;
                         i = ibegin - i ;
                         if (i % inc == 0)
@@ -451,7 +453,7 @@
                     for (int64_t k = alen - 1 ; k >= 0 ; k--)
                     { 
                         // A(i,kA) is present
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         int64_t inew = (ibegin - i) ;
                         ASSERT (i == GB_ijlist (I, inew, GB_I_KIND, Icolon)) ;
                         Ci [pC] = inew ;
@@ -477,7 +479,7 @@
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present, look it up in the I inverse buckets
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         // traverse bucket i for all indices inew where
                         // i == I [inew] or where i is from a colon expression
                         GB_for_each_index_in_bucket (inew, i)
@@ -510,7 +512,7 @@
                         #if defined ( GB_ISO_SUBREF )
                         // iso numeric subref C=A(I,J)
                         // just sort the pattern of C(:,kC)
-                        GB_qsort_1 (Ci + pC, clen) ;
+                        GB_qsort_1 (Ci + pC, false, clen) ;
                         #else
                         // sort the pattern of C(:,kC), and the values
                         GB_QSORT_1B (Ci, Cx, pC, clen) ;
@@ -532,7 +534,7 @@
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present, look it up in the I inverse buckets
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         // traverse bucket i for all indices inew where
                         // i == I [inew] or where i is from a colon expression
                         GB_for_each_index_in_bucket (inew, i)
@@ -566,7 +568,7 @@
                     for (int64_t k = 0 ; k < alen ; k++)
                     {
                         // A(i,kA) present, look it up in the I inverse buckets
-                        int64_t i = GB_Ai (pA + k) ;
+                        int64_t i = GB_AI (pA + k) ;
                         // bucket i has at most one index inew such that
                         // i == I [inew]
                         int64_t inew = Mark [i] - 1 ;
@@ -636,7 +638,7 @@
                     { 
                         // iso numeric subref C=A(I,J)
                         // just sort the pattern of C(:,kC)
-                        GB_qsort_1 (Ci + pC, clen) ;
+                        GB_qsort_1 (Ci + pC, false, clen) ;
                     }
                     #else
                     { 
@@ -652,7 +654,7 @@
 
 }
 
-#undef GB_Ai
+#undef GB_AI
 #undef GB_for_each_index_in_bucket
 #undef GB_COPY_RANGE
 #undef GB_COPY_ENTRY

@@ -9,7 +9,7 @@
 
 #include "extract/GB_subref.h"
 
-#define GB_Ai(p) GBI_UNZOMBIE (Ai, p, avlen)
+#define GB_AI(p) GBI_UNZOMBIE (Ai, p, avlen)
 
 //------------------------------------------------------------------------------
 // GB_find_Ap_start_end
@@ -33,8 +33,8 @@ static inline void GB_find_Ap_start_end
     const int64_t kC,
     const int64_t nzombies,
     // output: Ap_start [kC] and Ap_end [kC]:
-    int64_t *restrict Ap_start,
-    int64_t *restrict Ap_end
+    uint64_t *restrict Ap_start,
+    uint64_t *restrict Ap_end
 )
 {
 
@@ -60,7 +60,7 @@ static inline void GB_find_Ap_start_end
         ;
 
     }
-    else if (ajnz == 0 || GB_Ai (pA) > imax || GB_Ai (pA_end-1) < imin)
+    else if (ajnz == 0 || GB_AI (pA) > imax || GB_AI (pA_end-1) < imin)
     { 
 
         //----------------------------------------------------------------------
@@ -79,7 +79,7 @@ static inline void GB_find_Ap_start_end
         //----------------------------------------------------------------------
 
         // trim the leading part of A(:,kA)
-        if (GB_Ai (pA) < imin)
+        if (GB_AI (pA) < imin)
         { 
             bool found, is_zombie ;
             int64_t pright = pA_end - 1 ;
@@ -90,7 +90,7 @@ static inline void GB_find_Ap_start_end
         // trim the trailing part of A (:,kA)
         if (imin == imax)
         {
-            if (GB_Ai (pA) == imin)
+            if (GB_AI (pA) == imin)
             { 
                 // found the the single entry A (i,kA)
                 pA_end = pA + 1 ;
@@ -102,7 +102,7 @@ static inline void GB_find_Ap_start_end
                 pA_end = -1 ;
             }
         }
-        else if (imax < GB_Ai (pA_end-1))
+        else if (imax < GB_AI (pA_end-1))
         { 
             bool found, is_zombie ;
             int64_t pleft = pA ;
@@ -117,10 +117,10 @@ static inline void GB_find_Ap_start_end
         if (ajnz > 0 && Ap != NULL)
         {
             // A(imin:imax,kA) is now in Ai [pA:pA_end-1]
-            ASSERT (GB_IMPLIES (Ap [kA] < pA,  GB_Ai (pA-1) < imin)) ;
-            ASSERT (GB_IMPLIES (pA_end < Ap [kA+1], imax < GB_Ai (pA_end))) ;
-            ASSERT (imin <= GB_Ai (pA)) ;
-            ASSERT (GB_Ai (pA_end-1) <= imax) ;
+            ASSERT (GB_IMPLIES (Ap [kA] < pA,  GB_AI (pA-1) < imin)) ;
+            ASSERT (GB_IMPLIES (pA_end < Ap [kA+1], imax < GB_AI (pA_end))) ;
+            ASSERT (imin <= GB_AI (pA)) ;
+            ASSERT (GB_AI (pA_end-1) <= imax) ;
         }
         #endif
     }
@@ -158,9 +158,9 @@ GrB_Info GB_subref_phase0
     // output
     int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL standard
     size_t *p_Ch_size,
-    int64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    uint64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
     size_t *p_Ap_start_size,
-    int64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    uint64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     size_t *p_Ap_end_size,
     int64_t *p_Cnvec,       // # of vectors in C
     bool *p_need_qsort,     // true if C must be sorted
@@ -200,8 +200,8 @@ GrB_Info GB_subref_phase0
     GrB_Info info ;
     GB_WERK_DECLARE (Count, int64_t) ;
     int64_t *restrict Ch       = NULL ; size_t Ch_size = 0 ;
-    int64_t *restrict Ap_start = NULL ; size_t Ap_start_size = 0 ;
-    int64_t *restrict Ap_end   = NULL ; size_t Ap_end_size = 0 ;
+    uint64_t *restrict Ap_start = NULL ; size_t Ap_start_size = 0 ;
+    uint64_t *restrict Ap_end   = NULL ; size_t Ap_end_size = 0 ;
 
     (*p_Ch        ) = NULL ;
     (*p_Ap_start  ) = NULL ;
@@ -216,7 +216,7 @@ GrB_Info GB_subref_phase0
     // get A
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ap = A->p ;   // Ap (but not A->p) may be trimmed
+    uint64_t *restrict Ap = A->p ;   // Ap (but not A->p) may be trimmed
     int64_t *restrict Ah = A->h ;   // Ah (but not A->h) may be trimmed
     int64_t *restrict Ai = A->i ;
     int64_t anvec = A->nvec ;       // may be trimmed
@@ -325,7 +325,7 @@ GrB_Info GB_subref_phase0
         GB_OK (GB_hyper_hash_build (A, Werk)) ;
     }
 
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
@@ -448,7 +448,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum1 (Count, ntasks) ;
+        GB_cumsum1_64 (Count, ntasks) ;
         Cnvec = Count [ntasks] ;
 
     }
@@ -502,7 +502,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum1 (Count, ntasks) ;
+        GB_cumsum1_64 (Count, ntasks) ;
         Cnvec = Count [ntasks] ;
     }
 
@@ -723,8 +723,8 @@ GrB_Info GB_subref_phase0
         {
             ASSERT (jA == A->h [kA]) ;
         }
-        int64_t pA      = Ap_start [kC] ;
-        int64_t pA_end  = Ap_end   [kC] ;
+        uint64_t pA      = Ap_start [kC] ;
+        uint64_t pA_end  = Ap_end   [kC] ;
         int64_t ajnz = pA_end - pA ;
         if (ajnz == avlen)
         {
@@ -737,8 +737,8 @@ GrB_Info GB_subref_phase0
         else if (ajnz > 0)
         {
             // A(imin:imax,kA) has at least one entry, in Ai [pA:pA_end-1]
-            ASSERT (imin <= GB_Ai (pA)) ;
-            ASSERT (GB_Ai (pA_end-1) <= imax) ;
+            ASSERT (imin <= GB_AI (pA)) ;
+            ASSERT (GB_AI (pA_end-1) <= imax) ;
             ASSERT (pA_start_all <= pA && pA < pA_end && pA_end <= pA_end_all) ;
         }
         else

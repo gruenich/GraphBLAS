@@ -61,7 +61,10 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *Tile_vlen = csc ? Tile_rows : Tile_cols ;
 
     int64_t anvec = A->nvec ;
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const bool A_iso = A->iso ;
@@ -71,7 +74,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     //--------------------------------------------------------------------------
 
     size_t Wp_size = 0 ;
-    int64_t *restrict Wp = NULL ;
+    uint64_t *restrict Wp = NULL ;
     Wp = GB_MALLOC_WORK (anvec, int64_t, &Wp_size) ;
     if (Wp == NULL)
     { 
@@ -145,7 +148,9 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
-            int64_t *restrict Cp = C->p ;
+            GBp_DECL_GET (C, ) ;
+            GBh_DECL_GET (C, ) ;
+            uint64_t *restrict Cp = C->p ;
             int64_t *restrict Ch = C->h ;
 
             //------------------------------------------------------------------
@@ -202,7 +207,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 }
             }
 
-            GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+            GB_cumsum (Cp, false, cnvec, &(C->nvec_nonempty), nth, Werk) ;
             int64_t cnz = Cp [cnvec] ;
 
             //------------------------------------------------------------------
@@ -211,6 +216,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             // set C->iso = A_iso       OK
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso)) ;
+            GBi_DECL_GET (C, ) ;
             int64_t *restrict Ci = C->i ;
             C->nvals = cnz ;
             C->magic = GB_MAGIC ;       // for GB_nnz_held(C), to slice C

@@ -126,7 +126,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         ctype, A->vdim, vlen, GB_Ap_malloc, C_is_csc,
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso)) ;
 
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     C->nvals = anz ;
 
     //--------------------------------------------------------------------------
@@ -187,6 +188,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         ASSERT (nworkspaces == 1) ;
         int64_t *restrict workspace = Workspaces [0] ;
         memset (workspace, 0, (vlen + 1) * sizeof (int64_t)) ;
+        GBi_DECL_GET (A, const) ;
         const int64_t *restrict Ai = A->i ;
         for (int64_t p = 0 ; p < anz ; p++)
         { 
@@ -195,7 +197,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         }
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), 1, NULL) ;
+        GB_cumsum (workspace, false, vlen, &(C->nvec_nonempty), 1, NULL) ;
         memcpy (Cp, workspace, (vlen + 1) * sizeof (int64_t)) ;
 
     }
@@ -218,6 +220,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // compute the row counts of A.  No need to scan the A->p pointers
         int64_t *restrict workspace = Workspaces [0] ;
         GB_memset (workspace, 0, (vlen + 1) * sizeof (int64_t), nth) ;
+        GBi_DECL_GET (A, const) ;
         const int64_t *restrict Ai = A->i ;
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -232,7 +235,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         C->jumbled = true ; // atomic transpose leaves C jumbled
 
         // cumulative sum of the workspace, and copy back into C->p
-        GB_cumsum (workspace, vlen, &(C->nvec_nonempty), nth, Werk) ;
+        GB_cumsum (workspace, false, vlen, &(C->nvec_nonempty), nth, Werk) ;
         GB_memcpy (Cp, workspace, (vlen+ 1) * sizeof (int64_t), nth) ;
 
     }
@@ -252,8 +255,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         GBURBLE ("(%d-thread non-atomic bucket transpose) ", nthreads) ;
 
         ASSERT (nworkspaces == nthreads) ;
-        const int64_t *restrict Ap = A->p ;
-//      const int64_t *restrict Ah = A->h ;
+        GBp_DECL_GET (A, const) ;
+        GBi_DECL_GET (A, const) ;
+        const uint64_t *restrict Ap = A->p ;
         const int64_t *restrict Ai = A->i ;
 
         int tid ;
@@ -296,7 +300,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         Cp [vlen] = 0 ;
 
         // compute the vector pointers for C
-        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nth, Werk) ;
+        GB_cumsum (Cp, false, vlen, &(C->nvec_nonempty), nth, Werk) ;
 
         // add Cp back to all Workspaces
         #pragma omp parallel for num_threads(nth) schedule(static)

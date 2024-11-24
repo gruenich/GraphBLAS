@@ -232,7 +232,7 @@ GrB_Info GB_serialize_array
         size_t dsize = Blocks [blockid].p_size_allocated ;  // size of dest
         int dstCapacity = (int) GB_IMIN (dsize, INT32_MAX) ;
         int s ;
-        size_t s64 ;
+        size_t ss ;
         switch (algo)
         {
 
@@ -252,10 +252,10 @@ GrB_Info GB_serialize_array
 
             default :
             case GxB_COMPRESSION_ZSTD : 
-                s64 = ZSTD_compress (dst, dstCapacity, src, srcSize, level) ;
-                ok = ok && (s64 <= dstCapacity) ;
-                // compressed block is now in dst [0:s64-1], of size s64
-                Sblocks [blockid] = (int64_t) s64 ;
+                ss = ZSTD_compress (dst, dstCapacity, src, srcSize, level) ;
+                ok = ok && (ss <= dstCapacity) ;
+                // compressed block is now in dst [0:ss-1], of size ss
+                Sblocks [blockid] = (int64_t) ss ;
                 break ;
         }
     }
@@ -271,7 +271,7 @@ GrB_Info GB_serialize_array
     // compute cumulative sum of the compressed blocks
     //--------------------------------------------------------------------------
 
-    GB_cumsum1 (Sblocks, nblocks) ;
+    GB_cumsum1_64 (Sblocks, nblocks) ;
 
     //--------------------------------------------------------------------------
     // free workspace return result

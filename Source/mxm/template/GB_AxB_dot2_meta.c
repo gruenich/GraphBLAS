@@ -34,9 +34,11 @@
     const bool C_is_full = (Cb == NULL) ;
     #endif
 
-    const int64_t *restrict Bp = B->p ;
-    const int8_t  *restrict Bb = B->b ;
+    GBp_DECL_GET (B, const) ;
+    GBi_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
     #ifdef GB_JIT_KERNEL
     #define B_is_bitmap    GB_B_IS_BITMAP
     #define B_is_sparse    GB_B_IS_SPARSE
@@ -51,9 +53,11 @@
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
     #define B_is_hyper false
 
-    const int64_t *restrict Ap = A->p ;
-    const int8_t  *restrict Ab = A->b ;
+    GBp_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
 
     #ifdef GB_JIT_KERNEL
     #define A_is_bitmap    GB_A_IS_BITMAP

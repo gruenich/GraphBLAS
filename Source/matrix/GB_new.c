@@ -65,7 +65,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     if ((*Ahandle) == NULL)
     {
         size_t header_size ;
-        (*Ahandle) = GB_MALLOC (1, struct GB_Matrix_opaque, &header_size) ;
+        (*Ahandle) = GB_CALLOC (1, struct GB_Matrix_opaque, &header_size) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
@@ -168,6 +168,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->jumbled = false ;
     A->Pending = NULL ;
     A->iso = false ;            // OK: if iso, burble in the caller
+
+    A->p_is_32 = false ;
+    A->i_is_32 = false ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested

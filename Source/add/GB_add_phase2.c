@@ -61,7 +61,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool flipij,      // if true, i,j must be flipped
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
-    int64_t **Cp_handle,    // vector pointers for C
+    int64_t **Cp_handle,    // vector pointers for C    FIXME
     size_t Cp_size,
     const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
     // tasks from phase1a:
@@ -70,7 +70,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    int64_t **Ch_handle,
+    int64_t **Ch_handle,        // FIXME
     size_t Ch_size,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -111,8 +111,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    int64_t *restrict Cp = (*Cp_handle) ;
-    int64_t *restrict Ch = (*Ch_handle) ;
+    GBp_DECL (C,) ;
+    GBh_DECL (C,) ;
+    uint64_t *restrict Cp = (*Cp_handle) ;      // FIXME
+    int64_t *restrict Ch = (*Ch_handle) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // get the opcode

@@ -56,6 +56,11 @@ static inline GrB_Info GB_jappend
     // one more non-empty vector
     C->nvec_nonempty++ ;
 
+    GBp_DECL_GET (C, ) ;
+    GBh_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
+    int64_t *restrict Ch = C->h ;
+
     if (C->h != NULL)
     { 
 
@@ -63,7 +68,7 @@ static inline GrB_Info GB_jappend
         // C is hypersparse; make sure space exists in the hyperlist
         //----------------------------------------------------------------------
 
-        ASSERT (C->p [C->nvec] == (*cnz_last)) ;
+        ASSERT (Cp [C->nvec] == (*cnz_last)) ;
         ASSERT (C->h != NULL) ;
 
         // check if space exists
@@ -80,16 +85,21 @@ static inline GrB_Info GB_jappend
             }
         }
 
+        GBp_GET (C) ;
+        GBh_GET (C) ;
+        Cp = C->p ;
+        Ch = C->h ;
+
         ASSERT (C->nvec >= 0) ;
         ASSERT (C->nvec < C->plen) ;
         ASSERT (C->plen <= C->vdim) ;
-        ASSERT (C->p [C->nvec] == (*cnz_last)) ;
+        ASSERT (Cp [C->nvec] == (*cnz_last)) ;
 
         // add j to the hyperlist
-        C->h [C->nvec] = j ;
+        Ch [C->nvec] = j ;
 
         // mark the end of C(:,j)
-        C->p [C->nvec+1] = cnz ;
+        Cp [C->nvec+1] = cnz ;
         C->nvec++ ;                     // one more vector in the hyperlist
 
     }
@@ -99,8 +109,6 @@ static inline GrB_Info GB_jappend
         //----------------------------------------------------------------------
         // C is non-hypersparse
         //----------------------------------------------------------------------
-
-        int64_t *restrict Cp = C->p ;
 
         ASSERT (C->nvec == C->plen && C->plen == C->vdim) ;
         ASSERT (C->h == NULL) ;
@@ -152,7 +160,8 @@ static inline void GB_jwrapup
         // log the end of C(:,jlast+1) to C(:,n-1), in case the last vector
         // j=n-1 has not yet been seen, or has been seen but was empty.
 
-        int64_t *restrict Cp = C->p ;
+        GBp_DECL_GET (C, ) ;
+        uint64_t *restrict Cp = C->p ;
         int64_t j = C->vdim - 1 ;
 
         for (int64_t jprior = jlast+1 ; jprior <= j ; jprior++)

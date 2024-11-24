@@ -60,8 +60,10 @@ GrB_Info GB_subassign_26
     int64_t Cnvec = C->nvec ;
     int64_t cnz = C->nvals ;
 
-    int64_t *restrict Ap = A->p ;
-    int64_t *restrict Ai = A->i ;
+    GBp_DECL_GET (A, const) ;
+    GBi_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anz = A->nvals ;
 
@@ -96,7 +98,10 @@ GrB_Info GB_subassign_26
         GB_OK (GB_ix_realloc (C, 2*cnz_new + 1)) ;
     }
 
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    GBh_DECL_GET (C, ) ;
+    GBi_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     GB_void *restrict Cx = (GB_void *) C->x ;

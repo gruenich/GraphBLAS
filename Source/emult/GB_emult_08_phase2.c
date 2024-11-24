@@ -98,7 +98,8 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (A->vdim == B->vdim) ;
 
     ASSERT (Cp_handle != NULL) ;
-    int64_t *restrict Cp = (*Cp_handle) ;
+    GBp_DECL (C, ) ;
+    uint64_t *restrict Cp = (*Cp_handle) ;
 
     //--------------------------------------------------------------------------
     // get the opcode

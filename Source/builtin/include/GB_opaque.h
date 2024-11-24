@@ -545,11 +545,169 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 // Accessing the content of a scalar, vector, or matrix
 //------------------------------------------------------------------------------
 
+// get Ap [k]
+#define GBp(A,k,vlen)                                                       \
+    (A ## p64 ? A ## p64 [k] : (A ## p32 ? A ## p32 [k] : ((k) * (vlen))))
+
+// get Ah [k]
+#define GBh(A,k)                                                            \
+    (A ## h64 ? A ## h64 [k] : (A ## h32 ? A ## h32 [k] : (k)))
+
+// get Ai [p]
+#define GBi(A,p,vlen)                                                       \
+    (A ## i64 ? A ## i64 [p] : (A ## i32 ? A ## i32 [p] : ((p) % (vlen))))
+
+// get Ai [p], and unzombie the result
+#define GBi_UNZOMBIE(A,p,vlen)                                              \
+    (A ## i64 ? GB_UNZOMBIE (A ## i64 [p]) :                                \
+    (A ## i32 ? GB_UNZOMBIE (A ## i32 [p]) : ((p) % (vlen))))
+
+// get Ab [p]
+#define GBb(A,p) (A ## b ? A ## b [p] : 1)
+
+// set Ap [k] = p
+#define GBp_SET(A,k,p)                                                      \
+    if (A ## p64) { A ## p64 [k] = (p) ; } else { A ## p32 [k] = (p) ; }
+
+// set Ah [k] = j
+#define GBh_SET(A,k,j)                                                      \
+    if (A ## h64) { A ## h64 [k] = (j) ; } else { A ## h32 [k] = (j) ; }
+
+// set Ai [p] = i
+#define GBi_SET(A,p,i)                                                      \
+    if (A ## i64) { A ## i64 [k] = (i) ; } else { A ## i32 [k] = (i) ; }
+
+// Ap = A->p
+#define GBp_GET(A)                                                          \
+    A ## p32 = A->p_is_32 ? A->p : NULL ;                                   \
+    A ## p64 = A->p_is_32 ? NULL : A->p
+
+// Ah = A->h
+#define GBh_GET(A)                                                          \
+    A ## h32 = A->i_is_32 ? A->h : NULL ;                                   \
+    A ## h64 = A->i_is_32 ? NULL : A->h
+
+// Ai = A->i
+#define GBi_GET(A)                                                          \
+    A ## i32 = A->i_is_32 ? A->i : NULL ;                                   \
+    A ## i64 = A->i_is_32 ? NULL : A->i
+
+// declare Ap
+#define GBp_DECL(A,const)                                                   \
+    const uint64_t *restrict A ## p64 = NULL ;                              \
+    const uint32_t *restrict A ## p32 = NULL
+
+// declare Ah
+#define GBh_DECL(A,const)                                                   \
+    const  int64_t *restrict A ## h64 = NULL ;                              \
+    const  int32_t *restrict A ## h32 = NULL
+
+// declare Ai
+#define GBi_DECL(A,const)                                                   \
+    const  int64_t *restrict A ## i64 = NULL ;                              \
+    const  int32_t *restrict A ## i32 = NULL
+
+// declare and get Ap
+#define GBp_DECL_GET(A,const) GBp_DECL(A,const) ; GBp_GET (A)
+
+// declare and get Ah
+#define GBh_DECL_GET(A,const) GBh_DECL(A,const) ; GBh_GET (A)
+
+// declare and get Ai
+#define GBi_DECL_GET(A,const) GBi_DECL(A,const) ; GBi_GET (A)
+
+// declare A->Y->p
+#define GB_Yp_DECL(A,const)                                                 \
+    GBp_DECL (A ## _Y, const) ;
+
+// get A->Y->p
+#define GB_Yp_GET(A)                                                        \
+    if (A->Y != NULL)                                                       \
+    {                                                                       \
+        GrB_Matrix A ## _Y = A->Y ;                                         \
+        GBp_GET (A ## _Y) ;                                                 \
+    }
+
+// declare and get A->Y->p
+#define GB_Yp_DECL_GET(A,const) GB_Yp_DECL (A,const) ; GB_Yp_GET(A)
+
+// declare A->Y->i
+#define GB_Yi_DECL(A,const)                                                 \
+    GBi_DECL (A ## _Y, const) ;
+
+// get A->Y->i
+#define GB_Yi_GET(A)                                                        \
+    if (A->Y != NULL)                                                       \
+    {                                                                       \
+        GrB_Matrix A ## _Y = A->Y ;                                         \
+        GBi_GET (A ## _Y) ;                                                 \
+    }
+
+// declare and get A->Y->i
+#define GB_Yi_DECL_GET(A,const) GB_Yi_DECL (A,const) ; GB_Yi_GET(A)
+
+// accessing the C matrix
+#define GB_Cp(k,vlen) GBp (C,k,vlen)
+#define GB_Ch(k)      GBh (C,k)
+#define GB_Ci(p,vlen) GBi (C,p,vlen)
+#define GB_Cb(p)      GBb (C,p)
+#define GB_C_NVALS(e) int64_t e = GB_nnz (C)
+#define GB_C_NHELD(e) int64_t e = GB_nnz_held (C)
+
+// accessing the M matrix
+#define GB_Mp(k,vlen) GBp (M,k,vlen)
+#define GB_Mh(k)      GBh (M,k)
+#define GB_Mi(p,vlen) GBi (M,p,vlen)
+#define GB_Mb(p)      GBb (M,p)
+#define GB_M_NVALS(e) int64_t e = GB_nnz (M)
+#define GB_M_NHELD(e) int64_t e = GB_nnz_held (M)
+
+// accessing the A matrix
+#define GB_Ap(k,vlen) GBp (A,k,vlen)
+#define GB_Ah(k)      GBh (A,k)
+#define GB_Ai(p,vlen) GBi (A,p,vlen)
+#define GB_Ab(p)      GBb (A,p)
+#define GB_A_NVALS(e) int64_t e = GB_nnz (A)
+#define GB_A_NHELD(e) int64_t e = GB_nnz_held (A)
+
+// accessing the B matrix
+#define GB_Bp(k,vlen) GBp (B,k,vlen)
+#define GB_Bh(k)      GBh (B,k)
+#define GB_Bi(p,vlen) GBi (B,p,vlen)
+#define GB_Bb(p)      GBb (B,p)
+#define GB_B_NVALS(e) int64_t e = GB_nnz (B)
+#define GB_B_NHELD(e) int64_t e = GB_nnz_held (B)
+
+// accessing the S matrix
+#define GB_Sp(k,vlen) GBp (S,k,vlen)
+#define GB_Sh(k)      GBh (S,k)
+#define GB_Si(p,vlen) GBi (S,p,vlen)
+#define GB_Sb(p)      GBb (S,p)
+#define GB_S_NVALS(e) int64_t e = GB_nnz (S)
+#define GB_S_NHELD(e) int64_t e = GB_nnz_held (S)
+
+// accessing the R matrix
+#define GB_Rp(k,vlen) GBp (R,k,vlen)
+#define GB_Rh(k)      GBh (R,k)
+#define GB_Ri(p,vlen) GBi (R,p,vlen)
+#define GB_Rb(p)      GBb (R,p)
+#define GB_R_NVALS(e) int64_t e = GB_nnz (R)
+#define GB_R_NHELD(e) int64_t e = GB_nnz_held (R)
+
+// accessing the Z matrix
+#define GB_Zp(k,vlen) GBp (Z,k,vlen)
+#define GB_Zh(k)      GBh (Z,k)
+#define GB_Zi(p,vlen) GBi (Z,p,vlen)
+#define GB_Zb(p)      GBb (Z,p)
+#define GB_Z_NVALS(e) int64_t e = GB_nnz (Z)
+#define GB_Z_NHELD(e) int64_t e = GB_nnz_held (Z)
+
+//------------------------------------------------------------------------------
+
 #define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 #define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-#define GBX(Ax,p,A_iso) (Ax [(A_iso) ? 0 : (p)])
 
 // these macros are redefined by the JIT kernels:
 

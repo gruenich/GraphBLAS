@@ -56,7 +56,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     // check inputs
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Rp = NULL ; size_t Rp_size = 0 ;
+    uint64_t *restrict Rp = NULL ; size_t Rp_size = 0 ;     // FIXME
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rp_size_handle != NULL) ;

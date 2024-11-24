@@ -183,11 +183,17 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // each component
+        GBp_DECL (A,) ;
+        GBh_DECL (A,) ;
+        GBi_DECL (A,) ;
         uint64_t *Ap = NULL ; size_t Ap_size = 0 ;
         uint64_t *Ah = NULL ; size_t Ah_size = 0 ;
-        int8_t   *Ab = NULL ; size_t Ab_size = 0 ;
         uint64_t *Ai = NULL ; size_t Ai_size = 0 ;
+        int8_t   *Ab = NULL ; size_t Ab_size = 0 ;
         void     *Ax = NULL ; size_t Ax_size = 0 ; 
+
+        GBp_DECL (Y,) ;
+        GBi_DECL (Y,) ;
         uint64_t *Yp = NULL ; size_t Yp_size = 0 ;
         uint64_t *Yi = NULL ; size_t Yi_size = 0 ;
         void     *Yx = NULL ; size_t Yx_size = 0 ;
@@ -379,6 +385,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
 
         // get Xp, Xi, nzmax, or create them
+        GBp_DECL (X,) ;
+        GBi_DECL (X,) ;
         GrB_Index *Xp, *Xi, nzmax ;
         if (X_is_sparse)
         { 

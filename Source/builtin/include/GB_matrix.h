@@ -219,9 +219,10 @@ int64_t nvec ;          // number of non-empty vectors for hypersparse form,
 int64_t nvec_nonempty ; // the actual number of non-empty vectors, or -1 if
                         // not known
 
-int64_t *h ;            // list of non-empty vectors: h_size >= 8*max(plen,1)
-int64_t *p ;            // pointers: p_size >= 8*(plen+1)
-int64_t *i ;            // indices:  i_size >= 8*max(anz,1)
+// A->p, A->h, and A->i can be 32 or 64 bit integers
+void *h ;               // non-empty vector list: h_size >= (4 or 8)*max(plen,1)
+void *p ;               // pointers: p_size >= (4 or 8)*(plen+1)
+void *i ;               // indices:  i_size >= (4 or 8)*max(anz,1)
 void *x ;               // values:   x_size >= max(anz*A->type->size,1),
                         //           or x_size >= 1 if A is iso
 int8_t *b ;             // bitmap:   b_size >= max(anz,1)
@@ -278,7 +279,7 @@ size_t x_size ;         // exact size of A->x in bytes, zero if A->x is NULL
         // This can be done once, and reused for many searches:
         int64_t nhash = A->Y->vdim ;    // # of buckets in the hash table
         int64_t hash_bits = nhash-1 ;
-        int64_t *Yp = A->Y->p ;         // pointers to each hash bucket
+        uint64_t *Yp = A->Y->p ;        // pointers to each hash bucket
                                         // Yp has size nhash+1.
         int64_t *Yi = A->Y->i ;         // "row" indices j; Yi has size anvec.
         int64_t *Yx = A->Y->x ;         // values k; Yx has size anvec.
@@ -515,7 +516,6 @@ bool is_csc ;           // true if stored by column, false if by row
 bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
                         // matrices are never jumbled.
 
-
 //------------------------------------------------------------------------------
 // iso matrices
 //------------------------------------------------------------------------------
@@ -541,6 +541,16 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 bool iso ;              // true if all entries have the same value
 
 //------------------------------------------------------------------------------
+// integer sizes
+//------------------------------------------------------------------------------
+
+// A->h, A->p, and A->i can be either 32-bit or 64-bit integers.
+// A->h and A->i always have the same integer size.
+
+bool p_is_32 ;  // true if A->p is int32_t, false if int64_t
+bool i_is_32 ;  // true if A->h and A->i are int32_t, false if int64_t
+
+//------------------------------------------------------------------------------
 // iterating through a matrix
 //------------------------------------------------------------------------------
 
@@ -556,7 +566,6 @@ bool iso ;              // true if all entries have the same value
 #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
 #define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
 #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
-#define GBX(Ax,p,A_iso) (Ax [(A_iso) ? 0 : (p)])
 
     // A->vdim: the vector dimension of A (ncols(A))
     // A->nvec: # of vectors that appear in A.  For the hypersparse case,
@@ -577,7 +586,7 @@ bool iso ;              // true if all entries have the same value
             {
                 // entry A(i,j) with row index i and value aij
                 int64_t i = (p % vlen) ;
-                double aij = GBX (Ax, p, A->iso) ;
+                double aij = Ax [A->iso ? 0 : p] ;
             }
         }
 
@@ -597,7 +606,7 @@ bool iso ;              // true if all entries have the same value
                 {
                     // entry A(i,j) with row index i and value aij
                     int64_t i = (p % vlen) ;
-                    double aij = GBX (Ax, p, A->iso) ;
+                    double aij = Ax [A->iso ? 0 : p] ;
                 }
                 else
                 {
@@ -619,7 +628,7 @@ bool iso ;              // true if all entries have the same value
             {
                 // entry A(i,j) with row index i and value aij
                 int64_t i = Ai [p] ;
-                double aij = GBX (Ax, p, A->iso) ;
+                double aij = Ax [A->iso ? 0 : p] ;
             }
         }
 
@@ -636,7 +645,7 @@ bool iso ;              // true if all entries have the same value
             {
                 // entry A(i,j) with row index i and value aij
                 int64_t i = Ai [p] ;
-                double aij = GBX (Ax, p, A->iso) ;
+                double aij = Ax [A->iso ? 0 : p] ;
             }
         }
 
@@ -655,7 +664,7 @@ bool iso ;              // true if all entries have the same value
                 if (!GBB (Ab, p)) continue ;
                 // entry A(i,j) with row index i and value aij
                 int64_t i = GBI (Ai, p, vlen) ;
-                double aij = GBX (Ax, p, A->iso) ;
+                double aij = Ax [A->iso ? 0 : p] ;
             }
         }
 

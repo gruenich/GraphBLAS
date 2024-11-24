@@ -116,7 +116,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
+    GBp_DECL_GET (M, const) ;
+    GBh_DECL_GET (M, const) ;
+    GBi_DECL_GET (M, const) ;
+    const uint64_t *restrict Mp = M->p ;
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
@@ -128,7 +131,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
 
-    const int64_t *restrict Ap = A->p ;
+    GBp_DECL_GET (A, const) ;
+    GBh_DECL_GET (A, const) ;
+    const uint64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t vlen = A->vlen ;
     const int64_t anvec = A->nvec ;
@@ -136,7 +141,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
 
-    const int64_t *restrict Bp = B->p ;
+    GBp_DECL_GET (B, const) ;
+    GBh_DECL_GET (B, const) ;
+    const uint64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
@@ -145,12 +152,16 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (vlen > 0) ;
 
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    GB_Yp_DECL_GET (A, const) ;
+    GB_Yi_DECL_GET (A, const) ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-    const int64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+    GB_Yp_DECL_GET (B, const) ;
+    GB_Yi_DECL_GET (B, const) ;
+    const uint64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
     const int64_t *restrict B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
     const int64_t *restrict B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
@@ -174,7 +185,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, C_iso)) ;
 
-    int64_t *restrict Cp = C->p ;
+    GBp_DECL_GET (C, ) ;
+    GBh_DECL_GET (C, ) ;
+    uint64_t *restrict Cp = C->p ;
     int64_t *restrict Ch = C->h ;
     int64_t *restrict Cwork = C->i ;    // use C->i as workspace
 

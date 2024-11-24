@@ -199,7 +199,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             // export A->p, unless A is a sparse vector in CSC format
             if (is_sparse_vector)
             { 
-                (*nvals) = (*A)->p [1] ;
+                uint64_t *restrict Ap = (*A)->p ;       // FIXME
+                (*nvals) = Ap [1] ;
             }
             else
             { 

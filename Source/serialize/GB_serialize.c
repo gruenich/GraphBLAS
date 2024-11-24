@@ -312,6 +312,20 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     uint64_t blob_size_required64 = (uint64_t) blob_size_required ;
     GB_BLOB_WRITE (blob_size_required64, uint64_t) ;
 
+    // FIXME: augment typecode with an encoding of the integer sizes of
+    // A->p and A->h/A->i (2 bits).
+
+    // typecode is current 4 bytes, but only 1 byte is required.
+    // Use the 2nd byte for A->p and A->i integer sizes.
+    #ifdef todo
+        int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+        int Ai_is_32 = (A->i_is_32) ? 1 : 0 ;
+        uint32_t encoding =
+            GB_LSHIFT (Ap_is_32, 5) |
+            GB_LSHIFT (Ai_is_32, 4) |
+            (typecode & 0xF) ;
+    #endif
+
     GB_BLOB_WRITE (typecode, int32_t) ;
     GB_BLOB_WRITE (version, int32_t) ;
     GB_BLOB_WRITE (vlen, int64_t) ;

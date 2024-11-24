@@ -56,7 +56,10 @@ GrB_Info GB_bitmap_expand_to_hyper
     // allocate the sparse/hypersparse structure of the final C
     //----------------------------------------------------------------------
 
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    GBp_DECL (C, ) ;
+    GBh_DECL (C, ) ;
+    GBi_DECL (C, ) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
     int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
     int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
 
@@ -114,7 +117,8 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            GrB_Index *restrict Ah = (GrB_Index *) A->h ;
+            GBh_DECL_GET (A, const) ;
+            const GrB_Index *restrict Ah = (GrB_Index *) A->h ;
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)
@@ -141,7 +145,8 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            GrB_Index *restrict Ah = (GrB_Index *) A->h ;
+            GBh_DECL_GET (A, const) ;
+            const GrB_Index *restrict Ah = (GrB_Index *) A->h ;
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)

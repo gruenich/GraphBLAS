@@ -321,7 +321,7 @@
     if (do_sort)                                                \
     {                                                           \
         /* sort the pattern of C(:,j) (non-default) */          \
-        GB_qsort_1 (Ci + Cp [kk], cjnz) ;                       \
+        GB_qsort_1 (Ci + Cp [kk], false, cjnz) ;                \
     }                                                           \
     else                                                        \
     {                                                           \

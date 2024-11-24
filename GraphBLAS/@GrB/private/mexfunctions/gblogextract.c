@@ -274,6 +274,7 @@ void mexFunction
     #endif
     GB_Global_memtable_add (V->x, V->x_size) ;  // this was the old G->x
 
+    GBp_DECL_GET (V,) ;
     int64_t *Vp = V->p ;
     Vp [0] = 0 ;
     Vp [1] = tnvals ;

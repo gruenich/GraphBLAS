@@ -12,9 +12,9 @@ I = 42 * ones (n,1) ;
 J = (1:n)' ;
 K = 100 * ones (n,1) ;
 
-I0 = int64 (I) ;
-J0 = int64 (J) ;
-K0 = int64 (K) ;
+I0 = uint64 (I) ;
+J0 = uint64 (J) ;
+K0 = uint64 (K) ;
 
 IJ1 = sortrows ([I0 J0]) ;
 [a b] = GB_mex_msort_2 (I0, J0, 2) ;

@@ -145,7 +145,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     //--------------------------------------------------------------------------
 
     int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-    GB_cumsum (Cp, avdim, cnvec_nonempty, nth, Werk) ;
+    GB_cumsum (Cp, false, avdim, cnvec_nonempty, nth, Werk) ;
     ASSERT (Cp [avdim] == A->nvals) ;
 
     //--------------------------------------------------------------------------

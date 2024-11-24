@@ -465,10 +465,12 @@ int GB_subassigner_method           // return method to use in GB_subassigner
         {
             if (accum == NULL)
             {
+                GBh_DECL_GET (C, const) ;
+                const int64_t *restrict Ch = C->h ;
                 if (Ikind == GB_ALL && GB_IS_HYPERSPARSE (C) && GB_IS_SPARSE (A)
                     && (Jkind == GB_RANGE) && (nJ >= 1)
                     && (Jcolon [0] ==
-                        ((C->nvec == 0) ? 0 : (C->h [C->nvec-1] + 1)))
+                        ((C->nvec == 0) ? 0 : (Ch [C->nvec-1] + 1)))
                     && (C->type == A->type)
                     && !(A->iso)        // FUTURE: allow A to be iso
                     && !(C->iso))       // FUTURE: allow C to be iso

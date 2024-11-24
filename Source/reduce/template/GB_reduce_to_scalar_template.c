@@ -29,8 +29,9 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int8_t   *restrict Ab = A->b ;
-    const int64_t  *restrict Ai = A->i ;
+    GBi_DECL_GET (A, const) ;
+    const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
     ASSERT (anz > 0) ;

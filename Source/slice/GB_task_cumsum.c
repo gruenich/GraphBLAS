@@ -62,7 +62,7 @@ void GB_task_cumsum
     // replace Cp with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads, Werk) ;
+    GB_cumsum (Cp, false, Cnvec, Cnvec_nonempty, nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // shift the cumulative sum of the fine tasks

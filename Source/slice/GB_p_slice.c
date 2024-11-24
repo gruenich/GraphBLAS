@@ -25,7 +25,7 @@
 static void GB_p_slice_worker
 (
     int64_t *restrict Slice,     // size ntasks+1
-    const int64_t *restrict Ap,  // array size n+1
+    const uint64_t *restrict Ap,  // array size n+1
     int tlo,                        // assign to Slice [(tlo+1):(thi-1)]
     int thi                     
 )

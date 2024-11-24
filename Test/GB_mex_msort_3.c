@@ -2,7 +2,7 @@
 // GB_mex_msort_3: sort using GB_msort_3
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -26,29 +26,29 @@ void mexFunction
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
-    if (!mxIsClass (pargin [0], "int64"))
+    if (!mxIsClass (pargin [0], "uint64"))
     {
-        mexErrMsgTxt ("I must be a int64 array") ;
+        mexErrMsgTxt ("I must be a uint64 array") ;
     }
-    if (!mxIsClass (pargin [1], "int64"))
+    if (!mxIsClass (pargin [1], "uint64"))
     {
-        mexErrMsgTxt ("J must be a int64 array") ;
+        mexErrMsgTxt ("J must be a uint64 array") ;
     }
-    if (!mxIsClass (pargin [2], "int64"))
+    if (!mxIsClass (pargin [2], "uint64"))
     {
-        mexErrMsgTxt ("K must be a int64 array") ;
+        mexErrMsgTxt ("K must be a uint64 array") ;
     }
 
-    int64_t *I = mxGetData (pargin [0]) ;
+    uint64_t *I = mxGetData (pargin [0]) ;
     int64_t n = (uint64_t) mxGetNumberOfElements (pargin [0]) ;
 
-    int64_t *J = mxGetData (pargin [1]) ;
+    uint64_t *J = mxGetData (pargin [1]) ;
     if (n != (uint64_t) mxGetNumberOfElements (pargin [1])) 
     {
         mexErrMsgTxt ("I and J must be the same length") ;
     }
 
-    int64_t *K = mxGetData (pargin [2]) ;
+    uint64_t *K = mxGetData (pargin [2]) ;
     if (n != (uint64_t) mxGetNumberOfElements (pargin [2])) 
     {
         mexErrMsgTxt ("I and K must be the same length") ;
@@ -57,16 +57,16 @@ void mexFunction
     int GET_SCALAR (3, int, nthreads, 1) ;
 
     pargout [0] = GB_mx_create_full (n, 1, GrB_INT64) ;
-    int64_t *Iout = mxGetData (pargout [0]) ;
-    memcpy (Iout, I, n * sizeof (int64_t)) ;
+    uint64_t *Iout = mxGetData (pargout [0]) ;
+    memcpy (Iout, I, n * sizeof (uint64_t)) ;
 
     pargout [1] = GB_mx_create_full (n, 1, GrB_INT64) ;
-    int64_t *Jout = mxGetData (pargout [1]) ;
-    memcpy (Jout, J, n * sizeof (int64_t)) ;
+    uint64_t *Jout = mxGetData (pargout [1]) ;
+    memcpy (Jout, J, n * sizeof (uint64_t)) ;
 
     pargout [2] = GB_mx_create_full (n, 1, GrB_INT64) ;
-    int64_t *Kout = mxGetData (pargout [2]) ;
-    memcpy (Kout, K, n * sizeof (int64_t)) ;
+    uint64_t *Kout = mxGetData (pargout [2]) ;
+    memcpy (Kout, K, n * sizeof (uint64_t)) ;
 
     GB_msort_3 (Iout, Jout, Kout, n, nthreads) ;
 

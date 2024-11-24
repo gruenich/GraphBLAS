@@ -96,30 +96,30 @@
             for (t = tstart ; t < tend ; t++)
             { 
                 // get the tuple and break if it is not a duplicate
-                if (I_work [t] >= 0) break ;
+                if (I_work [t] >= 0) break ;//FIXME
             }
 
             // scan all tuples and assemble any duplicates
             for ( ; t < tend ; t++)
             {
                 // get the t-th tuple, a unique tuple
-                int64_t i = I_work [t] ;
+                int64_t i = I_work [t] ;//FIXME
                 ASSERT (i >= 0) ;
                 #ifndef GB_ISO_BUILD
-                int64_t k = (K_work == NULL) ? t : K_work [t] ;
+                int64_t k = (K_work == NULL) ? t : K_work [t] ; // FIXME
                 // Tx [my_tnz] = (ttype) Sx [k] ;
                 GB_BLD_COPY (Tx, my_tnz, Sx, k) ;
                 #endif
-                Ti [my_tnz] = i ;
+                Ti [my_tnz] = i ;       // FIXME
 
                 // assemble all duplicates that follow it.  This may assemble
                 // the first duplicates in the next slice(s) (up to but not
                 // including the first unique tuple in the subsequent slice(s)).
-                for ( ; t+1 < nvals && I_work [t+1] < 0 ; t++)
+                for ( ; t+1 < nvals && I_work [t+1] < 0 ; t++)//FIXME
                 { 
                     // assemble the duplicate tuple
                     #ifndef GB_ISO_BUILD
-                    int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;
+                    int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;//FIXME
                     // Tx [my_tnz] += Sx [k], typecasting as needed
                     GB_BLD_DUP (Tx, my_tnz, Sx, k) ;
                     #endif

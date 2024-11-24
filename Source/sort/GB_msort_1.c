@@ -9,7 +9,7 @@
 
 // A parallel mergesort of an array of 1-by-n integers.
 
-#include "sort/GB_msort_1.h"
+#include "sort/GB_sort.h"
 
 //------------------------------------------------------------------------------
 // GB_msort_1_binary_search: binary search for the pivot
@@ -28,11 +28,11 @@
 // larger than all entries in X [p_start...p_end-1], and the right list X
 // [pleft...p_end-1] is empty.
 
-static int64_t GB_msort_1_binary_search    // return pleft
+static int64_t GB_msort_1_binary_search // return pleft
 (
-    const int64_t *restrict Z_0,         // Pivot is Z [pivot]
+    const uint64_t *restrict Z_0,       // Pivot is Z [pivot]
     const int64_t pivot,
-    const int64_t *restrict X_0,         // search in X [p_start..p_end_-1]
+    const uint64_t *restrict X_0,       // search in X [p_start..p_end_-1]
     const int64_t p_start,
     const int64_t p_end
 )
@@ -49,8 +49,7 @@ static int64_t GB_msort_1_binary_search    // return pleft
     { 
         int64_t pmiddle = (pleft + pright) >> 1 ;
         // less = (X [pmiddle] < Pivot)
-        bool less = GB_lt_1 (X_0, pmiddle,
-                             Z_0, pivot) ;
+        bool less = GB_lt_1 (X_0, pmiddle, Z_0, pivot) ;
         pleft  = less ? (pmiddle+1) : pleft ;
         pright = less ? pright : pmiddle ;
     }
@@ -65,14 +64,12 @@ static int64_t GB_msort_1_binary_search    // return pleft
     //    X [p_start ... pleft-1] < Pivot and
     //    X [pleft+1 ... p_end-1] > Pivot holds.
     //    The value X [pleft] may be either < or > Pivot.
-    bool found = (pleft == pright) && GB_eq_1 (X_0, pleft,
-                                               Z_0, pivot) ;
+    bool found = (pleft == pright) && GB_eq_1 (X_0, pleft, Z_0, pivot) ;
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
     { 
-        if (GB_lt_1 (X_0, pleft,
-                     Z_0, pivot))
+        if (GB_lt_1 (X_0, pleft, Z_0, pivot))
         {
             pleft++ ;
         }
@@ -116,22 +113,22 @@ static int64_t GB_msort_1_binary_search    // return pleft
 // array S [S_task [tid] ... ].  The task tids created are t0 to
 // t0+ntasks-1.
 
-void GB_msort_1_create_merge_tasks
+static void GB_msort_1_create_merge_tasks
 (
     // output:
-    int64_t *restrict L_task,        // L_task [t0...t0+ntasks-1] computed
-    int64_t *restrict L_len,         // L_len  [t0...t0+ntasks-1] computed
-    int64_t *restrict R_task,        // R_task [t0...t0+ntasks-1] computed
-    int64_t *restrict R_len,         // R_len  [t0...t0+ntasks-1] computed
-    int64_t *restrict S_task,        // S_task [t0...t0+ntasks-1] computed
+    int64_t *restrict L_task,       // L_task [t0...t0+ntasks-1] computed
+    int64_t *restrict L_len,        // L_len  [t0...t0+ntasks-1] computed
+    int64_t *restrict R_task,       // R_task [t0...t0+ntasks-1] computed
+    int64_t *restrict R_len,        // R_len  [t0...t0+ntasks-1] computed
+    int64_t *restrict S_task,       // S_task [t0...t0+ntasks-1] computed
     // input:
-    const int t0,                       // first task tid to create
-    const int ntasks,                   // # of tasks to create
-    const int64_t pS_start,             // merge into S [pS_start...]
-    const int64_t *restrict L_0,     // Left = L [pL_start...pL_end-1]
+    const int t0,                   // first task tid to create
+    const int ntasks,               // # of tasks to create
+    const int64_t pS_start,         // merge into S [pS_start...]
+    const uint64_t *restrict L_0,   // Left = L [pL_start...pL_end-1]
     const int64_t pL_start,
     const int64_t pL_end,
-    const int64_t *restrict R_0,     // Right = R [pR_start...pR_end-1]
+    const uint64_t *restrict R_0,   // Right = R [pR_start...pR_end-1]
     const int64_t pR_start,
     const int64_t pR_end
 )
@@ -234,14 +231,14 @@ void GB_msort_1_create_merge_tasks
 // GB_msort_1_merge: merge two sorted lists via a single thread
 //------------------------------------------------------------------------------
 
-// merge Left [0..nleft-1] and Right [0..nright-1] into S [0..nleft+nright-1] */
+// merge Left [0..nleft-1] and Right [0..nright-1] into S [0..nleft+nright-1]
 
 static void GB_msort_1_merge
 (
-    int64_t *restrict S_0,              // output of length nleft + nright
-    const int64_t *restrict Left_0,     // left input of length nleft
+    uint64_t *restrict S_0,             // output of length nleft + nright
+    const uint64_t *restrict L_0,       // left input of length nleft
     const int64_t nleft,
-    const int64_t *restrict Right_0,    // right input of length nright
+    const uint64_t *restrict R_0,       // right input of length nright
     const int64_t nright
 )
 {
@@ -250,17 +247,16 @@ static void GB_msort_1_merge
     // merge the two inputs, Left and Right, while both inputs exist
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
     {
-        if (GB_lt_1 (Left_0,  pleft,
-                     Right_0, pright))
+        if (GB_lt_1 (L_0, pleft, R_0, pright))
         { 
             // S [p] = Left [pleft++]
-            S_0 [p] = Left_0 [pleft] ;
+            S_0 [p] = L_0 [pleft] ;
             pleft++ ;
         }
         else
         { 
             // S [p] = Right [pright++]
-            S_0 [p] = Right_0 [pright] ;
+            S_0 [p] = R_0 [pright] ;
             pright++ ;
         }
     }
@@ -269,12 +265,12 @@ static void GB_msort_1_merge
     if (pleft < nleft)
     { 
         int64_t nremaining = (nleft - pleft) ;
-        memcpy (S_0 + p, Left_0 + pleft, nremaining * sizeof (int64_t)) ;
+        memcpy (S_0 + p, L_0 + pleft, nremaining * sizeof (uint64_t)) ;
     }
     else if (pright < nright)
     { 
         int64_t nremaining = (nright - pright) ;
-        memcpy (S_0 + p, Right_0 + pright, nremaining * sizeof (int64_t)) ;
+        memcpy (S_0 + p, R_0 + pright, nremaining * sizeof (uint64_t)) ;
     }
 }
 
@@ -284,7 +280,7 @@ static void GB_msort_1_merge
 
 GrB_Info GB_msort_1     // sort array A of size 1-by-n
 (
-    int64_t *restrict A_0,   // size n array
+    uint64_t *restrict A_0,     // size n array
     const int64_t n,
     int nthreads                // # of threads to use
 )
@@ -297,7 +293,7 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     if (nthreads <= 1 || n <= GB_BASECASE)
     { 
         // sequential quicksort
-        GB_qsort_1 (A_0, n) ;
+        GB_qsort_1 (A_0, false, n) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -331,8 +327,10 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    int64_t *T = W ;
-    int64_t *restrict W_0    = T ; T += n ;
+    // FIXME: split W into workspaces of different types
+    uint64_t *T = W ;
+    uint64_t *restrict W_0   = T ; T += n ;
+
     int64_t *restrict L_task = T ; T += ntasks ;
     int64_t *restrict L_len  = T ; T += ntasks ;
     int64_t *restrict R_task = T ; T += ntasks ;
@@ -351,7 +349,7 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     { 
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
-        GB_qsort_1 (A_0 + leaf, leafsize) ;
+        GB_qsort_1 (A_0 + leaf, false, leafsize) ;
     }
 
     //--------------------------------------------------------------------------
