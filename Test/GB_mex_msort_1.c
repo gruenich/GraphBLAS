@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_msort_2: sort using GB_msort_2
+// GB_mex_msort_1: sort using GB_msort_1
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "[I,J] = GB_mex_msort_2 (I,J,nthreads)"
+#define USAGE "[I] = GB_mex_msort_1 (I,nthreads)"
 
 void mexFunction
 (
@@ -22,7 +22,7 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
 
     // check inputs
-    if (nargin != 3 || nargout != 2)
+    if (nargin != 2 || nargout != 1)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -41,30 +41,10 @@ void mexFunction
         mexErrMsgTxt ("I must be a uint32 or uint64 array") ;
     }
 
-    bool J_is_32 ;
-    if (mxIsClass (pargin [0], "uint32"))
-    { 
-        J_is_32 = true ;
-    }
-    else if (mxIsClass (pargin [0], "uint64"))
-    {
-        J_is_32 = false ;
-    }
-    else
-    {
-        mexErrMsgTxt ("I must be a uint32 or uint64 array") ;
-    }
-
     void *I = mxGetData (pargin [0]) ;
     int64_t n = (uint64_t) mxGetNumberOfElements (pargin [0]) ;
 
-    void *J = mxGetData (pargin [1]) ;
-    if (n != (uint64_t) mxGetNumberOfElements (pargin [1])) 
-    {
-        mexErrMsgTxt ("I and J must be the same length") ;
-    }
-
-    int GET_SCALAR (2, int, nthreads, 1) ;
+    int GET_SCALAR (1, int, nthreads, 1) ;
 
     // make a copy of the input arrays
 
@@ -72,11 +52,7 @@ void mexFunction
     void *Iout = mxGetData (pargout [0]) ;
     memcpy (Iout, I, n * (I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
 
-    pargout [1] = GB_mx_create_full (n, 1, J_is_32 ? GrB_UINT32 : GrB_UINT64) ;
-    void *Jout = mxGetData (pargout [1]) ;
-    memcpy (Jout, J, n * (J_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
-
-    GB_msort_2 (Iout, I_is_32, Jout, J_is_32, n, nthreads) ;
+    GB_msort_1 (Iout, I_is_32, n, nthreads) ;
 
     GB_mx_put_global (true) ;   
 }

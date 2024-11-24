@@ -364,6 +364,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 % > 100 seconds, debug_off
 logstat ('test280'    ,t, J4   , F1   ) ; % subassign method 26
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
+logstat ('test44'     ,t, J0   , F0   ) ; % sort
 
 %===============================================================================
 % finalize

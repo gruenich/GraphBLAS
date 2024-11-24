@@ -10,7 +10,7 @@
 #ifndef GB_RAND_H
 #define GB_RAND_H
 
-#define GB_BASECASE (64 * 1024)
+#define GB_BASECASE (1024)
 
 //------------------------------------------------------------------------------
 // random number generator for quicksort

@@ -9,8 +9,7 @@
 
 //  macros:
 //  GB_SORT (func)      defined as GB_sort_func_TYPE_ascend or _descend,
-//                      GB_msort_ISO_ascend or _descend,
-//                      or GB_msort_func_UDT
+//                      GB_sort_ISO_ascend or _descend, or GB_sort_func_UDT
 //  GB_C_TYPE           bool, int8_, ... or GB_void for UDT or ISO
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
 //  GB_SIZE             size of each entry: sizeof (GB_C_TYPE) for built-in

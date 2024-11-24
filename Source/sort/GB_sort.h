@@ -230,17 +230,20 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 
 GrB_Info GB_msort_1     // sort array A of size 1-by-n
 (
-    uint64_t *restrict A_0,     // size n array
+    void *restrict A_0,         // size n array
+    bool A0_is_32,              // if true: A_0 is uint32, else uint64
     const int64_t n,
-    int nthreads                // # of threads to use
+    int nthreads_max            // max # of threads to use
 ) ;
 
-GrB_Info GB_msort_2    // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+GrB_Info GB_msort_2     // sort array A of size 2-by-n
 (
-    uint64_t *restrict A_0,     // size n array
-    uint64_t *restrict A_1,     // size n array
+    void *restrict A_0,         // size n array
+    bool A0_is_32,              // if true: A_0 is uint32, else uint64
+    void *restrict A_1,         // size n array
+    bool A1_is_32,              // if true: A_1 is uint32, else uint64
     const int64_t n,
-    int nthreads                // # of threads to use
+    int nthreads_max            // max # of threads to use
 ) ;
 
 GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])

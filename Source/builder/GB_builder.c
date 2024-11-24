@@ -586,13 +586,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // sort a set of (j,i,k) tuples
             //------------------------------------------------------------------
 
-            // FIXME: need GB_msort_2 (I,J: 32/64 ), 2 variants
-            // FIXME: need GB_msort_3 (I,J: 32/64, K: 32/64 ), 4 variants
-
             if (S_iso)
             { 
                 // K_work is NULL; only sort (j,i)
-                info = GB_msort_2 (J_work, I_work, nvals, nthreads) ;
+                info = GB_msort_2 (J_work, false, I_work, false, nvals,
+                    nthreads) ;
             }
             else
             { 
@@ -623,18 +621,15 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // sort a set of (i,k) tuples
             //------------------------------------------------------------------
 
-            // FIXME: need GB_msort_1 (I: 32/64), 2 variants
-            // FIXME: need GB_msort_2 (I: 32/64, K: 32/64 ), 4 variants
-            // FIXME: need GB_msort_3 (I,J: 32/64, K: 32/64 ), 4 variants
-
             if (S_iso)
             { 
                 // K_work is NULL; only sort (i)
-                info = GB_msort_1 (I_work, nvals, nthreads) ;   // FIXME
+                info = GB_msort_1 (I_work, false, nvals, nthreads_max) ;
             }
             else
             { 
-                info = GB_msort_2 (I_work, K_work, nvals, nthreads) ;   // FIXME
+                info = GB_msort_2 (I_work, false, K_work, false, nvals,
+                    nthreads) ;
             }
 
             #ifdef GB_DEBUG
