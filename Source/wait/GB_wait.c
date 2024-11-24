@@ -194,7 +194,8 @@ GrB_Info GB_wait                // finish all pending computations
                                     // NULL if A is iso
             stype,                  // type of Pending->x
             true,                   // burble is allowed
-            Werk
+            Werk,
+            false, false
         ) ;
 
         //----------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // GB_msort_1_template: sort a 1-by-n list of integers
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -123,10 +123,10 @@ static void GB_msort_1_create_merge_tasks
     const int t0,                   // first task tid to create
     const int ntasks,               // # of tasks to create
     const int64_t pS_start,         // merge into S [pS_start...]
-    const GB_A0_t *restrict L_0,   // Left = L [pL_start...pL_end-1]
+    const GB_A0_t *restrict L_0,    // Left = L [pL_start...pL_end-1]
     const int64_t pL_start,
     const int64_t pL_end,
-    const GB_A0_t *restrict R_0,   // Right = R [pR_start...pR_end-1]
+    const GB_A0_t *restrict R_0,    // Right = R [pR_start...pR_end-1]
     const int64_t pR_start,
     const int64_t pR_end
 )
@@ -233,10 +233,10 @@ static void GB_msort_1_create_merge_tasks
 
 static void GB_msort_1_merge
 (
-    GB_A0_t *restrict S_0,             // output of length nleft + nright
-    const GB_A0_t *restrict L_0,       // left input of length nleft
+    GB_A0_t *restrict S_0,              // output of length nleft + nright
+    const GB_A0_t *restrict L_0,        // left input of length nleft
     const int64_t nleft,
-    const GB_A0_t *restrict R_0,       // right input of length nright
+    const GB_A0_t *restrict R_0,        // right input of length nright
     const int64_t nright
 )
 {
@@ -339,8 +339,8 @@ static GrB_Info GB_msort_1_method      // sort array A of size 1-by-n
     { 
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
-        GB_qsort_1 (A_0 + leaf,
-            sizeof (GB_A0_t) == sizeof (uint32_t),
+        GB_qsort_1 (
+            A_0 + leaf, sizeof (GB_A0_t) == sizeof (uint32_t),
             leafsize) ;
     }
 

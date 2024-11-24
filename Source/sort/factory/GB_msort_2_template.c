@@ -7,8 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A parallel mergesort of an array of 2-by-n integers.  Each key
-// consists of two integers.
+// A parallel mergesort of an array of 2-by-n integers.
 
 //------------------------------------------------------------------------------
 // GB_msort_2_binary_search: binary search for the pivot
@@ -70,13 +69,13 @@ static int64_t GB_msort_2_binary_search // return pleft
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
-    {
+    { 
         if (GB_lt_2 (X_0, X_1, pleft, Z_0, Z_1, pivot))
-        { 
+        {
             pleft++ ;
         }
         else
-        { 
+        {
 //          pright++ ;  // (not needed)
         }
     }
@@ -127,11 +126,11 @@ static void GB_msort_2_create_merge_tasks
     const int t0,                   // first task tid to create
     const int ntasks,               // # of tasks to create
     const int64_t pS_start,         // merge into S [pS_start...]
-    const GB_A0_t *restrict L_0,   // Left = L [pL_start...pL_end-1]
+    const GB_A0_t *restrict L_0,    // Left = L [pL_start...pL_end-1]
     const GB_A1_t *restrict L_1,
     const int64_t pL_start,
     const int64_t pL_end,
-    const GB_A0_t *restrict R_0,   // Right = R [pR_start...pR_end-1]
+    const GB_A0_t *restrict R_0,    // Right = R [pR_start...pR_end-1]
     const GB_A1_t *restrict R_1,
     const int64_t pR_start,
     const int64_t pR_end
@@ -239,12 +238,12 @@ static void GB_msort_2_create_merge_tasks
 
 static void GB_msort_2_merge
 (
-    GB_A0_t *restrict S_0,             // output of length nleft + nright
+    GB_A0_t *restrict S_0,              // output of length nleft + nright
     GB_A1_t *restrict S_1,
-    const GB_A0_t *restrict L_0,       // left input of length nleft
+    const GB_A0_t *restrict L_0,        // left input of length nleft
     const GB_A1_t *restrict L_1,
     const int64_t nleft,
-    const GB_A0_t *restrict R_0,       // right input of length nright
+    const GB_A0_t *restrict R_0,        // right input of length nright
     const GB_A1_t *restrict R_1,
     const int64_t nright
 )

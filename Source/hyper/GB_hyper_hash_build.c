@@ -124,7 +124,8 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         NULL,                   // no duplicates, so dup is NUL
         GrB_UINT64,             // the type of X_work
         false,                  // no burble (already burbled above)
-        Werk
+        Werk,
+        false, false
     )) ;
 
     Y->hyper_switch = -1 ;              // never make Y hypersparse

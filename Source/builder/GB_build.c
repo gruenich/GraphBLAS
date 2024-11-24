@@ -292,7 +292,8 @@ GrB_Info GB_build               // build matrix
         dup2,           // operator to assemble duplicates (may be NULL)
         xtype,          // type of the X array
         true,           // burble is OK
-        Werk
+        Werk,
+        false, false
     )) ;
 
     //--------------------------------------------------------------------------

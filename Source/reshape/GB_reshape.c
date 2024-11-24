@@ -365,7 +365,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             NULL,           // no dup operator
             type,           // type of S_work and S_input
             true,           // burble is allowed
-            Werk
+            Werk,
+            false, false
         )) ;
 
         ASSERT (I_work == NULL) ;   // transplanted into C->i

@@ -279,19 +279,19 @@ void GB_qsort_3_64_64_64 // sort A of size 3-by-n, A0: 64bit, A1: 64, A2: 64
 void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (
     void *restrict A_0,         // size n array
-    bool a0_is_32,              // if true: A_0 is uint32, false: uint64
+    bool A0_is_32,              // if true: A_0 is uint32, false: uint64
     void *restrict A_1,         // size n array
-    bool a1_is_32,              // if true: A_1 is uint32, false: uint64
+    bool A1_is_32,              // if true: A_1 is uint32, false: uint64
     void *restrict A_2,         // size n array
-    bool a2_is_32,              // if true: A_1 is uint32, false: uint64
+    bool A2_is_32,              // if true: A_1 is uint32, false: uint64
     const int64_t n
 )
 { 
-    if (a0_is_32)
+    if (A0_is_32)
     {
-        if (a1_is_32)
+        if (A1_is_32)
         {
-            if (a2_is_32)
+            if (A2_is_32)
             { 
                 // A0: uint32_t, A1: uint32_t, A2: uint32_t
                 GB_qsort_3_32_32_32 (A_0, A_1, A_2, n) ;
@@ -304,7 +304,7 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         }
         else
         {
-            if (a2_is_32)
+            if (A2_is_32)
             { 
                 // A0: uint32_t, A1: uint64_t, A2: uint32_t
                 GB_qsort_3_32_64_32 (A_0, A_1, A_2, n) ;
@@ -318,9 +318,9 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     }
     else
     {
-        if (a1_is_32)
+        if (A1_is_32)
         {
-            if (a2_is_32)
+            if (A2_is_32)
             { 
                 // A0: uint64_t, A1: uint32_t, A2: uint32_t
                 GB_qsort_3_64_32_32 (A_0, A_1, A_2, n) ;
@@ -333,7 +333,7 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
         }
         else
         {
-            if (a2_is_32)
+            if (A2_is_32)
             { 
                 // A0: uint64_t, A1: uint64_t, A2: uint32_t
                 GB_qsort_3_64_64_32 (A_0, A_1, A_2, n) ;

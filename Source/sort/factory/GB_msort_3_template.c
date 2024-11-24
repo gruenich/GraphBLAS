@@ -1,14 +1,13 @@
 //------------------------------------------------------------------------------
-// GB_msort_3: sort a 3-by-n list of integers, using A[0:2][ ] as the key
+// GB_msort_3_template: sort a 3-by-n list of integers
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// A parallel mergesort of an array of 3-by-n integers.  Each key
-// consists of three integers.
+// A parallel mergesort of an array of 3-by-n integers.
 
 //------------------------------------------------------------------------------
 // GB_msort_3_binary_search: binary search for the pivot
@@ -29,13 +28,13 @@
 
 static int64_t GB_msort_3_binary_search // return pleft
 (
-    const uint64_t *restrict Z_0,       // Pivot is Z [pivot]
-    const uint64_t *restrict Z_1,
-    const uint64_t *restrict Z_2,
+    const GB_A0_t *restrict Z_0,       // Pivot is Z [pivot]
+    const GB_A1_t *restrict Z_1,
+    const GB_A2_t *restrict Z_2,
     const int64_t pivot,
-    const uint64_t *restrict X_0,       // search in X [p_start..p_end_-1]
-    const uint64_t *restrict X_1,
-    const uint64_t *restrict X_2,
+    const GB_A0_t *restrict X_0,       // search in X [p_start..p_end_-1]
+    const GB_A1_t *restrict X_1,
+    const GB_A2_t *restrict X_2,
     const int64_t p_start,
     const int64_t p_end
 )
@@ -72,13 +71,13 @@ static int64_t GB_msort_3_binary_search // return pleft
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
-    {
+    { 
         if (GB_lt_3 (X_0, X_1, X_2, pleft, Z_0, Z_1, Z_2, pivot))
-        { 
+        {
             pleft++ ;
         }
         else
-        { 
+        {
 //          pright++ ;  // (not needed)
         }
     }
@@ -129,14 +128,14 @@ static void GB_msort_3_create_merge_tasks
     const int t0,                   // first task tid to create
     const int ntasks,               // # of tasks to create
     const int64_t pS_start,         // merge into S [pS_start...]
-    const uint64_t *restrict L_0,   // Left = L [pL_start...pL_end-1]
-    const uint64_t *restrict L_1,
-    const uint64_t *restrict L_2,
+    const GB_A0_t *restrict L_0,    // Left = L [pL_start...pL_end-1]
+    const GB_A1_t *restrict L_1,
+    const GB_A2_t *restrict L_2,
     const int64_t pL_start,
     const int64_t pL_end,
-    const uint64_t *restrict R_0,   // Right = R [pR_start...pR_end-1]
-    const uint64_t *restrict R_1,
-    const uint64_t *restrict R_2,
+    const GB_A0_t *restrict R_0,    // Right = R [pR_start...pR_end-1]
+    const GB_A1_t *restrict R_1,
+    const GB_A2_t *restrict R_2,
     const int64_t pR_start,
     const int64_t pR_end
 )
@@ -243,16 +242,16 @@ static void GB_msort_3_create_merge_tasks
 
 static void GB_msort_3_merge
 (
-    uint64_t *restrict S_0,             // output of length nleft + nright
-    uint64_t *restrict S_1,
-    uint64_t *restrict S_2,
-    const uint64_t *restrict L_0,       // left input of length nleft
-    const uint64_t *restrict L_1,
-    const uint64_t *restrict L_2,
+    GB_A0_t *restrict S_0,              // output of length nleft + nright
+    GB_A1_t *restrict S_1,
+    GB_A2_t *restrict S_2,
+    const GB_A0_t *restrict L_0,        // left input of length nleft
+    const GB_A1_t *restrict L_1,
+    const GB_A2_t *restrict L_2,
     const int64_t nleft,
-    const uint64_t *restrict R_0,       // right input of length nright
-    const uint64_t *restrict R_1,
-    const uint64_t *restrict R_2,
+    const GB_A0_t *restrict R_0,        // right input of length nright
+    const GB_A1_t *restrict R_1,
+    const GB_A2_t *restrict R_2,
     const int64_t nright
 )
 {
@@ -283,44 +282,32 @@ static void GB_msort_3_merge
     if (pleft < nleft)
     { 
         int64_t nremaining = (nleft - pleft) ;
-        memcpy (S_0 + p, L_0 + pleft, nremaining * sizeof (uint64_t)) ;
-        memcpy (S_1 + p, L_1 + pleft, nremaining * sizeof (uint64_t)) ;
-        memcpy (S_2 + p, L_2 + pleft, nremaining * sizeof (uint64_t)) ;
+        memcpy (S_0 + p, L_0 + pleft, nremaining * sizeof (GB_A0_t)) ;
+        memcpy (S_1 + p, L_1 + pleft, nremaining * sizeof (GB_A1_t)) ;
+        memcpy (S_2 + p, L_2 + pleft, nremaining * sizeof (GB_A2_t)) ;
     }
     else if (pright < nright)
     { 
         int64_t nremaining = (nright - pright) ;
-        memcpy (S_0 + p, R_0 + pright, nremaining * sizeof (uint64_t)) ;
-        memcpy (S_1 + p, R_1 + pright, nremaining * sizeof (uint64_t)) ;
-        memcpy (S_2 + p, R_2 + pright, nremaining * sizeof (uint64_t)) ;
+        memcpy (S_0 + p, R_0 + pright, nremaining * sizeof (GB_A0_t)) ;
+        memcpy (S_1 + p, R_1 + pright, nremaining * sizeof (GB_A1_t)) ;
+        memcpy (S_2 + p, R_2 + pright, nremaining * sizeof (GB_A2_t)) ;
     }
 }
 
 //------------------------------------------------------------------------------
-// GB_msort_3: parallel mergesort
+// GB_msort_3_method: parallel mergesort
 //------------------------------------------------------------------------------
 
-GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
+static GrB_Info GB_msort_3_method    // sort array A of size 3-by-n
 (
-    uint64_t *restrict A_0,     // size n array
-    uint64_t *restrict A_1,     // size n array
-    uint64_t *restrict A_2,     // size n array
+    GB_A0_t *restrict A_0,      // size n array
+    GB_A1_t *restrict A_1,      // size n array
+    GB_A2_t *restrict A_2,      // size n array
     const int64_t n,
     int nthreads                // # of threads to use
 )
 {
-
-    //--------------------------------------------------------------------------
-    // handle small problems with a single thread
-    //--------------------------------------------------------------------------
-
-    nthreads = GB_nthreads (n, GB_BASECASE, nthreads) ;
-    if (nthreads <= 1 || n <= GB_BASECASE)
-    { 
-        // sequential quicksort
-        GB_qsort_3 (A_0, false, A_1, false, A_2, false, n) ;
-        return (GrB_SUCCESS) ;
-    }
 
     //--------------------------------------------------------------------------
     // determine # of tasks
@@ -344,20 +331,27 @@ GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *restrict W = NULL ; size_t W_size = 0 ;
-    W = GB_MALLOC_WORK (3*n + 6*ntasks + 1, int64_t, &W_size) ;
-    if (W == NULL)
+    GB_A0_t *restrict W_0 = NULL ; size_t W_0_size = 0 ;
+    GB_A1_t *restrict W_1 = NULL ; size_t W_1_size = 0 ;
+    GB_A2_t *restrict W_2 = NULL ; size_t W_2_size = 0 ;
+    int64_t *restrict W_T = NULL ; size_t W_T_size = 0 ;
+
+    W_0 = GB_MALLOC_WORK (n, GB_A0_t, &W_0_size) ;
+    W_1 = GB_MALLOC_WORK (n, GB_A1_t, &W_1_size) ;
+    W_2 = GB_MALLOC_WORK (n, GB_A2_t, &W_1_size) ;
+    W_T = GB_MALLOC_WORK (6*ntasks + 1, int64_t, &W_T_size) ;
+
+    if (W_0 == NULL || W_1 == NULL || W_2 == NULL || W_T == NULL)
     { 
         // out of memory
+        GB_FREE_WORK (&W_0, W_0_size) ;
+        GB_FREE_WORK (&W_1, W_1_size) ;
+        GB_FREE_WORK (&W_2, W_2_size) ;
+        GB_FREE_WORK (&W_T, W_T_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // FIXME: split W into different workspaces
-    uint64_t *T = W ;
-    uint64_t *restrict W_0    = T ; T += n ;
-    uint64_t *restrict W_1    = T ; T += n ;
-    uint64_t *restrict W_2    = T ; T += n ;
-
+    int64_t *T = W_T ;
     int64_t *restrict L_task = T ; T += ntasks ;
     int64_t *restrict L_len  = T ; T += ntasks ;
     int64_t *restrict R_task = T ; T += ntasks ;
@@ -376,7 +370,10 @@ GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     { 
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
-        GB_qsort_3 (A_0 + leaf, false, A_1 + leaf, false, A_2 + leaf, false,
+        GB_qsort_3 (
+            A_0 + leaf, sizeof (GB_A0_t) == sizeof (uint32_t),
+            A_1 + leaf, sizeof (GB_A1_t) == sizeof (uint32_t),
+            A_2 + leaf, sizeof (GB_A2_t) == sizeof (uint32_t),
             leafsize) ;
     }
 
@@ -453,7 +450,10 @@ GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK (&W, W_size) ;
+    GB_FREE_WORK (&W_0, W_0_size) ;
+    GB_FREE_WORK (&W_1, W_1_size) ;
+    GB_FREE_WORK (&W_2, W_2_size) ;
+    GB_FREE_WORK (&W_T, W_T_size) ;
     return (GrB_SUCCESS) ;
 }
 

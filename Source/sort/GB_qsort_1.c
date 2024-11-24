@@ -84,7 +84,7 @@ void GB_qsort_1_64
 
 GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1)
 {
-    if (is_32)
+    if (A0_is_32)
     { 
         GB_qsort_1_32 ((uint32_t *) A_0, n) ;
     }

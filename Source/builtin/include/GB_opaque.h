@@ -542,6 +542,27 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 } ;
 
 //------------------------------------------------------------------------------
+// accessing a 32/64 bit integer array
+//------------------------------------------------------------------------------
+
+// get I [k] for a 32/64-bit integer array I
+#define GB_IGET(I,k) ((I ## 32) ? I ## 32 [k] : I ## 64 [k])
+
+// set I [k] for a 32/64-bit integer array I
+#define GB_ISET(I,k,i) \
+    if (I ## 64) { I ## 64 [k] = (i) ; } else { I ## 32 [k] = (i) ; }
+
+// get I32 and I64 pointers
+#define GB_IPTR(I)                      \
+    I ## 32 = I ## _is_32 ? I : NULL ;  \
+    I ## 64 = I ## _is_32 ? NULL : I
+
+// declare I32 and I64 (either int or uint)
+#define GB_IDECL(I,u)                   \
+    u ## int32_t *I ## 32 = NULL ;      \
+    u ## int64_t *I ## 64 = NULL
+
+//------------------------------------------------------------------------------
 // Accessing the content of a scalar, vector, or matrix
 //------------------------------------------------------------------------------
 
@@ -768,4 +789,3 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #define GB_Z_NHELD(e)    int64_t e = GB_nnz_held (Z)
 
 #endif
-

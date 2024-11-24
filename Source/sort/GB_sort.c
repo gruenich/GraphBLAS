@@ -41,9 +41,6 @@
     A [j] = t ;             \
 }
 
-#undef  GB_BASECASE
-#define GB_BASECASE (256 * 1024)
-
 //------------------------------------------------------------------------------
 // ascending sort for built-in types
 //------------------------------------------------------------------------------
@@ -489,30 +486,30 @@ GrB_Info GB_sort
 
     int64_t cnvec = C->nvec ;
     GBi_DECL (T, const) ;
-    int64_t *restrict Ti = NULL ;
+    int64_t *restrict Ti = NULL ;       // FIXME
 
     if (P == NULL)
     { 
         // P is not constructed; use C->i to construct the new indices
-        Ti = C->i ;
+        Ti = C->i ; // FIXME
     }
     else
     {
         // allocate P->i and use it to construct the new indices
-        P->i = GB_MALLOC (cnz, int64_t, &(P->i_size)) ;
+        P->i = GB_MALLOC (cnz, int64_t, &(P->i_size)) ; // FIXME
         if (P->i == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        Ti = P->i ;
+        Ti = P->i ; // FIXME
     }
 
     int C_nthreads, C_ntasks ;
     GB_SLICE_MATRIX (C, 1) ;
     GBp_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static,1)
     for (tid = 0 ; tid < C_ntasks ; tid++)
@@ -526,7 +523,7 @@ GrB_Info GB_sort
                 pC0, Cp [k+1]) ;
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             { 
-                Ti [pC] = pC - pC0 ;
+                Ti [pC] = pC - pC0 ;    // FIXME
             }
         }
     }

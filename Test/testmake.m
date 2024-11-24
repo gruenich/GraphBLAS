@@ -50,7 +50,7 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-flags = '-g -R2018a -DGBNCPUFEAT' ;
+flags = '-O -R2018a -DGBNCPUFEAT' ;
 
 if (~have_octave)
     try

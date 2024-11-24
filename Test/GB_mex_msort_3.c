@@ -26,29 +26,59 @@ void mexFunction
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
-    if (!mxIsClass (pargin [0], "uint64"))
-    {
-        mexErrMsgTxt ("I must be a uint64 array") ;
+
+    bool I_is_32 ;
+    if (mxIsClass (pargin [0], "uint32"))
+    { 
+        I_is_32 = true ;
     }
-    if (!mxIsClass (pargin [1], "uint64"))
+    else if (mxIsClass (pargin [0], "uint64"))
     {
-        mexErrMsgTxt ("J must be a uint64 array") ;
+        I_is_32 = false ;
     }
-    if (!mxIsClass (pargin [2], "uint64"))
+    else
     {
-        mexErrMsgTxt ("K must be a uint64 array") ;
+        mexErrMsgTxt ("I must be a uint32 or uint64 array") ;
     }
 
-    uint64_t *I = mxGetData (pargin [0]) ;
+    bool J_is_32 ;
+    if (mxIsClass (pargin [1], "uint32"))
+    { 
+        J_is_32 = true ;
+    }
+    else if (mxIsClass (pargin [1], "uint64"))
+    {
+        J_is_32 = false ;
+    }
+    else
+    {
+        mexErrMsgTxt ("I must be a uint32 or uint64 array") ;
+    }
+
+    bool K_is_32 ;
+    if (mxIsClass (pargin [2], "uint32"))
+    { 
+        K_is_32 = true ;
+    }
+    else if (mxIsClass (pargin [2], "uint64"))
+    {
+        K_is_32 = false ;
+    }
+    else
+    {
+        mexErrMsgTxt ("I must be a uint32 or uint64 array") ;
+    }
+
+    void *I = mxGetData (pargin [0]) ;
     int64_t n = (uint64_t) mxGetNumberOfElements (pargin [0]) ;
 
-    uint64_t *J = mxGetData (pargin [1]) ;
+    void *J = mxGetData (pargin [1]) ;
     if (n != (uint64_t) mxGetNumberOfElements (pargin [1])) 
     {
         mexErrMsgTxt ("I and J must be the same length") ;
     }
 
-    uint64_t *K = mxGetData (pargin [2]) ;
+    void *K = mxGetData (pargin [2]) ;
     if (n != (uint64_t) mxGetNumberOfElements (pargin [2])) 
     {
         mexErrMsgTxt ("I and K must be the same length") ;
@@ -56,19 +86,19 @@ void mexFunction
 
     int GET_SCALAR (3, int, nthreads, 1) ;
 
-    pargout [0] = GB_mx_create_full (n, 1, GrB_INT64) ;
-    uint64_t *Iout = mxGetData (pargout [0]) ;
-    memcpy (Iout, I, n * sizeof (uint64_t)) ;
+    pargout [0] = GB_mx_create_full (n, 1, I_is_32 ? GrB_UINT32 : GrB_UINT64) ;
+    void *Iout = mxGetData (pargout [0]) ;
+    memcpy (Iout, I, n * (I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
 
-    pargout [1] = GB_mx_create_full (n, 1, GrB_INT64) ;
-    uint64_t *Jout = mxGetData (pargout [1]) ;
-    memcpy (Jout, J, n * sizeof (uint64_t)) ;
+    pargout [1] = GB_mx_create_full (n, 1, J_is_32 ? GrB_UINT32 : GrB_UINT64) ;
+    void *Jout = mxGetData (pargout [1]) ;
+    memcpy (Jout, J, n * (J_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
 
-    pargout [2] = GB_mx_create_full (n, 1, GrB_INT64) ;
-    uint64_t *Kout = mxGetData (pargout [2]) ;
-    memcpy (Kout, K, n * sizeof (uint64_t)) ;
+    pargout [2] = GB_mx_create_full (n, 1, K_is_32 ? GrB_UINT32 : GrB_UINT64) ;
+    void *Kout = mxGetData (pargout [2]) ;
+    memcpy (Kout, K, n * (K_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
 
-    GB_msort_3 (Iout, Jout, Kout, n, nthreads) ;
+    GB_msort_3 (Iout, I_is_32, Jout, J_is_32, Kout, K_is_32, n, nthreads) ;
 
     GB_mx_put_global (true) ;   
 }

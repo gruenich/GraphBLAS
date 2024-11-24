@@ -17,6 +17,7 @@
 
 #include "GB.h"
 #include "sort/include/GB_sort_kernels.h"
+#define GB_MSORT_BASECASE (2*1024)
 
 void GB_qsort_1b_32_generic // sort array A of size 2-by-n, using A0: 32 bit
 (
@@ -147,9 +148,9 @@ void GB_qsort_2_32_32   // sort A of size 2-by-n, A0: 32bit, A1: 32bit
 void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     void *restrict A_0,         // size n array
-    bool a0_is_32,              // if true: A_0 is uint32, false: uint64
+    bool A0_is_32,              // if true: A_0 is uint32, false: uint64
     void *restrict A_1,         // size n array
-    bool a1_is_32,              // if true: A_1 is uint32, false: uint64
+    bool A1_is_32,              // if true: A_1 is uint32, false: uint64
     const int64_t n
 ) ;
 
@@ -220,11 +221,11 @@ void GB_qsort_3_64_64_64 // sort A of size 3-by-n, A0: 64bit, A1: 64, A2: 64
 void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (
     void *restrict A_0,         // size n array
-    bool a0_is_32,              // if true: A_0 is uint32, false: uint64
+    bool A0_is_32,              // if true: A_0 is uint32, false: uint64
     void *restrict A_1,         // size n array
-    bool a1_is_32,              // if true: A_1 is uint32, false: uint64
+    bool A1_is_32,              // if true: A_1 is uint32, false: uint64
     void *restrict A_2,         // size n array
-    bool a2_is_32,              // if true: A_1 is uint32, false: uint64
+    bool A2_is_32,              // if true: A_1 is uint32, false: uint64
     const int64_t n
 ) ;
 
@@ -246,13 +247,16 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
     int nthreads_max            // max # of threads to use
 ) ;
 
-GrB_Info GB_msort_3    // sort array A of size 3-by-n, using 3 keys (A [0:2][])
+GrB_Info GB_msort_3     // sort array A of size 3-by-n
 (
-    uint64_t *restrict A_0,     // size n array
-    uint64_t *restrict A_1,     // size n array
-    uint64_t *restrict A_2,     // size n array
+    void *restrict A_0,         // size n array
+    bool A0_is_32,              // if true: A_0 is uint32, else uint64
+    void *restrict A_1,         // size n array
+    bool A1_is_32,              // if true: A_1 is uint32, else uint64
+    void *restrict A_2,         // size n array
+    bool A2_is_32,              // if true: A_2 is uint32, else uint64
     const int64_t n,
-    int nthreads                // # of threads to use
+    int nthreads_max            // max # of threads to use
 ) ;
 
 //------------------------------------------------------------------------------

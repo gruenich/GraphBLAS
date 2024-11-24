@@ -58,8 +58,8 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     // handle small problems with a single thread
     //--------------------------------------------------------------------------
 
-    int nthreads = GB_nthreads (n, GB_BASECASE, nthreads_max) ;
-    if (nthreads <= 1 || n <= GB_BASECASE)
+    int nthreads = GB_nthreads (n, GB_MSORT_BASECASE, nthreads_max) ;
+    if (nthreads <= 1 || n <= GB_MSORT_BASECASE)
     { 
         // sequential quicksort
         GB_qsort_1 (A_0, A0_is_32, n) ;

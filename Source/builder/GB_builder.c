@@ -170,7 +170,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                                     // keep the most recent duplicate.
     const GrB_Type stype,           // the type of S_work or S_input
     bool do_burble,                 // if true, then burble is allowed
-    GB_Werk Werk
+    GB_Werk Werk,
+    bool I_is_32,       // true if I (I_work or I_input) is 32 bit, false if 64
+    bool J_is_32        // true if J (J_work or J_input) is 32 bit, false if 64
 )
 {
 
@@ -594,7 +596,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
             else
             { 
-                info = GB_msort_3 (J_work, I_work, K_work, nvals, nthreads) ;
+                info = GB_msort_3 (J_work, false, I_work, false, K_work, false,
+                    nvals, nthreads) ;
             }
 
             #ifdef GB_DEBUG

@@ -18,6 +18,10 @@
 //  GB_SWAP(A,i,k)      swap A[i] and A[k]
 //  GB_LT               compare two entries, x < y, or x > y for descending sort
 
+#ifndef GB_SORT_BASECASE
+#define GB_SORT_BASECASE (64 * 1024)
+#endif
+
 //------------------------------------------------------------------------------
 // GB_SORT (partition): use a pivot to partition an array
 //------------------------------------------------------------------------------
@@ -149,7 +153,7 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
     else
     { 
         // partition A [0:n-1] into A [0:k-1] and A [k:n-1]
-        int64_t k = GB_SORT (partition) (A_0, A_1, n, seed
+        int64_t k = GB_SORT (partition) (A_0, /* FIXME: */ A_1, n, seed
             #if GB_SORT_UDT
             , csize, xsize, flt, fcast
             #endif
@@ -158,14 +162,14 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
         // sort each partition
 
         // sort A [0:k-1]
-        GB_SORT (quicksort) (A_0, A_1, k, seed
+        GB_SORT (quicksort) (A_0, /* FIXME: */ A_1, k, seed
             #if GB_SORT_UDT
             , csize, xsize, flt, fcast
             #endif
             ) ;
 
         // sort A [k:n-1]
-        GB_SORT (quicksort) (GB_ADDR (A_0, k), A_1 + k, n-k, seed
+        GB_SORT (quicksort) (GB_ADDR (A_0, k), /* FIXME: */ A_1 + k, n-k, seed
             #if GB_SORT_UDT
             , csize, xsize, flt, fcast
             #endif
@@ -504,7 +508,7 @@ static void GB_SORT (merge)
 static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
 (
     GB_C_TYPE *restrict A_0,    // size n array
-    int64_t   *restrict A_1,    // size n array
+    int64_t   *restrict A_1,    // size n array // FIXME
     GB_C_TYPE *restrict W_0,    // workspace of size n * GB_SIZE bytes
     int64_t   *restrict W,      // int64_t workspace of size n+6*ntasks+1
     const int64_t n,
@@ -524,7 +528,7 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
     // split up workspace 
     //--------------------------------------------------------------------------
 
-    ASSERT (nthreads > 2 && n >= GB_BASECASE) ;
+    ASSERT (nthreads > 2 && n >= GB_SORT_BASECASE) ;
     int64_t *T = W ;
     int64_t *restrict W_1    = T ; T += n ;
     int64_t *restrict L_task = T ; T += ntasks ;
@@ -699,8 +703,8 @@ static GrB_Info GB_SORT (matrix)
     int64_t cnvec = C->nvec ;
     GBp_DECL_GET (C, const) ;
     GBi_DECL_GET (C, const) ;
-    uint64_t *restrict Cp = C->p ;
-    int64_t *restrict Ci = C->i ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
+    int64_t *restrict Ci = C->i ;   // FIXME
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
     // workspace
@@ -757,10 +761,11 @@ static GrB_Info GB_SORT (matrix)
             const int64_t pC_start = Cp [k] ;
             const int64_t pC_end   = Cp [k+1] ;
             const int64_t cknz = pC_end - pC_start ;
-            if (cknz <= GB_BASECASE || nthreads == 1)
+            if (cknz <= GB_SORT_BASECASE || nthreads == 1)
             { 
                 uint64_t seed = k ;
-                GB_SORT (quicksort) (GB_ADDR (Cx, pC_start), Ci + pC_start,
+                GB_SORT (quicksort) (GB_ADDR (Cx, pC_start),
+                    Ci + pC_start,  // FIXME
                     cknz, &seed
                     #if GB_SORT_UDT
                     , csize, xsize, flt, fcast
@@ -784,7 +789,7 @@ static GrB_Info GB_SORT (matrix)
         max_length = GB_IMAX (max_length, C_max [tid]) ;
     }
 
-    if (max_length <= GB_BASECASE || nthreads == 1)
+    if (max_length <= GB_SORT_BASECASE || nthreads == 1)
     { 
         // all vectors are sorted
         GB_FREE_WORKSPACE ;
@@ -818,10 +823,10 @@ static GrB_Info GB_SORT (matrix)
         int64_t n_skipped = C_skip [tid] ;
         for (int64_t k = kfirst ; k < klast ; k++)
         {
-            const int64_t pC_start = Cp [k] ;
+            const int64_t pC_start = Cp [k] ;       // FIXME
             const int64_t pC_end   = Cp [k+1] ;
             const int64_t cknz = pC_end - pC_start ;
-            if (cknz > GB_BASECASE)
+            if (cknz > GB_SORT_BASECASE)
             { 
                 // C(:,k) was not sorted
                 C_skipped [n_skipped++] = k ;
@@ -868,11 +873,11 @@ static GrB_Info GB_SORT (matrix)
     for (int64_t t = 0 ; t < total_skipped ; t++)
     { 
         const int64_t k = C_skipped [t] ;
-        const int64_t pC_start = Cp [k] ;
-        const int64_t pC_end   = Cp [k+1] ;
+        const int64_t pC_start = Cp [k] ;       // FIXME
+        const int64_t pC_end   = Cp [k+1] ;     // FIXME
         const int64_t cknz = pC_end - pC_start ;
-        ASSERT (cknz > GB_BASECASE) ;
-        GB_SORT (vector) (GB_ADDR (Cx, pC_start), Ci + pC_start,
+        ASSERT (cknz > GB_SORT_BASECASE) ;
+        GB_SORT (vector) (GB_ADDR (Cx, pC_start), Ci + pC_start,    // FIXME
             W_0, W, cknz, kk, ntasks2, nthreads
             #if GB_SORT_UDT
             , csize, xsize, flt, fcast

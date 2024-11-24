@@ -295,7 +295,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     NULL,           // implicit SECOND operator for duplicates
                     type,           // type of the X array
                     true,           // burble is allowed
-                    Werk
+                    Werk,
+                    false, false
                 )) ;
             }
             break ;

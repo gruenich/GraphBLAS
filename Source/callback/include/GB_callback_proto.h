@@ -263,7 +263,7 @@ void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
 void GX_qsort_1    /* sort array A of size 1-by-n */                        \
 (                                                                           \
     void *restrict A_0,             /* size n array */                      \
-    bool is_32,                     /* if true: uint32_t, else uint64_t */  \
+    bool A0_is_32,                  /* if true: uint32_t, else uint64_t */  \
     const int64_t n                                                         \
 )
 

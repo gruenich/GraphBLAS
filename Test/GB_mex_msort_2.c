@@ -42,11 +42,11 @@ void mexFunction
     }
 
     bool J_is_32 ;
-    if (mxIsClass (pargin [0], "uint32"))
+    if (mxIsClass (pargin [1], "uint32"))
     { 
         J_is_32 = true ;
     }
-    else if (mxIsClass (pargin [0], "uint64"))
+    else if (mxIsClass (pargin [1], "uint64"))
     {
         J_is_32 = false ;
     }
