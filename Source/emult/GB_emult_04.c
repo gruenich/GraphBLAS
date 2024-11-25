@@ -132,7 +132,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_OK (GB_new (&C, // sparse or hyper (same as M), existing header
-        ctype, vlen, vdim, GB_Ap_calloc, C_is_csc,
+        ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
         C_sparsity, M->hyper_switch, nvec)) ;
     GBp_DECL_GET (C, ) ;
     uint64_t *restrict Cp = C->p ;

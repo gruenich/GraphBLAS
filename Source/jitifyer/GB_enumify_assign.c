@@ -132,7 +132,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     // construct the assign method_code,
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 48 (12 hex digits)
+    // total method_code bits: 48 (12 hex digits): 16 bits to sparse
 
     (*method_code) =
                                                // range        bits

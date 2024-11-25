@@ -57,7 +57,7 @@ GrB_Info GB_select_bitmap
     // C->b and C->x are malloc'd, not calloc'd
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // always bitmap, existing header
-        A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
+        A->type, A->vlen, A->vdim, GB_ph_calloc, true,
         GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso)) ;
     int64_t cnvals ;
 

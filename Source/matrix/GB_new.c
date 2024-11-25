@@ -10,7 +10,7 @@
 // Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
 // See GB_new_bix instead.
 
-// If the Ap_option is GB_Ap_calloc, the A->p and A->h are allocated and
+// If the Ap_option is GB_ph_calloc, the A->p and A->h are allocated and
 // initialized, and A->magic is set to GB_MAGIC to denote a valid matrix.
 // Otherwise, the matrix has not yet been completely initialized, and A->magic
 // is set to GB_MAGIC2 to denote this.  This case only occurs internally in
@@ -39,7 +39,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
+    const GB_ph_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const float hyper_switch,   // A->hyper_switch
@@ -177,7 +177,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     //--------------------------------------------------------------------------
 
     bool ok ;
-    if (A_is_full_or_bitmap || Ap_option == GB_Ap_null)
+    if (A_is_full_or_bitmap || Ap_option == GB_ph_null)
     { 
         // A is not initialized yet; A->p and A->h are both NULL.
         A->magic = GB_MAGIC2 ;
@@ -185,7 +185,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->h = NULL ;
         ok = true ;
     }
-    else if (Ap_option == GB_Ap_calloc)
+    else if (Ap_option == GB_ph_calloc)
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
@@ -199,7 +199,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
             ok = ok && (A->h != NULL) ;
         }
     }
-    else // Ap_option == GB_Ap_malloc
+    else // Ap_option == GB_ph_malloc
     {
         // This is faster but can only be used internally by GraphBLAS since
         // the matrix is allocated but not yet completely initialized.  The
@@ -236,7 +236,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // return result
     //--------------------------------------------------------------------------
 
-    // The vector pointers A->p are initialized only if Ap_calloc is true
+    // The vector pointers A->p are initialized only if Ap_option is
+    // GB_ph_calloc
     if (A->magic == GB_MAGIC)
     { 
         ASSERT_MATRIX_OK (A, "new matrix from GB_new", GB0) ;

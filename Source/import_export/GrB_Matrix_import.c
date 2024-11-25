@@ -267,7 +267,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 
                 // allocate the header for A
                 GB_OK (GB_new (A, // new header
-                    type, vlen, vdim, GB_Ap_null, is_csc, GxB_AUTO_SPARSITY,
+                    type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0)) ;
 
                 // build A from the input triplets
@@ -296,7 +296,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     type,           // type of the X array
                     true,           // burble is allowed
                     Werk,
-                    false, false
+                    false, false, false, false
                 )) ;
             }
             break ;

@@ -175,7 +175,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // allocate the result C (but do not allocate C->p or C->h)
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // bitmap, existing header
-        ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
+        ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso)) ;
 
     C->magic = GB_MAGIC ;

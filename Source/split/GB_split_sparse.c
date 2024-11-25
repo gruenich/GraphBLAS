@@ -143,7 +143,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             C = NULL ;
             GB_OK (GB_new (&C, // new header
-                atype, cvlen, cvdim, GB_Ap_malloc, csc, A_sparsity,
+                atype, cvlen, cvdim, GB_ph_malloc, csc, A_sparsity,
                 hyper_switch, cnvec)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;

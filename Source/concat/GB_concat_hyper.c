@@ -208,7 +208,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         ctype,                  // the type of Wx (no typecasting)
         true,                   // burble is allowed
         Werk,
-        false, false
+        false, false, false, false
     )) ;
 
     C->hyper_switch = hyper_switch ;

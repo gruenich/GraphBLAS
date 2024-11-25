@@ -428,7 +428,7 @@ GrB_Info GB_select_sparse
         int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         info = GB_new (&C, // sparse or hyper (from A), existing header
-            A->type, avlen, avdim, GB_Ap_null, true,
+            A->type, avlen, avdim, GB_ph_null, true,
             csparsity, A->hyper_switch, anvec) ;
         ASSERT (info == GrB_SUCCESS) ;
 

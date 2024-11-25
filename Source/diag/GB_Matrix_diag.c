@@ -98,7 +98,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
-        ctype, n, n, GB_Ap_malloc, csc, C_sparsity, false,
+        ctype, n, n, GB_ph_malloc, csc, C_sparsity, false,
         C->hyper_switch, vnz, vnz, true, C_iso)) ;
     C->sparsity_control = sparsity_control ;
     C->bitmap_switch = bitmap_switch ;

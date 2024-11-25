@@ -144,7 +144,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // allocate the result C (but do not allocate C->p or C->h)
     // set C->iso = C_iso   OK
     GrB_Info info = GB_new_bix (&C, // sparse/hyper, existing header
-        ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
+        ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso) ;
     if (info != GrB_SUCCESS)
     { 

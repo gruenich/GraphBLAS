@@ -293,7 +293,7 @@ GrB_Info GB_build               // build matrix
         xtype,          // type of the X array
         true,           // burble is OK
         Werk,
-        false, false
+        false, false, false, false
     )) ;
 
     //--------------------------------------------------------------------------

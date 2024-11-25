@@ -44,21 +44,25 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             {
                 case GB_INT32_code :
                 case GB_UINT32_code : 
-                    GB_memcpy (dest, src, n, nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (int32_t), nthreads) ;
                     break ;
+
                 case GB_INT64_code :
                 {
-                    int32_t *Dest = (int32_t *) dest ;
-                    int64_t *Src  = (int64_t *) src ;
+                    int32_t *restrict Dest = (int32_t *) dest ;
+                    const int64_t *restrict Src = (int64_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;
+
                 case GB_UINT64_code :
                 {
-                    int32_t *Dest = (int32_t *) dest ;
-                    int64_t *Src  = (uint64_t *) src ;
+                    int32_t *restrict Dest = (int32_t *) dest ;
+                    const int64_t *restrict Src = (uint64_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
+                break ;
+
                 default: ;
             }
             break ;
@@ -73,22 +77,25 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             {
                 case GB_INT32_code :
                 case GB_UINT32_code : 
-                    GB_memcpy (dest, src, n, nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (int32_t), nthreads) ;
                     break ;
+
                 case GB_INT64_code :
                 {
-                    uint32_t *Dest = (uint32_t *) dest ;
-                    int64_t  *Src  = (int64_t  *) src ;
+                    uint32_t *restrict Dest = (uint32_t *) dest ;
+                    const int64_t *restrict Src = (int64_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;
+
                 case GB_UINT64_code :
                 {
-                    uint32_t *Dest = (uint32_t *) dest ;
-                    int64_t *Src  = (uint64_t *) src ;
+                    uint32_t *restrict Dest = (uint32_t *) dest ;
+                    const int64_t *restrict Src = (uint64_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;
+
                 default: ;
             }
             break ;
@@ -102,25 +109,26 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             switch (src_code)
             {
                 case GB_INT32_code :
-
                 {
-                    int64_t *Dest = (int64_t *) dest ;
-                    int32_t *Src  = (int32_t *) src ;
+                    int64_t *restrict Dest = (int64_t *) dest ;
+                    const int32_t *restrict Src = (int32_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;
 
                 case GB_UINT32_code : 
                 {
-                    int64_t  *Dest = (int64_t  *) dest ;
-                    uint32_t *Src  = (uint32_t *) src ;
+                    int64_t *restrict Dest = (int64_t *) dest ;
+                    const uint32_t *restrict Src = (uint32_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
+                break ;
 
                 case GB_INT64_code :
                 case GB_UINT64_code :
-                    GB_memcpy (dest, src, n, nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (int64_t), nthreads) ;
                     break ;
+
                 default: ;
             }
             break ;
@@ -134,25 +142,26 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             switch (src_code)
             {
                 case GB_INT32_code :
-
                 {
-                    uint64_t *Dest = (uint64_t *) dest ;
-                    int32_t  *Src  = (int32_t  *) src ;
+                    uint64_t *restrict Dest = (uint64_t *) dest ;
+                    const int32_t *restrict Src = (int32_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;
 
                 case GB_UINT32_code : 
                 {
-                    uint64_t *Dest = (uint64_t *) dest ;
-                    uint32_t *Src  = (uint32_t *) src ;
+                    uint64_t *restrict Dest = (uint64_t *) dest ;
+                    const uint32_t *restrict Src = (uint32_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
+                break ;
 
                 case GB_INT64_code :
                 case GB_UINT64_code :
-                    GB_memcpy (dest, src, n, nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (int64_t), nthreads) ;
                     break ;
+
                 default: ;
             }
             break ;

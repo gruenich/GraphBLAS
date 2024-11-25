@@ -122,7 +122,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     int sparsity_control = V->sparsity_control ;
 
     GB_OK (GB_new (&V, // existing header
-        vtype, n, 1, GB_Ap_malloc, true, GxB_SPARSE,
+        vtype, n, 1, GB_ph_malloc, true, GxB_SPARSE,
         GxB_NEVER_HYPER, 1)) ;
 
     V->sparsity_control = sparsity_control ;

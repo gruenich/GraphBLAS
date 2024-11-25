@@ -149,7 +149,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // allocate the result R (but do not allocate R->p or R->h)
     // set R->iso = R_iso   OK
     GrB_Info info = GB_new_bix (&R, // any sparsity, existing header
-        C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
+        C->type, C->vlen, C->vdim, GB_ph_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso) ;
     if (info != GrB_SUCCESS)
     { 

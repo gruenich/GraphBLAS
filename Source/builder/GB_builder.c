@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG /* HACK FIXME */
+
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
@@ -160,7 +162,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool do_burble,                 // if true, then burble is allowed
     GB_Werk Werk,
     bool I_is_32,       // true if I (I_work or I_input) is 32 bit, false if 64
-    bool J_is_32        // true if J (J_work or J_input) is 32 bit, false if 64
+    bool J_is_32,       // true if J (J_work or J_input) is 32 bit, false if 64
+    bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
+    bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
 )
 {
 
@@ -226,7 +230,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     uint32_t *restrict K_work32 = NULL ;
     uint64_t *restrict K_work64 = NULL ;
 
-    bool Ti_is_32 = false ; // FIXME: GB_MAX (vlen, vdim) < (1 << 30) ;
+    if (Ti_is_32 && GB_IMAX (vlen, vdim) > (1U << 30))
+    { 
+        // Ti is requested too small
+        return (GrB_INVALID_VALUE) ;
+    }
 
     // duplicate indices are flagged using an out-of-range index, after
     // any out-of-range indices on input have been checked.
@@ -319,7 +327,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         ASSERT (J_work == NULL) ;
 
-        // FIXME: choose I_work based on max(vlen,vdim) and Ti_is_32
+        // Revise I_is_32 for I_work.  This has no effect on I_input32 and
+        // I_input64 since they are already assigned with the original value
+        // of I_is_32.
+        I_is_32 = GB_IMAX (vlen, vdim) < UINT32_MAX ;
+
         I_work = GB_malloc_memory (nvals,
             I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),
             I_work_size_handle) ;
@@ -860,7 +872,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t tnz = tnz_slice [nthreads] ;
     int64_t ndupl = nvals - tnz ;
 
-    bool Tp_is_32 = false ; // FIXME: (tnz < UINT32_MAX) ;
+    if (Tp_is_32 && tnz >= UINT32_MAX)
+    { 
+        // Tp is requested too small
+        GB_FREE_WORKSPACE ;
+        return (GrB_INVALID_VALUE) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse
@@ -870,7 +887,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // T is always hypersparse.  The header T always exists on input, as
     // either a static or dynamic header.
     info = GB_new (&T, // always hyper, existing header
-        ttype, vlen, vdim, GB_Ap_malloc, is_csc,
+        ttype, vlen, vdim, GB_ph_malloc, is_csc,
         GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec) ;
     if (info != GrB_SUCCESS)
     { 
@@ -907,8 +924,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     uint32_t *restrict Tp32 = (Tp_is_32) ? T->p : NULL ;
     uint64_t *restrict Tp64 = (Tp_is_32) ? NULL : T->p ;
-    int32_t  *restrict Th32 = (Ti_is_32) ? T->h : NULL ;
-    int64_t  *restrict Th64 = (Ti_is_32) ? NULL : T->h ;
+    uint32_t *restrict Th32 = (Ti_is_32) ? T->h : NULL ;
+    uint64_t *restrict Th64 = (Ti_is_32) ? NULL : T->h ;
 
     if (vdim <= 1)
     {

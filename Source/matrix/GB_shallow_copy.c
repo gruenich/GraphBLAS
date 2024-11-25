@@ -54,7 +54,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // C has the exact same sparsity structure as A.
     GrB_Info info ;
     info = GB_new (&C, // sparse or hyper, existing header
-        A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
+        A->type, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0) ;
     ASSERT (info == GrB_SUCCESS) ;
 

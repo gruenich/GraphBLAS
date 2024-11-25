@@ -81,7 +81,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
     // set C->iso = C_iso       OK
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, existing header
-        ctype, nI, nJ, GB_Ap_null, C_is_csc,
+        ctype, nI, nJ, GB_ph_null, C_is_csc,
         sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso) ;
     if (info != GrB_SUCCESS)
     { 

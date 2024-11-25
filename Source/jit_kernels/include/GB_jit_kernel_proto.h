@@ -228,7 +228,6 @@ GrB_Info GB_jit_kernel_build                                            \
     void *restrict Ti_void,                                             \
     const GB_void *restrict Sx_void,                                    \
     const int64_t nvals,                                                \
-    const int64_t ndupl,                                                \
     const void *restrict I_work_void,                                   \
     const void *restrict K_work_void,                                   \
     const int64_t duplicate_entry_input,                                \

@@ -129,7 +129,7 @@ void mexFunction
     CHECK (code == UINT64_MAX) ;
 
     code = GB_encodify_build (&e, &suffix, 0, mult, GrB_FP32, GrB_FP32,
-        true, true, true, true) ;
+        true, true, true, true, false) ;
     CHECK (code == UINT64_MAX) ;
 
     //--------------------------------------------------------------------------

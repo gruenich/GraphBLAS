@@ -244,7 +244,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cnvec = bnvec ;
 
     info = GB_new (&C, // sparse or hyper, existing header
-        ctype, cvlen, cvdim, GB_Ap_malloc, true,
+        ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, B->hyper_switch, cnvec) ;
     if (info != GrB_SUCCESS)
     { 

@@ -71,7 +71,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     GB_phybix_free (C) ;
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
-        ctype, cvlen, cvdim, GB_Ap_malloc, csc, GxB_SPARSE, false,
+        ctype, cvlen, cvdim, GB_ph_malloc, csc, GxB_SPARSE, false,
         hyper_switch, cvdim, cnz, true, C_iso)) ;
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
@@ -124,7 +124,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             {
                 // T = (ctype) A', not in-place, using a dynamic header
                 GB_OK (GB_new (&T, // auto sparsity, new header
-                    A->type, A->vdim, A->vlen, GB_Ap_null, csc,
+                    A->type, A->vdim, A->vlen, GB_ph_null, csc,
                     GxB_AUTO_SPARSITY, -1, 1)) ;
                 // save T in array S
                 if (csc)

@@ -113,7 +113,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             (*mask_applied) = false ;
             // set C->iso = true    OK
             info = GB_new_bix (&C, // existing header
-                ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
+                ztype, A->vdim, B->vdim, GB_ph_null, true, GxB_FULL, false,
                 GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true) ;
             if (info == GrB_SUCCESS)
             { 
@@ -156,7 +156,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         GBURBLE ("(empty dot) ") ;
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, // auto sparsity, existing header
-            ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
+            ztype, A->vdim, B->vdim, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
             GB_Global_hyper_switch_get ( ), 1)) ;
     }
 

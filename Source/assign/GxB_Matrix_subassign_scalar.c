@@ -192,7 +192,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
         int64_t vlen = is_csc ? nRows : nCols ;
         int64_t vdim = is_csc ? nCols : nRows ;
         GB_OK (GB_new (&S, // existing header
-            scalar->type, vlen, vdim, GB_Ap_calloc, is_csc, GxB_AUTO_SPARSITY,
+            scalar->type, vlen, vdim, GB_ph_calloc, is_csc, GxB_AUTO_SPARSITY,
             GB_HYPER_SWITCH_DEFAULT, 1)) ;
         info = GB_subassign (
             C, C_replace,                   // C matrix and its descriptor

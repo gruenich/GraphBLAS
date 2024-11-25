@@ -36,7 +36,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const GrB_Type type,        // type of output matrix
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
+    const GB_ph_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc

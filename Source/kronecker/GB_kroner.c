@@ -170,7 +170,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
-        ctype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
+        ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
         C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso)) ;
 
     //--------------------------------------------------------------------------

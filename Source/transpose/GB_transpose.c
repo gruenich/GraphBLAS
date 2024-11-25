@@ -250,7 +250,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // create a new empty matrix T, with the new type and dimensions.
         // set T->iso = false   OK
         GB_OK (GB_new_bix (&T, // hyper, existing header
-            ctype, avdim, avlen, GB_Ap_calloc, C_is_csc, GxB_HYPERSPARSE,
+            ctype, avdim, avlen, GB_ph_calloc, C_is_csc, GxB_HYPERSPARSE,
             true, A_hyper_switch, 1, 1, true, false)) ;
 
     }
@@ -278,7 +278,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // just initialize the static header of T, not T->b or T->x
             GBURBLE ("(cheap transpose) ") ;
             info = GB_new (&T, // bitmap or full, existing header
-                ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+                ctype, avdim, avlen, GB_ph_null, C_is_csc,
                 T_sparsity, A_hyper_switch, 1) ;
             ASSERT (info == GrB_SUCCESS) ;
         }
@@ -287,7 +287,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // allocate all of T, including T->b and T->x
             // set T->iso = C_iso   OK
             GB_OK (GB_new_bix (&T, // bitmap or full, existing header
-                ctype, avdim, avlen, GB_Ap_null, C_is_csc, T_sparsity, true,
+                ctype, avdim, avlen, GB_ph_null, C_is_csc, T_sparsity, true,
                 A_hyper_switch, 1, anz_held, true, C_iso)) ;
         }
 
@@ -362,7 +362,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // type and dimension of T.  T is hypersparse.
 
         info = GB_new (&T, // hyper; existing header
-            ctype, 1, avlen, GB_Ap_null, C_is_csc,
+            ctype, 1, avlen, GB_ph_null, C_is_csc,
             GxB_HYPERSPARSE, A_hyper_switch, 0) ;
         ASSERT (info == GrB_SUCCESS) ;
 
@@ -496,7 +496,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // Allocate the header of T, with no content
         // and initialize the type and dimension of T.
         info = GB_new (&T, // sparse; existing header
-            ctype, avdim, 1, GB_Ap_null, C_is_csc,
+            ctype, avdim, 1, GB_ph_null, C_is_csc,
             GxB_SPARSE, A_hyper_switch, 0) ;
         ASSERT (info == GrB_SUCCESS) ;
 
@@ -744,7 +744,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // and initialize the type and dimension of T.
 
             info = GB_new (&T, // hyper, existing header
-                ctype, avdim, avlen, GB_Ap_null, C_is_csc,
+                ctype, avdim, avlen, GB_ph_null, C_is_csc,
                 GxB_HYPERSPARSE, A_hyper_switch, 0) ;
             ASSERT (info == GrB_SUCCESS) ;
 
@@ -871,7 +871,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 stype,      // type of S_input or Swork
                 false,      // no burble (already burbled above)
                 Werk,
-                false, false
+                false, false, false, false
             )) ;
 
             // GB_builder always frees jwork, and either frees iwork or

@@ -181,7 +181,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
         struct GB_Matrix_opaque S_header ;
         GB_CLEAR_STATIC_HEADER (S, &S_header) ;
         GB_OK (GB_new (&S,  // existing header
-            scalar->type, nRows, 1, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
+            scalar->type, nRows, 1, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
             GB_HYPER_SWITCH_DEFAULT, 1)) ;
         info = GB_assign (
             (GrB_Matrix) w, C_replace,      // w vector and its descriptor

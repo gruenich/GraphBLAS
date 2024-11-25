@@ -195,7 +195,7 @@ GrB_Info GB_wait                // finish all pending computations
             stype,                  // type of Pending->x
             true,                   // burble is allowed
             Werk,
-            false, false
+            false, false, false, false
         ) ;
 
         //----------------------------------------------------------------------
@@ -415,7 +415,7 @@ GrB_Info GB_wait                // finish all pending computations
             // W = [0, A (:, kA:end)], hypersparse with same dimensions as A
             GB_CLEAR_STATIC_HEADER (W, &W_header) ;
             GB_OK (GB_new (&W, // hyper, existing header
-                A->type, A->vlen, A->vdim, GB_Ap_malloc, A->is_csc,
+                A->type, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
                 GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA)) ;
 
             // the W->i and W->x content are shallow copies of A(:,kA:end).

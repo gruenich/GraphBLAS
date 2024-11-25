@@ -41,13 +41,11 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     // encodify the problem
     //--------------------------------------------------------------------------
 
-    // FIXME: encode the ndupl==0 condition
-
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_build (&encoding, &suffix,
         GB_JIT_KERNEL_BUILD, dup, ttype, stype, Ti_is_32, I_is_32, K_is_32,
-        K_is_null) ;
+        K_is_null, ndupl == 0) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -65,7 +63,7 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Tx, Ti, Sx, nvals, ndupl, I_work, K_work,
+    return (GB_jit_kernel (Tx, Ti, Sx, nvals, I_work, K_work,
         duplicate_entry, tstart_slice, tnz_slice, nthreads)) ;
 }
 

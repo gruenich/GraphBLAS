@@ -32,7 +32,8 @@ void GB_macrofy_build           // construct all macros for GB_build
     int K_is_32   = GB_RSHIFT (method_code, 29, 1) ;
     int K_is_null = GB_RSHIFT (method_code, 28, 1) ;
 
-    // dup, z = f(x,y) (5.5 hex digits)
+    // dup, z = f(x,y) (6 hex digits)
+    int no_dupl   = GB_RSHIFT (method_code, 27, 1) ;
 //  int dup_code  = GB_RSHIFT (method_code, 20, 6) ;
 //  int zcode     = GB_RSHIFT (method_code, 16, 4) ;
     int xcode     = GB_RSHIFT (method_code, 12, 4) ;
@@ -229,6 +230,8 @@ void GB_macrofy_build           // construct all macros for GB_build
     fprintf (fp, "#define GB_I_TYPE  %s\n", I_is_32  ? "uint32_t":"uint64_t") ;
     fprintf (fp, "#define GB_K_TYPE  %s\n", K_is_32  ? "uint32_t":"uint64_t") ;
     fprintf (fp, "#define GB_K_WORK(k) %s\n", K_is_null ? "k" : "K_work [k]") ;
+    fprintf (fp, "#define GB_K_IS_NULL %d\n", K_is_null) ;
+    fprintf (fp, "#define GB_NO_DUPLICATES %d\n", no_dupl) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

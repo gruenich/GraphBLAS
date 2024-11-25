@@ -85,7 +85,7 @@ GrB_Info GB_ewise_fulln      // C = A+B
         GB_phybix_free (C) ;
         // set C->iso = false   OK
         GB_OK (GB_new_bix (&C,  // existing header
-            C->type, C->vlen, C->vdim, GB_Ap_null, C->is_csc, GxB_FULL, false,
+            C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc, GxB_FULL, false,
             C->hyper_switch, -1, GB_nnz_full (C), true, false)) ;
         C->magic = GB_MAGIC ;
     }

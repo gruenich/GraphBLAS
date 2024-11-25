@@ -1205,21 +1205,23 @@ uint64_t GB_encodify_build      // encode an build problem
     bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
     bool I_is_32,               // if true, I_work is uint32_t else uint64_t
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
-    bool K_is_null              // if true, K_work is NULL
+    bool K_is_null,             // if true, K_work is NULL
+    bool no_duplicates          // if true, no duplicates appear
 ) ;
 
-void GB_enumify_build       // enumerate a GB_build problem
+void GB_enumify_build           // enumerate a GB_build problem
 (
     // output:
-    uint64_t *method_code,  // unique encoding of the entire operation
+    uint64_t *method_code,      // unique encoding of the entire operation
     // input:
-    GrB_BinaryOp dup,       // operator for duplicates
-    GrB_Type ttype,         // type of Tx
-    GrB_Type stype,         // type of Sx
-    bool Ti_is_32,          // if true, Ti is uint32_t, else uint64_t
-    bool I_is_32,           // if true, I_work is uint32_t else uint64_t
-    bool K_is_32,           // if true, K_work is uint32_t else uint64_t
-    bool K_is_null          // if true, K_work is NULL
+    GrB_BinaryOp dup,           // operator for duplicates
+    GrB_Type ttype,             // type of Tx
+    GrB_Type stype,             // type of Sx
+    bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
+    bool I_is_32,               // if true, I_work is uint32_t else uint64_t
+    bool K_is_32,               // if true, K_work is uint32_t else uint64_t
+    bool K_is_null,             // if true, K_work is NULL
+    bool no_duplicates          // if true, no duplicates appear
 ) ;
 
 void GB_macrofy_build           // construct all macros for GB_build

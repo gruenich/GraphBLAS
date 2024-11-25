@@ -24,7 +24,8 @@ uint64_t GB_encodify_build      // encode an build problem
     bool Ti_is_32,              // if true, Ti is uint32_t, else uint64_t
     bool I_is_32,               // if true, I_work is uint32_t else uint64_t
     bool K_is_32,               // if true, K_work is uint32_t else uint64_t
-    bool K_is_null              // if true, K_work is NULL
+    bool K_is_null,             // if true, K_work is NULL
+    bool no_duplicates          // if true, no duplicates appear
 )
 { 
 
@@ -46,7 +47,7 @@ uint64_t GB_encodify_build      // encode an build problem
 
     encoding->kcode = kcode ;
     GB_enumify_build (&encoding->code, dup, ttype, stype,
-        Ti_is_32, I_is_32, K_is_32, K_is_null) ;
+        Ti_is_32, I_is_32, K_is_32, K_is_null, no_duplicates) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

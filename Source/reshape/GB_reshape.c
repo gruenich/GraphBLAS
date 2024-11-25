@@ -115,7 +115,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         { 
             // T = A'
             GB_OK (GB_new (&T,  // new header
-                type, A->vdim, A->vlen, GB_Ap_null, by_col, GxB_AUTO_SPARSITY,
+                type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
                 GB_Global_hyper_switch_get ( ), 0)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
@@ -234,7 +234,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
             // create the output matrix (just the header; no content)
             GB_OK (GB_new (&C, // new header
-                type, vlen_new, vdim_new, GB_Ap_null, T_is_csc,
+                type, vlen_new, vdim_new, GB_ph_null, T_is_csc,
                 GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0)) ;
             // allocate new space for the future C->i
             I_work = GB_MALLOC (nvals, int64_t, &I_work_size) ;
@@ -366,7 +366,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             type,           // type of S_work and S_input
             true,           // burble is allowed
             Werk,
-            false, false
+            false, false, false, false
         )) ;
 
         ASSERT (I_work == NULL) ;   // transplanted into C->i

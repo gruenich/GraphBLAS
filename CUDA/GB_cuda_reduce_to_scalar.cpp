@@ -104,7 +104,7 @@ GrB_Info GB_cuda_reduce_to_scalar
         // allocate a full GrB_Matrix V for the partial result, of size
         // gridsz-by-1, and of type ztype.  V is allocated but not
         // initialized.
-        GB_OK (GB_new_bix (&V, ztype, gridsz, 1, GB_Ap_null,
+        GB_OK (GB_new_bix (&V, ztype, gridsz, 1, GB_ph_null,
             true, GxB_FULL, false, 0, -1, gridsz, true, false)) ;
     }
 

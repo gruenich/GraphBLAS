@@ -66,7 +66,7 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     int64_t hash_bits = (yvdim - 1) ;   // yvdim is always a power of 2
 
     GB_OK (GB_new (&(A->Y), // new dynamic header, do not allocate any content
-        GrB_UINT64, yvlen, yvdim, GB_Ap_null, true, GxB_SPARSE, -1, 0)) ;
+        GrB_UINT64, yvlen, yvdim, GB_ph_null, true, GxB_SPARSE, -1, 0)) ;
     GrB_Matrix Y = A->Y ;
 
     //--------------------------------------------------------------------------
@@ -125,7 +125,9 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         GrB_UINT64,             // the type of X_work
         false,                  // no burble (already burbled above)
         Werk,
-        false, false
+        false, false,
+        A->i_is_32, A->i_is_32  // integer size of A->Y->[pix] determined by
+                                // A->i_is_32
     )) ;
 
     Y->hyper_switch = -1 ;              // never make Y hypersparse

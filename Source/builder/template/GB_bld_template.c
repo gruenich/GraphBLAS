@@ -21,7 +21,15 @@
     // k unused for some uses of this template
     #include "include/GB_unused.h"
 
-    if (ndupl == 0)
+    #ifndef GB_NO_DUPLICATES
+    #define GB_NO_DUPLICATES (ndupl == 0)
+    #endif
+
+    #ifndef GB_K_IS_NULL
+    #define GB_K_IS_NULL (K_work == NULL)
+    #endif
+
+    if (GB_NO_DUPLICATES)
     {
 
         //----------------------------------------------------------------------
@@ -35,7 +43,7 @@
 
         #ifndef GB_ISO_BUILD
 
-            if (K_work == NULL)
+            if (GB_K_IS_NULL)
             {
 
                 int tid ;

@@ -82,7 +82,7 @@ GrB_Info GB_select_value_iso
     { 
         // C is an empty matrix
         return (GB_new (&C, // existing header
-            A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
+            A->type, A->vlen, A->vdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1)) ;
     }
     else

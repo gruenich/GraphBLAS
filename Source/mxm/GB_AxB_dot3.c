@@ -180,7 +180,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // C is sparse or hypersparse, not full or bitmap
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // sparse or hyper (from M), existing header
-        ctype, cvlen, cvdim, GB_Ap_malloc, true,
+        ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, C_iso)) ;
