@@ -20,7 +20,7 @@
 
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
 //  GB_SIZE             size of each entry: sizeof (GB_C_TYPE) for built-in
-//  GB_GET(x,X,i)       x = (op->xtype) X [i]
+//  GB_GETX(x,X,i)      x = (op->xtype) X [i]
 //  GB_COPY(A,i,C,k)    A [i] = C [k]
 //  GB_SWAP(A,i,k)      swap A [i] and A [k]
 //  GB_LT               compare two entries, x < y
@@ -31,7 +31,7 @@
 
 #define GB_SORT_UDT         0
 #define GB_ADDR(A,i)        ((A) + (i))
-#define GB_GET(x,A,i)       GB_C_TYPE x = A [i]
+#define GB_GETX(x,A,i)      GB_C_TYPE x = A [i]
 #define GB_COPY(A,i,B,j)    A [i] = B [j]
 #define GB_SIZE             sizeof (GB_C_TYPE)
 #define GB_SWAP(A,i,j)      \
@@ -149,14 +149,14 @@
 //------------------------------------------------------------------------------
 
 #undef  GB_ADDR
-#undef  GB_GET
+#undef  GB_GETX
 #undef  GB_COPY
 #undef  GB_SIZE
 #undef  GB_SWAP
 #undef  GB_LT
 
 #define GB_ADDR(A,i)        ((A) + (i) * csize)
-#define GB_GET(x,A,i)       GB_void x [GB_VLA(xsize)] ;                     \
+#define GB_GETX(x,A,i)      GB_void x [GB_VLA(xsize)] ;                     \
                             fcast (x, GB_ADDR (A, i), csize)
 #define GB_COPY(A,i,B,j)    memcpy (GB_ADDR (A, i), GB_ADDR (B, j), csize)
 #define GB_SIZE             csize

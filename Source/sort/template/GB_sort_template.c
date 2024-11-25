@@ -13,7 +13,7 @@
 //  GB_C_TYPE           bool, int8_, ... or GB_void for UDT or ISO
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
 //  GB_SIZE             size of each entry: sizeof (GB_C_TYPE) for built-in
-//  GB_GET(x,X,i)       x = X [i] for built-in, memcpy for UDT
+//  GB_GETX(x,X,i)      x = X [i] for built-in, memcpy for UDT
 //  GB_COPY(A,i,C,k)    A[i] = C [k]
 //  GB_SWAP(A,i,k)      swap A[i] and A[k]
 //  GB_LT               compare two entries, x < y, or x > y for descending sort
@@ -49,7 +49,7 @@ static inline int64_t GB_SORT (partition)
     uint64_t pivot = GB_rand (seed) % ((uint64_t) n) ;
 
     // Pivot = A [pivot]
-    GB_GET (Pivot0, A_0, pivot) ;       // Pivot0 = A_0 [pivot]
+    GB_GETX (Pivot0, A_0, pivot) ;       // Pivot0 = A_0 [pivot]
     int64_t Pivot1 = A_1 [pivot] ;
 
     // At the top of the while loop, A [left+1...right-1] is considered, and
@@ -71,7 +71,7 @@ static inline int64_t GB_SORT (partition)
         { 
             left++ ;
             // a0 = A_0 [left]
-            GB_GET (a0, A_0, left) ;
+            GB_GETX (a0, A_0, left) ;
             // less =   (a0, A_1 [left]) < (Pivot0, Pivot1)
             GB_LT (less, a0, A_1 [left],    Pivot0, Pivot1) ;
         }
@@ -82,7 +82,7 @@ static inline int64_t GB_SORT (partition)
         { 
             right-- ;
             // a0 = A_0 [right]
-            GB_GET (a1, A_0, right) ;
+            GB_GETX (a1, A_0, right) ;
             // less =   (Pivot0, Pivot1) < (a1, A_1 [right])
             GB_LT (less, Pivot0, Pivot1,    a1, A_1 [right]) ;
         }
@@ -136,9 +136,9 @@ static void GB_SORT (quicksort)    // sort A [0:n-1]
             for (int64_t j = k ; j > 0 ; j--)
             { 
                 // a0 = A_0 [j]
-                GB_GET (a0, A_0, j) ;
+                GB_GETX (a0, A_0, j) ;
                 // a1 = A_0 [j-1]
-                GB_GET (a1, A_0, j-1) ;
+                GB_GETX (a1, A_0, j-1) ;
                 // break if A [j] >= A [j-1]
                 bool less ;
                 // less =   (a0, A_1 [j]) < (a1, A_1 [j-1])
@@ -219,14 +219,14 @@ static int64_t GB_SORT (binary_search)  // return pleft
     // binary search of X [p_start...p_end-1] for the Pivot
     int64_t pleft = p_start ;
     int64_t pright = p_end - 1 ;
-    GB_GET (Pivot0, Z_0, pivot) ;       // Pivot0 = Z_0 [pivot]
+    GB_GETX (Pivot0, Z_0, pivot) ;       // Pivot0 = Z_0 [pivot]
     int64_t Pivot1 = Z_1 [pivot] ;
     bool less ;
     while (pleft < pright)
     { 
         int64_t pmiddle = (pleft + pright) >> 1 ;
         // x0 = X_0 [pmiddle]
-        GB_GET (x0, X_0, pmiddle) ;
+        GB_GETX (x0, X_0, pmiddle) ;
         // less =   (x0, X_1 [pmiddle]) < (Pivot0, Pivot1)
         GB_LT (less, x0, X_1 [pmiddle],    Pivot0, Pivot1) ;
         pleft  = less ? (pmiddle+1) : pleft ;
@@ -249,7 +249,7 @@ static int64_t GB_SORT (binary_search)  // return pleft
     if (!found && (pleft == pright))
     {
         // x0 = X_0 [pleft]
-        GB_GET (x0, X_0, pleft) ;
+        GB_GETX (x0, X_0, pleft) ;
         // less =   (x0, X_1 [pleft]) < (Pivot0, Pivot1)
         GB_LT (less, x0, X_1 [pleft],    Pivot0, Pivot1) ;
         if (less)
@@ -464,9 +464,9 @@ static void GB_SORT (merge)
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
     {
         // left0 = L_0 [pleft]
-        GB_GET (left0, L_0, pleft) ;
+        GB_GETX (left0, L_0, pleft) ;
         // right0 = R_0 [pright]
-        GB_GET (right0, R_0, pright) ;
+        GB_GETX (right0, R_0, pright) ;
         bool less ;
         // less =   (left0, L_1 [pleft]) < (right0, R_1 [pright])
         GB_LT (less, left0, L_1 [pleft],    right0, R_1 [pright]) ;

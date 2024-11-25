@@ -134,10 +134,10 @@ void mexFunction
     OK (GxB_pack_HyperHash (A, &Y, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A hypersparse (pack did nothing)", 3, NULL)) ;
 
-    int64_t *Yi = A->Y->i ;
-    Yi [0] = 99 ;
+    int64_t *A_Yi = A->Y->i ;   // FIXME: make generic
+    A_Yi [0] = 99 ;
     ERR (GxB_Matrix_fprint (A, "A->Y invalid (not found) ", 3, NULL)) ;
-    Yi [0] = 0 ;
+    A_Yi [0] = 0 ;
 
     int64_t *Yx = A->Y->x ;
     Yx [0] = 99 ;

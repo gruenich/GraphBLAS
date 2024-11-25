@@ -35,72 +35,8 @@
     #include "callback/GB_callbacks.h"
 #endif
 
-// these macros are redefined by the JIT kernels to specialize them for each
-// specific matrix format.
-
-// accessing an integer array
-#undef  GB_IGET
-#define GB_IGET(I,k)   I [k]
-
-#undef  GB_ISET
-#define GB_ISET(I,k,i) I [k] = i
-
-// accessing the C matrix
-#undef GBP_C
-#undef GBH_C
-#undef GBI_C
-#undef GBB_C
-#undef GB_C_NVALS
-#undef GB_C_NHELD
-
-// accessing the A matrix
-#undef GBP_A
-#undef GBH_A
-#undef GBI_A
-#undef GBB_A
-#undef GB_A_NVALS
-#undef GB_A_NHELD
-
-// accessing the B matrix
-#undef GBP_B
-#undef GBH_B
-#undef GBI_B
-#undef GBB_B
-#undef GB_B_NVALS
-#undef GB_B_NHELD
-
-// accessing the M matrix
-#undef GBP_M
-#undef GBH_M
-#undef GBI_M
-#undef GBB_M
-#undef GB_M_NVALS
-#undef GB_M_NHELD
-
 #undef GB_M_TYPE
 #undef GB_MCAST
-
-// accessing the S matrix for assign methods
-#undef GBP_S
-#undef GBH_S
-#undef GBI_S
-#undef GBB_S
-
-// accessing the Z matrix for masker methods
-#undef GBP_Z
-#undef GBH_Z
-#undef GBI_Z
-#undef GBB_Z
-#undef GB_Z_NVALS
-#undef GB_Z_NHELD
-
-// accessing the R matrix for masker methods
-#undef GBP_R
-#undef GBH_R
-#undef GBI_R
-#undef GBB_R
-#undef GB_R_NVALS
-#undef GB_R_NHELD
 
 #endif
 

@@ -17,7 +17,7 @@ void GB_macrofy_input
     FILE *fp,
     // input:
     const char *aname,      // name of the scalar aij = ...
-    const char *Amacro,     // name of the macro is GB_GET*(Amacro)
+    const char *Amacro,     // name of the macro is GB_GETA, if Amacro is 'A'
     const char *Aname,      // name of the input matrix (typically A or B)
     bool do_matrix_macros,  // if true, do the matrix macros
     GrB_Type a2type,        // type of aij after casting to x or y of f(x,y)
