@@ -98,10 +98,7 @@
             { 
                 // get the tuple and break if it is not a duplicate
                 int64_t i = GB_IGET (I_work, t) ;
-                if (GB_IGET (I_work, t) >= 0)       // FIXME: use uint_max
-                {
-                    break ;
-                }
+                if (i != duplicate_entry) break ;
             }
 
             // scan all tuples and assemble any duplicates
@@ -109,9 +106,8 @@
             {
                 // get the t-th tuple, a unique tuple
                 int64_t i = GB_IGET (I_work, t) ;
-                ASSERT (i >= 0) ;
+                ASSERT (i != duplicate_entry) ;
                 #ifndef GB_ISO_BUILD
-//              int64_t k = (K_work) ? GB_IGET (K_work, t) : t ;
                 int64_t k = GB_K_WORK (t) ;
                 // Tx [my_tnz] = (ttype) Sx [k] ;
                 GB_BLD_COPY (Tx, my_tnz, Sx, k) ;
@@ -121,11 +117,11 @@
                 // assemble all duplicates that follow it.  This may assemble
                 // the first duplicates in the next slice(s) (up to but not
                 // including the first unique tuple in the subsequent slice(s)).
-                for ( ; t+1 < nvals && GB_IGET (I_work, t+1) < 0 ; t++)
+                for ( ; t+1 < nvals &&
+                    GB_IGET (I_work, t+1) == duplicate_entry ; t++)
                 { 
                     // assemble the duplicate tuple
                     #ifndef GB_ISO_BUILD
-//                  int64_t k = (K_work) ? GB_IGET (K_work, t+1) : (t+1) ;
                     int64_t k = GB_K_WORK (t+1) ;
                     // Tx [my_tnz] += Sx [k], typecasting as needed
                     GB_BLD_DUP (Tx, my_tnz, Sx, k) ;

@@ -12,6 +12,7 @@ GrB_Info GB (_bld)
     bool I_is_32,
     const void *restrict K_work,
     bool K_is_32,
+    const int64_t duplicate_entry,
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads

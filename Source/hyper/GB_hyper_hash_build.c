@@ -107,9 +107,9 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         yvlen,                  // Y->vlen
         yvdim,                  // Y->vdim
         true,                   // Y->is_csc
-        (int64_t **) &I_work,   // row indices
+        &I_work,                // row indices
         &I_work_size,
-        (int64_t **) &J_work,   // column indices
+        &J_work,                // column indices
         &J_work_size,
         (GB_void **) &X_work,   // values
         &X_work_size,

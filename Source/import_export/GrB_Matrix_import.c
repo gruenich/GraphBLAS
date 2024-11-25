@@ -287,8 +287,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     false,          // known_no_duplicates: not yet known
                     0,              // I_work, J_work, and X_work not used here
                     true,           // A is a GrB_Matrix
-                    (int64_t *) (is_csc ? Ap : Ai),     // row/col indices
-                    (int64_t *) (is_csc ? Ai : Ap),     // col/row indices
+                    is_csc ? Ap : Ai,     // row/col indices
+                    is_csc ? Ai : Ap,     // col/row indices
                     (const GB_void *) Ax,               // values
                     false,          // matrix is not iso
                     nvals,          // number of tuples

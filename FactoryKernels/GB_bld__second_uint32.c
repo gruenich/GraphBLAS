@@ -56,6 +56,7 @@ GrB_Info GB (_bld__second_uint32)
     bool I_is_32,
     const void *restrict K_work,
     bool K_is_32,
+    const int64_t duplicate_entry,
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads
@@ -64,8 +65,8 @@ GrB_Info GB (_bld__second_uint32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    const int32_t *restrict I_work32 = (I_is_32) ? I_work : NULL ;
-    const int64_t *restrict I_work64 = (I_is_32) ? NULL : I_work ;
+    const uint32_t *restrict I_work32 = (I_is_32) ? I_work : NULL ;
+    const uint64_t *restrict I_work64 = (I_is_32) ? NULL : I_work ;
     const uint32_t *restrict K_work32 = (K_is_32) ? K_work : NULL ;
     const uint64_t *restrict K_work64 = (K_is_32) ? NULL : K_work ;
     int32_t *restrict Ti32 = (Ti_is_32) ? Ti : NULL ;

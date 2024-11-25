@@ -327,9 +327,18 @@
 
 typedef uint64_t GrB_Index ;
 
+// GxB_Index32: row or column index, or matrix dimension, for 32-bit integer
+// indices.
+typedef uint32_t GxB_Index32 ;
+
 // GrB_INDEX_MAX is the largest permissible index value.  The largest valid
 // matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in SuiteSparse:GrB.
 #define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
+
+// GxB_INDEX32_MAX is the largest permissible index value when using
+// 32-bit row/column indices.  The largest valid matrix dimension is
+// GxB_INDEX32_MAX+1, or 2^30, when using 32-bit row/column indices.
+#define GxB_INDEX32_MAX ((GxB_Index32) (1U << 30) - 1)
 
 //==============================================================================
 // GraphBLAS error and informational codes

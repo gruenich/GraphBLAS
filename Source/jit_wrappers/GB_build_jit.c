@@ -30,6 +30,7 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     const void *restrict K_work,
     bool K_is_32,                   // if true, K_work is uint32_t else uint64_t
     bool K_is_null,                 // if true, K_work is NULL
+    const int64_t duplicate_entry,  // row index of duplicate entries
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads
@@ -65,6 +66,6 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Tx, Ti, Sx, nvals, ndupl, I_work, K_work,
-        tstart_slice, tnz_slice, nthreads)) ;
+        duplicate_entry, tstart_slice, tnz_slice, nthreads)) ;
 }
 

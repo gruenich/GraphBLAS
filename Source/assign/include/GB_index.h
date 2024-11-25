@@ -18,7 +18,12 @@
 #define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
 #endif
 
+#ifndef GxB_INDEX32_MAX
+#define GxB_INDEX32_MAX ((GxB_Index32) (1U << 30) - 1)
+#endif
+
 #define GB_NMAX (GrB_INDEX_MAX + 1)
+#define GB_NMAX32 (GxB_INDEX32_MAX + 1)
 
 //------------------------------------------------------------------------------
 // kind of index list, Ikind and Jkind, and assign variations

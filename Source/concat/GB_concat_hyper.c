@@ -190,9 +190,9 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         cvlen,                  // C->vlen
         cvdim,                  // C->vdim
         csc,                    // C->is_csc
-        (int64_t **) &Wi,       // Wi is C->i on output, or freed on error
+        &Wi,                    // Wi is C->i on output, or freed on error
         &Wi_size,
-        (int64_t **) &Wj,       // Wj, free on output
+        &Wj,                    // Wj, free on output
         &Wj_size,
         (GB_void **) &Wx,       // Wx, free on output; or NULL if C is iso
         &Wx_size,

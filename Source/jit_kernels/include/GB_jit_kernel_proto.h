@@ -231,6 +231,7 @@ GrB_Info GB_jit_kernel_build                                            \
     const int64_t ndupl,                                                \
     const void *restrict I_work_void,                                   \
     const void *restrict K_work_void,                                   \
+    const int64_t duplicate_entry_input,                                \
     const int64_t *restrict tstart_slice,                               \
     const int64_t *restrict tnz_slice,                                  \
     const int nthreads                                                  \

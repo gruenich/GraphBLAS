@@ -284,8 +284,8 @@ GrB_Info GB_build               // build matrix
         false,          // known_no_duplicates: not yet known
         0,              // I_work, J_work, and X_work not used here
         is_matrix,      // true if T is a GrB_Matrix
-        (int64_t *) ((C->is_csc) ? I : J),  // size nvals
-        (int64_t *) ((C->is_csc) ? J : I),  // size nvals, or NULL for vector
+        C->is_csc ? I : J,  // size nvals
+        C->is_csc ? J : I,  // size nvals, or NULL for vector
         (const GB_void *) X,                // values, size nvals or 1 if iso
         X_iso,          // true if X is iso
         nvals,          // number of tuples
