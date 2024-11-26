@@ -105,7 +105,7 @@ GrB_Info GB_cuda_reduce_to_scalar
         // gridsz-by-1, and of type ztype.  V is allocated but not
         // initialized.
         GB_OK (GB_new_bix (&V, ztype, gridsz, 1, GB_ph_null,
-            true, GxB_FULL, false, 0, -1, gridsz, true, false)) ;
+            true, GxB_FULL, false, 0, -1, gridsz, true, false, false, false)) ;
     }
 
     GBURBLE ("(cuda reduce launch %d threads in %d blocks)",

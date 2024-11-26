@@ -24,8 +24,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    // This method is used only by GB_ix_resize, which itself is used only by
-    // GB_wait.  Full and bitmap matrices never have pending work, so
+    // Full and bitmap matrices never have pending work, so
     // this function is only called for hypersparse and sparse matrices.
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
@@ -47,6 +46,9 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    // FIXME: if nzmax_new exceeds UINT32_MAX, set A->p_is_32 false and
+    // reallocate A->p
 
     //--------------------------------------------------------------------------
     // reallocate the space

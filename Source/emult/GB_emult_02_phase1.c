@@ -42,6 +42,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 )
 {
 
+    // FIXME: if C->p_is_32, make sure cnz doesn't overflow
+
     //--------------------------------------------------------------------------
     // get C, M, A, and B
     //--------------------------------------------------------------------------
@@ -188,6 +190,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         //----------------------------------------------------------------------
         // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
         //----------------------------------------------------------------------
+
+        // FIXME: in GB_ek_slice_merge*: reallocate Cp if cumsum too large
 
         GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
         GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,

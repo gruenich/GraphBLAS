@@ -368,7 +368,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, // bitmap/full, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true, C_sparsity,
-        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso)) ;
+        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
+        false, false)) ;
 
     //--------------------------------------------------------------------------
     // if M is sparse/hyper, scatter it into the C bitmap

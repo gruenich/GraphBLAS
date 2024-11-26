@@ -429,7 +429,7 @@ GrB_Info GB_select_sparse
         ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
         info = GB_new (&C, // sparse or hyper (from A), existing header
             A->type, avlen, avdim, GB_ph_null, true,
-            csparsity, A->hyper_switch, anvec) ;
+            csparsity, A->hyper_switch, anvec, false, false) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         if (A->h != NULL)

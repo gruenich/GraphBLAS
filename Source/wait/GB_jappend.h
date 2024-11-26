@@ -9,6 +9,8 @@
 
 // These methods are now only used by GB_wait.
 
+// FIXME delete this once GB_wait is revised
+
 #ifndef GB_JAPPEND_H
 #define GB_JAPPEND_H
 #include "GB.h"

@@ -124,7 +124,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, A->vdim, vlen, GB_ph_malloc, C_is_csc,
-        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso)) ;
+        GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso,
+        false, false)) ;
 
     GBp_DECL_GET (C, ) ;
     uint64_t *restrict Cp = C->p ;

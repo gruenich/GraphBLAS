@@ -66,7 +66,8 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     int64_t hash_bits = (yvdim - 1) ;   // yvdim is always a power of 2
 
     GB_OK (GB_new (&(A->Y), // new dynamic header, do not allocate any content
-        GrB_UINT64, yvlen, yvdim, GB_ph_null, true, GxB_SPARSE, -1, 0)) ;
+        GrB_UINT64, yvlen, yvdim, GB_ph_null, true, GxB_SPARSE, -1, 0,
+        false, false)) ;
     GrB_Matrix Y = A->Y ;
 
     //--------------------------------------------------------------------------

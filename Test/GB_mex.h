@@ -193,11 +193,12 @@ GrB_Monoid GB_mx_BinaryOp_to_Monoid // monoid, or NULL if error
 
 bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
 (
-    GrB_Index **handle,             // index array returned
+    void **handle,                  // index array returned
+    bool *I_is_32,                  // if true, index is uint32; else uint64
     const mxArray *I_builtin,       // built-in mxArray to get
     GrB_Index *ni,                  // length of I, or special
     GrB_Index Icolon [3],           // for all but GB_LIST
-    bool *I_is_list                 // true if I is an explicit list
+    bool *I_is_list                 // true if GB_LIST
 ) ;
 
 bool GB_mx_Monoid               // true if successful, false otherwise

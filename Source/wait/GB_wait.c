@@ -377,6 +377,8 @@ GrB_Info GB_wait                // finish all pending computations
     if (2 * anz1 < anz0)
     {
 
+// FIXME: remove this option
+
         //----------------------------------------------------------------------
         // append new tuples to A
         //----------------------------------------------------------------------
@@ -416,7 +418,7 @@ GrB_Info GB_wait                // finish all pending computations
             GB_CLEAR_STATIC_HEADER (W, &W_header) ;
             GB_OK (GB_new (&W, // hyper, existing header
                 A->type, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
-                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA)) ;
+                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, false, false)) ;
 
             // the W->i and W->x content are shallow copies of A(:,kA:end).
             // They are not allocated pointers, but point to space inside

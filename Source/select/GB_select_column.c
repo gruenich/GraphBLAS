@@ -146,7 +146,8 @@ GrB_Info GB_select_column
         // return C as empty
         return (GB_new (&C, // auto (sparse or hyper), existing header
             A->type, avlen, avdim, GB_ph_calloc, true,
-            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1)) ;
+            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
+            false, false)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -156,7 +157,7 @@ GrB_Info GB_select_column
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
         A->type, avlen, avdim, GB_ph_malloc, true, csparsity, false,
-        A->hyper_switch, cnvec, cnz, true, A_iso)) ;
+        A->hyper_switch, cnvec, cnz, true, A_iso, false, false)) ;
 
     ASSERT (info == GrB_SUCCESS) ;
     int nth2 = GB_nthreads (cnvec, chunk, nth) ;

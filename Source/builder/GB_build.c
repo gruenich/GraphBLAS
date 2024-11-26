@@ -102,14 +102,15 @@
 GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
-    const GrB_Index *I,         // row indices of tuples
-    const GrB_Index *J,         // col indices of tuples (NULL for vector)
+    const void *I,              // row indices of tuples
+    const void *J,              // col indices of tuples (NULL for vector)
     const void *X,              // values, size 1 if iso
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary op to assemble duplicates (or NULL)
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
+    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 )
 {
@@ -168,7 +169,7 @@ GrB_Info GB_build               // build matrix
     { 
         // problem too large
         GB_ERROR (GrB_INVALID_VALUE, "Problem too large: nvals " GBu
-            " exceeds " GBu, nvals, GB_NMAX) ;
+            " exceeds " GBu, nvals, (uint64_t) GB_NMAX) ;
     }
 
     //--------------------------------------------------------------------------
@@ -293,7 +294,8 @@ GrB_Info GB_build               // build matrix
         xtype,          // type of the X array
         true,           // burble is OK
         Werk,
-        false, false, false, false
+        is_32, is_32,   // if true, I and J are 32 bit; otherwise 64-bit
+        false, false    // FIXME: allow Tp_is_32 and Ti_is_32 to be true
     )) ;
 
     //--------------------------------------------------------------------------

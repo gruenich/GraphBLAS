@@ -113,12 +113,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     GB_CHECK_MAGIC (A) ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+    GB_AYp_DECLARE (A_Yp, const) ; GB_AYp_PTR (A_Yp, A) ;
+    GB_AYi_DECLARE (A_Yi, const) ; GB_AYi_PTR (A_Yi, A) ;
+    GB_AYx_DECLARE (A_Yx, const) ; GB_AYx_PTR (A_Yx, A) ;
+
     const int8_t  *restrict Ab = A->b ;
 
     //--------------------------------------------------------------------------
@@ -384,6 +385,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check p
     //--------------------------------------------------------------------------
 
+    int64_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
     if (is_hyper || is_sparse)
     {
         if (A->p == NULL)
@@ -391,17 +394,20 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("  ->p is NULL, invalid %s\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }
-        if (Ap [0] != 0)
+        int64_t p = GBp (Ap, 0, 0) ;
+        if (p != 0)
         { 
-            GBPR0 ("  ->p [0] = " GBd " invalid\n", Ap [0]) ;
+            GBPR0 ("  ->p [0] = " GBd " invalid\n", p) ;
             return (GrB_INVALID_OBJECT) ;
         }
-        int64_t nzmax = A->i_size / sizeof (int64_t) ;
+        int64_t nzmax = A->i_size / isize ;
         for (int64_t j = 0 ; j < A->nvec ; j++)
         {
-            if (Ap [j+1] < Ap [j] || Ap [j+1] > nzmax)
+            int64_t p    = GBp (Ap, j,   0) ;
+            int64_t pend = GBp (Ap, j+1, 0) ;
+            if (pend < p || pend > nzmax)
             { 
-                GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j+1, Ap [j+1]) ;
+                GBPR0 ("  ->p [" GBd "] = " GBd " invalid\n", j+1, pend) ;
                 return (GrB_INVALID_OBJECT) ;
             }
         }
@@ -421,8 +427,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         int64_t jlast = -1 ;
         for (int64_t k = 0 ; k < A->nvec ; k++)
         {
-            int64_t j = Ah [k] ;
-//          printf ("Ah [%ld] = %ld\n", k, j) ;
+            int64_t j = GBh (Ah, k) ;
             if (jlast >= j || j < 0 || j >= A->vdim)
             { 
                 GBPR0 ("  ->h [" GBd "] = " GBd " invalid\n", k, j) ;
@@ -582,9 +587,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     for (int64_t k = 0 ; k < A->nvec ; k++)
     {
         int64_t ilast = -1 ;
-        int64_t j = GBH (Ah, k) ;
-        int64_t p = GBP (Ap, k, A->vlen) ;
-        int64_t pend = GBP (Ap, k+1, A->vlen) ;
+        int64_t j = GBh (Ah, k) ;
+        int64_t p = GBp (Ap, k, A->vlen) ;
+        int64_t pend = GBp (Ap, k+1, A->vlen) ;
 
         // count the entries in A(:,j)
         int64_t ajnz = pend - p ;
@@ -618,11 +623,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // for each entry in A(:,j), the kth vector of A
         for ( ; p < pend ; p++)
         {
-            if (!GBB (Ab, p)) continue ;
+            if (!GBb (Ab, p)) continue ;
             anz_actual++ ;
             icount++ ;
 
-            int64_t i = GBI (Ai, p, A->vlen) ;
+            int64_t i = GBi (Ai, p, A->vlen) ;
             bool is_zombie = GB_IS_ZOMBIE (i) ;
             i = GB_UNZOMBIE (i) ;
             if (is_zombie) nzombies++ ;
@@ -879,12 +884,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GrB_Matrix Y = A->Y ;
     if (Y != NULL)
     {
-
-        GBp_DECL_GET (Y, const) ;
-        GBi_DECL_GET (Y, const) ;
-        const uint64_t *restrict Yp = Y->p ;
-        const int64_t *restrict Yi = Y->i ;
-
         if (!is_hyper)
         { 
             // A->Y is optional, but A must be hypersparse for A->Y to exist
@@ -898,30 +897,33 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("  hyper_hash invalid") ;
             return (info) ;
         }
+        GrB_Type ytype = (A->i_is_32) ? GrB_UINT32 : GrB_UINT64 ;
         if (Y->vlen != A->vdim || !GB_IS_POWER_OF_TWO (Y->vdim) ||
-            Y->nvals != A->nvec || !GB_IS_SPARSE (Y) || Y->type != GrB_UINT64 ||
+            Y->nvals != A->nvec || !GB_IS_SPARSE (Y) || Y->type != ytype ||
             !Y->is_csc || GB_ANY_PENDING_WORK (Y))
         { 
-            // Y must be sparse, uint64, held by column, with A->nvec values,
-            // vector length the same as A->vdim, and with a Y->vdim that is a
-            // power of 2. It cannot have any pending work.
+            // Y must be sparse, uint32/uint64 (depending on A->i_is_32), held
+            // by column, with A->nvec values, vector length the same as
+            // A->vdim, and with a Y->vdim that is a power of 2. It cannot have
+            // any pending work.
             GBPR0 ("  hyper_hash invalid") ;
             return (GrB_INVALID_OBJECT) ;
         }
         // ensure that Y is the inverse of A->h
         int64_t hash_bits = Y->vdim - 1 ;
-        const int64_t *restrict Yx = (int64_t *) Y->x ;
         for (int64_t k = 0 ; k < A->nvec ; k++)
         {
             // look for j in the hyper_hash; it must be at position k
-            int64_t j = Ah [k] ;
+            int64_t j = GBh (Ah, k) ;
             int64_t jhash = GB_HASHF2 (j, hash_bits) ;
             bool found = false ;
-            for (int64_t p = Yp [jhash] ; p < Yp [jhash+1] ; p++)
+            int64_t p = GBp (A_Yp, jhash, 0) ;
+            int64_t pend = GBp (A_Yp, jhash+1, 0) ;
+            for ( ; p < pend ; p++)
             {
-                if (j == Yi [p])
+                if (j == GBi (A_Yi, p, Y->vlen))
                 {
-                    if (k != Yx [p])
+                    if (k != GB_IGET (A_Yx, p))
                     { 
                         // j is found but not with the right value of k
                         GBPR0 ("  hyper_hash invalid\n") ;

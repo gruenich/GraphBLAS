@@ -329,6 +329,7 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
+    // FIXME: if C->p_is_32 and cumsum overflows, reallocate to 64-bit
     GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
 
     //==========================================================================

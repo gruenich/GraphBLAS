@@ -267,13 +267,16 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // get the pattern of A
     //--------------------------------------------------------------------------
 
+    // FIXME: if anz > UINT32_MAX, set A->p_is_32 false
+
     if (deep_copy)
     {
 
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0) ;
+            GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
+            false, false) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -309,7 +312,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // [ create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
-            GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0) ;
+            GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
+            false, false) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;

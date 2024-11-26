@@ -15,15 +15,17 @@
 //------------------------------------------------------------------------------
 
 #ifndef GrB_INDEX_MAX
-#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
+#define GrB_INDEX_MAX ((uint64_t) (1ULL << 60) - 1)
 #endif
 
 #ifndef GxB_INDEX32_MAX
-#define GxB_INDEX32_MAX ((GxB_Index32) (1U << 30) - 1)
+#define GxB_INDEX32_MAX ((uint64_t) (1ULL << 30) - 1)
 #endif
 
-#define GB_NMAX (GrB_INDEX_MAX + 1)
-#define GB_NMAX32 (GxB_INDEX32_MAX + 1)
+// GB_NMAX:   max dimension when A->i is 64-bit
+// GB_NMAX32: max dimension when A->i is 32-bit
+#define GB_NMAX   ((uint64_t) (1ULL << 60))
+#define GB_NMAX32 ((uint64_t) (1ULL << 30))
 
 //------------------------------------------------------------------------------
 // kind of index list, Ikind and Jkind, and assign variations

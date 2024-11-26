@@ -43,8 +43,10 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const bool is_csc,          // true if CSC, false if CSR
     const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const float hyper_switch,   // A->hyper_switch
-    const int64_t plen          // size of A->p and A->h, if A hypersparse.
+    const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
+    bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
+    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
 )
 {
 
@@ -56,6 +58,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT_TYPE_OK (type, "type for GB_new", GB0) ;
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
+
+    if (i_is_32 && GB_IMAX (vlen, vdim) > GB_NMAX32)
+    { 
+        // matrix dimensions are too large to allocate A->h, A->i as 32-bit
+        i_is_32 = false ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate the matrix header, if not already allocated on input
@@ -76,7 +84,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         (*Ahandle)->header_size = header_size ;
     }
 //  else
-//  { 
+//  {
 //      // the header of A has been provided on input.  It may already be
 //      // malloc'd, or it might be statically allocated in the caller. 
 //      // (*Ahandle)->static_header is not modified.
@@ -139,6 +147,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->nvec = vdim ;
         // all vectors present, unless matrix has a zero dimension 
         A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
+        // full/bitmap matrices ignore the A->p_is_32 and A->i_is_32 flags
+        p_is_32 = false ;
+        i_is_32 = false ;
     }
     else if (A_is_hyper)
     { 
@@ -169,12 +180,15 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->Pending = NULL ;
     A->iso = false ;            // OK: if iso, burble in the caller
 
-    A->p_is_32 = false ;
-    A->i_is_32 = false ;
+    A->p_is_32 = p_is_32 ;
+    A->i_is_32 = i_is_32 ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested
     //--------------------------------------------------------------------------
+
+    size_t psize = p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     bool ok ;
     if (A_is_full_or_bitmap || Ap_option == GB_ph_null)
@@ -189,13 +203,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
-        A->p = GB_CALLOC (A->plen+1, int64_t, &(A->p_size)) ;
+        A->p = GB_calloc_memory (A->plen+1, psize, &(A->p_size)) ;
         ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
-            A->h = GB_MALLOC (A->plen, int64_t, &(A->h_size)) ;
+            A->h = GB_malloc_memory (A->plen, isize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
@@ -206,12 +220,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
         // before returning the matrix to the user application.
         A->magic = GB_MAGIC2 ;
-        A->p = GB_MALLOC (A->plen+1, int64_t, &(A->p_size)) ;
+        A->p = GB_malloc_memory (A->plen+1, psize, &(A->p_size)) ;
         ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
-            A->h = GB_MALLOC (A->plen, int64_t, &(A->h_size)) ;
+            A->h = GB_malloc_memory (A->plen, isize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }

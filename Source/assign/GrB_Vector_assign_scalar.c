@@ -182,7 +182,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
         GB_CLEAR_STATIC_HEADER (S, &S_header) ;
         GB_OK (GB_new (&S,  // existing header
             scalar->type, nRows, 1, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1)) ;
+            GB_HYPER_SWITCH_DEFAULT, 1, false, false)) ;
         info = GB_assign (
             (GrB_Matrix) w, C_replace,      // w vector and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor

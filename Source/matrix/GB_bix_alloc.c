@@ -15,6 +15,8 @@
 // If this method fails, A->b, A->i, and A->x are NULL,
 // but A->p and A->h are not modified.
 
+// FIXME: revise A->p_is_32 if nzmax is too large, and realloc A->p.
+
 #include "GB.h"
 
 GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
@@ -54,7 +56,12 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     else if (sparsity != GxB_FULL)
     { 
         // sparsity: sparse / hyper / auto 
-        A->i = GB_MALLOC (nzmax, int64_t, &(A->i_size)) ;
+        if (A->p_is_32 && nzmax > UINT32_MAX)
+        { 
+            // FIXME: how to handle this case?
+            ok = false ;
+        }
+        A->i = GB_MALLOC (nzmax, /* FIXME: */ int64_t, &(A->i_size)) ;
         ok = (A->i != NULL) ;
         GBi_DECL_GET (A, ) ;
         int64_t *Ai = A->i ;

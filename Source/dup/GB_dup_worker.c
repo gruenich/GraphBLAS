@@ -99,7 +99,8 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     // set C->iso = C_iso   OK: burble in the caller
     GB_OK (GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
-        GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso)) ;
+        GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,
+        A->p_is_32, A->i_is_32)) ;
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------

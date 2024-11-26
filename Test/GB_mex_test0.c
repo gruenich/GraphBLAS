@@ -495,52 +495,6 @@ void mexFunction
     #undef GET_DEEP_COPY
 
     //--------------------------------------------------------------------------
-    // SelectOp
-    //--------------------------------------------------------------------------
-
-#if 0
-//  GxB_SelectOp selectop = NULL, selectopcrud = NULL, sel0 ;
-    printf ("GxB_SelectOp-------------------------------------------------\n") ;
-    CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-
-    expected = GrB_NULL_POINTER ;
-
-    CHECK (T == NULL) ;
-    ERR (GxB_SelectOp_xtype (&T, selectop)) ;
-    CHECK (T == NULL) ;
-
-    CHECK (T == NULL) ;
-    ERR (GxB_SelectOp_ttype (&T, selectop)) ;
-    CHECK (T == NULL) ;
-
-    CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-
-    CHECK (T == NULL) ;
-    OK (GxB_SelectOp_xtype (&T, selectop)) ;
-    CHECK (T == GrB_FP64) ;
-    T = NULL ;
-
-    CHECK (T == NULL) ;
-    OK (GxB_SelectOp_ttype (&T, selectop)) ;
-    CHECK (T == GrB_FP64) ;
-    T = NULL ;
-
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-
-    expected = GrB_NULL_POINTER ;
-    ERR (GxB_SelectOp_new (&selectop, NULL, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectop == NULL) ;
-
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-#endif
-
-    //--------------------------------------------------------------------------
     // Monoid
     //--------------------------------------------------------------------------
 
@@ -1066,8 +1020,6 @@ void mexFunction
 
     OK (GrB_Vector_new (&v, GrB_FP64, 10)) ;
     ERR1 (v, GrB_Vector_build_FP64 (v, I, NULL, 0, NULL)) ;
-//  dup NULL is now OK
-//  ERR1 (v, GrB_Vector_build_FP64_(v, I, X,    0, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
     o2 = GrB_SECOND_FP64 ;
@@ -1086,7 +1038,6 @@ void mexFunction
     printf ("build udt:\n") ;
     OK (GrB_Vector_free_(&v)) ;
     GrB_Type user_type = NULL ;
-//  OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
     OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
         "typedef int16_t user_int ;")) ;
     OK (GrB_Vector_new (&v, user_type, 10)) ;
@@ -1532,8 +1483,6 @@ void mexFunction
     ERR1 (A, GrB_Matrix_build_FP64 (A, I,    NULL, NULL, 0, NULL)) ;
     ERR1 (A, GrB_Matrix_build_FP64 (A, NULL, NULL, NULL, 0, NULL)) ;
     ERR1 (A, GrB_Matrix_build_FP64 (A, I,    J,    NULL, 0, NULL)) ;
-//  dup of NULL is now OK
-//  ERR1 (A, GrB_Matrix_build_FP64_(A, I,    J,    X,    0, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
 
@@ -1841,8 +1790,6 @@ void mexFunction
     ERR (GxB_Desc_get_INT32 (dcrud, 0, &dval2)) ;
 
     double dval3 ;
-//  ERRD (dcrud, GxB_Desc_set_FP64 (dcrud, 0, 0)) ;
-//  ERR (GxB_Desc_get_FP64 (dcrud, 0, &dval3)) ;
 
     ERRD (dcrud, GrB_Descriptor_set (dcrud, 0, 0)) ;
     ERR (GxB_Descriptor_get (&dval, dcrud, 0)) ;
@@ -3399,98 +3346,6 @@ void mexFunction
     ERR1 (A,  GrB_Matrix_apply_(A , NULL, NULL, GrB_AINV_FP64, C , d0)) ;
 
     //--------------------------------------------------------------------------
-    // select
-    //--------------------------------------------------------------------------
-
-#if 0
-    printf ("GxB_select---------------------------------------------------\n") ;
-    CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectop != NULL) ;
-    OK (GB_SelectOp_check (selectop, "select op OK", G3, NULL)) ;
-
-    expected = GrB_NULL_POINTER ;
-
-    ERR1 (v0, GxB_Vector_select_(v0, NULL, NULL, NULL, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , NULL, NULL, NULL, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , NULL, NULL, NULL, v , NULL, d0)) ;
-
-    ERR1 (A0, GxB_Matrix_select_(A0, NULL, NULL, NULL, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, NULL, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, NULL, A , NULL, d0)) ;
-
-    CHECK (selectopcrud == NULL) ;
-    OK (GxB_SelectOp_new (&selectopcrud, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectopcrud != NULL) ;
-    selectopcrud->magic = 22309483 ;
-    expected = GrB_UNINITIALIZED_OBJECT ;
-    ERR (GB_SelectOp_check (selectopcrud, "select crud", G3, NULL)) ;
-
-    expected = GrB_UNINITIALIZED_OBJECT ;
-
-    v0 = vcrud ;
-    A0 = Acrud ;
-    d0 = dcrud ;
-    op0 = op2crud ;
-    sel0 = selectopcrud ;
-
-    ERR1 (v0, GxB_Vector_select_(v0, NULL, NULL, sel0, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v0  , NULL, sel0, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , NULL, sel0, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , NULL, sel0, v , NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , op0 , sel0, v , NULL, NULL)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , NULL, sel0, v , NULL, NULL)) ;
-
-    ERR1 (A0, GxB_Matrix_select_(A0, NULL, NULL, sel0, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A0  , NULL, sel0, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , NULL, sel0, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , NULL, sel0, A , NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , op0 , sel0, A , NULL, NULL)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , NULL, sel0, A , NULL, NULL)) ;
-
-    expected = GrB_DOMAIN_MISMATCH ;
-
-    double thresh = 42 ;
-
-    GrB_Scalar Thunk = NULL ;
-    OK (GrB_Scalar_new (&Thunk, GrB_FP64)) ;
-    OK (GrB_Scalar_setElement_FP64 (Thunk, thresh)) ;
-
-    o2  = Complex_plus ;
-    expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
-    if (Complex == GxB_FC64)
-    {
-        OK  (GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
-        OK  (GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
-    }
-    else
-    {
-        ERR1 (A,  GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
-        ERR1 (Z,  GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
-    }
-
-    ERR1 (A,  GxB_Matrix_select_(A, Z   , NULL, selectop, A, Thunk, NULL)) ;
-    ERR1 (A,  GxB_Matrix_select_(A, NULL, o2  , selectop, Z, Thunk, NULL)) ;
-    ERR1 (A,  GxB_Matrix_select_(A, NULL, NULL, selectop, Z, Thunk, NULL)) ;
-    ERR1 (Z,  GxB_Matrix_select_(Z, NULL, NULL, selectop, A, Thunk, NULL)) ;
-
-    v0 = NULL ;
-    A0 = NULL ;
-    d0 = NULL ;
-    op0 = NULL ;
-    sel0 = NULL ;
-
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-
-    expected = GrB_DIMENSION_MISMATCH ;
-
-    ERR1 (A, GxB_Matrix_select_(A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
-
-    OK (GrB_Scalar_free_(&Thunk)) ;
-#endif
-
-    //--------------------------------------------------------------------------
     // reduce to scalar
     //--------------------------------------------------------------------------
 
@@ -4373,13 +4228,10 @@ void mexFunction
     AP = A->Pending ;
     CHECK (AP != NULL) ;
     AP->sorted = !(AP->sorted) ;
-//  isave = AP->j [0] ;
-//  AP->j [0] = 2 ;
     printf ("matrix check with jumbled pending tuples:\n") ;
     ERR (GxB_Matrix_fprint (A, "jumbled pending tuples", G3, ff)) ;
     ERR (GB_Matrix_check (A, "jumbled pending tuples", G3, ff)) ;
     AP->sorted = !(AP->sorted) ;
-//  AP->j [0] = isave ;
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G0, ff)) ;
 
     AP = A->Pending ;
@@ -4867,8 +4719,6 @@ void mexFunction
     // restore all 'crud' objects so they can be freed
     //--------------------------------------------------------------------------
 
-    // printf ("\n-------------- Restore crud objects:\n") ;
-
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     Werk->where = "GB *_check" ;
@@ -5015,17 +4865,6 @@ void mexFunction
     //--------------------------------------------------------------------------
     // internal GB * routines
     //--------------------------------------------------------------------------
-
-#if 0
-    OK (GxB_Matrix_fprint (A, "A for bix_alloc", G3, NULL)) ;
-    CHECK (A != NULL) ;
-    Werk->where = "GB_bix_alloc" ;
-    info = GB_bix_alloc (A, GB_NMAX+1, GxB_SPARSE, true, true, false,
-        Werk) ;
-    CHECK (info == GrB_OUT_OF_MEMORY) ;
-    OK (GrB_Matrix_free_(&A)) ;
-    OK (GrB_Matrix_new (&A, GrB_BOOL, 11, 11)) ;
-#endif
 
     Werk->where = "GB_ix_realloc" ;
 

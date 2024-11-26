@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG /* HACK FIXME */
-
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
@@ -230,10 +228,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
     uint32_t *restrict K_work32 = NULL ;
     uint64_t *restrict K_work64 = NULL ;
 
-    if (Ti_is_32 && GB_IMAX (vlen, vdim) > (1U << 30))
+    if (Ti_is_32 && GB_IMAX (vlen, vdim) > GB_NMAX32)
     { 
-        // Ti is requested too small
-        return (GrB_INVALID_VALUE) ;
+        // Ti is requested too small; make it 64-bit
+        Ti_is_32 = false ;
     }
 
     // duplicate indices are flagged using an out-of-range index, after
@@ -874,9 +872,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     if (Tp_is_32 && tnz >= UINT32_MAX)
     { 
-        // Tp is requested too small
-        GB_FREE_WORKSPACE ;
-        return (GrB_INVALID_VALUE) ;
+        // Tp is requested too small; make it 64-bit
+        Tp_is_32 = false ;
     }
 
     //--------------------------------------------------------------------------
@@ -888,7 +885,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // either a static or dynamic header.
     info = GB_new (&T, // always hyper, existing header
         ttype, vlen, vdim, GB_ph_malloc, is_csc,
-        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec) ;
+        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Tp_is_32, Ti_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -908,11 +905,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     {
         if (S_iso)
         { 
-            GBURBLE ("(iso build) ") ;
+            GBURBLE ("(iso build, %d threads) ", nthreads) ;
         }
         else
         { 
-            GBURBLE ("(build) ") ;
+            GBURBLE ("(build, %d threads) ", nthreads) ;
         }
     }
 

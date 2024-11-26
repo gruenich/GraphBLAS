@@ -176,7 +176,8 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // bitmap, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
-        GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso)) ;
+        GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso,
+        false, false)) ;
 
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;

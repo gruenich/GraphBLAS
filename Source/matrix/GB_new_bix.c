@@ -45,7 +45,9 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t nzmax,        // number of nonzeros the matrix must hold;
                                 // ignored if A is iso and full
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const bool A_iso            // if true, allocate A as iso
+    const bool A_iso,           // if true, allocate A as iso
+    bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
+    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
 )
 {
 
@@ -55,13 +57,25 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     ASSERT (Ahandle != NULL) ;
 
+    if (p_is_32 && nzmax > UINT32_MAX)
+    { 
+        // matrix has too many entries for 32-bit A->p
+        p_is_32 = false ;
+    }
+
+    if (i_is_32 && GB_IMAX (vlen, vdim) > GB_NMAX32)
+    { 
+        // matrix dimensions are too large to allocate A->h, A->i as 32-bit
+        i_is_32 = false ;
+    }
+
     //--------------------------------------------------------------------------
     // allocate the header and the vector pointers
     //--------------------------------------------------------------------------
 
     bool preexisting_header = (*Ahandle != NULL) ;
     GrB_Info info = GB_new (Ahandle, type, vlen, vdim,
-        Ap_option, is_csc, sparsity, hyper_switch, plen) ;
+        Ap_option, is_csc, sparsity, hyper_switch, plen, p_is_32, i_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory.

@@ -333,12 +333,12 @@ typedef uint32_t GxB_Index32 ;
 
 // GrB_INDEX_MAX is the largest permissible index value.  The largest valid
 // matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in SuiteSparse:GrB.
-#define GrB_INDEX_MAX ((GrB_Index) (1ULL << 60) - 1)
+#define GrB_INDEX_MAX ((uint64_t) (1ULL << 60) - 1)
 
 // GxB_INDEX32_MAX is the largest permissible index value when using
 // 32-bit row/column indices.  The largest valid matrix dimension is
 // GxB_INDEX32_MAX+1, or 2^30, when using 32-bit row/column indices.
-#define GxB_INDEX32_MAX ((GxB_Index32) (1U << 30) - 1)
+#define GxB_INDEX32_MAX ((uint64_t) (1ULL << 30) - 1)
 
 //==============================================================================
 // GraphBLAS error and informational codes
@@ -3542,158 +3542,299 @@ GrB_Info GrB_Vector_free    // free a vector
 GrB_Info GrB_Vector_build_BOOL      // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const bool *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_INT8      // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const int8_t *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_UINT8     // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const uint8_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_INT16     // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const int16_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_UINT16    // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const uint16_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_INT32     // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const int32_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_UINT32    // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const uint32_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_INT64     // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const int64_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_UINT64    // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const uint64_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_FP32      // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const float *X,                 // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_FP64      // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const double *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GxB_Vector_build_FC32      // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const GxB_FC32_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GxB_Vector_build_FC64      // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const GxB_FC64_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Vector_build_UDT       // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     const void *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
     GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
+    uint64_t nvals                  // number of tuples
+) ;
+
+GrB_Info GxB_Vector_build_32_BOOL   // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const bool *X,                  // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_INT8   // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const int8_t *X,                // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_UINT8  // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint8_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_INT16  // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const int16_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_UINT16 // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint16_t *X,              // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_INT32  // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const int32_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_UINT32 // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *X,              // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_INT64  // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const int64_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_UINT64 // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint64_t *X,              // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_FP32   // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const float *X,                 // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_FP64   // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const double *X,                // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_FC32   // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const GxB_FC32_t *X,            // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_FC64   // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const GxB_FC64_t *X,            // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_UDT    // build a vector from (I,X) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const void *X,                  // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Vector_build_32_Scalar // build a vector from (i,scalar) tuples
+(
+    GrB_Vector w,                   // vector to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    GrB_Scalar scalar,              // value for all tuples
+    uint64_t nvals                  // number of tuples
 ) ;
 
 // Type-generic version:  X can be a pointer to any supported C type or void *
-// for a user-defined type.
+// for a user-defined type.  Ilist can be uint32_t or uint64_t.
 
 /*
 GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const <itype> *Ilist,           // array of row indices of tuples
     const <type> *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_build(w,Ilist,X,nvals,dup)           \
-    _Generic                                            \
-    (                                                   \
-        (X),                                            \
-            GB_PCASES (GrB, Vector_build)               \
-    )                                                   \
+#define GrB_Vector_build(w,Ilist,X,nvals,dup)                       \
+    _Generic                                                        \
+    (                                                               \
+        (Ilist),                                                    \
+            uint32_t * :                                            \
+                _Generic ( (X), GB_PCASES (GxB, Vector_build_32)),  \
+            const uint32_t * :                                      \
+                _Generic ( (X), GB_PCASES (GxB, Vector_build_32)),  \
+            uint64_t * :                                            \
+                _Generic ( (X), GB_PCASES (GrB, Vector_build)),     \
+            const uint64_t * :                                      \
+                _Generic ( (X), GB_PCASES (GrB, Vector_build))      \
+    )                                                               \
     (w, Ilist, ((const void *) (X)), nvals, dup)
 #endif
 
@@ -4205,174 +4346,331 @@ GrB_Info GrB_Matrix_free    // free a matrix
 GrB_Info GrB_Matrix_build_BOOL      // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const bool *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_INT8      // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const int8_t *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_UINT8     // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const uint8_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_INT16     // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const int16_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_UINT16    // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const uint16_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_INT32     // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const int32_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_UINT32    // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const uint32_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_INT64     // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const int64_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_UINT64    // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const uint64_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_FP32      // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const float *X,                 // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_FP64      // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const double *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GxB_Matrix_build_FC32      // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const GxB_FC32_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GxB_Matrix_build_FC64      // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const GxB_FC64_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GrB_Matrix_build_UDT       // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     const void *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 
 GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *Ilist,          // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
+    uint64_t nvals                  // number of tuples
+) ;
+
+GrB_Info GxB_Matrix_build_32_BOOL   // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const bool *X,                  // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_INT8   // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const int8_t *X,                // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_UINT8  // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const uint8_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_INT16  // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const int16_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_UINT16 // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const uint16_t *X,              // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_INT32  // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const int32_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_UINT32 // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const uint32_t *X,              // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_INT64  // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const int64_t *X,               // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_UINT64 // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const uint64_t *X,              // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_FP32   // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const float *X,                 // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_FP64   // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const double *X,                // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_FC32   // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const GxB_FC32_t *X,            // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_FC64   // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const GxB_FC64_t *X,            // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_UDT    // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    const void *X,                  // array of values of tuples
+    uint64_t nvals,                 // number of tuples
+    const GrB_BinaryOp dup          // binary function to assemble duplicates
+) ;
+
+GrB_Info GxB_Matrix_build_32_Scalar // build a matrix from (I,J,scalar) tuples
+(
+    GrB_Matrix C,                   // matrix to build
+    const uint32_t *Ilist,          // array of row indices of tuples
+    const uint32_t *J,              // array of column indices of tuples
+    GrB_Scalar scalar,              // value for all tuples
+    uint64_t nvals                  // number of tuples
 ) ;
 
 // Type-generic version:  X can be a pointer to any supported C type or void *
-// for a user-defined type.
+// for a user-defined type.  Ilist and J can be uint32_t or uint64_t (they must
+// have the same type however.
 
 /*
 GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const <itype> *Ilist,           // array of row indices of tuples
+    const <itype> *J,               // array of column indices of tuples
     const <type> *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
+    uint64_t nvals,                 // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 */
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_build(C,Ilist,J,X,nvals,dup)         \
-    _Generic                                            \
-    (                                                   \
-        (X),                                            \
-            GB_PCASES (GrB, Matrix_build)               \
-    )                                                   \
+#define GrB_Matrix_build(C,Ilist,J,X,nvals,dup)                     \
+    _Generic                                                        \
+    (                                                               \
+        (Ilist),                                                    \
+            uint32_t * :                                            \
+                _Generic ( (X), GB_PCASES (GxB, Matrix_build_32)),  \
+            const uint32_t * :                                      \
+                _Generic ( (X), GB_PCASES (GxB, Matrix_build_32)),  \
+            uint64_t * :                                            \
+                _Generic ( (X), GB_PCASES (GrB, Matrix_build)),     \
+            const uint64_t * :                                      \
+                _Generic ( (X), GB_PCASES (GrB, Matrix_build))      \
+    )                                                               \
     (C, Ilist, J, ((const void *) (X)), nvals, dup)
 #endif
 
@@ -11464,7 +11762,7 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 GrB_Info GrB_getVersion (unsigned int *, unsigned int *) ;
 
 // GxB_INDEX_MAX: use GrB_INDEX_MAX+1 instead
-#define GxB_INDEX_MAX ((GrB_Index) (1ULL << 60))
+#define GxB_INDEX_MAX ((uint64_t) (1ULL << 60))
 
 // GxB_ABS_*: use GrB_ABS_* instead (as-is)
 GB_GLOBAL GrB_UnaryOp

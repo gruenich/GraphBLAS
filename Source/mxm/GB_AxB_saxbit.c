@@ -122,7 +122,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, A->vlen, B->vdim, GB_ph_null, true, GxB_BITMAP, true,
-        GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso)) ;
+        GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso, false, false)) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

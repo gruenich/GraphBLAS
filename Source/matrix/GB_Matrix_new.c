@@ -72,6 +72,6 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
 
     return (GB_new (A, // auto sparsity, new header
         type, vlen, vdim, GB_ph_calloc, A_is_csc, GxB_AUTO_SPARSITY,
-        GB_Global_hyper_switch_get ( ), 1)) ;
+        GB_Global_hyper_switch_get ( ), 1, false, false)) ;
 }
 

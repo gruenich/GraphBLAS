@@ -150,7 +150,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // set R->iso = R_iso   OK
     GrB_Info info = GB_new_bix (&R, // any sparsity, existing header
         C->type, C->vlen, C->vdim, GB_ph_null, R_is_csc,
-        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso) ;
+        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso,
+        false, false) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z

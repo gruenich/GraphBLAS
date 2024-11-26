@@ -2,7 +2,7 @@
 // GB_build.h: definitions for GB_build
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,14 +14,15 @@
 GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
-    const GrB_Index *I,         // row indices of tuples
-    const GrB_Index *J,         // col indices of tuples (NULL for vector)
+    const void *I,              // row indices of tuples
+    const void *J,              // col indices of tuples (NULL for vector)
     const void *X,              // values, size 1 if iso
     const GrB_Index nvals,      // number of tuples
-    const GrB_BinaryOp dup,     // binary op to assemble duplicates
+    const GrB_BinaryOp dup,     // binary op to assemble duplicates (or NULL)
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
+    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 ) ;
 

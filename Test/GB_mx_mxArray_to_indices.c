@@ -13,7 +13,8 @@
 
 bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
 (
-    GrB_Index **handle,             // index array returned
+    void **handle,                  // index array returned
+    bool *I_is_32,                  // if true, index is uint32; else uint64
     const mxArray *I_builtin,       // built-in mxArray to get
     GrB_Index *ni,                  // length of I, or special
     GrB_Index Icolon [3],           // for all but GB_LIST
@@ -99,10 +100,25 @@ bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
         }
         else
         {
-            if (!mxIsClass (I_builtin, "uint64"))
+
+            if (! (mxIsClass (I_builtin, "uint64") || 
+                   mxIsClass (I_builtin, "uint32")))
             {
-                mexWarnMsgIdAndTxt ("GB:warn","indices must be uint64") ;
+                mexWarnMsgIdAndTxt ("GB:warn","indices must be uint64/uint32") ;
                 return (false) ;
+            }
+
+            if (I_is_32 == NULL)
+            {
+                if (mxIsClass (I_builtin, "uint32"))
+                {
+                    mexWarnMsgIdAndTxt ("GB:warn","indices must be uint64") ;
+                    return (false) ;
+                } 
+            }
+            else
+            {
+                (*I_is_32) = mxIsClass (I_builtin, "uint32") ;
             }
 
             (*I_is_list) = true ;
