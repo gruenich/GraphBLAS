@@ -16,6 +16,10 @@
 #define GB_DEVELOPER 0
 #endif
 
+
+#undef  GB_DEVELOPER
+#define GB_DEVELOPER 1
+
 #include "pending/GB_Pending.h"
 #include "GB.h"
 #include "get_set/GB_get_set.h"
@@ -120,7 +124,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     GB_AYi_DECLARE (A_Yi, const) ; GB_AYi_PTR (A_Yi, A) ;
     GB_AYx_DECLARE (A_Yx, const) ; GB_AYx_PTR (A_Yx, A) ;
 
-    const int8_t  *restrict Ab = A->b ;
+    const int8_t *restrict Ab = A->b ;
 
     //--------------------------------------------------------------------------
     // print the header
@@ -156,7 +160,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     { 
         GBPR0 (" (jumbled)") ;
     }
-    GBPR0 (" %s\n", A->is_csc ? "by col" : "by row") ;
+    GBPR0 (" %s", A->is_csc ? "by col" : "by row") ;
+    if (is_sparse || is_hyper)
+    {
+        GBPR0 (", ints: %s/%s",
+            A->p_is_32 ? "32" : "64",
+            A->i_is_32 ? "32" : "64") ;
+    }
+    GBPR0 ("\n") ;
 
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", GB_nnz_max (A)) ;
@@ -369,13 +380,16 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     #endif
 
-    if (A->p != NULL && (A->p_size < (A->plen + 1) * sizeof (int64_t)))
+    int64_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    int64_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    if (A->p != NULL && (A->p_size < (A->plen + 1) * psize))
     { 
         GBPR0 ("  A->p is too small!\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (A->h != NULL && (A->h_size < (A->plen) * sizeof (int64_t)))
+    if (A->h != NULL && (A->h_size < (A->plen) * isize))
     { 
         GBPR0 ("  A->h is too small!\n") ;
         return (GrB_INVALID_OBJECT) ;
@@ -384,8 +398,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
     // check p
     //--------------------------------------------------------------------------
-
-    int64_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (is_hyper || is_sparse)
     {
@@ -900,7 +912,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GrB_Type ytype = (A->i_is_32) ? GrB_UINT32 : GrB_UINT64 ;
         if (Y->vlen != A->vdim || !GB_IS_POWER_OF_TWO (Y->vdim) ||
             Y->nvals != A->nvec || !GB_IS_SPARSE (Y) || Y->type != ytype ||
-            !Y->is_csc || GB_ANY_PENDING_WORK (Y))
+            !Y->is_csc || GB_ANY_PENDING_WORK (Y) ||
+            Y->p_is_32 != A->i_is_32 || Y->i_is_32 != A->i_is_32)
         { 
             // Y must be sparse, uint32/uint64 (depending on A->i_is_32), held
             // by column, with A->nvec values, vector length the same as

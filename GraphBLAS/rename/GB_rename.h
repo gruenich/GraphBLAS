@@ -260,6 +260,7 @@
 #define GB_convert_full_to_sparse GM_convert_full_to_sparse
 #define GB_convert_hyper_to_sparse GM_convert_hyper_to_sparse
 #define GB_convert_hyper_to_sparse_test GM_convert_hyper_to_sparse_test
+#define GB_convert_int GM_convert_int
 #define GB_convert_s2b GM_convert_s2b
 #define GB_convert_s2b_jit GM_convert_s2b_jit
 #define GB_convert_sparse_to_bitmap_test GM_convert_sparse_to_bitmap_test

@@ -267,7 +267,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     // get the pattern of A
     //--------------------------------------------------------------------------
 
-    // FIXME: if anz > UINT32_MAX, set A->p_is_32 false
+    // FIXME: if anz >= UINT32_MAX, set A->p_is_32 false
 
     if (deep_copy)
     {

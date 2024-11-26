@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME:  the hyperhash Y->p and Y->i need to be 64-bit integers if A->i
+// FIXME:  the hyperhash Y->[pix] need to be 64-bit integers if A->i
 // is 64-bit, or 32-bit otherwise.
 
 #define GB_FREE_WORKSPACE               \

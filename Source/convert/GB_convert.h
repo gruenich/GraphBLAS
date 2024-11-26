@@ -265,10 +265,12 @@ static inline const char *GB_sparsity_char_matrix (GrB_Matrix A)
     ASSERT (0) ;               return ("?") ;
 }
 
-GrB_Matrix GB_hyper_shallow         // return C
+GrB_Info GB_convert_int     // convert the integers of a matrix
 (
-    GrB_Matrix C,                   // output matrix
-    const GrB_Matrix A              // input matrix
+    GrB_Matrix A,           // matrix to convert
+    bool p_is_32_new,       // new integer format for A->p
+    bool i_is_32_new,       // new integer format for A->h, A->i, and A->Y
+    GB_Werk Werk
 ) ;
 
 #endif

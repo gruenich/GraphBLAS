@@ -19,6 +19,7 @@ tic
 [I,J,X] = find (A) ;
 toc
 nz = length (I) ;
+fprintf ('nz: %g million\n', nz/1e6) ;
 
 for trial = 1:2
 

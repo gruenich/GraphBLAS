@@ -57,7 +57,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     ASSERT (Ahandle != NULL) ;
 
-    if (p_is_32 && nzmax > UINT32_MAX)
+    if (p_is_32 && nzmax >= UINT32_MAX)
     { 
         // matrix has too many entries for 32-bit A->p
         p_is_32 = false ;

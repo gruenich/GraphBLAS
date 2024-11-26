@@ -489,6 +489,8 @@ struct GB_Context_opaque    // content of GxB_Context
 // Pending tuples are a list of unsorted (i,j,x) tuples that have not yet been
 // added to a matrix.  The data structure is defined in GB_Pending.h.
 
+// FIXME: 32-bit Pending->i and Pending->j; should follow A->i_is_32
+
 struct GB_Pending_struct    // list of pending tuples for a matrix
 {
     size_t header_size ;    // size of the malloc'd block for this struct, or 0

@@ -183,6 +183,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (J_work_size_handle != NULL) ;
     ASSERT (S_work_size_handle != NULL) ;
 
+    double tt = GB_OPENMP_GET_WTIME ;
+
     //--------------------------------------------------------------------------
     // get Sx
     //--------------------------------------------------------------------------
@@ -1554,6 +1556,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ASSERT_MATRIX_OK (T, "T built", GB0) ;
         ASSERT (GB_IS_HYPERSPARSE (T)) ;
     }
+    tt = GB_OPENMP_GET_WTIME - tt;
+    GB_BURBLE_MATRIX (T, "(build %s/%s time: %g) ",
+        Tp_is_32 ? "32" : "64",
+        Ti_is_32 ? "32" : "64", tt) ;
     return (info) ;
 }
 

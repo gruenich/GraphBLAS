@@ -56,7 +56,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     else if (sparsity != GxB_FULL)
     { 
         // sparsity: sparse / hyper / auto 
-        if (A->p_is_32 && nzmax > UINT32_MAX)
+        if (A->p_is_32 && nzmax >= UINT32_MAX)
         { 
             // FIXME: how to handle this case?
             ok = false ;

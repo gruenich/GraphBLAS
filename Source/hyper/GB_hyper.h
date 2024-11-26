@@ -47,6 +47,12 @@ bool GB_hyper_hash_need         // return true if A needs a hyper hash
     GrB_Matrix A
 ) ;
 
+GrB_Matrix GB_hyper_shallow         // return C
+(
+    GrB_Matrix C,                   // output matrix
+    const GrB_Matrix A              // input matrix
+) ;
+
 //------------------------------------------------------------------------------
 // GB_lookup: find k so that j == Ah [k], without using the A->Y hyper_hash
 //------------------------------------------------------------------------------
