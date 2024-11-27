@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C = A, making a deep copy.  Not user-callable; this function does the work
 // for user-callable functions GrB_*_dup.
 

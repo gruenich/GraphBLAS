@@ -154,7 +154,7 @@ static GrB_Info builder
     ASSERT_TYPE_OK (ctype, "ctype for build", GB0) ;
     ASSERT_BINARYOP_OK (dup, "dup for build", GB0) ;
 
-    double t = omp_get_wtime ( ) ;
+    // double t = omp_get_wtime ( ) ;
 
     if (scalar_build)
     {
@@ -285,8 +285,8 @@ static GrB_Info builder
         }
     }
 
-    t = omp_get_wtime ( ) - t ;
-    printf ("build time %g\n", t) ;
+    // t = omp_get_wtime ( ) - t ;
+    // printf ("build time %g\n", t) ;
 
     GrB_Scalar_free_(&scalar) ;
     return (GrB_SUCCESS) ;
@@ -305,8 +305,10 @@ void mexFunction
 
     GrB_Info info ;
     malloc_debug = GB_mx_get_global (true) ;
-    GrB_Index *I = NULL, ni = 0, I_range [3] ;
-    GrB_Index *J = NULL, nj = 0, J_range [3] ;
+    void *I = NULL ;
+    int64_t ni = 0, I_range [3] ;
+    void *J = NULL ;
+    int64_t nj = 0, J_range [3] ;
     GrB_Scalar scalar = NULL ;
     bool is_list ; 
     #ifdef MATRIX
@@ -323,7 +325,8 @@ void mexFunction
 
     // get I
     bool I_is_32 = false ;
-    if (!GB_mx_mxArray_to_indices (&I, &I_is_32, pargin [I_ARG], &ni, I_range, &is_list))
+    if (!GB_mx_mxArray_to_indices (&I, &I_is_32, pargin [I_ARG], &ni,
+        I_range, &is_list))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
@@ -336,7 +339,8 @@ void mexFunction
     #ifdef MATRIX
     // get J for a matrix
     bool J_is_32 = false ;
-    if (!GB_mx_mxArray_to_indices (&J, &J_is_32, pargin [J_ARG], &nj, J_range, &is_list))
+    if (!GB_mx_mxArray_to_indices (&J, &J_is_32, pargin [J_ARG], &nj,
+        J_range, &is_list))
     {
         FREE_ALL ;
         mexErrMsgTxt ("J failed") ;
@@ -391,9 +395,21 @@ void mexFunction
     }
     else
     {
-        for (int64_t k = 0 ; k < ni ; k++)
+        if (I_is_32)
         {
-            nrows = GB_IMAX (nrows, I [k]) ;
+            uint32_t *I32 = I ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                nrows = GB_IMAX (nrows, I32 [k]) ;
+            }
+        }
+        else
+        {
+            uint64_t *I64 = I ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                nrows = GB_IMAX (nrows, I64 [k]) ;
+            }
         }
         nrows++ ;
     }
@@ -408,9 +424,21 @@ void mexFunction
     else
     {
         ncols = 0 ;
-        for (int64_t k = 0 ; k < ni ; k++)
+        if (J_is_32)
+        { 
+            uint32_t *J32 = J ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                ncols = GB_IMAX (ncols, J32 [k]) ;
+            }
+        }
+        else
         {
-            ncols = GB_IMAX (ncols, J [k]) ;
+            uint64_t *J64 = J ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                ncols = GB_IMAX (ncols, J64 [k]) ;
+            }
         }
         ncols++ ;
     }

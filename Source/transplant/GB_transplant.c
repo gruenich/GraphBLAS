@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Transplant A into C, and then free A.  If any part of A is shallow, or if A
 // must be typecasted, a deep copy is made into C.  Prior content of C is
 // ignored.  Then A is freed, except for any shallow components of A which are
@@ -165,7 +167,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Ci)
     { 
         // allocate new C->i component
-        C->i = GB_MALLOC (anz, int64_t, &(C->i_size)) ;
+        C->i = GB_MALLOC (anz, int64_t, &(C->i_size)) ; // FIXME
         ok = ok && (C->i != NULL) ;
     }
 
@@ -254,8 +256,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             // A is hypersparse, create new C->p and C->h
             C->plen = GB_IMAX (1, anvec) ;
             C->nvec = anvec ;
-            C->p = GB_MALLOC (C->plen+1, int64_t, &(C->p_size)) ;
-            C->h = GB_MALLOC (C->plen  , int64_t, &(C->h_size)) ;
+            C->p = GB_MALLOC (C->plen+1, int64_t, &(C->p_size)) ;   // FIXME
+            C->h = GB_MALLOC (C->plen  , int64_t, &(C->h_size)) ;   // FIXME
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
@@ -264,15 +266,15 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
-            GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nth) ;
-            GB_memcpy (C->h, A->h,  anvec    * sizeof (int64_t), nth) ;
+            GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nth) ; //FIXME
+            GB_memcpy (C->h, A->h,  anvec    * sizeof (int64_t), nth) ; //FIXME
         }
         else
         {
             // A is sparse, create new C->p
             C->plen = avdim ;
             C->nvec = avdim ;
-            C->p = GB_MALLOC (C->plen+1, int64_t, &(C->p_size)) ;
+            C->p = GB_MALLOC (C->plen+1, int64_t, &(C->p_size)) ;   //FIXME
             if (C->p == NULL)
             { 
                 // out of memory
@@ -281,7 +283,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p into the newly created C->p
-            GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
+            GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ; //FIXME
         }
 
         // free any non-shallow A->p and A->h content of A
@@ -340,7 +342,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         //----------------------------------------------------------------------
 
         // copy A->i into C->i
-        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
+        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;  //FIXME
         A->i = NULL ;
         A->i_shallow = false ;
 

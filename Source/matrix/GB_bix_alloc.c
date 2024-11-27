@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit, partially done
+
 // Does not modify A->p or A->h.  Frees A->b, A->x,
 // and A->i and reallocates them to the requested size.  Frees any pending
 // tuples and deletes all entries (including zombies, if any).  If numeric is
@@ -55,17 +57,20 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     }
     else if (sparsity != GxB_FULL)
     { 
-        // sparsity: sparse / hyper / auto 
+        // sparsity: sparse or hypersparse
         if (A->p_is_32 && nzmax >= UINT32_MAX)
         { 
             // FIXME: how to handle this case?
             ok = false ;
         }
-        A->i = GB_MALLOC (nzmax, /* FIXME: */ int64_t, &(A->i_size)) ;
+        size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
+        A->i = GB_malloc_memory (nzmax, isize, &(A->i_size)) ;
         ok = (A->i != NULL) ;
-        GBi_DECL_GET (A, ) ;
-        int64_t *Ai = A->i ;
-        if (ok) Ai [0] = 0 ;
+        if (ok)
+        {
+            // Ai [0] = 0
+            memset (A->i, 0, isize) ;
+        }
     }
 
     if (numeric)

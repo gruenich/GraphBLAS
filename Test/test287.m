@@ -5,6 +5,7 @@ s = maxNumCompThreads (32)
 save = nthreads_set (32) 
 
 fprintf ('\nsprand:\n') ;
+rng ('default') ;
 n = 20e6 ;
 m = n ;
 nz = 400e6 ;
@@ -54,6 +55,6 @@ for trial = 1:2
 
 end
 
-maxNumCompThreads (s)
-nthreads_set (save) 
+maxNumCompThreads (s) ;
+nthreads_set (save)  ;
 GrB.burble (0) ;

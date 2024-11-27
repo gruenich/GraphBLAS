@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C = A, making a deep copy.  The header for C may already exist.
 
 // if numeric is false, C->x is allocated but not initialized.
@@ -53,14 +55,6 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     int64_t anz = GB_nnz_held (A) ;
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const int8_t  *restrict Ab = A->b ;
-    const GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
     int64_t anvec_nonempty = A->nvec_nonempty ;
@@ -114,27 +108,30 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     C->nzombies = A_nzombies ;      // zombies can be duplicated
     C->sparsity_control = sparsity_control ;
 
-    if (Ap != NULL)
+    size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    if (A->p != NULL)
     { 
-        GB_memcpy (C->p, Ap, (anvec+1) * sizeof (int64_t), nthreads_max) ;
+        GB_memcpy (C->p, A->p, (anvec+1) * psize, nthreads_max) ;
     }
-    if (Ah != NULL)
+    if (A->h != NULL)
     { 
-        GB_memcpy (C->h, Ah, anvec * sizeof (int64_t), nthreads_max) ;
+        GB_memcpy (C->h, A->h, anvec * isize, nthreads_max) ;
     }
-    if (Ab != NULL)
+    if (A->b != NULL)
     { 
-        GB_memcpy (C->b, Ab, anz * sizeof (int8_t), nthreads_max) ;
+        GB_memcpy (C->b, A->b, anz * sizeof (int8_t), nthreads_max) ;
     }
-    if (Ai != NULL)
+    if (A->i != NULL)
     { 
-        GB_memcpy (C->i, Ai, anz * sizeof (int64_t), nthreads_max) ;
+        GB_memcpy (C->i, A->i, anz * isize, nthreads_max) ;
     }
     if (numeric)
     { 
         ASSERT (C_iso == A->iso) ;
         ASSERT (C->type == A->type) ;
-        GB_memcpy (C->x, Ax, (A->iso ? 1:anz) * atype->size, nthreads_max) ;
+        GB_memcpy (C->x, A->x, (A->iso ? 1:anz) * atype->size, nthreads_max) ;
     }
 
     C->magic = GB_MAGIC ;      // C->p and C->h are now initialized

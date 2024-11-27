@@ -65,7 +65,7 @@ GrB_Info wathen             // construct a random Wathen matrix
     GrB_Matrix A = NULL, F = NULL, E = NULL, D = NULL ;
     GrB_UnaryOp rho_op = NULL ;
     double *rho_rand = NULL, *X = NULL, *rho ;
-    GrB_Index *I = NULL, *J = NULL ;
+    GxB_Index32 *I = NULL, *J = NULL ;
 
     //--------------------------------------------------------------------------
     // construct the coefficients
@@ -151,8 +151,8 @@ GrB_Info wathen             // construct a random Wathen matrix
 
             // allocate the tuples
             int64_t ntriplets = nx*ny*64 ;
-            I = (GrB_Index *) malloc (ntriplets * sizeof (GrB_Index)) ;
-            J = (GrB_Index *) malloc (ntriplets * sizeof (GrB_Index)) ;
+            I = (GxB_Index32 *) malloc (ntriplets * sizeof (GxB_Index32)) ;
+            J = (GxB_Index32 *) malloc (ntriplets * sizeof (GxB_Index32)) ;
             X = (double *) malloc (ntriplets * sizeof (double )) ;
             if (I == NULL || J == NULL || X == NULL)
             {   // out of memory
@@ -190,8 +190,14 @@ GrB_Info wathen             // construct a random Wathen matrix
             }
 
             // A = sparse (I,J,X,n,n) ;
-            OK (GrB_Matrix_build_FP64 (A, I, J, X, ntriplets, GrB_PLUS_FP64)) ;
-
+            #ifdef GxB_build
+            printf ("using GxB_build\n") ;
+            OK (GxB_build (A, I, J, X, ntriplets, GrB_PLUS_FP64)) ;
+            #else
+            printf ("using GrB_Matrix_build_32_FP64\n") ;
+            OK (GxB_Matrix_build_32_FP64 (A, I, J, X, ntriplets,
+                GrB_PLUS_FP64)) ;
+            #endif
         }
         break ;
 

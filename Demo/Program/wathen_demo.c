@@ -10,6 +10,16 @@
 // Construct a matrix using the wathen method.
 //
 //  wathen_demo nx ny method nthreads
+//
+//  nx and ny default to 10.
+//
+//  methods:
+//      0: build (the default)
+//      1: assign scalars
+//      2: assign finite elements, create F with a loop
+//      3: assign finite elements, create F all at once
+//
+//  nthreads: defaults # of threads from OpenMP
 
 #include "graphblas_demos.h"
 #include "simple_rand.h"
@@ -29,6 +39,7 @@ int main (int argc, char **argv)
     GrB_Matrix A = NULL ;
     GrB_Info info ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
+    OK (GrB_set (GrB_GLOBAL, true, (GrB_Field) GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // get inputs

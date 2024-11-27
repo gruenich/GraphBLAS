@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Creates a matrix (with GB_new), then allocates a given space for indices and
 // values.
 
@@ -56,6 +58,10 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     //--------------------------------------------------------------------------
 
     ASSERT (Ahandle != NULL) ;
+
+    // FIXME: make these tests static inline functions:
+    // p_is_32 = GB_validate_p_is_32 (p_is_32, nzmax)
+    // i_is_32 = GB_validate_i_is_32 (p_is_32, vlen, vdim)
 
     if (p_is_32 && nzmax >= UINT32_MAX)
     { 

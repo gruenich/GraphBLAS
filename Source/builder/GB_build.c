@@ -295,7 +295,7 @@ GrB_Info GB_build               // build matrix
         true,           // burble is OK
         Werk,
         is_32, is_32,   // if true, I and J are 32 bit; otherwise 64-bit
-        #if 0
+        #if 1
         true, true      // allow Tp_is_32 and Ti_is_32 to be true.  Tp_is_32
                         // is set false is nnz(T) is too large, and Ti_is_32
                         // is set false if the dimensions are too large.
@@ -305,10 +305,6 @@ GrB_Info GB_build               // build matrix
     )) ;
 
     double tt = GB_OPENMP_GET_WTIME ;
-
-    // FIXME: convert the result to all 64-bit.  This is temporary, until
-    // the methods below can handle 32-bit matrices, used below.
-    GB_OK (GB_convert_int (T, false, false, Werk)) ;  // FIXME: temporary
 
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
@@ -348,6 +344,10 @@ GrB_Info GB_build               // build matrix
         T->iso = true ;
         GB_OK (GB_convert_any_to_iso (T, NULL)) ;
     }
+
+    // FIXME: convert the result to all 64-bit.  This is temporary, until
+    // the methods below can handle 32-bit matrices, used below.
+    GB_OK (GB_convert_int (T, false, false, Werk)) ;  // FIXME: temporary
 
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, conform C, and free T

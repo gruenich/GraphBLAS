@@ -7,11 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 
 GrB_Info GrB_Matrix_nrows   // get the number of rows of a matrix
 (
-    GrB_Index *nrows,       // matrix has nrows rows
+    uint64_t *nrows,        // matrix has nrows rows
     const GrB_Matrix A      // matrix to query
 )
 { 
