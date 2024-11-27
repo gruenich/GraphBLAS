@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -32,8 +34,9 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_SPLIT_FULL, GxB_FULL, true, C->type, op, false,
-        GB_sparsity (A), true, A->type, A->iso, A->nzombies) ;
+        GB_JIT_KERNEL_SPLIT_FULL, GxB_FULL, true, C->type, C->p_is_32,
+        C->i_is_32, false, op, false, GB_sparsity (A), true, A->type,
+        A->p_is_32, A->i_is_32, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

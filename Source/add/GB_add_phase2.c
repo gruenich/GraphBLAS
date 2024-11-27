@@ -111,8 +111,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    GBp_DECL (C,) ;
-    GBh_DECL (C,) ;
     uint64_t *restrict Cp = (*Cp_handle) ;      // FIXME
     int64_t *restrict Ch = (*Ch_handle) ;       // FIXME
 

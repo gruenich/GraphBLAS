@@ -2,7 +2,7 @@
 // GB_macrofy_output: construct a macro to store values to an output matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -24,7 +24,9 @@ void GB_macrofy_output
     GrB_Type ztype,         // type of cij scalar to cast to ctype write to C
     int csparsity,          // sparsity format of the output matrix
     bool C_iso,             // true if C is iso on output
-    bool C_in_iso           // true if C is iso on input
+    bool C_in_iso,          // true if C is iso on input
+    int p_is_32,            // if true, Cp is 32-bit, else 64-bit
+    int i_is_32             // if true, Ci is 32-bit, else 64-bit
 )
 {
 
@@ -84,5 +86,12 @@ void GB_macrofy_output
         GB_macrofy_cast_output (fp, macro_name, cname, xargs, xexpr, ztype,
             ctype) ;
     }
+
+    //--------------------------------------------------------------------------
+    // construct macros for 32/64 integer types
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "#define GB_%sp_BITS %d\n", Cname, p_is_32 ? 32 : 64) ;
+    fprintf (fp, "#define GB_%si_BITS %d\n", Cname, i_is_32 ? 32 : 64) ;
 }
 

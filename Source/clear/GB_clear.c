@@ -92,7 +92,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         int64_t plen = A->vdim ;
         A->nvec = plen ;
         A->plen = plen ;
-        A->p = GB_MALLOC (plen+1, int64_t, &(A->p_size)) ;
+        A->p = GB_MALLOC (plen+1, int64_t, &(A->p_size)) ;  // FIXME
         ASSERT (A->h == NULL) ;
         if (A->p == NULL)
         { 
@@ -100,7 +100,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
             GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_memset (A->p, 0, (plen+1) * sizeof (int64_t), nthreads_max) ;
+        GB_memset (A->p, 0, (plen+1) * sizeof (int64_t), nthreads_max) ; //FIXME
 
     }
     else
@@ -113,18 +113,16 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         int64_t plen = GB_IMIN (1, A->vdim) ;
         A->nvec = 0 ;
         A->plen = plen ;
-        A->p = GB_MALLOC (plen+1, int64_t, &(A->p_size)) ;
-        A->h = GB_MALLOC (plen  , int64_t, &(A->h_size)) ;
+        A->p = GB_MALLOC (plen+1, int64_t, &(A->p_size)) ;  // FIXME
+        A->h = GB_MALLOC (plen  , int64_t, &(A->h_size)) ;  // FIXME
         if (A->p == NULL || A->h == NULL)
         { 
             // out of memory
             GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GBp_DECL_GET (A, const) ;
-        GBh_DECL_GET (A, const) ;
-        uint64_t *restrict Ap = A->p ;
-        int64_t *restrict Ah = A->h ;
+        uint64_t *restrict Ap = A->p ;  // FIXME
+        int64_t *restrict Ah = A->h ;   // FIXME
         Ap [0] = 0 ;
         if (plen > 0)
         { 

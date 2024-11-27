@@ -2,10 +2,12 @@
 // GB_convert_bitmap_to_sparse: convert a matrix from bitmap to sparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit (except 32-bit case currently disabled)
 
 #include "GB.h"
 
@@ -47,13 +49,17 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     int64_t cnvec_nonempty ;
     const int64_t avdim = A->vdim ;
     const size_t asize = A->type->size ;
-    GBp_DECL (C, ) ;
-    GBi_DECL (C, ) ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
-    GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
-    Cp = GB_MALLOC (avdim+1, int64_t, &Cp_size) ; 
-    Ci = GB_MALLOC (anzmax, int64_t, &Ci_size) ;
+    void *Cp = NULL ; size_t Cp_size = 0 ;
+    void *Ci = NULL ; size_t Ci_size = 0 ;
+    void *Cx = NULL ; size_t Cx_size = 0 ;
+//  FIXME: done, but 32-bit disabled for now.
+    bool Cp_is_32 = false ; // GB_validate_p_is_32 (true, anvals) ;
+    bool Ci_is_32 = false ; // GB_validate_i_is_32 (true, A->vlen, avdim) ;
+    size_t psize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    Cp = GB_malloc_memory (avdim+1, psize, &Cp_size) ;
+    Ci = GB_malloc_memory (anzmax,  isize, &Ci_size) ;
     if (Cp == NULL || Ci == NULL)
     { 
         // out of memory
@@ -61,24 +67,12 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    bool Cx_shallow ;
     const bool A_iso = A->iso ;
-    if (A_iso)
+    if (!A_iso)
     { 
-        // A is iso.  Remove A->x from the matrix so it is not freed by
-        // GB_phybix_free.  It is not modified by GB_convert_b2s, and is
-        // transplanted back into A, below.
-        Cx = (GB_void *) A->x ;
-        Cx_shallow = A->x_shallow ;
-        Cx_size = A->x_size ;
-        A->x = NULL ;
-    }
-    else
-    {
         // A is not iso.  Allocate new space for Cx, which is filled by
         // GB_convert_b2s.
         Cx = GB_MALLOC (anzmax * asize, GB_void, &Cx_size) ;
-        Cx_shallow = false ;
         if (Cx == NULL)
         { 
             // out of memory
@@ -91,23 +85,34 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     // convert to sparse format (Cp, Ci, and Cx)
     //--------------------------------------------------------------------------
 
-    // Cx and A->x always have the same type
-
-    // the values are not converted if A is iso
-    GB_OK (GB_convert_b2s (Cp, Ci, NULL, (A_iso) ? NULL : Cx,
-        &cnvec_nonempty, A->type, A, Werk)) ;
+    // Cx and A->x always have the same type.
+    // The values are not converted if A is iso (Cx is NULL).
+    GB_OK (GB_convert_b2s (Cp, Ci, NULL, Cx, &cnvec_nonempty,
+        Cp_is_32, Ci_is_32, false, A->type, A, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free prior content of A and transplant the new content
     //--------------------------------------------------------------------------
 
-    GB_phybix_free (A) ;         // clears A->nvals
+    bool Cx_shallow = false ;
+    if (A_iso)
+    { 
+        // A is iso.  Remove A->x from the matrix so it is not freed by
+        // GB_phybix_free; it is transplanted back again just below.
+        Cx = A->x ;
+        Cx_size = A->x_size ;
+        Cx_shallow = A->x_shallow ;
+        A->x = NULL ;
+    }
+
+    GB_phybix_free (A) ;        // clears A->nvals
     A->p = Cp ; A->p_size = Cp_size ; A->p_shallow = false ;
     A->i = Ci ; A->i_size = Ci_size ; A->i_shallow = false ;
     A->x = Cx ; A->x_size = Cx_size ; A->x_shallow = Cx_shallow ;
+    A->p_is_32 = Cp_is_32 ;
+    A->i_is_32 = Ci_is_32 ;
     A->iso = A_iso ;
     A->nvals = anvals ;
-    ASSERT (A->nvals == Cp [avdim]) ;
     A->plen = avdim ;
     A->nvec = avdim ;
     A->nvec_nonempty = cnvec_nonempty ;

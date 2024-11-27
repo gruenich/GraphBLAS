@@ -683,12 +683,12 @@ GrB_Info GB_jit_kernel_unjumble                                         \
 #define GB_JIT_KERNEL_CONVERT_B2S_PROTO(GB_jit_kernel_convert_b2s)      \
 GrB_Info GB_jit_kernel_convert_b2s                                      \
 (                                                                       \
-    const int64_t *restrict Cp,                                         \
-    int64_t *restrict Ci,                                               \
-    int64_t *restrict Cj,                                               \
-    GB_void *restrict Cx_new,                                           \
+    const void *Cp_input,                                               \
+    void *Ci_input,                                                     \
+    void *Cj_input,                                                     \
+    void *Cx_new,                                                       \
     const GrB_Matrix A,                                                 \
-    const int64_t *restrict W,                                          \
+    const void *W_input,                                                \
     const int nthreads                                                  \
 )
 

@@ -2,10 +2,12 @@
 // GB_conform: conform any matrix to its desired sparsity structure
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // On input, the matrix has any one of four sparsity structures: hypersparse,
 // sparse, bitmap, or full.  A bitmap or full matrix never has pending work.  A

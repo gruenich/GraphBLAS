@@ -2,10 +2,12 @@
 // GB_convert_s2b: convert from sparse/hypersparse to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // The matrix A is converted from sparse/hypersparse to bitmap.
 
@@ -152,7 +154,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
         //----------------------------------------------------------------------
 
         int A_nthreads, A_ntasks ;
-        GB_SLICE_MATRIX (A, 8) ;
+        GB_SLICE_MATRIX (A, 8) ;    // FIXME
 
         info = GrB_NO_VALUE ;
 
@@ -283,6 +285,9 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
     A->plen = -1 ;
     A->nvec = avdim ;
     A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
+
+    A->p_is_32 = false ;    // not used by bitmap or full matrices
+    A->i_is_32 = false ;
 
     A->magic = GB_MAGIC ;
 

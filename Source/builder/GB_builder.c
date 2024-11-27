@@ -2,7 +2,7 @@
 // GB_builder: build a matrix from tuples
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -227,16 +227,14 @@ GrB_Info GB_builder                 // build a matrix from tuples
     const uint32_t *restrict J_input32 = (J_is_32) ? J_input : NULL ;
     const uint64_t *restrict J_input64 = (J_is_32) ? NULL : J_input ;
 
-    void *restrict K_work = NULL ; size_t K_work_size = 0 ;
+    // K_is_32 does not use GB_validate_i_is_32 since it is not transplanted
+    // into the output matrix T.
     bool K_is_32 = (nvals < UINT32_MAX) ;
+    void *restrict K_work = NULL ; size_t K_work_size = 0 ;
     uint32_t *restrict K_work32 = NULL ;
     uint64_t *restrict K_work64 = NULL ;
 
-    if (Ti_is_32 && GB_IMAX (vlen, vdim) > GB_NMAX32)
-    { 
-        // Ti is requested too small; make it 64-bit
-        Ti_is_32 = false ;
-    }
+    Ti_is_32 = GB_validate_i_is_32 (Ti_is_32, vlen, vdim) ;
 
     // duplicate indices are flagged using an out-of-range index, after
     // any out-of-range indices on input have been checked.
@@ -325,17 +323,44 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // tuples: I_input [k] and Sx [k] when vdim <= 1, and also J_input [k]
         // for matrices with vdim > 1.
 
-        // The workspace I_work and J_work are allocated here but freed (or
-        // transplanted) inside GB_builder.  K_work is allocated, used, and
-        // freed in GB_builder.
+        // The workspace I_work is allocated here but freed (or transplanted)
+        // inside GB_builder.  J_work and K_work are allocated, used, and freed
+        // in GB_builder.
 
         ASSERT (J_work == NULL) ;
 
         // Revise I_is_32 for I_work.  This has no effect on I_input32 and
-        // I_input64 since they are already assigned with the original value
-        // of I_is_32.
+        // I_input64 since they are already assigned with the original value of
+        // I_is_32.  There are four options for choosing I_is_32.
 
-        I_is_32 = GB_IMAX (vlen, vdim) < UINT32_MAX ;
+        // (1) This option uses GB_validate_i_is_32 since I_work can be
+        // transplanted into T->i.  If 32-bit integers are used when
+        // max(vlen,vdim) is > GB_NMAX32, then I_work must be cast to T->i when
+        // transplanted later.  This option avoids the cast.  However, the sort
+        // (if needed) would be a bit slower, and the transplant can only
+        // happen if there are no duplicates.  If there are duplicates, T->i is
+        // computed out-of-place from I_work, so there is no cast.
+        // I_is_32 = GB_validate_i_is_32 (true, vlen, vdim) ;
+
+        // (2) This option allows the widest use of 32-bit indices for I_work,
+        // which speeds up the sort when max(vlen,vdim) > GB_NMAX32.  However,
+        // the sort may be skipped, and if there are no duplicates, I_work is
+        // transplanted into T->i.  In that case, this is slightly slower than
+        // option (1), but it does use the least amount of memory of all 4
+        // options when duplicates appear.
+        // I_is_32 = GB_IMAX (vlen, vdim) < UINT32_MAX ;
+
+        // (3) This option ensures I_work can be transplanted into T->i with no
+        // cast when no duplicates appear.  The caller can request 64-bit
+        // indices for T->i (with Ti_is_32 = false on input) even for small
+        // matrices.  However, this option makes the sort (if needed) slower.
+        // It uses the least amount of memory when no duplicates appear, since
+        // I_work can then always be transplanted into T->i with no extra time
+        // and memory.
+        I_is_32 = Ti_is_32 ;
+
+        // (4) Do nothing, letting I_is_32 be determined by the integer size
+        // of the I_input array.
 
         I_work = GB_malloc_memory (nvals,
             I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),
@@ -469,6 +494,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
                 // copy J_input into J_work, so the tuples can be sorted.
                 // J_work can be smaller than J_input, so GB_cast_int is used.
+                // This does not need to use GB_validate_i_is_32, since J_work
+                // is not transplanted into the output matrix T.
                 bool J_is_32_new = (vdim < UINT32_MAX) ;
                 J_work = GB_malloc_memory (nvals,
                     J_is_32_new ? sizeof (uint32_t) : sizeof (uint64_t),
@@ -902,11 +929,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t tnz = tnz_slice [nthreads] ;
     int64_t ndupl = nvals - tnz ;
 
-    if (Tp_is_32 && tnz >= UINT32_MAX)
-    { 
-        // Tp is requested too small; make it 64-bit
-        Tp_is_32 = false ;
-    }
+    Tp_is_32 = GB_validate_p_is_32 (Tp_is_32, tnz) ;
 
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse

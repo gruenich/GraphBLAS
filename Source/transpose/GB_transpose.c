@@ -368,8 +368,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         // allocate T->p, T->i, and optionally T->x, but not T->h
         int64_t tplen = GB_IMAX (1, anz) ;
-        T->p = GB_MALLOC (tplen+1, int64_t, &(T->p_size)) ;
-        T->i = GB_MALLOC (anz    , int64_t, &(T->i_size)) ;
+        T->p = GB_MALLOC (tplen+1, int64_t, &(T->p_size)) ; // FIXME
+        T->i = GB_MALLOC (anz    , int64_t, &(T->i_size)) ; // FIXME
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
@@ -672,7 +672,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         //---------------------------------------------------------------------
         // vector pointers of T
         //---------------------------------------------------------------------
-
 
         // T->p = [0 anz]
         ASSERT (T->plen == 1) ;

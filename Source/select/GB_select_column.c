@@ -48,12 +48,9 @@ GrB_Info GB_select_column
     // get A
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
+    const uint64_t *restrict Ap = A->p ;   // FIXME
+    const int64_t *restrict Ah = A->h ; // FIXME
+    const int64_t *restrict Ai = A->i ;    // FIXME
     const GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
@@ -96,7 +93,7 @@ GrB_Info GB_select_column
         // find the column j in the hyperlist of A
         // future:: use hyper_hash if present
         int64_t kright = anvec-1 ;
-        GB_SPLIT_BINARY_SEARCH (j, Ah, k, kright, found) ;
+        GB_SPLIT_BINARY_SEARCH (j, Ah, k, kright, found) ;  // FIXME
         // if found is true the Ah [k] == j
         // if found is false, then Ah [0..k-1] < j and Ah [k..anvec-1] > j
     }
@@ -111,8 +108,8 @@ GrB_Info GB_select_column
     // determine the # of entries and # of vectors in C
     //--------------------------------------------------------------------------
 
-    int64_t pstart = Ap [k] ;
-    int64_t pend = found ? Ap [k+1] : pstart ;
+    int64_t pstart = Ap [k] ;   // FIXME
+    int64_t pend = found ? Ap [k+1] : pstart ;  // FIXME
     int64_t ajnz = pend - pstart ;
     int64_t cnz, cnvec ;
     int64_t anz = Ap [anvec] ;
@@ -162,12 +159,9 @@ GrB_Info GB_select_column
     ASSERT (info == GrB_SUCCESS) ;
     int nth2 = GB_nthreads (cnvec, chunk, nth) ;
 
-    GBp_DECL_GET (C, ) ;
-    GBh_DECL_GET (C, ) ;
-    GBi_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Ci = C->i ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
+    int64_t *restrict Ch = C->h ;   // FIXME
+    int64_t *restrict Ci = C->i ;   // FIXME
     GB_void *restrict Cx = (GB_void *) C->x ;
     int64_t kk ;
 
@@ -192,34 +186,34 @@ GrB_Info GB_select_column
         { 
             ASSERT (found) ;
             // Cp [0:k-1] = Ap [0:k-1]
-            GB_memcpy (Cp, Ap, k * sizeof (int64_t), nth) ;
+            GB_memcpy (Cp, Ap, k * sizeof (int64_t), nth) ;     // FIXME
             // Cp [k:cnvec] = Ap [k+1:anvec] - ajnz
             #pragma omp parallel for num_threads(nth2)
             for (kk = k ; kk <= cnvec ; kk++)
             { 
-                Cp [kk] = Ap [kk+1] - ajnz ;
+                Cp [kk] = Ap [kk+1] - ajnz ;        // FIXME
             }
             // Ch [0:k-1] = Ah [0:k-1]
-            GB_memcpy (Ch, Ah, k * sizeof (int64_t), nth) ;
+            GB_memcpy (Ch, Ah, k * sizeof (int64_t), nth) ;     // FIXME
             // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
-            GB_memcpy (Ch + k, Ah + (k+1), (cnvec-k) * sizeof (int64_t), nth) ;
+            GB_memcpy (Ch + k, Ah + (k+1), (cnvec-k) * sizeof (int64_t), nth) ;     // FIXME
         }
         else
         { 
             // Cp [0:k] = Ap [0:k]
-            GB_memcpy (Cp, Ap, (k+1) * sizeof (int64_t), nth) ;
+            GB_memcpy (Cp, Ap, (k+1) * sizeof (int64_t), nth) ;     // FIXME
             // Cp [k+1:anvec] = Ap [k+1:anvec] - ajnz
             #pragma omp parallel for num_threads(nth2)
             for (kk = k+1 ; kk <= cnvec ; kk++)
             { 
-                Cp [kk] = Ap [kk] - ajnz ;
+                Cp [kk] = Ap [kk] - ajnz ;      // FIXME
             }
         }
         // Ci [0:pstart-1] = Ai [0:pstart-1]
-        GB_memcpy (Ci, Ai, pstart * sizeof (int64_t), nth) ;
+        GB_memcpy (Ci, Ai, pstart * sizeof (int64_t), nth) ;        // FIXME
         // Ci [pstart:cnz-1] = Ai [pend:anz-1]
         GB_memcpy (Ci + pstart, Ai + pend,
-            (cnz - pstart) * sizeof (int64_t), nth) ;
+            (cnz - pstart) * sizeof (int64_t), nth) ;       // FIXME
         if (!A_iso)
         { 
             // Cx [0:pstart-1] = Ax [0:pstart-1]
@@ -240,24 +234,24 @@ GrB_Info GB_select_column
         if (A_is_hyper)
         { 
             // Cp [0:cnvec] = Ap [0:cnvec]
-            GB_memcpy (Cp, Ap, (cnvec+1) * sizeof (int64_t), nth) ;
+            GB_memcpy (Cp, Ap, (cnvec+1) * sizeof (int64_t), nth) ;     // FIXME
             // Ch [0:cnvec-1] = Ah [0:cnvec-1]
-            GB_memcpy (Ch, Ah, (cnvec) * sizeof (int64_t), nth) ;
+            GB_memcpy (Ch, Ah, (cnvec) * sizeof (int64_t), nth) ;       // FIXME
         }
         else
         {
             // Cp [0:k+1] = Ap [0:k+1]
             ASSERT (found) ;
-            GB_memcpy (Cp, Ap, (k+2) * sizeof (int64_t), nth) ;
+            GB_memcpy (Cp, Ap, (k+2) * sizeof (int64_t), nth) ;     // FIXME
             // Cp [k+2:cnvec] = cnz
             #pragma omp parallel for num_threads(nth2)
             for (kk = k+2 ; kk <= cnvec ; kk++)
             { 
-                Cp [kk] = cnz ;
+                Cp [kk] = cnz ;     // FIXME
             }
         }
         // Ci [0:cnz-1] = Ai [0:cnz-1]
-        GB_memcpy (Ci, Ai, cnz * sizeof (int64_t), nth) ;
+        GB_memcpy (Ci, Ai, cnz * sizeof (int64_t), nth) ;       // FIXME
         if (!A_iso)
         { 
             // Cx [0:cnz-1] = Ax [0:cnz-1]
@@ -278,25 +272,25 @@ GrB_Info GB_select_column
             #pragma omp parallel for num_threads(nth2)
             for (kk = 0 ; kk <= cnvec ; kk++)
             { 
-                Cp [kk] = Ap [kk + k + found] - pend ;
+                Cp [kk] = Ap [kk + k + found] - pend ;      // FIXME
             }
             // Ch [0:cnvec-1] = Ah [k+found:anvec-1]
-            GB_memcpy (Ch, Ah + k + found, cnvec * sizeof (int64_t), nth) ;
+            GB_memcpy (Ch, Ah + k + found, cnvec * sizeof (int64_t), nth) ;     // FIXME
         }
         else
         {
             ASSERT (found) ;
             // Cp [0:k] = 0
-            GB_memset (Cp, 0, (k+1) * sizeof (int64_t), nth) ;
+            GB_memset (Cp, 0, (k+1) * sizeof (int64_t), nth) ;      // FIXME
             // Cp [k+1:cnvec] = Ap [k+1:cnvec] - pend
             #pragma omp parallel for num_threads(nth2)
             for (kk = k+1 ; kk <= cnvec ; kk++)
             { 
-                Cp [kk] = Ap [kk] - pend ;
+                Cp [kk] = Ap [kk] - pend ;      // FIXME
             }
         }
         // Ci [0:cnz-1] = Ai [pend:anz-1]
-        GB_memcpy (Ci, Ai + pend, cnz * sizeof (int64_t), nth) ;
+        GB_memcpy (Ci, Ai + pend, cnz * sizeof (int64_t), nth) ;        // FIXME
         if (!A_iso)
         { 
             // Cx [0:cnz-1] = Ax [pend:anz-1]

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // No conversion is done, except to convert to non-iso if requested.  The
 // matrix is exported in its current sparsity structure and by-row/by-col
 // format.
@@ -64,8 +66,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;
-    int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;
+    int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;   // FIXME
+    int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;   // FIXME
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;
@@ -121,11 +123,11 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     {
         plen_new = (avdim == 0) ? 0 : 1 ;
         nvec_new = (avdim == 1) ? 1 : 0 ;
-        Ap_new = GB_CALLOC (plen_new+1, int64_t, &(Ap_new_size)) ;
+        Ap_new = GB_CALLOC (plen_new+1, int64_t, &(Ap_new_size)) ;  // FIXME
         if (avdim > 1)
         { 
             // A is sparse if avdim <= 1, hypersparse if avdim > 1
-            Ah_new = GB_CALLOC (1, int64_t, &(Ah_new_size)) ;
+            Ah_new = GB_CALLOC (1, int64_t, &(Ah_new_size)) ;   // FIXME
         }
         if (Ap_new == NULL || (avdim > 1 && Ah_new == NULL))
         { 

@@ -2,7 +2,7 @@
 // GB_macrofy_sort: construct all macros for sort methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -73,7 +73,8 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_input (fp, "c", "C", "C", true, xtype, ctype, 1, ccode, 0, -1) ;
+    GB_macrofy_input (fp, "c", "C", "C", true, xtype, ctype, 1, ccode, 0, -1,
+    /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

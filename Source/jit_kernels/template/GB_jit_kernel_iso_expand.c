@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 GB_JIT_GLOBAL GB_JIT_KERNEL_ISO_EXPAND_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_ISO_EXPAND_PROTO (GB_jit_kernel)
 {

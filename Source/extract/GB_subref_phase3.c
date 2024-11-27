@@ -92,7 +92,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         return (info) ;
     }
 
-    // add Cp as the vector pointers for C, from GB_subref_phase1
+    // add Cp as the vector pointers for C, from GB_subref_phase2
     C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
     (*Cp_handle) = NULL ;
 

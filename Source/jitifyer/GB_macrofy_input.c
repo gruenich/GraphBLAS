@@ -2,7 +2,7 @@
 // GB_macrofy_input: construct a macro to load values from an input matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -26,8 +26,10 @@ void GB_macrofy_input
     int acode,              // type code of the input (0 if pattern,
                             // 15 if A is NULL)
     int A_iso_code,         // 1 if A is iso
-    int azombies            // 1 if A has zombies, 0 if A has no zombies;
+    int azombies,           // 1 if A has zombies, 0 if A has no zombies;
                             // -1 if the macro should not be created.
+    int p_is_32,            // if true, Cp is 32-bit, else 64-bit
+    int i_is_32             // if true, Ci is 32-bit, else 64-bit
 )
 {
 
@@ -142,4 +144,12 @@ void GB_macrofy_input
         GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, a2type,
             atype) ;
     }
+
+    //--------------------------------------------------------------------------
+    // construct macros for 32/64 integer types
+    //--------------------------------------------------------------------------
+
+    fprintf (fp, "#define GB_%sp_BITS %d\n", Aname, p_is_32 ? 32 : 64) ;
+    fprintf (fp, "#define GB_%si_BITS %d\n", Aname, i_is_32 ? 32 : 64) ;
 }
+

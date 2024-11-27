@@ -2,10 +2,12 @@
 // GB_convert_full_to_sparse: convert a matrix from full to sparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit (32-bit disabled for now)
 
 #include "GB.h"
 
@@ -36,12 +38,19 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     int64_t avlen = A->vlen ;
     int64_t anz = GB_nnz_full (A) ;
     GB_BURBLE_N (anz, "(full to sparse) ") ;
-    GBp_DECL (A, const) ;
-    GBi_DECL (A, const) ;
-    uint64_t *restrict Ap = NULL ; size_t Ap_size = 0 ;
-    int64_t *restrict Ai = NULL ; size_t Ai_size = 0 ;
-    Ap = GB_MALLOC (avdim+1, int64_t, &Ap_size) ;
-    Ai = GB_MALLOC (anz, int64_t, &Ai_size) ;
+
+// FIXME: 32-bit disabled for now
+    bool Ap_is_32 = false ; // GB_validate_p_is_32 (true, anz) ;
+    bool Ai_is_32 = false ; // GB_validate_i_is_32 (true, avlen, avdim) ;
+
+    void *Ap = NULL ; size_t Ap_size = 0 ;
+    void *Ai = NULL ; size_t Ai_size = 0 ;
+
+    size_t psize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    Ap = GB_malloc_memory (avdim+1, psize, &Ap_size) ;
+    Ai = GB_malloc_memory (anz, isize, &Ai_size) ;
     if (Ap == NULL || Ai == NULL)
     { 
         // out of memory
@@ -52,6 +61,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 
     A->p = Ap ; A->p_size = Ap_size ;
     A->i = Ai ; A->i_size = Ai_size ;
+    A->p_is_32 = Ap_is_32 ;
+    A->i_is_32 = Ai_is_32 ;
     A->plen = avdim ;
     A->nvec = avdim ;
     A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
@@ -69,18 +80,26 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     // fill the A->p and A->i pattern
     //--------------------------------------------------------------------------
 
+    uint32_t *Ap32 = (Ap_is_32) ? Ap : NULL ;
+    uint64_t *Ap64 = (Ap_is_32) ? NULL : Ap ;
+
+    uint32_t *Ai32 = (Ai_is_32) ? Ai : NULL ;
+    uint64_t *Ai64 = (Ai_is_32) ? NULL : Ai ;
+
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (k = 0 ; k <= avdim ; k++)
     { 
-        Ap [k] = k * avlen ;
+        // Ap [k] = k * avlen ;
+        GB_ISET (Ap, k, k * avlen) ;
     }
 
     int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < anz ; p++)
     { 
-        Ai [p] = p % avlen ;
+        // Ai [p] = p % avlen ;
+        GB_ISET (Ai, p, p % avlen) ;
     }
 
     //--------------------------------------------------------------------------

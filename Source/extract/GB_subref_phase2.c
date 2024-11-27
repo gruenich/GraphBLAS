@@ -58,9 +58,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
-    GBp_DECL (C, ) ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;  // FIXME
     if (Cp == NULL)
     { 
         // out of memory

@@ -13,6 +13,8 @@
 // invalid, and would generate a GrB_INVALID_OBJECT error if passed to a
 // user-callable GraphBLAS function.
 
+// A->p_is_32 and A->i_is_32 are unchanged.
+
 #include "GB.h"
 
 void GB_phy_free                // free A->p, A->h, and A->Y of a matrix

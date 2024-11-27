@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit, except for better handling of pending tuples below.
+
 // The integer arrays A->[phi] and A->Y in the matrix A are converted to match
 // the request p_is_32_new and i_is_32_new.  If converted, A->[phi] are no
 // longer shallow.  If A->Y is entirely shallow, it is simply removed from A.
@@ -57,17 +59,8 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     int64_t vlen = A->vlen ;
     int64_t vdim = A->vdim ;
 
-    if (p_is_32_new && anz >= UINT32_MAX)
-    { 
-        // too many entries to convert A->p to 32-bit
-        p_is_32_new = false ;
-    }
-
-    if (i_is_32_new && GB_IMAX (vlen, vdim) > GB_NMAX32)
-    { 
-        // dimensions are too large to convert A->i, A->h, and A->Y to 32-bit
-        i_is_32_new = false ;
-    }
+    p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;
+    i_is_32_new = GB_validate_i_is_32 (i_is_32_new, vlen, vdim) ;
 
     if (p_is_32 == p_is_32_new && i_is_32 == i_is_32_new)
     { 
@@ -80,7 +73,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     //--------------------------------------------------------------------------
 
     // do not convert pending tuples; finish the work first
-    // FIXME: convert them to i_is_32_new instead
+    // FIXME: this works OK, but can convert them to i_is_32_new instead
     GB_MATRIX_WAIT_IF_PENDING (A) ;
 
     // simply remove A->Y if it is entirely shallow

@@ -512,6 +512,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         if (A->x == NULL || A->x_size < A->type->size)
         { 
+            #if GB_DEVELOPER
+            GBPR0 ("A->x %p size %d typesize %d\n", A->x, (int) A->x_size,
+                (int) A->type->size) ;
+            #endif
             GBPR0 ("  invalid iso matrix\n") ;
             return (GrB_INVALID_OBJECT) ;
         }

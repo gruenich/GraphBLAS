@@ -559,8 +559,8 @@ GrB_Info GB_sort
             // is copied to Ph.
             int64_t pplen = GB_IMAX (1, cnvec) ;
             P->plen = pplen ;
-            P->x = GB_MALLOC (cnz, int64_t, &(P->x_size)) ; // x:OK
-            P->p = GB_MALLOC (pplen+1, int64_t, &(P->p_size)) ;
+            P->x = GB_MALLOC (cnz, int64_t, &(P->x_size)) ;
+            P->p = GB_MALLOC (pplen+1, int64_t, &(P->p_size)) ; // FIXME
             P->h = NULL ;
             if (C_is_hyper)
             { 

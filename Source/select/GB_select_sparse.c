@@ -86,9 +86,9 @@ GrB_Info GB_select_sparse
     GBp_DECL_GET (A, const) ;
     GBh_DECL_GET (A, const) ;
     GBi_DECL_GET (A, const) ;
-    uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ;
-    int64_t *restrict Ah = A->h ;
-    int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ;
+    uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ; // FIXME
+    int64_t *restrict Ah = A->h ; // FIXME
+    int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ; // FIXME
     GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
@@ -103,7 +103,7 @@ GrB_Info GB_select_sparse
     int64_t cnz = 0 ;
     int64_t cplen = (avdim == 1) ? 1 : anvec ;
 
-    Cp = GB_CALLOC (cplen+1, int64_t, &Cp_size) ;
+    Cp = GB_CALLOC (cplen+1, int64_t, &Cp_size) ;   // FIXME
     if (Cp == NULL)
     { 
         // out of memory

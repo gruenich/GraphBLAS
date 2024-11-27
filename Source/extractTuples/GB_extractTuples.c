@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Extracts all tuples from a matrix, like [I,J,X] = find (A).  If any
 // parameter I, J and/or X is NULL, then that component is not extracted.  The
 // size of the I, J, and X arrays (those that are not NULL) is given by nvals,
@@ -29,8 +31,8 @@
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
-    GrB_Index *I_out,           // array for returning row indices of tuples
-    GrB_Index *J_out,           // array for returning col indices of tuples
+    GrB_Index *I_out, // FIXME  // array for returning row indices of tuples
+    GrB_Index *J_out, // FIXME  // array for returning col indices of tuples
     void *X,                    // array for returning values of tuples
     GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
     const GrB_Type xtype,       // type of array X
@@ -46,8 +48,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Info info ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
-    GBp_DECL (C, ) ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
 
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT_TYPE_OK (xtype, "xtype to extract", GB0) ;
@@ -113,7 +114,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // allocate workspace
         //----------------------------------------------------------------------
 
-        Cp = GB_MALLOC_WORK (A->vdim+1, int64_t, &Cp_size) ;
+        Cp = GB_MALLOC_WORK (A->vdim+1, int64_t, &Cp_size) ; // FIXME
         if (Cp == NULL)
         { 
             // out of memory
@@ -129,7 +130,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // iso or X is NULL, GB_convert_b2s only does the symbolic work.
 
         GB_OK (GB_convert_b2s (Cp, (int64_t *) I, (int64_t *) J,
-            (GB_void *) X, NULL, xtype, A, Werk)) ;
+            (GB_void *) X, NULL, /* FIXME: */ false, false, false,
+            xtype, A, Werk)) ;
 
         if (A->iso && X != NULL)
         { 
@@ -163,11 +165,12 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
-                    I [p] = (p % avlen) ;
+                    I [p] = (p % avlen) ;   // FIXME
                 }
             }
             else
             { 
+                // FIXME: cast_int here
                 GB_memcpy (I, A->i, anz * sizeof (int64_t), nthreads) ;
             }
         }
@@ -178,7 +181,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (J != NULL)
         {
-            GB_OK (GB_extract_vector_list ((int64_t *) J, A, Werk)) ;
+            GB_OK (GB_extract_vector_list ((int64_t *) J, A, Werk)) ; // FIXME
         }
 
         //----------------------------------------------------------------------

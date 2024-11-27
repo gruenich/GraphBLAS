@@ -2,7 +2,7 @@
 // GB_macrofy_mxm: construct all macros for a semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -360,7 +360,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
 
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
-        C_in_iso) ;
+        C_in_iso,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name
@@ -377,11 +378,13 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     GB_macrofy_input (fp, "a", "A", "A", true,
         flipxy ? ytype : xtype,
-        atype, asparsity, acode, A_iso_code, -1) ;
+        atype, asparsity, acode, A_iso_code, -1,
+        /* FIXME: */ false, false) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true,
         flipxy ? xtype : ytype,
-        btype, bsparsity, bcode, B_iso_code, -1) ;
+        btype, bsparsity, bcode, B_iso_code, -1,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

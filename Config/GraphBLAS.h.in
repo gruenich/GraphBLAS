@@ -4692,6 +4692,7 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 // GxB_build (C,I,J,X,nvals,dup,desc):  GxB_Matrix_build_Vector
 // GxB_build (v,I,X,nvals,dup,desc):    GxB_Vector_build_Vector
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_build(arg1,arg2,arg3,arg4,...)                                  \
     _Generic ((arg1),                                                       \
         GrB_Matrix :                                                        \
@@ -4719,6 +4720,7 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
                 const GrB_Index * :                                         \
                     _Generic ( (arg3), GB_PCASES (GrB, Matrix_build)))      \
 ) (arg1, arg2, arg3, arg4, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_setElement

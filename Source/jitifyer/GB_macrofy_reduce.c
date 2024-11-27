@@ -2,7 +2,7 @@
 // GB_macrofy_reduce: construct all macros for a reduction to scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -90,7 +90,8 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // to a scalar, even for user-defined types and monoids.
 
     GB_macrofy_input (fp, "a", "A", "A", true, monoid->op->ztype,
-        atype, asparsity, acode, false, azombies) ;
+        atype, asparsity, acode, false, azombies,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // reduction method

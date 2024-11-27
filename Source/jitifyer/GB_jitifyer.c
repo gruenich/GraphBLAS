@@ -2,7 +2,7 @@
 // GB_jitifyer.c: CPU / CUDA jitifyer
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -1807,7 +1807,7 @@ GrB_Info GB_jitifyer_load2_worker
     {
         case GB_jit_apply_family  : 
             op1 = op ;
-            method_code_digits = 10 ;
+            method_code_digits = 11 ;
             break ;
 
         case GB_jit_assign_family : 

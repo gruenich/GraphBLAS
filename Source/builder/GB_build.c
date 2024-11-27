@@ -2,7 +2,7 @@
 // GB_build: build a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -298,9 +298,10 @@ GrB_Info GB_build               // build matrix
         #if 1
         true, true      // allow Tp_is_32 and Ti_is_32 to be true.  Tp_is_32
                         // is set false is nnz(T) is too large, and Ti_is_32
-                        // is set false if the dimensions are too large.
+                        // is set false if the dimensions are too large.  This
+                        // constructs the most compact T possible.
         #else
-        is_32, is_32    // FIXME: just for testing
+        is_32, is_32    // just for testing
         #endif
     )) ;
 
@@ -358,11 +359,13 @@ GrB_Info GB_build               // build matrix
     ASSERT (!GB_JUMBLED (T)) ;
     ASSERT (!GB_PENDING (T)) ;
     info = GB_transplant_conform (C, C->type, &T, Werk) ;
-
-    tt = GB_OPENMP_GET_WTIME - tt;
-    GB_BURBLE_MATRIX (T, "(wrapup %s/%s time: %g) ",
-        is_32 ? "32" : "64",
-        is_32 ? "32" : "64", tt) ;
+    if (nvals > 1000)
+    { 
+        tt = GB_OPENMP_GET_WTIME - tt;
+        GB_BURBLE_MATRIX (T, "(wrapup %s/%s time: %g) ",
+            is_32 ? "32" : "64",
+            is_32 ? "32" : "64", tt) ;
+    }
     return (info) ;
 }
 

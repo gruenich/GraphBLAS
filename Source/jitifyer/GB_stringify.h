@@ -2,7 +2,7 @@
 // GB_stringify.h: prototype definitions construction of *.h definitions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -795,8 +795,10 @@ void GB_macrofy_input
     int asparsity,          // sparsity format of the input matrix
     int acode,              // type code of the input (0 if pattern)
     int A_iso_code,         // 1 if A is iso
-    int azombies            // 1 if A has zombies, 0 if A has no zombies,
+    int azombies,           // 1 if A has zombies, 0 if A has no zombies,
                             // -1 if A can never have zombies
+    int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int i_is_32             // if true, Ai is 32-bit, else 64-bit
 ) ;
 
 void GB_macrofy_output
@@ -810,7 +812,9 @@ void GB_macrofy_output
     GrB_Type ztype,         // type of cij scalar to cast to ctype write to C
     int csparsity,          // sparsity format of the output matrix
     bool C_iso,             // true if C is iso on output
-    bool C_in_iso           // true if C is iso on input
+    bool C_in_iso,          // true if C is iso on input
+    int p_is_32,            // if true, Cp is 32-bit, else 64-bit
+    int i_is_32             // if true, Ci is 32-bit, else 64-bit
 ) ;
 
 //------------------------------------------------------------------------------
@@ -929,6 +933,9 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
                             // C is sparse, hyper, or full.
     const bool C_is_matrix, // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,   // C=((ctype) T) is the final typecast
+    const bool Cp_is_32,        // if true, Cp is uint32_t, else uint64_t
+    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
+    const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
         const bool flipij,          // if true, flip i,j for user idxunop
@@ -937,6 +944,8 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     const int A_sparsity,
     const bool A_is_matrix,
     const GrB_Type atype,
+    const bool Ap_is_32,        // if true, A->p is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, A->[hi] is uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 ) ;
@@ -989,14 +998,18 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const int C_sparsity,
     const bool C_is_matrix,     // true for C=op(A), false for Cx=op(A)
     const GrB_Type ctype,
+    const bool Cp_is_32,        // if true, Cp is uint32_t, else uint64_t
+    const bool Ci_is_32,        // if true, Ci is uint32_t, else uint64_t
+    const bool Cj_is_32,        // if true, Cj is uint32_t, else uint64_t
     // operator:
     const GB_Operator op,       // not JIT'd if NULL
     const bool flipij,
     // A matrix:
-//  const GrB_Matrix A
     const int A_sparsity,
     const bool A_is_matrix,
     const GrB_Type atype,
+    const bool Ap_is_32,        // if true, Ap is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, A[hi] is uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 ) ;
@@ -1097,16 +1110,19 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
 GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
 (
     // input:
-    const int64_t *restrict Cp,     // vector pointers for CSC/CSR form
+    const void *Cp,                 // vector pointers for CSC/CSR form
     // outputs:
-    int64_t *restrict Ci,           // indices for CSC/CSR or triplet form
-    int64_t *restrict Cj,           // vector indices for triplet form
+    void *Ci,                       // indices for CSC/CSR or triplet form
+    void *Cj,                       // vector indices for triplet form
     GB_void *restrict Cx,           // values for CSC/CSR or triplet form
     // inputs: not modified
+    const bool Cp_is_32,            // if true, Cp is uint32_t, else uint64_t
+    const bool Ci_is_32,            // if true, Cp is uint32_t, else uint64_t
+    const bool Cj_is_32,            // if true, Cp is uint32_t, else uint64_t
     const GrB_Type ctype,           // type of Cx
     GB_Operator op,
     const GrB_Matrix A,             // matrix to extract; not modified
-    const int64_t *restrict W,      // workspace
+    const void *W,                  // workspace
     int nthreads                    // # of threads to use
 ) ;
 

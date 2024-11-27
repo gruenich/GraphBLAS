@@ -35,7 +35,7 @@ static inline void GB_ek_slice_search
     int taskid,
     int ntasks,
     const int64_t *restrict pstart_slice,    // size ntasks+1
-    const int64_t *restrict Ap,              // size anvec
+    const int64_t *restrict Ap,              // size anvec  FIXME
     int64_t anvec,                           // # of vectors in A
     int64_t avlen,                           // vector length of A
     // output:
@@ -55,7 +55,7 @@ static inline void GB_ek_slice_search
     }
     else
     { 
-        kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;
+        kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;   // FIXME
     }
 
     // find the last vector of the slice for task taskid: the
@@ -72,7 +72,7 @@ static inline void GB_ek_slice_search
     }
     else
     { 
-        klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;
+        klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;//FIXME
     }
     kfirst_slice [taskid] = kfirst ;
     klast_slice  [taskid] = klast ;
@@ -102,7 +102,7 @@ GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
     int64_t avlen = A->vlen ;
     int64_t anz = GB_nnz_held (A) ;
     GBp_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;      // NULL if bitmap or full
+    const uint64_t *restrict Ap = A->p ;      // NULL if bitmap or full  FIXME
 
     //--------------------------------------------------------------------------
     // allocate result

@@ -146,6 +146,5 @@ static inline void GB_ek_slice_ntasks
         pA_end   = p1 ;                                                     \
     }
 
-
 #endif
 

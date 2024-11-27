@@ -2,10 +2,14 @@
 // GB_convert_hyper_to_sparse: convert a matrix from hypersparse to sparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
+
+#define GB_DEBUG    /* HACK FIXME */
 
 // On input, the matrix may have shallow A->p and A->h content; it is safely
 // removed.  On output, the matrix is always non-hypersparse (even if out of
@@ -51,6 +55,10 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     int64_t n = A->vdim ;
     int64_t anz = GB_nnz (A) ;
 
+    bool Ap_is_32 = A->p_is_32 ;
+    bool Ai_is_32 = A->i_is_32 ;
+    size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
     if (n == 1)
     { 
 
@@ -63,14 +71,12 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // user as an invalid GrB_Vector.
 
         ASSERT (A->plen == 1) ;
-        ASSERT (A->p_size >= 2 * sizeof (int64_t)) ;
+        ASSERT (A->p_size >= 2 * psize) ;
         ASSERT (A->nvec == 0 || A->nvec == 1) ;
         if (A->nvec == 0)
         { 
-            GBp_DECL_GET (A, ) ;
-            uint64_t *restrict Ap = A->p ;
-            Ap [0] = 0 ;
-            Ap [1] = 0 ;
+            // Ap [0:1] = 0
+            memset (A->p, 0, 2 * psize) ;
             A->nvec = 1 ;
         }
         A->nvec_nonempty = (anz > 0) ? 1 : 0 ;
@@ -104,17 +110,24 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // allocate the new Ap array, of size n+1
         //----------------------------------------------------------------------
 
-        int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        Ap_new = GB_MALLOC (n+1, int64_t, &Ap_new_size) ;
+        void *Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        Ap_new = GB_malloc_memory (n+1, psize, &Ap_new_size) ;
         if (Ap_new == NULL)
         { 
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
 
+        uint32_t *restrict Ap_new32 = (Ap_is_32) ? Ap_new : NULL ;
+        uint64_t *restrict Ap_new64 = (Ap_is_32) ? NULL : Ap_new ;
+
         #ifdef GB_DEBUG
         // to ensure all values of Ap_new are assigned below.
-        for (int64_t j = 0 ; j <= n ; j++) Ap_new [j] = -99999 ;
+        for (int64_t j = 0 ; j <= n ; j++)
+        {
+            // Ap_new [j] = -99999 ;
+            GB_ISET (Ap_new, j, -99999) ;
+        }
         #endif
 
         //----------------------------------------------------------------------
@@ -122,9 +135,16 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         //----------------------------------------------------------------------
 
         int64_t nvec = A->nvec ;            // # of vectors in Ah_old
-        int64_t *restrict Ap_old = A->p ;   // size nvec+1
-        int64_t *restrict Ah_old = A->h ;   // size nvec
         int64_t nvec_nonempty = 0 ;         // recompute A->nvec_nonempty
+
+        void *Ap_old = A->p ;               // size nvec+1
+        void *Ah_old = A->h ;               // size nvec
+
+        const uint32_t *restrict Ap_old32 = (Ap_is_32) ? Ap_old : NULL ;
+        const uint64_t *restrict Ap_old64 = (Ap_is_32) ? NULL : Ap_old ;
+
+        const uint32_t *restrict Ah_old32 = (Ai_is_32) ? Ah_old : NULL ;
+        const uint64_t *restrict Ah_old64 = (Ai_is_32) ? NULL : Ah_old ;
 
         //----------------------------------------------------------------------
         // construct the new vector pointers
@@ -153,11 +173,19 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
             int64_t k = 0, pright = nvec-1 ;
             bool found ;
-            GB_SPLIT_BINARY_SEARCH (jstart, Ah_old, k, pright, found) ;
+            if (Ai_is_32)
+            { 
+                GB_SPLIT_BINARY_SEARCH (jstart, Ah_old32, k, pright, found) ;
+            }
+            else
+            { 
+                GB_SPLIT_BINARY_SEARCH (jstart, Ah_old64, k, pright, found) ;
+            }
             ASSERT (k >= 0 && k <= nvec) ;
             ASSERT (GB_IMPLIES (nvec == 0, !found && k == 0)) ;
-            ASSERT (GB_IMPLIES (found, jstart == Ah_old [k])) ;
-            ASSERT (GB_IMPLIES (!found && k < nvec, jstart < Ah_old [k])) ;
+            ASSERT (GB_IMPLIES (found, jstart == GB_IGET (Ah_old, k))) ;
+            ASSERT (GB_IMPLIES (!found && k < nvec,
+                jstart < GB_IGET (Ah_old, k))) ;
 
             // Let jk = Ah_old [k], jlast = Ah_old [k-1], and pk = Ah_old [k].
             // Then Ap_new [jlast+1:jk] must be set to pk.  This must be done
@@ -169,7 +197,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             // jstart:jend-1, even if it does not own that particular vector k.
             // This happens only at the tail end of jstart:jend-1. 
 
-            int64_t jlast = (k == 0) ? (-1) : Ah_old [k-1] ;
+            int64_t jlast = (k == 0) ? (-1) : GB_IGET (Ah_old, k-1) ;
             jlast = GB_IMAX (jstart-1, jlast) ;
 
             bool done = false ;
@@ -181,8 +209,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
                 // get the kth vector in Ah_old, which is vector index jk.
                 //--------------------------------------------------------------
 
-                int64_t jk = (k < nvec) ? Ah_old [k] : n ;
-                int64_t pk = (k < nvec) ? Ap_old [k] : anz ;
+                int64_t jk = (k < nvec) ? GB_IGET (Ah_old, k) : n ;
+                int64_t pk = (k < nvec) ? GB_IGET (Ap_old, k) : anz ;
 
                 //--------------------------------------------------------------
                 // determine if this task owns jk
@@ -204,7 +232,10 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
                     // Ap must be set to pk for all vector indices jlast+1:jk.
                     jfin = jk ;
                     ASSERT (k >= 0 && k < nvec && nvec > 0) ;
-                    if (pk < Ap_old [k+1]) my_nvec_nonempty++ ;
+                    if (pk < GB_IGET (Ap_old, k+1))
+                    { 
+                        my_nvec_nonempty++ ;
+                    }
                 }
 
                 //--------------------------------------------------------------
@@ -216,7 +247,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
                 for (int64_t j = jlast+1 ; j <= jfin ; j++)
                 { 
-                    Ap_new [j] = pk ;
+                    // Ap_new [j] = pk ;
+                    GB_ISET (Ap_new, j, pk) ;
                 }
 
                 //--------------------------------------------------------------
@@ -234,7 +266,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             if (tid == ntasks-1)
             { 
                 ASSERT (jend == n) ;
-                Ap_new [n] = anz ;
+                // Ap_new [n] = anz ;
+                GB_ISET (Ap_new, n, anz) ;
             }
         }
 

@@ -2,10 +2,12 @@
 // GB_macrofy_sparsity: define macro for the sparsity structure of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -38,6 +40,16 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name) ;
+
+            fprintf (fp,
+                "#define GBp_%s(%sp,k,vlen) %sp [k]\n"
+                "#define GBh_%s(%sh,k)      %sh [k]\n"
+                "#define GBi_%s(%si,p,vlen) %si [p]\n"
+                "#define GBb_%s(%sb,p)      1\n",
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name, matrix_name) ;
+
             break ;
 
         case 1 :    // sparse
@@ -54,6 +66,16 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name) ;
+
+            fprintf (fp,
+                "#define GBp_%s(%sp,k,vlen) %sp [k]\n"
+                "#define GBh_%s(%sh,k)      (k)\n"
+                "#define GBi_%s(%si,p,vlen) %si [p]\n"
+                "#define GBb_%s(%sb,p)      1\n",
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name) ;
+
             break ;
 
         case 2 :    // bitmap
@@ -70,6 +92,16 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name) ;
+
+            fprintf (fp,
+                "#define GBp_%s(%sp,k,vlen) ((k) * (vlen))\n"
+                "#define GBh_%s(%sh,k)      (k)\n"
+                "#define GBi_%s(%si,p,vlen) ((p) %% (vlen))\n"
+                "#define GBb_%s(%sb,p)      %sb [p]\n",
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name) ;
+
             break ;
 
         case 3 :    // full
@@ -85,6 +117,15 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
+
+            fprintf (fp,
+                "#define GBp_%s(%sp,k,vlen) ((k) * (vlen))\n"
+                "#define GBh_%s(%sh,k)      (k)\n"
+                "#define GBi_%s(%si,p,vlen) ((p) %% (vlen))\n"
+                "#define GBb_%s(%sb,p)      1\n",
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name, matrix_name, matrix_name) ;
+
             break ;
 
         default :   // unused
@@ -100,6 +141,15 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name,
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
+
+            fprintf (fp,
+                "#define GBp_%s(%sp,k,vlen) 0\n"
+                "#define GBh_%s(%sh,k)      (k)\n"
+                "#define GBi_%s(%si,p,vlen) 0\n"
+                "#define GBb_%s(%sb,p)      1\n",
+                matrix_name, matrix_name, matrix_name, matrix_name,
+                matrix_name, matrix_name, matrix_name, matrix_name) ;
+
             break ;
 
     }
