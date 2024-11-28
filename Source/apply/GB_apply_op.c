@@ -192,10 +192,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
         if (info == GrB_NO_VALUE)
         {
             // get A and C
-            GBp_DECL_GET (A, const) ;
-            GBh_DECL_GET (A, const) ;
-            GBi_DECL_GET (A, const) ;
-            const uint64_t *restrict Ap = A->p ;
+            const uint64_t *restrict Ap = A->p ;    // FIXME
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             int64_t avlen = A->vlen ;
@@ -758,10 +755,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GB_BURBLE_N (anz, "(generic apply: user-defined idxunop) ") ;
 
             // get A and C
-            GBp_DECL_GET (A, const) ;
-            GBh_DECL_GET (A, const) ;
-            GBi_DECL_GET (A, const) ;
-            const uint64_t *restrict Ap = A->p ;
+            const uint64_t *restrict Ap = A->p ;    // FIXME
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             int64_t avlen = A->vlen ;

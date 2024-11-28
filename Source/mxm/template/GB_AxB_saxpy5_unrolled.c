@@ -31,10 +31,7 @@
     //--------------------------------------------------------------------------
 
     const int64_t m = C->vlen ;     // # of rows of C and A
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     #ifdef GB_JIT_KERNEL

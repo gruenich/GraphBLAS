@@ -17,9 +17,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel)
 {
 
     // get C and A
-    GBp_DECL_GET (C, const) ;
-    GBi_DECL_GET (C, ) ;
-    const uint64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     int64_t *restrict Ci = C->i ;
     #define GB_COPY_RANGE(pC,pA,len) \
         memcpy (Cx + (pC), Ax + (pA), (len) * sizeof (GB_C_TYPE)) ;

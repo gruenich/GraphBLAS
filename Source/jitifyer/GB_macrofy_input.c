@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // The macro, typically called GB_GETA or GB_GETB, also does typecasting.
 
 #include "GB.h"

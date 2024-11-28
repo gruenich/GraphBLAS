@@ -40,8 +40,7 @@
     const bool B_iso = B->iso ;
     #endif
 
-    GBi_DECL_GET (B, const) ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *restrict Bi = B->i ; // FIXME
     GB_B_NVALS (bnz) ;      // const int64_t bnz = GB_nnz (B) ;
     const int64_t bvlen = B->vlen ;
 

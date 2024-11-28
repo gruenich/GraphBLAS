@@ -573,20 +573,31 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         { if (I ## 64) { I ## 64 [k] = (i); } else { I ## 32 [k] = (i) ; } }
 
     // helper macro: declare a 32/64-bit integer array I
-    #define GB_IDECL(I,const,u) \
-        const u ## int32_t *restrict I ## 32 = NULL ; \
+    #define GB_IDECL(I,const,u)                         \
+        const u ## int32_t *restrict I ## 32 = NULL ;   \
         const u ## int64_t *restrict I ## 64 = NULL
 
+    // helper macro: declare a 32/64-bit integer array I, for matrix component
+    #define GB_MDECL(I,const,u)                         \
+        const void *I = NULL ;                          \
+        GB_IDECL (I, const, u)
+
+    #define GB_IPTR(I,is_32)                            \
+        I ## 32 = (is_32) ? I : NULL ;                  \
+        I ## 64 = (is_32) ? NULL : I
+
     // helper macro: get a 32/64-bit pointer from a matrix
-    #define GB_GET_MATRIX_PTR(I,A,is_32,component) \
-        I ## 32 = (A) ? (A->is_32 ? A->component : NULL) : NULL ; \
-        I ## 64 = (A) ? (A->is_32 ? NULL : A->component) : NULL
+    #define GB_GET_MATRIX_PTR(I,A,is_32,component)                  \
+        I = (A) ? A->component : NULL ;                             \
+        I ## 32 = (A) ? (A->is_32 ? I : NULL) : NULL ;              \
+        I ## 64 = (A) ? (A->is_32 ? NULL : I) : NULL
 
     // helper macro: get a 32/64-bit pointer from a matrix hyper_hash.
     // The integer types of A->Y->[pix] are defined by A->i_is_32.
-    #define GB_GET_HYPER_PTR(I,A,i) \
-        I ## 32 = (A && A->Y) ? (A->i_is_32 ? A->Y->i : NULL) : NULL ; \
-        I ## 64 = (A && A->Y) ? (A->i_is_32 ? NULL : A->Y->i) : NULL
+    #define GB_GET_HYPER_PTR(I,A,component)                                    \
+        I = (A && A->Y) ? A->Y->component : NULL ;                             \
+        I ## 32 = (A && A->Y) ? (A->i_is_32 ? A->Y->component : NULL) : NULL ; \
+        I ## 64 = (A && A->Y) ? (A->i_is_32 ? NULL : A->Y->component) : NULL
 
     // general method for getting an entry from the Ap array of a matrix
     #define GBp(Ap,k,vlen) \
@@ -612,61 +623,61 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     // for declaring pointers for specific matrices (C, M, A, B, S, R, Z):
 
         // C matrix:
-        #define GB_Cp_DECLARE(Cp,const)    GB_IDECL (Cp,   const, u)
-        #define GB_Ch_DECLARE(Ch,const)    GB_IDECL (Ch,   const, u)
-        #define GB_Ci_DECLARE(Ci,const)    GB_IDECL (Ci,   const,  )
-        #define GB_Ci_DECLARE_U(Ci,const)  GB_IDECL (Ci,   const, u)
-        #define GB_CYp_DECLARE(C_Yp,const) GB_IDECL (C_Yp, const, u)
-        #define GB_CYi_DECLARE(C_Yi,const) GB_IDECL (C_Yi, const, u)
-        #define GB_CYx_DECLARE(C_Yx,const) GB_IDECL (C_Yx, const, u)
+        #define GB_Cp_DECLARE(Cp,const)    GB_MDECL (Cp,   const, u)
+        #define GB_Ch_DECLARE(Ch,const)    GB_MDECL (Ch,   const, u)
+        #define GB_Ci_DECLARE(Ci,const)    GB_MDECL (Ci,   const,  )
+        #define GB_Ci_DECLARE_U(Ci,const)  GB_MDECL (Ci,   const, u)
+        #define GB_CYp_DECLARE(C_Yp,const) GB_MDECL (C_Yp, const, u)
+        #define GB_CYi_DECLARE(C_Yi,const) GB_MDECL (C_Yi, const, u)
+        #define GB_CYx_DECLARE(C_Yx,const) GB_MDECL (C_Yx, const, u)
 
         // M matrix:
-        #define GB_Mp_DECLARE(Mp,const)    GB_IDECL (Mp,   const, u)
-        #define GB_Mh_DECLARE(Mh,const)    GB_IDECL (Mh,   const, u)
-        #define GB_Mi_DECLARE(Mi,const)    GB_IDECL (Mi,   const,  )
-        #define GB_Mi_DECLARE_U(Mi,const)  GB_IDECL (Mi,   const, u)
-        #define GB_MYp_DECLARE(M_Yp,const) GB_IDECL (M_Yp, const, u)
-        #define GB_MYi_DECLARE(M_Yi,const) GB_IDECL (M_Yi, const, u)
-        #define GB_MYx_DECLARE(M_Yx,const) GB_IDECL (M_Yx, const, u)
+        #define GB_Mp_DECLARE(Mp,const)    GB_MDECL (Mp,   const, u)
+        #define GB_Mh_DECLARE(Mh,const)    GB_MDECL (Mh,   const, u)
+        #define GB_Mi_DECLARE(Mi,const)    GB_MDECL (Mi,   const,  )
+        #define GB_Mi_DECLARE_U(Mi,const)  GB_MDECL (Mi,   const, u)
+        #define GB_MYp_DECLARE(M_Yp,const) GB_MDECL (M_Yp, const, u)
+        #define GB_MYi_DECLARE(M_Yi,const) GB_MDECL (M_Yi, const, u)
+        #define GB_MYx_DECLARE(M_Yx,const) GB_MDECL (M_Yx, const, u)
 
         // A matrix:
-        #define GB_Ap_DECLARE(Ap,const)    GB_IDECL (Ap,   const, u)
-        #define GB_Ah_DECLARE(Ah,const)    GB_IDECL (Ah,   const, u)
-        #define GB_Ai_DECLARE(Ai,const)    GB_IDECL (Ai,   const,  )
-        #define GB_Ai_DECLARE_U(Ai,const)  GB_IDECL (Ai,   const, u)
-        #define GB_AYp_DECLARE(A_Yp,const) GB_IDECL (A_Yp, const, u)
-        #define GB_AYi_DECLARE(A_Yi,const) GB_IDECL (A_Yi, const, u)
-        #define GB_AYx_DECLARE(A_Yx,const) GB_IDECL (A_Yx, const, u)
+        #define GB_Ap_DECLARE(Ap,const)    GB_MDECL (Ap,   const, u)
+        #define GB_Ah_DECLARE(Ah,const)    GB_MDECL (Ah,   const, u)
+        #define GB_Ai_DECLARE(Ai,const)    GB_MDECL (Ai,   const,  )
+        #define GB_Ai_DECLARE_U(Ai,const)  GB_MDECL (Ai,   const, u)
+        #define GB_AYp_DECLARE(A_Yp,const) GB_MDECL (A_Yp, const, u)
+        #define GB_AYi_DECLARE(A_Yi,const) GB_MDECL (A_Yi, const, u)
+        #define GB_AYx_DECLARE(A_Yx,const) GB_MDECL (A_Yx, const, u)
 
         // B matrix:
-        #define GB_Bp_DECLARE(Bp,const)    GB_IDECL (Bp,   const, u)
-        #define GB_Bh_DECLARE(Bh,const)    GB_IDECL (Bh,   const, u)
-        #define GB_Bi_DECLARE(Bi,const)    GB_IDECL (Bi,   const,  )
-        #define GB_Bi_DECLARE_U(Bi,const)  GB_IDECL (Bi,   const, u)
-        #define GB_BYp_DECLARE(B_Yp,const) GB_IDECL (B_Yp, const, u)
-        #define GB_BYi_DECLARE(B_Yi,const) GB_IDECL (B_Yi, const, u)
-        #define GB_BYx_DECLARE(B_Yx,const) GB_IDECL (B_Yx, const, u)
+        #define GB_Bp_DECLARE(Bp,const)    GB_MDECL (Bp,   const, u)
+        #define GB_Bh_DECLARE(Bh,const)    GB_MDECL (Bh,   const, u)
+        #define GB_Bi_DECLARE(Bi,const)    GB_MDECL (Bi,   const,  )
+        #define GB_Bi_DECLARE_U(Bi,const)  GB_MDECL (Bi,   const, u)
+        #define GB_BYp_DECLARE(B_Yp,const) GB_MDECL (B_Yp, const, u)
+        #define GB_BYi_DECLARE(B_Yi,const) GB_MDECL (B_Yi, const, u)
+        #define GB_BYx_DECLARE(B_Yx,const) GB_MDECL (B_Yx, const, u)
 
         // S matrix:
-        #define GB_Sp_DECLARE(Sp,const)    GB_IDECL (Sp,   const, u)
-        #define GB_Sh_DECLARE(Sh,const)    GB_IDECL (Sh,   const, u)
-        #define GB_Si_DECLARE(Si,const)    GB_IDECL (Si,   const,  )
-        #define GB_Si_DECLARE_U(Si,const)  GB_IDECL (Si,   const, u)
-        #define GB_SYp_DECLARE(S_Yp,const) GB_IDECL (S_Yp, const, u)
-        #define GB_SYi_DECLARE(S_Yi,const) GB_IDECL (S_Yi, const, u)
-        #define GB_SYx_DECLARE(S_Yx,const) GB_IDECL (S_Yx, const, u)
+        #define GB_Sp_DECLARE(Sp,const)    GB_MDECL (Sp,   const, u)
+        #define GB_Sh_DECLARE(Sh,const)    GB_MDECL (Sh,   const, u)
+        #define GB_Si_DECLARE(Si,const)    GB_MDECL (Si,   const,  )
+        #define GB_Si_DECLARE_U(Si,const)  GB_MDECL (Si,   const, u)
+        #define GB_SYp_DECLARE(S_Yp,const) GB_MDECL (S_Yp, const, u)
+        #define GB_SYi_DECLARE(S_Yi,const) GB_MDECL (S_Yi, const, u)
+        #define GB_SYx_DECLARE(S_Yx,const) GB_MDECL (S_Yx, const, u)
 
         // R matrix:
-        #define GB_Rp_DECLARE(Rp,const)    GB_IDECL (Rp,   const, u)
-        #define GB_Rh_DECLARE(Rh,const)    GB_IDECL (Rh,   const, u)
-        #define GB_Ri_DECLARE(Ri,const)    GB_IDECL (Ri,   const,  )
-        #define GB_Ri_DECLARE_U(Ri,const)  GB_IDECL (Ri,   const, u)
+        #define GB_Rp_DECLARE(Rp,const)    GB_MDECL (Rp,   const, u)
+        #define GB_Rh_DECLARE(Rh,const)    GB_MDECL (Rh,   const, u)
+        #define GB_Ri_DECLARE(Ri,const)    GB_MDECL (Ri,   const,  )
+        #define GB_Ri_DECLARE_U(Ri,const)  GB_MDECL (Ri,   const, u)
 
         // Z matrix:
-        #define GB_Zp_DECLARE(Zp,const)    GB_IDECL (Zp,   const, u)
-        #define GB_Zh_DECLARE(Zh,const)    GB_IDECL (Zh,   const, u)
-        #define GB_Zi_DECLARE(Zi,const)    GB_IDECL (Zi,   const,  )
-        #define GB_Zi_DECLARE_U(Zi,const)  GB_IDECL (Zi,   const, u)
+        #define GB_Zp_DECLARE(Zp,const)    GB_MDECL (Zp,   const, u)
+        #define GB_Zh_DECLARE(Zh,const)    GB_MDECL (Zh,   const, u)
+        #define GB_Zi_DECLARE(Zi,const)    GB_MDECL (Zi,   const,  )
+        #define GB_Zi_DECLARE_U(Zi,const)  GB_MDECL (Zi,   const, u)
 
     // for getting pointers from specific matrices:
 
@@ -725,7 +736,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // C matrix:
         #define GBp_C(Cp,k,vlen) GBp (Cp, k, vlen)
         #define GBh_C(Ch,k)      GBh (Ch, k)
-        #define GBi_C(Ci,p,vlen) GBi (Cp, k, vlen)
+        #define GBi_C(Ci,p,vlen) GBi (Ci, p, vlen)
         #define GBb_C(Cb,p)      GBb (Cb, p)
         #define GB_C_NVALS(e)    int64_t e = GB_nnz (C)
         #define GB_C_NHELD(e)    int64_t e = GB_nnz_held (C)
@@ -733,7 +744,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // M matrix:
         #define GBp_M(Mp,k,vlen) GBp (Mp, k, vlen)
         #define GBh_M(Mh,k)      GBh (Mh, k)
-        #define GBi_M(Mi,p,vlen) GBi (Mp, k, vlen)
+        #define GBi_M(Mi,p,vlen) GBi (Mi, p, vlen)
         #define GBb_M(Mb,p)      GBb (Mb, p)
         #define GB_M_NVALS(e)    int64_t e = GB_nnz (M)
         #define GB_M_NHELD(e)    int64_t e = GB_nnz_held (M)
@@ -741,7 +752,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // A matrix:
         #define GBp_A(Ap,k,vlen) GBp (Ap, k, vlen)
         #define GBh_A(Ah,k)      GBh (Ah, k)
-        #define GBi_A(Ai,p,vlen) GBi (Ap, k, vlen)
+        #define GBi_A(Ai,p,vlen) GBi (Ai, p, vlen)
         #define GBb_A(Ab,p)      GBb (Ab, p)
         #define GB_A_NVALS(e)    int64_t e = GB_nnz (A)
         #define GB_A_NHELD(e)    int64_t e = GB_nnz_held (A)
@@ -749,7 +760,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // B matrix:
         #define GBp_B(Bp,k,vlen) GBp (Bp, k, vlen)
         #define GBh_B(Bh,k)      GBh (Bh, k)
-        #define GBi_B(Bi,p,vlen) GBi (Bp, k, vlen)
+        #define GBi_B(Bi,p,vlen) GBi (Bi, p, vlen)
         #define GBb_B(Bb,p)      GBb (Bb, p)
         #define GB_B_NVALS(e)    int64_t e = GB_nnz (B)
         #define GB_B_NHELD(e)    int64_t e = GB_nnz_held (B)
@@ -757,7 +768,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // S matrix:
         #define GBp_S(Sp,k,vlen) GBp (Sp, k, vlen)
         #define GBh_S(Sh,k)      GBh (Sh, k)
-        #define GBi_S(Si,p,vlen) GBi (Sp, k, vlen)
+        #define GBi_S(Si,p,vlen) GBi (Si, p, vlen)
         #define GBb_S(Sb,p)      GBb (Sb, p)
         #define GB_S_NVALS(e)    int64_t e = GB_nnz (S)
         #define GB_S_NHELD(e)    int64_t e = GB_nnz_held (S)
@@ -765,7 +776,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // R matrix:
         #define GBp_R(Rp,k,vlen) GBp (Rp, k, vlen)
         #define GBh_R(Rh,k)      GBh (Rh, k)
-        #define GBi_R(Ri,p,vlen) GBi (Rp, k, vlen)
+        #define GBi_R(Ri,p,vlen) GBi (Ri, p, vlen)
         #define GBb_R(Rb,p)      GBb (Rb, p)
         #define GB_R_NVALS(e)    int64_t e = GB_nnz (R)
         #define GB_R_NHELD(e)    int64_t e = GB_nnz_held (R)
@@ -773,7 +784,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // Z matrix:
         #define GBp_Z(Zp,k,vlen) GBp (Zp, k, vlen)
         #define GBh_Z(Zh,k)      GBh (Zh, k)
-        #define GBi_Z(Zi,p,vlen) GBi (Zp, k, vlen)
+        #define GBi_Z(Zi,p,vlen) GBi (Zi, p, vlen)
         #define GBb_Z(Zb,p)      GBb (Zb, p)
         #define GB_Z_NVALS(e)    int64_t e = GB_nnz (Z)
         #define GB_Z_NHELD(e)    int64_t e = GB_nnz_held (Z)
@@ -796,10 +807,10 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     // JIT helper macro
     #ifdef GB_CUDA_KERNEL
         #define GB_IDECL(I,const,u,bits) \
-            const *__restrict__ u ## int ## bits ## _t I = NULL
+            const GB_EVAL4 (u,int,bits,_t) *__restrict__ I = NULL
     #else
         #define GB_IDECL(I,const,u,bits) \
-            const *restrict u ## int ## bits ## _t I = NULL
+            const GB_EVAL4 (u,int,bits,_t) *restrict I = NULL
     #endif
 
     // helper macro: get a 32/64-bit pointer from a matrix
@@ -929,23 +940,6 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         // These must be #define'd in each JIT kernel, via GB_macrofy_*
 
 #endif
-
-// remove these (preliminary names)
-#define GBp_GET(A)
-#define GBh_GET(A)
-#define GBi_GET(A)
-#define GBp_DECL(A,const)
-#define GBh_DECL(A,const)
-#define GBi_DECL(A,const)
-#define GBp_DECL_GET(A,const)
-#define GBh_DECL_GET(A,const)
-#define GBi_DECL_GET(A,const)
-#define GB_Yp_DECL(A,const)
-#define GB_Yp_GET(A)
-#define GB_Yp_DECL_GET(A,const)
-#define GB_Yi_DECL(A,const)
-#define GB_Yi_GET(A)
-#define GB_Yi_DECL_GET(A,const)
 
 //------------------------------------------------------------------------------
 // OLD style: remove all of these (but see NVALS and NHELD above)

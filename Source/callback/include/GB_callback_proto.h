@@ -268,14 +268,15 @@ void GX_qsort_1    /* sort array A of size 1-by-n */                        \
 )
 
 #define GB_CALLBACK_P_SLICE_PROTO(GX_p_slice)                               \
-void GX_p_slice                     /* slice Ap */                          \
+void GX_p_slice                 /* slice Ap, 32-bit or 64-bit */            \
 (                                                                           \
     /* output: */                                                           \
-    int64_t *restrict Slice,        /* size ntasks+1 */                     \
+    int64_t *restrict Slice,    /* size ntasks+1 */                         \
     /* input: */                                                            \
-    const uint64_t *restrict Ap,     /* array size n+1 (full/bitmap: NULL)*/ \
+    const void *Ap,             /* array size n+1 (full/bitmap: NULL)*/     \
+    bool Ap_is_32,              /* if true, Ap is uint32_t, else uint64_t */\
     const int64_t n,                                                        \
-    const int ntasks,               /* # of tasks */                        \
+    const int ntasks,           /* # of tasks */                            \
     const bool perfectly_balanced                                           \
 )
 

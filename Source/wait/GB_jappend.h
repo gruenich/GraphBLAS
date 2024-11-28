@@ -58,9 +58,7 @@ static inline GrB_Info GB_jappend
     // one more non-empty vector
     C->nvec_nonempty++ ;
 
-    GBp_DECL_GET (C, ) ;
-    GBh_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ch = C->h ;
 
     if (C->h != NULL)
@@ -87,8 +85,6 @@ static inline GrB_Info GB_jappend
             }
         }
 
-        GBp_GET (C) ;
-        GBh_GET (C) ;
         Cp = C->p ;
         Ch = C->h ;
 
@@ -162,8 +158,7 @@ static inline void GB_jwrapup
         // log the end of C(:,jlast+1) to C(:,n-1), in case the last vector
         // j=n-1 has not yet been seen, or has been seen but was empty.
 
-        GBp_DECL_GET (C, ) ;
-        uint64_t *restrict Cp = C->p ;
+        uint64_t *restrict Cp = C->p ;  // FIXME
         int64_t j = C->vdim - 1 ;
 
         for (int64_t jprior = jlast+1 ; jprior <= j ; jprior++)

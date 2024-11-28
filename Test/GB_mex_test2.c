@@ -130,12 +130,18 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t Slice [30] ;
-    GB_p_slice (Slice, A->p, n, 2, true) ;
+    GB_p_slice (Slice, A->p, false, n, 2, true) ;
     CHECK (Slice [0] == 0) ;
 
     int64_t Ap [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
-    GB_p_slice (Slice, Ap, 10, 10, false) ;
+    GB_p_slice (Slice, Ap, false, 10, 10, false) ;
     printf ("Slice: ") ;
+    for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
+    printf ("\n") ;
+
+    int32_t Ap32 [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
+    GB_p_slice (Slice, Ap32, true, 10, 10, false) ;
+    printf ("Slice32: ") ;
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;
 

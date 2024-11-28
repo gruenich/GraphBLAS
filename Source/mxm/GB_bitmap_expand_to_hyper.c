@@ -114,8 +114,7 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            GBh_DECL_GET (A, const) ;
-            const GrB_Index *restrict Ah = (GrB_Index *) A->h ;
+            const GrB_Index *restrict Ah = (GrB_Index *) A->h ; // FIXME
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)
@@ -142,8 +141,7 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            GBh_DECL_GET (A, const) ;
-            const GrB_Index *restrict Ah = (GrB_Index *) A->h ;
+            const GrB_Index *restrict Ah = (GrB_Index *) A->h ; // FIXME
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)

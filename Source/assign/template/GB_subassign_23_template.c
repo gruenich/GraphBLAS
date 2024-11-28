@@ -124,10 +124,7 @@
 
         ASSERT (GB_JUMBLED_OK (A)) ;
 
-        GBp_DECL_GET (A, const) ;
-        GBh_DECL_GET (A, const) ;
-        GBi_DECL_GET (A, const) ;
-        const uint64_t *restrict Ap = A->p ;
+        const uint64_t *restrict Ap = A->p ;    // FIXME
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ai = A->i ;
         const int64_t avlen = A->vlen ;

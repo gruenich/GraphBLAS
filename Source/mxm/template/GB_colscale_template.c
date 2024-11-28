@@ -28,9 +28,7 @@
     // get C, A, and D
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     const GB_B_TYPE *restrict Dx = (GB_B_TYPE *) D->x ;

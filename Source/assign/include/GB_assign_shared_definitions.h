@@ -184,8 +184,7 @@
     ASSERT_MATRIX_OK (C, "C for subassign kernel", GB0) ;                   \
     ASSERT (!GB_IS_BITMAP (C)) ;                                            \
     const bool C_iso = C->iso ;                                             \
-    GBi_DECL_GET (C, ) ;                                                    \
-    int64_t *restrict Ci = C->i ;                                           \
+    int64_t *restrict Ci = C->i ; /* FIXME */                               \
     GB_C_TYPE *restrict Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;       \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
@@ -200,8 +199,7 @@
 
 #define GB_GET_C_HYPER_HASH                                                 \
     GB_OK (GB_hyper_hash_build (C, Werk)) ;                                 \
-    GB_Yp_DECL_GET (C, const) ;                                             \
-    GB_Yi_DECL_GET (C, const) ;                                             \
+    /* FIXME */ \
     const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;       \
     const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;        \
     const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;        \
@@ -215,10 +213,7 @@
 
 #define GB_GET_MASK                                                         \
     ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
-    GBp_DECL_GET (M, const) ;                                               \
-    GBh_DECL_GET (M, const) ;                                               \
-    GBi_DECL_GET (M, const) ;                                               \
-    const uint64_t *Mp = M->p ;                                             \
+    const uint64_t *Mp = M->p ;      /* FIXME*/                             \
     const int64_t *Mh = M->h ;                                              \
     const int64_t *Mi = M->i ;                                              \
     const int8_t  *Mb = M->b ;                                              \
@@ -231,8 +226,7 @@
 
 #define GB_GET_MASK_HYPER_HASH                                              \
     GB_OK (GB_hyper_hash_build (M, Werk)) ;                                 \
-    GB_Yp_DECL_GET (M, const) ;                                             \
-    GB_Yi_DECL_GET (M, const) ;                                             \
+    /* FIXME */ \
     const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;       \
     const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;        \
     const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;        \
@@ -282,9 +276,7 @@
     ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
     const GrB_Type atype = A->type ;                                        \
     const size_t asize = atype->size ;                                      \
-    GBp_DECL_GET (A, const) ;                                               \
-    GBi_DECL_GET (A, const) ;                                               \
-    const uint64_t *Ap = A->p ;                                             \
+    const uint64_t *Ap = A->p ;   /* FIXME*/                                \
     const int64_t *Ai = A->i ;                                              \
     const int8_t  *Ab = A->b ;                                              \
     const int64_t Avlen = A->vlen ;                                         \
@@ -361,18 +353,14 @@
 
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
-    GBp_DECL_GET (S, const) ;                                               \
-    GBh_DECL_GET (S, const) ;                                               \
-    GBi_DECL_GET (S, const) ;                                               \
-    const uint64_t *restrict Sp = S->p ;                                    \
+    const uint64_t *restrict Sp = S->p ; /* FIXME*/                         \
     const int64_t *restrict Sh = S->h ;                                     \
     const int64_t *restrict Si = S->i ;                                     \
     const int64_t *restrict Sx = (int64_t *) S->x ;                         \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
     const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;                         \
-    GB_Yp_DECL_GET (S, const) ;                                             \
-    GB_Yi_DECL_GET (S, const) ;                                             \
+    /* FIXME */ \
     const uint64_t *restrict S_Yp = (S->Y == NULL) ? NULL : S->Y->p ;       \
     const int64_t *restrict S_Yi = (S->Y == NULL) ? NULL : S->Y->i ;        \
     const int64_t *restrict S_Yx = (S->Y == NULL) ? NULL : S->Y->x ;        \
@@ -1755,10 +1743,7 @@
     const int64_t cnzmax = Cvlen * Cvdim ;                                  \
     int64_t cnvals = C->nvals ;                                             \
     /* A matrix and scalar: */                                              \
-    GBp_DECL (A, const) ;                                                   \
-    GBh_DECL (A, const) ;                                                   \
-    GBi_DECL (A, const) ;                                                   \
-    const uint64_t *Ap = NULL ;                                             \
+    const uint64_t *Ap = NULL ;  /* FIXME */                                \
     const int64_t *Ah = NULL ;                                              \
     const int64_t *Ai = NULL ;                                              \
     const int8_t  *Ab = NULL ;                                              \
@@ -1771,9 +1756,6 @@
     if (!(GB_SCALAR_ASSIGN))                                                \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
-        GBp_GET (A) ;                                                       \
-        GBh_GET (A) ;                                                       \
-        GBi_GET (A) ;                                                       \
         Ap = A->p ;                                                         \
         Ah = A->h ;                                                         \
         Ai = A->i ;                                                         \

@@ -58,10 +58,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
@@ -71,8 +68,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     const int8_t *restrict Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
-    GBp_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;

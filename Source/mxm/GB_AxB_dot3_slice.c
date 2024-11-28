@@ -86,9 +86,10 @@ GrB_Info GB_AxB_dot3_slice
     // get C
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (C, const) ;
-    const uint64_t *restrict Cp = C->p ;
-    int64_t *restrict Cwork = C->i ;
+    const void *Cp = C->p ;
+    bool Cp_is_32 = C->p_is_32 ;
+
+    int64_t *restrict Cwork = C->i ;    // FIXME
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnz = GB_nnz_held (C) ;
@@ -96,6 +97,9 @@ GrB_Info GB_AxB_dot3_slice
     //--------------------------------------------------------------------------
     // compute the cumulative sum of the work
     //--------------------------------------------------------------------------
+
+    // FIXME: if C is 32-bit, Cwork probably still needs to be 64-bit, so it
+    // can't be done with C->i.
 
     // FUTURE:: handle possible int64_t overflow
 
@@ -155,7 +159,7 @@ GrB_Info GB_AxB_dot3_slice
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Cwork, cnz, ntasks1, false) ;
+    GB_p_slice (Coarse, Cwork, false, cnz, ntasks1, false) ;    // FIXME
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
@@ -173,15 +177,25 @@ GrB_Info GB_AxB_dot3_slice
 
         if (pfirst <= plast)
         { 
-            // find the first vector of the slice for task taskid: the
-            // vector that owns the entry Ci [pfirst] and Cx [pfirst].
-            int64_t kfirst = GB_search_for_vector (pfirst, Cp, 0, cnvec,
-                cvlen) ;
 
-            // find the last vector of the slice for task taskid: the
-            // vector that owns the entry Ci [plast] and Cx [plast].
-            int64_t klast = GB_search_for_vector (plast, Cp, kfirst, cnvec,
-                cvlen) ;
+            int64_t kfirst, klast ;
+            if (Cp_is_32)
+            {
+                // find the first vector of the slice for task taskid: the
+                // vector that owns the entry Ci [pfirst] and Cx [pfirst].
+                kfirst = GB_search_for_vector_32 (pfirst, Cp, 0, cnvec, cvlen) ;
+                // find the last vector of the slice for task taskid: the
+                // vector that owns the entry Ci [plast] and Cx [plast].
+                klast  = GB_search_for_vector_32 (plast, Cp, kfirst, cnvec,
+                    cvlen) ;
+            }
+            else
+            {
+                // as above, 64-bit version
+                kfirst = GB_search_for_vector_64 (pfirst, Cp, 0, cnvec, cvlen) ;
+                klast  = GB_search_for_vector_64 (plast, Cp, kfirst, cnvec,
+                    cvlen) ;
+            }
 
             // construct a coarse task that computes Ci,Cx [pfirst:plast].
             // These entries appear in C(:,kfirst:klast), but this task does

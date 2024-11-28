@@ -63,10 +63,7 @@ static inline bool GB_removeElement     // return true if found
         // C is sparse or hypersparse
         //----------------------------------------------------------------------
 
-        GBp_DECL_GET (C, const) ;
-        GBh_DECL_GET (C, const) ;
-        GBi_DECL_GET (C, const) ;
-        const uint64_t *restrict Cp = C->p ;
+        const uint64_t *restrict Cp = C->p ;    // FIXME
         const int64_t *restrict Ch = C->h ;
         const int64_t *restrict Ci = C->i ;
         bool found ;
@@ -79,8 +76,7 @@ static inline bool GB_removeElement     // return true if found
             // C is hypersparse: look for j in hyperlist C->h [0 ... C->nvec-1]
             //------------------------------------------------------------------
 
-            GB_Yp_DECL_GET (C, const) ;
-            GB_Yi_DECL_GET (C, const) ;
+            // FIXME
             const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
             const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
             const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
@@ -134,8 +130,7 @@ static inline bool GB_removeElement     // return true if found
         if (found && !is_zombie)
         { 
             // C(i,j) becomes a zombie
-            GBi_DECL_GET (C, ) ;
-            int64_t *restrict Ci = C->i ;
+            int64_t *restrict Ci = C->i ;   // FIXME
             Ci [pleft] = GB_ZOMBIE (i) ;
             C->nzombies++ ;
         }

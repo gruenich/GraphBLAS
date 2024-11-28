@@ -19,16 +19,11 @@
     #endif
 
     #ifdef GB_JIT_KERNEL
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
 //  int64_t cvlen = C->vlen ;
-    GBp_DECL_GET (C, ) ;
-    GBi_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ci = C->i ;
     const int64_t *restrict kfirst_Cslice = C_ek_slicing ;
     const int64_t *restrict klast_Cslice  = C_ek_slicing + C_ntasks ;

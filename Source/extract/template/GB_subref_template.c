@@ -41,8 +41,7 @@
     // get A and I
     //--------------------------------------------------------------------------
 
-    GBi_DECL_GET (A, const) ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *restrict Ai = A->i ; // FIXME
     const int64_t avlen = A->vlen ;
 
     // these values are ignored if GB_I_KIND == GB_LIST

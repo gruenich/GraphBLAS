@@ -80,11 +80,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     // fill the A->p and A->i pattern
     //--------------------------------------------------------------------------
 
-    uint32_t *Ap32 = (Ap_is_32) ? Ap : NULL ;
-    uint64_t *Ap64 = (Ap_is_32) ? NULL : Ap ;
-
-    uint32_t *Ai32 = (Ai_is_32) ? Ai : NULL ;
-    uint64_t *Ai64 = (Ai_is_32) ? NULL : Ai ;
+    GB_IDECL (Ap, , u) ; GB_IPTR (Ap, Ap_is_32) ;
+    GB_IDECL (Ai, , u) ; GB_IPTR (Ai, Ai_is_32) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)

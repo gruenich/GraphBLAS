@@ -43,10 +43,7 @@
 
     const int64_t cvlen = C->vlen ;
 
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t  *restrict Bp = B->p ;
+    const uint64_t  *restrict Bp = B->p ;    // FIXME
     const int64_t  *restrict Bh = B->h ;
     const int64_t  *restrict Bi = B->i ;
     const int8_t   *restrict Bb = B->b ;
@@ -65,10 +62,7 @@
     const bool B_iso = B->iso ;
     #endif
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t  *restrict Ap = A->p ;
+    const uint64_t  *restrict Ap = A->p ;   // FIXME
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
     const int8_t   *restrict Ab = A->b ;

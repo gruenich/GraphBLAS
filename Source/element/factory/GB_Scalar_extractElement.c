@@ -52,8 +52,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
-    GBp_DECL_GET (S, const) ;
-    const uint64_t *restrict Sp = S->p ;
+    const uint64_t *restrict Sp = S->p ; // FIXME
     if (GB_nnz ((GrB_Matrix) S) == 0            // empty
         || (Sp != NULL && Sp [1] == 0)          // sparse/hyper with no entry
         || (S->b != NULL && S->b [0] == 0))     // bitmap with no entry

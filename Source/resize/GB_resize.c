@@ -252,9 +252,7 @@ GrB_Info GB_resize              // change the size of a matrix
         GB_hyper_hash_free (A) ;
 
         // resize the number of sparse vectors
-        GBp_DECL_GET (A, ) ;
-        GBh_DECL_GET (A, ) ;
-        uint64_t *restrict Ap = A->p ;
+        uint64_t *restrict Ap = A->p ;  // FIXME
         int64_t *restrict Ah = A->h ;
         A->vdim = vdim_new ;
 
@@ -263,8 +261,6 @@ GrB_Info GB_resize              // change the size of a matrix
             // reduce the size of A->p and A->h; this cannot fail
             info = GB_hyper_realloc (A, vdim_new, Werk) ;
             ASSERT (info == GrB_SUCCESS) ;
-            GBp_GET (A) ;
-            GBh_GET (A) ;
             Ap = A->p ;
             Ah = A->h ;
         }

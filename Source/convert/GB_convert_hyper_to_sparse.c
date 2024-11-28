@@ -118,8 +118,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        uint32_t *restrict Ap_new32 = (Ap_is_32) ? Ap_new : NULL ;
-        uint64_t *restrict Ap_new64 = (Ap_is_32) ? NULL : Ap_new ;
+        GB_IDECL (Ap_new, , u) ; GB_IPTR (Ap_new, Ap_is_32) ;
 
         #ifdef GB_DEBUG
         // to ensure all values of Ap_new are assigned below.
@@ -139,12 +138,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
         void *Ap_old = A->p ;               // size nvec+1
         void *Ah_old = A->h ;               // size nvec
-
-        const uint32_t *restrict Ap_old32 = (Ap_is_32) ? Ap_old : NULL ;
-        const uint64_t *restrict Ap_old64 = (Ap_is_32) ? NULL : Ap_old ;
-
-        const uint32_t *restrict Ah_old32 = (Ai_is_32) ? Ah_old : NULL ;
-        const uint64_t *restrict Ah_old64 = (Ai_is_32) ? NULL : Ah_old ;
+        GB_IDECL (Ap_old, const, u) ; GB_IPTR (Ap_old, Ap_is_32) ;
+        GB_IDECL (Ah_old, const, u) ; GB_IPTR (Ah_old, Ai_is_32) ;
 
         //----------------------------------------------------------------------
         // construct the new vector pointers

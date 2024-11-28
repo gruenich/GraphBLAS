@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // The macro, typically called GB_PUTC, also does typecasting from the Z
 // type of the monoid or operator, into the type of the C matrix.
 

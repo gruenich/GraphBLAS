@@ -2,10 +2,12 @@
 // GB_ek_slice_merge1: merge column counts for a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // The input matrix A has been sliced via GB_ek_slice, and scanned to compute
 // the counts of entries in each vector of C in Cp, Wfirst, and Wlast.  This
@@ -47,11 +49,11 @@ GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1)
             { 
                 // This thread is the first one that did work on
                 // A(:,kfirst), so use it to start the reduction.
-                Cp [kfirst] = Wfirst [tid] ;
+                Cp [kfirst] = Wfirst [tid] ;    // FIXME
             }
             else
             { 
-                Cp [kfirst] += Wfirst [tid] ;
+                Cp [kfirst] += Wfirst [tid] ;   // FIXME
             }
             kprior = kfirst ;
         }
@@ -65,7 +67,7 @@ GB_CALLBACK_EK_SLICE_MERGE1_PROTO (GB_ek_slice_merge1)
             ASSERT (kprior < klast) ;
             // This thread is the first one that did work on
             // A(:,klast), so use it to start the reduction.
-            Cp [klast] = Wlast [tid] ;
+            Cp [klast] = Wlast [tid] ;  // FIXME
             kprior = klast ;
         }
     }

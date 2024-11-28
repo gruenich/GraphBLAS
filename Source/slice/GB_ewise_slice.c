@@ -2,10 +2,12 @@
 // GB_ewise_slice: slice the entries and vectors for an ewise operation
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // JIT: possible: could use variants for sparsity formats.
 
@@ -119,26 +121,18 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     //--------------------------------------------------------------------------
 
     const int64_t vlen = A->vlen ;
-    GBp_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ai = A->i ;
-    GBp_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bi = B->i ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
     bool Ch_is_Bh = (Ch != NULL && B->h != NULL && Ch == B->h) ;
 
-    GBp_DECL (M, const) ;
-    GBi_DECL (M, const) ;
-    const uint64_t *restrict Mp = NULL ;
+    const uint64_t *restrict Mp = NULL ;    // FIXME
     const int64_t *restrict Mi = NULL ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     if (M != NULL)
     { 
-        GBp_GET (M) ;
-        GBi_GET (M) ;
         Mp = M->p ;
         Mi = M->i ;
         // Ch_is_Mh is true if either true on input (for GB_add, which denotes
@@ -279,7 +273,8 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Cwork, Cnvec, ntasks1, false) ;
+    GB_p_slice (Coarse, Cwork, false,   // FIXME
+        Cnvec, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

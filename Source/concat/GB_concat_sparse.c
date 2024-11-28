@@ -75,9 +75,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         hyper_switch, cvdim, cnz, true, C_iso, false, false)) ;
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
-    GBp_DECL_GET (C, ) ;
-    GBi_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ci = C->i ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
@@ -197,9 +195,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             { 
                 // A is sparse or hyper
                 int64_t k ;
-                GBp_DECL_GET (A, const) ;
-                GBh_DECL_GET (A, const) ;
-                const uint64_t *restrict Ap = A->p ;
+                const uint64_t *restrict Ap = A->p ;    // FIXME
                 const int64_t *restrict Ah = A->h ;
                 #pragma omp parallel for num_threads(nth) schedule(static)
                 for (k = 0 ; k < anvec ; k++)
@@ -314,10 +310,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             ASSERT (avdim == A->vdim) ;
             ASSERT (avlen == A->vlen) ;
             int A_nthreads, A_ntasks ;
-            GBp_DECL_GET (A, const) ;
-            GBh_DECL_GET (A, const) ;
-            GBi_DECL_GET (A, const) ;
-            const uint64_t *restrict Ap = A->p ;
+            const uint64_t *restrict Ap = A->p ;     // FIXME
             const int64_t *restrict Ah = A->h ;
             const int64_t *restrict Ai = A->i ;
             const bool A_iso = A->iso ;

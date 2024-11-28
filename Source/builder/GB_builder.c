@@ -214,25 +214,18 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // (J_work_handle is always non-NULL however).
 
     void *restrict I_work = (*I_work_handle) ;
-    uint32_t *restrict I_work32 = (I_is_32) ? I_work : NULL ;
-    uint64_t *restrict I_work64 = (I_is_32) ? NULL : I_work ;
-
-    const uint32_t *restrict I_input32 = (I_is_32) ? I_input : NULL ;
-    const uint64_t *restrict I_input64 = (I_is_32) ? NULL : I_input ;
-
     void *restrict J_work = (*J_work_handle) ;
-    uint32_t *restrict J_work32 = (J_is_32) ? J_work : NULL ;
-    uint64_t *restrict J_work64 = (J_is_32) ? NULL : J_work ;
 
-    const uint32_t *restrict J_input32 = (J_is_32) ? J_input : NULL ;
-    const uint64_t *restrict J_input64 = (J_is_32) ? NULL : J_input ;
+    GB_IDECL (I_work,       , u) ; GB_IPTR (I_work , I_is_32) ;
+    GB_IDECL (I_input, const, u) ; GB_IPTR (I_input, I_is_32) ;
+    GB_IDECL (J_work,       , u) ; GB_IPTR (J_work , J_is_32) ;
+    GB_IDECL (J_input, const, u) ; GB_IPTR (J_input, J_is_32) ;
 
     // K_is_32 does not use GB_validate_i_is_32 since it is not transplanted
     // into the output matrix T.
     bool K_is_32 = (nvals < UINT32_MAX) ;
     void *restrict K_work = NULL ; size_t K_work_size = 0 ;
-    uint32_t *restrict K_work32 = NULL ;
-    uint64_t *restrict K_work64 = NULL ;
+    GB_IDECL (K_work, , u) ;
 
     Ti_is_32 = GB_validate_i_is_32 (Ti_is_32, vlen, vdim) ;
 
@@ -375,8 +368,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             return (GrB_OUT_OF_MEMORY) ;
         }
 
-        I_work32 = (I_is_32) ? I_work : NULL ;
-        I_work64 = (I_is_32) ? NULL : I_work ;
+        GB_IPTR (I_work, I_is_32) ;
 
         //----------------------------------------------------------------------
         // create the tuples to sort, and check for any invalid indices
@@ -527,8 +519,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 J_work = (void *) J_input ;
             }
 
-            J_work32 = (J_is_32) ? J_work : NULL ;
-            J_work64 = (J_is_32) ? NULL : J_work ;
+            GB_IPTR (J_work, J_is_32) ;
 
             t2 = GB_OPENMP_GET_WTIME - t2 ;
 
@@ -650,8 +641,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 return (GrB_OUT_OF_MEMORY) ;
             }
 
-            K_work32 = (K_is_32) ? K_work : NULL ;
-            K_work64 = (K_is_32) ? NULL : K_work ;
+            GB_IPTR (K_work, K_is_32) ;
 
             // The k part of each tuple (i,k) or (j,i,k) records the original
             // position of the tuple in the input list.  This allows an
@@ -981,10 +971,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     // Step 4 scans the J_work indices and constructs T->h and T->p.
 
-    uint32_t *restrict Tp32 = (Tp_is_32) ? T->p : NULL ;
-    uint64_t *restrict Tp64 = (Tp_is_32) ? NULL : T->p ;
-    uint32_t *restrict Th32 = (Ti_is_32) ? T->h : NULL ;
-    uint64_t *restrict Th64 = (Ti_is_32) ? NULL : T->h ;
+    void *Tp = T->p ;
+    void *Th = T->h ;
+    GB_IDECL (Tp, , u) ; GB_IPTR (Tp, Tp_is_32) ;
+    GB_IDECL (Th, , u) ; GB_IPTR (Th, Ti_is_32) ;
 
     t2 = GB_OPENMP_GET_WTIME ;
 
@@ -1172,8 +1162,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     T->i_is_32 = Ti_is_32 ;
     void *restrict Ti = T->i ;
-    int32_t *restrict Ti32 = (Ti_is_32) ? Ti : NULL ;
-    int64_t *restrict Ti64 = (Ti_is_32) ? NULL : Ti ;
+    GB_IDECL (Ti, , ) ; GB_IPTR (Ti, Ti_is_32) ;
 
     if (allow_burble)
     {

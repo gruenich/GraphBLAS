@@ -109,9 +109,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rh_handle != NULL) ;
-    GBp_DECL (R, ) ;
-    GBh_DECL (R, ) ;
-    uint64_t *restrict Rp = (*Rp_handle) ;
+    uint64_t *restrict Rp = (*Rp_handle) ;  // FIXME
     int64_t *restrict Rh = (*Rh_handle) ;
 
     //--------------------------------------------------------------------------

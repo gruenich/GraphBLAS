@@ -98,23 +98,17 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // get inputs
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
 
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnvec = B->nvec ;
@@ -168,20 +162,23 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int C_sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
-    // set C->iso = C_iso   OK
+    // FIXME: enable 32-bit cases:
+    bool Cp_is_32 = false ; // GB_validate_p_is_32 (true, cnzmax) ;
+    bool Ci_is_32 = false ; // GB_validate_i_is_32 (true, cvlen, cvdim) ;
+
+    // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
         C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso,
-        false, false)) ;
+        Cp_is_32, Ci_is_32)) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C: Cp and Ch if C is hypersparse
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (C, ) ;
-    GBh_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
-    int64_t *restrict Ch = C->h ;
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
+    #define GB_Cp_BITS ((Cp_is_32) ? 32 : 64)
 
     if (!C_is_full)
     { 
@@ -193,22 +190,26 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             const int64_t kA = kC / bnvec ;
             const int64_t kB = kC % bnvec ;
             // get A(:,jA), the (kA)th vector of A
-            const int64_t jA = GBH (Ah, kA) ;
-            const int64_t aknz = (Ap == NULL) ? avlen : (Ap [kA+1] - Ap [kA]) ;
+            const int64_t jA = GBh_A (Ah, kA) ;
+            const int64_t aknz = (Ap == NULL) ? avlen :
+                (GB_IGET (Ap, kA+1) - GB_IGET (Ap, kA)) ;
             // get B(:,jB), the (kB)th vector of B
-            const int64_t jB = GBH (Bh, kB) ;
-            const int64_t bknz = (Bp == NULL) ? bvlen : (Bp [kB+1] - Bp [kB]) ;
+            const int64_t jB = GBh_B (Bh, kB) ;
+            const int64_t bknz = (Bp == NULL) ? bvlen :
+                (GB_IGET (Bp, kB+1) - GB_IGET (Bp, kB)) ;
             // determine # entries in C(:,jC), the (kC)th vector of C
             // int64_t kC = kA * bnvec + kB ;
-            Cp [kC] = aknz * bknz ;
+            // Cp [kC] = aknz * bknz ;
+            GB_ISET (Cp, kC, aknz * bknz) ;
             if (C_is_hyper)
             { 
-                Ch [kC] = jA * bvdim + jB ;
+                // Ch [kC] = jA * bvdim + jB ;
+                GB_ISET (Ch, kC, jA * bvdim + jB) ;
             }
         }
 
-        GB_cumsum (Cp, false, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
-        C->nvals = Cp [cnvec] ;
+        GB_cumsum (Cp, Cp_is_32, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
+        C->nvals = GB_IGET (Cp, cnvec) ;
         if (C_is_hyper) C->nvec = cnvec ;
     }
 

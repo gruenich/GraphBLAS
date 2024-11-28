@@ -60,9 +60,7 @@ static inline bool GB_removeElement     // returns true if found
         // V is sparse
         //----------------------------------------------------------------------
 
-        GBp_DECL_GET (V, const) ;
-        GBi_DECL_GET (V, const) ;
-        const uint64_t *restrict Vp = V->p ;
+        const uint64_t *restrict Vp = V->p ;    // FIXME
         const int64_t *restrict Vi = V->i ;
         bool found ;
 
@@ -93,8 +91,7 @@ static inline bool GB_removeElement     // returns true if found
         if (found && !is_zombie)
         { 
             // V(i) becomes a zombie
-            GBi_DECL_GET (V, ) ;
-            int64_t *restrict Vi = V->i ;
+            int64_t *restrict Vi = V->i ;   // FIXME
             Vi [pleft] = GB_ZOMBIE (i) ;
             V->nzombies++ ;
         }

@@ -701,8 +701,6 @@ static GrB_Info GB_SORT (matrix)
 
     GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
     int64_t cnvec = C->nvec ;
-    GBp_DECL_GET (C, const) ;
-    GBi_DECL_GET (C, const) ;
     uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ci = C->i ;   // FIXME
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
@@ -744,7 +742,8 @@ static GrB_Info GB_SORT (matrix)
     int64_t *restrict C_skip  = SortTasks + ntasks ;         // size ntasks+1
     int64_t *restrict C_slice = SortTasks + 2*ntasks + 1;    // size ntasks+1
 
-    GB_p_slice (C_slice, Cp, cnvec, ntasks, false) ;
+    GB_p_slice (C_slice, Cp, false, // FIXME
+        cnvec, ntasks, false) ;
 
     // sort all short vectors in parallel, one thread per vector
     int tid ;

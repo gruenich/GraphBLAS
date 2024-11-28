@@ -403,9 +403,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, Cnvec_nonempty ;
-    GBp_DECL (C, ) ;
-    GBh_DECL (C, ) ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
     const int64_t *Ch = NULL ; size_t Ch_size = 0 ;
     int C_ntasks = 0, C_nthreads ;
 

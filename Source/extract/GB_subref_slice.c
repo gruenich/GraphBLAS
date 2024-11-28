@@ -255,7 +255,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Cwork, Cnvec, ntasks1, false) ;
+    GB_p_slice (Coarse, Cwork, false, Cnvec, ntasks1, false) ;  // FIXME
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

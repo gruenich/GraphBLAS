@@ -127,8 +127,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         GxB_SPARSE, true, A->hyper_switch, vlen, anz, true, C_iso,
         false, false)) ;
 
-    GBp_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;   // FIXME
     C->nvals = anz ;
 
     //--------------------------------------------------------------------------
@@ -171,7 +170,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (A_slice, A->p, A->nvec, nthreads, true) ;
+    GB_p_slice (A_slice, A->p, false,   // FIXME
+        A->nvec, nthreads, true) ;
 
     // sum up the row counts and find C->p
     if (nthreads == 1)
@@ -189,8 +189,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         ASSERT (nworkspaces == 1) ;
         int64_t *restrict workspace = Workspaces [0] ;
         memset (workspace, 0, (vlen + 1) * sizeof (int64_t)) ;
-        GBi_DECL_GET (A, const) ;
-        const int64_t *restrict Ai = A->i ;
+        const int64_t *restrict Ai = A->i ;  // FIXME
         for (int64_t p = 0 ; p < anz ; p++)
         { 
             int64_t i = Ai [p] ;
@@ -221,8 +220,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         // compute the row counts of A.  No need to scan the A->p pointers
         int64_t *restrict workspace = Workspaces [0] ;
         GB_memset (workspace, 0, (vlen + 1) * sizeof (int64_t), nth) ;
-        GBi_DECL_GET (A, const) ;
-        const int64_t *restrict Ai = A->i ;
+        const int64_t *restrict Ai = A->i ;     // FIXME
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
@@ -256,9 +254,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         GBURBLE ("(%d-thread non-atomic bucket transpose) ", nthreads) ;
 
         ASSERT (nworkspaces == nthreads) ;
-        GBp_DECL_GET (A, const) ;
-        GBi_DECL_GET (A, const) ;
-        const uint64_t *restrict Ap = A->p ;
+        const uint64_t *restrict Ap = A->p ;    // FIXME
         const int64_t *restrict Ai = A->i ;
 
         int tid ;

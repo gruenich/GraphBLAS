@@ -78,8 +78,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // get M
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (M, const) ;
-    const uint64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ; // FIXME
     const int64_t mnz = GB_nnz_held (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
@@ -133,7 +132,7 @@ GrB_Info GB_AxB_dot3_one_slice
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Mp, mnvec, ntasks1, false) ;
+    GB_p_slice (Coarse, Mp, false, mnvec, ntasks1, false) ;     // FIXME
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

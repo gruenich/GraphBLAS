@@ -18,10 +18,7 @@
     int A_nthreads, A_ntasks ;
     GB_A_NHELD (A_nnz_held) ;
     GB_SLICE_MATRIX_WORK (A, 1, A_nnz_held + A->nvec, A_nnz_held) ;
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
 

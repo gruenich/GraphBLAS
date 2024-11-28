@@ -45,9 +45,7 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     // get A
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
 

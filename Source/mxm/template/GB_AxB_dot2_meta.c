@@ -34,9 +34,7 @@
     const bool C_is_full = (Cb == NULL) ;
     #endif
 
-    GBp_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bi = B->i ;
     const int8_t  *restrict Bb = B->b ;
     #ifdef GB_JIT_KERNEL
@@ -53,9 +51,7 @@
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
     #define B_is_hyper false
 
-    GBp_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ai = A->i ;
     const int8_t  *restrict Ab = A->b ;
 

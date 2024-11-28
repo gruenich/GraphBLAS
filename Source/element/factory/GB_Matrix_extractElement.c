@@ -83,8 +83,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     int64_t pleft ;
     bool found ;
-    GBp_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
 
     if (Ap != NULL)
     {
@@ -94,8 +93,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         //----------------------------------------------------------------------
 
         int64_t pA_start, pA_end ;
-        GBh_DECL_GET (A, const) ;
-        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ah = A->h ; // FIXME
         if (Ah != NULL)
         {
 
@@ -103,8 +101,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             // A is hypersparse: look for j in hyperlist A->h [0 ... A->nvec-1]
             //------------------------------------------------------------------
 
-            GB_Yp_DECL_GET (A, const) ;
-            GB_Yi_DECL_GET (A, const) ;
+            // FIXME
             const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
             const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
             const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
@@ -136,8 +133,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         int64_t pright = pA_end - 1 ;
 
         // Time taken for this step is at most O(log(nnz(A(:,j))).
-        GBi_DECL_GET (A, const) ;
-        const int64_t *restrict Ai = A->i ;
+        const int64_t *restrict Ai = A->i ; // FIXME
         GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
 
     }

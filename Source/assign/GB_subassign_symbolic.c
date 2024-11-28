@@ -106,10 +106,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     GB_ijlength (J, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
 
     // get S
-    GBp_DECL_GET (S, const) ;
-    GBh_DECL_GET (S, const) ;
-    GBi_DECL_GET (S, const) ;
-    const uint64_t *restrict Sp = S->p ;
+    const uint64_t *restrict Sp = S->p ;    // FIXME
     const int64_t *restrict Sh = S->h ;
     const int64_t *restrict Si = S->i ;
     const int64_t *restrict Sx = (int64_t *) S->x ;

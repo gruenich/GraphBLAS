@@ -2,10 +2,12 @@
 // GB_ek_slice_merge2: merge final results for matrix C
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // Prior to calling this function, a method using GB_ek_slice to slice an input
 // matrix A has computed the vector counts Cp, where Cp [k] is the number of
@@ -39,7 +41,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     int64_t *C_nvec_nonempty,       // # of non-empty vectors in C
     uint64_t *restrict Cp_kfirst,    // size ntasks
     // input/output
-    uint64_t *restrict Cp,           // size cnvec+1
+    uint64_t *restrict Cp,           // size cnvec+1    // FIXME
     // input
     const int64_t cnvec,
     const int64_t *restrict Wfirst, // size ntasks
@@ -55,7 +57,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
     // Cp = cumsum (Cp)
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, false, cnvec, C_nvec_nonempty, nthreads, Werk) ;
+    GB_cumsum (Cp, false, cnvec, C_nvec_nonempty, nthreads, Werk) ; //FIXME
 
     //--------------------------------------------------------------------------
     // determine the slice boundaries in the new C matrix
@@ -77,7 +79,7 @@ void GB_ek_slice_merge2     // merge final results for matrix C
             // Task tid is the first one to do work on C(:,kfirst), so it
             // starts at Cp [kfirst], and it contributes Wfirst [tid] entries
             // to C(:,kfirst).
-            pC = Cp [kfirst] ;
+            pC = Cp [kfirst] ;  //FIXME
             kprior = kfirst ;
         }
 
@@ -89,11 +91,11 @@ void GB_ek_slice_merge2     // merge final results for matrix C
         if (kfirst < klast)
         { 
             // Task tid is the last to contribute to C(:,kfirst).
-            ASSERT (pC == Cp [kfirst+1]) ;
+            ASSERT (pC == Cp [kfirst+1]) ;  //FIXME
             // Task tid contributes the first Wlast [tid] entries to
             // C(:,klast), so the next task tid+1 starts at location Cp [klast]
             // + Wlast [tid], if its first vector is klast of this task.
-            pC = Cp [klast] + Wlast [tid] ;
+            pC = Cp [klast] + Wlast [tid] ; //FIXME
             kprior = klast ;
         }
     }

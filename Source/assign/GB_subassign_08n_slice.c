@@ -79,10 +79,7 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     // get inputs
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (C, const) ;
-    GBh_DECL_GET (C, const) ;
-    GBi_DECL_GET (C, ) ;
-    const uint64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     int64_t nzombies = C->nzombies ;
@@ -91,18 +88,12 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_C_HYPER_HASH ;
 
-    GBp_DECL_GET (M, const) ;
-    GBh_DECL_GET (M, const) ;
-    GBi_DECL_GET (M, const) ;
-    const uint64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const int64_t Mvlen = M->vlen ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int64_t Avlen = A->vlen ;

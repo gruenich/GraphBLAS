@@ -54,8 +54,7 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     // A->Y is (A->vdim)-by-(hash table size for A->h), with one vector per
     // hash bucket.
 
-    GBh_DECL_GET (A, const) ;
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ah = A->h ;  // FIXME
     int64_t anvec = A->nvec ;
     // this ensures a load factor of 0.5 to 1:
     int64_t yvdim = ((uint64_t) 1) << (GB_FLOOR_LOG2 (anvec) + 1) ;

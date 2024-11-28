@@ -60,9 +60,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    GBp_DECL (C, const) ;
-    GBh_DECL (C, const) ;
-    const uint64_t *restrict Cp = (*Cp_handle) ;
+    const uint64_t *restrict Cp = (*Cp_handle) ;    // FIXME
     const int64_t *restrict Ch = (*Ch_handle) ;
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
@@ -117,8 +115,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_2_OF_2
-    GBi_DECL_GET (C, ) ;
-    int64_t *restrict Ci = C->i ;
+    int64_t *restrict Ci = C->i ;   // FIXME
     int64_t *restrict Cx = (int64_t *) C->x ;
     #define GB_I_KIND Ikind
     #define GB_NEED_QSORT need_qsort

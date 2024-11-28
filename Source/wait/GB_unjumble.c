@@ -52,9 +52,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
 
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
-    GBp_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, ) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ; // FIXME
     int64_t *restrict Ai = A->i ;
     const size_t asize = (A->iso) ? 0 : A->type->size ;
 
@@ -80,7 +78,8 @@ GrB_Info GB_unjumble        // unjumble a matrix
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (A_slice, Ap, anvec, ntasks, false) ;
+    GB_p_slice (A_slice, Ap, false, // FIXME
+        anvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
     // sort the vectors

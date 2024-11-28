@@ -65,12 +65,15 @@ GrB_Info GB (_bld__times_int8)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    const uint32_t *restrict I_work32 = (I_is_32) ? I_work : NULL ;
-    const uint64_t *restrict I_work64 = (I_is_32) ? NULL : I_work ;
-    const uint32_t *restrict K_work32 = (K_is_32) ? K_work : NULL ;
-    const uint64_t *restrict K_work64 = (K_is_32) ? NULL : K_work ;
-    int32_t *restrict Ti32 = (Ti_is_32) ? Ti : NULL ;
-    int64_t *restrict Ti64 = (Ti_is_32) ? NULL : Ti ;
+//  const uint32_t *restrict I_work32 = (I_is_32) ? I_work : NULL ;
+//  const uint64_t *restrict I_work64 = (I_is_32) ? NULL : I_work ;
+//  const uint32_t *restrict K_work32 = (K_is_32) ? K_work : NULL ;
+//  const uint64_t *restrict K_work64 = (K_is_32) ? NULL : K_work ;
+//  int32_t *restrict Ti32 = (Ti_is_32) ? Ti : NULL ;
+//  int64_t *restrict Ti64 = (Ti_is_32) ? NULL : Ti ;
+    GB_IDECL (I_work, const, u) ; GB_IPTR (I_work, I_is_32 ) ;
+    GB_IDECL (K_work, const, u) ; GB_IPTR (K_work, K_is_32 ) ;
+    GB_IDECL (Ti     ,      , ) ; GB_IPTR (Ti    , Ti_is_32) ;
     #define GB_K_WORK(t) (K_work ? GB_IGET (K_work, t) : (t))
     #include "builder/template/GB_bld_template.c"
     return (GrB_SUCCESS) ;

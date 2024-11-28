@@ -147,10 +147,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int64_t vlen = B->vlen ;
@@ -176,8 +173,7 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     GB_OK (GB_new (&C, // sparse or hyper (same as B), existing header
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
         C_sparsity, B->hyper_switch, nvec, false, false)) ;
-    GBp_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
     // slice the input matrix B

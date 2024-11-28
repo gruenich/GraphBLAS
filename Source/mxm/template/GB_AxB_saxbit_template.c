@@ -53,10 +53,7 @@
     ASSERT (!GB_IS_SPARSE (B)) ;
     ASSERT (!GB_IS_HYPERSPARSE (B)) ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int8_t  *restrict Ab = A->b ;
@@ -80,10 +77,7 @@
     const bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
     #endif
 
-    GBp_DECL (M, const) ;
-    GBh_DECL (M, const) ;
-    GBi_DECL (M, const) ;
-    const uint64_t *restrict Mp = NULL ;
+    const uint64_t *restrict Mp = NULL ;    // FIXME
     const int64_t *restrict Mh = NULL ;
     const int64_t *restrict Mi = NULL ;
     const int8_t  *restrict Mb = NULL ;
@@ -126,9 +120,6 @@
     {
         ASSERT (C->vlen == M->vlen) ;
         ASSERT (C->vdim == M->vdim) ;
-        GBp_GET (M) ;
-        GBh_GET (M) ;
-        GBi_GET (M) ;
         Mp = M->p ;
         Mh = M->h ;
         Mi = M->i ;

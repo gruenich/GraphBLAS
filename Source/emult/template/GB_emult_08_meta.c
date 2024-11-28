@@ -28,10 +28,7 @@
     // get A, B, M, and C
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int8_t  *restrict Ab = A->b ;
@@ -49,10 +46,7 @@
     const bool A_is_full = GB_IS_FULL (A) ;
     #endif
 
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int8_t  *restrict Bb = B->b ;
@@ -69,10 +63,7 @@
     const bool B_is_full = GB_IS_FULL (B) ;
     #endif
 
-    GBp_DECL (M, const) ;
-    GBh_DECL (M, const) ;
-    GBi_DECL (M, const) ;
-    const uint64_t *restrict Mp = NULL ;
+    const uint64_t *restrict Mp = NULL ;    // FIXME
     const int64_t *restrict Mh = NULL ;
     const int64_t *restrict Mi = NULL ;
     const int8_t  *restrict Mb = NULL ;
@@ -99,9 +90,6 @@
     size_t msize = 0 ;
     if (M_is_present)
     { 
-        GBp_GET (M) ;
-        GBh_GET (M) ;
-        GBi_GET (M) ;
         Mp = M->p ;
         Mh = M->h ;
         Mi = M->i ;
@@ -131,10 +119,7 @@
     const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
-    GBp_DECL_GET (C, const) ;
-    GBh_DECL_GET (C, const) ;
-    GBi_DECL_GET (C, ) ;
-    const uint64_t  *restrict Cp = C->p ;
+    const uint64_t  *restrict Cp = C->p ;    // FIXME
     const int64_t  *restrict Ch = C->h ;
           int64_t  *restrict Ci = C->i ;
     #endif

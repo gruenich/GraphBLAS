@@ -72,10 +72,7 @@ GrB_Info GB_assign_zombie5
     // get C
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (C, const) ;
-    GBh_DECL_GET (C, const) ;
-    GBi_DECL_GET (C, ) ;
-    const uint64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     // const int64_t Cnvec = C->nvec ;
@@ -86,10 +83,7 @@ GrB_Info GB_assign_zombie5
     // get M
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (M, const) ;
-    GBh_DECL_GET (M, const) ;
-    GBi_DECL_GET (M, const) ;
-    const uint64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const int8_t  *restrict Mb = M->b ;
@@ -100,9 +94,7 @@ GrB_Info GB_assign_zombie5
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_is_full = GB_IS_FULL (M) ;
-    GB_Yp_DECL_GET (M, const) ;
-    GB_Yi_DECL_GET (M, const) ;
-    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;   //FIXME
     const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
     const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;

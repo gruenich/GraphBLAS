@@ -29,8 +29,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    GBi_DECL_GET (A, const) ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *restrict Ai = A->i ; // FIXME
     const int8_t  *restrict Ab = A->b ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;

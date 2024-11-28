@@ -52,17 +52,10 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
     //--------------------------------------------------------------------------
 
     void *W = NULL ; size_t W_size = 0 ;
-    uint32_t *restrict W32 = NULL ;
-    uint64_t *restrict W64 = NULL ;
-
-    uint32_t *restrict Cp32 = Cp_is_32 ? Cp : NULL ;
-    uint64_t *restrict Cp64 = Cp_is_32 ? NULL : Cp ;
-
-    uint32_t *restrict Ci32 = Ci_is_32 ? Ci : NULL ;
-    uint64_t *restrict Ci64 = Ci_is_32 ? NULL : Ci ;
-
-    uint32_t *restrict Cj32 = Cj_is_32 ? Cj : NULL ;
-    uint64_t *restrict Cj64 = Cj_is_32 ? NULL : Cj ;
+    GB_IDECL (W , , u) ;
+    GB_IDECL (Cp, , u) ; GB_IPTR (Cp, Cp_is_32) ;
+    GB_IDECL (Ci, , u) ; GB_IPTR (Ci, Ci_is_32) ;
+    GB_IDECL (Cj, , u) ; GB_IPTR (Cj, Cj_is_32) ;
 
     size_t psize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
@@ -120,8 +113,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
             // out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
-        W32 = (Cp_is_32) ? W : NULL ;
-        W64 = (Cp_is_32) ? NULL : W ;
+        GB_IPTR (W, Cp_is_32) ;
 
         //----------------------------------------------------------------------
         // count each block

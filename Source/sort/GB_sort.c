@@ -485,7 +485,6 @@ GrB_Info GB_sort
     //--------------------------------------------------------------------------
 
     int64_t cnvec = C->nvec ;
-    GBi_DECL (T, const) ;
     int64_t *restrict Ti = NULL ;       // FIXME
 
     if (P == NULL)
@@ -508,7 +507,6 @@ GrB_Info GB_sort
 
     int C_nthreads, C_ntasks ;
     GB_SLICE_MATRIX (C, 1) ;
-    GBp_DECL_GET (C, ) ;
     uint64_t *restrict Cp = C->p ;  // FIXME
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static,1)

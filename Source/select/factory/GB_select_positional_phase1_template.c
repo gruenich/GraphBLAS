@@ -19,10 +19,7 @@
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
     const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     int64_t avlen = A->vlen ;

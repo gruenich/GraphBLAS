@@ -64,10 +64,7 @@ GrB_Info GB_assign_zombie3
     // get C (:,j)
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (C, const) ;
-    GBh_DECL_GET (C, const) ;
-    GBi_DECL_GET (C, ) ;
-    const uint64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     int64_t pC_start, pC_end ;
@@ -76,8 +73,6 @@ GrB_Info GB_assign_zombie3
     if (Ch != NULL)
     { 
         // C is hypersparse
-        GB_Yp_DECL_GET (C, const) ;
-        GB_Yi_DECL_GET (C, const) ;
         const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
         const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
         const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
@@ -99,9 +94,7 @@ GrB_Info GB_assign_zombie3
     // get M(:,0)
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (M, const) ;
-    GBi_DECL_GET (M, const) ;
-    const uint64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mi = M->i ;
     const int8_t  *restrict Mb = M->b ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;

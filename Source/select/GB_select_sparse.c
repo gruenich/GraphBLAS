@@ -83,9 +83,6 @@ GrB_Info GB_select_sparse
     // the case when A is bitmap is always handled above by GB_select_bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
     uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ; // FIXME
     int64_t *restrict Ah = A->h ; // FIXME
     int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ; // FIXME

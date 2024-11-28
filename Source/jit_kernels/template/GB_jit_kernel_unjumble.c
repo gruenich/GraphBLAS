@@ -15,9 +15,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_UNJUMBLE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_UNJUMBLE_PROTO (GB_jit_kernel)
 {
     // get A
-    GBp_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;     // FIXME
     int64_t *restrict Ai = A->i ;
     GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     // sort its vectors

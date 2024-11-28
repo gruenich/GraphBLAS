@@ -222,9 +222,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         //----------------------------------------------------------------------
 
         int64_t pC_start, pC_end ;
-        GBp_DECL_GET (C, const) ;
-        GBh_DECL_GET (C, const) ;
-        const uint64_t *restrict Cp = C->p ;
+        const uint64_t *restrict Cp = C->p ;    // FIXME
         const int64_t *restrict Ch = C->h ;
         if (C->nvals == 0)
         { 
@@ -234,8 +232,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         else if (Ch != NULL)
         {
             // C is hypersparse, with at least one entry
-            GB_Yp_DECL_GET (C, const) ;
-            GB_Yi_DECL_GET (C, const) ;
+            // FIXME:
             const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
             const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
             const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
@@ -265,8 +262,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             int64_t pright = pC_end - 1 ;
 
             // Time taken for this step is at most O(log(nnz(C(:,j))).
-            GBi_DECL_GET (C, const) ;
-            const int64_t *restrict Ci = C->i ;
+            const int64_t *restrict Ci = C->i ; // FIXME
             GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found,
                 C->nzombies, is_zombie) ;
         }
@@ -331,8 +327,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (is_zombie)
         { 
             // bring the zombie back to life
-            GBi_DECL_GET (C, ) ;
-            int64_t *restrict Ci = C->i ;
+            int64_t *restrict Ci = C->i ;   // FIXME
             Ci [pleft] = i ;
             C->nzombies-- ;
         }

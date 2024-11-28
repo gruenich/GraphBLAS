@@ -439,9 +439,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         T->plen = tplen ;
         T->nvec = anz ;
         T->nvec_nonempty = anz ;
-        GBp_DECL_GET (T, ) ;
-        GBi_DECL_GET (T, ) ;
-        uint64_t *restrict Tp = T->p ;
+        uint64_t *restrict Tp = T->p ;  // FIXME
         int64_t *restrict Ti = T->i ;
 
         // fill the vector pointers T->p
@@ -591,9 +589,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // find the non-empty vectors of A, which become entries in T
             //------------------------------------------------------------------
 
-            GBp_DECL_GET (A, const) ;
-            const uint64_t *restrict Ap = A->p ;
-            GBi_DECL_GET (T, ) ;
+            const uint64_t *restrict Ap = A->p ; // FIXME
                   int64_t *restrict Ti = T->i ;
 
             if (nth == 1)
@@ -677,8 +673,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         ASSERT (T->plen == 1) ;
         ASSERT (T->nvec == 1) ;
         T->nvec_nonempty = (anz == 0) ? 0 : 1 ;
-        GBp_DECL_GET (T, ) ;
-        uint64_t *restrict Tp = T->p ;
+        uint64_t *restrict Tp = T->p ;   // FIXME
         Tp [1] = anz ;
         T->nvals = anz ;
         T->magic = GB_MAGIC ;

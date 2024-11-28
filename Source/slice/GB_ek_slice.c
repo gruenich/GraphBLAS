@@ -2,10 +2,12 @@
 // GB_ek_slice: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Slice the entries of a matrix or vector into ntasks slices.
 
@@ -29,54 +31,13 @@
 // GB_ek_slice_search: find the first and last vectors in a slice
 //------------------------------------------------------------------------------
 
-static inline void GB_ek_slice_search
-(
-    // input:
-    int taskid,
-    int ntasks,
-    const int64_t *restrict pstart_slice,    // size ntasks+1
-    const int64_t *restrict Ap,              // size anvec  FIXME
-    int64_t anvec,                           // # of vectors in A
-    int64_t avlen,                           // vector length of A
-    // output:
-    int64_t *restrict kfirst_slice,          // size ntasks
-    int64_t *restrict klast_slice            // size ntasks
-)
-{
-    int64_t pfirst = pstart_slice [taskid] ;
-    int64_t plast  = pstart_slice [taskid+1] - 1 ;
+#define GB_ek_slice_search_TYPE   GB_ek_slice_search_32
+#define GB_search_for_vector_TYPE GB_search_for_vector_32
+#include "slice/factory/GB_ek_slice_search_template.c"
 
-    // find the first vector of the slice for task taskid: the
-    // vector that owns the entry Ai [pfirst] and Ax [pfirst].
-    int64_t kfirst ;
-    if (taskid == 0)
-    { 
-        kfirst = 0 ;
-    }
-    else
-    { 
-        kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;   // FIXME
-    }
-
-    // find the last vector of the slice for task taskid: the
-    // vector that owns the entry Ai [plast] and Ax [plast].
-    int64_t klast ;
-    if (taskid == ntasks-1)
-    { 
-        klast = anvec - 1 ;
-    }
-    else if (pfirst > plast)
-    { 
-        // this task does no work
-        klast = kfirst ;
-    }
-    else
-    { 
-        klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;//FIXME
-    }
-    kfirst_slice [taskid] = kfirst ;
-    klast_slice  [taskid] = klast ;
-}
+#define GB_ek_slice_search_TYPE   GB_ek_slice_search_64
+#define GB_search_for_vector_TYPE GB_search_for_vector_64
+#include "slice/factory/GB_ek_slice_search_template.c"
 
 //------------------------------------------------------------------------------
 // GB_ek_slice: slice the entries and vectors of a matrix
@@ -101,8 +62,8 @@ GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
     int64_t anz = GB_nnz_held (A) ;
-    GBp_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;      // NULL if bitmap or full  FIXME
+    const void *Ap = A->p ;         // NULL if bitmap or full
+    bool Ap_is_32 = A->p_is_32 ;
 
     //--------------------------------------------------------------------------
     // allocate result
@@ -150,10 +111,23 @@ GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
     // is vector is k = klast_slice [taskid].
 
     // FUTURE: this can be done in parallel if there are many tasks
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    { 
-        GB_ek_slice_search (taskid, ntasks, pstart_slice, Ap, anvec, avlen,
-            kfirst_slice, klast_slice) ;
+    if (Ap_is_32)
+    {
+        for (int taskid = 0 ; taskid < ntasks ; taskid++)
+        { 
+            // using GB_search_for_vector_32 (...):
+            GB_ek_slice_search_32 (taskid, ntasks, pstart_slice, Ap,
+                anvec, avlen, kfirst_slice, klast_slice) ;
+        }
+    }
+    else
+    {
+        for (int taskid = 0 ; taskid < ntasks ; taskid++)
+        { 
+            // using GB_search_for_vector_64 (...):
+            GB_ek_slice_search_64 (taskid, ntasks, pstart_slice, Ap,
+                anvec, avlen, kfirst_slice, klast_slice) ;
+        }
     }
 
     ASSERT (kfirst_slice [0] == 0) ;

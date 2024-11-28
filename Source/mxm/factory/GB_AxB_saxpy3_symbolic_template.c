@@ -48,14 +48,10 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (C, ) ;
-    uint64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     const int64_t cvlen = C->vlen ;
 
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int8_t  *restrict Bb = B->b ;
@@ -66,10 +62,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     ASSERT (GB_B_IS_BITMAP == GB_IS_BITMAP (B)) ;
     ASSERT (GB_B_IS_FULL   == GB_IS_FULL   (B)) ;
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int8_t  *restrict Ab = A->b ;
@@ -83,19 +76,14 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     ASSERT (GB_A_IS_FULL   == GB_IS_FULL   (A)) ;
 
     #if GB_A_IS_HYPER
-    GB_Yp_DECL_GET (A, const) ;
-    GB_Yi_DECL_GET (A, const) ;
-    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;   //FIXME
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
     #endif
 
     #if ( !GB_NO_MASK )
-    GBp_DECL_GET (M, const) ;
-    GBh_DECL_GET (M, const) ;
-    GBi_DECL_GET (M, const) ;
-    const uint64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const int8_t  *restrict Mb = M->b ;
@@ -107,9 +95,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_jumbled = GB_JUMBLED (M) ;
     // get the M hyper_hash
-    GB_Yp_DECL_GET (M, const) ;
-    GB_Yi_DECL_GET (M, const) ;
-    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ; // FIXME
     const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
     const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;

@@ -131,12 +131,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     //--------------------------------------------------------------------------
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
-    GBp_DECL (M, const) ;
-    GBh_DECL (M, const) ;
-    const uint64_t *restrict Mp = NULL ;
+    const uint64_t *restrict Mp = NULL ;        // FIXME
     const int64_t *restrict Mh = NULL ;
-    GB_Yp_DECL (M, const) ;
-    GB_Yi_DECL (M, const) ;
     const uint64_t *restrict M_Yp = NULL ;
     const int64_t *restrict M_Yi = NULL ;
     const int64_t *restrict M_Yx = NULL ;
@@ -147,8 +143,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
     bool M_is_dense = false ;
     if (M != NULL)
     { 
-        GBp_GET (M) ;
-        GBh_GET (M) ;
         Mp = M->p ;
         Mh = M->h ;
         mnvec = M->nvec ;
@@ -158,8 +152,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
         { 
             // mask is present, and hypersparse
             ASSERT_MATRIX_OK (M->Y, "M->Y hyper_hash", GB0) ;
-            GB_Yp_GET (M) ;
-            GB_Yi_GET (M) ;
             M_Yp = M->Y->p ;
             M_Yi = M->Y->i ;
             M_Yx = M->Y->x ;
@@ -171,24 +163,17 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // get A and B: any sparsity structure
     //--------------------------------------------------------------------------
 
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    GB_Yp_DECL_GET (A, const) ;
-    GB_Yi_DECL_GET (A, const) ;
     const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-    GBp_DECL_GET (B, const) ;
-    GBh_DECL_GET (B, const) ;
-    GBi_DECL_GET (B, const) ;
-    const uint64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    //FIXME
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int8_t  *restrict Bb = B->b ;

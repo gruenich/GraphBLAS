@@ -45,10 +45,7 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
-    GBp_DECL_GET (M, const) ;
-    GBh_DECL_GET (M, const) ;
-    GBi_DECL_GET (M, const) ;
-    const uint64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const int8_t  *restrict Mb = M->b ;

@@ -186,10 +186,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         //----------------------------------------------------------------------
 
         int64_t nvals = GB_nnz (T) ;
-        GBp_DECL_GET (T, ) ;
-        GBh_DECL_GET (T, ) ;
-        GBi_DECL_GET (T, ) ;
-        uint64_t *restrict Tp = T->p ;
+        uint64_t *restrict Tp = T->p ;  // FIXME
         int64_t *restrict Th = T->h ;
         int64_t *restrict Ti = T->i ;
         bool T_iso = T->iso ;

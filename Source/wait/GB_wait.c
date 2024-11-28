@@ -329,17 +329,13 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (A->nvec > 0) ;
 
     // tjfirst = first vector in T
-    GBh_DECL_GET (T, const) ;
-    const int64_t *restrict Th = T->h ;
+    const int64_t *restrict Th = T->h ;  // FIXME
     int64_t tjfirst = Th [0] ;
     int64_t anz0 = 0 ;
     int64_t kA = 0 ;
     int64_t jlast ;
 
-    GBp_DECL_GET (A, ) ;
-    GBh_DECL_GET (A, ) ;
-    GBi_DECL_GET (A, ) ;
-    uint64_t *restrict Ap = A->p ;
+    uint64_t *restrict Ap = A->p ;  // FIXME
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
@@ -398,7 +394,6 @@ GrB_Info GB_wait                // finish all pending computations
         { 
             // double the size if not enough space
             GB_OK (GB_ix_realloc (A, 2 * anz_new)) ;
-            GBi_GET (A) ;
             Ai = A->i ;
             Ax = (GB_void *) A->x ;
         }
@@ -433,12 +428,9 @@ GrB_Info GB_wait                // finish all pending computations
             W->iso = A_iso ;       // OK
 
             // fill the column W->h and W->p with A->h and A->p, shifted
-            GBp_DECL_GET (W, ) ;
-            GBh_DECL_GET (W, ) ;
-            uint64_t *restrict Wp = W->p ;
+            uint64_t *restrict Wp = W->p ;   // FIXME
             int64_t *restrict Wh = W->h ;
-            GBh_DECL_GET (A, ) ;
-            int64_t *restrict Ah = A->h ;
+            int64_t *restrict Ah = A->h ;       // FIXME
             int64_t a1nvec = 0 ;
 
             for (int64_t k = kA ; k < anvec ; k++) // TODO:parallel
@@ -501,10 +493,7 @@ GrB_Info GB_wait                // finish all pending computations
         // append T to the end of A0
         //----------------------------------------------------------------------
 
-        GBp_DECL_GET (T, const) ;
-        GBh_DECL_GET (T, const) ;
-        GBi_DECL_GET (T, const) ;
-        const uint64_t *restrict Tp = T->p ;
+        const uint64_t *restrict Tp = T->p ; // FIXME
         const int64_t *restrict Th = T->h ;
         const int64_t *restrict Ti = T->i ;
         int64_t tnvec = T->nvec ;
@@ -592,9 +581,7 @@ GrB_Info GB_wait                // finish all pending computations
             if (S->nvec == anvec)
             {
                 // A and S have the same number of vectors.  Compare Ah and Sh
-                GBh_DECL_GET (A, const) ;
-                GBh_DECL_GET (S, const) ;
-                int64_t *restrict Ah = A->h ;
+                int64_t *restrict Ah = A->h ;   // FIXME
                 int64_t *restrict Sh = S->h ;
                 bool hsame = true ;
                 int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;

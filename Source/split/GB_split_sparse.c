@@ -61,10 +61,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *Tile_vlen = csc ? Tile_rows : Tile_cols ;
 
     int64_t anvec = A->nvec ;
-    GBp_DECL_GET (A, const) ;
-    GBh_DECL_GET (A, const) ;
-    GBi_DECL_GET (A, const) ;
-    const uint64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const bool A_iso = A->iso ;
@@ -148,9 +145,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
-            GBp_DECL_GET (C, ) ;
-            GBh_DECL_GET (C, ) ;
-            uint64_t *restrict Cp = C->p ;
+            uint64_t *restrict Cp = C->p ;  // FIXME
             int64_t *restrict Ch = C->h ;
 
             //------------------------------------------------------------------
@@ -217,8 +212,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             // set C->iso = A_iso       OK
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso)) ;
-            GBi_DECL_GET (C, ) ;
-            int64_t *restrict Ci = C->i ;
+            int64_t *restrict Ci = C->i ;   // FIXME
             C->nvals = cnz ;
             C->magic = GB_MAGIC ;       // for GB_nnz_held(C), to slice C
 
