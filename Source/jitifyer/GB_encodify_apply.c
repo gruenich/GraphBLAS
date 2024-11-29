@@ -33,7 +33,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const bool A_is_matrix,
     const GrB_Type atype,
     const bool Ap_is_32,        // if true, Ap is uint32_t, else uint64_t
-    const bool Ai_is_32,        // if true, A[hi] is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, Ah,Ai are uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 )

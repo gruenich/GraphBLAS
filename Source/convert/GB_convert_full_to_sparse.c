@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit (32-bit disabled for now)
+// DONE: 32/64 bit (32-bit case currently disabled)
 
 #include "GB.h"
 
@@ -39,8 +39,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     int64_t anz = GB_nnz_full (A) ;
     GB_BURBLE_N (anz, "(full to sparse) ") ;
 
-// FIXME: 32-bit disabled for now
-    bool Ap_is_32 = false ; // GB_validate_p_is_32 (true, anz) ;
+    bool Ap_is_32 = false ; // GB_validate_p_is_32 (true, anz) ;    FIXME
     bool Ai_is_32 = false ; // GB_validate_i_is_32 (true, avlen, avdim) ;
 
     void *Ap = NULL ; size_t Ap_size = 0 ;

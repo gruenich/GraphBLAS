@@ -600,21 +600,21 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         I ## 64 = (A && A->Y) ? (A->i_is_32 ? NULL : A->Y->component) : NULL
 
     // general method for getting an entry from the Ap array of a matrix
-    #define GBp(Ap,k,vlen) \
-        ((Ap ## 32) ? Ap ## 32 [k] : \
-        ((Ap ## 64) ? Ap ## 64 [k] : \
+    #define GBp(Ap,k,vlen)                  \
+        ((Ap ## 32) ? Ap ## 32 [k] :        \
+        ((Ap ## 64) ? Ap ## 64 [k] :        \
         ((k) * (vlen))))
 
     // general method for getting an entry from the Ah array of a matrix
-    #define GBh(Ah,k) \
-        ((Ah ## 32) ? Ah ## 32 [k] : \
-        ((Ah ## 64) ? Ah ## 64 [k] : \
+    #define GBh(Ah,k)                       \
+        ((Ah ## 32) ? Ah ## 32 [k] :        \
+        ((Ah ## 64) ? Ah ## 64 [k] :        \
         (k)))
 
     // general method for getting an entry from the Ai array of a matrix
-    #define GBi(Ai,p,vlen) \
-        ((Ai ## 32) ? Ai ## 32 [p] : \
-        ((Ai ## 64) ? Ai ## 64 [p] : \
+    #define GBi(Ai,p,vlen)                  \
+        ((Ai ## 32) ? Ai ## 32 [p] :        \
+        ((Ai ## 64) ? Ai ## 64 [p] :        \
         ((p) % (vlen))))
 
     // general method for getting an entry from the Ab array of a matrix

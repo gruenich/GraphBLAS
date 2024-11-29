@@ -20,6 +20,7 @@
 // For v5, iso is present but false, and the s component has length 10.
 // For v5_1, iso is true/false, and the s component has length 10.
 // For v7_3: the same content as v5_1, except that Yp, Yi, and Yx are added.
+// For v9_5: Ap, Ah, Ai, Yp, Yi, and Yx can be 32-bit FIXME
 
 // mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
 // because mxGetData works best for Octave, and it works fine for MATLAB
@@ -41,6 +42,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     //--------------------------------------------------------------------------
 
     CHECK_ERROR (X == NULL, "matrix missing") ;
+
+    //--------------------------------------------------------------------------
+    // turn off the burble
+    //--------------------------------------------------------------------------
+
+    int burble ;
+    OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // construct the shallow GrB_Matrix
@@ -183,18 +192,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // each component
-        GBp_DECL (A,) ;
-        GBh_DECL (A,) ;
-        GBi_DECL (A,) ;
-        uint64_t *Ap = NULL ; size_t Ap_size = 0 ;
+        uint64_t *Ap = NULL ; size_t Ap_size = 0 ;  // FIXME
         uint64_t *Ah = NULL ; size_t Ah_size = 0 ;
         uint64_t *Ai = NULL ; size_t Ai_size = 0 ;
         int8_t   *Ab = NULL ; size_t Ab_size = 0 ;
         void     *Ax = NULL ; size_t Ax_size = 0 ; 
 
-        GBp_DECL (Y,) ;
-        GBi_DECL (Y,) ;
-        uint64_t *Yp = NULL ; size_t Yp_size = 0 ;
+        uint64_t *Yp = NULL ; size_t Yp_size = 0 ;  // FIXME
         uint64_t *Yi = NULL ; size_t Yi_size = 0 ;
         void     *Yx = NULL ; size_t Yx_size = 0 ;
         int64_t yvdim = 0 ; 
@@ -373,7 +377,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     {
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy of a built-in matrix
+        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix
         //----------------------------------------------------------------------
 
         // get the type and dimensions
@@ -385,8 +389,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
 
         // get Xp, Xi, nzmax, or create them
-        GBp_DECL (X,) ;
-        GBi_DECL (X,) ;
         GrB_Index *Xp, *Xi, nzmax ;
         if (X_is_sparse)
         { 
@@ -516,9 +518,10 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     }
 
     //--------------------------------------------------------------------------
-    // return the result
+    // restore the burble and return result
     //--------------------------------------------------------------------------
 
+    OK (GrB_set (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     return (A) ;
 }
 

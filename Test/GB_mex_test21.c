@@ -63,7 +63,7 @@ void mexFunction
     // results are written to a single log file
     //--------------------------------------------------------------------------
 
-    FILE *fp = fopen ("log_GB_mex_test21.txt", "w") ;
+    FILE *fp = fopen ("tmp/log_GB_mex_test21.txt", "w") ;
     CHECK (fp != NULL) ;
 
     //--------------------------------------------------------------------------

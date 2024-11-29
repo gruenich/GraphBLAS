@@ -1,8 +1,12 @@
-function test287
+function bench1
+% BENCH1 benchmark GrB_build
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
 
 GrB.burble (1) ;
-s = maxNumCompThreads (32)
-save = nthreads_set (32) 
+s = maxNumCompThreads (32) ;
+save = nthreads_set (32)  ;
 
 fprintf ('\nsprand:\n') ;
 rng ('default') ;
@@ -11,9 +15,15 @@ m = n ;
 nz = 400e6 ;
 d = nz / n^2 ;
 tic
-A = sprandn (n, n, d) ;
+% A = sprandn (n, n, d) ;
+G = GrB.random (m, n, d) ;
 toc
 Cin = sparse (n,n) ;
+
+fprintf ('\nconvert to MATLAB:\n') ;
+tic
+A = double (G) ;
+toc
 
 fprintf ('\nfind:\n') ;
 tic
@@ -58,3 +68,4 @@ end
 maxNumCompThreads (s) ;
 nthreads_set (save)  ;
 GrB.burble (0) ;
+

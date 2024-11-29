@@ -193,8 +193,8 @@ GrB_Info GxB_Matrix_Iterator_seek
             case GxB_HYPERSPARSE : 
             { 
                 // find the vector k that contains position p
-                iterator->k = GB_search_for_vector_64 (p, iterator->Ap,// FIXME
-                    0, iterator->anvec, iterator->avlen) ;
+                iterator->k = GB_search_for_vector_64 (iterator->Ap, // FIXME
+                    p, 0, iterator->anvec, iterator->avlen) ;
                 iterator->pstart = iterator->Ap [iterator->k] ; // FIXME
                 iterator->pend = iterator->Ap [iterator->k+1] ; // FIXME
             }

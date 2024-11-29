@@ -35,12 +35,11 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
         const bool flipij,          // if true, flip i,j for user idxunop
     // A matrix:
-//  const GrB_Matrix A              // input matrix
     const int A_sparsity,
     const bool A_is_matrix,
     const GrB_Type atype,
     const bool Ap_is_32,        // if true, A->p is uint32_t, else uint64_t
-    const bool Ai_is_32,        // if true, A->[hi] is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, A->[hi] are uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 )

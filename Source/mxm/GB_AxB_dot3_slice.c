@@ -183,17 +183,17 @@ GrB_Info GB_AxB_dot3_slice
             {
                 // find the first vector of the slice for task taskid: the
                 // vector that owns the entry Ci [pfirst] and Cx [pfirst].
-                kfirst = GB_search_for_vector_32 (pfirst, Cp, 0, cnvec, cvlen) ;
+                kfirst = GB_search_for_vector_32 (Cp, pfirst, 0, cnvec, cvlen) ;
                 // find the last vector of the slice for task taskid: the
                 // vector that owns the entry Ci [plast] and Cx [plast].
-                klast  = GB_search_for_vector_32 (plast, Cp, kfirst, cnvec,
+                klast  = GB_search_for_vector_32 (Cp, plast, kfirst, cnvec,
                     cvlen) ;
             }
             else
             {
                 // as above, 64-bit version
-                kfirst = GB_search_for_vector_64 (pfirst, Cp, 0, cnvec, cvlen) ;
-                klast  = GB_search_for_vector_64 (plast, Cp, kfirst, cnvec,
+                kfirst = GB_search_for_vector_64 (Cp, pfirst, 0, cnvec, cvlen) ;
+                klast  = GB_search_for_vector_64 (Cp, plast, kfirst, cnvec,
                     cvlen) ;
             }
 

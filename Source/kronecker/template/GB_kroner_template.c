@@ -79,12 +79,12 @@
         if (GB_Cp_BITS == 32)
         { 
             // Cp is 32-bit
-            kC_task = GB_search_for_vector_32 (pC, Cp, 0, cnvec, cvlen) ;
+            kC_task = GB_search_for_vector_32 (Cp, pC, 0, cnvec, cvlen) ;
         }
         else
         { 
             // Cp is 64-bit
-            kC_task = GB_search_for_vector_64 (pC, Cp, 0, cnvec, cvlen) ;
+            kC_task = GB_search_for_vector_64 (Cp, pC, 0, cnvec, cvlen) ;
         }
         int64_t pC_delta = pC - GBp_C (Cp, kC_task, cvlen) ;
 

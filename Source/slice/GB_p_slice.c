@@ -12,8 +12,7 @@
 // Ap [0..n] is an array with monotonically increasing entries.  This function
 // slices Ap so that each chunk has the same number of total values of its
 // entries.  Ap can be A->p for a matrix and then n = A->nvec.  Or it can be
-// the work needed for computing each vector of a matrix (see GB_ewise_slice
-// and GB_subref_slice, for example).
+// the work needed for computing n tasks, where Ap [p] is the work for task p.
 
 // If Ap is NULL then the matrix A (not provided here) is full or bitmap,
 // which this function handles (Ap is implicit).

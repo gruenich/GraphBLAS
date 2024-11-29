@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG    /* HACK FIXME */
-
 // On input, the matrix may have shallow A->p and A->h content; it is safely
 // removed.  On output, the matrix is always non-hypersparse (even if out of
 // memory).  If the input matrix is hypersparse, it is given a new A->p that is

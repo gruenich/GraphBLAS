@@ -118,10 +118,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     GrB_Type type = NULL ;
     GrB_Index nrows = 0, ncols = 0 ;
     int8_t *Ab = NULL ;
-    GBp_DECL (A,) ;
-    GBh_DECL (A,) ;
-    GBi_DECL (A,) ;
-    uint64_t *Ap = NULL ;
+    uint64_t *Ap = NULL ;       // FIXME
     int64_t *Ah = NULL, *Ai = NULL ;
     void *Ax = NULL ;
     GrB_Index Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
@@ -130,9 +127,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     bool iso = false ;
 
     GrB_Type ytype = NULL ;
-    GBp_DECL (Y,) ;
-    GBi_DECL (Y,) ;
-    uint64_t *Yp = NULL ; GrB_Index Yp_size = 0 ;
+    uint64_t *Yp = NULL ; GrB_Index Yp_size = 0 ;       // FIXME
     uint64_t *Yi = NULL ; GrB_Index Yi_size = 0 ;
     void     *Yx = NULL ; GrB_Index Yx_size = 0 ;
     uint64_t yvdim, ynrows ;

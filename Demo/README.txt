@@ -25,11 +25,9 @@ in Demo/Program:
 --------------------------------------------------------------------------------
 
     complex_demo.c          demo program to test complex type
-    import_demo.c           demo program to test import/export
-    kron_demo.c             demo program to test GrB_kronecker
     simple_demo.c           demo program to test simple_rand
     wildtype_demo.c         demo program, arbitrary struct as user-defined type
-    openmp_demo.c           demo program using OpenMP
+    FIXME
 
 --------------------------------------------------------------------------------
 in Demo/Output:
@@ -37,25 +35,20 @@ in Demo/Output:
 
     complex_demo_out.m  output of complex_demo
     simple_test.out     output of simple_demo
-    tri_demo.out        output of tri_demo
     wildtype_demo.out   output of wildtype_demo
-    import_demo.out     output of import_demo
 
 --------------------------------------------------------------------------------
 in Demo/Include:
 --------------------------------------------------------------------------------
 
     graphblas_demos.h       include file for all demos
-    simple_rand.h           include file for simple_rand.c
+    simple_rand.h           simple random number generator
     usercomplex.h           include file for usercomplex.h
-
     get_matrix.c            get a matrix (file, Wathen, or random)
     random_matrix.c         create a random matrix
     read_matrix.c           read a matrix from a file (Matrix/*)
-    simple_rand.c           a very simple random number generator
     usercomplex.c           user-defined double complex type
     wathen.c                GraphBLAS version of wathen.m
-    import_test.c           test import/export
     isequal.c               test if 2 matrices are equal
 
 --------------------------------------------------------------------------------

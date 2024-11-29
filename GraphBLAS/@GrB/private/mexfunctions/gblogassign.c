@@ -186,9 +186,7 @@ void mexFunction
     // extract the values and pattern of A; handle iso case
     //--------------------------------------------------------------------------
 
-    // Tim: use a shallow variant of GxB*export to access content of M and A
-    GBi_DECL_GET (A,) ;
-    GrB_Index *Ai =  (GrB_Index *) A->i ;
+    GrB_Index *Ai =  (GrB_Index *) A->i ;   // FIXME
     void *Ax = A->x ;          		 	 	 	 	 	
     char nil [16] = "iso logassign  " ;
     if (Ax == NULL) Ax = &nil ;
@@ -197,8 +195,7 @@ void mexFunction
     // extract the pattern of M
     //--------------------------------------------------------------------------
 
-    GBi_DECL_GET (M,) ;
-    GrB_Index *Mi = (GrB_Index *) (M->i) ;
+    GrB_Index *Mi = (GrB_Index *) (M->i) ;  // FIXME
     GrB_Index *Mj = mxMalloc (MAX (mnz, 1) * sizeof (GrB_Index)) ;
     OK (GrB_Matrix_extractTuples_BOOL (NULL, Mj, NULL, &mnz, M)) ;
 

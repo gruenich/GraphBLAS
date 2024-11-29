@@ -41,7 +41,7 @@ static inline void GB_ek_slice_search_TYPE
     }
     else
     { 
-        kfirst = GB_search_for_vector_TYPE (pfirst, Ap, 0, anvec, avlen) ;
+        kfirst = GB_search_for_vector_TYPE (Ap, pfirst, 0, anvec, avlen) ;
     }
 
     // find the last vector of the slice for task taskid: the
@@ -58,7 +58,7 @@ static inline void GB_ek_slice_search_TYPE
     }
     else
     { 
-        klast = GB_search_for_vector_TYPE (plast, Ap, kfirst, anvec, avlen) ;
+        klast = GB_search_for_vector_TYPE (Ap, plast, kfirst, anvec, avlen) ;
     }
     kfirst_slice [taskid] = kfirst ;
     klast_slice  [taskid] = klast ;

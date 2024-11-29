@@ -5682,6 +5682,8 @@ GrB_Info GrB_Global_set_String (GrB_Global, char *    , GrB_Field) ;
 GrB_Info GrB_Global_set_INT32  (GrB_Global, int32_t   , GrB_Field) ;
 GrB_Info GrB_Global_set_VOID   (GrB_Global, void *    , GrB_Field, size_t) ;
 
+// GxB_Context_set_INT is slightly misnamed, because of the prior
+// GxB_Context_set_INT32.
 GrB_Info GxB_Context_set_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
 GrB_Info GxB_Context_set_String (GxB_Context, char *    , GrB_Field) ;
 GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , GrB_Field) ;
@@ -11806,6 +11808,11 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator,
 // the usage of these historical methods, and upgrade to the newer methods
 // present in this version of GraphBLAS.
 
+// A user application can request that no historical methods should be
+// available, by compiling their application with -DNHISTORICAL.
+
+#ifndef NHISTORICAL
+
 // GrB_getVersion: use GrB_get instead
 GrB_Info GrB_getVersion (unsigned int *, unsigned int *) ;
 
@@ -12155,6 +12162,8 @@ GrB_Info GxB_Matrix_select (GrB_Matrix C, const GrB_Matrix Mask,
 
 // GxB_deserialize_* queries: use GrB_get instead
 GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
+
+#endif
 
 #endif  // GB_CUDA_FOLDER
 #if defined ( __cplusplus )

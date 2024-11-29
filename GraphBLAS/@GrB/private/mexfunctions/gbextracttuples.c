@@ -56,11 +56,19 @@ void mexFunction
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
-    // get the matrix
+    // get the matrix; disable burble for scalars
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Index nvals ;
+    GrB_Index nrows, ncols, nvals ;
+    OK (GrB_Matrix_nrows (&nrows, A)) ;
+    OK (GrB_Matrix_ncols (&ncols, A)) ;
+    int burble ;
+    if (nrows <= 1 && ncols <= 1)
+    {
+        OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
+        OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+    }
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     GrB_Type xtype ;
     OK (GxB_Matrix_type (&xtype, A)) ;
@@ -226,8 +234,6 @@ void mexFunction
 
     if (base == BASE_DEFAULT)
     {
-        GrB_Index nrows, ncols ;
-        OK (GrB_Matrix_nrows (&nrows, A)) ;
         OK (GrB_Matrix_ncols (&ncols, A)) ;
         if (MAX (nrows, ncols) > FLINTMAX)
         { 
@@ -319,6 +325,14 @@ void mexFunction
         }
     }
 
+    //--------------------------------------------------------------------------
+    // restore burble and return result
+    //--------------------------------------------------------------------------
+
+    if (nrows <= 1 && ncols <= 1)
+    {
+        OK (GrB_set (GrB_GLOBAL, burble, GxB_BURBLE)) ;
+    }
     GB_WRAPUP ;
 }
 

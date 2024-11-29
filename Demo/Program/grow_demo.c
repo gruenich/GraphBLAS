@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Program/grow_demo.c: grow a matrix row-by-row
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -10,21 +10,12 @@
 // Reads in a matrix A, then does C = A one row at a time.
 
 #include "graphblas_demos.h"
-#include "simple_rand.c"
 #include "usercomplex.h"
 #include "usercomplex.c"
 #include "wathen.c"
-#include "get_matrix.c"
 #include "random_matrix.c"
-#include "import_test.c"
 #include "read_matrix.c"
-
-#include "omp.h"
-#if defined ( _OPENMP )
-#define WALLCLOCK omp_get_wtime ( )
-#else
-#define WALLCLOCK 0
-#endif
+#include "get_matrix.c"
 
 // macro used by OK(...) to free workspace if an error occurs
 #undef  FREE_ALL
@@ -74,14 +65,15 @@ int main (int argc, char **argv)
 
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int32_t nthreads ;
-    OK (GxB_Global_Option_get (GxB_GLOBAL_NTHREADS, &nthreads)) ;
+    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads, GxB_NTHREADS)) ;
     fprintf (stderr, "grow demo: nthreads %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // get A matrix
     //--------------------------------------------------------------------------
 
-    OK (get_matrix (&A, argc, argv, false, false, false)) ;
+    uint64_t state = 1 ;
+    OK (get_matrix (&A, argc, argv, false, false, false, &state)) ;
     GrB_Index anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
@@ -89,8 +81,6 @@ int main (int argc, char **argv)
     int32_t type_code ;
     OK (GrB_Matrix_get_INT32 (A, &type_code, GrB_EL_TYPE_CODE)) ;
     GrB_Type atype = NULL ;
-    // OK (GxB_print (A, 5)) ;
-    // printf ("type_code: %d\n", type_code) ;
     GrB_BinaryOp eq = NULL ;
 
     switch (type_code)
@@ -111,7 +101,6 @@ int main (int argc, char **argv)
         default              : ;
     }
 
-    // OK (GxB_print (atype, 5)) ;
     CHECK (atype != NULL, GrB_INVALID_VALUE) ;
     OK (GxB_Matrix_fprint (A, "A", 1, stdout)) ;
 
@@ -121,26 +110,21 @@ int main (int argc, char **argv)
 
     OK (GrB_Matrix_new (&C, atype, anrows, ancols)) ;
     OK (GrB_Vector_new (&w, atype, ancols)) ;
-    // OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE)) ;
-    OK (GrB_Matrix_set_INT32 (C, (int32_t) false, (GrB_Field) GxB_HYPER_HASH)) ;
-    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, (GrB_Field) GxB_SPARSITY_CONTROL)) ;
-    OK (GrB_Vector_set_INT32 (w, GxB_SPARSE, (GrB_Field) GxB_SPARSITY_CONTROL)) ;
-    // printf ("\n\nC empty:\n") ;
-    // OK (GxB_print (C, 1)) ;
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE)) ;
+    OK (GrB_Matrix_set_INT32 (C, (int32_t) false, GxB_HYPER_HASH)) ;
+    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Vector_set_INT32 (w, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
     double t, tt [4] = {0, 0, 0, 0}, t2 [4] = {0, 0, 0, 0} ;
     tt [0] = WALLCLOCK ;
 
     for (int64_t i = 0 ; i < anrows ; i++)
     {
-        // printf ("\n\ni = %ld\n", i) ;
-
         // w = A (i,:), using A' via the descriptor
         t = WALLCLOCK ;
         OK (GrB_Col_extract (w, NULL, NULL, A, GrB_ALL, ancols, i,
             GrB_DESC_T0)) ;
         tt [1] += (WALLCLOCK - t) ;
-        // OK (GxB_print (w, 3)) ;
 
         // C (i,:) = w
         t = WALLCLOCK ;
@@ -151,11 +135,9 @@ int main (int argc, char **argv)
         t = WALLCLOCK ;
         OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
         tt [3] += (WALLCLOCK - t) ;
-        // OK (GxB_print (C, 1)) ;
     }
 
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, (GrB_Field) GxB_BURBLE)) ;
-    // OK (GxB_print (C, 1)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     tt [0] = WALLCLOCK - tt [0] ;
     printf ("one row at a time:\n") ;
@@ -171,10 +153,9 @@ int main (int argc, char **argv)
     // C = A, multiple rows at a time
     //--------------------------------------------------------------------------
 
-    // OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE)) ;
     GrB_Matrix_free (&C) ;
     OK (GrB_Matrix_new (&C, atype, anrows, ancols)) ;
-    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
 
     t2 [0] = WALLCLOCK ;
     int64_t i1 = 0 ;
@@ -187,24 +168,19 @@ int main (int argc, char **argv)
         int64_t i2 = i1 + irows - 1 ;
         if (i2 > ilast) i2 = ilast ;
         irows = i2 - i1 + 1 ;
-        // printf ("i1: %ld i2: %ld irows %ld ilast: %ld\n",
-        //     i1, i2, irows, ilast) ;
 
         // W = A (i1:i2,:)
         t = WALLCLOCK ;
         OK (GrB_Matrix_new (&W, atype, irows, ancols)) ;
-        OK (GrB_Matrix_set_INT32 (W, GxB_SPARSE, (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+        OK (GrB_Matrix_set_INT32 (W, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
         GrB_Index Icolon [3] ;
         Icolon [GxB_BEGIN] = i1 ;
         Icolon [GxB_INC  ] = 1 ;
         Icolon [GxB_END  ] = i2 ;
-        // OK (GxB_print (W, 3)) ;
         info = GrB_Matrix_extract (W, NULL, NULL, A, Icolon, GxB_RANGE,
             GrB_ALL, ancols, NULL) ;
-        // printf ("got here: %d\n", info) ;
         OK (info) ;
         t2 [1] += (WALLCLOCK - t) ;
-        // OK (GxB_print (W, 3)) ;
 
         // C (i1:i2,:) = W
         t = WALLCLOCK ;
@@ -216,13 +192,12 @@ int main (int argc, char **argv)
         t = WALLCLOCK ;
         OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
         t2 [3] += (WALLCLOCK - t) ;
-        // OK (GxB_print (C, 1)) ;
 
         GrB_Matrix_free (&W) ;
 
         i1 += irows ;
     }
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, (GrB_Field) GxB_BURBLE)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     t2 [0] = WALLCLOCK - t2 [0] ;
     printf ("\nmany rows at a time:\n") ;
@@ -242,13 +217,13 @@ int main (int argc, char **argv)
     for (int trial = 1 ; trial <= 2 ; trial++)
     {
         int32_t threads ;
-        GrB_Global_get_INT32 (GrB_GLOBAL, &threads, (GrB_Field) GxB_GLOBAL_NTHREADS) ;
+        GrB_Global_get_INT32 (GrB_GLOBAL, &threads, GxB_GLOBAL_NTHREADS) ;
         GrB_Matrix_free (&T) ;
         t = WALLCLOCK ;
         OK (GrB_Matrix_dup (&T, A)) ;
         t = (WALLCLOCK - t) ;
         printf ("dup:        %g (%d threads)\n", t, threads) ;
-        GrB_Global_set_INT32 (GrB_GLOBAL, (int) 1, (GrB_Field) GxB_GLOBAL_NTHREADS) ;
+        GrB_Global_set_INT32 (GrB_GLOBAL, (int) 1, GxB_GLOBAL_NTHREADS) ;
     }
 
     printf ("grow_demo: all tests passed\n") ;
