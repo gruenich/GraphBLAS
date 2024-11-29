@@ -64,7 +64,6 @@ demos: all
 	./build/simple_demo > ./build/simple_demo.out
 	./build/complex_demo > ./build/complex_demo_out.m
 	./build/complex_demo 1 > ./build/complex_demo_out2.m
-	./build/openmp_demo > ./build/openmp_demo.out
 	./build/wildtype_demo > ./build/wildtype_demo.out
 	./build/gauss_demo > ./build/gauss_demo1.out
 	./build/gauss_demo > ./build/gauss_demo.out
