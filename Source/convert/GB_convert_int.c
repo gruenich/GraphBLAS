@@ -73,8 +73,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     //--------------------------------------------------------------------------
 
     // do not convert pending tuples; finish the work first
-    // FIXME: this works OK, but can convert them to i_is_32_new instead
-    GB_MATRIX_WAIT_IF_PENDING (A) ;
+    GB_MATRIX_WAIT_IF_PENDING (A) ; // FIXME:OK but could convert pending tuples
 
     // simply remove A->Y if it is entirely shallow
     if (A->Y_shallow)
