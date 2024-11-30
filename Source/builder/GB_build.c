@@ -358,7 +358,8 @@ GrB_Info GB_build               // build matrix
     ASSERT (!GB_ZOMBIES (T)) ;
     ASSERT (!GB_JUMBLED (T)) ;
     ASSERT (!GB_PENDING (T)) ;
-    info = GB_transplant_conform (C, C->type, &T, Werk) ;
+    GB_OK (GB_transplant_conform (C, C->type, &T, Werk)) ;
+
     if (nvals > 1000)
     { 
         tt = GB_OPENMP_GET_WTIME - tt;
@@ -366,6 +367,7 @@ GrB_Info GB_build               // build matrix
             is_32 ? "32" : "64",
             is_32 ? "32" : "64", tt) ;
     }
-    return (info) ;
+
+    return (GrB_SUCCESS) ;
 }
 

@@ -2926,263 +2926,87 @@ GrB_Info GrB_IndexUnaryOp_free  // free a user-created IndexUnaryOp
 // The GrB_BinaryOp must be associative and commutative (but this cannot be
 // checked).  It cannot be based on a GxB_IndexBinaryOp.
 
-GrB_Info GrB_Monoid_new_BOOL        // create a new boolean monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    bool identity                   // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_INT8        // create a new int8 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int8_t identity                 // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_UINT8       // create a new uint8 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint8_t identity                // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_INT16       // create a new int16 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int16_t identity                // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_UINT16      // create a new uint16 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint16_t identity               // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_INT32       // create a new int32 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int32_t identity                // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_UINT32      // create a new uint32 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint32_t identity               // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_INT64       // create a new int64 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int64_t identity                // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_UINT64      // create a new uint64 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint64_t identity               // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_FP32        // create a new float monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    float identity                  // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_FP64        // create a new double monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    double identity                 // identity value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_new_FC32        // create a new float complex monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    GxB_FC32_t identity             // identity value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_new_FC64        // create a new double complex monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    GxB_FC64_t identity             // identity value of the monoid
-) ;
-
-GrB_Info GrB_Monoid_new_UDT         // create a monoid with a user-defined type
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    void *identity                  // identity value of the monoid
-) ;
-
 // Type-generic method for creating a new monoid:
-
-/*
-GrB_Info GrB_Monoid_new             // create a monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,          // binary operator of the monoid
-    <type> identity           // identity value of the monoid
-) ;
-*/
-
+//
+//  GrB_Info GrB_Monoid_new             // create a monoid
+//  (
+//      GrB_Monoid *monoid,             // handle of monoid to create
+//      GrB_BinaryOp op,                // binary operator of the monoid
+//      <type> identity                 // identity value of the monoid
+//  ) ;
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Monoid_new(monoid,op,identity)      \
-    _Generic                                    \
-    (                                           \
-        (identity),                             \
-            GB_CASES (GrB, Monoid_new)          \
-    )                                           \
-    (monoid, op, identity)
+#define GrB_Monoid_new(monoid,op,identity)              \
+    _Generic ((identity), GB_CASES (GrB, Monoid_new)) (monoid, op, identity)
 #endif
+
+// Type-specific methods for creating a new monoid:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Monoid_new ## suffix   /* create a new monoid */           \
+(                                                                             \
+    GrB_Monoid *monoid,             /* handle of monoid to create */          \
+    GrB_BinaryOp op,                /* binary operator of the monoid */       \
+    type identity                   /* identity value of the monoid */        \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void *    ) ;
 
 // GxB_Monoid_terminal_new is identical to GrB_Monoid_new, except that a
 // terminal value can be specified.  The terminal may be NULL, which indicates
 // no terminal value (and in this case, it is identical to GrB_Monoid_new).
 // The terminal value, if not NULL, must have the same type as the identity.
 
-GrB_Info GxB_Monoid_terminal_new_BOOL        // create a new boolean monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    bool identity,                  // identity value of the monoid
-    bool terminal                   // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_INT8        // create a new int8 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int8_t identity,                // identity value of the monoid
-    int8_t terminal                 // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_UINT8       // create a new uint8 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint8_t identity,               // identity value of the monoid
-    uint8_t terminal                // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_INT16       // create a new int16 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int16_t identity,               // identity value of the monoid
-    int16_t terminal                // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_UINT16      // create a new uint16 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint16_t identity,              // identity value of the monoid
-    uint16_t terminal               // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_INT32       // create a new int32 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int32_t identity,               // identity value of the monoid
-    int32_t terminal                // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_UINT32      // create a new uint32 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint32_t identity,              // identity value of the monoid
-    uint32_t terminal               // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_INT64       // create a new int64 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    int64_t identity,               // identity value of the monoid
-    int64_t terminal                // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_UINT64      // create a new uint64 monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    uint64_t identity,              // identity value of the monoid
-    uint64_t terminal               // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_FP32        // create a new float monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    float identity,                 // identity value of the monoid
-    float terminal                  // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_FP64        // create a new double monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    double identity,                // identity value of the monoid
-    double terminal                 // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_FC32   // create a new float complex monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    GxB_FC32_t identity,            // identity value of the monoid
-    GxB_FC32_t terminal             // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_FC64   // create a new double complex monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    GxB_FC64_t identity,            // identity value of the monoid
-    GxB_FC64_t terminal             // terminal value of the monoid
-) ;
-
-GrB_Info GxB_Monoid_terminal_new_UDT    // create a monoid with a user type
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    void *identity,                 // identity value of the monoid
-    void *terminal                  // terminal value of the monoid
-) ;
-
 // Type-generic method for creating a new monoid with a terminal value:
-
-/*
-GrB_Info GxB_Monoid_terminal_new             // create a monoid
-(
-    GrB_Monoid *monoid,             // handle of monoid to create
-    GrB_BinaryOp op,                // binary operator of the monoid
-    <type> identity,                // identity value of the monoid
-    <type> terminal                 // terminal value of the monoid
-) ;
-*/
-
+//
+//  GrB_Info GxB_Monoid_terminal_new             // create a monoid
+//  (
+//      GrB_Monoid *monoid,             // handle of monoid to create
+//      GrB_BinaryOp op,                // binary operator of the monoid
+//      <type> identity,                // identity value of the monoid
+//      <type> terminal                 // terminal value of the monoid
+//  ) ;
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
-    _Generic                                                    \
-    (                                                           \
-        (identity),                                             \
-            GB_CASES (GxB, Monoid_terminal_new)                 \
-    )                                                           \
+    _Generic ((identity), GB_CASES (GxB, Monoid_terminal_new))  \
     (monoid, op, identity, terminal)
 #endif
+
+// Type-specific methods for creating a new monoid with a terminal value:
+#undef  GB_DECLARE
+#define GB_DECLARE(suffix,type)                                               \
+GrB_Info GxB_Monoid_terminal_new ## suffix /* create a new termainal monoid */\
+(                                                                             \
+    GrB_Monoid *monoid,             /* handle of monoid to create */          \
+    GrB_BinaryOp op,                /* binary operator of the monoid */       \
+    type identity,                  /* identity value of the monoid */        \
+    type terminal                   /* terminal value of the monoid */        \
+)
+GB_DECLARE (_BOOL  , bool      ) ;
+GB_DECLARE (_INT8  , int8_t    ) ;
+GB_DECLARE (_INT16 , int16_t   ) ;
+GB_DECLARE (_INT32 , int32_t   ) ;
+GB_DECLARE (_INT64 , int64_t   ) ;
+GB_DECLARE (_UINT8 , uint8_t   ) ;
+GB_DECLARE (_UINT16, uint16_t  ) ;
+GB_DECLARE (_UINT32, uint32_t  ) ;
+GB_DECLARE (_UINT64, uint64_t  ) ;
+GB_DECLARE (_FP32  , float     ) ;
+GB_DECLARE (_FP64  , double    ) ;
+GB_DECLARE (_FC32  , GxB_FC32_t) ;
+GB_DECLARE (_FC64  , GxB_FC64_t) ;
+GB_DECLARE (_UDT   , void *    ) ;
 
 GrB_Info GrB_Monoid_free            // free a user-created monoid
 (
@@ -3256,110 +3080,41 @@ GrB_Info GrB_Scalar_free    // free a GrB_Scalar
 // Set a single GrB_Scalar s, from a user scalar x: s = x, typecasting from the
 // type of x to the type of w as needed.
 
-GrB_Info GrB_Scalar_setElement_BOOL     // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    bool x                              // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_INT8     // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    int8_t x                            // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_UINT8    // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    uint8_t x                           // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_INT16    // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    int16_t x                           // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_UINT16   // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    uint16_t x                          // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_INT32    // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    int32_t x                           // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_UINT32   // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    uint32_t x                          // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_INT64    // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    int64_t x                           // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_UINT64   // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    uint64_t x                          // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_FP32     // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    float x                             // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_FP64     // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    double x                            // user scalar to assign to s
-) ;
-
-GrB_Info GxB_Scalar_setElement_FC32     // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    GxB_FC32_t x                        // user scalar to assign to s
-) ;
-
-GrB_Info GxB_Scalar_setElement_FC64     // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    GxB_FC64_t x                        // user scalar to assign to s
-) ;
-
-GrB_Info GrB_Scalar_setElement_UDT      // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    void *x                             // user scalar to assign to s
-) ;
-
 // Type-generic version:  x can be any supported C type or void * for a
 // user-defined type.
-
-/*
-GrB_Info GrB_Scalar_setElement          // s = x
-(
-    GrB_Scalar s,                       // GrB_Scalar to modify
-    <type> x                            // user scalar to assign to s
-) ;
-*/
-
+//
+//  GrB_Info GrB_Scalar_setElement          // s = x
+//  (
+//      GrB_Scalar s,                       // GrB_Scalar to modify
+//      <type> x                            // user scalar to assign to s
+//  ) ;
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Scalar_setElement(s,x)                  \
-    _Generic                                        \
-    (                                               \
-        (x),                                        \
-            GB_CASES (GrB, Scalar_setElement)       \
-    )                                               \
-    (s, x)
+    _Generic ((x), GB_CASES (GrB, Scalar_setElement)) (s, x)
 #endif
+
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Scalar_setElement ## suffix   /* s = x  */                 \
+(                                                                             \
+    GrB_Scalar s,                       /* GrB_Scalar to modify */            \
+    type x                              /* user scalar to assign to s */      \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void *    ) ;
 
 //------------------------------------------------------------------------------
 // GrB_Scalar_extractElement
@@ -3368,112 +3123,41 @@ GrB_Info GrB_Scalar_setElement          // s = x
 // Extract a single entry from a GrB_Scalar, x = s, typecasting from the type
 // of s to the type of x as needed.
 
-GrB_Info GrB_Scalar_extractElement_BOOL     // x = s
-(
-    bool *x,                        // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_INT8     // x = s
-(
-    int8_t *x,                      // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_UINT8    // x = s
-(
-    uint8_t *x,                     // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_INT16    // x = s
-(
-    int16_t *x,                     // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_UINT16   // x = s
-(
-    uint16_t *x,                    // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_INT32    // x = s
-(
-    int32_t *x,                     // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_UINT32   // x = s
-(
-    uint32_t *x,                    // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_INT64    // x = s
-(
-    int64_t *x,                     // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_UINT64   // x = s
-(
-    uint64_t *x,                    // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_FP32     // x = s
-(
-    float *x,                       // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_FP64     // x = s
-(
-    double *x,                      // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GxB_Scalar_extractElement_FC32     // x = s
-(
-    GxB_FC32_t *x,                  // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GxB_Scalar_extractElement_FC64     // x = s
-(
-    GxB_FC64_t *x,                  // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-GrB_Info GrB_Scalar_extractElement_UDT      // x = s
-(
-    void *x,                        // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
 // Type-generic version:  x can be a pointer to any supported C type or void *
 // for a user-defined type.
-
-/*
-
-GrB_Info GrB_Scalar_extractElement  // x = s
-(
-    <type> *x,                      // user scalar extracted
-    const GrB_Scalar s              // GrB_Scalar to extract an entry from
-) ;
-
-*/
-
+//
+//  GrB_Info GrB_Scalar_extractElement  // x = s
+//  (
+//      <type> *x,                      // user scalar extracted
+//      const GrB_Scalar s              // GrB_Scalar to extract an entry from
+//  ) ;
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Scalar_extractElement(x,s)                  \
-    _Generic                                            \
-    (                                                   \
-        (x),                                            \
-            GB_PCASES (GrB, Scalar_extractElement)      \
-    )                                                   \
-    (x, s)
+    _Generic ((x), GB_PCASES (GrB, Scalar_extractElement)) (x, s)
 #endif
+
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Scalar_extractElement ## suffix   /* x = s  */             \
+(                                                                             \
+    type *x,                        /* user scalar extracted */               \
+    const GrB_Scalar s              /* GrB_Scalar to extract an entry from */ \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 //==============================================================================
 // GrB_Vector: a GraphBLAS vector
@@ -3539,304 +3223,94 @@ GrB_Info GrB_Vector_free    // free a vector
 
 // The dup operator cannot be based on a GxB_IndexBinaryOp.
 
-GrB_Info GrB_Vector_build_BOOL      // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const bool *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
+// Type-generic version:  X can be a pointer to any supported C type or void *
+// for a user-defined type.  I_ can be GxB_Index32 or GrB_Index.
+//
+//  GrB_Info GrB_Vector_build       // build a vector from (I,X) tuples
+//  (
+//      GrB_Vector w,               // vector to build
+//      const <itype> *I_,          // array of row indices of tuples
+//      const <type> *X,            // array of values of tuples
+//      GrB_Index nvals,            // number of tuples
+//      const GrB_BinaryOp dup      // binary function to assemble duplicates
+//  ) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Vector_build(w,I_,X,nvals,dup)                                    \
+    _Generic ((I_),                                                           \
+          GxB_Index32 * : _Generic ( (X), GB_PCASES (GxB, Vector_build_32)),  \
+    const GxB_Index32 * : _Generic ( (X), GB_PCASES (GxB, Vector_build_32)),  \
+          GrB_Index   * : _Generic ( (X), GB_PCASES (GrB, Vector_build)),     \
+    const GrB_Index   * : _Generic ( (X), GB_PCASES (GrB, Vector_build)))     \
+    (w, I_, ((const void *) (X)), nvals, dup)
+#endif
 
-GrB_Info GrB_Vector_build_INT8      // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const int8_t *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_UINT8     // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const uint8_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_INT16     // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const int16_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_UINT16    // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const uint16_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_INT32     // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const int32_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_UINT32    // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const uint32_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_INT64     // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const int64_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_UINT64    // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const uint64_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_FP32      // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const float *X,                 // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_FP64      // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const double *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_FC32      // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GxB_FC32_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_FC64      // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GxB_FC64_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Vector_build_UDT       // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const void *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
+// Type-specific versions (64-bit):
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_build ## suffix   /* build a vector from tuples */  \
+(                                                                             \
+    GrB_Vector w,               /* vector to build */                         \
+    const GrB_Index *I_,        /* array of row indices of tuples */          \
+    const type *X,              /* array of values of tuples */               \
+    GrB_Index nvals,            /* number of tuples */                        \
+    const GrB_BinaryOp dup      /* binary function to assemble duplicates */  \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const GrB_Index *I_,            // array of row indices of tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
 
-GrB_Info GxB_Vector_build_32_BOOL   // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const bool *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_INT8   // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const int8_t *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_UINT8  // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const uint8_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_INT16  // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const int16_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_UINT16 // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const uint16_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_INT32  // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const int32_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_UINT32 // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const uint32_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_INT64  // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const int64_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_UINT64 // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const uint64_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_FP32   // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const float *X,                 // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_FP64   // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const double *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_FC32   // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_FC32_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_FC64   // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_FC64_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_32_UDT    // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const void *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
+// Type-specific versions (32-bit):
+#undef  GB_DECLARE
+#define GB_DECLARE(suffix,type)                                               \
+GrB_Info GxB_Vector_build_32 ## suffix   /* build a vector from tuples */     \
+(                                                                             \
+    GrB_Vector w,               /* vector to build */                         \
+    const GxB_Index32 *I_,      /* array of row indices of tuples */          \
+    const type *X,              /* array of values of tuples */               \
+    GrB_Index nvals,            /* number of tuples */                        \
+    const GrB_BinaryOp dup      /* binary function to assemble duplicates */  \
+)
+GB_DECLARE (_BOOL  , bool      ) ;
+GB_DECLARE (_INT8  , int8_t    ) ;
+GB_DECLARE (_INT16 , int16_t   ) ;
+GB_DECLARE (_INT32 , int32_t   ) ;
+GB_DECLARE (_INT64 , int64_t   ) ;
+GB_DECLARE (_UINT8 , uint8_t   ) ;
+GB_DECLARE (_UINT16, uint16_t  ) ;
+GB_DECLARE (_UINT32, uint32_t  ) ;
+GB_DECLARE (_UINT64, uint64_t  ) ;
+GB_DECLARE (_FP32  , float     ) ;
+GB_DECLARE (_FP64  , double    ) ;
+GB_DECLARE (_FC32  , GxB_FC32_t) ;
+GB_DECLARE (_FC64  , GxB_FC64_t) ;
+GB_DECLARE (_UDT   , void      ) ;
 
 GrB_Info GxB_Vector_build_32_Scalar // build a vector from (i,scalar) tuples
 (
     GrB_Vector w,                   // vector to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
+    const GxB_Index32 *I_,          // array of row indices of tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
-
-// Type-generic version:  X can be a pointer to any supported C type or void *
-// for a user-defined type.  Ilist can be GxB_Index32 or GrB_Index.
-
-/*
-GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const <itype> *Ilist,           // array of row indices of tuples
-    const <type> *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-*/
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_build(w,Ilist,X,nvals,dup)                       \
-    _Generic                                                        \
-    (                                                               \
-        (Ilist),                                                    \
-            GxB_Index32 * :                                         \
-                _Generic ( (X), GB_PCASES (GxB, Vector_build_32)),  \
-            const GxB_Index32 * :                                   \
-                _Generic ( (X), GB_PCASES (GxB, Vector_build_32)),  \
-            GrB_Index * :                                           \
-                _Generic ( (X), GB_PCASES (GrB, Vector_build)),     \
-            const GrB_Index * :                                     \
-                _Generic ( (X), GB_PCASES (GrB, Vector_build))      \
-    )                                                               \
-    (w, Ilist, ((const void *) (X)), nvals, dup)
-#endif
 
 //------------------------------------------------------------------------------
 // GrB_Vector_setElement
@@ -3845,103 +3319,46 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
 // Set a single scalar in a vector, w(i) = x, typecasting from the type of x to
 // the type of w as needed.
 
-GrB_Info GrB_Vector_setElement_BOOL     // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    bool x,                             // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
+// Type-generic version:  x can be any supported C type or void * for a
+// user-defined type.
+//
+//  GrB_Info GrB_Vector_setElement          // w(i) = x
+//  (
+//      GrB_Vector w,                       // vector to modify
+//      <type> x,                           // scalar to assign to w(i)
+//      GrB_Index i                         // row index
+//  ) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Vector_setElement(w,x,i)                    \
+    _Generic ((x),                                      \
+        GB_CASES (GrB, Vector_setElement),              \
+        default:  GrB_Vector_setElement_Scalar          \
+    ) (w, x, i)
+#endif
 
-GrB_Info GrB_Vector_setElement_INT8     // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    int8_t x,                           // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_UINT8    // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    uint8_t x,                          // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_INT16    // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    int16_t x,                          // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_UINT16   // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    uint16_t x,                         // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_INT32    // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    int32_t x,                          // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_UINT32   // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    uint32_t x,                         // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_INT64    // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    int64_t x,                          // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_UINT64   // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    uint64_t x,                         // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_FP32     // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    float x,                            // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_FP64     // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    double x,                           // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GxB_Vector_setElement_FC32     // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    GxB_FC32_t x,                       // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GxB_Vector_setElement_FC64     // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    GxB_FC64_t x,                       // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-
-GrB_Info GrB_Vector_setElement_UDT      // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    void *x,                            // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_setElement ## suffix   /* w(i) = x */               \
+(                                                                             \
+    GrB_Vector w,                   /* vector to modify */                    \
+    type x,                         /* scalar to assign to w(i) */            \
+    GrB_Index i                     /* row index */                           \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void *    ) ;
 
 GrB_Info GrB_Vector_setElement_Scalar   // w(i) = x
 (
@@ -3950,29 +3367,6 @@ GrB_Info GrB_Vector_setElement_Scalar   // w(i) = x
     GrB_Index i                         // row index
 ) ;
 
-// Type-generic version:  x can be any supported C type or void * for a
-// user-defined type.
-
-/*
-GrB_Info GrB_Vector_setElement          // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    <type> x,                           // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
-*/
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_setElement(w,x,i)                        \
-    _Generic                                                \
-    (                                                       \
-        (x),                                                \
-            GB_CASES (GrB, Vector_setElement),              \
-            default:  GrB_Vector_setElement_Scalar          \
-    )                                                       \
-    (w, x, i)
-#endif
-
 //------------------------------------------------------------------------------
 // GrB_Vector_extractElement
 //------------------------------------------------------------------------------
@@ -3980,103 +3374,46 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 // Extract a single entry from a vector, x = v(i), typecasting from the type of
 // v to the type of x as needed.
 
-GrB_Info GrB_Vector_extractElement_BOOL     // x = v(i)
-(
-    bool *x,                        // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
+// Type-generic version:  x can be a pointer to any supported C type or void *
+// for a user-defined type.
+//
+//  GrB_Info GrB_Vector_extractElement  // x = v(i)
+//  (
+//      <type> *x,                      // scalar extracted
+//      const GrB_Vector v,             // vector to extract an entry from
+//      GrB_Index i                     // row index
+//  ) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Vector_extractElement(x,v,i)                    \
+    _Generic ((x),                                          \
+        GB_PCASES (GrB, Vector_extractElement),             \
+        default:  GrB_Vector_extractElement_Scalar          \
+    ) (x, v, i)
+#endif
 
-GrB_Info GrB_Vector_extractElement_INT8     // x = v(i)
-(
-    int8_t *x,                      // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_UINT8    // x = v(i)
-(
-    uint8_t *x,                     // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_INT16    // x = v(i)
-(
-    int16_t *x,                     // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_UINT16   // x = v(i)
-(
-    uint16_t *x,                    // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_INT32    // x = v(i)
-(
-    int32_t *x,                     // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_UINT32   // x = v(i)
-(
-    uint32_t *x,                    // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_INT64    // x = v(i)
-(
-    int64_t *x,                     // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_UINT64   // x = v(i)
-(
-    uint64_t *x,                    // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_FP32     // x = v(i)
-(
-    float *x,                       // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_FP64     // x = v(i)
-(
-    double *x,                      // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GxB_Vector_extractElement_FC32     // x = v(i)
-(
-    GxB_FC32_t *x,                  // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GxB_Vector_extractElement_FC64     // x = v(i)
-(
-    GxB_FC64_t *x,                  // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-
-GrB_Info GrB_Vector_extractElement_UDT      // x = v(i)
-(
-    void *x,                        // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_extractElement ## suffix   /* x = v(i) */           \
+(                                                                             \
+    type *x,                    /* scalar extracted */                        \
+    const GrB_Vector v,         /* vector to extract an entry from */         \
+    GrB_Index i                 /* row index */                               \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 GrB_Info GrB_Vector_extractElement_Scalar   // x = v(i)
 (
@@ -4084,29 +3421,6 @@ GrB_Info GrB_Vector_extractElement_Scalar   // x = v(i)
     const GrB_Vector v,             // vector to extract an entry from
     GrB_Index i                     // row index
 ) ;
-
-// Type-generic version:  x can be a pointer to any supported C type or void *
-// for a user-defined type.
-
-/*
-GrB_Info GrB_Vector_extractElement  // x = v(i)
-(
-    <type> *x,                      // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
-*/
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractElement(x,v,i)                        \
-    _Generic                                                    \
-    (                                                           \
-        (x),                                                    \
-            GB_PCASES (GrB, Vector_extractElement),             \
-            default:  GrB_Vector_extractElement_Scalar          \
-    )                                                           \
-    (x, v, i)
-#endif
 
 // GxB_Vector_isStoredElement determines if v(i) is present in the structure
 // of the vector v, as a stored element.  It does not return the value.  It
@@ -4139,140 +3453,44 @@ GrB_Info GrB_Vector_removeElement
 // example, to extract just the row indices, pass I as non-NULL, and X as NULL.
 // This is like [I,~,~] = find (v).
 
-GrB_Info GrB_Vector_extractTuples_BOOL      // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    bool *X,                    // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_INT8      // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    int8_t *X,                  // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_UINT8     // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    uint8_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_INT16     // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    int16_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_UINT16    // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    uint16_t *X,                // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_INT32     // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    int32_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_UINT32    // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    uint32_t *X,                // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_INT64     // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    int64_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_UINT64    // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    uint64_t *X,                // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_FP32      // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    float *X,                   // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_FP64      // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    double *X,                  // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GxB_Vector_extractTuples_FC32      // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GxB_FC32_t *X,              // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GxB_Vector_extractTuples_FC64      // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GxB_FC64_t *X,              // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
-GrB_Info GrB_Vector_extractTuples_UDT       // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    void *X,                    // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-
 // Type-generic version:  X can be a pointer to any supported C type or void *
 // for a user-defined type.
-
-/*
-GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    <type> *X,                  // array for returning values of tuples
-    GrB_Index *nvals,           // I, X size on input; # tuples on output
-    const GrB_Vector v          // vector to extract tuples from
-) ;
-*/
-
+//  GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
+//  (
+//      GrB_Index *I_,          // array for returning row indices of tuples
+//      <type> *X,              // array for returning values of tuples
+//      GrB_Index *nvals,       // I, X size on input; # tuples on output
+//      const GrB_Vector v      // vector to extract tuples from
+//  ) ;
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractTuples(Ilist,X,nvals,v)       \
-    _Generic                                            \
-    (                                                   \
-        (X),                                            \
-            GB_PCASES (GrB, Vector_extractTuples)       \
-    )                                                   \
-    (Ilist, X, nvals, v)
+#define GrB_Vector_extractTuples(I_,X,nvals,v)       \
+    _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)) (I_, X, nvals, v)
 #endif
+
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_extractTuples ## suffix   /* [I,~,X = find (v) */   \
+(                                                                             \
+    GrB_Index *I_,          /* array for returning row indices of tuples */   \
+    type *X,                /* array for returning values of tuples */        \
+    GrB_Index *nvals,       /* I, X size on input; # tuples on output */      \
+    const GrB_Vector v      /* vector to extract tuples from */               \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 //==============================================================================
 // GrB_Matrix: a GraphBLAS matrix
@@ -4343,336 +3561,100 @@ GrB_Info GrB_Matrix_free    // free a matrix
 // associative operator to assemble duplicate entries.
 // The dup operator cannot be based on a GxB_IndexBinaryOp.
 
-GrB_Info GrB_Matrix_build_BOOL      // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const bool *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
+// Type-generic version:  X can be a pointer to any supported C type or void *
+// for a user-defined type.  I_ and J can be GxB_Index32 or GrB_Index (they
+// must have the same type however.
+//
+//  GrB_Info GrB_Matrix_build       // build a matrix from (I,J,X) tuples
+//  (
+//      GrB_Matrix C,               // matrix to build
+//      const <itype> *I_,          // array of row indices of tuples
+//      const <itype> *J,           // array of column indices of tuples
+//      const <type> *X,            // array of values of tuples
+//      GrB_Index nvals,            // number of tuples
+//      const GrB_BinaryOp dup      // binary function to assemble duplicates
+//  ) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_build(C,I_,J,X,nvals,dup)                                  \
+    _Generic ((I_),                                                           \
+          GxB_Index32 * : _Generic ( (X), GB_PCASES (GxB, Matrix_build_32)),  \
+    const GxB_Index32 * : _Generic ( (X), GB_PCASES (GxB, Matrix_build_32)),  \
+          GrB_Index   * : _Generic ( (X), GB_PCASES (GrB, Matrix_build)),     \
+    const GrB_Index   * : _Generic ( (X), GB_PCASES (GrB, Matrix_build))      \
+    ) (C, I_, J, ((const void *) (X)), nvals, dup)
+#endif
 
-GrB_Info GrB_Matrix_build_INT8      // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const int8_t *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_UINT8     // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const uint8_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_INT16     // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const int16_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_UINT16    // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const uint16_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_INT32     // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const int32_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_UINT32    // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const uint32_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_INT64     // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const int64_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_UINT64    // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const uint64_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_FP32      // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const float *X,                 // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_FP64      // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const double *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_FC32      // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const GxB_FC32_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_FC64      // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const GxB_FC64_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_UDT       // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    const void *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
+// Type-specific versions (64-bit):
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_build ## suffix   /* build a matrix from tuples */  \
+(                                                                             \
+    GrB_Matrix C,               /* matrix to build */                         \
+    const GrB_Index *I_,        /* array of row indices of tuples */          \
+    const GrB_Index *J,         /* array of column indices of tuples */       \
+    const type *X,              /* array of values of tuples */               \
+    GrB_Index nvals,            /* number of tuples */                        \
+    const GrB_BinaryOp dup      /* binary function to assemble duplicates */  \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *Ilist,         // array of row indices of tuples
+    const GrB_Index *I_,            // array of row indices of tuples
     const GrB_Index *J,             // array of column indices of tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
 
-GrB_Info GxB_Matrix_build_32_BOOL   // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const bool *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_INT8   // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const int8_t *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_UINT8  // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const uint8_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_INT16  // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const int16_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_UINT16 // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const uint16_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_INT32  // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const int32_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_UINT32 // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const uint32_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_INT64  // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const int64_t *X,               // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_UINT64 // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const uint64_t *X,              // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_FP32   // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const float *X,                 // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_FP64   // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const double *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_FC32   // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const GxB_FC32_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_FC64   // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const GxB_FC64_t *X,            // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Matrix_build_32_UDT    // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
-    const void *X,                  // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
+// Type-specific versions (32-bit):
+#undef  GB_DECLARE
+#define GB_DECLARE(suffix,type)                                               \
+GrB_Info GxB_Matrix_build_32 ## suffix      /* build a matrix from tuples */  \
+(                                                                             \
+    GrB_Matrix C,               /* matrix to build */                         \
+    const GxB_Index32 *I_,      /* array of row indices of tuples */          \
+    const GxB_Index32 *J,       /* array of column indices of tuples */       \
+    const type *X,              /* array of values of tuples */               \
+    GrB_Index nvals,            /* number of tuples */                        \
+    const GrB_BinaryOp dup      /* binary function to assemble duplicates */  \
+)
+GB_DECLARE (_BOOL  , bool      ) ;
+GB_DECLARE (_INT8  , int8_t    ) ;
+GB_DECLARE (_INT16 , int16_t   ) ;
+GB_DECLARE (_INT32 , int32_t   ) ;
+GB_DECLARE (_INT64 , int64_t   ) ;
+GB_DECLARE (_UINT8 , uint8_t   ) ;
+GB_DECLARE (_UINT16, uint16_t  ) ;
+GB_DECLARE (_UINT32, uint32_t  ) ;
+GB_DECLARE (_UINT64, uint64_t  ) ;
+GB_DECLARE (_FP32  , float     ) ;
+GB_DECLARE (_FP64  , double    ) ;
+GB_DECLARE (_FC32  , GxB_FC32_t) ;
+GB_DECLARE (_FC64  , GxB_FC64_t) ;
+GB_DECLARE (_UDT   , void      ) ;
 
 GrB_Info GxB_Matrix_build_32_Scalar // build a matrix from (I,J,scalar) tuples
 (
     GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *Ilist,       // array of row indices of tuples
+    const GxB_Index32 *I_,          // array of row indices of tuples
     const GxB_Index32 *J,           // array of column indices of tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
-
-// Type-generic version:  X can be a pointer to any supported C type or void *
-// for a user-defined type.  Ilist and J can be GxB_Index32 or GrB_Index (they
-// must have the same type however.
-
-/*
-GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const <itype> *Ilist,           // array of row indices of tuples
-    const <itype> *J,               // array of column indices of tuples
-    const <type> *X,                // array of values of tuples
-    GrB_Index nvals,                // number of tuples
-    const GrB_BinaryOp dup          // binary function to assemble duplicates
-) ;
-*/
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_build(C,Ilist,J,X,nvals,dup)                     \
-    _Generic                                                        \
-    (                                                               \
-        (Ilist),                                                    \
-            GxB_Index32 * :                                         \
-                _Generic ( (X), GB_PCASES (GxB, Matrix_build_32)),  \
-            const GxB_Index32 * :                                   \
-                _Generic ( (X), GB_PCASES (GxB, Matrix_build_32)),  \
-            GrB_Index * :                                           \
-                _Generic ( (X), GB_PCASES (GrB, Matrix_build)),     \
-            const GrB_Index * :                                     \
-                _Generic ( (X), GB_PCASES (GrB, Matrix_build))      \
-    )                                                               \
-    (C, Ilist, J, ((const void *) (X)), nvals, dup)
-#endif
 
 //------------------------------------------------------------------------------
 // GxB_build:  build a matrix or vector
@@ -4693,32 +3675,22 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 // GxB_build (v,I,X,nvals,dup,desc):    GxB_Vector_build_Vector
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_build(arg1,arg2,arg3,arg4,...)                                  \
-    _Generic ((arg1),                                                       \
-        GrB_Matrix :                                                        \
-            _Generic ((arg2),                                               \
-/* future:      GrB_Vector :                                            */  \
-/*                  GxB_Matrix_build_Vector,                            */  \
-                GxB_Index32 * :                                             \
-                    _Generic ( (arg4), GB_PCASES (GxB, Matrix_build_32)),   \
-                const GxB_Index32 * :                                       \
-                    _Generic ( (arg4), GB_PCASES (GxB, Matrix_build_32)),   \
-                GrB_Index * :                                               \
-                    _Generic ( (arg4), GB_PCASES (GrB, Matrix_build)),      \
-                const GrB_Index * :                                         \
-                    _Generic ( (arg4), GB_PCASES (GrB, Matrix_build))),     \
-        GrB_Vector :                                                        \
-            _Generic ((arg2),                                               \
-/* future:      GrB_Vector :                                            */  \
-/*                  GxB_Vector_build_Vector,                            */  \
-                GxB_Index32 * :                                             \
-                    _Generic ( (arg3), GB_PCASES (GxB, Matrix_build_32)),   \
-                const GxB_Index32 * :                                       \
-                    _Generic ( (arg3), GB_PCASES (GxB, Matrix_build_32)),   \
-                GrB_Index * :                                               \
-                    _Generic ( (arg3), GB_PCASES (GrB, Matrix_build)),      \
-                const GrB_Index * :                                         \
-                    _Generic ( (arg3), GB_PCASES (GrB, Matrix_build)))      \
+#define GxB_build(arg1,arg2,arg3,arg4,...)                                     \
+_Generic ((arg1),                                                              \
+GrB_Matrix :                                                                   \
+    _Generic ((arg2),                                                          \
+          /* GrB_Vector : GxB_Matrix_build_Vector, (future) */                 \
+          GxB_Index32 * : _Generic ((arg4), GB_PCASES (GxB, Matrix_build_32)), \
+    const GxB_Index32 * : _Generic ((arg4), GB_PCASES (GxB, Matrix_build_32)), \
+          GrB_Index   * : _Generic ((arg4), GB_PCASES (GrB, Matrix_build)),    \
+    const GrB_Index   * : _Generic ((arg4), GB_PCASES (GrB, Matrix_build))),   \
+GrB_Vector :                                                                   \
+    _Generic ((arg2),                                                          \
+          /* GrB_Vector : GxB_Vector_build_Vector, (future) */                 \
+          GxB_Index32 * : _Generic ((arg3), GB_PCASES (GxB, Matrix_build_32)), \
+    const GxB_Index32 * : _Generic ((arg3), GB_PCASES (GxB, Matrix_build_32)), \
+          GrB_Index   * : _Generic ((arg3), GB_PCASES (GrB, Matrix_build)),    \
+    const GrB_Index   * : _Generic ((arg3), GB_PCASES (GrB, Matrix_build)))    \
 ) (arg1, arg2, arg3, arg4, __VA_ARGS__)
 #endif
 
@@ -4729,117 +3701,48 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 // Set a single entry in a matrix, C(i,j) = x, typecasting
 // from the type of x to the type of C, as needed.
 
-GrB_Info GrB_Matrix_setElement_BOOL     // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    bool x,                             // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
+// Type-generic version:  x can be any supported C type or void * for a
+// user-defined type.
+//
+//  GrB_Info GrB_Matrix_setElement          // C (i,j) = x
+//  (
+//      GrB_Matrix C,                       // matrix to modify
+//      <type> x,                           // scalar to assign to C(i,j)
+//      GrB_Index i,                        // row index
+//      GrB_Index j                         // column index
+//  ) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_setElement(C,x,i,j)          \
+    _Generic ((x),                              \
+        GB_CASES (GrB, Matrix_setElement),      \
+        default:  GrB_Matrix_setElement_Scalar  \
+    ) (C, x, i, j)
+#endif
 
-GrB_Info GrB_Matrix_setElement_INT8     // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    int8_t x,                           // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_UINT8    // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    uint8_t x,                          // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_INT16    // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    int16_t x,                          // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_UINT16   // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    uint16_t x,                         // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_INT32    // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    int32_t x,                          // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_UINT32   // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    uint32_t x,                         // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_INT64    // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    int64_t x,                          // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_UINT64   // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    uint64_t x,                         // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_FP32     // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    float x,                            // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_FP64     // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    double x,                           // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GxB_Matrix_setElement_FC32     // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    GxB_FC32_t x,                       // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GxB_Matrix_setElement_FC64     // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    GxB_FC64_t x,                       // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_setElement_UDT      // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    void *x,                            // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                      \
+GrB_Info prefix ## Matrix_setElement ## suffix  /* C(i,j) = x */            \
+(                                                                           \
+    GrB_Matrix C,                   /* matrix to modify */                  \
+    type x,                         /* scalar to assign to C(i,j) */        \
+    GrB_Index i,                    /* row index */                         \
+    GrB_Index j                     /* column index */                      \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void *    ) ;
 
 GrB_Info GrB_Matrix_setElement_Scalar   // C (i,j) = x
 (
@@ -4849,30 +3752,6 @@ GrB_Info GrB_Matrix_setElement_Scalar   // C (i,j) = x
     GrB_Index j                         // column index
 ) ;
 
-// Type-generic version:  x can be any supported C type or void * for a
-// user-defined type.
-
-/*
-GrB_Info GrB_Matrix_setElement          // C (i,j) = x
-(
-    GrB_Matrix C,                       // matrix to modify
-    <type> x,                           // scalar to assign to C(i,j)
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-*/
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_setElement(C,x,i,j)                      \
-    _Generic                                                \
-    (                                                       \
-        (x),                                                \
-            GB_CASES (GrB, Matrix_setElement),              \
-            default:  GrB_Matrix_setElement_Scalar          \
-    )                                                       \
-    (C, x, i, j)
-#endif
-
 //------------------------------------------------------------------------------
 // GrB_Matrix_extractElement
 //------------------------------------------------------------------------------
@@ -4880,117 +3759,48 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 // Extract a single entry from a matrix, x = A(i,j), typecasting from the type
 // of A to the type of x, as needed.
 
-GrB_Info GrB_Matrix_extractElement_BOOL     // x = A(i,j)
-(
-    bool *x,                            // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
+// Type-generic version:  x can be a pointer to any supported C type or void *
+// for a user-defined type.
+//
+//  GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
+//  (
+//      <type> *x,                          // extracted scalar
+//      const GrB_Matrix A,                 // matrix to extract a scalar from
+//      GrB_Index i,                        // row index
+//      GrB_Index j                         // column index
+//  ) ;
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_extractElement(x,A,i,j)              \
+    _Generic ((x),                                      \
+        GB_PCASES (GrB, Matrix_extractElement),         \
+        default:  GrB_Matrix_extractElement_Scalar      \
+    ) (x, A, i, j)
+#endif
 
-GrB_Info GrB_Matrix_extractElement_INT8     // x = A(i,j)
-(
-    int8_t *x,                          // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_UINT8    // x = A(i,j)
-(
-    uint8_t *x,                         // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_INT16    // x = A(i,j)
-(
-    int16_t *x,                         // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_UINT16   // x = A(i,j)
-(
-    uint16_t *x,                        // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_INT32    // x = A(i,j)
-(
-    int32_t *x,                         // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_UINT32   // x = A(i,j)
-(
-    uint32_t *x,                        // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_INT64    // x = A(i,j)
-(
-    int64_t *x,                         // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_UINT64   // x = A(i,j)
-(
-    uint64_t *x,                        // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_FP32     // x = A(i,j)
-(
-    float *x,                           // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_FP64     // x = A(i,j)
-(
-    double *x,                          // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GxB_Matrix_extractElement_FC32     // x = A(i,j)
-(
-    GxB_FC32_t *x,                      // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GxB_Matrix_extractElement_FC64     // x = A(i,j)
-(
-    GxB_FC64_t *x,                      // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-
-GrB_Info GrB_Matrix_extractElement_UDT      // x = A(i,j)
-(
-    void *x,                            // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                      \
+GrB_Info prefix ## Matrix_extractElement ## suffix   /* x = A(i,j) */       \
+(                                                                           \
+    type *x,                        /* extracted scalar */                  \
+    const GrB_Matrix A,             /* matrix to extract a scalar from */   \
+    GrB_Index i,                    /* row index */                         \
+    GrB_Index j                     /* column index */                      \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 GrB_Info GrB_Matrix_extractElement_Scalar   // x = A(i,j)
 (
@@ -4999,30 +3809,6 @@ GrB_Info GrB_Matrix_extractElement_Scalar   // x = A(i,j)
     GrB_Index i,                        // row index
     GrB_Index j                         // column index
 ) ;
-
-// Type-generic version:  x can be a pointer to any supported C type or void *
-// for a user-defined type.
-
-/*
-GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
-(
-    <type> *x,                          // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
-*/
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractElement(x,A,i,j)                      \
-    _Generic                                                    \
-    (                                                           \
-        (x),                                                    \
-            GB_PCASES (GrB, Matrix_extractElement),             \
-            default:  GrB_Matrix_extractElement_Scalar          \
-    )                                                           \
-    (x, A, i, j)
-#endif
 
 // GxB_Matrix_isStoredElement determines if A(i,j) is present in the structure
 // of the matrix A, as a stored element.  It does not return the value.  It
@@ -5057,155 +3843,47 @@ GrB_Info GrB_Matrix_removeElement
 // For example, to extract just the row and col indices, pass I and J as
 // non-NULL, and X as NULL.  This is like [I,J,~] = find (A).
 
-GrB_Info GrB_Matrix_extractTuples_BOOL      // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    bool *X,                    // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_INT8      // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    int8_t *X,                  // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_UINT8     // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    uint8_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_INT16     // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    int16_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_UINT16    // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    uint16_t *X,                // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_INT32     // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    int32_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_UINT32    // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    uint32_t *X,                // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_INT64     // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    int64_t *X,                 // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_UINT64    // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    uint64_t *X,                // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_FP32      // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    float *X,                   // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_FP64      // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    double *X,                  // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GxB_Matrix_extractTuples_FC32      // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    GxB_FC32_t *X,              // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GxB_Matrix_extractTuples_FC64      // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    GxB_FC64_t *X,              // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
-GrB_Info GrB_Matrix_extractTuples_UDT       // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    void *X,                    // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-
 // Type-generic version:  X can be a pointer to any supported C type or void *
 // for a user-defined type.
-
-/*
-GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
-(
-    GrB_Index *Ilist,           // array for returning row indices of tuples
-    GrB_Index *J,               // array for returning col indices of tuples
-    <type> *X,                  // array for returning values of tuples
-    GrB_Index *nvals,           // I,J,X size on input; # tuples on output
-    const GrB_Matrix A          // matrix to extract tuples from
-) ;
-*/
-
+//
+//  GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
+//  (
+//      GrB_Index *I_,          // array for returning row indices of tuples
+//      GrB_Index *J,           // array for returning col indices of tuples
+//      <type> *X,              // array for returning values of tuples
+//      GrB_Index *nvals,       // I,J,X size on input; # tuples on output
+//      const GrB_Matrix A      // matrix to extract tuples from
+//  ) ;
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractTuples(Ilist,J,X,nvals,A)     \
-    _Generic                                            \
-    (                                                   \
-        (X),                                            \
-            GB_PCASES (GrB, Matrix_extractTuples)       \
-    )                                                   \
-    (Ilist, J, X, nvals, A)
+#define GrB_Matrix_extractTuples(I_,J,X,nvals,A)     \
+    _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)) (I_, J, X, nvals, A)
 #endif
+
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_extractTuples ## suffix   /* [I,J,X = find (A) */   \
+(                                                                             \
+    GrB_Index *I_,          /* array for returning row indices of tuples */ \
+    GrB_Index *J,           /* array for returning col indices of tuples */ \
+    type *X,                /* array for returning values of tuples */      \
+    GrB_Index *nvals,       /* I,J,X size on input; # tuples on output */   \
+    const GrB_Matrix A      /* matrix to extract tuples from */             \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void      ) ;
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_concat and GxB_Matrix_split
@@ -5359,94 +4037,38 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 // GrB_get: get a scalar, string, enum, size, or void * from an object
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Scalar_get_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Scalar_get_String (GrB_Scalar, char *    , GrB_Field) ;
-GrB_Info GrB_Scalar_get_INT32  (GrB_Scalar, int32_t * , GrB_Field) ;
-GrB_Info GrB_Scalar_get_SIZE   (GrB_Scalar, size_t *  , GrB_Field) ;
-GrB_Info GrB_Scalar_get_VOID   (GrB_Scalar, void *    , GrB_Field) ;
+// object-specific methods:
+#undef  GB_DECLARE
+#define GB_DECLARE(object)                                          \
+GrB_Info object ## _get_Scalar (object, GrB_Scalar, GrB_Field) ;    \
+GrB_Info object ## _get_String (object, char *    , GrB_Field) ;    \
+GrB_Info object ## _get_INT32  (object, int32_t * , GrB_Field) ;    \
+GrB_Info object ## _get_SIZE   (object, size_t *  , GrB_Field) ;    \
+GrB_Info object ## _get_VOID   (object, void *    , GrB_Field) ;
 
-GrB_Info GrB_Vector_get_Scalar (GrB_Vector, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Vector_get_String (GrB_Vector, char *    , GrB_Field) ;
-GrB_Info GrB_Vector_get_INT32  (GrB_Vector, int32_t * , GrB_Field) ;
-GrB_Info GrB_Vector_get_SIZE   (GrB_Vector, size_t *  , GrB_Field) ;
-GrB_Info GrB_Vector_get_VOID   (GrB_Vector, void *    , GrB_Field) ;
+GB_DECLARE (GrB_Scalar       )
+GB_DECLARE (GrB_Vector       )
+GB_DECLARE (GrB_Matrix       )
+GB_DECLARE (GrB_UnaryOp      )
+GB_DECLARE (GrB_IndexUnaryOp )
+GB_DECLARE (GxB_IndexBinaryOp)
+GB_DECLARE (GrB_BinaryOp     )
+GB_DECLARE (GrB_Monoid       )
+GB_DECLARE (GrB_Semiring     )
+GB_DECLARE (GrB_Descriptor   )
+GB_DECLARE (GrB_Type         )
+GB_DECLARE (GrB_Global       )
 
-GrB_Info GrB_Matrix_get_Scalar (GrB_Matrix, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Matrix_get_String (GrB_Matrix, char *    , GrB_Field) ;
-GrB_Info GrB_Matrix_get_INT32  (GrB_Matrix, int32_t * , GrB_Field) ;
-GrB_Info GrB_Matrix_get_SIZE   (GrB_Matrix, size_t *  , GrB_Field) ;
-GrB_Info GrB_Matrix_get_VOID   (GrB_Matrix, void *    , GrB_Field) ;
+GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field, size_t) ;
 
-GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field,
-    size_t) ;
-GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field,
-    size_t) ;
-GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , GrB_Field,
-    size_t) ;
-GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field,
-    size_t) ;
-GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field,
-    size_t) ;
-
-GrB_Info GrB_UnaryOp_get_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_UnaryOp_get_String (GrB_UnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_UnaryOp_get_INT32  (GrB_UnaryOp, int32_t * , GrB_Field) ;
-GrB_Info GrB_UnaryOp_get_SIZE   (GrB_UnaryOp, size_t *  , GrB_Field) ;
-GrB_Info GrB_UnaryOp_get_VOID   (GrB_UnaryOp, void *    , GrB_Field) ;
-
-GrB_Info GrB_IndexUnaryOp_get_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_get_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_get_INT32  (GrB_IndexUnaryOp, int32_t * , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_get_SIZE   (GrB_IndexUnaryOp, size_t *  , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_get_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field) ;
-
-GrB_Info GrB_BinaryOp_get_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_BinaryOp_get_String (GrB_BinaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_BinaryOp_get_INT32  (GrB_BinaryOp, int32_t * , GrB_Field) ;
-GrB_Info GrB_BinaryOp_get_SIZE   (GrB_BinaryOp, size_t *  , GrB_Field) ;
-GrB_Info GrB_BinaryOp_get_VOID   (GrB_BinaryOp, void *    , GrB_Field) ;
-
-GrB_Info GxB_IndexBinaryOp_get_Scalar (GxB_IndexBinaryOp, GrB_Scalar,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_get_String (GxB_IndexBinaryOp, char *    ,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_get_INT32  (GxB_IndexBinaryOp, int32_t * ,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_get_SIZE   (GxB_IndexBinaryOp, size_t *  ,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_get_VOID   (GxB_IndexBinaryOp, void *    ,
-    GrB_Field) ;
-
-GrB_Info GrB_Monoid_get_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Monoid_get_String (GrB_Monoid, char *    , GrB_Field) ;
-GrB_Info GrB_Monoid_get_INT32  (GrB_Monoid, int32_t * , GrB_Field) ;
-GrB_Info GrB_Monoid_get_SIZE   (GrB_Monoid, size_t *  , GrB_Field) ;
-GrB_Info GrB_Monoid_get_VOID   (GrB_Monoid, void *    , GrB_Field) ;
-
-GrB_Info GrB_Semiring_get_Scalar (GrB_Semiring, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Semiring_get_String (GrB_Semiring, char *    , GrB_Field) ;
-GrB_Info GrB_Semiring_get_INT32  (GrB_Semiring, int32_t * , GrB_Field) ;
-GrB_Info GrB_Semiring_get_SIZE   (GrB_Semiring, size_t *  , GrB_Field) ;
-GrB_Info GrB_Semiring_get_VOID   (GrB_Semiring, void *    , GrB_Field) ;
-
-GrB_Info GrB_Descriptor_get_Scalar (GrB_Descriptor, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Descriptor_get_String (GrB_Descriptor, char *    , GrB_Field) ;
-GrB_Info GrB_Descriptor_get_INT32  (GrB_Descriptor, int32_t * , GrB_Field) ;
-GrB_Info GrB_Descriptor_get_SIZE   (GrB_Descriptor, size_t *  , GrB_Field) ;
-GrB_Info GrB_Descriptor_get_VOID   (GrB_Descriptor, void *    , GrB_Field) ;
-
-GrB_Info GrB_Type_get_Scalar (GrB_Type, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Type_get_String (GrB_Type, char *    , GrB_Field) ;
-GrB_Info GrB_Type_get_INT32  (GrB_Type, int32_t * , GrB_Field) ;
-GrB_Info GrB_Type_get_SIZE   (GrB_Type, size_t *  , GrB_Field) ;
-GrB_Info GrB_Type_get_VOID   (GrB_Type, void *    , GrB_Field) ;
-
-GrB_Info GrB_Global_get_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Global_get_String (GrB_Global, char *    , GrB_Field) ;
-GrB_Info GrB_Global_get_INT32  (GrB_Global, int32_t * , GrB_Field) ;
-GrB_Info GrB_Global_get_SIZE   (GrB_Global, size_t *  , GrB_Field) ;
-GrB_Info GrB_Global_get_VOID   (GrB_Global, void *    , GrB_Field) ;
-
+// Note that GxB_Context_get_INT has an irregular name.  This is because it
+// conflicts with the signature of the prior GxB_Context_get_INT32 method,
+// which is now historical.
 GrB_Info GxB_Context_get_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
 GrB_Info GxB_Context_get_String (GxB_Context, char *    , GrB_Field) ;
 GrB_Info GxB_Context_get_INT    (GxB_Context, int32_t * , GrB_Field) ;
@@ -5455,232 +4077,140 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 
 // GrB_get (object, value, field):
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_get(object,value,...)                                           \
-    _Generic                                                                \
-    (                                                                       \
-        (object),                                                           \
-            GrB_Scalar :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Scalar_get_Scalar ,               \
-                        char *      : GrB_Scalar_get_String ,               \
-                        int32_t *   : GrB_Scalar_get_INT32  ,               \
-                        size_t *    : GrB_Scalar_get_SIZE   ,               \
-                        void *      : GrB_Scalar_get_VOID                   \
-                ) ,                                                         \
-            GrB_Vector :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Vector_get_Scalar ,               \
-                        char *      : GrB_Vector_get_String ,               \
-                        int32_t *   : GrB_Vector_get_INT32  ,               \
-                        size_t *    : GrB_Vector_get_SIZE   ,               \
-                        void *      : GrB_Vector_get_VOID                   \
-                ) ,                                                         \
-            GrB_Matrix :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Matrix_get_Scalar ,               \
-                        char *      : GrB_Matrix_get_String ,               \
-                        int32_t *   : GrB_Matrix_get_INT32  ,               \
-                        size_t *    : GrB_Matrix_get_SIZE   ,               \
-                        void *      : GrB_Matrix_get_VOID                   \
-                ) ,                                                         \
-            GrB_UnaryOp :                                                   \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_UnaryOp_get_Scalar ,              \
-                        char *      : GrB_UnaryOp_get_String ,              \
-                        int32_t *   : GrB_UnaryOp_get_INT32  ,              \
-                        size_t *    : GrB_UnaryOp_get_SIZE   ,              \
-                        void *      : GrB_UnaryOp_get_VOID                  \
-                ) ,                                                         \
-            GrB_IndexUnaryOp :                                              \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_IndexUnaryOp_get_Scalar ,         \
-                        char *      : GrB_IndexUnaryOp_get_String ,         \
-                        int32_t *   : GrB_IndexUnaryOp_get_INT32  ,         \
-                        size_t *    : GrB_IndexUnaryOp_get_SIZE   ,         \
-                        void *      : GrB_IndexUnaryOp_get_VOID             \
-                ) ,                                                         \
-            GrB_BinaryOp :                                                  \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_BinaryOp_get_Scalar ,             \
-                        char *      : GrB_BinaryOp_get_String ,             \
-                        int32_t *   : GrB_BinaryOp_get_INT32  ,             \
-                        size_t *    : GrB_BinaryOp_get_SIZE   ,             \
-                        void *      : GrB_BinaryOp_get_VOID                 \
-                ) ,                                                         \
-            GxB_IndexBinaryOp :                                             \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GxB_IndexBinaryOp_get_Scalar ,        \
-                        char *      : GxB_IndexBinaryOp_get_String ,        \
-                        int32_t *   : GxB_IndexBinaryOp_get_INT32  ,        \
-                        size_t *    : GxB_IndexBinaryOp_get_SIZE   ,        \
-                        void *      : GxB_IndexBinaryOp_get_VOID            \
-                ) ,                                                         \
-            GrB_Monoid :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Monoid_get_Scalar ,               \
-                        char *      : GrB_Monoid_get_String ,               \
-                        int32_t *   : GrB_Monoid_get_INT32  ,               \
-                        size_t *    : GrB_Monoid_get_SIZE   ,               \
-                        void *      : GrB_Monoid_get_VOID                   \
-                ) ,                                                         \
-            GrB_Semiring :                                                  \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Semiring_get_Scalar ,             \
-                        char *      : GrB_Semiring_get_String ,             \
-                        int32_t *   : GrB_Semiring_get_INT32  ,             \
-                        size_t *    : GrB_Semiring_get_SIZE   ,             \
-                        void *      : GrB_Semiring_get_VOID                 \
-                ) ,                                                         \
-            GrB_Type :                                                      \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Type_get_Scalar ,                 \
-                        char *      : GrB_Type_get_String ,                 \
-                        int32_t *   : GrB_Type_get_INT32  ,                 \
-                        size_t *    : GrB_Type_get_SIZE   ,                 \
-                        void *      : GrB_Type_get_VOID                     \
-                ) ,                                                         \
-            GrB_Descriptor :                                                \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Descriptor_get_Scalar ,           \
-                        char *      : GrB_Descriptor_get_String ,           \
-                        int32_t *   : GrB_Descriptor_get_INT32  ,           \
-                        size_t *    : GrB_Descriptor_get_SIZE   ,           \
-                        void *      : GrB_Descriptor_get_VOID               \
-                ) ,                                                         \
-            GrB_Global :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Global_get_Scalar ,               \
-                        char *      : GrB_Global_get_String ,               \
-                        int32_t *   : GrB_Global_get_INT32  ,               \
-                        size_t *    : GrB_Global_get_SIZE   ,               \
-                        void *      : GrB_Global_get_VOID                   \
-                ) ,                                                         \
-            GxB_Context :                                                   \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GxB_Context_get_Scalar ,              \
-                        char *      : GxB_Context_get_String ,              \
-                        int32_t *   : GxB_Context_get_INT    ,              \
-                        size_t *    : GxB_Context_get_SIZE   ,              \
-                        void *      : GxB_Context_get_VOID                  \
-                ) ,                                                         \
-            const void *:                                                   \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GxB_Serialized_get_Scalar ,           \
-                        char *      : GxB_Serialized_get_String ,           \
-                        int32_t *   : GxB_Serialized_get_INT32  ,           \
-                        size_t *    : GxB_Serialized_get_SIZE   ,           \
-                        void *      : GxB_Serialized_get_VOID               \
-                ) ,                                                         \
-            void *:                                                         \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GxB_Serialized_get_Scalar ,           \
-                        char *      : GxB_Serialized_get_String ,           \
-                        int32_t *   : GxB_Serialized_get_INT32  ,           \
-                        size_t *    : GxB_Serialized_get_SIZE   ,           \
-                        void *      : GxB_Serialized_get_VOID               \
-                )                                                           \
-    ) (object, value, __VA_ARGS__)
+#define GrB_get(object,value,...)                               \
+    _Generic ((object),                                         \
+        GrB_Scalar :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Scalar_get_Scalar ,           \
+                char *      : GrB_Scalar_get_String ,           \
+                int32_t *   : GrB_Scalar_get_INT32  ,           \
+                size_t *    : GrB_Scalar_get_SIZE   ,           \
+                void *      : GrB_Scalar_get_VOID ) ,           \
+        GrB_Vector :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Vector_get_Scalar ,           \
+                char *      : GrB_Vector_get_String ,           \
+                int32_t *   : GrB_Vector_get_INT32  ,           \
+                size_t *    : GrB_Vector_get_SIZE   ,           \
+                void *      : GrB_Vector_get_VOID ) ,           \
+        GrB_Matrix :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Matrix_get_Scalar ,           \
+                char *      : GrB_Matrix_get_String ,           \
+                int32_t *   : GrB_Matrix_get_INT32  ,           \
+                size_t *    : GrB_Matrix_get_SIZE   ,           \
+                void *      : GrB_Matrix_get_VOID ) ,           \
+        GrB_UnaryOp :                                           \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_UnaryOp_get_Scalar ,          \
+                char *      : GrB_UnaryOp_get_String ,          \
+                int32_t *   : GrB_UnaryOp_get_INT32  ,          \
+                size_t *    : GrB_UnaryOp_get_SIZE   ,          \
+                void *      : GrB_UnaryOp_get_VOID ) ,          \
+        GrB_IndexUnaryOp :                                      \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_IndexUnaryOp_get_Scalar ,     \
+                char *      : GrB_IndexUnaryOp_get_String ,     \
+                int32_t *   : GrB_IndexUnaryOp_get_INT32  ,     \
+                size_t *    : GrB_IndexUnaryOp_get_SIZE   ,     \
+                void *      : GrB_IndexUnaryOp_get_VOID ) ,     \
+        GrB_BinaryOp :                                          \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_BinaryOp_get_Scalar ,         \
+                char *      : GrB_BinaryOp_get_String ,         \
+                int32_t *   : GrB_BinaryOp_get_INT32  ,         \
+                size_t *    : GrB_BinaryOp_get_SIZE   ,         \
+                void *      : GrB_BinaryOp_get_VOID ) ,         \
+        GxB_IndexBinaryOp :                                     \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GxB_IndexBinaryOp_get_Scalar ,    \
+                char *      : GxB_IndexBinaryOp_get_String ,    \
+                int32_t *   : GxB_IndexBinaryOp_get_INT32  ,    \
+                size_t *    : GxB_IndexBinaryOp_get_SIZE   ,    \
+                void *      : GxB_IndexBinaryOp_get_VOID ) ,    \
+        GrB_Monoid :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Monoid_get_Scalar ,           \
+                char *      : GrB_Monoid_get_String ,           \
+                int32_t *   : GrB_Monoid_get_INT32  ,           \
+                size_t *    : GrB_Monoid_get_SIZE   ,           \
+                void *      : GrB_Monoid_get_VOID ) ,           \
+        GrB_Semiring :                                          \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Semiring_get_Scalar ,         \
+                char *      : GrB_Semiring_get_String ,         \
+                int32_t *   : GrB_Semiring_get_INT32  ,         \
+                size_t *    : GrB_Semiring_get_SIZE   ,         \
+                void *      : GrB_Semiring_get_VOID ) ,         \
+        GrB_Type :                                              \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Type_get_Scalar ,             \
+                char *      : GrB_Type_get_String ,             \
+                int32_t *   : GrB_Type_get_INT32  ,             \
+                size_t *    : GrB_Type_get_SIZE   ,             \
+                void *      : GrB_Type_get_VOID ) ,             \
+        GrB_Descriptor :                                        \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Descriptor_get_Scalar ,       \
+                char *      : GrB_Descriptor_get_String ,       \
+                int32_t *   : GrB_Descriptor_get_INT32  ,       \
+                size_t *    : GrB_Descriptor_get_SIZE   ,       \
+                void *      : GrB_Descriptor_get_VOID ) ,       \
+        GrB_Global :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Global_get_Scalar ,           \
+                char *      : GrB_Global_get_String ,           \
+                int32_t *   : GrB_Global_get_INT32  ,           \
+                size_t *    : GrB_Global_get_SIZE   ,           \
+                void *      : GrB_Global_get_VOID ) ,           \
+        GxB_Context :                                           \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GxB_Context_get_Scalar ,          \
+                char *      : GxB_Context_get_String ,          \
+                int32_t *   : GxB_Context_get_INT    ,          \
+                size_t *    : GxB_Context_get_SIZE   ,          \
+                void *      : GxB_Context_get_VOID ) ,          \
+        const void *:                                           \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GxB_Serialized_get_Scalar ,       \
+                char *      : GxB_Serialized_get_String ,       \
+                int32_t *   : GxB_Serialized_get_INT32  ,       \
+                size_t *    : GxB_Serialized_get_SIZE   ,       \
+                void *      : GxB_Serialized_get_VOID ) ,       \
+        void *:                                                 \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GxB_Serialized_get_Scalar ,       \
+                char *      : GxB_Serialized_get_String ,       \
+                int32_t *   : GxB_Serialized_get_INT32  ,       \
+                size_t *    : GxB_Serialized_get_SIZE   ,       \
+                void *      : GxB_Serialized_get_VOID ))        \
+    (object, value, __VA_ARGS__)
 #endif
 
 //------------------------------------------------------------------------------
 // GrB_set: set a scalar, string, enum, size, or void * of an object
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Scalar_set_Scalar (GrB_Scalar, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Scalar_set_String (GrB_Scalar, char *    , GrB_Field) ;
-GrB_Info GrB_Scalar_set_INT32  (GrB_Scalar, int32_t   , GrB_Field) ;
-GrB_Info GrB_Scalar_set_VOID   (GrB_Scalar, void *    , GrB_Field, size_t) ;
+// object-specific methods:
+#undef  GB_DECLARE
+#define GB_DECLARE(object)                                          \
+GrB_Info object ## _set_Scalar (object, GrB_Scalar, GrB_Field) ;    \
+GrB_Info object ## _set_String (object, char *    , GrB_Field) ;    \
+GrB_Info object ## _set_INT32  (object, int32_t   , GrB_Field) ;    \
+GrB_Info object ## _set_VOID   (object, void *    , GrB_Field, size_t) ;
 
-GrB_Info GrB_Vector_set_Scalar (GrB_Vector, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Vector_set_String (GrB_Vector, char *    , GrB_Field) ;
-GrB_Info GrB_Vector_set_INT32  (GrB_Vector, int32_t   , GrB_Field) ;
-GrB_Info GrB_Vector_set_VOID   (GrB_Vector, void *    , GrB_Field, size_t) ;
-
-GrB_Info GrB_Matrix_set_Scalar (GrB_Matrix, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Matrix_set_String (GrB_Matrix, char *    , GrB_Field) ;
-GrB_Info GrB_Matrix_set_INT32  (GrB_Matrix, int32_t   , GrB_Field) ;
-GrB_Info GrB_Matrix_set_VOID   (GrB_Matrix, void *    , GrB_Field, size_t) ;
-
-GrB_Info GrB_UnaryOp_set_Scalar (GrB_UnaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_UnaryOp_set_String (GrB_UnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_UnaryOp_set_INT32  (GrB_UnaryOp, int32_t   , GrB_Field) ;
-GrB_Info GrB_UnaryOp_set_VOID   (GrB_UnaryOp, void *    , GrB_Field, size_t) ;
-
-GrB_Info GrB_IndexUnaryOp_set_Scalar (GrB_IndexUnaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_set_String (GrB_IndexUnaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_set_INT32  (GrB_IndexUnaryOp, int32_t   , GrB_Field) ;
-GrB_Info GrB_IndexUnaryOp_set_VOID   (GrB_IndexUnaryOp, void *    , GrB_Field,
-    size_t) ;
-
-GrB_Info GrB_BinaryOp_set_Scalar (GrB_BinaryOp, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_BinaryOp_set_String (GrB_BinaryOp, char *    , GrB_Field) ;
-GrB_Info GrB_BinaryOp_set_INT32  (GrB_BinaryOp, int32_t   , GrB_Field) ;
-GrB_Info GrB_BinaryOp_set_VOID   (GrB_BinaryOp, void *    , GrB_Field, size_t) ;
-
-GrB_Info GxB_IndexBinaryOp_set_Scalar (GxB_IndexBinaryOp, GrB_Scalar,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_set_String (GxB_IndexBinaryOp, char *    ,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_set_INT32  (GxB_IndexBinaryOp, int32_t   ,
-    GrB_Field) ;
-GrB_Info GxB_IndexBinaryOp_set_VOID   (GxB_IndexBinaryOp, void *    ,
-    GrB_Field, size_t) ;
-
-GrB_Info GrB_Monoid_set_Scalar (GrB_Monoid, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Monoid_set_String (GrB_Monoid, char *    , GrB_Field) ;
-GrB_Info GrB_Monoid_set_INT32  (GrB_Monoid, int32_t   , GrB_Field) ;
-GrB_Info GrB_Monoid_set_VOID   (GrB_Monoid, void *    , GrB_Field, size_t) ;
-
-GrB_Info GrB_Semiring_set_Scalar (GrB_Semiring, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Semiring_set_String (GrB_Semiring, char *    , GrB_Field) ;
-GrB_Info GrB_Semiring_set_INT32  (GrB_Semiring, int32_t   , GrB_Field) ;
-GrB_Info GrB_Semiring_set_VOID   (GrB_Semiring, void *    , GrB_Field, size_t) ;
-
-GrB_Info GrB_Descriptor_set_Scalar (GrB_Descriptor, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Descriptor_set_String (GrB_Descriptor, char *    , GrB_Field) ;
-GrB_Info GrB_Descriptor_set_INT32  (GrB_Descriptor, int32_t   , GrB_Field) ;
-GrB_Info GrB_Descriptor_set_VOID   (GrB_Descriptor, void *    , GrB_Field,
-                                                                size_t) ;
-
-GrB_Info GrB_Type_set_Scalar (GrB_Type, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Type_set_String (GrB_Type, char *    , GrB_Field) ;
-GrB_Info GrB_Type_set_INT32  (GrB_Type, int32_t   , GrB_Field) ;
-GrB_Info GrB_Type_set_VOID   (GrB_Type, void *    , GrB_Field, size_t) ;
-
-GrB_Info GrB_Global_set_Scalar (GrB_Global, GrB_Scalar, GrB_Field) ;
-GrB_Info GrB_Global_set_String (GrB_Global, char *    , GrB_Field) ;
-GrB_Info GrB_Global_set_INT32  (GrB_Global, int32_t   , GrB_Field) ;
-GrB_Info GrB_Global_set_VOID   (GrB_Global, void *    , GrB_Field, size_t) ;
+GB_DECLARE (GrB_Scalar       )
+GB_DECLARE (GrB_Vector       )
+GB_DECLARE (GrB_Matrix       )
+GB_DECLARE (GrB_UnaryOp      )
+GB_DECLARE (GrB_IndexUnaryOp )
+GB_DECLARE (GxB_IndexBinaryOp)
+GB_DECLARE (GrB_BinaryOp     )
+GB_DECLARE (GrB_Monoid       )
+GB_DECLARE (GrB_Semiring     )
+GB_DECLARE (GrB_Descriptor   )
+GB_DECLARE (GrB_Type         )
+GB_DECLARE (GrB_Global       )
 
 // GxB_Context_set_INT is slightly misnamed, because of the prior
 // GxB_Context_set_INT32.
@@ -5689,130 +4219,89 @@ GrB_Info GxB_Context_set_String (GxB_Context, char *    , GrB_Field) ;
 GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , GrB_Field) ;
 GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
 
-// GrB_set (object, value, field) or (object, value, field, size) for _VOID
+// GrB_set (object, value, field):
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_set(object,value,...)                                           \
-    _Generic                                                                \
-    (                                                                       \
-        (object),                                                           \
-            GrB_Scalar :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Scalar_set_Scalar ,               \
-                        char *      : GrB_Scalar_set_String ,               \
-                        int32_t     : GrB_Scalar_set_INT32  ,               \
-                        void *      : GrB_Scalar_set_VOID                   \
-                ) ,                                                         \
-            GrB_Vector :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Vector_set_Scalar ,               \
-                        char *      : GrB_Vector_set_String ,               \
-                        int32_t     : GrB_Vector_set_INT32  ,               \
-                        void *      : GrB_Vector_set_VOID                   \
-                ) ,                                                         \
-            GrB_Matrix :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Matrix_set_Scalar ,               \
-                        char *      : GrB_Matrix_set_String ,               \
-                        int32_t     : GrB_Matrix_set_INT32  ,               \
-                        void *      : GrB_Matrix_set_VOID                   \
-                ) ,                                                         \
-            GrB_UnaryOp :                                                   \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_UnaryOp_set_Scalar ,              \
-                        char *      : GrB_UnaryOp_set_String ,              \
-                        int32_t     : GrB_UnaryOp_set_INT32  ,              \
-                        void *      : GrB_UnaryOp_set_VOID                  \
-                ) ,                                                         \
-            GrB_IndexUnaryOp :                                              \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_IndexUnaryOp_set_Scalar ,         \
-                        char *      : GrB_IndexUnaryOp_set_String ,         \
-                        int32_t     : GrB_IndexUnaryOp_set_INT32  ,         \
-                        void *      : GrB_IndexUnaryOp_set_VOID             \
-                ) ,                                                         \
-            GrB_BinaryOp :                                                  \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_BinaryOp_set_Scalar ,             \
-                        char *      : GrB_BinaryOp_set_String ,             \
-                        int32_t     : GrB_BinaryOp_set_INT32  ,             \
-                        void *      : GrB_BinaryOp_set_VOID                 \
-                ) ,                                                         \
-            GxB_IndexBinaryOp :                                             \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GxB_IndexBinaryOp_set_Scalar ,        \
-                        char *      : GxB_IndexBinaryOp_set_String ,        \
-                        int32_t     : GxB_IndexBinaryOp_set_INT32  ,        \
-                        void *      : GxB_IndexBinaryOp_set_VOID            \
-                ) ,                                                         \
-            GrB_Monoid :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Monoid_set_Scalar ,               \
-                        char *      : GrB_Monoid_set_String ,               \
-                        int32_t     : GrB_Monoid_set_INT32  ,               \
-                        void *      : GrB_Monoid_set_VOID                   \
-                ) ,                                                         \
-            GrB_Semiring :                                                  \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Semiring_set_Scalar ,             \
-                        char *      : GrB_Semiring_set_String ,             \
-                        int32_t     : GrB_Semiring_set_INT32  ,             \
-                        void *      : GrB_Semiring_set_VOID                 \
-                ) ,                                                         \
-            GrB_Type :                                                      \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Type_set_Scalar ,                 \
-                        char *      : GrB_Type_set_String ,                 \
-                        int32_t     : GrB_Type_set_INT32  ,                 \
-                        void *      : GrB_Type_set_VOID                     \
-                ) ,                                                         \
-            GrB_Descriptor :                                                \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Descriptor_set_Scalar ,           \
-                        char *      : GrB_Descriptor_set_String ,           \
-                        int32_t     : GrB_Descriptor_set_INT32  ,           \
-                        void *      : GrB_Descriptor_set_VOID               \
-                ) ,                                                         \
-            GrB_Global :                                                    \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GrB_Global_set_Scalar ,               \
-                        char *      : GrB_Global_set_String ,               \
-                        int32_t     : GrB_Global_set_INT32  ,               \
-                        void *      : GrB_Global_set_VOID                   \
-                ) ,                                                         \
-            GxB_Context :                                                   \
-                _Generic                                                    \
-                (                                                           \
-                    (value),                                                \
-                        GrB_Scalar  : GxB_Context_set_Scalar ,              \
-                        char *      : GxB_Context_set_String ,              \
-                        int32_t     : GxB_Context_set_INT    ,              \
-                        void *      : GxB_Context_set_VOID                  \
-                )                                                           \
-    ) (object, value, __VA_ARGS__)
+#define GrB_set(object,value,...)                               \
+    _Generic ((object),                                         \
+        GrB_Scalar :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Scalar_set_Scalar ,           \
+                char *      : GrB_Scalar_set_String ,           \
+                int32_t     : GrB_Scalar_set_INT32  ,           \
+                void *      : GrB_Scalar_set_VOID ) ,           \
+        GrB_Vector :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Vector_set_Scalar ,           \
+                char *      : GrB_Vector_set_String ,           \
+                int32_t     : GrB_Vector_set_INT32  ,           \
+                void *      : GrB_Vector_set_VOID ) ,           \
+        GrB_Matrix :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Matrix_set_Scalar ,           \
+                char *      : GrB_Matrix_set_String ,           \
+                int32_t     : GrB_Matrix_set_INT32  ,           \
+                void *      : GrB_Matrix_set_VOID ) ,           \
+        GrB_UnaryOp :                                           \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_UnaryOp_set_Scalar ,          \
+                char *      : GrB_UnaryOp_set_String ,          \
+                int32_t     : GrB_UnaryOp_set_INT32  ,          \
+                void *      : GrB_UnaryOp_set_VOID ) ,          \
+        GrB_IndexUnaryOp :                                      \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_IndexUnaryOp_set_Scalar ,     \
+                char *      : GrB_IndexUnaryOp_set_String ,     \
+                int32_t     : GrB_IndexUnaryOp_set_INT32  ,     \
+                void *      : GrB_IndexUnaryOp_set_VOID ) ,     \
+        GrB_BinaryOp :                                          \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_BinaryOp_set_Scalar ,         \
+                char *      : GrB_BinaryOp_set_String ,         \
+                int32_t     : GrB_BinaryOp_set_INT32  ,         \
+                void *      : GrB_BinaryOp_set_VOID ) ,         \
+        GxB_IndexBinaryOp :                                     \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GxB_IndexBinaryOp_set_Scalar ,    \
+                char *      : GxB_IndexBinaryOp_set_String ,    \
+                int32_t     : GxB_IndexBinaryOp_set_INT32  ,    \
+                void *      : GxB_IndexBinaryOp_set_VOID ) ,    \
+        GrB_Monoid :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Monoid_set_Scalar ,           \
+                char *      : GrB_Monoid_set_String ,           \
+                int32_t     : GrB_Monoid_set_INT32  ,           \
+                void *      : GrB_Monoid_set_VOID ) ,           \
+        GrB_Semiring :                                          \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Semiring_set_Scalar ,         \
+                char *      : GrB_Semiring_set_String ,         \
+                int32_t     : GrB_Semiring_set_INT32  ,         \
+                void *      : GrB_Semiring_set_VOID ) ,         \
+        GrB_Type :                                              \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Type_set_Scalar ,             \
+                char *      : GrB_Type_set_String ,             \
+                int32_t     : GrB_Type_set_INT32  ,             \
+                void *      : GrB_Type_set_VOID ) ,             \
+        GrB_Descriptor :                                        \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Descriptor_set_Scalar ,       \
+                char *      : GrB_Descriptor_set_String ,       \
+                int32_t     : GrB_Descriptor_set_INT32  ,       \
+                void *      : GrB_Descriptor_set_VOID ) ,       \
+        GrB_Global :                                            \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GrB_Global_set_Scalar ,           \
+                char *      : GrB_Global_set_String ,           \
+                int32_t     : GrB_Global_set_INT32  ,           \
+                void *      : GrB_Global_set_VOID ) ,           \
+        GxB_Context :                                           \
+            _Generic ((value),                                  \
+                GrB_Scalar  : GxB_Context_set_Scalar ,          \
+                char *      : GxB_Context_set_String ,          \
+                int32_t     : GxB_Context_set_INT    ,          \
+                void *      : GxB_Context_set_VOID ))           \
+    (object, value, __VA_ARGS__)
 #endif
 
 //==============================================================================
@@ -6399,159 +4888,33 @@ GrB_Info GxB_Row_subassign          // C(i,J)<mask'> = accum (C(i,J),u')
 // scalar x is implicitly expanded into a vector u of size ni-by-1, with each
 // entry in u equal to x, and then w(I)<mask> = accum(w(I),u) is done.
 
-GrB_Info GxB_Vector_subassign_BOOL  // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),x)
-    bool x,                         // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_INT8  // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int8_t x,                       // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_UINT8 // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint8_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_INT16 // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int16_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_UINT16   // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint16_t x,                     // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_INT32    // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int32_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_UINT32   // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint32_t x,                     // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_INT64    // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int64_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_UINT64   // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint64_t x,                     // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_FP32     // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    float x,                        // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_FP64     // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    double x,                       // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_FC32     // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    GxB_FC32_t x,                   // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_FC64     // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    GxB_FC64_t x,                   // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
-
-GrB_Info GxB_Vector_subassign_UDT      // w(I)<mask> = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w(I), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    void *x,                        // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(suffix,type)                                              \
+GrB_Info GxB_Vector_subassign ## suffix /* w(I)<mask> = accum (w(I),x) */    \
+(                                                                            \
+    GrB_Vector w,               /* input/output vector for results */        \
+    const GrB_Vector mask,      /* optional mask for w(I), unused if NULL */ \
+    const GrB_BinaryOp accum,   /* optional accum for z=accum(w(I),x) */     \
+    type x,                     /* scalar to assign to w(I) */               \
+    const GrB_Index *I_,        /* row indices */                            \
+    GrB_Index ni,               /* number of row indices */                  \
+    const GrB_Descriptor desc   /* descriptor for w(I) and mask */           \
+)
+GB_DECLARE (_BOOL  , bool      ) ;
+GB_DECLARE (_INT8  , int8_t    ) ;
+GB_DECLARE (_INT16 , int16_t   ) ;
+GB_DECLARE (_INT32 , int32_t   ) ;
+GB_DECLARE (_INT64 , int64_t   ) ;
+GB_DECLARE (_UINT8 , uint8_t   ) ;
+GB_DECLARE (_UINT16, uint16_t  ) ;
+GB_DECLARE (_UINT32, uint32_t  ) ;
+GB_DECLARE (_UINT64, uint64_t  ) ;
+GB_DECLARE (_FP32  , float     ) ;
+GB_DECLARE (_FP64  , double    ) ;
+GB_DECLARE (_FC32  , GxB_FC32_t) ;
+GB_DECLARE (_FC64  , GxB_FC64_t) ;
+GB_DECLARE (_UDT   , void *    ) ;
 
 GrB_Info GxB_Vector_subassign_Scalar   // w(I)<mask> = accum (w(I),x)
 (
@@ -6572,187 +4935,35 @@ GrB_Info GxB_Vector_subassign_Scalar   // w(I)<mask> = accum (w(I),x)
 // scalar x is implicitly expanded into a matrix A of size ni-by-nj, with each
 // entry in A equal to x, and then C(I,J)<Mask> = accum(C(I,J),A) is done.
 
-GrB_Info GxB_Matrix_subassign_BOOL  // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    bool x,                         // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_INT8  // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int8_t x,                       // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_UINT8 // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint8_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_INT16 // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int16_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_UINT16   // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint16_t x,                     // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_INT32    // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int32_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_UINT32   // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint32_t x,                     // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_INT64    // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int64_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_UINT64   // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint64_t x,                     // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_FP32     // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    float x,                        // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_FP64     // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    double x,                       // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_FC32     // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    GxB_FC32_t x,                   // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_FC64     // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    GxB_FC64_t x,                   // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
-
-GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    void *x,                        // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(suffix,type)                                               \
+GrB_Info GxB_Matrix_subassign ## suffix /* C(I,J)<mask> = accum (C(I,J),x) */ \
+(                                                                             \
+    GrB_Matrix C,               /* input/output matrix for results */         \
+    const GrB_Matrix Mask,      /* optional mask for C(I,J), unused if NULL */\
+    const GrB_BinaryOp accum,   /* optional accum for Z=accum(C(I,J),x) */    \
+    type x,                     /* scalar to assign to C(I,J) */              \
+    const GrB_Index *I_,        /* row indices */                             \
+    GrB_Index ni,               /* number of row indices */                   \
+    const GrB_Index *J,         /* column indices */                          \
+    GrB_Index nj,               /* number of column indices */                \
+    const GrB_Descriptor desc   /* descriptor for C(I,J) and Mask */          \
+)
+GB_DECLARE (_BOOL  , bool      ) ;
+GB_DECLARE (_INT8  , int8_t    ) ;
+GB_DECLARE (_INT16 , int16_t   ) ;
+GB_DECLARE (_INT32 , int32_t   ) ;
+GB_DECLARE (_INT64 , int64_t   ) ;
+GB_DECLARE (_UINT8 , uint8_t   ) ;
+GB_DECLARE (_UINT16, uint16_t  ) ;
+GB_DECLARE (_UINT32, uint32_t  ) ;
+GB_DECLARE (_UINT64, uint64_t  ) ;
+GB_DECLARE (_FP32  , float     ) ;
+GB_DECLARE (_FP64  , double    ) ;
+GB_DECLARE (_FC32  , GxB_FC32_t) ;
+GB_DECLARE (_FC64  , GxB_FC64_t) ;
+GB_DECLARE (_UDT   , void *    ) ;
 
 GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
 (
@@ -6760,7 +4971,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
     const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
     GrB_Scalar x,                   // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
+    const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
@@ -6877,159 +5088,33 @@ GrB_Info GrB_Row_assign             // C<mask'>(i,J) = accum (C(i,J),u')
 // scalar x is implicitly expanded into a vector u of size ni-by-1, with each
 // entry in u equal to x, and then w<mask>(I) = accum(w(I),u) is done.
 
-GrB_Info GrB_Vector_assign_BOOL     // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),x)
-    bool x,                         // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_INT8     // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int8_t x,                       // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_UINT8    // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint8_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_INT16    // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int16_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_UINT16   // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint16_t x,                     // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_INT32    // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int32_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_UINT32   // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint32_t x,                     // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_INT64    // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    int64_t x,                      // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_UINT64   // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    uint64_t x,                     // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_FP32     // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    float x,                        // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_FP64     // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    double x,                       // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GxB_Vector_assign_FC32     // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    GxB_FC32_t x,                   // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GxB_Vector_assign_FC64     // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    GxB_FC64_t x,                   // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
-GrB_Info GrB_Vector_assign_UDT      // w<mask>(I) = accum (w(I),x)
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
-    void *x,                        // scalar to assign to w(I)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                       \
+GrB_Info prefix ## Vector_assign ## suffix /* w<mask>(I) = accum (w(I),x) */ \
+(                                                                            \
+    GrB_Vector w,               /* input/output vector for results */        \
+    const GrB_Vector mask,      /* optional mask for w, unused if NULL */    \
+    const GrB_BinaryOp accum,   /* optional accum for z=accum(w(I),x) */     \
+    type x,                     /* scalar to assign to w(I) */               \
+    const GrB_Index *I_,        /* row indices */                            \
+    GrB_Index ni,               /* number of row indices */                  \
+    const GrB_Descriptor desc   /* descriptor for w and mask */              \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void *    ) ;
 
 GrB_Info GrB_Vector_assign_Scalar   // w<mask>(I) = accum (w(I),x)
 (
@@ -7050,187 +5135,35 @@ GrB_Info GrB_Vector_assign_Scalar   // w<mask>(I) = accum (w(I),x)
 // scalar x is implicitly expanded into a matrix A of size ni-by-nj, with each
 // entry in A equal to x, and then C<Mask>(I,J) = accum(C(I,J),A) is done.
 
-GrB_Info GrB_Matrix_assign_BOOL     // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    bool x,                         // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_INT8     // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int8_t x,                       // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_UINT8    // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint8_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_INT16    // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int16_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_UINT16   // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint16_t x,                     // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_INT32    // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int32_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_UINT32   // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint32_t x,                     // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_INT64    // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    int64_t x,                      // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_UINT64   // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    uint64_t x,                     // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_FP32     // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    float x,                        // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_FP64     // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    double x,                       // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GxB_Matrix_assign_FC32     // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    GxB_FC32_t x,                   // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GxB_Matrix_assign_FC64     // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    GxB_FC64_t x,                   // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
-
-GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    void *x,                        // scalar to assign to C(I,J)
-    const GrB_Index *Ilist,         // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
-) ;
+// Type-specific versions:
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_assign ## suffix /* C<Mask>(I,J) = accum(C(I,J),x)*/\
+(                                                                             \
+    GrB_Matrix C,               /* input/output matrix for results */         \
+    const GrB_Matrix Mask,      /* optional mask for C, unused if NULL */     \
+    const GrB_BinaryOp accum,   /* optional accum for Z=accum(C(I,J),x) */    \
+    type x,                     /* scalar to assign to C(I,J) */              \
+    const GrB_Index *I_,        /* row indices */                             \
+    GrB_Index ni,               /* number of row indices */                   \
+    const GrB_Index *J,         /* column indices */                          \
+    GrB_Index nj,               /* number of column indices */                \
+    const GrB_Descriptor desc   /* descriptor for C and Mask */               \
+)
+GB_DECLARE (GrB_, _BOOL  , bool      ) ;
+GB_DECLARE (GrB_, _INT8  , int8_t    ) ;
+GB_DECLARE (GrB_, _INT16 , int16_t   ) ;
+GB_DECLARE (GrB_, _INT32 , int32_t   ) ;
+GB_DECLARE (GrB_, _INT64 , int64_t   ) ;
+GB_DECLARE (GrB_, _UINT8 , uint8_t   ) ;
+GB_DECLARE (GrB_, _UINT16, uint16_t  ) ;
+GB_DECLARE (GrB_, _UINT32, uint32_t  ) ;
+GB_DECLARE (GrB_, _UINT64, uint64_t  ) ;
+GB_DECLARE (GrB_, _FP32  , float     ) ;
+GB_DECLARE (GrB_, _FP64  , double    ) ;
+GB_DECLARE (GxB_, _FC32  , GxB_FC32_t) ;
+GB_DECLARE (GxB_, _FC64  , GxB_FC64_t) ;
+GB_DECLARE (GrB_, _UDT   , void *    ) ;
 
 GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
 (
@@ -12148,12 +10081,12 @@ GrB_Info GxB_Vector_export_Full (GrB_Vector *, GrB_Type *, GrB_Index *,
     void **, GrB_Index *, bool *, const GrB_Descriptor) ;
 
 // GxB_select: use GrB_select instead
-GrB_Info GxB_Vector_select (GrB_Vector w, const GrB_Vector mask,
-    const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Vector u,
-    const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
-GrB_Info GxB_Matrix_select (GrB_Matrix C, const GrB_Matrix Mask,
-    const GrB_BinaryOp accum, const GxB_SelectOp op, const GrB_Matrix A,
-    const GrB_Scalar Thunk, const GrB_Descriptor desc) ;
+GrB_Info GxB_Vector_select (GrB_Vector, const GrB_Vector, const GrB_BinaryOp,
+    const GxB_SelectOp, const GrB_Vector, const GrB_Scalar,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_select (GrB_Matrix, const GrB_Matrix, const GrB_BinaryOp,
+    const GxB_SelectOp, const GrB_Matrix, const GrB_Scalar,
+    const GrB_Descriptor) ;
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic ((C),             \
     GrB_Vector : GxB_Vector_select ,                                        \
