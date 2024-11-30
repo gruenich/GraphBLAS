@@ -346,10 +346,6 @@ GrB_Info GB_build               // build matrix
         GB_OK (GB_convert_any_to_iso (T, NULL)) ;
     }
 
-    // FIXME: convert the result to all 64-bit.  This is temporary, until
-    // the methods below can handle 32-bit matrices, used below.
-    GB_OK (GB_convert_int (T, false, false, Werk)) ;  // FIXME: temporary
-
     //--------------------------------------------------------------------------
     // transplant and typecast T into C, conform C, and free T
     //--------------------------------------------------------------------------
@@ -367,6 +363,10 @@ GrB_Info GB_build               // build matrix
             is_32 ? "32" : "64",
             is_32 ? "32" : "64", tt) ;
     }
+
+    // FIXME: convert the result to all 64-bit.  This is temporary, until
+    // the methods below can handle 32-bit matrices, used below.
+    GB_OK (GB_convert_int (C, false, false, Werk)) ;  // FIXME: temporary
 
     return (GrB_SUCCESS) ;
 }
