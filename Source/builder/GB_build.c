@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit: except converted to 64-bit when done
+
 // CALLED BY: GrB_Matrix_build_*, GrB_Vector_build_*,
 //            GxB_Matrix_build_Scalar, GxB_Vector_build_Scalar
 // CALLS:     GB_builder
@@ -364,10 +366,7 @@ GrB_Info GB_build               // build matrix
             is_32 ? "32" : "64", tt) ;
     }
 
-    // FIXME: convert the result to all 64-bit.  This is temporary, until
-    // the methods below can handle 32-bit matrices, used below.
-    GB_OK (GB_convert_int (C, false, false, Werk)) ;  // FIXME: temporary
-
+    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME: temporary: all 64-bit
     return (GrB_SUCCESS) ;
 }
 

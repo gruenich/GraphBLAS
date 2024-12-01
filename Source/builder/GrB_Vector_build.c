@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // If dup is NULL: any duplicates result in an error.
 // If dup is GxB_IGNORE_DUP: duplicates are ignored, which is not an error.
 // If dup is a valid binary operator, it is used to reduce any duplicates to

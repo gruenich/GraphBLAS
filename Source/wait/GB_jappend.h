@@ -9,6 +9,7 @@
 
 // These methods are now only used by GB_wait.
 
+#if 0
 // FIXME delete this once GB_wait is revised
 
 #ifndef GB_JAPPEND_H
@@ -173,5 +174,6 @@ static inline void GB_jwrapup
     C->magic = GB_MAGIC ;
 }
 
+#endif
 #endif
 

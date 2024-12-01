@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #ifndef GB_BUILD_H
 #define GB_BUILD_H
 #include "GB.h"
@@ -63,3 +65,4 @@ GrB_Info GB_builder                 // build a matrix from tuples
 ) ;
 
 #endif
+

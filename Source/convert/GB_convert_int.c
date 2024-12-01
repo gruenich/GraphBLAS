@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except for better handling of pending tuples below.
+// DONE: 32/64 bit
 
 // The integer arrays A->[phi] and A->Y in the matrix A are converted to match
 // the request p_is_32_new and i_is_32_new.  If converted, A->[phi] are no
@@ -26,8 +26,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 (
     GrB_Matrix A,           // matrix to convert
     bool p_is_32_new,       // new integer format for A->p
-    bool i_is_32_new,       // new integer format for A->h, A->i, and A->Y
-    GB_Werk Werk
+    bool i_is_32_new        // new integer format for A->h, A->i, and A->Y
 )
 {
 
@@ -72,9 +71,6 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     // at least some integers must be converted
     //--------------------------------------------------------------------------
 
-    // do not convert pending tuples; finish the work first
-    GB_MATRIX_WAIT_IF_PENDING (A) ; // FIXME:OK but could convert pending tuples
-
     // simply remove A->Y if it is entirely shallow
     if (A->Y_shallow)
     { 
@@ -85,8 +81,11 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     int64_t plen = A->plen ;
     GrB_Matrix Y = A->Y ;
+    GB_Pending Pending = A->Pending ;
     int64_t ynz = GB_nnz (Y) ;
     int64_t yplen = (Y == NULL) ? 0 : Y->plen ;
+    int64_t npending = (Pending == NULL) ? 0 : Pending->n ;
+    int64_t nmax_pending = (Pending == NULL) ? 0 : Pending->nmax ;
 
     //--------------------------------------------------------------------------
     // allocate new space for A->[phi] and Y->[pix] if present
@@ -103,9 +102,13 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     void *Yp_new = NULL ; size_t Yp_new_size = 0 ;
     void *Yi_new = NULL ; size_t Yi_new_size = 0 ;
     void *Yx_new = NULL ; size_t Yx_new_size = 0 ;
+    void *Pending_i_new = NULL ; size_t Pending_i_new_size = 0 ;
+    void *Pending_j_new = NULL ; size_t Pending_j_new_size = 0 ;
+    bool has_Pending_i = (Pending != NULL) && (Pending->i != NULL) ;
+    bool has_Pending_j = (Pending != NULL) && (Pending->j != NULL) ;
 
     size_t psize_new = p_is_32_new ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t isize_new = i_is_32_new ? sizeof ( int32_t) : sizeof ( int64_t) ;
+    size_t isize_new = i_is_32_new ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     bool ok = true ;
 
@@ -135,6 +138,20 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             Yx_new = GB_malloc_memory (ynz,     isize_new, &Yx_new_size) ;
             ok = ok && (Yp_new != NULL && Yi_new != NULL && Yx_new != NULL) ;
         }
+        if (has_Pending_i)
+        {
+            // allocate new space for Pending->i; matches A->i_is_32
+            Pending_i_new = GB_malloc_memory (nmax_pending, isize_new,
+                &Pending_i_new_size) ;
+            ok = ok && (Pending_i_new != NULL) ;
+        }
+        if (has_Pending_j)
+        {
+            // allocate new space for Pending->j; matches A->i_is_32
+            Pending_j_new = GB_malloc_memory (nmax_pending, isize_new,
+                &Pending_j_new_size) ;
+            ok = ok && (Pending_j_new != NULL) ;
+        }
     }
 
     if (!ok)
@@ -146,6 +163,8 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         GB_FREE (&Yp_new, Yp_new_size) ;
         GB_FREE (&Yi_new, Yi_new_size) ;
         GB_FREE (&Yx_new, Yx_new_size) ;
+        GB_FREE (&Pending_i_new, Pending_i_new_size) ;
+        GB_FREE (&Pending_j_new, Pending_j_new_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -173,19 +192,22 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     }
 
     //--------------------------------------------------------------------------
-    // convert A->h, A->i, and Y
+    // convert A->h, A->i, Y->p, Y->i, Pending->i, and Pending->j
     //--------------------------------------------------------------------------
 
     if (i_is_32 != i_is_32_new)
     { 
 
+        size_t icode_new = i_is_32_new ? GB_INT32_code  : GB_INT64_code  ;
+        size_t icode     = i_is_32     ? GB_INT32_code  : GB_INT64_code  ;
+        size_t ucode_new = i_is_32_new ? GB_UINT32_code : GB_UINT64_code ;
+        size_t ucode     = i_is_32     ? GB_UINT32_code : GB_UINT64_code ;
+
         //----------------------------------------------------------------------
         // convert A->i
         //----------------------------------------------------------------------
 
-        GB_cast_int (Ai_new, i_is_32_new ? GB_INT32_code : GB_INT64_code,
-                     A->i,   i_is_32     ? GB_INT32_code : GB_INT64_code,
-                     anz, nthreads_max) ;
+        GB_cast_int (Ai_new, icode_new, A->i, icode, anz, nthreads_max) ;
         if (!A->i_shallow)
         { 
             GB_FREE (&(A->i), A->i_size) ;
@@ -201,9 +223,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 
         if (A_is_hyper)
         { 
-            GB_cast_int (Ah_new, i_is_32_new ? GB_UINT32_code : GB_UINT64_code,
-                         A->h,   i_is_32     ? GB_UINT32_code : GB_UINT64_code,
-                         plen, nthreads_max) ;
+            GB_cast_int (Ah_new, ucode_new, A->h, ucode, plen, nthreads_max) ;
             if (!A->h_shallow)
             { 
                 GB_FREE (&(A->h), A->h_size) ;
@@ -228,9 +248,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             // convert Y->p
             //------------------------------------------------------------------
 
-            GB_cast_int (Yp_new, i_is_32_new ? GB_UINT32_code : GB_UINT64_code,
-                         Y->p  , i_is_32     ? GB_UINT32_code : GB_UINT64_code,
-                         yplen+1, nthreads_max) ;
+            GB_cast_int (Yp_new, ucode_new, Y->p, ucode, yplen+1, nthreads_max);
             if (!Y->p_shallow)
             { 
                 GB_FREE (&(Y->p), Y->p_size) ;
@@ -244,9 +262,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             // convert Y->i
             //------------------------------------------------------------------
 
-            GB_cast_int (Yi_new, i_is_32_new ? GB_INT32_code : GB_INT64_code,
-                         Y->i,   i_is_32     ? GB_INT32_code : GB_INT64_code,
-                         ynz, nthreads_max) ;
+            GB_cast_int (Yi_new, icode_new, Y->i, icode, ynz, nthreads_max) ;
             if (!Y->i_shallow)
             { 
                 GB_FREE (&(Y->i), Y->i_size) ;
@@ -260,9 +276,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             // convert Y->x
             //------------------------------------------------------------------
 
-            GB_cast_int (Yx_new, i_is_32_new ? GB_UINT32_code : GB_UINT64_code,
-                         Y->x,   i_is_32     ? GB_UINT32_code : GB_UINT64_code,
-                         ynz, nthreads_max) ;
+            GB_cast_int (Yx_new, ucode_new, Y->x, ucode, ynz, nthreads_max) ;
             if (!Y->x_shallow)
             { 
                 GB_FREE (&(Y->x), Y->x_size) ;
@@ -271,6 +285,38 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             Y->x_size = Yx_new_size ;
             Y->x_shallow = false ;
             Y->type = i_is_32_new ? GrB_UINT32 : GrB_UINT64 ;
+        }
+
+        //----------------------------------------------------------------------
+        // convert Pending->i and Pending->j if present
+        //----------------------------------------------------------------------
+
+        if (has_Pending_i)
+        { 
+
+            //------------------------------------------------------------------
+            // convert Pending->i
+            //------------------------------------------------------------------
+
+            GB_cast_int (Pending_i_new, ucode_new, Pending->i, ucode, npending,
+                nthreads_max) ;
+            GB_FREE (&(Pending->i), Pending->i_size) ;
+            Pending->i = Pending_i_new ;
+            Pending->i_size = Pending_i_new_size ;
+        }
+
+        if (has_Pending_j)
+        {
+
+            //------------------------------------------------------------------
+            // convert Pending->j
+            //------------------------------------------------------------------
+
+            GB_cast_int (Pending_j_new, ucode_new, Pending->j, ucode, npending,
+                nthreads_max) ;
+            GB_FREE (&(Pending->j), Pending->j_size) ;
+            Pending->j = Pending_j_new ;
+            Pending->j_size = Pending_j_new_size ;
         }
     }
 

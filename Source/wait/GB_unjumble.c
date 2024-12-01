@@ -53,7 +53,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
     const uint64_t *restrict Ap = A->p ; // FIXME
-    int64_t *restrict Ai = A->i ;
+    int64_t *restrict Ai = A->i ;       // FIXME
     const size_t asize = (A->iso) ? 0 : A->type->size ;
 
     //--------------------------------------------------------------------------

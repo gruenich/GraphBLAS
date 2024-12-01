@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GxB_Matrix_build_32_Scalar builds a matrix C whose values in its sparsity
 // pattern are all equal to a value given by a GrB_Scalar.  Unlike the
 // GrB_Matrix_build_* methods, there is no binary dup operator.  Instead, any

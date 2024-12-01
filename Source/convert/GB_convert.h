@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64-bit
+
 #ifndef GB_CONVERT_H
 #define GB_CONVERT_H
 
@@ -272,8 +274,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 (
     GrB_Matrix A,           // matrix to convert
     bool p_is_32_new,       // new integer format for A->p
-    bool i_is_32_new,       // new integer format for A->h, A->i, and A->Y
-    GB_Werk Werk
+    bool i_is_32_new        // new integer format for A->h, A->i, and A->Y
 ) ;
 
 #endif

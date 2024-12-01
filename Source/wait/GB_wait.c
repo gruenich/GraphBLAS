@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // CALLS:     GB_builder
 
 // The matrix A has zombies and/or pending tuples placed there by
@@ -54,7 +56,7 @@
 #include "binaryop/GB_binop.h"
 #include "pending/GB_Pending.h"
 #include "builder/GB_build.h"
-#include "wait/GB_jappend.h"
+// #include "wait/GB_jappend.h"
 #include "scalar/GB_Scalar_wrap.h"
 
 GrB_Info GB_wait                // finish all pending computations
@@ -252,7 +254,6 @@ GrB_Info GB_wait                // finish all pending computations
     // deletion, but hasn't been deleted yet.  It is marked by "negating"
     // replacing its index i with GB_ZOMBIE(i).
 
-    // TODO: pass tnz to GB_selector, to pad the reallocated A matrix
     ASSERT_MATRIX_OK (A, "A before zombies removed", GB0) ;
 
     if (nzombies > 0)
@@ -329,6 +330,12 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (tnz > 0) ;
     ASSERT (T->nvec > 0) ;
     ASSERT (A->nvec > 0) ;
+    int64_t anvec = A->nvec ;
+    bool ignore ;
+
+#if 0
+
+// FIXME: remove this option
 
     // tjfirst = first vector in T
     const int64_t *restrict Th = T->h ;  // FIXME
@@ -341,8 +348,6 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
-
-    int64_t anvec = A->nvec ;
 
     // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
     if (Ah != NULL)
@@ -367,15 +372,11 @@ GrB_Info GB_wait                // finish all pending computations
     // anz1 = nnz (W) = nnz (A (:, kA:end)), the region modified by T
     anz0 = Ap [kA] ;
     int64_t anz1 = anz - anz0 ;
-    bool ignore ;
-
     // A + T will have anz_new entries
     int64_t anz_new = anz + tnz ;       // must have at least this space
 
     if (2 * anz1 < anz0)
     {
-
-// FIXME: remove this option
 
         //----------------------------------------------------------------------
         // append new tuples to A
@@ -541,6 +542,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     }
     else
+#endif
     { 
 
         //----------------------------------------------------------------------
@@ -590,7 +592,8 @@ GrB_Info GB_wait                // finish all pending computations
                 if (nthreads == 1)
                 { 
                     // compare Ah and Sh with a single thread
-                    hsame = (memcmp (Ah, Sh, anvec * sizeof (int64_t)) == 0) ;
+                    hsame = (memcmp (Ah, Sh, anvec * sizeof (int64_t)) //FIXME
+                        == 0) ;
                 }
                 else
                 { 
@@ -610,7 +613,8 @@ GrB_Info GB_wait                // finish all pending computations
                         {
                             // compare this task's region of Ah and Sh
                             my_hsame = (memcmp (Ah + kstart, Sh + kstart,
-                                (kend - kstart) * sizeof (int64_t)) == 0) ;
+                                (kend - kstart) * sizeof (int64_t)) //FIXME
+                                == 0) ;
                             if (!my_hsame)
                             {
                                 // tell other tasks to exit early

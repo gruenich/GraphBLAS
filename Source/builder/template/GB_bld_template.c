@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // This template is used in GB_builder and the FactoryKernels/GB_bld__* workers.
 // This is the same for both vectors and matrices, since this step is agnostic
 // about which vectors the entries appear.

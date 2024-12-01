@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GxB_Vector_build_Scalar builds a vector w whose values in its sparsity
 // pattern are all equal to a value given by a GrB_Scalar.  Unlike the
 // GrB_Vector_build_* methods, there is no binary dup operator.  Instead, any
