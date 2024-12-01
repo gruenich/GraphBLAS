@@ -371,7 +371,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
         return (info) ;
     }
 
-    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+    GB_OK (GB_hyper_prune (C, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

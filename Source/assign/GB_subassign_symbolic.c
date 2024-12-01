@@ -7,10 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG /* HACK FIXME */
+
 #include "assign/GB_subassign_methods.h"
 #include "extract/GB_subref.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
+#include "hyper/factory/GB_debug_lookup.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_phybix_free (S) ;
@@ -110,6 +113,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     const int64_t *restrict Sh = S->h ;
     const int64_t *restrict Si = S->i ;
     const int64_t *restrict Sx = (int64_t *) S->x ;
+    const int64_t *restrict Ci = C->i ;
     // for each vector of S
     for (int64_t k = 0 ; k < S->nvec ; k++)
     {
@@ -130,7 +134,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
             int64_t p = Sx [pS] ;
             ASSERT (p >= 0 && p < GB_nnz (C)) ;
             int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
-            bool found = GB_lookup (C->h != NULL, // for debug only
+            bool found = GB_debug_lookup (C->h != NULL, // FIXME
                 C->h, C->p, C->vlen, &pleft, pright, jC, &pC_start, &pC_end) ;
             ASSERT (found) ;
             // If iC == I [inew] and jC == J [jnew], (or the equivaleent
@@ -138,7 +142,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
             // assigned to C(iC,jC), and p = S(inew,jnew) gives the pointer
             // into C to where the entry (C(iC,jC) appears in C:
             ASSERT (pC_start <= p && p < pC_end) ;
-            ASSERT (iC == GB_UNZOMBIE (GBI_C (C->i, p, C->vlen))) ;
+            ASSERT (iC == GB_UNZOMBIE (GBI_C (Ci, p, C->vlen))) ;
         }
     }
     #endif

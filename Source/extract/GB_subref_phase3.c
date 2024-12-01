@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
@@ -66,6 +68,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -202,7 +205,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
     if (info == GrB_SUCCESS)
     { 
-        info = GB_hypermatrix_prune (C, Werk) ;
+        info = GB_hyper_prune (C, Werk) ;
     }
 
     //--------------------------------------------------------------------------

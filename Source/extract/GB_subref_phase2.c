@@ -7,8 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // GB_subref_phase2 counts the number of entries in each vector of C, for
-// C=A(I,J) and then does a cumulative sum to find Cp.
+// C=A(I,J) and then does a cumulative sum to find Cp.  A is sparse or
+// hypersparse.
 
 // Cp is either freed by phase2, or transplanted into C.
 
@@ -50,7 +53,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Cp_size_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // allocate the result

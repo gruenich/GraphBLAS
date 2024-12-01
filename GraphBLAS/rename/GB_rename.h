@@ -497,7 +497,6 @@
 #define GB_hyper_hash_build GM_hyper_hash_build
 #define GB_hyper_hash_free GM_hyper_hash_free
 #define GB_hyper_hash_need GM_hyper_hash_need
-#define GB_hypermatrix_prune GM_hypermatrix_prune
 #define GB_hyper_prune GM_hyper_prune
 #define GB_hyper_realloc GM_hyper_realloc
 #define GB_hyper_shallow GM_hyper_shallow

@@ -7,7 +7,15 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
+// Finds the vectors for C=A(I,J) when A and C are sparse or hypersparse, and
+// determines the properties of I and J.
+
+#define GB_DEBUG /* HACK FIXME */
+
 #include "extract/GB_subref.h"
+#include "hyper/factory/GB_debug_lookup.h"
 
 #define GB_AI(p) GBI_UNZOMBIE (Ai, p, avlen)
 
@@ -25,16 +33,16 @@ static inline void GB_find_Ap_start_end
 (
     // input, not modified
     const int64_t kA,
-    const int64_t *restrict Ap,
-    const int64_t *restrict Ai,
+    const int64_t *restrict Ap,     // FIXME
+    const int64_t *restrict Ai,     // FIXME
     const int64_t avlen,
     const int64_t imin,
     const int64_t imax,
     const int64_t kC,
     const int64_t nzombies,
     // output: Ap_start [kC] and Ap_end [kC]:
-    uint64_t *restrict Ap_start,
-    uint64_t *restrict Ap_end
+    uint64_t *restrict Ap_start,    // FIXME
+    uint64_t *restrict Ap_end       // FIXME
 )
 {
 
@@ -184,7 +192,7 @@ GrB_Info GB_subref_phase0
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A for subref phase 0", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     ASSERT (p_Ch != NULL) ;
     ASSERT (p_Ap_start != NULL) ;
@@ -717,34 +725,48 @@ GrB_Info GB_subref_phase0
         int64_t kA = 0 ;
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
-        bool found = GB_lookup (A->h != NULL,   // for debug only
-            A->h, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
-        if (found && A->h != NULL)
+        int64_t *Ah = A->h ;    // FIXME
+        bool found = GB_debug_lookup (Ah != NULL,   // FIXME
+            Ah, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
+        if (found && Ah != NULL)
         {
-            ASSERT (jA == A->h [kA]) ;
+            ASSERT (jA == Ah [kA]) ;
         }
-        uint64_t pA      = Ap_start [kC] ;
-        uint64_t pA_end  = Ap_end   [kC] ;
-        int64_t ajnz = pA_end - pA ;
-        if (ajnz == avlen)
+        if (!found)
         {
-            // A(:,kA) is dense; Ai [pA:pA_end-1] is the entire vector.
-            // C(:,kC) will have exactly nI entries.
-            ASSERT (pA     == pA_start_all) ;
-            ASSERT (pA_end == pA_end_all  ) ;
-            ;
-        }
-        else if (ajnz > 0)
-        {
-            // A(imin:imax,kA) has at least one entry, in Ai [pA:pA_end-1]
-            ASSERT (imin <= GB_AI (pA)) ;
-            ASSERT (GB_AI (pA_end-1) <= imax) ;
-            ASSERT (pA_start_all <= pA && pA < pA_end && pA_end <= pA_end_all) ;
+            ASSERT (pA_start_all == -1) ;
+            ASSERT (pA_end_all == -1) ;
         }
         else
         {
-            // A(imin:imax,kA) and C(:,kC) are empty
-            ;
+            uint64_t pA      = Ap_start [kC] ;
+            uint64_t pA_end  = Ap_end   [kC] ;
+            int64_t ajnz = pA_end - pA ;
+            if (ajnz == avlen)
+            {
+                // A(:,kA) is dense; Ai [pA:pA_end-1] is the entire vector.
+                // C(:,kC) will have exactly nI entries.
+                ASSERT (pA     == pA_start_all) ;
+                ASSERT (pA_end == pA_end_all  ) ;
+                ;
+            }
+            else if (ajnz > 0)
+            {
+                // A(imin:imax,kA) has at least one entry, in Ai [pA:pA_end-1]
+//              printf ("A (imin: %ld, imax: %ld, kA: %ld)\n", imin, imax, kA) ;
+                ASSERT (imin <= GB_AI (pA)) ;
+                ASSERT (GB_AI (pA_end-1) <= imax) ;
+//              printf ("  pA %ld %ld %ld %ld\n",
+//                  pA_start_all, pA, pA_end, pA_end_all) ;
+                ASSERT (pA_start_all <= pA) ;
+                ASSERT (pA < pA_end) ;
+                ASSERT (pA_end <= pA_end_all) ;
+            }
+            else
+            {
+                // A(imin:imax,kA) and C(:,kC) are empty
+                ;
+            }
         }
     }
     #endif

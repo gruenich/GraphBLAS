@@ -287,7 +287,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
         return (info) ;
     }
 
-    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+    GB_OK (GB_hyper_prune (C, Werk)) ;
 
     //--------------------------------------------------------------------------
     // return result

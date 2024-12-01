@@ -364,7 +364,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
-            GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+            GB_OK (GB_hyper_prune (C, Werk)) ;
             GB_OK (GB_conform (C, Werk)) ;
             if (csc)
             { 

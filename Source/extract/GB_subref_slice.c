@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Determine the tasks for computing C=A(I,J).  The matrix C has Cnvec vectors,
 // and these are divided into coarse and fine tasks.  A coarse task will
 // compute one or more whole vectors of C.  A fine task operates on a slice of
@@ -28,6 +30,9 @@
 
 // Compare this function with GB_ewise_slice, which constructs coarse/fine
 // tasks for the eWise operations (C=A+B, C=A.*B, and C<M>=Z).
+
+// The matrices C and A are sparse or hypersparse, but the matrices themselves
+// do not appear in this method.
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \

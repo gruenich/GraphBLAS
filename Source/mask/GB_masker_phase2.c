@@ -255,7 +255,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // prune empty vectors from Rh
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hypermatrix_prune (R, Werk)) ;
+    GB_OK (GB_hyper_prune (R, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

@@ -403,7 +403,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // shallow copy of A1->h, B1->h, or M1->h.  T is hypersparse if any
         // matrix A1, B1, or M1 are hypersparse.  Internally, T->h always
         // starts as a shallow copy of A1->h, B1->h, or M1->h, but it may be
-        // pruned by GB_hypermatrix_prune, and thus no longer shallow.
+        // pruned by GB_hyper_prune, and thus no longer shallow.
 
         GB_OK (GB_emult (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, flipij, Werk)) ;

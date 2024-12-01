@@ -333,7 +333,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     if (info == GrB_SUCCESS)
     { 
-        GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+        GB_OK (GB_hyper_prune (C, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

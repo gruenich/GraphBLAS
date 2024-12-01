@@ -431,7 +431,7 @@ void mexFunction
     GrB_Matrix_free (&X) ;
 
     //--------------------------------------------------------------------------
-    // hypermatrix prune
+    // hyper_prune
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&C, GrB_FP32, GB_NMAX, GB_NMAX)) ;
@@ -439,7 +439,7 @@ void mexFunction
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
     OK (GxB_Matrix_fprint (C, "huge matrix", GxB_SHORT, NULL)) ;
     C->nvec_nonempty = -1 ;
-    OK (GB_hypermatrix_prune (C, NULL)) ;
+    OK (GB_hyper_prune (C, NULL)) ;
     CHECK (C->nvec_nonempty == 1) ;
     GrB_Matrix_free (&C) ;
 

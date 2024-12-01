@@ -690,7 +690,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     C->magic = GB_MAGIC ;
     GB_FREE_WORKSPACE ;
-    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+    GB_OK (GB_hyper_prune (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
