@@ -163,7 +163,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
     // FIXME: enable 32-bit cases:
-    bool Cp_is_32 = false ; // GB_validate_p_is_32 (true, cnzmax) ;
+    bool Cp_is_32 = false ; // GB_validate_p_is_32 (true, cnzmax) ; FIXME
     bool Ci_is_32 = false ; // GB_validate_i_is_32 (true, cvlen, cvdim) ;
 
     // set C->iso = C_iso

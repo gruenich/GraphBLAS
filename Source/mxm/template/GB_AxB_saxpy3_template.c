@@ -326,6 +326,8 @@
     // allocate Ci and Cx
     int64_t cnz = Cp [cnvec] ;
 
+    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
+
     // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
     GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
         GB_IS_ANY_PAIR_SEMIRING) ;

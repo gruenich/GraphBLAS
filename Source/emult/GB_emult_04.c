@@ -223,6 +223,8 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // allocate C->i and C->x
     //--------------------------------------------------------------------------
 
+    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
+
     int64_t cnz = Cp [nvec] ;
     // set C->iso = C_iso   OK
     GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;

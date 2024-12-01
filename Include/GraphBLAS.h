@@ -415,6 +415,31 @@ typedef enum
 GrB_Mode ;
 
 //==============================================================================
+// GraphBLAS opaque objects
+//==============================================================================
+
+// GraphBLAS relies on opaque objects for most of its data structures.  The
+// content of these objects are not accessible to the user application.
+
+// 11 objects in the GraphBLAS C API:
+typedef struct GB_Descriptor_opaque   *GrB_Descriptor ;
+typedef struct GB_Type_opaque         *GrB_Type ;
+typedef struct GB_UnaryOp_opaque      *GrB_UnaryOp ;
+typedef struct GB_BinaryOp_opaque     *GrB_BinaryOp ;
+typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
+typedef struct GB_Monoid_opaque       *GrB_Monoid ;
+typedef struct GB_Semiring_opaque     *GrB_Semiring ;
+typedef struct GB_Scalar_opaque       *GrB_Scalar ;
+typedef struct GB_Vector_opaque       *GrB_Vector ;
+typedef struct GB_Matrix_opaque       *GrB_Matrix ;
+typedef struct GB_Global_opaque       *GrB_Global ;
+
+// 3 objects in the SuiteSparse extensions:
+typedef struct GB_IndexBinaryOp_opaque  *GxB_IndexBinaryOp ;
+typedef struct GB_Context_opaque        *GxB_Context ;
+typedef struct GB_Iterator_opaque       *GxB_Iterator ;
+
+//==============================================================================
 // GrB_Descriptor: the GraphBLAS descriptor
 //==============================================================================
 
@@ -540,8 +565,6 @@ GrB_Desc_Value ;
 // default for GxB pack is to trust the input data
 #define GxB_FAST_IMPORT ((int) GrB_DEFAULT)
 
-typedef struct GB_Descriptor_opaque *GrB_Descriptor ;
-
 // Predefined descriptors and their values:
 
 GB_GLOBAL GrB_Descriptor
@@ -604,8 +627,6 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
 // GrB_Type: data types
 //==============================================================================
 
-typedef struct GB_Type_opaque *GrB_Type ;
-
 // GraphBLAS predefined types and their counterparts in pure C:
 GB_GLOBAL GrB_Type
     GrB_BOOL   ,        // in C: bool
@@ -636,7 +657,7 @@ GB_GLOBAL GrB_Type
 // ztype and xtype, respectively.  The function must typecast its arguments as
 // needed from void* to ztype* and xtype*.
 
-typedef struct GB_UnaryOp_opaque *GrB_UnaryOp ;
+typedef void (*GxB_unary_function)  (void *, const void *) ;
 
 //------------------------------------------------------------------------------
 // built-in unary operators, z = f(x)
@@ -798,8 +819,6 @@ GB_GLOBAL GrB_UnaryOp
     GxB_ISFINITE_FC32,  // isfinite (real (x)) && isfinite (cimag (x))
     GxB_ISFINITE_FC64 ; // isfinite (real (x)) && isfinite (cimag (x))
 
-typedef void (*GxB_unary_function)  (void *, const void *) ;
-
 //==============================================================================
 // GrB_BinaryOp: binary operators
 //==============================================================================
@@ -811,7 +830,7 @@ typedef void (*GxB_unary_function)  (void *, const void *) ;
 // The pointers are void * but they are always of pointers to objects of type
 // ztype, xtype, and ytype, respectively.  See Demo/usercomplex.c for examples.
 
-typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
+typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 
 //------------------------------------------------------------------------------
 // built-in binary operators, z = f(x,y), where x,y,z all have the same type
@@ -1199,8 +1218,6 @@ GB_GLOBAL GrB_BinaryOp GxB_IGNORE_DUP ;
 // BXOR, and BXNOR.  This assumes that the computations for each bit are
 // entirely independent (so BSHIFT would not fit in the table above).
 
-typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
-
 //==============================================================================
 // GxB_IndexBinaryOp: index binary operators
 //==============================================================================
@@ -1216,8 +1233,6 @@ typedef void (*GxB_binary_function) (void *, const void *, const void *) ;
 // ztype, xtype, ytype, and theta_type, respectively.
 // for examples.
 
-typedef struct GB_IndexBinaryOp_opaque *GxB_IndexBinaryOp ;
-
 typedef void (*GxB_index_binary_function) (void *,
     const void *, GrB_Index, GrB_Index,
     const void *, GrB_Index, GrB_Index,
@@ -1230,8 +1245,6 @@ typedef void (*GxB_index_binary_function) (void *,
 // The indexop has the form z = f(aij, i, j, y) where aij is the numerical
 // value of the A(i,j) entry, i and j are its row and column index, and y
 // is a scalar.  For vectors, it has the form z = f(vi, i, 0, y).
-
-typedef struct GB_IndexUnaryOp_opaque *GrB_IndexUnaryOp ;
 
 typedef void (*GxB_index_unary_function)
 (
@@ -1325,40 +1338,6 @@ GB_GLOBAL GrB_IndexUnaryOp
     GrB_VALUEGE_INT16, GrB_VALUEGE_UINT16, GrB_VALUEGE_FP64,
     GrB_VALUEGE_INT32, GrB_VALUEGE_UINT32,
     GrB_VALUEGE_INT64, GrB_VALUEGE_UINT64 ;
-
-//==============================================================================
-// GrB_Monoid
-//==============================================================================
-
-// A monoid is an associative operator z=op(x,y) where all three types of z, x,
-// and y are identical.  The monoid also has an identity element, such that
-// op(x,identity) = op(identity,x) = x.
-
-typedef struct GB_Monoid_opaque *GrB_Monoid ;
-
-//==============================================================================
-// GrB_Semiring
-//==============================================================================
-
-typedef struct GB_Semiring_opaque *GrB_Semiring ;
-
-//==============================================================================
-// GrB_Scalar: a GraphBLAS scalar
-//==============================================================================
-
-typedef struct GB_Scalar_opaque *GrB_Scalar ;
-
-//==============================================================================
-// GrB_Vector: a GraphBLAS vector
-//==============================================================================
-
-typedef struct GB_Vector_opaque *GrB_Vector ;
-
-//==============================================================================
-// GrB_Matrix: a GraphBLAS matrix
-//==============================================================================
-
-typedef struct GB_Matrix_opaque *GrB_Matrix ;
 
 //==============================================================================
 // SuiteSparse:GraphBLAS options
@@ -1542,8 +1521,6 @@ GB_GLOBAL const double GxB_ALWAYS_HYPER, GxB_NEVER_HYPER ;
 // GxB_Context: for managing computational resources
 //==============================================================================
 
-typedef struct GB_Context_opaque *GxB_Context ;
-
 // GxB_CONTEXT_WORLD is the default Context for all user threads.
 GB_GLOBAL GxB_Context GxB_CONTEXT_WORLD ;
 
@@ -1564,7 +1541,6 @@ GxB_Context_Field ;
 // GrB_set and GrB_get
 //==============================================================================
 
-typedef struct GB_Global_opaque *GrB_Global ;
 GB_GLOBAL const GrB_Global GrB_GLOBAL ;
 
 typedef enum
@@ -1703,6 +1679,10 @@ GB_GLOBAL const uint64_t *GrB_ALL ;
 //==============================================================================
 // GrB_Monoid: built-in monoids
 //==============================================================================
+
+// A monoid is an associative operator z=op(x,y) where all three types of z, x,
+// and y are identical.  The monoid also has an identity element, such that
+// op(x,identity) = op(identity,x) = x.
 
 GB_GLOBAL GrB_Monoid
 
@@ -2735,8 +2715,8 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
         const void       * : GB_CONCAT ( prefix, _, func, _UDT    ),    \
               void       * : GB_CONCAT ( prefix, _, func, _UDT    )
 
-// declare 14 methods, one for each C type
-#define GB_DECLARE_14(prefix,user)        \
+// declare 14 methods, one for each C type and the user type (void *)
+#define GB_DECLARE_14(prefix,user_type)   \
 GB_DECLARE (prefix, _BOOL  , bool      )  \
 GB_DECLARE (prefix, _INT8  , int8_t    )  \
 GB_DECLARE (prefix, _INT16 , int16_t   )  \
@@ -2750,7 +2730,7 @@ GB_DECLARE (prefix, _FP32  , float     )  \
 GB_DECLARE (prefix, _FP64  , double    )  \
 GB_DECLARE (GxB_  , _FC32  , GxB_FC32_t)  \
 GB_DECLARE (GxB_  , _FC64  , GxB_FC64_t)  \
-GB_DECLARE (prefix, _UDT   , user      )
+GB_DECLARE (prefix, _UDT   , user_type )
 
 //==============================================================================
 // GrB_Type: data types
@@ -2919,7 +2899,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Monoid_new(monoid,op,identity)              \
+#define GrB_Monoid_new(monoid,op,identity) \
     _Generic ((identity), GB_CASES (GrB, Monoid_new)) (monoid, op, identity)
 #endif
 
@@ -3027,7 +3007,7 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Scalar_setElement(s,x)                  \
+#define GrB_Scalar_setElement(s,x) \
     _Generic ((x), GB_CASES (GrB, Scalar_setElement)) (s, x)
 #endif
 
@@ -3054,7 +3034,7 @@ GB_DECLARE_14 (GrB_, void *)
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Scalar_extractElement(x,s)                  \
+#define GrB_Scalar_extractElement(x,s) \
     _Generic ((x), GB_PCASES (GrB, Scalar_extractElement)) (x, s)
 #endif
 
@@ -3782,7 +3762,7 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 //      GrB_Field field     // what to query
 //  ) ;
 //
-//  GrB_Info GrB_get
+//  GrB_Info GrB_get        // a SuiteSparse:GraphBLAS extension
 //  (
 //      void *blob,         // GraphBLAS serialized blob
 //      result,             // GrB_Scalar, char *, int32_t *, size_t *, void *
@@ -3951,7 +3931,7 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 //  GrB_Info GrB_set
 //  (
 //      Object object,      // GraphBLAS object to modify
-//      void * input,       // new value of the field
+//      void *input,        // new value of the field
 //      GrB_Field field,    // what to field modify
 //      size_t inputsize    // size of the input
 //  ) ;
@@ -4918,16 +4898,16 @@ GrB_Info GrB_Vector_apply_BinaryOp1st_Scalar    // w<mask> = accum (w, op(x,u))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Vector_apply_BinaryOp1st ## suffix                           \
-(                                                                               \
-    GrB_Vector w,                   /* input/output vector for results */       \
-    const GrB_Vector mask,          /* optional mask for w, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */       \
-    const GrB_BinaryOp op,          /* operator to apply to the entries */      \
-    type x,                         /* first input:  scalar x */                \
-    const GrB_Vector u,             /* second input: vector u */                \
-    const GrB_Descriptor desc       /* descriptor for w and mask */             \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_apply_BinaryOp1st ## suffix                         \
+(                                                                             \
+    GrB_Vector w,                   /* input/output vector for results */     \
+    const GrB_Vector mask,          /* optional mask for w, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */     \
+    const GrB_BinaryOp op,          /* operator to apply to the entries */    \
+    type x,                         /* first input:  scalar x */              \
+    const GrB_Vector u,             /* second input: vector u */              \
+    const GrB_Descriptor desc       /* descriptor for w and mask */           \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -4950,16 +4930,16 @@ GrB_Info GrB_Vector_apply_BinaryOp2nd_Scalar    // w<mask> = accum (w, op(u,y))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Vector_apply_BinaryOp2nd ## suffix                           \
-(                                                                               \
-    GrB_Vector w,                   /* input/output vector for results */       \
-    const GrB_Vector mask,          /* optional mask for w, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */       \
-    const GrB_BinaryOp op,          /* operator to apply to the entries */      \
-    const GrB_Vector u,             /* first input:  vector u */                \
-    type y,                         /* second input: scalar u */                \
-    const GrB_Descriptor desc       /* descriptor for w and mask */             \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_apply_BinaryOp2nd ## suffix                         \
+(                                                                             \
+    GrB_Vector w,                   /* input/output vector for results */     \
+    const GrB_Vector mask,          /* optional mask for w, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */     \
+    const GrB_BinaryOp op,          /* operator to apply to the entries */    \
+    const GrB_Vector u,             /* first input:  vector u */              \
+    type y,                         /* second input: scalar u */              \
+    const GrB_Descriptor desc       /* descriptor for w and mask */           \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -4981,16 +4961,16 @@ GrB_Info GrB_Vector_apply_IndexOp_Scalar    // w<mask> = accum (w, op(u))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Vector_apply_IndexOp ## suffix                               \
-(                                                                               \
-    GrB_Vector w,                   /* input/output vector for results */       \
-    const GrB_Vector mask,          /* optional mask for w, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */       \
-    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */      \
-    const GrB_Vector u,             /* first input:  vector u */                \
-    type y,                         /* second input: scalar u */                \
-    const GrB_Descriptor desc       /* descriptor for w and mask */             \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_apply_IndexOp ## suffix                             \
+(                                                                             \
+    GrB_Vector w,                   /* input/output vector for results */     \
+    const GrB_Vector mask,          /* optional mask for w, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */     \
+    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */    \
+    const GrB_Vector u,             /* first input:  vector u */              \
+    type y,                         /* second input: scalar u */              \
+    const GrB_Descriptor desc       /* descriptor for w and mask */           \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -5013,16 +4993,16 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Matrix_apply_BinaryOp1st ## suffix                           \
-(                                                                               \
-    GrB_Matrix C,                   /* input/output matrix for results */       \
-    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */       \
-    const GrB_BinaryOp op,          /* operator to apply to the entries */      \
-    type x,                         /* first input:  scalar x */                \
-    const GrB_Matrix A,             /* second input: matrix A */                \
-    const GrB_Descriptor desc       /* descriptor for C, mask, and A */         \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_apply_BinaryOp1st ## suffix                         \
+(                                                                             \
+    GrB_Matrix C,                   /* input/output matrix for results */     \
+    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */     \
+    const GrB_BinaryOp op,          /* operator to apply to the entries */    \
+    type x,                         /* first input:  scalar x */              \
+    const GrB_Matrix A,             /* second input: matrix A */              \
+    const GrB_Descriptor desc       /* descriptor for C, mask, and A */       \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -5045,16 +5025,16 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Matrix_apply_BinaryOp2nd ## suffix                           \
-(                                                                               \
-    GrB_Matrix C,                   /* input/output matrix for results */       \
-    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */       \
-    const GrB_BinaryOp op,          /* operator to apply to the entries */      \
-    const GrB_Matrix A,             /* first input:  matrix A */                \
-    type y,                         /* second input: scalar y */                \
-    const GrB_Descriptor desc       /* descriptor for C, mask, and A */         \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_apply_BinaryOp2nd ## suffix                         \
+(                                                                             \
+    GrB_Matrix C,                   /* input/output matrix for results */     \
+    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */     \
+    const GrB_BinaryOp op,          /* operator to apply to the entries */    \
+    const GrB_Matrix A,             /* first input:  matrix A */              \
+    type y,                         /* second input: scalar y */              \
+    const GrB_Descriptor desc       /* descriptor for C, mask, and A */       \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -5076,16 +5056,16 @@ GrB_Info GrB_Matrix_apply_IndexOp_Scalar    // C<M>=accum(C,op(A))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Matrix_apply_IndexOp ## suffix                               \
-(                                                                               \
-    GrB_Matrix C,                   /* input/output matrix for results */       \
-    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */       \
-    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */      \
-    const GrB_Matrix A,             /* first input:  matrix A */                \
-    type y,                         /* second input: scalar y */                \
-    const GrB_Descriptor desc       /* descriptor for w and mask */             \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_apply_IndexOp ## suffix                             \
+(                                                                             \
+    GrB_Matrix C,                   /* input/output matrix for results */     \
+    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */     \
+    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */    \
+    const GrB_Matrix A,             /* first input:  matrix A */              \
+    type y,                         /* second input: scalar y */              \
+    const GrB_Descriptor desc       /* descriptor for w and mask */           \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -5157,16 +5137,16 @@ GrB_Info GrB_Vector_select_Scalar   // w<mask> = accum (w, op(u))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Vector_select ## suffix                                      \
-(                                                                               \
-    GrB_Vector w,                   /* input/output vector for results */       \
-    const GrB_Vector mask,          /* optional mask for w, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */       \
-    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */      \
-    const GrB_Vector u,             /* first input:  vector u */                \
-    type y,                         /* second input: scalar y */                \
-    const GrB_Descriptor desc       /* descriptor for w and mask */             \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_select ## suffix                                    \
+(                                                                             \
+    GrB_Vector w,                   /* input/output vector for results */     \
+    const GrB_Vector mask,          /* optional mask for w, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for z=accum(w,t) */     \
+    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */    \
+    const GrB_Vector u,             /* first input:  vector u */              \
+    type y,                         /* second input: scalar y */              \
+    const GrB_Descriptor desc       /* descriptor for w and mask */           \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -5186,16 +5166,16 @@ GrB_Info GrB_Matrix_select_Scalar   // C<M>=accum(C,op(A))
 ) ;
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                          \
-GrB_Info prefix ## Matrix_select ## suffix                                      \
-(                                                                               \
-    GrB_Matrix C,                   /* input/output matrix for results */       \
-    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */   \
-    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */       \
-    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */      \
-    const GrB_Matrix A,             /* first input:  matrix A */                \
-    type y,                         /* second input: scalar y */                \
-    const GrB_Descriptor desc       /* descriptor for C, mask, and A */         \
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Matrix_select ## suffix                                    \
+(                                                                             \
+    GrB_Matrix C,                   /* input/output matrix for results */     \
+    const GrB_Matrix Mask,          /* optional mask for C, unused if NULL */ \
+    const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */     \
+    const GrB_IndexUnaryOp op,      /* operator to apply to the entries */    \
+    const GrB_Matrix A,             /* first input:  matrix A */              \
+    type y,                         /* second input: scalar y */              \
+    const GrB_Descriptor desc       /* descriptor for C, mask, and A */       \
 ) ;
 GB_DECLARE_14 (GrB_, const void *)
 
@@ -7096,7 +7076,7 @@ parallel iteration using 4 threads (work may be imbalanced however):
 // application.  Only the functions and macros provided here may access
 // "iterator->" contents.  The iterator is defined here only so that macros
 // can be used to speed up the use of the iterator methods.  User applications
-// must not use "iterator->" directly.
+// must not use "iterator->" directly; results are undefined otherwise.
 
 struct GB_Iterator_opaque
 {
@@ -7128,8 +7108,6 @@ struct GB_Iterator_opaque
 //  bool p_is_32 ;              // if true, Ap is 32-bit, else 64-bit
 //  bool i_is_32 ;              // if true, Ah and Ai are 32-bit, else 64-bit
 } ;
-
-typedef struct GB_Iterator_opaque *GxB_Iterator ;
 
 // GxB_Iterator_new: create a new iterator, not attached to any matrix/vector
 GrB_Info GxB_Iterator_new (GxB_Iterator *iterator) ;
@@ -7976,6 +7954,9 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator, void *value) ;
 // GrB_free: free any GraphBLAS object
 //==============================================================================
 
+// GrB_free (&object) frees any of the 13 allocatable GraphBLAS objects.
+// The GrB_Global object cannot be freed.
+
 #undef  GB_DECLARE
 #define GB_DECLARE(Object) GrB_Info Object ## _free (Object *object) ;
 GB_DECLARE (GrB_Type         )
@@ -8077,7 +8058,6 @@ GB_GLOBAL GrB_Monoid
 
 // GxB_* semirings: use the GrB_* semirings instead (as-is)
 GB_GLOBAL GrB_Semiring
-
     GxB_PLUS_TIMES_INT8,   GxB_PLUS_MIN_INT8,     GxB_MIN_PLUS_INT8,
     GxB_PLUS_TIMES_INT16,  GxB_PLUS_MIN_INT16,    GxB_MIN_PLUS_INT16,
     GxB_PLUS_TIMES_INT32,  GxB_PLUS_MIN_INT32,    GxB_MIN_PLUS_INT32,

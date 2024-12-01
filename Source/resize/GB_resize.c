@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #include "select/GB_select.h"
 #include "scalar/GB_Scalar_wrap.h"
 #include "resize/GB_resize.h"
@@ -265,9 +267,9 @@ GrB_Info GB_resize              // change the size of a matrix
             int64_t pleft = 0 ;
             int64_t pright = GB_IMIN (A->nvec, vdim_new) - 1 ;
             bool found ;
-            GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;
+            GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;//FIXME
             A->nvec = pleft ;
-            A->nvals = Ap [A->nvec] ;
+            A->nvals = Ap [A->nvec] ;   // FIXME
 
             // number of vectors is decreasing, need to count the new number of
             // non-empty vectors: done during pruning or by selector, below.
@@ -301,11 +303,10 @@ GrB_Info GB_resize              // change the size of a matrix
         A->vlen = vlen_new ;
         A->vdim = vdim_new ;
 
-        // FIXME: change A->p_is_32 and A->i_is_32 here, and
-        // do GB_convert_int here too.
+        // FIXME: change A->p_is_32 and A->i_is_32 here, and do GB_convert_int
         #if 0
         if A->p_is_32 or i_is_32 are changing then
-            GB_convert_int ( ... )
+            GB_convert_int ( ... )   FIXME
         #endif
 
         ASSERT_MATRIX_OK (A, "A vlen resized", GB0) ;

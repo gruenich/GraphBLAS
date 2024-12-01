@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
 // DONE: 32/64 bit
 
 // Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
@@ -61,11 +62,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
 
-    if (i_is_32 && GB_IMAX (vlen, vdim) > GB_NMAX32)
-    { 
-        // matrix dimensions are too large to allocate A->h, A->i as 32-bit
-        i_is_32 = false ;
-    }
+    // ensure p_is_32 and i_is_32 are valid
+//  p_is_32 = GB_validate_p_is_32 (p_is_32, 1) ; (nzmax not yet known)
+    i_is_32 = GB_validate_i_is_32 (i_is_32, vlen, vdim) ;
 
     //--------------------------------------------------------------------------
     // allocate the matrix header, if not already allocated on input
@@ -206,7 +205,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
         A->p = GB_calloc_memory (A->plen+1, psize, &(A->p_size)) ;
-        ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
@@ -223,7 +221,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // before returning the matrix to the user application.
         A->magic = GB_MAGIC2 ;
         A->p = GB_malloc_memory (A->plen+1, psize, &(A->p_size)) ;
-        ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 

@@ -2,11 +2,12 @@
 // GB_new_bix: create a matrix and allocate space
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
 // DONE: 32/64 bit
 
 // Creates a matrix (with GB_new), then allocates a given space for indices and
@@ -59,21 +60,9 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     ASSERT (Ahandle != NULL) ;
 
-    // FIXME: make these tests static inline functions:
-    // p_is_32 = GB_validate_p_is_32 (p_is_32, nzmax)
-    // i_is_32 = GB_validate_i_is_32 (p_is_32, vlen, vdim)
-
-    if (p_is_32 && nzmax >= UINT32_MAX)
-    { 
-        // matrix has too many entries for 32-bit A->p
-        p_is_32 = false ;
-    }
-
-    if (i_is_32 && GB_IMAX (vlen, vdim) > GB_NMAX32)
-    { 
-        // matrix dimensions are too large to allocate A->h, A->i as 32-bit
-        i_is_32 = false ;
-    }
+    // ensure p_is_32 and i_is_32 are valid
+    p_is_32 = GB_validate_p_is_32 (p_is_32, nzmax) ;
+    i_is_32 = GB_validate_i_is_32 (p_is_32, vlen, vdim) ;
 
     //--------------------------------------------------------------------------
     // allocate the header and the vector pointers

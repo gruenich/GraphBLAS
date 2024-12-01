@@ -198,6 +198,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // allocate C->i and C->x
     //--------------------------------------------------------------------------
 
+    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
+
     int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
     // set C->iso = C_iso   OK
     GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;

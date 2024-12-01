@@ -2,16 +2,21 @@
 // GB_ix_realloc: reallocate a sparse/hyper matrix to hold a given # of entries
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit, partially done
+#define GB_DEBUG    /* HACK FIXME */
+// DONE: 32/64 bit
 
-// Does not modify A->p.  Reallocates A->x and A->i to the requested size,
-// preserving the existing content of A->x and A->i.  Preserves pending tuples
-// and zombies, if any.
+// Reallocates A->x and A->i to the requested size, preserving the existing
+// content of A->x and A->i.  Preserves pending tuples and zombies, if any.
+// A->i_is_32 is unchanged since the matrix dimensions do not change.
+
+// If nzmax_new is too large for the current value of A->p_is_32, then A->p
+// is converted to 64-bit integers and A->p_is_32 is set true.  The content of
+// A->p is preserved.
 
 #include "GB.h"
 
@@ -49,11 +54,23 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    // FIXME: if nzmax_new exceeds UINT32_MAX, set A->p_is_32 false and
-    // reallocate A->p
+    //--------------------------------------------------------------------------
+    // reallocate A->p if required
+    //--------------------------------------------------------------------------
+
+    if (A->p_is_32 != GB_validate_p_is_32 (A->p_is_32, nzmax_new))
+    { 
+        // convert A->p to 64-bit; do not change A->i_is_32
+        GrB_Info info = GB_convert_int (A, false, A->i_is_32) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            return (info) ;
+        }
+    }
 
     //--------------------------------------------------------------------------
-    // reallocate the space
+    // reallocate A->i
     //--------------------------------------------------------------------------
 
     size_t nzmax_new1 = GB_IMAX (nzmax_new, 1) ;

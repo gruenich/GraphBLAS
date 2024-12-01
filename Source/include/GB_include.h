@@ -114,7 +114,7 @@
     #include "math/include/GB_binary_search.h"
     #include "math/include/GB_zombie.h"
     #include "math/include/GB_int64_mult.h"
-    #include "assign/include/GB_index.h"
+    #include "matrix/include/GB_index.h"
     #include "math/include/GB_hash.h"
     #include "math/include/GB_complex.h"
     #include "math/include/GB_iceil.h"

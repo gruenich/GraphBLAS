@@ -56,7 +56,6 @@
 #include "binaryop/GB_binop.h"
 #include "pending/GB_Pending.h"
 #include "builder/GB_build.h"
-// #include "wait/GB_jappend.h"
 #include "scalar/GB_Scalar_wrap.h"
 
 GrB_Info GB_wait                // finish all pending computations
@@ -322,8 +321,19 @@ GrB_Info GB_wait                // finish all pending computations
     GrB_BinaryOp op_2nd = GB_binop_second (A->type, &op_header) ;
 
     //--------------------------------------------------------------------------
-    // determine the method for A = A+T
+    // A = A+T
     //--------------------------------------------------------------------------
+
+    // A single parallel add: S=A+T, free T, and then transplant S back into A.
+    // The nzmax of A is tight, with no room for future incremental growth.
+
+    // FUTURE:: if GB_add could tolerate zombies in A, then the initial
+    // prune of zombies can be skipped.
+
+    // T->Y is not present (GB_builder does not create it).  The old A->Y
+    // is still valid, if present, for the matrix A prior to added the
+    // pending tuples in T.  GB_add may need A->Y to compute S, but it does
+    // not compute S->Y.
 
     // If anz > 0, T is hypersparse, even if A is a GrB_Vector
     ASSERT (GB_IS_HYPERSPARSE (T)) ;
@@ -333,323 +343,93 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anvec = A->nvec ;
     bool ignore ;
 
-#if 0
+    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+    GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
+        false, NULL, NULL, op_2nd, false, true, Werk)) ;
+    GB_Matrix_free (&T) ;
+    ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
 
-// FIXME: remove this option
-
-    // tjfirst = first vector in T
-    const int64_t *restrict Th = T->h ;  // FIXME
-    int64_t tjfirst = Th [0] ;
-    int64_t anz0 = 0 ;
-    int64_t kA = 0 ;
-    int64_t jlast ;
-
-    uint64_t *restrict Ap = A->p ;  // FIXME
-    int64_t *restrict Ah = A->h ;
-    int64_t *restrict Ai = A->i ;
-    GB_void *restrict Ax = (GB_void *) A->x ;
-
-    // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
-    if (Ah != NULL)
+    if (A->no_hyper_hash)
     { 
-        // find tjfirst in Ah
-        int64_t pright = anvec - 1 ;
-        bool found ;
-        GB_SPLIT_BINARY_SEARCH (tjfirst, Ah, kA, pright, found) ;
-        // Ah [0 ... kA-1] excludes vector tjfirst.  The list
-        // Ah [kA ... anvec-1] includes tjfirst.
-        ASSERT (kA >= 0 && kA <= anvec) ;
-        ASSERT (GB_IMPLIES (kA > 0 && kA < anvec, Ah [kA-1] < tjfirst)) ;
-        ASSERT (GB_IMPLIES (found, Ah [kA] == tjfirst)) ;
-        jlast = (kA > 0) ? Ah [kA-1] : (-1) ;
-    }
-    else
-    { 
-        kA = tjfirst ;
-        jlast = tjfirst - 1 ;
-    }
-
-    // anz1 = nnz (W) = nnz (A (:, kA:end)), the region modified by T
-    anz0 = Ap [kA] ;
-    int64_t anz1 = anz - anz0 ;
-    // A + T will have anz_new entries
-    int64_t anz_new = anz + tnz ;       // must have at least this space
-
-    if (2 * anz1 < anz0)
-    {
-
-        //----------------------------------------------------------------------
-        // append new tuples to A
-        //----------------------------------------------------------------------
-
-        // A is growing incrementally.  It splits into two parts: A = [A0 W].
-        // where A0 = A (:, 0:kA-1) and W = A (:, kA:end).  The
-        // first part (A0 with anz0 = nnz (A0) entries) is not modified.  The
-        // second part (W, with anz1 = nnz (W) entries) overlaps with T.
-        // If anz1 is zero, or small compared to anz0, then it is faster to
-        // leave A0 unmodified, and to update just W.
-
-        // TODO: if A also had zombies, GB_selector could pad A so that
-        // GB_nnz_max (A) is equal to anz + tnz.
-
-        // make sure A has enough space for the new tuples
-        if (anz_new > GB_nnz_max (A))
-        { 
-            // double the size if not enough space
-            GB_OK (GB_ix_realloc (A, 2 * anz_new)) ;
-            Ai = A->i ;
-            Ax = (GB_void *) A->x ;
-        }
-
-        //----------------------------------------------------------------------
-        // T = W + T
-        //----------------------------------------------------------------------
-
-        if (anz1 > 0)
-        {
-
-            //------------------------------------------------------------------
-            // extract W = A (:, kA:end) as a shallow copy
-            //------------------------------------------------------------------
-
-            // W = [0, A (:, kA:end)], hypersparse with same dimensions as A
-            GB_CLEAR_STATIC_HEADER (W, &W_header) ;
-            GB_OK (GB_new (&W, // hyper, existing header
-                A->type, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
-                GxB_HYPERSPARSE, GB_ALWAYS_HYPER, anvec - kA, false, false)) ;
-
-            // the W->i and W->x content are shallow copies of A(:,kA:end).
-            // They are not allocated pointers, but point to space inside
-            // Ai and Ax.
-
-            W->x = (void *) (Ax + (A_iso ? 0 : (asize * anz0))) ;
-            W->x_size = (A_iso ? 1 : anz1) * asize  ;
-            W->x_shallow = true ;
-            W->i = Ai + anz0 ;
-            W->i_size = anz1 * sizeof (int64_t) ;
-            W->i_shallow = true ;
-            W->iso = A_iso ;       // OK
-
-            // fill the column W->h and W->p with A->h and A->p, shifted
-            uint64_t *restrict Wp = W->p ;   // FIXME
-            int64_t *restrict Wh = W->h ;
-            int64_t *restrict Ah = A->h ;       // FIXME
-            int64_t a1nvec = 0 ;
-
-            for (int64_t k = kA ; k < anvec ; k++) // TODO:parallel
-            {
-                // get A (:,k)
-                int64_t pA_start = Ap [k] ;
-                int64_t pA_end = Ap [k+1] ;
-                if (pA_end > pA_start)
-                { 
-                    // add this column to W if A (:,k) is not empty
-                    int64_t j = GBH (Ah, k) ;
-                    Wp [a1nvec] = pA_start - anz0 ;
-                    Wh [a1nvec] = j ;
-                    a1nvec++ ;
-                }
-            }
-
-            // finalize W
-            Wp [a1nvec] = anz1 ;
-            W->nvec = a1nvec ;
-            W->nvec_nonempty = a1nvec ;
-            W->nvals = anz1 ;
-            W->magic = GB_MAGIC ;
-
-            ASSERT_MATRIX_OK (W, "W slice for GB_wait", GB0) ;
-
-            //------------------------------------------------------------------
-            // S = W + T, with no operator or mask
-            //------------------------------------------------------------------
-    
-            GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-            GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, W, T,
-                false, NULL, NULL, op_2nd, false, true, Werk)) ;
-
-            ASSERT_MATRIX_OK (S, "S = W+T", GB0) ;
-
-            // free W and T
-            GB_Matrix_free (&T) ;
-            GB_Matrix_free (&W) ;
-
-            //------------------------------------------------------------------
-            // replace T with S
-            //------------------------------------------------------------------
-
-            T = S ;
-            S = NULL ;
-            tnz = GB_nnz (T) ;
-
-            //------------------------------------------------------------------
-            // remove W from the vectors of A, if A is hypersparse
-            //------------------------------------------------------------------
-
-            if (A->h != NULL)
-            { 
-                A->nvec = kA ;
-            }
-        }
-
-        //----------------------------------------------------------------------
-        // append T to the end of A0
-        //----------------------------------------------------------------------
-
-        const uint64_t *restrict Tp = T->p ; // FIXME
-        const int64_t *restrict Th = T->h ;
-        const int64_t *restrict Ti = T->i ;
-        int64_t tnvec = T->nvec ;
-
-        anz = anz0 ;
-        int64_t anz_last = anz ;
-    
-        int nthreads = GB_nthreads (tnz, chunk, nthreads_max) ;
-
-        // append the indices and values of T to the end of A
-        GB_memcpy (Ai + anz, Ti, tnz * sizeof (int64_t), nthreads) ;
-        if (!A_iso)
-        {
-            const GB_void *restrict Tx = (GB_void *) T->x ;
-            GB_memcpy (Ax + anz * asize, Tx, tnz * asize, nthreads) ;
-        }
-
-        // append the vectors of T to the end of A
-        for (int64_t k = 0 ; k < tnvec ; k++) // TODO:parallel
-        { 
-            int64_t j = Th [k] ;
-            ASSERT (j >= tjfirst) ;
-            anz += (Tp [k+1] - Tp [k]) ;
-            GB_OK (GB_jappend (A, j, &jlast, anz, &anz_last, Werk)) ;
-        }
-
-        GB_jwrapup (A, jlast, anz) ;
-        ASSERT (anz == anz_new) ;
-
-        // need to recompute the # of non-empty vectors in GB_conform
-        A->nvec_nonempty = -1 ;     // recomputed just below
-
-        // A->h has been modified so A->Y is now invalid
+        // A does not want the hyper_hash, so free A->Y and S->Y if present
         GB_hyper_hash_free (A) ;
-
-        ASSERT_MATRIX_OK (A, "A after GB_wait:append", GB0) ;
-
-        GB_Matrix_free (&T) ;
-
-        // conform A to its desired sparsity structure
-        GB_OK (GB_conform (A, Werk)) ;
-        ASSERT (A->nvec_nonempty >= 0) ;
-
+        GB_hyper_hash_free (S) ;
     }
-    else
-#endif
-    { 
 
-        //----------------------------------------------------------------------
-        // A = A+T
-        //----------------------------------------------------------------------
-
-        // The update is not incremental since most of A is changing.  Just do
-        // a single parallel add: S=A+T, free T, and then transplant S back
-        // into A.  The nzmax of A is tight, with no room for future
-        // incremental growth.
-
-        // FUTURE:: if GB_add could tolerate zombies in A, then the initial
-        // prune of zombies can be skipped.
-
-        // T->Y is not present (GB_builder does not create it).  The old A->Y
-        // is still valid, if present, for the matrix A prior to added the
-        // pending tuples in T.  GB_add may need A->Y to compute S, but it does
-        // not compute S->Y.
-
-        GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-        GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
-            false, NULL, NULL, op_2nd, false, true, Werk)) ;
-        GB_Matrix_free (&T) ;
-        ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
-
-        if (A->no_hyper_hash)
-        { 
-            // A does not want the hyper_hash, so free A->Y and S->Y if present
-            GB_hyper_hash_free (A) ;
-            GB_hyper_hash_free (S) ;
-        }
-
-        if (GB_IS_HYPERSPARSE (A) && GB_IS_HYPERSPARSE (S) && A->Y != NULL
-            && !A->Y_shallow && !GB_is_shallow (A->Y))
+    if (GB_IS_HYPERSPARSE (A) && GB_IS_HYPERSPARSE (S) && A->Y != NULL
+        && !A->Y_shallow && !GB_is_shallow (A->Y))
+    {
+        // A and S are both hypersparse, and the old A->Y exists and is not
+        // shallow.  Check if S->h and A->h are identical.  If so, remove
+        // A->Y from A and save it.  Then after the transplant of S into A,
+        // below, if A is still hyperparse, transplant Y back into A->Y.
+        if (S->nvec == anvec)
         {
-            // A and S are both hypersparse, and the old A->Y exists and is not
-            // shallow.  Check if S->h and A->h are identical.  If so, remove
-            // A->Y from A and save it.  Then after the transplant of S into A,
-            // below, if A is still hyperparse, transplant Y back into A->Y.
-            if (S->nvec == anvec)
-            {
-                // A and S have the same number of vectors.  Compare Ah and Sh
-                int64_t *restrict Ah = A->h ;   // FIXME
-                int64_t *restrict Sh = S->h ;
-                bool hsame = true ;
-                int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
-                if (nthreads == 1)
-                { 
-                    // compare Ah and Sh with a single thread
-                    hsame = (memcmp (Ah, Sh, anvec * sizeof (int64_t)) //FIXME
-                        == 0) ;
-                }
-                else
-                { 
-                    // compare Ah and Sh with several threads
-                    int ntasks = 64 * nthreads ;
-                    int tid ;
-                    #pragma omp parallel for num_threads(nthreads) \
-                        schedule(dynamic)
-                    for (tid = 0 ; tid < ntasks ; tid++)
+            // A and S have the same number of vectors.  Compare Ah and Sh
+            int64_t *restrict Ah = A->h ;   // FIXME
+            int64_t *restrict Sh = S->h ;
+            bool hsame = true ;
+            int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
+            if (nthreads == 1)
+            { 
+                // compare Ah and Sh with a single thread
+                hsame = (memcmp (Ah, Sh, anvec * sizeof (int64_t)) //FIXME
+                    == 0) ;
+            }
+            else
+            { 
+                // compare Ah and Sh with several threads
+                int ntasks = 64 * nthreads ;
+                int tid ;
+                #pragma omp parallel for num_threads(nthreads) \
+                    schedule(dynamic)
+                for (tid = 0 ; tid < ntasks ; tid++)
+                {
+                    int64_t kstart, kend ;
+                    GB_PARTITION (kstart, kend, anvec, tid, ntasks) ;
+                    bool my_hsame ;
+                    GB_ATOMIC_READ
+                    my_hsame = hsame ;
+                    if (my_hsame)
                     {
-                        int64_t kstart, kend ;
-                        GB_PARTITION (kstart, kend, anvec, tid, ntasks) ;
-                        bool my_hsame ;
-                        GB_ATOMIC_READ
-                        my_hsame = hsame ;
-                        if (my_hsame)
+                        // compare this task's region of Ah and Sh
+                        my_hsame = (memcmp (Ah + kstart, Sh + kstart,
+                            (kend - kstart) * sizeof (int64_t)) //FIXME
+                            == 0) ;
+                        if (!my_hsame)
                         {
-                            // compare this task's region of Ah and Sh
-                            my_hsame = (memcmp (Ah + kstart, Sh + kstart,
-                                (kend - kstart) * sizeof (int64_t)) //FIXME
-                                == 0) ;
-                            if (!my_hsame)
-                            {
-                                // tell other tasks to exit early
-                                GB_ATOMIC_WRITE
-                                hsame = false ;
-                            }
+                            // tell other tasks to exit early
+                            GB_ATOMIC_WRITE
+                            hsame = false ;
                         }
                     }
                 }
-                if (hsame)
-                { 
-                    // Ah and Sh are the same, so keep A->Y
-                    Y = A->Y ;
-                    A->Y = NULL ;
-                    A->Y_shallow = false ;
-                }
+            }
+            if (hsame)
+            { 
+                // Ah and Sh are the same, so keep A->Y
+                Y = A->Y ;
+                A->Y = NULL ;
+                A->Y_shallow = false ;
             }
         }
-
-        // transplant S into A
-        GB_OK (GB_transplant_conform (A, A->type, &S, Werk)) ;
-        ASSERT (A->nvec_nonempty >= 0) ;
-
-        if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL)
-        { 
-            // The hyperlist of A has not changed.  A is still hypersparse, and
-            // has no A->Y after the transplant/conform above.  The original
-            // A->Y is valid, so transplant it back into A.
-            A->Y = Y ;
-            A->Y_shallow = false ;
-            Y = NULL ;
-        }
-
-        ASSERT_MATRIX_OK (A, "A after GB_wait:add", GB0) ;
     }
+
+    // transplant S into A
+    GB_OK (GB_transplant_conform (A, A->type, &S, Werk)) ;
+    ASSERT (A->nvec_nonempty >= 0) ;
+
+    if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL)
+    { 
+        // The hyperlist of A has not changed.  A is still hypersparse, and
+        // has no A->Y after the transplant/conform above.  The original
+        // A->Y is valid, so transplant it back into A.
+        A->Y = Y ;
+        A->Y_shallow = false ;
+        Y = NULL ;
+    }
+
+    ASSERT_MATRIX_OK (A, "A after GB_wait:add", GB0) ;
 
     //--------------------------------------------------------------------------
     // flush the matrix and return result

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #define GB_FREE_WORKSPACE                       \
     if (S != NULL)                              \
     {                                           \
@@ -34,7 +36,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 (
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_iso,               // if true, construct C as iso
-    const GB_void *cscalar,         // iso value of C, if C is io 
+    const GB_void *cscalar,         // iso value of C, if C is iso 
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
     const GrB_Index m,

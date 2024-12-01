@@ -24,7 +24,7 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
 (
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_iso,               // if true, construct C as iso
-    const GB_void *cscalar,         // iso value of C, if C is io 
+    const GB_void *cscalar,         // iso value of C, if C is iso
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
     const GrB_Index m,
@@ -55,6 +55,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     { 
         // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
+        C->p_is_32 = false ;    // OK: bitmap always has *_is_32 = false
+        C->i_is_32 = false ;
         GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_BITMAP, true, true,
             C_iso)) ;
         C->plen = -1 ;

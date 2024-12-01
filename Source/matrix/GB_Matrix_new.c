@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit, should be set to 32-bit
+// DONE: 32/64 bit (but disabled)
 
 // The new matrix is nrows-by-ncols, with no entries in it.  Default format for
 // an empty matrix is hypersparse CSC: A->p is size 2 and all zero, A->h is
@@ -72,8 +72,11 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
+    bool Ap_is_32 = false ; // GB_validate_p_is_32 (true, 1) ;  // FIXME
+    bool Ai_is_32 = false ; // GB_validate_i_is_32 (true, avlen, avdim) ;
+
     return (GB_new (A, // auto sparsity, new header
         type, vlen, vdim, GB_ph_calloc, A_is_csc, GxB_AUTO_SPARSITY,
-        GB_Global_hyper_switch_get ( ), 1, /* FIXME: */ false, false)) ;
+        GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Ai_is_32)) ;
 }
 

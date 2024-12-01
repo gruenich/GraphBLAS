@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG    /* HACK FIXME */
 // DONE: 32/64 bit
 
 // Create a purely shallow copy C of a matrix A.  No typecasting is done.  If A

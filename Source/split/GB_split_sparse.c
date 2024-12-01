@@ -141,7 +141,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             C = NULL ;
             GB_OK (GB_new (&C, // new header
                 atype, cvlen, cvdim, GB_ph_malloc, csc, A_sparsity,
-                hyper_switch, cnvec, false, false)) ;
+                hyper_switch, cnvec, /* FIXME: */ false, false)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
@@ -209,6 +209,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             //------------------------------------------------------------------
             // allocate C->i and C->x for this tile
             //------------------------------------------------------------------
+
+            // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
 
             // set C->iso = A_iso       OK
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso)) ;
