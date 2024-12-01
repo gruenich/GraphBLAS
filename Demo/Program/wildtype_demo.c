@@ -247,7 +247,7 @@ int main (void)
     fprintf (stderr, "GraphBLAS API Version %d.%d.%d", vmajor, vminor, vpatch) ;
 
     get_global_string (str, STRLEN, GxB_API_DATE) ;
-    fprintf (stderr, ", %s", str) ;
+    fprintf (stderr, ", %s ", str) ;
     get_global_string (str, STRLEN, GxB_API_URL) ;
     fprintf (stderr, "(%s)\n", str) ;
     get_global_string (str, STRLEN, GxB_API_ABOUT) ;

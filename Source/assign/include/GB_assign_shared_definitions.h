@@ -1584,8 +1584,8 @@
         return (GrB_OUT_OF_MEMORY) ;                                        \
     }                                                                       \
     GB_Pending Pending = C->Pending ;                                       \
-    int64_t *restrict Pending_i = Pending->i ;                              \
-    int64_t *restrict Pending_j = Pending->j ;                              \
+    GB_CPending_DECLARE (Pending_i) ; GB_CPending_PTR (Pending_i, C, i) ;   \
+    GB_CPending_DECLARE (Pending_j) ; GB_CPending_PTR (Pending_j, C, j) ;   \
     GB_A_TYPE *restrict Pending_x = Pending->x ; /* NULL if C is iso */     \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;
@@ -1651,8 +1651,13 @@
             task_sorted = false ;                                           \
         }                                                                   \
     }                                                                       \
-    Pending_i [my_npending] = iC ;                                          \
-    if (Pending_j != NULL) Pending_j [my_npending] = jC ;                   \
+    /* Pending_i [my_npending] = iC ; */                                    \
+    GB_ISET (Pending_i, my_npending, iC) ;                                  \
+    if (Pending_j != NULL)                                                  \
+    {                                                                       \
+        /* Pending_j [my_npending] = jC ; */                                \
+        GB_ISET (Pending_j, my_npending, jC) ;                              \
+    }                                                                       \
     if (Pending_x != NULL) copy_to_Pending_x ;                              \
     my_npending++ ;                                                         \
     ilast = iC ;                                                            \
@@ -1687,12 +1692,12 @@
                 /* (i,j) is the first pending tuple for this task; check */ \
                 /* with the pending tuple just before it                 */ \
                 ASSERT (my_npending < npending_orig + total_new_npending) ; \
-                int64_t i = Pending_i [my_npending] ;                       \
+                int64_t i = GB_IGET (Pending_i, my_npending) ;              \
                 int64_t j = (Pending_j != NULL) ?                           \
-                            Pending_j [my_npending] : 0 ;                   \
-                int64_t ilast = Pending_i [my_npending-1] ;                 \
+                            GB_IGET (Pending_j, my_npending) : 0 ;          \
+                int64_t ilast = GB_IGET (Pending_i, my_npending-1) ;        \
                 int64_t jlast = (Pending_j != NULL) ?                       \
-                                 Pending_j [my_npending-1] : 0 ;            \
+                                 GB_IGET (Pending_j, my_npending-1) : 0 ;   \
                 pending_sorted = pending_sorted &&                          \
                     ((jlast < j) || (jlast == j && ilast <= i)) ;           \
             }                                                               \

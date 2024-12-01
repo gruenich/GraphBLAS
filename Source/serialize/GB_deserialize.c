@@ -150,11 +150,6 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     C->sparsity_control = sparsity_control ;
     C->iso = iso ;
 
-    // the matrix has no pending work
-    ASSERT (C->Pending == NULL) ;
-    ASSERT (C->nzombies == 0) ;
-    ASSERT (!C->jumbled) ;
-
     //--------------------------------------------------------------------------
     // decompress each array (Cp, Ch, Cb, Ci, and Cx)
     //--------------------------------------------------------------------------

@@ -73,6 +73,9 @@ GrB_Info GB_resize              // change the size of a matrix
     // not been allocated yet, but would be required in the resized matrix.
     // If A is jumbled, it must be sorted.
 
+    // FIXME: if change in max(vlen,vdim) will cause A->i_is_32 to change, then
+    // assemble pending tuples here too
+
     if (vdim_new < vdim_old || vlen_new < vlen_old || A->jumbled ||
         (GB_PENDING (A) && vdim_old <= 1 && vdim_new > 1))
     { 
@@ -253,17 +256,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
         // resize the number of sparse vectors
         uint64_t *restrict Ap = A->p ;  // FIXME
-        int64_t *restrict Ah = A->h ;
-        A->vdim = vdim_new ;
-
-        if (vdim_new < A->plen)
-        { 
-            // reduce the size of A->p and A->h; this cannot fail
-            info = GB_hyper_realloc (A, vdim_new, Werk) ;
-            ASSERT (info == GrB_SUCCESS) ;
-            Ap = A->p ;
-            Ah = A->h ;
-        }
+        int64_t *restrict Ah = A->h ;   // FIXME
 
         if (vdim_new < vdim_old)
         { 
@@ -281,6 +274,13 @@ GrB_Info GB_resize              // change the size of a matrix
             A->nvec_nonempty = -1 ;     // recomputed just below
         }
 
+        if (vdim_new < A->plen)
+        { 
+            // reduce the size of A->p and A->h; this cannot fail
+            info = GB_hyper_realloc (A, vdim_new, Werk) ;
+            ASSERT (info == GrB_SUCCESS) ;
+        }
+
         //----------------------------------------------------------------------
         // resize the length of each vector
         //----------------------------------------------------------------------
@@ -295,10 +295,19 @@ GrB_Info GB_resize              // change the size of a matrix
         }
 
         //----------------------------------------------------------------------
-        // vlen has been resized
+        // change the matrix dimensions
         //----------------------------------------------------------------------
 
         A->vlen = vlen_new ;
+        A->vdim = vdim_new ;
+
+        // FIXME: change A->p_is_32 and A->i_is_32 here, and
+        // do GB_convert_int here too.
+        #if 0
+        if A->p_is_32 or i_is_32 are changing then
+            GB_convert_int ( ... )
+        #endif
+
         ASSERT_MATRIX_OK (A, "A vlen resized", GB0) ;
 
         //----------------------------------------------------------------------

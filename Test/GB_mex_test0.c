@@ -166,7 +166,7 @@ void mexFunction
     GrB_Index I [5] = { 0,   7,   8,   3,    2 },       I2 [LEN] ;
     GrB_Index J [5] = { 4,   1,   2,   2,    1 },       J2 [LEN] ;
     double    X [5] = { 4.5, 8.2, 9.1, -1.2, 3.14159 }, X2 [LEN]  ;
-    GB_Pending AP = NULL ;
+    GB_Pending A_Pending = NULL ;
 
     size_t s ;
     bool        x_bool, ok ;
@@ -804,7 +804,7 @@ void mexFunction
     bool scalar_is_full = GB_IS_FULL (a_scalar) ;
     if (!scalar_is_full)
     {
-        int64_t *Ai = a_scalar->i ;
+        int64_t *Ai = a_scalar->i ; // FIXME
         Ai [0] = GB_ZOMBIE (0) ;
         a_scalar->nzombies = 1 ;
     }
@@ -3995,7 +3995,7 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
     CHECK (!GB_IS_FULL (v)) ;
-    int64_t *Vi = v->i ;
+    int64_t *Vi = v->i ;    // FIXME
     Vi [0] = 1 ;
     Vi [1] = 0 ;
     ERR (GxB_Vector_fprint (v, "v jumbled", G3, ff)) ;
@@ -4012,7 +4012,7 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
 
     v->vdim = 2 ;
-    int64_t *psave = v->p ;
+    void *psave = v->p ;
     size_t p_size_save = v->p_size ;
     GB_Global_memtable_remove (v->p) ;
     v->p_size = 3 * sizeof (int64_t) ;
@@ -4023,8 +4023,8 @@ void mexFunction
     v->vdim = 1 ;
 
     CHECK (!GB_IS_FULL (v)) ;
-    uint64_t *Vp = v->p ;
-    Vp [0] = 1 ;
+    uint64_t *Vp = v->p ;           // FIXME
+    Vp [0] = 1 ;            // FIXME
     ERR (GB_Vector_check (v, "v p[0] invalid", G1, ff)) ;
 
     mxFree (v->p) ;
@@ -4068,10 +4068,10 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    uint64_t *Ap = A->p ;
-    Ap [0] = 1 ;
+    uint64_t *Ap = A->p ;           // FIXME
+    Ap [0] = 1 ;            // FIXME
     ERR (GB_Matrix_check (A, "p[0] invalid", G1, ff)) ;
-    Ap [0] = 0 ;
+    Ap [0] = 0 ;            // FIXME
 
     A->vlen = -1 ;
     ERR (GB_Matrix_check (A, "invalid dimensions", G1, ff)) ;
@@ -4120,17 +4120,17 @@ void mexFunction
     OK (GrB_Matrix_setElement_FP64 (A, 3.14159, 3, 3)) ;
     OK (GB_Matrix_check (A, "with pi pending", G3, NULL)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 1) ;
-    CHECK (AP->type == GrB_FP64) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->n == 1) ;
+    CHECK (A_Pending->type == GrB_FP64) ;
 
     OK (GrB_Matrix_setElement_FP64 (A, 9.0909, 2, 1)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 2) ;
-    CHECK (AP->type == GrB_FP64) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->n == 2) ;
+    CHECK (A_Pending->type == GrB_FP64) ;
 
     OK (GB_Matrix_check (A, "with pi and 9.0909 pending", G3, NULL)) ;
 
@@ -4147,10 +4147,10 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pi", G0, NULL)) ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    Ap = A->p ;
-    Ap [0] = 1 ;
+    Ap = A->p ;         // FIXME
+    Ap [0] = 1 ;            // FIXME
     ERR (GB_Matrix_check (A, "Ap[0] invalid", G1, NULL)) ;
-    Ap [0] = 0 ;
+    Ap [0] = 0 ;            // FIXME
 
     int64_t isave = Ap [1] ;
     Ap [1] = -1 ;
@@ -4172,9 +4172,9 @@ void mexFunction
     ERR (GB_Matrix_check (A, "too many zombies", G1, NULL)) ;
     A->nzombies = isave ;
 
-    int64_t *Ai = A->i ;
-    isave = Ai [0] ;
-    Ai [0] = -1 ;
+    int64_t *Ai = A->i ;    // FIXME
+    isave = Ai [0] ;    // FIXME
+    Ai [0] = -1 ;   // FIXME
     ERR (GB_Matrix_check (A, "row index invalid", G3, NULL)) ;
     Ai [0] = isave ;
 
@@ -4183,8 +4183,8 @@ void mexFunction
     ERR (GB_Matrix_check (A, "bad zombies", G3, NULL)) ;
     A->nzombies = isave ;
 
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
 
     printf ("\n========================================== valid [pi 7.1]\n") ;
     OK (GrB_Matrix_setElement_FP64 (A, 7.1, 1, 0)) ;
@@ -4193,29 +4193,31 @@ void mexFunction
 
     Werk->where = "GB_Matrix_check" ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    isave = AP->n ;
-    AP->n = -1 ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    isave = A_Pending->n ;
+    A_Pending->n = -1 ;
     ERR (GB_Matrix_check (A, "negative pending", G1, NULL)) ;
-    AP->n = isave ;
+    A_Pending->n = isave ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    psave = AP->i ;
-    AP->i = NULL ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    psave = A_Pending->i ;
+    A_Pending->i = NULL ;
     ERR (GB_Matrix_check (A, "missing pending", G3, NULL)) ;
-    AP->i = psave ;
+    A_Pending->i = psave ;
 
     OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G0, NULL)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->j != NULL) ;
-    isave = AP->j [0] ;
-    AP->j [0] = 1070 ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    GB_MDECL (Pending_j, , u) ;
+    GB_GET_PENDING_PTR (Pending_j, A, j) ;
+    CHECK (Pending_j != NULL) ;
+    isave = GB_IGET (Pending_j, 0) ;
+    GB_ISET (Pending_j, 0, 1070) ;
     ERR (GB_Matrix_check (A, "bad pending tuple", G3, NULL)) ;
-    AP->j [0] = isave ;
+    GB_ISET (Pending_j, 0, isave) ;
     OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G0, NULL)) ;
 
     printf ("\n====================================== valid [pi 7.1 11.4]\n") ;
@@ -4225,21 +4227,21 @@ void mexFunction
 
     Werk->where = "GB_Matrix_check" ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    AP->sorted = !(AP->sorted) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    A_Pending->sorted = !(A_Pending->sorted) ;
     printf ("matrix check with jumbled pending tuples:\n") ;
     ERR (GxB_Matrix_fprint (A, "jumbled pending tuples", G3, ff)) ;
     ERR (GB_Matrix_check (A, "jumbled pending tuples", G3, ff)) ;
-    AP->sorted = !(AP->sorted) ;
+    A_Pending->sorted = !(A_Pending->sorted) ;
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G0, ff)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->op == NULL) ;
-    AP->op = op2crud ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->op == NULL) ;
+    A_Pending->op = op2crud ;
     ERR (GB_Matrix_check (A, "invalid operator", G3, NULL)) ;
-    AP->op = NULL ;
+    A_Pending->op = NULL ;
 
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
@@ -4282,8 +4284,8 @@ void mexFunction
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     CHECK (nvals == 5) ;
 
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
     CHECK (A->nzombies == 0) ;
     OK (GrB_Matrix_new (&Empty1, GrB_FP64, 1, 1)) ;
     I [0] = 0 ;
@@ -4697,20 +4699,20 @@ void mexFunction
 
     OK (GrB_Matrix_setElement_FP64 (A, 32.4, 3, 2)) ;
     OK (GB_Matrix_check (A, "A with one pending", G3, NULL)) ;
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 1 && A->nzombies == 0) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->n == 1 && A->nzombies == 0) ;
     GB_Global_mode_set (GrB_BLOCKING) ;
     OK (GB_block (A, Werk)) ;
     OK (GB_Matrix_check (A, "A with no pending", G3, NULL)) ;
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
     CHECK (A->nzombies == 0) ;
     OK (GrB_Matrix_setElement_FP64 (A, 99.4, 3, 3)) ;
     OK (GB_Matrix_check (A, "A blocking mode", G3, NULL)) ;
     GB_Global_mode_set (GrB_NONBLOCKING) ;
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
     CHECK (A->nzombies == 0) ;
 
     printf ("\nAll blocking/nonblocking mode tests passed\n") ;

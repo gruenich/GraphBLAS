@@ -195,7 +195,9 @@ GrB_Info GB_wait                // finish all pending computations
             stype,                  // type of Pending->x
             true,                   // burble is allowed
             Werk,
-            false, false, false, false
+            A->i_is_32, A->i_is_32, // true if Pending->[ij] are 32-bit,
+                                    // false if 64-bit
+            false, false
         ) ;
 
         //----------------------------------------------------------------------

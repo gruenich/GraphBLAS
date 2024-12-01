@@ -487,9 +487,8 @@ struct GB_Context_opaque    // content of GxB_Context
 //------------------------------------------------------------------------------
 
 // Pending tuples are a list of unsorted (i,j,x) tuples that have not yet been
-// added to a matrix.  The data structure is defined in GB_Pending.h.
-
-// FIXME: 32-bit Pending->i and Pending->j; should follow A->i_is_32
+// added to a matrix.  The indices Pending->i and Pending->j are 32/64 bit, as
+// determined by A->i_is_32.
 
 struct GB_Pending_struct    // list of pending tuples for a matrix
 {
@@ -497,9 +496,9 @@ struct GB_Pending_struct    // list of pending tuples for a matrix
     int64_t n ;         // number of pending tuples to add to matrix
     int64_t nmax ;      // size of i,j,x
     bool sorted ;       // true if pending tuples are in sorted order
-    int64_t *i ;        // row indices of pending tuples
+    void *i ;           // row indices of pending tuples
     size_t i_size ;
-    int64_t *j ;        // col indices of pending tuples; NULL if A->vdim <= 1
+    void *j ;           // col indices of pending tuples; NULL if A->vdim <= 1
     size_t j_size ;
     GB_void *x ;        // values of pending tuples
     size_t x_size ;
@@ -587,17 +586,24 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         I ## 64 = (is_32) ? NULL : I
 
     // helper macro: get a 32/64-bit pointer from a matrix
-    #define GB_GET_MATRIX_PTR(I,A,is_32,component)                  \
-        I = (A) ? A->component : NULL ;                             \
-        I ## 32 = (A) ? (A->is_32 ? I : NULL) : NULL ;              \
+    #define GB_GET_MATRIX_PTR(I,A,is_32,component)      \
+        I = (A) ? A->component : NULL ;                 \
+        I ## 32 = (A) ? (A->is_32 ? I : NULL) : NULL ;  \
         I ## 64 = (A) ? (A->is_32 ? NULL : I) : NULL
 
-    // helper macro: get a 32/64-bit pointer from a matrix hyper_hash.
-    // The integer types of A->Y->[pix] are defined by A->i_is_32.
-    #define GB_GET_HYPER_PTR(I,A,component)                                    \
-        I = (A && A->Y) ? A->Y->component : NULL ;                             \
-        I ## 32 = (A && A->Y) ? (A->i_is_32 ? A->Y->component : NULL) : NULL ; \
-        I ## 64 = (A && A->Y) ? (A->i_is_32 ? NULL : A->Y->component) : NULL
+    // helper macro: get a 32/64-bit pointer from a matrix hyper_hash.  The
+    // integer types of A->Y->[pix] are defined by A->i_is_32.
+    #define GB_GET_HYPER_PTR(I,A,pix)                                    \
+        I = (A && A->Y) ? A->Y->pix : NULL ;                             \
+        I ## 32 = (A && A->Y) ? (A->i_is_32 ? A->Y->pix : NULL) : NULL ; \
+        I ## 64 = (A && A->Y) ? (A->i_is_32 ? NULL : A->Y->pix) : NULL
+
+    // helper macro: get a 32/64-bit pointer from a matrix Pending object.  The
+    // integer types of A->Pending->[ij] are defined by A->i_is_32.
+    #define GB_GET_PENDING_PTR(I,A,ij)                      \
+        I = A->Pending->ij ;                                \
+        I ## 32 = (A->i_is_32 ? A->Pending->ij : NULL) ;    \
+        I ## 64 = (A->i_is_32 ? NULL : A->Pending->ij)
 
     // general method for getting an entry from the Ap array of a matrix
     #define GBp(Ap,k,vlen)                  \
@@ -630,6 +636,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_CYp_DECLARE(C_Yp,const) GB_MDECL (C_Yp, const, u)
         #define GB_CYi_DECLARE(C_Yi,const) GB_MDECL (C_Yi, const, u)
         #define GB_CYx_DECLARE(C_Yx,const) GB_MDECL (C_Yx, const, u)
+        #define GB_CPending_DECLARE(Pending_ij) GB_MDECL (Pending_ij, , u)
 
         // M matrix:
         #define GB_Mp_DECLARE(Mp,const)    GB_MDECL (Mp,   const, u)
@@ -688,6 +695,8 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_CYp_PTR(C_Yp,C) GB_GET_HYPER_PTR  (C_Yp, C, p)
         #define GB_CYi_PTR(C_Yi,C) GB_GET_HYPER_PTR  (C_Yi, C, i)
         #define GB_CYx_PTR(C_Yx,C) GB_GET_HYPER_PTR  (C_Yx, C, x)
+        #define GB_CPending_PTR(Pending_ij,C,ij) \
+                GB_GET_PENDING_PTR (Pending_ij, C, ij)
 
         // M matrix:
         #define GB_Mp_PTR(Mp,M)    GB_GET_MATRIX_PTR (Mp,   M, p_is_32, p)
@@ -821,6 +830,10 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     #define GB_GET_HYPER_PTR(I,A,component) \
         I = (A && A->Y) ? (A->Y->component) : NULL
 
+    // helper macro: get a 32/64-bit pointer from a matrix Pending object.
+    #define GB_GET_PENDING_PTR(I,A,ij) \
+        I = A->Pending->ij ;
+
     // FIXME: GBh is only needed for subassign Zh, but it's not from a matrix.
     #define GBh(Ah,k) ((Ah) ? Ah [k] : (k))
 
@@ -834,6 +847,8 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_CYp_DECLARE(C_Yp,const) GB_IDECL (C_Yp,const, u, GB_Ci_BITS)
         #define GB_CYi_DECLARE(C_Yi,const) GB_IDECL (C_Yi,const, u, GB_Ci_BITS)
         #define GB_CYx_DECLARE(C_Yx,const) GB_IDECL (C_Yx,const, u, GB_Ci_BITS)
+        #define GB_CPending_DECLARE(Pending_ij) \
+                GB_IDECL (Pending_ij, , u, GB_Ci_BITS)
 
         // M matrix:
         #define GB_Mp_DECLARE(Mp,const)    GB_IDECL (Mp,  const, u, GB_Mp_BITS)
@@ -892,6 +907,8 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_CYp_PTR(C_Yp,C) GB_GET_HYPER_PTR  (C_Yp, C, p)
         #define GB_CYi_PTR(C_Yi,C) GB_GET_HYPER_PTR  (C_Yi, C, i)
         #define GB_CYx_PTR(C_Yx,C) GB_GET_HYPER_PTR  (C_Yx, C, x)
+        #define GB_CPending_PTR(Pending_ij,C,ij) \
+                GB_GET_PENDING_PTR (Pending_ij, C, ij)
 
         // M matrix:
         #define GB_Mp_PTR(Mp,M)    GB_GET_MATRIX_PTR (Mp,   M, p)

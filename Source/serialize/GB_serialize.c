@@ -117,6 +117,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_OK (GB_wait (A, "A to serialize", Werk)) ;
     ASSERT (A->nvec_nonempty >= 0) ;
 
+    // the matrix has no pending work
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
+
     //--------------------------------------------------------------------------
     // determine maximum # of threads
     //--------------------------------------------------------------------------
@@ -152,10 +157,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     float hyper_switch = A->hyper_switch ;
     float bitmap_switch = A->bitmap_switch ;
     int32_t sparsity_control = A->sparsity_control ;
-    // the matrix has no pending work
-    ASSERT (A->Pending == NULL) ;
-    ASSERT (A->nzombies == 0) ;
-    ASSERT (!A->jumbled) ;
     GrB_Type atype = A->type ;
     int64_t typesize = atype->size ;
     int32_t typecode = (int32_t) (atype->code) ;

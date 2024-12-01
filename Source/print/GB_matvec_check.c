@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // for code development only:
 #ifdef GRAPHBLAS_HAS_CUDA
 // when CUDA kernels enabled:
@@ -773,12 +775,16 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // A has pending tuples
         //---------------------------------------------------------------------
 
+        GB_MDECL (Pending_i, , u) ; GB_GET_PENDING_PTR (Pending_i, A, i) ;
+        GB_MDECL (Pending_j, , u) ; GB_GET_PENDING_PTR (Pending_j, A, j) ;
+        GB_void *Pending_x = Pending->x ;
+
         #if GB_DEVELOPER
         if (pr_short || pr_complete)
         {
-            GBPR ("  Pending->i %p\n", Pending->i) ;
-            GBPR ("  Pending->j %p\n", Pending->j) ;
-            GBPR ("  Pending->x %p\n", Pending->x) ;
+            GBPR ("  Pending_i %p\n", Pending_i) ;
+            GBPR ("  Pending_j %p\n", Pending_j) ;
+            GBPR ("  Pending_x %p\n", Pending_x) ;
         }
         #endif
 
@@ -790,10 +796,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
 
         // matrix has tuples, arrays and type must not be NULL
-        // Pending->x must be NULL if and only if A is iso
-        // Pending->x must be non-NULL if and only if A is non-iso
-        if (Pending->i == NULL || ((Pending->x == NULL) != (A->iso)) ||
-            (A->vdim > 1 && Pending->j == NULL))
+        // Pending_x must be NULL if and only if A is iso
+        // Pending_x must be non-NULL if and only if A is non-iso
+        if (Pending_i == NULL || ((Pending_x == NULL) != (A->iso)) ||
+            (A->vdim > 1 && Pending_j == NULL))
         { 
             GBPR0 ("  invalid pending tuples\n") ;
             return (GrB_INVALID_OBJECT) ;
@@ -815,8 +821,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         for (int64_t k = 0 ; k < Pending->n ; k++)
         {
-            int64_t i = Pending->i [k] ;
-            int64_t j = (A->vdim <= 1) ? 0 : (Pending->j [k]) ;
+            int64_t i = GB_IGET (Pending_i, k) ;
+            int64_t j = (A->vdim <= 1) ? 0 : GB_IGET (Pending_j, k) ;
             int64_t row = (A->is_csc ? i : j) + offset ;
             int64_t col = (A->is_csc ? j : i) + offset ;
 
@@ -827,7 +833,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 if (!A->iso)
                 { 
                     info = GB_entry_check (Pending->type,
-                        Pending->x +(k * Pending->type->size), pr, f) ;
+                        Pending_x +(k * Pending->type->size), pr, f) ;
                     if (info != GrB_SUCCESS) return (info) ;
                 }
                 GBPR ("\n") ;

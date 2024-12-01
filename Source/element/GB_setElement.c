@@ -430,8 +430,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // tuples becomes the type of this scalar, and the pending operator
             // becomes NULL, which is the implicit SECOND_ctype operator,
             // or non-NULL if accum is present.
-            if (!GB_Pending_add (&(C->Pending), C->iso, (GB_void *) scalar,
-                stype, accum, i, j, C->vdim > 1, Werk))
+            if (!GB_Pending_add (C, (GB_void *) scalar, stype, accum, i, j,
+                Werk))
             { 
                 // out of memory
                 GB_phybix_free (C) ;
