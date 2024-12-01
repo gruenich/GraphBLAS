@@ -81,7 +81,8 @@ GrB_Info GB_subassign_26
     // resize C if necessary
     //--------------------------------------------------------------------------
 
-    // FIXME: change C->p_is_32 if problem grows too large
+    // FIXME: change C->p_is_32 if problem grows too large.
+    // C->i_is_32 does not change since the matrix dimensions are constant.
 
     int64_t cnz_new = cnz + anz ;
 

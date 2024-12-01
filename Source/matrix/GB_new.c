@@ -149,8 +149,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // all vectors present, unless matrix has a zero dimension 
         A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
         // full/bitmap matrices ignore the A->p_is_32 and A->i_is_32 flags
-        p_is_32 = false ;
-        i_is_32 = false ;
+        p_is_32 = false ;    // OK: bitmap/full always has p_is_32 = false
+        i_is_32 = false ;    // OK: bitmap/full always has i_is_32 = false
     }
     else if (A_is_hyper)
     { 
@@ -180,7 +180,6 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->jumbled = false ;
     A->Pending = NULL ;
     A->iso = false ;            // OK: if iso, burble in the caller
-
     A->p_is_32 = p_is_32 ;
     A->i_is_32 = i_is_32 ;
 

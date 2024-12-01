@@ -12,7 +12,8 @@
 
 // Reallocates A->x and A->i to the requested size, preserving the existing
 // content of A->x and A->i.  Preserves pending tuples and zombies, if any.
-// A->i_is_32 is unchanged since the matrix dimensions do not change.
+// A->i_is_32 is unchanged since the matrix dimensions do not change, and thus
+// A->Y is not modified.
 
 // If nzmax_new is too large for the current value of A->p_is_32, then A->p
 // is converted to 64-bit integers and A->p_is_32 is set true.  The content of

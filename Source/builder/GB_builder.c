@@ -226,8 +226,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // K_is_32 does not use GB_validate_i_is_32 since it is not transplanted
     // into the output matrix T.
     bool K_is_32 = (nvals < UINT32_MAX) ;
-    void *restrict K_work = NULL ; size_t K_work_size = 0 ;
-    GB_IDECL (K_work, , u) ;
+    GB_MDECL (K_work, , u) ; size_t K_work_size = 0 ;
 
     Ti_is_32 = GB_validate_i_is_32 (Ti_is_32, vlen, vdim) ;
 

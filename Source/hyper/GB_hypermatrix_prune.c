@@ -2,14 +2,18 @@
 // GB_hypermatrix_prune: prune empty vectors from a hypersparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG /* HACK FIXME */
+// DONE: 32/64 bit
+
 // On input, A->p and A->h may be shallow.  If modified, new arrays A->p and
 // A->h are created, which are not shallow.  If these arrays are not modified,
-// and are shallow on input, then they remain shallow on output.
+// and are shallow on input, then they remain shallow on output.  A->p_is_32
+// and A->i_is_32 are unchanged.
 
 #include "GB.h"
 
@@ -52,11 +56,10 @@ GrB_Info GB_hypermatrix_prune
     if (A->nvec_nonempty < A->nvec)     // A->nvec_nonempty used here
     {
         // create new Ap_new and Ah_new arrays, with no empty vectors
-        int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        int64_t *restrict Ah_new = NULL ; size_t Ah_new_size = 0 ;
+        void *Ap_new = NULL ; size_t Ap_new_size = 0 ;
+        void *Ah_new = NULL ; size_t Ah_new_size = 0 ;
         int64_t nvec_new, plen_new ;
         int64_t anz = A->nvals ;
-        ASSERT (anz == A->p [A->nvec]) ;
         GrB_Info info = GB_hyper_prune (&Ap_new, &Ap_new_size,
             &Ah_new, &Ah_new_size, &nvec_new, &plen_new,
             A->p, A->h, A->nvec, Werk) ;
@@ -78,7 +81,6 @@ GrB_Info GB_hypermatrix_prune
         A->plen = plen_new ;
         A->nvec_nonempty = nvec_new ;
         A->nvals = anz ;
-        ASSERT (anz == A->p [A->nvec]) ;
         A->magic = GB_MAGIC ;
     }
 

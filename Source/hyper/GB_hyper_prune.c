@@ -2,10 +2,15 @@
 // GB_hyper_prune: remove empty vectors from a hypersparse Ap, Ah list
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+#define GB_DEBUG /* HACK FIXME */
+// FIXME: 32/64 bit
+
+// FIXME: move this into GB_hypermatrix_prune.
 
 // Removes empty vectors from a hypersparse list.  On input, *Ap and *Ah are
 // assumed to be NULL.  The input arrays Ap_old and Ah_old are not modified,

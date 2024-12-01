@@ -69,8 +69,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->p_shallow = (A->p != NULL) ;     // C->p not freed when freeing C
     C->h_shallow = (A->h != NULL) ;     // C->h not freed when freeing C
     C->p = A->p ;                       // C->p is of size A->plen + 1
-    C->p_is_32 = A->p_is_32 ;
     C->h = A->h ;                       // C->h is of size A->plen
+    C->p_is_32 = A->p_is_32 ;
     C->i_is_32 = A->i_is_32 ;
     C->p_size = A->p_size ;
     C->h_size = A->h_size ;

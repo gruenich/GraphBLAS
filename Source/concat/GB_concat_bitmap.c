@@ -55,8 +55,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     { 
         // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
-        C->p_is_32 = false ;    // OK: bitmap always has *_is_32 = false
-        C->i_is_32 = false ;
+        C->p_is_32 = false ;    // OK: bitmap always has p_is_32 = false
+        C->i_is_32 = false ;    // OK: bitmap always has i_is_32 = false
         GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_BITMAP, true, true,
             C_iso)) ;
         C->plen = -1 ;

@@ -40,7 +40,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     GB_BURBLE_N (anz, "(full to sparse) ") ;
 
     bool Ap_is_32 = false ; // GB_validate_p_is_32 (true, anz) ;    FIXME
-    bool Ai_is_32 = false ; // GB_validate_i_is_32 (true, avlen, avdim) ;
+    bool Ai_is_32 = false ; // GB_validate_i_is_32 (true, avlen, avdim) ; FIXME
 
     void *Ap = NULL ; size_t Ap_size = 0 ;
     void *Ai = NULL ; size_t Ai_size = 0 ;
