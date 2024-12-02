@@ -195,7 +195,7 @@ void mexFunction
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have zombies",
         GxB_SHORT, NULL)) ;
     A->nzombies = 0 ;
-    CHECK (GB_Pending_alloc (&(A->Pending), false, GrB_INT32, NULL, true, 4)) ;
+    CHECK (GB_Pending_alloc (A, false, GrB_INT32, NULL, 4)) ;
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have pending tuples",
         GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;

@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+#define GB_DEBUG    /* HACK FIXME */
+
+// DONE: 32/64 bit
 
 // Reallocate a list of pending tuples.  If it fails, the list is freed.
 
@@ -15,7 +17,7 @@
 
 bool GB_Pending_realloc     // reallocate a list of pending tuples
 (
-    GB_Pending *PHandle,    // Pending tuple list to reallocate
+    GrB_Matrix C,           // matrix to reallocate C->Pending for
     int64_t nnew,           // # of new tuples to accomodate
     GB_Werk Werk
 )
@@ -25,8 +27,9 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (PHandle != NULL) ;
-    GB_Pending Pending = (*PHandle) ;
+    ASSERT (C != NULL) ;
+    GB_Pending Pending = C->Pending ;
+    ASSERT (Pending != NULL) ;
 
     //--------------------------------------------------------------------------
     // ensure the list can hold at least nnew more tuples
@@ -47,16 +50,18 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
         // reallocate the i,j,x arrays
         //----------------------------------------------------------------------
 
+        size_t isize = (C->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
         bool ok1 = true ;
         bool ok2 = true ;
         bool ok3 = true ;
 
-        GB_REALLOC (Pending->i, newsize, int64_t, // FIXME
+        Pending->i = GB_realloc_memory (newsize, isize, Pending->i,
             &(Pending->i_size), &ok1) ;
         if (Pending->j != NULL)
         { 
-            GB_REALLOC (Pending->j, newsize, int64_t, // FIXME
-                &(Pending->j_size), &ok2);
+            Pending->j = GB_realloc_memory (newsize, isize, Pending->j,
+                &(Pending->j_size), &ok2) ;
         }
         size_t s = Pending->size ;
         if (Pending->x != NULL)
@@ -67,7 +72,7 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
         if (!ok1 || !ok2 || !ok3)
         { 
             // out of memory
-            GB_Pending_free (PHandle) ;
+            GB_Pending_free (&(C->Pending)) ;
             return (false) ;
         }
 

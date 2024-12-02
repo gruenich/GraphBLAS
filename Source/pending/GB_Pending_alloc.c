@@ -7,17 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+#define GB_DEBUG    /* HACK FIXME */
+
+// DONE: 32/64 bit
 
 #include "pending/GB_Pending.h"
 
 bool GB_Pending_alloc       // create a list of pending tuples
 (
-    GB_Pending *PHandle,    // output
+    GrB_Matrix C,           // matrix to create C->Pending for
     bool iso,               // if true, do not allocate Pending->x
     GrB_Type type,          // type of pending tuples
     GrB_BinaryOp op,        // operator for assembling pending tuples
-    bool is_matrix,         // true if Pending->j must be allocated
     int64_t nmax            // # of pending tuples to hold
 )
 {
@@ -26,8 +27,8 @@ bool GB_Pending_alloc       // create a list of pending tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (PHandle != NULL) ;
-    (*PHandle) = NULL ;
+    ASSERT (C != NULL) ;
+    ASSERT (C->Pending == NULL) ;
 
     //--------------------------------------------------------------------------
     // allocate the Pending header
@@ -57,11 +58,14 @@ bool GB_Pending_alloc       // create a list of pending tuples
     Pending->j_size = 0 ;
     Pending->x_size = 0 ;
 
-    Pending->i = GB_MALLOC (nmax, int64_t, &(Pending->i_size)) ;    // FIXME
+    bool is_matrix = (C->vdim > 1) ;
+    size_t isize = (C->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    Pending->i = GB_malloc_memory (nmax, isize, &(Pending->i_size)) ;
     Pending->j = NULL ;
     if (is_matrix)
     { 
-        Pending->j = GB_MALLOC (nmax, int64_t, &(Pending->j_size)) ; // FIXME
+        Pending->j = GB_malloc_memory (nmax, isize, &(Pending->j_size)) ;
     }
     Pending->x = NULL ;
     if (!iso)
@@ -83,7 +87,7 @@ bool GB_Pending_alloc       // create a list of pending tuples
     // return result
     //--------------------------------------------------------------------------
 
-    (*PHandle) = Pending ;
+    C->Pending = Pending ;
     return (true) ;
 }
 

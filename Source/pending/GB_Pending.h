@@ -19,17 +19,16 @@
 
 bool GB_Pending_alloc       // create a list of pending tuples
 (
-    GB_Pending *PHandle,    // output
+    GrB_Matrix C,           // matrix to create C->Pending for
     bool iso,               // if true, do not allocate Pending->x
     GrB_Type type,          // type of pending tuples
     GrB_BinaryOp op,        // operator for assembling pending tuples
-    bool is_matrix,         // true if Pending->j must be allocated
     int64_t nmax            // # of pending tuples to hold
 ) ;
 
 bool GB_Pending_realloc     // reallocate a list of pending tuples
 (
-    GB_Pending *PHandle,    // Pending tuple list to reallocate
+    GrB_Matrix C,           // matrix to reallocate C->Pending for
     int64_t nnew,           // # of new tuples to accomodate
     GB_Werk Werk
 ) ;
@@ -67,8 +66,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
     //--------------------------------------------------------------------------
 
     bool iso = C->iso ;
-    bool is_matrix = (C->vdim > 1) ;
-    if (!GB_Pending_ensure (&(C->Pending), iso, type, op, is_matrix, 1, Werk))
+    if (!GB_Pending_ensure (C, iso, type, op, 1, Werk))
     {
         return (false) ;
     }
@@ -78,7 +76,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
     ASSERT (Pending->type == type) ;
     ASSERT (Pending->nmax > 0 && n < Pending->nmax) ;
     ASSERT (Pending->i != NULL) ;
-    ASSERT ((is_matrix) == (Pending->j != NULL)) ;
+    ASSERT ((C->vdim > 1) == (Pending->j != NULL)) ;
 
     //--------------------------------------------------------------------------
     // keep track of whether or not the pending tuples are already sorted

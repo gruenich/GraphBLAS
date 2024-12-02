@@ -214,11 +214,10 @@ GrB_Info GX_subassign_IxJ_slice                                             \
 #define GB_CALLBACK_PENDING_ENSURE_PROTO(GX_Pending_ensure)                 \
 bool GX_Pending_ensure                                                      \
 (                                                                           \
-    GB_Pending *PHandle,    /* input/output */                              \
+    GrB_Matrix C,           /* matrix with C->Pending */                    \
     bool iso,               /* if true, do not allocate Pending->x */       \
     GrB_Type type,          /* type of pending tuples */                    \
     GrB_BinaryOp op,        /* operator for assembling pending tuples */    \
-    bool is_matrix,         /* true if Pending->j must be allocated */      \
     int64_t nnew,           /* # of pending tuples to add */                \
     GB_Werk Werk                                                            \
 )

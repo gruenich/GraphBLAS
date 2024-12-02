@@ -190,8 +190,7 @@
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t Cvdim = C->vdim ;                                         \
     const int64_t Cvlen = C->vlen ;                                         \
-    int64_t nzombies = C->nzombies ;                                        \
-    const bool is_matrix = (Cvdim > 1) ;
+    int64_t nzombies = C->nzombies ;
 
 #ifndef GB_DECLAREC
 #define GB_DECLAREC(cwork) GB_void cwork [GB_VLA(csize)] ;
@@ -1581,8 +1580,8 @@
     /* ensure C->Pending is large enough to handle total_new_npending */    \
     /* more tuples.  The type of Pending->x is atype, the type of A or */   \
     /* the scalar. */                                                       \
-    if (!GB_Pending_ensure (&(C->Pending), GB_C_ISO, atype, accum,          \
-        is_matrix, total_new_npending, Werk))                               \
+    if (!GB_Pending_ensure (C, GB_C_ISO, atype, accum, total_new_npending,  \
+        Werk))                                                              \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
         return (GrB_OUT_OF_MEMORY) ;                                        \
