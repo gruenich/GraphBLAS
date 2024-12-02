@@ -90,11 +90,13 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_nvals (fp, "C", csparsity, false) ;
     GB_macrofy_type (fp, "C", "_", ctype->name) ;
+    GB_macrofy_bits (fp, "C", false, false) ;       // FIXME
 
     GrB_Type atype = ctype ;        // C and A have the same type
     GB_macrofy_sparsity (fp, "A", asparsity) ;
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
     GB_macrofy_type (fp, "A", "_", atype->name) ;
+    GB_macrofy_bits (fp, "A", false, false) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // include the final default definitions

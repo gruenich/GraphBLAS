@@ -75,17 +75,8 @@
         GB_PARTITION (pC, pC_end, cnz, tid, nthreads) ;
 
         // find where this task starts in C
-        int64_t kC_task ;
-        if (GB_Cp_BITS == 32)
-        { 
-            // Cp is 32-bit
-            kC_task = GB_search_for_vector_32 (Cp, pC, 0, cnvec, cvlen) ;
-        }
-        else
-        { 
-            // Cp is 64-bit
-            kC_task = GB_search_for_vector_64 (Cp, pC, 0, cnvec, cvlen) ;
-        }
+        int64_t kC_task = GB_search_for_vector (Cp, GB_Cp_IS_32, pC, 0, cnvec,
+            cvlen) ;
         int64_t pC_delta = pC - GBp_C (Cp, kC_task, cvlen) ;
 
         //----------------------------------------------------------------------

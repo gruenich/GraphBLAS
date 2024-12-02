@@ -227,6 +227,7 @@ void GB_macrofy_build           // construct all macros for GB_build
 
     fprintf (fp, "\n// 32/64 integer types:\n") ;
     fprintf (fp, "#define GB_Ti_TYPE %s\n", Ti_is_32 ? "int32_t" : "int64_t") ;
+    fprintf (fp, "#define GB_Ti_BITS %d\n", Ti_is_32 ? 32 : 64) ;
     fprintf (fp, "#define GB_I_TYPE  %s\n", I_is_32  ? "uint32_t":"uint64_t") ;
     fprintf (fp, "#define GB_K_TYPE  %s\n", K_is_32  ? "uint32_t":"uint64_t") ;
     fprintf (fp, "#define GB_K_WORK(k) %s\n", K_is_null ? "k" : "K_work [k]") ;

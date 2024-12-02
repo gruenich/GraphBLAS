@@ -188,6 +188,9 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
         fprintf (fp, "#define GB_Cp_TYPE uint%d_t\n", Cp_is_32 ? 32 : 64) ;
         fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
         fprintf (fp, "#define GB_Cj_TYPE uint%d_t\n", Cj_is_32 ? 32 : 64) ;
+        fprintf (fp, "#define GB_Cp_BITS %d\n", Cp_is_32 ? 32 : 64) ;
+        fprintf (fp, "#define GB_Ci_BITS %d\n", Ci_is_32 ? 32 : 64) ;
+        fprintf (fp, "#define GB_Cj_BITS %d\n", Cj_is_32 ? 32 : 64) ;
     }
 
     //--------------------------------------------------------------------------

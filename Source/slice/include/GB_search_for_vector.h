@@ -26,5 +26,25 @@
 #define GB_search_for_vector_TYPE GB_search_for_vector_64
 #include "include/GB_search_for_vector_template.h"
 
+static inline int64_t GB_search_for_vector // return vector k
+(
+    const void *Ap,                 // vector pointers to search
+    const bool Ap_is_32,            // if true, Ap is 32-bit, else 64-bit
+    const int64_t p,                // search for vector k that contains p
+    const int64_t kleft,            // left-most k to search
+    const int64_t anvec,            // Ap is of size anvec+1
+    const int64_t avlen             // A->vlen
+)
+{
+    if (Ap_is_32)
+    {
+        return (GB_search_for_vector_32 (Ap, p, kleft, anvec, avlen)) ;
+    }
+    else
+    {
+        return (GB_search_for_vector_64 (Ap, p, kleft, anvec, avlen)) ;
+    }
+}
+
 #endif
 

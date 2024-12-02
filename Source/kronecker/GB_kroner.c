@@ -178,7 +178,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
-    #define GB_Cp_BITS ((Cp_is_32) ? 32 : 64)
+    #define GB_Cp_IS_32 Cp_is_32
 
     if (!C_is_full)
     { 

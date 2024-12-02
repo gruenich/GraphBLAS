@@ -817,6 +817,15 @@ void GB_macrofy_output
     int i_is_32             // if true, Ci is 32-bit, else 64-bit
 ) ;
 
+void GB_macrofy_bits
+(
+    FILE *fp,
+    // input:
+    const char *Aname,      // name of the matrix
+    int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int i_is_32             // if true, Ai is 32-bit, else 64-bit
+) ;
+
 //------------------------------------------------------------------------------
 // monoid identity and terminal values
 //------------------------------------------------------------------------------

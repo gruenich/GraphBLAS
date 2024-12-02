@@ -23,9 +23,9 @@ static inline int64_t GB_search_for_vector_TYPE // return vector k
 (
     const GB_SV_TYPE *restrict Ap,  // vector pointers to search
     const int64_t p,                // search for vector k that contains p
-    int64_t kleft,                  // left-most k to search
-    int64_t anvec,                  // Ap is of size anvec+1
-    int64_t avlen                   // A->vlen
+    const int64_t kleft,            // left-most k to search
+    const int64_t anvec,            // Ap is of size anvec+1
+    const int64_t avlen             // A->vlen
 )
 {
 

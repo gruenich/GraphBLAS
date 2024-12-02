@@ -111,6 +111,7 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "R", rsparsity) ;
     GB_macrofy_nvals (fp, "R", rsparsity, false) ;
     fprintf (fp, "#define GB_R_ISO 0\n") ;
+    GB_macrofy_bits (fp, "R", false, false) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // construct the macros for C, M, and Z
@@ -119,12 +120,14 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_nvals (fp, "C", csparsity, C_iso) ;
     fprintf (fp, "#define GB_C_ISO %d\n", C_iso) ;
+    GB_macrofy_bits (fp, "C", false, false) ;       // FIXME
 
     GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
 
     GB_macrofy_sparsity (fp, "Z", zsparsity) ;
     GB_macrofy_nvals (fp, "Z", zsparsity, Z_iso) ;
     fprintf (fp, "#define GB_Z_ISO %d\n", Z_iso) ;
+    GB_macrofy_bits (fp, "Z", false, false) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // include the final default definitions

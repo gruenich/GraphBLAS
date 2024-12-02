@@ -177,25 +177,15 @@ GrB_Info GB_AxB_dot3_slice
 
         if (pfirst <= plast)
         { 
+            // find the first vector of the slice for task taskid: the
+            // vector that owns the entry Ci [pfirst] and Cx [pfirst].
+            int64_t kfirst = GB_search_for_vector (Cp, Cp_is_32, pfirst, 0,
+                cnvec, cvlen) ;
 
-            int64_t kfirst, klast ;
-            if (Cp_is_32)
-            {
-                // find the first vector of the slice for task taskid: the
-                // vector that owns the entry Ci [pfirst] and Cx [pfirst].
-                kfirst = GB_search_for_vector_32 (Cp, pfirst, 0, cnvec, cvlen) ;
-                // find the last vector of the slice for task taskid: the
-                // vector that owns the entry Ci [plast] and Cx [plast].
-                klast  = GB_search_for_vector_32 (Cp, plast, kfirst, cnvec,
-                    cvlen) ;
-            }
-            else
-            {
-                // as above, 64-bit version
-                kfirst = GB_search_for_vector_64 (Cp, pfirst, 0, cnvec, cvlen) ;
-                klast  = GB_search_for_vector_64 (Cp, plast, kfirst, cnvec,
-                    cvlen) ;
-            }
+            // find the last vector of the slice for task taskid: the
+            // vector that owns the entry Ci [plast] and Cx [plast].
+            int64_t klast  = GB_search_for_vector (Cp, Cp_is_32, plast,
+                kfirst, cnvec, cvlen) ;
 
             // construct a coarse task that computes Ci,Cx [pfirst:plast].
             // These entries appear in C(:,kfirst:klast), but this task does

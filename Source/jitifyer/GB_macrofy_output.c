@@ -93,7 +93,6 @@ void GB_macrofy_output
     // construct macros for 32/64 integer types
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "#define GB_%sp_BITS %d\n", Cname, p_is_32 ? 32 : 64) ;
-    fprintf (fp, "#define GB_%si_BITS %d\n", Cname, i_is_32 ? 32 : 64) ;
+    GB_macrofy_bits (fp, Cname, p_is_32, i_is_32) ;
 }
 
