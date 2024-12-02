@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
 // DONE: 32/64 bit
 
 // Reallocates A->x and A->i to the requested size, preserving the existing

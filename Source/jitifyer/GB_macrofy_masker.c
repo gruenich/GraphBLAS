@@ -122,7 +122,8 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     fprintf (fp, "#define GB_C_ISO %d\n", C_iso) ;
     GB_macrofy_bits (fp, "C", false, false) ;       // FIXME
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
+        /* FIXME: */ false, false) ;
 
     GB_macrofy_sparsity (fp, "Z", zsparsity) ;
     GB_macrofy_nvals (fp, "Z", zsparsity, Z_iso) ;

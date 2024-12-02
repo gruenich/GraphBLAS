@@ -28,14 +28,6 @@ void GB_macrofy_preface
 ) ;
 
 //------------------------------------------------------------------------------
-// left and right shift
-//------------------------------------------------------------------------------
-
-// FIXME: move these into the math/include folder
-#define GB_LSHIFT(x,k) (((uint64_t) x) << k)
-#define GB_RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
-
-//------------------------------------------------------------------------------
 // GB_macrofy_name: create the kernel name
 //------------------------------------------------------------------------------
 
@@ -116,8 +108,6 @@ GrB_Info GB_reduce_to_scalar_jit    // z = reduce_to_scalar (A) via the JIT
 // GrB_eWiseAdd, GrB_eWiseMult, GxB_eWiseUnion
 //------------------------------------------------------------------------------
 
-// FUTURE: add accumulator for eWise operations?
-
 uint64_t GB_encodify_ewise      // encode an ewise problem
 (
     // output:
@@ -127,18 +117,24 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
     const bool is_eWiseMult,    // if true, method is emult
+    // C matrix:
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
     const GrB_Type ctype,
+    const bool Cp_is_32,
+    const bool Ci_is_32,
+    // M matrix:
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
+    // operator:
     const GrB_BinaryOp binaryop,
     const bool flipij,
     const bool flipxy,
-    const GrB_Matrix A,
-    const GrB_Matrix B
+    // A and B:
+    const GrB_Matrix A,         // NULL for apply bind1st
+    const GrB_Matrix B          // NULL for apply bind2nd
 ) ;
 
 void GB_enumify_ewise       // enumerate a GrB_eWise problem
@@ -155,6 +151,8 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     bool C_in_iso,          // if true, C is iso on input
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    bool Cp_is_32,          // if true, Cp is 32-bit; else 64-bit
+    bool Ci_is_32,          // if true, Ci is 32-bit; else 64-bit
     // M matrix:
     GrB_Matrix M,           // may be NULL
     bool Mask_struct,       // mask is structural
@@ -630,7 +628,9 @@ void GB_macrofy_mask
     // input:
     int mask_ecode,         // enumified mask
     char *Mname,            // name of the mask
-    int msparsity           // sparsity of the mask
+    int msparsity,          // sparsity of the mask
+    bool Mp_is_32,
+    bool Mi_is_32
 ) ;
 
 //------------------------------------------------------------------------------

@@ -6,7 +6,7 @@ function test220
 
 rng ('default') ;
 
-GB_mex_burble (0) ;
+GB_mex_burble (1) ;
 n = 100 ;
 Cin.matrix = spones (sprand (n, n, 0.01)) ;
 Cin.sparsity = 1 ;

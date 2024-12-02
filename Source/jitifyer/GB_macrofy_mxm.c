@@ -367,7 +367,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A and B

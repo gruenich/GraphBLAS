@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C = kron(A,B) where op determines the binary multiplier to use.  The type of
 // C is the ztype of the operator.  C is hypersparse if either A or B are
 // hypersparse, full if both A and B are full, or sparse otherwise.  C is never
@@ -56,6 +58,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ASSERT_MATRIX_OK (A_in, "A_in for kron (A,B)", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
+
+    double tt = GB_OPENMP_GET_WTIME ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
@@ -124,6 +128,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+    printf ("\nnthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // check if C is iso and compute its iso value if it is
@@ -162,9 +167,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int C_sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
-    // FIXME: enable 32-bit cases:
-    bool Cp_is_32 = false ; // GB_validate_p_is_32 (true, cnzmax) ; FIXME
-    bool Ci_is_32 = false ; // GB_validate_i_is_32 (true, cvlen, cvdim) ;
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+//  printf ("hack32: %d\n", hack32) ;
+    bool Cp_is_32 = GB_validate_p_is_32 (hack32, cnzmax) ;          // FIXME
+    bool Ci_is_32 = GB_validate_i_is_32 (hack32, cvlen, cvdim) ;    // FIXME
 
     // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
@@ -342,6 +348,12 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     GB_FREE_WORKSPACE ;
+    tt = GB_OPENMP_GET_WTIME - tt ;
+    GBURBLE ("(kron %d/%d time: %g) ",
+        Cp_is_32 ? 32 : 64,
+        Ci_is_32 ? 32 : 64, tt) ;
+    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
+    ASSERT_MATRIX_OK (C, "C=kron(A,B) converted", GB0) ;
     return (info) ;
 }
 

@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
 // DONE: 32/64 bit
 
 // Creates a matrix (with GB_new), then allocates a given space for indices and

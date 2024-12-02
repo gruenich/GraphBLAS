@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
-
 // DONE: 32/64 bit
 
 // Reallocate a list of pending tuples.  If it fails, the list is freed.

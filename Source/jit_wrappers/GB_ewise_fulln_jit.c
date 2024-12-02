@@ -32,8 +32,8 @@ GrB_Info GB_ewise_fulln_jit  // C=A+B via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_EWISEFN, false,
-        false, false, GxB_FULL, C->type, NULL, false, false,
-        binaryop, false, false, A, B) ;
+        false, false, GxB_FULL, C->type, false, false,
+        NULL, false, false, binaryop, false, false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

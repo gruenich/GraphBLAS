@@ -35,8 +35,8 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_COLSCALE, false,
-        false, false, GB_sparsity (C), C->type, NULL, false, false,
-        binaryop, false, flipxy, A, D) ;
+        false, false, GB_sparsity (C), C->type, C->p_is_32, C->i_is_32,
+        NULL, false, false, binaryop, false, flipxy, A, D) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

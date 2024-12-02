@@ -396,7 +396,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A or the scalar, including typecast to Y type

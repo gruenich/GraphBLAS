@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG    /* HACK FIXME */
 // DONE: 32/64 bit
 
 // Does not modify A->p or A->h.  Frees A->b, A->x, and A->i and reallocates
