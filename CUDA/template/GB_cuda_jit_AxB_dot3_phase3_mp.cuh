@@ -129,7 +129,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         // find A(:,i)
         int64_t pA_start, pA_end ;
         #if GB_A_IS_HYPER
-        GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
             i, &pA_start, &pA_end) ;
         #else
         pA_start = Ap[i] ;
@@ -139,8 +140,9 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         // find B(:,j)
         int64_t pB_start, pB_end ;
         #if GB_B_IS_HYPER
-        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
-           j, &pB_start, &pB_end) ;
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+            j, &pB_start, &pB_end) ;
         #else
         pB_start = Bp[j] ;
         pB_end   = Bp[j+1] ;

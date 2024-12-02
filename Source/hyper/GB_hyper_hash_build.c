@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG /* HACK FIXME */
-
 #define GB_FREE_WORKSPACE               \
 {                                       \
     GB_FREE (&I_work, I_work_size) ;    \

@@ -492,8 +492,9 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using the hyper_hash
                     int64_t ignore1, ignore2 ;
-                    kA = GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                        A_hash_bits, jA, &ignore1, &ignore2) ;
+                    kA = GB_hyper_hash_lookup (false, false, // FIXME
+                        Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, jA,
+                        &ignore1, &ignore2) ;
                     found = (kA >= 0) ;
                 }
                 else
@@ -689,8 +690,9 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using the hyper_hash
                     int64_t ignore1, ignore2 ;
-                    kA = GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                        A_hash_bits, jA, &ignore1, &ignore2) ;
+                    kA = GB_hyper_hash_lookup (false, false, // FIXME
+                        Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, jA,
+                        &ignore1, &ignore2) ;
                     found = (kA >= 0) ;
                 }
                 else

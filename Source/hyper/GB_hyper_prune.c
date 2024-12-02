@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG /* HACK FIXME */
 // DONE: 32/64 bit
 
 // On input, A->p and A->h may be shallow.  If modified, new arrays A->p and

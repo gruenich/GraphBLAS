@@ -106,8 +106,9 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
             const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
             const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
-            int64_t k = GB_hyper_hash_lookup (Ah, A->nvec, Ap, A_Yp, A_Yi, A_Yx,
-                A_hash_bits, j, &pA_start, &pA_end) ;
+            int64_t k = GB_hyper_hash_lookup (false, false, // FIXME
+                Ah, A->nvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                j, &pA_start, &pA_end) ;
             found = (k >= 0) ;
             if (!found)
             { 

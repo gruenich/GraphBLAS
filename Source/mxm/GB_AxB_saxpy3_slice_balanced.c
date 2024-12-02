@@ -679,8 +679,9 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                             if (A_is_hyper)
                             { 
                                 // A is hypersparse: find A(:,k) in hyper_hash
-                                GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp,
-                                    A_Yi, A_Yx, A_hash_bits, k, &pA, &pA_end) ;
+                                GB_hyper_hash_lookup (false, false, // FIXME
+                                    Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
+                                    A_hash_bits, k, &pA, &pA_end) ;
                             }
                             else
                             { 

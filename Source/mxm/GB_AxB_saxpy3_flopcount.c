@@ -270,8 +270,9 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 if (M_is_hyper)
                 { 
                     // M is hypersparse: find M(:,j) in the M->Y hyper_hash
-                    GB_hyper_hash_lookup (Mh, mnvec, Mp, M_Yp, M_Yi, M_Yx,
-                        M_hash_bits, j, &pM, &pM_end) ;
+                    GB_hyper_hash_lookup (false, false, // FIXME
+                        Mh, mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,
+                        j, &pM, &pM_end) ;
                 }
                 else
                 { 
@@ -320,8 +321,9 @@ GrB_Info GB_AxB_saxpy3_flopcount
                 if (A_is_hyper)
                 { 
                     // A is hypersparse: find A(:,k) in the A->Y hyper_hash
-                    GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                        A_hash_bits, k, &pA, &pA_end) ;
+                    GB_hyper_hash_lookup (false, false, // FIXME
+                        Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                        k, &pA, &pA_end) ;
                 }
                 else
                 { 

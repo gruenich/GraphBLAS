@@ -280,16 +280,18 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
                 { 
                     // C_to_A [k] = kA if Ah [kA] == j and A(:,j) is non-empty
                     int64_t pA, pA_end ;
-                    int64_t kA = GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp,
-                        A_Yi, A_Yx, A_hash_bits, j, &pA, &pA_end) ;
+                    int64_t kA = GB_hyper_hash_lookup (false, false, // FIXME
+                        Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                        j, &pA, &pA_end) ;
                     C_to_A [k] = (pA < pA_end) ? kA : -1 ;
                 }
                 if (B_is_hyper)
                 { 
                     // C_to_B [k] = kB if Bh [kB] == j and B(:,j) is non-empty
                     int64_t pB, pB_end ;
-                    int64_t kB = GB_hyper_hash_lookup (Bh, Bnvec, Bp, B_Yp,
-                        B_Yi, B_Yx, B_hash_bits, j, &pB, &pB_end) ;
+                    int64_t kB = GB_hyper_hash_lookup (false, false, // FIXME
+                        Bh, Bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+                        j, &pB, &pB_end) ;
                     C_to_B [k] = (pB < pB_end) ? kB : -1 ;
                 }
             }
@@ -672,8 +674,9 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
                 int64_t j = Ch [k] ;
                 // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
                 int64_t pM, pM_end ;
-                int64_t kM = GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp, M_Yi,
-                    M_Yx, M_hash_bits, j, &pM, &pM_end) ;
+                int64_t kM = GB_hyper_hash_lookup (false, false, // FIXME
+                    Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,
+                    j, &pM, &pM_end) ;
                 C_to_M [k] = (pM < pM_end) ? kM : -1 ;
             }
         }

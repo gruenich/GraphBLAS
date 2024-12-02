@@ -1388,8 +1388,9 @@
     {                                                               \
         if (GB_C_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp,              \
-                C_Yi, C_Yx, C_hash_bits, j, &pC_start, &pC_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,       \
+                j, &pC_start, &pC_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1403,8 +1404,9 @@
     {                                                               \
         if (GB_M_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp,              \
-                M_Yi, M_Yx, M_hash_bits, j, &pM_start, &pM_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,       \
+                j, &pM_start, &pM_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1418,8 +1420,9 @@
     {                                                               \
         if (GB_A_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp,              \
-                A_Yi, A_Yx, A_hash_bits, j, &pA_start, &pA_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,       \
+                j, &pA_start, &pA_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1433,8 +1436,9 @@
     {                                                               \
         if (GB_S_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Sh, Snvec, Sp, S_Yp,              \
-                S_Yi, S_Yx, S_hash_bits, j, &pS_start, &pS_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Sh, Snvec, Sp, S_Yp, S_Yi, S_Yx, S_hash_bits,       \
+                j, &pS_start, &pS_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \

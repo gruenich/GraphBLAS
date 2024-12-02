@@ -158,8 +158,9 @@ GrB_Info GB_assign_zombie4
                         if (M_is_hyper)
                         { 
                             // M is hypersparse
-                            GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp, M_Yi,
-                                M_Yx, M_hash_bits, j, &pM, &pM_end) ;
+                            GB_hyper_hash_lookup (false, false, // FIXME
+                                Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,
+                                j, &pM, &pM_end) ;
                         }
                         else
                         { 

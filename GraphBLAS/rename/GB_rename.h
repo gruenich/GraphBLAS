@@ -854,6 +854,7 @@
 #define GB_JITpackage_351 GM_JITpackage_351
 #define GB_JITpackage_352 GM_JITpackage_352
 #define GB_JITpackage_353 GM_JITpackage_353
+#define GB_JITpackage_354 GM_JITpackage_354
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37
@@ -1016,6 +1017,7 @@
 #define GB_macrofy_apply GM_macrofy_apply
 #define GB_macrofy_assign GM_macrofy_assign
 #define GB_macrofy_binop GM_macrofy_binop
+#define GB_macrofy_bits GM_macrofy_bits
 #define GB_macrofy_build GM_macrofy_build
 #define GB_macrofy_bytes GM_macrofy_bytes
 #define GB_macrofy_cast_copy GM_macrofy_cast_copy

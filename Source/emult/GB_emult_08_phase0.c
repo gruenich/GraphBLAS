@@ -436,8 +436,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pM, pM_end ;
             int64_t j = Ch [k] ;
-            int64_t kM = GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx,
-                M_hash_bits, j, &pM, &pM_end) ;
+            int64_t kM = GB_hyper_hash_lookup (false, false, // FIXME
+                Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits, j, &pM, &pM_end) ;
             C_to_M [k] = (pM < pM_end) ? kM : -1 ;
         }
     }
@@ -474,8 +474,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pA, pA_end ;
             int64_t j = Ch [k] ;
-            int64_t kA = GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx,
-                A_hash_bits, j, &pA, &pA_end) ;
+            int64_t kA = GB_hyper_hash_lookup (false, false, // FIXME
+                Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, j, &pA, &pA_end) ;
             C_to_A [k] = (pA < pA_end) ? kA : -1 ;
         }
     }
@@ -512,8 +512,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pB, pB_end ;
             int64_t j = Ch [k] ;
-            int64_t kB = GB_hyper_hash_lookup (Bh, Bnvec, Bp, B_Yp, B_Yi, B_Yx,
-                B_hash_bits, j, &pB, &pB_end) ;
+            int64_t kB = GB_hyper_hash_lookup (false, false, // FIXME
+                Bh, Bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits, j, &pB, &pB_end) ;
             C_to_B [k] = (pB < pB_end) ? kB : -1 ;
         }
     }
