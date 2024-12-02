@@ -7,12 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #ifndef GB_DEBUG_LOOKUP_H
 #define GB_DEBUG_LOOKUP_H
-
-#ifdef GB_DEBUG
 
 // For a sparse, bitmap, or full matrix j == k.
 // For a hypersparse matrix, find k so that j == Ah [k], if it
@@ -26,12 +24,36 @@
 
 // With the introduction of the hyper_hash, this is used only for debugging.
 
+#ifdef GB_DEBUG
+
+#define GB_PTYPE uint32_t
+#define GB_ITYPE uint32_t
+#define GB_debug_lookup_T GB_debug_lookup_32_32
+#include "hyper/factory/GB_debug_lookup_template.h"
+
+#define GB_PTYPE uint32_t
+#define GB_ITYPE uint64_t
+#define GB_debug_lookup_T GB_debug_lookup_32_64
+#include "hyper/factory/GB_debug_lookup_template.h"
+
+#define GB_PTYPE uint64_t
+#define GB_ITYPE uint32_t
+#define GB_debug_lookup_T GB_debug_lookup_64_32
+#include "hyper/factory/GB_debug_lookup_template.h"
+
+#define GB_PTYPE uint64_t
+#define GB_ITYPE uint64_t
+#define GB_debug_lookup_T GB_debug_lookup_64_64
+#include "hyper/factory/GB_debug_lookup_template.h"
+
 static inline bool GB_debug_lookup  // find j = Ah [k]
 (
     // input:
+    const bool Ap_is_32,            // if true, Ap is 32-bit; else 64-bit
+    const bool Ai_is_32,            // if true, Ah, Y->[pix] are 32-bit; else 64
     const bool A_is_hyper,          // true if A is hypersparse
-    const int64_t *restrict Ah,     // A->h [0..A->nvec-1]: list of vectors
-    const int64_t *restrict Ap,     // A->p [0..A->nvec  ]: pointers to vectors
+    const void *Ah,                 // A->h [0..A->nvec-1]: list of vectors
+    const void *Ap,                 // A->p [0..A->nvec  ]: pointers to vectors
     const int64_t avlen,            // A->vlen
     // input/output:
     int64_t *restrict pleft,        // on input: look in A->h [pleft..pright].
@@ -44,34 +66,35 @@ static inline bool GB_debug_lookup  // find j = Ah [k]
     int64_t *restrict pend          // end of vector: Ap [k+1]
 )
 {
-    if (A_is_hyper)
+    if (Ap_is_32)
     {
-        // binary search of Ah [pleft...pright] for the value j
-        bool found ;
-        GB_BINARY_SEARCH (j, Ah, (*pleft), pright, found) ; // ok (historical)
-        if (found)
-        {
-            // j appears in the hyperlist at Ah [pleft]
-            // k = (*pleft)
-            (*pstart) = Ap [(*pleft)] ;
-            (*pend)   = Ap [(*pleft)+1] ;
+        if (Ai_is_32)
+        { 
+            // Ap is 32-bit; Ah is 32 bit
+            GB_debug_lookup_32_32 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+                j, pstart, pend) ;
         }
         else
-        {
-            // j does not appear in the hyperlist Ah
-            // k = -1
-            (*pstart) = -1 ;
-            (*pend)   = -1 ;
+        { 
+            // Ap is 32-bit; Ah is 64-bit
+            GB_debug_lookup_32_64 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+                j, pstart, pend) ;
         }
-        return (found) ;
     }
     else
     {
-        // A is sparse, bitmap, or full; j always appears
-        // k = j
-        (*pstart) = GBP (Ap, j, avlen) ;
-        (*pend)   = GBP (Ap, j+1, avlen) ;
-        return (true) ;
+        if (Ai_is_32)
+        { 
+            // Ap is 64-bit; Ah is 32-bit
+            GB_debug_lookup_64_32 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+                j, pstart, pend) ;
+        }
+        else
+        { 
+            // Ap is 64-bit; Ah is 64-bit
+            GB_debug_lookup_64_64 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+                j, pstart, pend) ;
+        }
     }
 }
 

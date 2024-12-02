@@ -69,6 +69,8 @@ uint64_t GB_enumify_masker  // enumify a masker problem
 
     // total method_code bits: 18 (5 hex digits)
 
+    // FIXME: 32/64 bits: 8 bits for R, M, C, Z
+
     (*method_code) =
                                                // range        bits
                 // C and Z iso properites (1 hex digit)

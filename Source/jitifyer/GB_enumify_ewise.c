@@ -172,6 +172,8 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
 
     // total method_code bits: 47 (12 hex digits); 17 bits to spare.
 
+    // FIXME: 32/64: 8 bits for C, M, A, B
+
     (*method_code) =
                                                // range        bits
                 // C in, A and B iso properites (3 bits) (1 hex digit)

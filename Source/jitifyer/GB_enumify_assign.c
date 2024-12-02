@@ -134,6 +134,8 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
 
     // total method_code bits: 48 (12 hex digits): 16 bits to sparse
 
+    // FIXME: 32/64: 8 bits for C, M, A, S
+
     (*method_code) =
                                                // range        bits
 

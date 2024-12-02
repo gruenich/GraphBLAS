@@ -63,6 +63,8 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
 
     // total method_code bits: 14 (4 hex digits)
 
+    // FIXME: 32/64 bits: 4 bits for C, P
+
     (*method_code) =
                                                // range        bits
                 // binaryop, z = f(x,y) (3 hex digits)

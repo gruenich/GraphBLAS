@@ -55,6 +55,8 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
 
     // total method_code bits: 14 (4 hex digits)
 
+    // FIXME: 32/64 bits: 4 bits for C, A
+
     (*method_code) =
                                                // range        bits
                 /// need_qsort, I_has_duplicates (1 hex digit)

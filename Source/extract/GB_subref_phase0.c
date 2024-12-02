@@ -728,7 +728,7 @@ GrB_Info GB_subref_phase0
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
         int64_t *Ah = A->h ;    // FIXME
-        bool found = GB_debug_lookup (Ah != NULL,   // FIXME
+        bool found = GB_debug_lookup (false, false, Ah != NULL,   // FIXME
             Ah, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
         if (found && Ah != NULL)
         {

@@ -102,6 +102,8 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
 
     // total method_code bits:  38 (10 hex digits)
 
+    // FIXME: 32/64 bits: 4 bits for C, A
+
     (*method_code) =
                                                // range        bits
                 // iso of A aand C (2 bits)

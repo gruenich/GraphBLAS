@@ -87,6 +87,8 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
 
     // total method_code bits: 17 (5 hex digits)
 
+    // FIXME: 32/64 bits: 2 bits for A (or just 1 bit for A->i_is_32)
+
     (*method_code) = 
                                                // range        bits
                 // monoid: 5 bits (2 hex digits)

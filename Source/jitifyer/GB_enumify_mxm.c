@@ -174,6 +174,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
 
     // total method_code bits: 50 (13 hex digits): 14 bits to spare.
 
+    // FIXME: 32/64 bits: 8 bits for C, M, A, B
+
     (*method_code) =
                                                // range        bits
                 // monoid (4 bits, 1 hex digit)
