@@ -160,21 +160,26 @@ GrB_Info GB_selector
 
     info = GrB_NO_VALUE ;
 
-    // FIXME: pass in a T matrix, below, not C:
-
-#if 0
+    // FIXME: pass in a T matrix, below, not C
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (!in_place_A /* Fixme for CUDA: remove this condition, and let the CUDA
-        kernel handle the in-place-A condition for GB_wait and GB_resize. */
+    if (!in_place_A /* FIXME: Workaround for CUDA kernel not
+        handling in-place condition. Fix by building result
+        in T matrix for both CUDA and CPU and handle in-place case
+        separately at end */
+        && (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) /* It is possible for
+        non-sparse matrices to use the sparse kernel; see check for 
+        use_select_bitmap above. The CUDA select_sparse kernel will not work
+        in this case, so make this go to the CPU. */
         && GB_cuda_select_branch (A, op))
     {
+
         info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
     }
     #endif
-#endif
 
     if (info == GrB_NO_VALUE)
     {
+        // FIXME: Extract in-place handling out of this function
         info = GB_select_sparse (C, C_iso, op, flipij, A, ithunk, athunk,
             ythunk, Werk) ;
     }
