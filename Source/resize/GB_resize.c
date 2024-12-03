@@ -283,6 +283,9 @@ GrB_Info GB_resize              // change the size of a matrix
             ASSERT (info == GrB_SUCCESS) ;
         }
 
+        A->vdim = vdim_new ;
+        ASSERT_MATRIX_OK (A, "A vdim resized", GB0) ;
+
         //----------------------------------------------------------------------
         // resize the length of each vector
         //----------------------------------------------------------------------
@@ -297,11 +300,10 @@ GrB_Info GB_resize              // change the size of a matrix
         }
 
         //----------------------------------------------------------------------
-        // change the matrix dimensions
+        // vlen has been resized
         //----------------------------------------------------------------------
 
         A->vlen = vlen_new ;
-        A->vdim = vdim_new ;
 
         // FIXME: change A->p_is_32 and A->i_is_32 here, and do GB_convert_int
         #if 0
@@ -317,6 +319,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
         info = GB_conform (A, Werk) ;
         ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
+        ASSERT_MATRIX_OK (A, "A final resized", GB0) ;
         return (info) ;
     }
 }

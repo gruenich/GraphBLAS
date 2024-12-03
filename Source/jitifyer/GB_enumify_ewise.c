@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Enumify an ewise operation: eWiseAdd, eWiseMult, eWiseUnion,
-// rowscale, colscale, apply with bind 1st and 2nd, transpose apply with
-// bind 1st and 2nd, etc.
+// Enumify an ewise operation: eWiseAdd, eWiseMult, eWiseUnion, rowscale,
+// colscale, apply with bind 1st and 2nd, transpose apply with bind 1st and
+// 2nd, etc.
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"

@@ -42,6 +42,8 @@
 // C matrix:
 #define GB_C_TYPE double
 
+#define GB_Cp_IS_32 Cp_is_32
+
 // disable this operator and use the generic case if these conditions hold
 #if (defined(GxB_NO_PAIR) || defined(GxB_NO_FP64) || defined(GxB_NO_PAIR_FP64))
 #define GB_DISABLE 1

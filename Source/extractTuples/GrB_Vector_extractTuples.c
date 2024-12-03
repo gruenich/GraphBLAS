@@ -2,10 +2,12 @@
 // GrB_Vector_extractTuples: extract all tuples from a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // Extracts all tuples from a column vector, like [I,~,X] = find (v).  If any
 // parameter I and/or X is NULL, then that component is not extracted.  The

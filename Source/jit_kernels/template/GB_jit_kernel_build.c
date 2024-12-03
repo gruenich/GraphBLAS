@@ -20,4 +20,3 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_BUILD_PROTO (GB_jit_kernel)
     return (GrB_SUCCESS) ;
 }
 
-

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_debug_lookup: find k where j == Ah [k], without using the A->Y hyper_hash
+// GB_lookup_debug: find k where j == Ah [k], without using the A->Y hyper_hash
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,8 +9,8 @@
 
 // DONE: 32/64 bit
 
-#ifndef GB_DEBUG_LOOKUP_H
-#define GB_DEBUG_LOOKUP_H
+#ifndef GB_LOOKUP_DEBUG_H
+#define GB_LOOKUP_DEBUG_H
 
 // For a sparse, bitmap, or full matrix j == k.
 // For a hypersparse matrix, find k so that j == Ah [k], if it
@@ -28,25 +28,25 @@
 
 #define GB_PTYPE uint32_t
 #define GB_ITYPE uint32_t
-#define GB_debug_lookup_T GB_debug_lookup_32_32
-#include "hyper/factory/GB_debug_lookup_template.h"
+#define GB_lookup_debug_T GB_lookup_debug_32_32
+#include "hyper/factory/GB_lookup_debug_template.h"
 
 #define GB_PTYPE uint32_t
 #define GB_ITYPE uint64_t
-#define GB_debug_lookup_T GB_debug_lookup_32_64
-#include "hyper/factory/GB_debug_lookup_template.h"
+#define GB_lookup_debug_T GB_lookup_debug_32_64
+#include "hyper/factory/GB_lookup_debug_template.h"
 
 #define GB_PTYPE uint64_t
 #define GB_ITYPE uint32_t
-#define GB_debug_lookup_T GB_debug_lookup_64_32
-#include "hyper/factory/GB_debug_lookup_template.h"
+#define GB_lookup_debug_T GB_lookup_debug_64_32
+#include "hyper/factory/GB_lookup_debug_template.h"
 
 #define GB_PTYPE uint64_t
 #define GB_ITYPE uint64_t
-#define GB_debug_lookup_T GB_debug_lookup_64_64
-#include "hyper/factory/GB_debug_lookup_template.h"
+#define GB_lookup_debug_T GB_lookup_debug_64_64
+#include "hyper/factory/GB_lookup_debug_template.h"
 
-static inline bool GB_debug_lookup  // find j = Ah [k]
+static inline bool GB_lookup_debug  // find j = Ah [k]
 (
     // input:
     const bool Ap_is_32,            // if true, Ap is 32-bit; else 64-bit
@@ -71,13 +71,13 @@ static inline bool GB_debug_lookup  // find j = Ah [k]
         if (Ai_is_32)
         { 
             // Ap is 32-bit; Ah is 32 bit
-            GB_debug_lookup_32_32 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+            GB_lookup_debug_32_32 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
                 j, pstart, pend) ;
         }
         else
         { 
             // Ap is 32-bit; Ah is 64-bit
-            GB_debug_lookup_32_64 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+            GB_lookup_debug_32_64 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
                 j, pstart, pend) ;
         }
     }
@@ -86,13 +86,13 @@ static inline bool GB_debug_lookup  // find j = Ah [k]
         if (Ai_is_32)
         { 
             // Ap is 64-bit; Ah is 32-bit
-            GB_debug_lookup_64_32 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+            GB_lookup_debug_64_32 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
                 j, pstart, pend) ;
         }
         else
         { 
             // Ap is 64-bit; Ah is 64-bit
-            GB_debug_lookup_64_64 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
+            GB_lookup_debug_64_64 (A_is_hyper, Ah, Ap, avlen, pleft, pright,
                 j, pstart, pend) ;
         }
     }

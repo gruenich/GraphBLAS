@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_debug_lookup_template: find k where j == Ah [k], no hyper_hash
+// GB_lookup_debug_template: find k where j == Ah [k], no hyper_hash
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -11,7 +11,7 @@
 
 // For debugging only.
 
-static inline bool GB_debug_lookup_T // find j = Ah [k]
+static inline bool GB_lookup_debug_T // find j = Ah [k]
 (
     // input:
     const bool A_is_hyper,          // true if A is hypersparse
@@ -62,5 +62,5 @@ static inline bool GB_debug_lookup_T // find j = Ah [k]
 
 #undef GB_PTYPE
 #undef GB_ITYPE
-#undef GB_debug_lookup_T
+#undef GB_lookup_debug_T
 

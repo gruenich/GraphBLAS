@@ -64,6 +64,7 @@ int main (int argc, char **argv)
     GrB_Info info ;
 
     OK (GrB_init (GrB_NONBLOCKING)) ;
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE)) ;
     int32_t nthreads ;
     OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads, GxB_NTHREADS)) ;
     fprintf (stderr, "grow demo: nthreads %d\n", nthreads) ;
@@ -110,7 +111,6 @@ int main (int argc, char **argv)
 
     OK (GrB_Matrix_new (&C, atype, anrows, ancols)) ;
     OK (GrB_Vector_new (&w, atype, ancols)) ;
-//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE)) ;
     OK (GrB_Matrix_set_INT32 (C, (int32_t) false, GxB_HYPER_HASH)) ;
     OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
     OK (GrB_Vector_set_INT32 (w, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;

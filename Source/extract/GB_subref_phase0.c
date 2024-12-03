@@ -12,10 +12,8 @@
 // Finds the vectors for C=A(I,J) when A and C are sparse or hypersparse, and
 // determines the properties of I and J.
 
-#define GB_DEBUG /* HACK FIXME */
-
 #include "extract/GB_subref.h"
-#include "hyper/factory/GB_debug_lookup.h"
+#include "hyper/factory/GB_lookup_debug.h"
 
 #define GB_AI(p) GBI_UNZOMBIE (Ai, p, avlen)
 
@@ -728,7 +726,7 @@ GrB_Info GB_subref_phase0
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
         int64_t *Ah = A->h ;    // FIXME
-        bool found = GB_debug_lookup (false, false, Ah != NULL,   // FIXME
+        bool found = GB_lookup_debug (false, false, Ah != NULL,   // FIXME
             Ah, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
         if (found && Ah != NULL)
         {

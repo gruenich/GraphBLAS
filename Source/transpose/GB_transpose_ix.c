@@ -59,6 +59,9 @@ GrB_Info GB_transpose_ix        // transpose the pattern and values of a matrix
     GB_Type_code code2 = A->type->code ;        // defines atype
     size_t asize = A->type->size ;
 
+    bool Cp_is_32 = C->p_is_32 ;
+    #define GB_Cp_IS_32 Cp_is_32
+
     //--------------------------------------------------------------------------
     // built-in worker: transpose and typecast
     //--------------------------------------------------------------------------

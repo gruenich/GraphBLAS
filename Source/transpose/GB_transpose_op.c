@@ -77,6 +77,12 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
     ASSERT (!GB_OPCODE_IS_POSITIONAL (opcode)) ;
     ASSERT (!GB_IS_INDEXUNARYOP_CODE (opcode)) ;
 
+    // for the generic kernels below:
+    bool Cp_is_32 = C->p_is_32 ;
+    #define GB_Cp_IS_32 Cp_is_32
+    #define GB_A_TYPE GB_void
+    #define GB_C_TYPE GB_void
+
     //--------------------------------------------------------------------------
     // transpose the matrix and apply the operator
     //--------------------------------------------------------------------------
@@ -188,8 +194,6 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
                 fop (Cx +((pC)*zsize), xwork) ;                             \
             }
 
-            #define GB_A_TYPE GB_void
-            #define GB_C_TYPE GB_void
             #include "transpose/template/GB_transpose_template.c"
             info = GrB_SUCCESS ;
         }

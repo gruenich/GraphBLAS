@@ -2,10 +2,12 @@
 // GB_extract_vector_list: extract vector indices for all entries in a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // JIT: not needed; factory possible w/ 3 variants (sparse/hyper/full)
 
@@ -24,7 +26,7 @@
 GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 (
     // output:
-    int64_t *restrict J,         // size nnz(A) or more
+    int64_t *restrict J,         // size nnz(A) or more     FIXME
     // input:
     const GrB_Matrix A,
     GB_Werk Werk
@@ -84,9 +86,9 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
             // find the part of A(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ah, k) ;
+            int64_t j = GBH (Ah, k) ;   // FIXME
             GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                GBP (Ap, k, avlen), GBP (Ap, k+1, avlen)) ;
+                GBP (Ap, k, avlen), GBP (Ap, k+1, avlen)) ; // FIXME
 
             //------------------------------------------------------------------
             // extract vector indices of A(:,j)
@@ -94,7 +96,7 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
-                J [p] = j ;
+                J [p] = j ; // FIXME
             }
         }
     }

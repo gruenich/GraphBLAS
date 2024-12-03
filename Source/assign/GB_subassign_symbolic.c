@@ -9,13 +9,11 @@
 
 // FIXME: 32/64 bit
 
-#define GB_DEBUG /* HACK FIXME */
-
 #include "assign/GB_subassign_methods.h"
 #include "extract/GB_subref.h"
 #define GB_GENERIC
 #include "assign/include/GB_assign_shared_definitions.h"
-#include "hyper/factory/GB_debug_lookup.h"
+#include "hyper/factory/GB_lookup_debug.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_phybix_free (S) ;
@@ -136,7 +134,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
             int64_t p = Sx [pS] ;
             ASSERT (p >= 0 && p < GB_nnz (C)) ;
             int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
-            bool found = GB_debug_lookup (false, false, C->h != NULL, // FIXME
+            bool found = GB_lookup_debug (false, false, C->h != NULL, // FIXME
                 C->h, C->p, C->vlen, &pleft, pright, jC, &pC_start, &pC_end) ;
             ASSERT (found) ;
             // If iC == I [inew] and jC == J [jnew], (or the equivaleent

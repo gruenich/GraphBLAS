@@ -182,6 +182,7 @@ GrB_Info GB_selector
     // FIXME: handle in_place_A case here, not in select_sparse:
     // transplant from T to either C (not in place) or A (in place)
 
+    ASSERT_MATRIX_OK (A, "A output of GB_selector", GB_ZOMBIE (GB0)) ;
     return (info) ;
 }
 

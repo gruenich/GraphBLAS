@@ -25,6 +25,7 @@
 
 // C matrix
 #define GB_C_TYPE int32_t
+#define GB_Cp_IS_32 Cp_is_32
 
 // cij = op (aij)
 #define GB_APPLY_OP(pC,pA)          \
@@ -83,6 +84,7 @@ GrB_Info GB (_uop_tran__identity_int32_bool)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    bool Cp_is_32 = C->p_is_32 ;
     #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif

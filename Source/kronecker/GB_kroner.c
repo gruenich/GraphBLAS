@@ -128,7 +128,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
-    printf ("\nnthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // check if C is iso and compute its iso value if it is
@@ -349,9 +348,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     GB_FREE_WORKSPACE ;
     tt = GB_OPENMP_GET_WTIME - tt ;
-    GBURBLE ("(kron %d/%d time: %g) ",
+    GBURBLE ("(kron %d/%d nthreads: %d time: %g) ",
         Cp_is_32 ? 32 : 64,
-        Ci_is_32 ? 32 : 64, tt) ;
+        Ci_is_32 ? 32 : 64, nthreads, tt) ;
     GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C=kron(A,B) converted", GB0) ;
     return (info) ;

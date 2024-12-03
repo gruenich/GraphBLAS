@@ -44,6 +44,7 @@
 
 #define GB_CTYPE_IS_ATYPE 0
 #define GB_CTYPE_IS_BTYPE 0
+#define GB_Cp_IS_32 Cp_is_32
 
 // disable this operator and use the generic case if these conditions hold
 #if (defined(GxB_NO_LT) || defined(GxB_NO_FP64) || defined(GxB_NO_LT_FP64))
@@ -406,6 +407,7 @@ GrB_Info GB (_bind1st_tran__lt_fp64)
     return (GrB_NO_VALUE) ;
     #else
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
+    bool Cp_is_32 = C->p_is_32 ;
     #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -440,6 +442,7 @@ GrB_Info GB (_bind2nd_tran__lt_fp64)
     return (GrB_NO_VALUE) ;
     #else
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
+    bool Cp_is_32 = C->p_is_32 ;
     #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif

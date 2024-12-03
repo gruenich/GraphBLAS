@@ -1097,7 +1097,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     // input:
     GB_Operator op,
     const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
+    void *restrict *Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads

@@ -2,7 +2,7 @@
 // GB_transpose_unop_jit: C=op(A) transpose unop method, via the JIT
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     // input:
     GB_Operator op,
     const GrB_Matrix A,
-    int64_t *restrict *Workspaces,      // FIXME type?
+    void *restrict *Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
