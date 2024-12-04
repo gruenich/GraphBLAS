@@ -24,7 +24,7 @@
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    uint64_t **Cp_handle,               // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
@@ -79,7 +79,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 
     (*Cp_handle) = NULL ;
     uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;     // FIXME
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;      // FIXME
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), uint64_t, &Cp_size) ;      // FIXME
     if (Cp == NULL)
     { 
         // out of memory

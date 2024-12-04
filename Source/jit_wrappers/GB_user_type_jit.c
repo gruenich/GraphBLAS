@@ -44,6 +44,7 @@ GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     char *ignore ;
     return (GB_jit_kernel (user_type_size, &ignore)) ;

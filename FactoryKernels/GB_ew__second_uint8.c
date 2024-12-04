@@ -333,5 +333,7 @@ GrB_Info GB (_AemultB_bitmap__second_uint8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

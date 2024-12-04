@@ -339,7 +339,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
         else
         {
-            GBPR ("  header %p", A) ;
+            GBPR ("  header %p", (void *) A) ;
         }
         GBPR (" number of memory blocks: " GBd "\n", nallocs) ;
         GBPR ("  deep: " GBu " shallow: " GBu " total: " GBu "\n",
@@ -377,7 +377,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR ("  ->x: %p shallow: %d size: " GBu "\n",
             A->x, A->x_shallow, (uint64_t) A->x_size) ;
         GBPR ("  ->Y: %p shallow: %d no_hyper_hash: %d\n",
-            A->Y, A->Y_shallow, A->no_hyper_hash) ;
+            (void *) (A->Y), A->Y_shallow, A->no_hyper_hash) ;
     }
     #endif
 
@@ -767,7 +767,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #if GB_DEVELOPER
     if ((pr_short || pr_complete) && (is_sparse || is_hyper))
     {
-        GBPR ("  Pending %p\n", Pending) ;
+        GBPR ("  Pending %p\n", (void *) Pending) ;
     }
     #endif
 

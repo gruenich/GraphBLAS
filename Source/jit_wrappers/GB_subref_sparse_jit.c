@@ -25,8 +25,8 @@ GrB_Info GB_subref_sparse_jit
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const bool need_qsort,
     const int Ikind,
     const int64_t nI,
@@ -62,6 +62,7 @@ GrB_Info GB_subref_sparse_jit
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, TaskList, ntasks, nthreads, post_sort, Mark,
         Inext, Ap_start, Ap_end, nI, Icolon, A, I, &GB_callback)) ;

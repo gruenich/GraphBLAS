@@ -57,6 +57,7 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cx, Cb, A, A_ek_slicing, A_ntasks, A_nthreads)) ;
 }

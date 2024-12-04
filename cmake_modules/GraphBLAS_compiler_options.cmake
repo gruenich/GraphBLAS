@@ -17,7 +17,8 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
     # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wundef " )
 #   uncomment this to check for all warnings:
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Werror -Wno-strict-aliasing " )
+    # FIXME
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wno-strict-aliasing " )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas " )
     # operations may be carried out in higher precision
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fexcess-precision=fast " )
@@ -28,7 +29,8 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
     # integer operations wrap
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv " )
     # check all warnings (uncomment for development only)
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic " )
+    # FIXME
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )

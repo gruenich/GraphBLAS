@@ -516,7 +516,7 @@
                         GB_qsort_1 (Ci + pC, false, clen) ;
                         #else
                         // sort the pattern of C(:,kC), and the values
-                        GB_QSORT_1B (Ci, Cx, pC, clen) ;
+                        GB_QSORT_1B ((uint64_t *) Ci, Cx, pC, clen) ;
                         #endif
                     }
                     #endif
@@ -644,7 +644,7 @@
                     #else
                     { 
                         // sort the pattern of C(:,kC), and the values
-                        GB_QSORT_1B (Ci, Cx, pC, clen) ;
+                        GB_QSORT_1B ((uint64_t *) Ci, Cx, pC, clen) ;
                     }
                     #endif
                 }

@@ -208,10 +208,7 @@
                     { 
                         // C(i,j) = A(:,i)'*B(:,j) or A(i,:)*B(:,j)
                         bool cij_exists = false ;
-                        GB_CIJ_DECLARE (cij) ;
-                        #if GB_IS_PLUS_PAIR_REAL_SEMIRING
-                        cij = 0 ;
-                        #endif
+                        GB_DECLARE_IDENTITY (cij) ;
                         #include "template/GB_AxB_dot_cij.c"
                     }
                 }

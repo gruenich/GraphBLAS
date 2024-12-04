@@ -427,7 +427,7 @@ GrB_Info GB_jit_kernel_select_bitmap                                    \
 #define GB_JIT_KERNEL_SELECT_PHASE1_PROTO(GB_jit_kernel_select_phase1)  \
 GrB_Info GB_jit_kernel_select_phase1                                    \
 (                                                                       \
-    int64_t *restrict Cp,                                               \
+    uint64_t *restrict Cp,                                              \
     int64_t *restrict Wfirst,                                           \
     int64_t *restrict Wlast,                                            \
     const GrB_Matrix A,                                                 \
@@ -443,7 +443,7 @@ GrB_Info GB_jit_kernel_select_phase2                                    \
 (                                                                       \
     int64_t *restrict Ci,                                               \
     GB_void *restrict Cx_out,                                           \
-    const int64_t *restrict Cp,                                         \
+    const uint64_t *restrict Cp,                                        \
     const int64_t *restrict Cp_kfirst,                                  \
     const GrB_Matrix A,                                                 \
     const GB_void *restrict ythunk,                                     \
@@ -479,7 +479,7 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
     GrB_Matrix A,                                                       \
     const int64_t akstart,                                              \
     const int64_t aistart,                                              \
-    int64_t *restrict Wp,                                               \
+    uint64_t *restrict Wp,                                              \
     const int64_t *C_ek_slicing,                                        \
     const int C_ntasks,                                                 \
     const int C_nthreads                                                \
@@ -522,7 +522,7 @@ GrB_Info GB_jit_kernel_trans_bind1st                                    \
     GrB_Matrix C,                                                       \
     const GB_void *x_input,                                             \
     const GrB_Matrix A,                                                 \
-    int64_t *restrict *Workspaces,                                      \
+    void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
     const int nthreads                                                  \
@@ -534,7 +534,7 @@ GrB_Info GB_jit_kernel_trans_bind2nd                                    \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
     const GB_void *y_input,                                             \
-    int64_t *restrict *Workspaces,                                      \
+    void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
     const int nthreads                                                  \
@@ -545,7 +545,7 @@ GrB_Info GB_jit_kernel_trans_unop                                       \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
-    int64_t *restrict *Workspaces,                                      \
+    void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
     const int nthreads                                                  \
@@ -584,7 +584,7 @@ GrB_Info GB_jit_kernel_union                                            \
 #define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
 GrB_Info GB_jit_kernel_masker1                                          \
 (                                                                       \
-    int64_t *Rp,                                                        \
+    uint64_t *Rp,                                                       \
     int64_t *Rnvec_nonempty,                                            \
     GB_task_struct *restrict TaskList,                                  \
     const int R_ntasks,                                                 \
@@ -634,8 +634,8 @@ GrB_Info GB_jit_kernel_subref_sparse                                    \
     const bool post_sort,                                               \
     const int64_t *Mark,                                                \
     const int64_t *Inext,                                               \
-    const int64_t *restrict Ap_start,                                   \
-    const int64_t *restrict Ap_end,                                     \
+    const uint64_t *restrict Ap_start,                                  \
+    const uint64_t *restrict Ap_end,                                    \
     const int64_t nI,                                                   \
     const int64_t Icolon [3],                                           \
     const GrB_Matrix A,                                                 \

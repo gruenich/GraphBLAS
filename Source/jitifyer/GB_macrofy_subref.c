@@ -33,7 +33,7 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     int Jkind       = GB_RSHIFT (method_code,  8, 2) ;
 
     // type of C and A (1 hex digit)
-    int ccode       = GB_RSHIFT (method_code,  4, 4) ;
+//  int ccode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
     int csparsity   = GB_RSHIFT (method_code,  2, 2) ;

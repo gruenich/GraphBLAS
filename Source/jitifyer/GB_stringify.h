@@ -1070,7 +1070,7 @@ GrB_Info GB_transpose_bind1st_jit
     const GrB_BinaryOp binaryop,
     const GB_void *xscalar,
     const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
@@ -1084,7 +1084,7 @@ GrB_Info GB_transpose_bind2nd_jit
     const GrB_BinaryOp binaryop,
     const GrB_Matrix A,
     const GB_void *yscalar,
-    int64_t *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
@@ -1097,7 +1097,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     // input:
     GB_Operator op,
     const GrB_Matrix A,
-    void *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
@@ -1182,7 +1182,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     const GrB_Matrix A,
     int64_t akstart,
     int64_t aistart,
-    int64_t *restrict Wp,
+    uint64_t *restrict Wp,
     const int64_t *restrict C_ek_slicing,
     const int C_ntasks,
     const int C_nthreads
@@ -1345,7 +1345,7 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 GrB_Info GB_select_phase1_jit      // select phase1
 (
     // output:
-    int64_t *restrict Cp,
+    uint64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     // input:
@@ -1366,7 +1366,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     int64_t *restrict Ci,
     GB_void *restrict Cx,                   // NULL if C is iso-valued
     // input:
-    const int64_t *restrict Cp,
+    const uint64_t *restrict Cp,
     const bool C_iso,
     const bool in_place_A,
     const int64_t *restrict Cp_kfirst,
@@ -1547,7 +1547,7 @@ GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
 GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
 (
     // computed by phase1:
-    int64_t *Rp,                    // output of size Rnvec+1
+    uint64_t *Rp,                   // output of size Rnvec+1 FIXME
     int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
     // tasks from phase1a:
     GB_task_struct *restrict TaskList,       // array of structs
@@ -1608,7 +1608,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const GrB_Matrix Z
 ) ;
 
-uint64_t GB_enumify_masker  // enumify a masker problem
+void GB_enumify_masker  // enumify a masker problem
 (
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
@@ -1690,8 +1690,8 @@ GrB_Info GB_subref_sparse_jit
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const bool need_qsort,
     const int Ikind,
     const int64_t nI,

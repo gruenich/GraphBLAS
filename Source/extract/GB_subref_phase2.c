@@ -20,7 +20,7 @@
 GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 (
     // computed by phase2:
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    uint64_t **Cp_handle,               // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase1:
@@ -62,7 +62,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
     uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;  // FIXME
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), uint64_t, &Cp_size) ;  // FIXME
     if (Cp == NULL)
     { 
         // out of memory

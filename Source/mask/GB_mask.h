@@ -39,7 +39,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (
     // computed by phase1:
-    int64_t **Rp_handle,            // output of size Rnvec+1
+    uint64_t **Rp_handle,           // vector pointers for R    FIXME
     size_t *Rp_size_handle,
     int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
     // tasks from phase1a:
@@ -66,7 +66,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
-    int64_t **Rp_handle,            // vector pointers for R
+    uint64_t **Rp_handle,           // vector pointers for R    FIXME
     size_t Rp_size,
     const int64_t Rnvec_nonempty,   // # of non-empty vectors in R
     // tasks from phase1a:

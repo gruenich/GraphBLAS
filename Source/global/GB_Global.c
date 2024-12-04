@@ -613,6 +613,8 @@ void GB_Global_memtable_remove (void *p)
 // malloc_function
 //------------------------------------------------------------------------------
 
+#include "include/GB_pedantic_disable.h"
+
 void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
 { 
     GB_Global.malloc_function = malloc_function ;

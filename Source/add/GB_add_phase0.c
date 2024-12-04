@@ -392,7 +392,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
         // cumulative sum of entries in Ch for each task
         //----------------------------------------------------------------------
 
-        GB_cumsum1_64 (kC_start, ntasks) ;
+        GB_cumsum1_64 ((uint64_t *) kC_start, ntasks) ;
         Cnvec = kC_start [ntasks] ;
 
         //----------------------------------------------------------------------

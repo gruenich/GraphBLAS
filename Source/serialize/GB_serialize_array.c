@@ -27,7 +27,7 @@ GrB_Info GB_serialize_array
     // output:
     GB_blocks **Blocks_handle,          // Blocks: array of size nblocks+1
     size_t *Blocks_size_handle,         // size of Blocks
-    int64_t **Sblocks_handle,           // Sblocks: array of size nblocks+1
+    uint64_t **Sblocks_handle,          // Sblocks: array of size nblocks+1
     size_t *Sblocks_size_handle,        // size of Sblocks
     int32_t *nblocks_handle,            // # of blocks
     int32_t *method_used,               // method used
@@ -58,7 +58,7 @@ GrB_Info GB_serialize_array
     GB_blocks *Blocks = NULL ;
     size_t Blocks_size = 0, Sblocks_size = 0 ;
     int32_t nblocks = 0 ;
-    int64_t *Sblocks = NULL ;
+    uint64_t *Sblocks = NULL ;
 
     //--------------------------------------------------------------------------
     // check for quick return
@@ -87,7 +87,7 @@ GrB_Info GB_serialize_array
         if (!dryrun)
         {
             Blocks = GB_MALLOC (2, GB_blocks, &Blocks_size) ;
-            Sblocks = GB_MALLOC (2, int64_t, &Sblocks_size) ;
+            Sblocks = GB_MALLOC (2, uint64_t, &Sblocks_size) ;
             if (Blocks == NULL || Sblocks == NULL)
             { 
                 // out of memory
@@ -148,7 +148,7 @@ GrB_Info GB_serialize_array
     if (!dryrun)
     {
         Blocks = GB_CALLOC (nblocks+1, GB_blocks, &Blocks_size) ;
-        Sblocks = GB_CALLOC (nblocks+1, int64_t, &Sblocks_size) ;
+        Sblocks = GB_CALLOC (nblocks+1, uint64_t, &Sblocks_size) ;
         if (Blocks == NULL || Sblocks == NULL)
         { 
             // out of memory
@@ -240,14 +240,14 @@ GrB_Info GB_serialize_array
                 s = LZ4_compress_default (src, dst, srcSize, dstCapacity) ;
                 ok = ok && (s > 0) ;
                 // compressed block is now in dst [0:s-1], of size s
-                Sblocks [blockid] = (int64_t) s ;
+                Sblocks [blockid] = (uint64_t) s ;
                 break ;
 
             case GxB_COMPRESSION_LZ4HC : 
                 s = LZ4_compress_HC (src, dst, srcSize, dstCapacity, level) ;
                 ok = ok && (s > 0) ;
                 // compressed block is now in dst [0:s-1], of size s
-                Sblocks [blockid] = (int64_t) s ;
+                Sblocks [blockid] = (uint64_t) s ;
                 break ;
 
             default :
@@ -255,7 +255,7 @@ GrB_Info GB_serialize_array
                 ss = ZSTD_compress (dst, dstCapacity, src, srcSize, level) ;
                 ok = ok && (ss <= dstCapacity) ;
                 // compressed block is now in dst [0:ss-1], of size ss
-                Sblocks [blockid] = (int64_t) ss ;
+                Sblocks [blockid] = (uint64_t) ss ;
                 break ;
         }
     }

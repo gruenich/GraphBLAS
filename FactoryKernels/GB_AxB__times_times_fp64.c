@@ -460,5 +460,7 @@ GrB_Info GB (_Asaxpy3B__times_times_fp64)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -114,5 +114,7 @@ GrB_Info GB (_subassign_22__bshift_uint32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

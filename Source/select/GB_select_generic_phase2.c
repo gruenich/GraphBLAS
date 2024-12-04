@@ -17,7 +17,7 @@ GrB_Info GB_select_generic_phase2
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx,                   // NULL if C is iso-valued
-    const int64_t *restrict Cp,
+    const uint64_t *restrict Cp,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,

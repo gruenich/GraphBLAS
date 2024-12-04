@@ -3,7 +3,7 @@
 m4_divert(if_phase1)
 GrB_Info GB (_sel_phase1)
 (
-    int64_t *restrict Cp,
+    uint64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -18,7 +18,7 @@ GrB_Info GB (_sel_phase2)
 (
     int64_t *restrict Ci,
     GB_void *restrict Cx_out,
-    const int64_t *restrict Cp,
+    const uint64_t *restrict Cp,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,

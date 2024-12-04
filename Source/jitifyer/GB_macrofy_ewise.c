@@ -46,7 +46,9 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // binary operator (5 hex digits)
     bool flipxy     = GB_RSHIFT (method_code, 43, 1) ;
     bool flipij     = GB_RSHIFT (method_code, 42, 1) ;
+    #ifdef GB_DEBUG
     int binop_code  = GB_RSHIFT (method_code, 36, 6) ;
+    #endif
 //  int zcode       = GB_RSHIFT (method_code, 32, 4) ;
     int xcode       = GB_RSHIFT (method_code, 28, 4) ;
     int ycode       = GB_RSHIFT (method_code, 24, 4) ;

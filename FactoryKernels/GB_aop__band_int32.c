@@ -114,5 +114,7 @@ GrB_Info GB (_subassign_22__band_int32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

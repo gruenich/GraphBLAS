@@ -52,7 +52,7 @@ void mexFunction
     GrB_Matrix V = gb_get_shallow (pargin [0]) ;
     int64_t k = 0 ;
 
-    int64_t ncols ;
+    uint64_t ncols ;
     OK (GrB_Matrix_ncols (&ncols, V)) ;
     CHECK_ERROR (ncols != 1, "v must be a column vector") ;
 
@@ -73,7 +73,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type ctype = NULL ;
-    int64_t n ;
+    uint64_t n ;
     OK (GxB_Matrix_type (&ctype, V)) ;
     OK (GrB_Matrix_nrows (&n, V)) ;
     n += GB_IABS (k) ;

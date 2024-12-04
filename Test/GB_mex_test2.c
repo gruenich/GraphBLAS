@@ -139,8 +139,8 @@ void mexFunction
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;
 
-    int32_t Ap32 [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
-    GB_p_slice (Slice, Ap32, true, 10, 10, false) ;
+    int32_t Ap_32 [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
+    GB_p_slice (Slice, Ap_32, true, 10, 10, false) ;
     printf ("Slice32: ") ;
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;

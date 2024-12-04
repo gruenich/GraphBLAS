@@ -82,7 +82,7 @@ int main (int argc, char **argv)
     fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
 
     // print in 1-based notation
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_PRINT_1BASED)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, (GrB_Field) GxB_PRINT_1BASED)) ;
 
     bool predefined = (argc > 1) ;
     if (predefined)

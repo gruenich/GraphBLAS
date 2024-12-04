@@ -32,7 +32,7 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     int mask_ecode  = GB_RSHIFT (method_code, 12, 4) ;
 
     // type of R (1 hex digit)
-    int rcode       = GB_RSHIFT (method_code,  8, 4) ;
+//  int rcode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // formats of R, M, C, and Z (2 hex digits)
     int rsparsity   = GB_RSHIFT (method_code,  6, 2) ;

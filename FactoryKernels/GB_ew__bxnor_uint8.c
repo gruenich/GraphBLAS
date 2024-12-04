@@ -420,5 +420,7 @@ GrB_Info GB (_bind2nd_tran__bxnor_uint8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

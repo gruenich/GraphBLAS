@@ -357,5 +357,7 @@ GrB_Info GB (_Asaxpy3B__any_max_uint32)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

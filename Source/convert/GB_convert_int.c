@@ -34,7 +34,6 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;

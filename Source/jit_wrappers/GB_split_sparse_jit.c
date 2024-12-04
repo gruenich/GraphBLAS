@@ -23,7 +23,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     const GrB_Matrix A,
     int64_t akstart,
     int64_t aistart,
-    int64_t *restrict Wp,           // FIXME what type is Wp?
+    uint64_t *restrict Wp,           // FIXME what type is Wp?
     const int64_t *restrict C_ek_slicing,
     const int C_ntasks,
     const int C_nthreads
@@ -56,6 +56,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, akstart, aistart, Wp, C_ek_slicing, C_ntasks,
         C_nthreads)) ;

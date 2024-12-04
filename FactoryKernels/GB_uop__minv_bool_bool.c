@@ -95,5 +95,7 @@ GrB_Info GB (_uop_tran__minv_bool_bool)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

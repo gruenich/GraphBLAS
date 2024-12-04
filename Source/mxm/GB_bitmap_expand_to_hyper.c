@@ -60,7 +60,7 @@ GrB_Info GB_bitmap_expand_to_hyper
     int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;  // FIXME
     int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;  // FIXME
 
-    Cp = GB_MALLOC (cvdim+1, int64_t, &Cp_size) ;   // FIXME
+    Cp = GB_MALLOC (cvdim+1, uint64_t, &Cp_size) ;   // FIXME
     Ch = NULL ;
     if (B_is_hyper)
     { 

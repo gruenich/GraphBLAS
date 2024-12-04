@@ -68,7 +68,7 @@ void mexFunction
     int GET_SCALAR (3, int, fmt, GxB_BY_COL) ;
 
     // construct C
-    int64_t n ;
+    uint64_t n ;
     GrB_Matrix_nrows (&n, V) ;
     n += GB_IABS (k) ;
 

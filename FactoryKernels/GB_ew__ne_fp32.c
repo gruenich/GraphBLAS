@@ -422,5 +422,7 @@ GrB_Info GB (_bind2nd_tran__ne_fp32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

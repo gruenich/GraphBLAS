@@ -60,6 +60,7 @@ GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cp, Ci, Cj, Cx, A, W, nthreads)) ;
 }

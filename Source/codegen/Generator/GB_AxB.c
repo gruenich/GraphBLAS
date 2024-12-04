@@ -557,5 +557,7 @@ GrB_Info GB (_Asaxpy3B)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

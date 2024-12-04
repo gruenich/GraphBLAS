@@ -116,5 +116,7 @@ GrB_Info GB (_AaddB__pair_int32)
 // eWiseUnion: C=A+B, C<M>=A+B, C<!M>=A+B
 //------------------------------------------------------------------------------
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

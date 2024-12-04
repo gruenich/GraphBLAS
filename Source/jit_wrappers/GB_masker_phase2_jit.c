@@ -61,6 +61,7 @@ GrB_Info GB_masker_phase2_jit       // phase2 for R = masker (C,M,Z)
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (R, TaskList, R_ntasks, R_nthreads,
         R_to_M, R_to_C, R_to_Z, M, Mask_comp, Mask_struct, C, Z,

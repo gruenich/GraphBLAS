@@ -13,7 +13,7 @@ try
     cd ../Test/spok
     spok_install ;
     cd ../../Tcov
-    mex -g -R2018a ../Test/GB_spones_mex.c
+    mex -O -R2018a ../Test/GB_spones_mex.c
     grbcov_testmake ;
     testall ([ ], true) ;
 catch me

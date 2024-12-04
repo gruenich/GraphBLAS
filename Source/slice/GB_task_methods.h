@@ -92,7 +92,7 @@ void GB_slice_vector
 
 void GB_task_cumsum
 (
-    int64_t *Cp,                        // size Cnvec+1
+    uint64_t *Cp,                       // size Cnvec+1 FIXME
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *restrict TaskList,  // array of structs

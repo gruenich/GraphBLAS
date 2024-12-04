@@ -461,5 +461,7 @@ GrB_Info GB (_Asaxpy3B__max_rdiv_fp32)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

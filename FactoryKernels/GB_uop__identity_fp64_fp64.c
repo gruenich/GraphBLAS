@@ -69,5 +69,7 @@ GrB_Info GB (_uop_tran__identity_fp64_fp64)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

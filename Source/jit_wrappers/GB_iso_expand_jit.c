@@ -50,6 +50,7 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (X, n, scalar, nthreads)) ;
 }

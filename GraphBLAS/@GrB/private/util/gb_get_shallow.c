@@ -20,7 +20,7 @@
 // For v5, iso is present but false, and the s component has length 10.
 // For v5_1, iso is true/false, and the s component has length 10.
 // For v7_3: the same content as v5_1, except that Yp, Yi, and Yx are added.
-// For v9_5: Ap, Ah, Ai, Yp, Yi, and Yx can be 32-bit FIXME
+// For v10: Ap, Ah, Ai, Yp, Yi, and Yx can be 32-bit FIXME
 
 // mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
 // because mxGetData works best for Octave, and it works fine for MATLAB
@@ -211,7 +211,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             mxArray *Ap_mx = mxGetField (X, 0, "p") ;
             IF (Ap_mx == NULL, ".p missing") ;
             IF (mxGetM (Ap_mx) != 1, ".p wrong size") ;
-            Ap = (int64_t *) mxGetData (Ap_mx) ;
+            Ap = (uint64_t *) mxGetData (Ap_mx) ;
             Ap_size = mxGetN (Ap_mx) * sizeof (int64_t) ;
 
             // get Ai
@@ -219,7 +219,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             IF (Ai_mx == NULL, ".i missing") ;
             IF (mxGetM (Ai_mx) != 1, ".i wrong size") ;
             Ai_size = mxGetN (Ai_mx) * sizeof (int64_t) ;
-            Ai = (Ai_size == 0) ? NULL : ((int64_t *) mxGetData (Ai_mx)) ;
+            Ai = (Ai_size == 0) ? NULL : ((uint64_t *) mxGetData (Ai_mx)) ;
         }
 
         // get the values

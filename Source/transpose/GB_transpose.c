@@ -41,7 +41,7 @@
     GB_FREE (&iwork, iwork_size) ;      \
     GB_FREE (&jwork, jwork_size) ;      \
     GB_FREE (&Swork, Swork_size) ;      \
-    GB_WERK_POP (Count, int64_t) ;      \
+    GB_WERK_POP (Count, uint64_t) ;     \
 }
 
 #define GB_FREE_ALL                     \
@@ -85,9 +85,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
     bool in_place = (A == C) ;
-    GB_WERK_DECLARE (Count, int64_t) ;
-    GB_MDECL (iwork, , u) ; size_t iwork_size = 0 ;
-    GB_MDECL (jwork, , u) ; size_t jwork_size = 0 ;
+    GB_WERK_DECLARE (Count, uint64_t) ;
+    void *iwork = NULL ; size_t iwork_size = 0 ;
+    void *jwork = NULL ; size_t jwork_size = 0 ;
     GB_void *Swork = NULL ; size_t Swork_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
@@ -138,8 +138,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     bool Cp_is_32 = GB_validate_p_is_32 (hack32, anz) ;
     bool Ci_is_32 = GB_validate_i_is_32 (hack32, avdim, avlen) ;
 
-    size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
@@ -502,7 +502,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             ntasks = 8 * nth ;
             ntasks = GB_IMIN (ntasks, avdim) ;
             ntasks = GB_IMAX (ntasks, 1) ;
-            GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
+            GB_WERK_PUSH (Count, ntasks+1, uint64_t) ;
             if (Count == NULL)
             { 
                 // out of memory

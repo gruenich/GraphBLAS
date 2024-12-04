@@ -32,7 +32,7 @@ GrB_Info GB_deserialize_from_blob
     int64_t X_len,              // size of X in bytes
     const GB_void *blob,        // serialized blob of size blob_size
     size_t blob_size,
-    int64_t *Sblocks,           // array of size nblocks
+    uint64_t *Sblocks,          // array of size nblocks
     int32_t nblocks,            // # of compressed blocks for this array
     int32_t method,             // compression method used for each block
     // input/output:

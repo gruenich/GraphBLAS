@@ -84,7 +84,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
 GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 (
     // computed by phase1:
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    uint64_t **Cp_handle,               // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
@@ -113,7 +113,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 (
     GrB_Matrix C,               // output matrix, static header
     // from phase1:
-    int64_t **Cp_handle,        // vector pointers for C
+    uint64_t **Cp_handle,       // vector pointers for C FIXME
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase0b:

@@ -95,5 +95,7 @@ GrB_Info GB (_uop_tran__abs_uint8_uint8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

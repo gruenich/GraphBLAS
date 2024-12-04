@@ -69,5 +69,7 @@ GrB_Info GB (_uop_tran__identity_fc32_fc32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

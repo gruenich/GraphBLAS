@@ -114,5 +114,7 @@ GrB_Info GB (_subassign_22__lxor_bool)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

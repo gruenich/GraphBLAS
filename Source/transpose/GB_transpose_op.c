@@ -51,7 +51,7 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,                 // input matrix
     // for sparse or hypersparse case:
-    int64_t *restrict *Workspaces,      // Workspaces, size nworkspaces
+    void **Workspaces,                  // Workspaces, size nworkspaces
     const int64_t *restrict A_slice,    // how A is sliced, size nthreads+1
     int nworkspaces,                    // # of workspaces to use
     // for all cases:

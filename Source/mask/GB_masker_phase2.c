@@ -50,7 +50,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
-    int64_t **Rp_handle,            // vector pointers for R    FIXME
+    uint64_t **Rp_handle,           // vector pointers for R    FIXME
     size_t Rp_size,
     const int64_t Rnvec_nonempty,   // # of non-empty vectors in R
     // tasks from phase1a:

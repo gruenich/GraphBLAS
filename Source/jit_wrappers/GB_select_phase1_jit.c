@@ -15,7 +15,7 @@ typedef GB_JIT_KERNEL_SELECT_PHASE1_PROTO ((*GB_jit_dl_function)) ;
 GrB_Info GB_select_phase1_jit      // select phase1
 (
     // output:
-    int64_t *restrict Cp,
+    uint64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     // input:
@@ -55,6 +55,7 @@ GrB_Info GB_select_phase1_jit      // select phase1
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cp, Wfirst, Wlast, A, ythunk, A_ek_slicing,
         A_ntasks, A_nthreads, &GB_callback)) ;

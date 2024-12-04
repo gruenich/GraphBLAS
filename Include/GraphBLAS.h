@@ -7095,7 +7095,7 @@ struct GB_Iterator_opaque
     int64_t avdim ;             // number of vectors in the matrix dimension
     int64_t anvec ;             // # of vectors present in the matrix
 //  FIXME: for iterator: change Ap, Ah, Ai 
-    const int64_t *GB_restrict Ap ;      // pointers for sparse and hypersparse
+    const uint64_t *GB_restrict Ap ;     // pointers for sparse and hypersparse
     const int64_t *GB_restrict Ah ;      // vector names for hypersparse
     const int8_t  *GB_restrict Ab ;      // bitmap
     const int64_t *GB_restrict Ai ;      // indices for sparse and hypersparse

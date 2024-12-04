@@ -596,7 +596,7 @@ void mexFunction
         OK (GxB_Matrix_fprint (A, "A", 3, NULL)) ;
 
         OK (GrB_Matrix_new (&C, GrB_INT64, 5, 6)) ;
-        int64_t cnvals ;
+        uint64_t cnvals ;
 
         OK (GxB_Matrix_fprint (A, "A for select:banded", 3, NULL)) ;
         OK (GxB_Global_Option_set (GxB_BURBLE, true)) ;
@@ -663,7 +663,7 @@ void mexFunction
         OK (GrB_Matrix_select_INT64 (E, NULL, NULL, UpperBanded, A, 1,
             GrB_DESC_T0)) ;
         OK (GxB_Matrix_fprint (E, "E = upper_banded (A')", 3, NULL)) ;
-        int64_t envals ;
+        uint64_t envals ;
         OK (GrB_Matrix_nvals (&envals, E)) ;
         CHECK (envals == 8) ;
         for (int i = 0 ; i < 6 ; i++)
@@ -1271,7 +1271,7 @@ void mexFunction
     OK (GrB_Matrix_select_Scalar (A, NULL, NULL, GrB_VALUEEQ_FP32,
         A, scalar, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso select output", 3, NULL)) ;
-    int64_t anvals ;
+    uint64_t anvals ;
     OK (GrB_Matrix_nvals (&anvals, A)) ;
     CHECK (anvals == 5) ;
 

@@ -11,6 +11,7 @@
 
 #include "extract/GB_subref.h"
 #include "jitifyer/GB_stringify.h"
+#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                               \
 {                                                       \

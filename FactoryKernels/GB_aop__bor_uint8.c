@@ -114,5 +114,7 @@ GrB_Info GB (_subassign_22__bor_uint8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

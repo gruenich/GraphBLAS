@@ -699,7 +699,7 @@ static GrB_Info GB_SORT (matrix)
     // get input
     //--------------------------------------------------------------------------
 
-    GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
+//  GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
     int64_t cnvec = C->nvec ;
     uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ci = C->i ;   // FIXME
@@ -803,7 +803,7 @@ static GrB_Info GB_SORT (matrix)
     // construct a list of vectors that must still be sorted
     //--------------------------------------------------------------------------
 
-    GB_cumsum1_64 (C_skip, ntasks) ;
+    GB_cumsum1_64 ((uint64_t *) C_skip, ntasks) ;
     int64_t total_skipped = C_skip [ntasks] ;
 
     C_skipped = GB_MALLOC_WORK (total_skipped, int64_t, &C_skipped_size) ;

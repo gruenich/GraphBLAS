@@ -469,5 +469,7 @@ GrB_Info GB (_bind2nd_tran)
 }
 m4_divert(0)
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -50,7 +50,6 @@ int GB_subassigner_method           // return method to use in GB_subassigner
 
     bool A_is_bitmap = GB_IS_BITMAP (A) ;
     bool A_is_full = GB_IS_FULL (A) ;
-    bool A_is_sparse = GB_IS_SPARSE (A) ;
     int64_t anz = GB_nnz (A) ;
 
     // these properties of C are not affected by wait(C):

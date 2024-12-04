@@ -297,14 +297,10 @@ GrB_Info GB_build               // build matrix
         true,           // burble is OK
         Werk,
         is_32, is_32,   // if true, I and J are 32 bit; otherwise 64-bit
-        #if 1
         true, true      // allow Tp_is_32 and Ti_is_32 to be true.  Tp_is_32
                         // is set false is nnz(T) is too large, and Ti_is_32
                         // is set false if the dimensions are too large.  This
                         // constructs the most compact T possible.
-        #else
-        is_32, is_32    // just for testing
-        #endif
     )) ;
 
     double tt = GB_OPENMP_GET_WTIME ;

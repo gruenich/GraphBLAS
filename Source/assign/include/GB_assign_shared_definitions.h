@@ -1568,7 +1568,7 @@
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
     /* cumsum Npending for each task, and get total from all tasks */       \
-    GB_cumsum1_64 (Npending, ntasks) ;                                      \
+    GB_cumsum1_64 ((uint64_t *) Npending, ntasks) ;                         \
     int64_t total_new_npending = Npending [ntasks] ;                        \
     if (total_new_npending == 0)                                            \
     {                                                                       \
@@ -1589,7 +1589,7 @@
     GB_Pending Pending = C->Pending ;                                       \
     GB_CPending_DECLARE (Pending_i) ; GB_CPending_PTR (Pending_i, C, i) ;   \
     GB_CPending_DECLARE (Pending_j) ; GB_CPending_PTR (Pending_j, C, j) ;   \
-    GB_A_TYPE *restrict Pending_x = Pending->x ; /* NULL if C is iso */     \
+    GB_A_TYPE *restrict Pending_x = (GB_A_TYPE *) Pending->x ;              \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;
 
@@ -1620,7 +1620,7 @@
 // Pending->x is NULL.
 
 // The type of Pending_x is always identical to the type of A, or the scalar,
-// so no typecasting is required.
+// so no typecasting is required.  Pending_x is NULL if C is iso.
 
 // insert a scalar into Pending_x:
 #undef GB_COPY_scalar_to_PENDING_X

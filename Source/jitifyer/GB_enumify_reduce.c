@@ -39,17 +39,6 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     //--------------------------------------------------------------------------
 
     // consider z = op(x,y) where both x and y are boolean:
-    // DIV becomes FIRST
-    // RDIV becomes SECOND
-    // MIN and TIMES become LAND
-    // MAX and PLUS become LOR
-    // NE, ISNE, RMINUS, and MINUS become LXOR
-    // ISEQ becomes EQ
-    // ISGT becomes GT
-    // ISLT becomes LT
-    // ISGE becomes GE
-    // ISLE becomes LE
-
     GB_Type_code zcode = ztype->code ;
     if (zcode == GB_BOOL_code)
     { 

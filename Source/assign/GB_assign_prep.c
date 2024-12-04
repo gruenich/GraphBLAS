@@ -1178,8 +1178,7 @@ GrB_Info GB_assign_prep
         // C has changed so recompute the subassigner method
         (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,
             (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
-            nJ, J, /* FUTURE: Jcolon, */
-            scalar_expansion, scalar, scalar_type) ;
+            nJ, Jcolon, scalar_expansion, scalar, scalar_type) ;
     }
 
     ASSERT_MATRIX_OK (C, "C before subassign", GB0) ;

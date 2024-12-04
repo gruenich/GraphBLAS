@@ -74,5 +74,7 @@ GrB_Info GB (_bld__min_int16)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

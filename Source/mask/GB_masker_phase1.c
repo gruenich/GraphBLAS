@@ -29,7 +29,7 @@
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (
     // computed by phase1:
-    int64_t **Rp_handle,            // output of size Rnvec+1
+    uint64_t **Rp_handle,           // vector pointers for R    FIXME
     size_t *Rp_size_handle,
     int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
     // tasks from phase1a:
@@ -88,7 +88,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     // allocate the result
     //--------------------------------------------------------------------------
 
-    Rp = GB_CALLOC (GB_IMAX (2, Rnvec+1), int64_t, &Rp_size) ;
+    Rp = GB_CALLOC (GB_IMAX (2, Rnvec+1), uint64_t, &Rp_size) ;
     if (Rp == NULL)
     { 
         // out of memory

@@ -465,5 +465,7 @@ GrB_Info GB (_bind2nd_tran__div_int32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

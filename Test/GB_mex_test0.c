@@ -4632,7 +4632,7 @@ void mexFunction
     A->h = Ah_save ;
     OK (GB_Matrix_check (A, "h restored", G1, NULL)) ;
 
-    int64_t nvec = A->nvec ;
+    uint64_t nvec = A->nvec ;
     A->nvec = -1 ;
     ERR (GB_Matrix_check (A, "nvec invalid", G1, NULL)) ;
     A->nvec = nvec ;
@@ -5266,7 +5266,7 @@ void mexFunction
     double *Ax ;
     GrB_Type atype ;
     bool jumbled, iso ;
-    int64_t Ap_size, Aj_size, Ai_size, Ax_size, Ah_size, Ab_size ;
+    uint64_t Ap_size, Aj_size, Ai_size, Ax_size, Ah_size, Ab_size ;
 
     OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
         &Ap, &Aj, (void **) &Ax, &Ap_size, &Aj_size, &Ax_size, &iso,

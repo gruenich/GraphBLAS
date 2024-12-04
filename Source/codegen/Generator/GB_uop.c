@@ -88,5 +88,7 @@ GrB_Info GB (_uop_tran)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

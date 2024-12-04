@@ -56,7 +56,7 @@ end
 addpath ../Test
 addpath ../Test/spok
 
-flags = '-g -DGBCOVER -R2018a -DGBNCPUFEAT' ;
+flags = '-O -DGBCOVER -R2018a -DGBNCPUFEAT' ;
 if (need_rename)
     flags = [flags ' -DGBMATLAB=1 '] ;
 end

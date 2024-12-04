@@ -404,5 +404,7 @@ GrB_Info GB (_bind2nd_tran__pow_int64)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

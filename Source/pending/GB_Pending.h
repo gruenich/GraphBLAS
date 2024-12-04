@@ -12,6 +12,7 @@
 #ifndef GB_PENDING_H
 #define GB_PENDING_H
 #include "GB.h"
+#include "include/GB_unused.h"
 
 //------------------------------------------------------------------------------
 // GB_Pending functions

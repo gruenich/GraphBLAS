@@ -72,14 +72,14 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
     size_t Wp_size = 0 ;
     uint64_t *restrict Wp = NULL ;
-    Wp = GB_MALLOC_WORK (anvec, int64_t, &Wp_size) ;
+    Wp = GB_MALLOC_WORK (anvec, uint64_t, &Wp_size) ;
     if (Wp == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_memcpy (Wp, Ap, anvec * sizeof (int64_t), nthreads_max) ;
+    GB_memcpy (Wp, Ap, anvec * sizeof (uint64_t), nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // split A into tiles

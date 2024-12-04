@@ -117,10 +117,7 @@
                 //--------------------------------------------------------------
 
                 bool cij_exists = false ;
-                GB_CIJ_DECLARE (cij) ;
-                #if GB_IS_PLUS_PAIR_REAL_SEMIRING
-                cij = 0 ;
-                #endif
+                GB_DECLARE_IDENTITY (cij) ;
 
                 // get the value of M(i,j)
                 int64_t i = Mi [pC] ;

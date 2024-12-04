@@ -125,8 +125,6 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         case GB_PLUS_binop_code    :    // z = x + y
         case GB_TIMES_binop_code   :    // z = x * y
         case GB_PAIR_binop_code    :    // z = 1
-        case GB_ISEQ_binop_code    :    // z = (x == y)
-        case GB_ISNE_binop_code    :    // z = (x != y)
         case GB_EQ_binop_code      :    // z = (x == y)
         case GB_NE_binop_code      :    // z = (x != y)
         case GB_LOR_binop_code     :    // z = x || y
@@ -403,7 +401,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, Cnvec_nonempty ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
+    uint64_t *Cp = NULL ; size_t Cp_size = 0 ; // FIXME
     const int64_t *Ch = NULL ; size_t Ch_size = 0 ;
     int C_ntasks = 0, C_nthreads ;
 

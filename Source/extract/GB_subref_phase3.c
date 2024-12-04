@@ -21,7 +21,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 (
     GrB_Matrix C,               // output matrix, static header
     // from phase2:
-    int64_t **Cp_handle,        // vector pointers for C
+    uint64_t **Cp_handle,       // vector pointers for C FIXME
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase1:
@@ -143,8 +143,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 Cx [(pC) + k] = (pA) + k ;          \
             }
         #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
-        #define GB_QSORT_1B(Ci,Cx,pC,clen) \
-            GB_qsort_1b_64_size8 (Ci + pC, (uint64_t *) (Cx + pC), clen) ;
+        #define GB_QSORT_1B(Ci,Cx,pC,clen)                  \
+            GB_qsort_1b_64_size8 ((uint64_t *) (Ci + pC),   \
+                (uint64_t *) (Cx + pC), clen) ;
         #define GB_SYMBOLIC
         #include "extract/template/GB_subref_template.c"
 
@@ -191,9 +192,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, (len) * csize) ;
             #define GB_COPY_ENTRY(pC,pA)                                    \
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, csize) ;
-            #define GB_QSORT_1B(Ci,Cx,pC,clen) \
-                GB_qsort_1b_64_generic (Ci+(pC), (GB_void *) (Cx+(pC)*csize), \
-                    csize, clen) ;
+            #define GB_QSORT_1B(Ci,Cx,pC,clen)                  \
+                GB_qsort_1b_64_generic ((uint64_t *) (Ci+(pC)), \
+                    (GB_void *) (Cx+(pC)*csize), csize, clen) ;
             #include "extract/template/GB_subref_template.c"
             info = GrB_SUCCESS ;
         }

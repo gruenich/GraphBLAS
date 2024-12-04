@@ -58,7 +58,7 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
                 case GB_UINT64_code :
                 {
                     int32_t *restrict Dest = (int32_t *) dest ;
-                    const int64_t *restrict Src = (uint64_t *) src ;
+                    const uint64_t *restrict Src = (uint64_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;
@@ -91,7 +91,7 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
                 case GB_UINT64_code :
                 {
                     uint32_t *restrict Dest = (uint32_t *) dest ;
-                    const int64_t *restrict Src = (uint64_t *) src ;
+                    const uint64_t *restrict Src = (uint64_t *) src ;
                     #include "cast/factory/GB_cast_int_template.c"
                 }
                 break ;

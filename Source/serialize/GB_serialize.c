@@ -99,11 +99,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_blocks *Ab_Blocks = NULL ; size_t Ab_Blocks_size = 0 ;
     GB_blocks *Ai_Blocks = NULL ; size_t Ai_Blocks_size = 0 ;
     GB_blocks *Ax_Blocks = NULL ; size_t Ax_Blocks_size = 0 ;
-    int64_t *Ap_Sblocks = NULL  ; size_t Ap_Sblocks_size = 0 ;
-    int64_t *Ah_Sblocks = NULL  ; size_t Ah_Sblocks_size = 0 ;
-    int64_t *Ab_Sblocks = NULL  ; size_t Ab_Sblocks_size = 0 ;
-    int64_t *Ai_Sblocks = NULL  ; size_t Ai_Sblocks_size = 0 ;
-    int64_t *Ax_Sblocks = NULL  ; size_t Ax_Sblocks_size = 0 ;
+    uint64_t *Ap_Sblocks = NULL ; size_t Ap_Sblocks_size = 0 ;
+    uint64_t *Ah_Sblocks = NULL ; size_t Ah_Sblocks_size = 0 ;
+    uint64_t *Ab_Sblocks = NULL ; size_t Ab_Sblocks_size = 0 ;
+    uint64_t *Ai_Sblocks = NULL ; size_t Ai_Sblocks_size = 0 ;
+    uint64_t *Ax_Sblocks = NULL ; size_t Ax_Sblocks_size = 0 ;
     int32_t Ap_nblocks = 0      ; size_t Ap_compressed_size = 0 ;
     int32_t Ah_nblocks = 0      ; size_t Ah_compressed_size = 0 ;
     int32_t Ab_nblocks = 0      ; size_t Ab_compressed_size = 0 ;
@@ -230,11 +230,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         // header information
         GB_BLOB_HEADER_SIZE
         // Sblocks for each array
-        + Ap_nblocks * sizeof (int64_t)     // Ap_Sblocks [1:Ap_nblocks]
-        + Ah_nblocks * sizeof (int64_t)     // Ah_Sblocks [1:Ah_nblocks]
-        + Ab_nblocks * sizeof (int64_t)     // Ab_Sblocks [1:Ab_nblocks]
-        + Ai_nblocks * sizeof (int64_t)     // Ai_Sblocks [1:Ai_nblocks]
-        + Ax_nblocks * sizeof (int64_t)     // Ax_Sblocks [1:Ax_nblocks]
+        + Ap_nblocks * sizeof (uint64_t)    // Ap_Sblocks [1:Ap_nblocks]
+        + Ah_nblocks * sizeof (uint64_t)    // Ah_Sblocks [1:Ah_nblocks]
+        + Ab_nblocks * sizeof (uint64_t)    // Ab_Sblocks [1:Ab_nblocks]
+        + Ai_nblocks * sizeof (uint64_t)    // Ai_Sblocks [1:Ai_nblocks]
+        + Ax_nblocks * sizeof (uint64_t)    // Ax_Sblocks [1:Ax_nblocks]
         // type_name for user-defined types
         + ((typecode == GB_UDT_code) ? GxB_MAX_NAME_LEN : 0) ;
 

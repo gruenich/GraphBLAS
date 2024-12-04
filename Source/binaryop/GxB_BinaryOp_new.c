@@ -85,6 +85,7 @@ GrB_Info GxB_BinaryOp_new
             // and cannot be compiled by the JIT).
             return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
+        #include "include/GB_pedantic_disable.h"
         op->binop_function = (GxB_binary_function) user_function ;
         GB_BURBLE_END ;
     }

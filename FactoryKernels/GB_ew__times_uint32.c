@@ -439,5 +439,7 @@ GrB_Info GB (_bind2nd_tran__times_uint32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

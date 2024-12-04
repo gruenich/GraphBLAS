@@ -122,7 +122,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     int64_t *Ah = NULL, *Ai = NULL ;
     void *Ax = NULL ;
     GrB_Index Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
-    int64_t nvals = 0, nvec = 0 ;
+    uint64_t nvals = 0, nvec = 0 ;
     bool by_col = (fmt == GxB_BY_COL) ;
     bool iso = false ;
 

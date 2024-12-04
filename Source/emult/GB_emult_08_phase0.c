@@ -571,14 +571,14 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                int64_t jA = A->h [kA] ;
+                int64_t jA = Ah [kA] ;
                 ASSERT (j == jA) ;
             }
         }
         else if (A_is_hyper)
         {
             // A is hypersparse, and Ch is a shallow copy of A->h
-            ASSERT (Ch == A->h) ;
+            ASSERT (Ch == Ah) ;
         }
 
         // see if B (:,j) exists
@@ -590,42 +590,42 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                int64_t jB = B->h [kB] ;
+                int64_t jB = Bh [kB] ;
                 ASSERT (j == jB) ;
             }
         }
         else if (B_is_hyper)
         {
             // A is hypersparse, and Ch is a shallow copy of A->h
-            ASSERT (Ch == B->h) ;
+            ASSERT (Ch == Bh) ;
         }
 
         // see if M (:,j) exists
-        if (Ch != NULL && M != NULL && Ch == M->h)
+        if (Ch != NULL && M != NULL && Ch == Mh)
         {
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
-            ASSERT (M->h != NULL) ;
-            ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
+            ASSERT (Mh != NULL) ;
+            ASSERT (Ch != NULL && Mh != NULL && Ch [k] == Mh [k]) ;
             ASSERT (C_to_M == NULL) ;
         }
         else if (C_to_M != NULL)
         {
             // M is present and hypersparse
             ASSERT (M != NULL) ;
-            ASSERT (M->h != NULL) ;
+            ASSERT (Mh != NULL) ;
             int64_t kM = C_to_M [k] ;
             ASSERT (kM >= -1 && kM < M->nvec) ;
             if (kM >= 0)
             {
-                int64_t jM = M->h [kM] ;
+                int64_t jM = Mh [kM] ;
                 ASSERT (j == jM) ;
             }
         }
         else
         {
             // M is not present, or in sparse form
-            ASSERT (M == NULL || M->h == NULL) ;
+            ASSERT (M == NULL || Mh == NULL) ;
         }
     }
 

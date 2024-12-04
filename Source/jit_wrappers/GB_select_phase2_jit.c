@@ -18,7 +18,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     int64_t *restrict Ci,
     GB_void *restrict Cx,                   // NULL if C is iso-valued
     // input:
-    const int64_t *restrict Cp,
+    const uint64_t *restrict Cp,
     const bool C_iso,
     const bool in_place_A,
     const int64_t *restrict Cp_kfirst,
@@ -56,6 +56,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Ci, Cx, Cp, Cp_kfirst, A, ythunk, A_ek_slicing,
         A_ntasks, A_nthreads)) ;

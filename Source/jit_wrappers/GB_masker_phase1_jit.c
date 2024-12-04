@@ -15,7 +15,7 @@ typedef GB_JIT_KERNEL_MASKER_PHASE1_PROTO ((*GB_jit_dl_function)) ;
 GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
 (
     // computed by phase1:
-    int64_t *Rp,                    // output of size Rnvec+1
+    uint64_t *Rp,                   // output of size Rnvec+1 FIXME
     int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
     // tasks from phase1a:
     GB_task_struct *restrict TaskList,       // array of structs
@@ -59,6 +59,7 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Rp, Rnvec_nonempty, TaskList, R_ntasks, R_nthreads,
         Rnvec, Rh, R_to_M, R_to_C, R_to_Z, M, Mask_comp, Mask_struct, C, Z)) ;

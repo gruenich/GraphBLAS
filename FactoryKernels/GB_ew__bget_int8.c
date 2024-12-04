@@ -404,5 +404,7 @@ GrB_Info GB (_bind2nd_tran__bget_int8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -230,12 +230,13 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         //----------------------------------------------------------------------
 
         int nfound = 0 ;
-        size_t ss [2] ;
+//      size_t ss [2] ;
         for (size_t p = s ; p < blob_size && nfound < 2 ; p++)
         {
             if (blob [p] == 0)
-            { 
-                ss [nfound++] = p ;
+            {
+//              ss [nfound] = p ;
+                nfound++ ;
             }
         }
 

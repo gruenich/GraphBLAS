@@ -95,5 +95,7 @@ GrB_Info GB (_uop_tran__minv_int16_int16)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

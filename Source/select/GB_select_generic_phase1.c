@@ -15,7 +15,7 @@
 
 GrB_Info GB_select_generic_phase1
 (
-    int64_t *restrict Cp,
+    uint64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,

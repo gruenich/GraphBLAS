@@ -74,5 +74,7 @@ GrB_Info GB (_bld__times_int8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -31,7 +31,7 @@ static inline void GB_find_Ap_start_end
 (
     // input, not modified
     const int64_t kA,
-    const int64_t *restrict Ap,     // FIXME
+    const uint64_t *restrict Ap,    // FIXME
     const int64_t *restrict Ai,     // FIXME
     const int64_t avlen,
     const int64_t imin,
@@ -148,7 +148,7 @@ static inline void GB_find_Ap_start_end
 
 #define GB_FREE_WORKSPACE           \
 {                                   \
-    GB_WERK_POP (Count, int64_t) ;  \
+    GB_WERK_POP (Count, uint64_t) ; \
 }
 
 #define GB_FREE_ALL                             \
@@ -204,7 +204,7 @@ GrB_Info GB_subref_phase0
     ASSERT (J != NULL) ;
 
     GrB_Info info ;
-    GB_WERK_DECLARE (Count, int64_t) ;
+    GB_WERK_DECLARE (Count, uint64_t) ;
     int64_t *restrict Ch       = NULL ; size_t Ch_size = 0 ;
     uint64_t *restrict Ap_start = NULL ; size_t Ap_start_size = 0 ;
     uint64_t *restrict Ap_end   = NULL ; size_t Ap_end_size = 0 ;
@@ -358,7 +358,7 @@ GrB_Info GB_subref_phase0
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_PUSH (Count, ntasks_max+1, int64_t) ;
+    GB_WERK_PUSH (Count, ntasks_max+1, uint64_t) ;
     if (Count == NULL)
     { 
         // out of memory
@@ -534,8 +534,8 @@ GrB_Info GB_subref_phase0
 
     if (Cnvec > 0)
     {
-        Ap_start = GB_MALLOC_WORK (Cnvec, int64_t, &Ap_start_size) ;
-        Ap_end   = GB_MALLOC_WORK (Cnvec, int64_t, &Ap_end_size) ;
+        Ap_start = GB_MALLOC_WORK (Cnvec, uint64_t, &Ap_start_size) ;
+        Ap_end   = GB_MALLOC_WORK (Cnvec, uint64_t, &Ap_end_size) ;
         if (Ap_start == NULL || Ap_end == NULL)
         { 
             // out of memory

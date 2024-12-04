@@ -64,12 +64,7 @@
         // SECOND and RDIV                      : SECOND
         // MIN, TIMES, and LAND                 : LAND
         // MAX, PLUS, and LOR                   : LOR
-        // ISNE, NE, MINUS, RMINUS, and LXOR    : LXOR
-        // ISEQ, EQ                             : EQ
-        // ISGT, GT                             : GT
-        // ISLT, LT                             : LT
-        // ISGE, GE                             : GE
-        // ISLE, LE                             : LE
+        // NE, MINUS, RMINUS, and LXOR          : LXOR
 
 // Thus, below there is a #define GxB_NO_LAND_FIRST_BOOL, but no #define
 // GxB_NO_LAND_DIV_BOOL.
@@ -79,6 +74,16 @@
 
 // To renable the fast versions of these semirings, simply comment out the
 // specific "#define GxB_NO..." statements below, and recompile this library.
+
+//------------------------------------------------------------------------------
+// handling empty source files
+//------------------------------------------------------------------------------
+
+// If types are disabled, some files become completely empty, which is not
+// allowed in the ISO C standard.  This #define is placed in those files to
+// ensure they are not empty.
+
+#define GB_EMPTY_PLACEHOLDER typedef int dummy ;
 
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the types
@@ -192,12 +197,7 @@
 // #define GxB_NO_TIMES     1
 // #define GxB_NO_DIV       1
 // #define GxB_NO_RDIV      1
-   #define GxB_NO_ISEQ      1
-   #define GxB_NO_ISNE      1
-   #define GxB_NO_ISGT      1
-   #define GxB_NO_ISGE      1
-   #define GxB_NO_ISLT      1
-   #define GxB_NO_ISLE      1
+
 // #define GxB_NO_EQ        1
 // #define GxB_NO_NE        1
 // #define GxB_NO_GT        1
@@ -417,76 +417,6 @@
 // #define GxB_NO_RDIV_FP64     1
 // #define GxB_NO_RDIV_FC32     1
 // #define GxB_NO_RDIV_FC64     1
-
-// #define GxB_NO_ISEQ_INT8     1
-// #define GxB_NO_ISEQ_INT16    1
-// #define GxB_NO_ISEQ_INT32    1
-// #define GxB_NO_ISEQ_INT64    1
-// #define GxB_NO_ISEQ_UINT8    1
-// #define GxB_NO_ISEQ_UINT16   1
-// #define GxB_NO_ISEQ_UINT32   1
-// #define GxB_NO_ISEQ_UINT64   1
-// #define GxB_NO_ISEQ_FP32     1
-// #define GxB_NO_ISEQ_FP64     1
-// #define GxB_NO_ISEQ_FC32     1
-// #define GxB_NO_ISEQ_FC64     1
-
-// #define GxB_NO_ISNE_INT8     1
-// #define GxB_NO_ISNE_INT16    1
-// #define GxB_NO_ISNE_INT32    1
-// #define GxB_NO_ISNE_INT64    1
-// #define GxB_NO_ISNE_UINT8    1
-// #define GxB_NO_ISNE_UINT16   1
-// #define GxB_NO_ISNE_UINT32   1
-// #define GxB_NO_ISNE_UINT64   1
-// #define GxB_NO_ISNE_FP32     1
-// #define GxB_NO_ISNE_FP64     1
-// #define GxB_NO_ISNE_FC32     1
-// #define GxB_NO_ISNE_FC64     1
-
-// #define GxB_NO_ISGT_INT8     1
-// #define GxB_NO_ISGT_INT16    1
-// #define GxB_NO_ISGT_INT32    1
-// #define GxB_NO_ISGT_INT64    1
-// #define GxB_NO_ISGT_UINT8    1
-// #define GxB_NO_ISGT_UINT16   1
-// #define GxB_NO_ISGT_UINT32   1
-// #define GxB_NO_ISGT_UINT64   1
-// #define GxB_NO_ISGT_FP32     1
-// #define GxB_NO_ISGT_FP64     1
-
-// #define GxB_NO_ISLT_INT8     1
-// #define GxB_NO_ISLT_INT16    1
-// #define GxB_NO_ISLT_INT32    1
-// #define GxB_NO_ISLT_INT64    1
-// #define GxB_NO_ISLT_UINT8    1
-// #define GxB_NO_ISLT_UINT16   1
-// #define GxB_NO_ISLT_UINT32   1
-// #define GxB_NO_ISLT_UINT64   1
-// #define GxB_NO_ISLT_FP32     1
-// #define GxB_NO_ISLT_FP64     1
-
-// #define GxB_NO_ISGE_INT8     1
-// #define GxB_NO_ISGE_INT16    1
-// #define GxB_NO_ISGE_INT32    1
-// #define GxB_NO_ISGE_INT64    1
-// #define GxB_NO_ISGE_UINT8    1
-// #define GxB_NO_ISGE_UINT16   1
-// #define GxB_NO_ISGE_UINT32   1
-// #define GxB_NO_ISGE_UINT64   1
-// #define GxB_NO_ISGE_FP32     1
-// #define GxB_NO_ISGE_FP64     1
-
-// #define GxB_NO_ISLE_INT8     1
-// #define GxB_NO_ISLE_INT16    1
-// #define GxB_NO_ISLE_INT32    1
-// #define GxB_NO_ISLE_INT64    1
-// #define GxB_NO_ISLE_UINT8    1
-// #define GxB_NO_ISLE_UINT16   1
-// #define GxB_NO_ISLE_UINT32   1
-// #define GxB_NO_ISLE_UINT64   1
-// #define GxB_NO_ISLE_FP32     1
-// #define GxB_NO_ISLE_FP64     1
 
 // #define GxB_NO_EQ_INT8       1
 // #define GxB_NO_EQ_INT16      1

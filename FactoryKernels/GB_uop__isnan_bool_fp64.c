@@ -95,5 +95,7 @@ GrB_Info GB (_uop_tran__isnan_bool_fp64)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

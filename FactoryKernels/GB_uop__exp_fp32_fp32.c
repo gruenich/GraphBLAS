@@ -95,5 +95,7 @@ GrB_Info GB (_uop_tran__exp_fp32_fp32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

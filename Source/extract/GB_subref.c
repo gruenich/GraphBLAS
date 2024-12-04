@@ -128,6 +128,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     { 
         // symbolic extraction never results in an iso matrix
         C_iso = false ;
+        ASSERT (GB_ZOMBIES_OK (A)) ;
     }
     else
     {
@@ -137,6 +138,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
             memcpy (cscalar, A->x, csize) ;
             C_iso = true ;
         }
+        ASSERT (!GB_ZOMBIES (A)) ;
     }
 
     if (C_iso)
@@ -159,12 +161,12 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // initializations
     //--------------------------------------------------------------------------
 
-    int64_t *Cp       = NULL ; size_t Cp_size = 0 ;
-    int64_t *Ch       = NULL ; size_t Ch_size = 0 ;
-    int64_t *Ap_start = NULL ; size_t Ap_start_size = 0 ;
-    int64_t *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
-    int64_t *Mark     = NULL ; size_t Mark_size = 0 ;
-    int64_t *Inext    = NULL ; size_t Inext_size = 0 ;
+    uint64_t *Cp       = NULL ; size_t Cp_size = 0 ;
+    int64_t *Ch        = NULL ; size_t Ch_size = 0 ;
+    uint64_t *Ap_start = NULL ; size_t Ap_start_size = 0 ;
+    uint64_t *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
+    int64_t *Mark      = NULL ; size_t Mark_size = 0 ;
+    int64_t *Inext     = NULL ; size_t Inext_size = 0 ;
     GB_task_struct *TaskList      = NULL ; size_t TaskList_size = 0 ;
 
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
@@ -179,6 +181,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // Pending tuples are OK (and ignored) for symbolic extraction.
     // GB_subref_phase0 may build the hyper_hash.
     GB_UNJUMBLE (A) ;
+    ASSERT (!GB_JUMBLED (A)) ;
 
     //--------------------------------------------------------------------------
     // phase0: find vectors for C=A(I,J), and I,J properties

@@ -420,5 +420,7 @@ GrB_Info GB (_bind2nd_tran__land_fp32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

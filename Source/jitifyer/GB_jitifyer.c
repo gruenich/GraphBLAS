@@ -13,6 +13,7 @@
 #include "zstd_wrapper/GB_zstd.h"
 #include "JITpackage/GB_JITpackage.h"
 #include "jitifyer/GB_file.h"
+#include "include/GB_unused.h"
 
 typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
 typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
@@ -417,7 +418,9 @@ GrB_Info GB_jitifyer_init (void)
         //----------------------------------------------------------------------
 
         void *dl_function = Kernels [k] ;
-        GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
+
+//      GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k] ;
+        GB_jit_query_func dl_query = GB_jitifyer_get_query (Queries [k]) ;
         ASSERT (dl_function != NULL && dl_query != NULL && Names [k] != NULL) ;
         char kernel_name [GB_KLEN+1] ;
         strncpy (kernel_name, Names [k], GB_KLEN) ;
@@ -1712,7 +1715,8 @@ GrB_Info GB_jitifyer_load2_worker
             char **Names = NULL ;
             int32_t nkernels = 0 ;
             GB_prejit (&nkernels, &Kernels, &Queries, &Names) ;
-            GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
+//          GB_jit_query_func dl_query = (GB_jit_query_func) Queries [k1] ;
+            GB_jit_query_func dl_query = GB_jitifyer_get_query (Queries [k1]) ;
             bool builtin = (encoding->suffix_len == 0) ;
             bool ok = GB_jitifyer_query (dl_query, builtin, hash, semiring,
                 monoid, op, type1, type2, type3) ;
@@ -1735,7 +1739,9 @@ GrB_Info GB_jitifyer_load2_worker
         else if (family == GB_jit_user_op_family)
         {
             // user-defined operator; check it now
-            GB_user_op_f GB_user_op = (GB_user_op_f) (*dl_function) ;
+//          GB_user_op_f GB_user_op = (GB_user_op_f) (*dl_function) ;
+            GB_user_op_f GB_user_op = GB_jitifyer_get_user_op (*dl_function) ;
+
             void *ignore ;
             char *defn ;
             GB_user_op (&ignore, &defn) ;
@@ -1754,7 +1760,10 @@ GrB_Info GB_jitifyer_load2_worker
         else if (family == GB_jit_user_type_family)
         {
             // user-defined type; check it now
-            GB_user_type_f GB_user_type = (GB_user_type_f) (*dl_function) ;
+//          GB_user_type_f GB_user_type = (GB_user_type_f) (*dl_function) ;
+            GB_user_type_f GB_user_type =
+                GB_jitifyer_get_user_type (*dl_function) ;
+    
             size_t ignore ;
             char *defn ;
             GB_user_type (&ignore, &defn) ;
@@ -1960,8 +1969,10 @@ GrB_Info GB_jitifyer_load_worker
     if (dl_handle != NULL)
     { 
         // library is loaded but make sure the defn match
-        GB_jit_query_func dl_query = (GB_jit_query_func)
-            GB_file_dlsym (dl_handle, "GB_jit_query") ;
+//      GB_jit_query_func dl_query = (GB_jit_query_func)
+//          GB_file_dlsym (dl_handle, "GB_jit_query") ;
+        GB_jit_query_func dl_query = GB_jitifyer_get_query (
+            GB_file_dlsym (dl_handle, "GB_jit_query")) ;
         bool ok = (dl_query != NULL) ;
         if (ok)
         { 

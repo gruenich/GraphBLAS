@@ -115,5 +115,7 @@ GrB_Info GB (_subassign_25__int16)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -82,7 +82,7 @@ static GrB_Info GB_blob_header_get
     GB_BLOB_READ (Cx_nblocks, int32_t) ; GB_BLOB_READ (Cx_method, int32_t) ;
 
     (*sparsity_status) = sparsity_iso_csc / 4 ;
-    bool iso = ((sparsity_iso_csc & 2) == 2) ;
+//  bool iso = ((sparsity_iso_csc & 2) == 2) ;
     bool is_csc = ((sparsity_iso_csc & 1) == 1) ;
     (*sparsity_ctrl) = sparsity_control ;
     (*hyper_sw)  = (double) hyper_switch ;
@@ -338,7 +338,6 @@ GrB_Info GxB_Serialized_get_String
     //--------------------------------------------------------------------------
 
     (*value) = '\0' ;
-    const char *name ;
 
     if (info == GrB_SUCCESS)
     {
@@ -483,8 +482,6 @@ GrB_Info GxB_Serialized_get_SIZE
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
-
-    const char *name ;
 
     if (info == GrB_SUCCESS)
     {

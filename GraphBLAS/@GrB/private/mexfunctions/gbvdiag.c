@@ -67,8 +67,8 @@ void mexFunction
     GrB_Type vtype = NULL ;
     int64_t n, nrows, ncols ;
     OK (GxB_Matrix_type (&vtype, A)) ;
-    OK (GrB_Matrix_nrows (&nrows, A)) ;
-    OK (GrB_Matrix_ncols (&ncols, A)) ;
+    OK (GrB_Matrix_nrows ((uint64_t *) &nrows, A)) ;
+    OK (GrB_Matrix_ncols ((uint64_t *) &ncols, A)) ;
 
     if (k >= ncols || k <= -nrows)
     {

@@ -69,5 +69,7 @@ GrB_Info GB (_uop_tran__identity_uint16_uint16)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

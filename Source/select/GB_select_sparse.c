@@ -100,7 +100,7 @@ GrB_Info GB_select_sparse
     int64_t cnz = 0 ;
     int64_t cplen = (avdim == 1) ? 1 : anvec ;
 
-    Cp = GB_CALLOC (cplen+1, int64_t, &Cp_size) ;   // FIXME
+    Cp = GB_CALLOC (cplen+1, uint64_t, &Cp_size) ;   // FIXME
     if (Cp == NULL)
     { 
         // out of memory
@@ -144,7 +144,7 @@ GrB_Info GB_select_sparse
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WORK (cplen, int64_t, &Zp_size) ;
+        Zp = GB_MALLOC_WORK (cplen, uint64_t, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory

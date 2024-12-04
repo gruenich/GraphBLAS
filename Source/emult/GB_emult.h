@@ -74,7 +74,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
 (
     // computed by phase1:
-    int64_t **Cp_handle,                    // output of size Cnvec+1
+    uint64_t **Cp_handle,                   // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
     // tasks from phase1a:
@@ -104,7 +104,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     const bool flipij,      // if true, i,j must be flipped
     // from phase1:
-    int64_t **Cp_handle,    // vector pointers for C
+    uint64_t **Cp_handle,   // vector pointers for C     FIXME
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:

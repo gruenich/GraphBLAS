@@ -25,7 +25,6 @@
 
 #define GB_FREE_ALL                             \
 {                                               \
-    GB_Matrix_free (&T) ;                       \
     GB_FREE_WORK (&Cp, Cp_size) ;               \
 }
 
@@ -46,8 +45,6 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = NULL ;
     uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
 
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
@@ -114,7 +111,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // allocate workspace
         //----------------------------------------------------------------------
 
-        Cp = GB_MALLOC_WORK (A->vdim+1, int64_t, &Cp_size) ; // FIXME
+        Cp = GB_MALLOC_WORK (A->vdim+1, uint64_t, &Cp_size) ; // FIXME
         if (Cp == NULL)
         { 
             // out of memory

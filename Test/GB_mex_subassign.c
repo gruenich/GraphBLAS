@@ -309,7 +309,7 @@ GrB_Info assign (void)
         if (M != NULL)
         {
             // mask = M'
-            int64_t mnrows, mncols ;
+            uint64_t mnrows, mncols ;
             OK (GrB_Matrix_nrows (&mnrows, M)) ;
             OK (GrB_Matrix_ncols (&mncols, M)) ;
             OK (GrB_Matrix_new (&mask, M->type, mncols, mnrows)) ;
@@ -318,7 +318,7 @@ GrB_Info assign (void)
             ASSERT (GB_VECTOR_OK (mask)) ;
         }
         // u = A'
-        int64_t ancols, anrows ;
+        uint64_t ancols, anrows ;
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
         OK (GrB_Matrix_new (&u, A->type, ancols, anrows)) ;

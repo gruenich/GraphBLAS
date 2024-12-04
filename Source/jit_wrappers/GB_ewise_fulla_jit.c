@@ -51,6 +51,7 @@ GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
     //--------------------------------------------------------------------------
 
     bool A_is_B = GB_all_aliased (A, B) ;
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, B, nthreads, A_is_B)) ;
 }

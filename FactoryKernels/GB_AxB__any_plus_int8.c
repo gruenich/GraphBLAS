@@ -357,5 +357,7 @@ GrB_Info GB (_Asaxpy3B__any_plus_int8)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

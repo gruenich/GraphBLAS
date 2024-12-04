@@ -37,12 +37,12 @@
     if (nthreads == 1)
     {
 
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // sequential method
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
 
-        // Cp and workspace are uint32_t
-        GB_W_TYPE *restrict workspace = Workspaces [0] ;
+        // Cp and workspace are of type GB_W_TYPE
+        GB_W_TYPE *restrict workspace = (GB_W_TYPE *) (Workspaces [0]) ;
         const int64_t anvec = A->nvec ;
         for (int64_t k = 0 ; k < anvec ; k++)
         {
@@ -68,11 +68,11 @@
     else if (nworkspaces == 1)
     {
 
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // atomic method
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
 
-        GB_W_TYPE *restrict workspace = Workspaces [0] ;
+        GB_W_TYPE *restrict workspace = (GB_W_TYPE *) (Workspaces [0]) ;
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
@@ -104,15 +104,15 @@
     else
     {
 
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // non-atomic method
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
 
         int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (tid = 0 ; tid < nthreads ; tid++)
         {
-            GB_W_TYPE *restrict workspace = Workspaces [tid] ;
+            GB_W_TYPE *restrict workspace = (GB_W_TYPE *) (Workspaces [tid]) ;
             for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
             {
                 // iterate over the entries in A(:,j)

@@ -31,9 +31,9 @@ void GB_ek_slice_merge2     // merge final results for matrix C
 (
     // output
     int64_t *C_nvec_nonempty,       // # of non-empty vectors in C
-    uint64_t *restrict Cp_kfirst,    // size ntasks
+    int64_t *restrict Cp_kfirst,    // size ntasks
     // input/output
-    uint64_t *restrict Cp,           // size cnvec+1
+    uint64_t *restrict Cp,          // size cnvec+1
     // input
     const int64_t cnvec,
     const int64_t *restrict Wfirst, // size ntasks

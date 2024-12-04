@@ -22,7 +22,7 @@ GrB_Info GB_transpose_bind1st_jit
     const GrB_BinaryOp binaryop,
     const GB_void *xscalar,
     const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
@@ -55,6 +55,7 @@ GrB_Info GB_transpose_bind1st_jit
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, xscalar, A, Workspaces, A_slice, nworkspaces,
         nthreads)) ;

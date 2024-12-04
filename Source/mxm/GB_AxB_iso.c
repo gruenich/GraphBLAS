@@ -146,8 +146,6 @@ bool GB_AxB_iso             // C = A*B, return true if C is iso
     if (xcode == GB_BOOL_code)
     { 
         // rename a boolean multiply op:
-        // DIV becomes FIRST, RDIV becomes SECOND; all other renaming has no
-        // effect on this method. 
         mult_binop_code = GB_boolean_rename (mult_binop_code) ;
     }
 
