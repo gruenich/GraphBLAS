@@ -49,14 +49,14 @@ for k1 = 1:length (types)
                         % since the order does not matter.
 
                         [~,p1] = sortrows ([I1 J1]) ;
-                        I1 = I1 (p1) ; 
-                        J1 = J1 (p1) ; 
-                        X1 = X1 (p1) ; 
+                        I1 = I1 (p1) ;
+                        J1 = J1 (p1) ;
+                        X1 = X1 (p1) ;
 
                         [~,p2] = sortrows ([I2 J2]) ;
-                        I2 = I2 (p2) ; 
-                        J2 = J2 (p2) ; 
-                        X2 = X2 (p2) ; 
+                        I2 = I2 (p2) ;
+                        J2 = J2 (p2) ;
+                        X2 = X2 (p2) ;
 
                         assert (isequal (I1, I2)) ;
                         assert (isequal (J1, J2)) ;
