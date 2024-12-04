@@ -130,7 +130,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
                 (GrB_Index *) ((csc ? Wi : Wj) + pC),
                 (GrB_Index *) ((csc ? Wj : Wi) + pC),
                 (C_iso) ? NULL : (Wx + pC * csize),
-                (GrB_Index *) (&anz), ctype, A, Werk)) ;
+                (GrB_Index *) (&anz), ctype, A, /* FIXME: */false, Werk)) ;
 
             //------------------------------------------------------------------
             // adjust the indices to reflect their new place in C

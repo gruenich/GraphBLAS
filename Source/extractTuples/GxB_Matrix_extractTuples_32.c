@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Matrix_extractTuples: extract all tuples from a matrix
+// GxB_Matrix_extractTuples_32: extract all tuples from a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -27,8 +27,8 @@
 #define GB_EXTRACT_TUPLES(function_name,ctype,xtype)                        \
 GrB_Info function_name      /* extract tuples from a matrix */              \
 (                                                                           \
-    uint64_t *I,            /* array for returning row indices of tuples */ \
-    uint64_t *J,            /* array for returning col indices of tuples */ \
+    uint32_t *I,            /* array for returning row indices of tuples */ \
+    uint32_t *J,            /* array for returning col indices of tuples */ \
     ctype *X,               /* array for returning values of tuples      */ \
     uint64_t *p_nvals,      /* I,J,X size on input; # tuples on output   */ \
     const GrB_Matrix A      /* matrix to extract tuples from             */ \
@@ -38,43 +38,43 @@ GrB_Info function_name      /* extract tuples from a matrix */              \
     GB_BURBLE_START (GB_STR(function_name)) ;                               \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                       \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
-    GrB_Info info = GB_extractTuples (I, J, X, p_nvals, xtype, A, false,    \
+    GrB_Info info = GB_extractTuples (I, J, X, p_nvals, xtype, A, true,     \
         Werk);                                                              \
     GB_BURBLE_END ;                                                         \
     GB_PRAGMA (omp flush)                                                   \
     return (info) ;                                                         \
 }
 
-// with 64-bit I and J arrays
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_BOOL  , bool       , GrB_BOOL  )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_INT8  , int8_t     , GrB_INT8  )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_INT16 , int16_t    , GrB_INT16 )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_INT32 , int32_t    , GrB_INT32 )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_INT64 , int64_t    , GrB_INT64 )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_UINT8 , uint8_t    , GrB_UINT8 )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_UINT16, uint16_t   , GrB_UINT16)
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_UINT32, uint32_t   , GrB_UINT32)
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_UINT64, uint64_t   , GrB_UINT64)
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_FP32  , float      , GrB_FP32  )
-GB_EXTRACT_TUPLES (GrB_Matrix_extractTuples_FP64  , double     , GrB_FP64  )
-GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_FC32  , GxB_FC32_t , GxB_FC32  )
-GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_FC64  , GxB_FC64_t , GxB_FC64  )
+// with 32-bit I and J arrays
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_BOOL  , bool       , GrB_BOOL  )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_INT8  , int8_t     , GrB_INT8  )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_INT16 , int16_t    , GrB_INT16 )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_INT32 , int32_t    , GrB_INT32 )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_INT64 , int64_t    , GrB_INT64 )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_UINT8 , uint8_t    , GrB_UINT8 )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_UINT16, uint16_t   , GrB_UINT16)
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_UINT32, uint32_t   , GrB_UINT32)
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_UINT64, uint64_t   , GrB_UINT64)
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_FP32  , float      , GrB_FP32  )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_FP64  , double     , GrB_FP64  )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_FC32  , GxB_FC32_t , GxB_FC32  )
+GB_EXTRACT_TUPLES (GxB_Matrix_extractTuples_32_FC64  , GxB_FC64_t , GxB_FC64  )
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_extractTuples_UDT: extract from a matrix with user-defined type
+// GxB_Matrix_extractTuples_32_UDT: extract from a matrix with user-defined type
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Matrix_extractTuples_UDT
+GrB_Info GxB_Matrix_extractTuples_32_UDT
 (
-    uint64_t *I,            // array for returning row indices of tuples
-    uint64_t *J,            // array for returning col indices of tuples
+    uint32_t *I,            // array for returning row indices of tuples
+    uint32_t *J,            // array for returning col indices of tuples
     void *X,                // array for returning values of tuples
     uint64_t *p_nvals,      // I,J,X size on input; # tuples on output
     const GrB_Matrix A      // matrix to extract tuples from
 )
 { 
-    GB_WHERE1 ("GrB_Matrix_extractTuples_UDT (I, J, X, nvals, A)") ;
-    GB_BURBLE_START ("GrB_Matrix_extractTuples_UDT") ;
+    GB_WHERE1 ("GxB_Matrix_extractTuples_32_UDT (I, J, X, nvals, A)") ;
+    GB_BURBLE_START ("GxB_Matrix_extractTuples_32_UDT") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (p_nvals) ;
     if (A->type->code != GB_UDT_code)
@@ -82,7 +82,7 @@ GrB_Info GrB_Matrix_extractTuples_UDT
         // A must have a user-defined type
         return (GrB_DOMAIN_MISMATCH) ;
     }
-    GrB_Info info = GB_extractTuples (I, J, X, p_nvals, A->type, A, false,
+    GrB_Info info = GB_extractTuples (I, J, X, p_nvals, A->type, A, true,
         Werk) ;
     GB_BURBLE_END ;
     GB_PRAGMA (omp flush)

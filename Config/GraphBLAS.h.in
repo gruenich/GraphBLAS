@@ -3108,7 +3108,7 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 //  GrB_Info GrB_Vector_build   // build a vector from (I,X) tuples
 //  (
 //      GrB_Vector w,           // vector to build
-//      const <itype> *I_,      // array of row indices of tuples
+//      const <itype> *I,       // array of row indices of tuples
 //      const <type> *X,        // array of values of tuples
 //      GrB_Index nvals,        // number of tuples
 //      const GrB_BinaryOp dup  // binary function to assemble duplicates
@@ -3275,19 +3275,23 @@ GrB_Info GrB_Vector_removeElement
 // Extracts all tuples from a vector, like [I,~,X] = find (v) in MATLAB.  If
 // any parameter I and/or X is NULL, then that component is not extracted.  For
 // example, to extract just the row indices, pass I as non-NULL, and X as NULL.
-// This is like [I,~,~] = find (v)
+// This is like [I,~,~] = find (v) in MATLAB notation.
 //
 //  GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
 //  (
-//      GrB_Index *I_,      // array for returning row indices of tuples
+//      <itype> *I,         // array for returning row indices of tuples
 //      <type> *X,          // array for returning values of tuples
 //      GrB_Index *nvals,   // I, X size on input; # tuples on output
 //      const GrB_Vector v  // vector to extract tuples from
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractTuples(I_,X,nvals,v) \
-    _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)) (I_, X, nvals, v)
+#define GrB_Vector_extractTuples(I_,X,nvals,v)                                \
+    _Generic ((I_),                                                           \
+    GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Vector_extractTuples_32)), \
+    void *        : _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)),    \
+    GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)))    \
+    (I_, X, nvals, v)
 #endif
 
 #undef  GB_DECLARE
@@ -3300,6 +3304,17 @@ GrB_Info prefix ## Vector_extractTuples ## suffix   /* [I,~,X = find (v) */   \
     const GrB_Vector v      /* vector to extract tuples from */               \
 ) ;
 GB_DECLARE_14 (GrB_, void)
+
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                        \
+GrB_Info prefix ## Vector_extractTuples_32 ## suffix   /* [I,~,X = find (v) */\
+(                                                                             \
+    GxB_Index32 *I_,        /* array for returning row indices of tuples */   \
+    type *X,                /* array for returning values of tuples */        \
+    GrB_Index *nvals,       /* I, X size on input; # tuples on output */      \
+    const GrB_Vector v      /* vector to extract tuples from */               \
+) ;
+GB_DECLARE_14 (GxB_, void)
 
 //==============================================================================
 // GrB_Matrix: a GraphBLAS matrix
@@ -3368,7 +3383,7 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
 //  GrB_Info GrB_Matrix_build       // build a matrix from (I,J,X) tuples
 //  (
 //      GrB_Matrix C,               // matrix to build
-//      const <itype> *I_,          // array of row indices of tuples
+//      const <itype> *I,           // array of row indices of tuples
 //      const <itype> *J,           // array of column indices of tuples
 //      const <type> *X,            // array of values of tuples
 //      GrB_Index nvals,            // number of tuples
@@ -3438,8 +3453,8 @@ GrB_Info GxB_Matrix_build_32_Scalar // build a matrix from (I,J,scalar) tuples
 //
 // GxB_build (C,I,J,X,nvals,dup):  GrB_Matrix_build_TYPE, I and J are uint64_t
 // GxB_build (C,I,J,X,nvals,dup):  GxB_Matrix_build_TYPE, I and J are uint32_t
-// GxB_build (v,I,X,nvals,dup):    GrB_Vector_build_TYPE, I and J are uint64_t
-// GxB_build (v,I,X,nvals,dup):    GxB_Vector_build_TYPE, I and J are uint32_t
+// GxB_build (v,I,X,nvals,dup):    GrB_Vector_build_TYPE, I is uint64_t
+// GxB_build (v,I,X,nvals,dup):    GxB_Vector_build_TYPE, I is uint32_t
 //
 // future: where I,J,X are all GrB_Vector, not C arrays.  The descriptor will
 // define what part of I,J,X to use: their indices or their values.
@@ -3586,22 +3601,29 @@ GrB_Info GrB_Matrix_removeElement
 //
 //  GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //  (
-//      GrB_Index *I_,          // array for returning row indices of tuples
-//      GrB_Index *J,           // array for returning col indices of tuples
+//      <itype> *I,             // array for returning row indices of tuples
+//      <itype> *J,             // array for returning col indices of tuples
 //      <type> *X,              // array for returning values of tuples
 //      GrB_Index *nvals,       // I,J,X size on input; # tuples on output
 //      const GrB_Matrix A      // matrix to extract tuples from
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractTuples(I_,J,X,nvals,A)     \
-    _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)) (I_, J, X, nvals, A)
+#define GrB_Matrix_extractTuples(I_,J,X,nvals,A)                              \
+_Generic ((I_),                                                               \
+  GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Matrix_extractTuples_32)),   \
+  GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)),      \
+  void *        : _Generic ((J),                                              \
+    GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Matrix_extractTuples_32)), \
+    GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)),    \
+    void *        : _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples))))   \
+(I_, J, X, nvals, A)
 #endif
 
 #undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                        \
-GrB_Info prefix ## Matrix_extractTuples ## suffix   /* [I,J,X = find (A) */   \
-(                                                                             \
+#define GB_DECLARE(prefix,suffix,type)                                      \
+GrB_Info prefix ## Matrix_extractTuples ## suffix   /* [I,J,X = find (A) */ \
+(                                                                           \
     GrB_Index *I_,          /* array for returning row indices of tuples */ \
     GrB_Index *J,           /* array for returning col indices of tuples */ \
     type *X,                /* array for returning values of tuples */      \
@@ -3610,7 +3632,17 @@ GrB_Info prefix ## Matrix_extractTuples ## suffix   /* [I,J,X = find (A) */   \
 ) ;
 GB_DECLARE_14 (GrB_, void)
 
-// FIXME: 32/64 bit: add extractTuples
+#undef  GB_DECLARE
+#define GB_DECLARE(prefix,suffix,type)                                      \
+GrB_Info prefix ## Matrix_extractTuples_32 ## suffix /* [I,J,X = find (A) */\
+(                                                                           \
+    GxB_Index32 *I_,        /* array for returning row indices of tuples */ \
+    GxB_Index32 *J,         /* array for returning col indices of tuples */ \
+    type *X,                /* array for returning values of tuples */      \
+    GrB_Index *nvals,       /* I,J,X size on input; # tuples on output */   \
+    const GrB_Matrix A      /* matrix to extract tuples from */             \
+) ;
+GB_DECLARE_14 (GxB_, void)
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_concat and GxB_Matrix_split

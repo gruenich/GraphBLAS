@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Vector_extractTuples: extract all tuples from a vector
+// GxB_Vector_extractTuples_32: extract all tuples from a vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -27,7 +27,7 @@
 #define GB_EXTRACT_TUPLES(function_name,ctype,xtype)                        \
 GrB_Info function_name      /* extract tuples from a vector */              \
 (                                                                           \
-    uint64_t *I,            /* array for returning row indices of tuples */ \
+    uint32_t *I,            /* array for returning row indices of tuples */ \
     ctype *X,               /* array for returning values of tuples      */ \
     uint64_t *p_nvals,      /* I, X size on input; # tuples on output    */ \
     const GrB_Vector v      /* vector to extract tuples from             */ \
@@ -39,41 +39,41 @@ GrB_Info function_name      /* extract tuples from a vector */              \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
     GrB_Info info = GB_extractTuples (I, NULL, X, p_nvals, xtype,           \
-        (GrB_Matrix) v, false, Werk) ;                                      \
+        (GrB_Matrix) v, true, Werk) ;                                       \
     GB_BURBLE_END ;                                                         \
     GB_PRAGMA (omp flush)                                                   \
     return (info) ;                                                         \
 }
 
-// with 64-bit I array
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_BOOL  , bool       , GrB_BOOL  )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_INT8  , int8_t     , GrB_INT8  )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_INT16 , int16_t    , GrB_INT16 )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_INT32 , int32_t    , GrB_INT32 )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_INT64 , int64_t    , GrB_INT64 )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_UINT8 , uint8_t    , GrB_UINT8 )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_UINT16, uint16_t   , GrB_UINT16)
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_UINT32, uint32_t   , GrB_UINT32)
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_UINT64, uint64_t   , GrB_UINT64)
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_FP32  , float      , GrB_FP32  )
-GB_EXTRACT_TUPLES (GrB_Vector_extractTuples_FP64  , double     , GrB_FP64  )
-GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_FC32  , GxB_FC32_t , GxB_FC32  )
-GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_FC64  , GxB_FC64_t , GxB_FC64  )
+// with 32-bit I array
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_BOOL  , bool       , GrB_BOOL  )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_INT8  , int8_t     , GrB_INT8  )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_INT16 , int16_t    , GrB_INT16 )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_INT32 , int32_t    , GrB_INT32 )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_INT64 , int64_t    , GrB_INT64 )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_UINT8 , uint8_t    , GrB_UINT8 )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_UINT16, uint16_t   , GrB_UINT16)
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_UINT32, uint32_t   , GrB_UINT32)
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_UINT64, uint64_t   , GrB_UINT64)
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_FP32  , float      , GrB_FP32  )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_FP64  , double     , GrB_FP64  )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_FC32  , GxB_FC32_t , GxB_FC32  )
+GB_EXTRACT_TUPLES (GxB_Vector_extractTuples_32_FC64  , GxB_FC64_t , GxB_FC64  )
 
 //------------------------------------------------------------------------------
-// GrB_Vector_extractTuples_UDT: extract from a vector with user-defined type
+// GxB_Vector_extractTuples_32_UDT: extract from a vector with user-defined type
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_Vector_extractTuples_UDT
+GrB_Info GxB_Vector_extractTuples_32_UDT
 (
-    uint64_t *I,            // array for returning row indices of tuples
+    uint32_t *I,            // array for returning row indices of tuples
     void *X,                // array for returning values of tuples
     uint64_t *p_nvals,      // I, X size on input; # tuples on output
     const GrB_Vector v      // vector to extract tuples from
 )
 { 
-    GB_WHERE1 ("GrB_Vector_extractTuples_UDT (I, X, nvals, v)") ;
-    GB_BURBLE_START ("GrB_Vector_extractTuples_UDT") ;
+    GB_WHERE1 ("GxB_Vector_extractTuples_32_UDT (I, X, nvals, v)") ;
+    GB_BURBLE_START ("GxB_Vector_extractTuples_32_UDT") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     GB_RETURN_IF_NULL (p_nvals) ;
     ASSERT (GB_VECTOR_OK (v)) ;
@@ -83,7 +83,7 @@ GrB_Info GrB_Vector_extractTuples_UDT
         return (GrB_DOMAIN_MISMATCH) ;
     }
     GrB_Info info = GB_extractTuples (I, NULL, X, p_nvals, v->type,
-        (GrB_Matrix) v, false, Werk) ;
+        (GrB_Matrix) v, true, Werk) ;
     GB_BURBLE_END ;
     GB_PRAGMA (omp flush)
     return (info) ;

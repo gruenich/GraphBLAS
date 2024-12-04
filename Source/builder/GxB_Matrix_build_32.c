@@ -16,7 +16,7 @@
 
 #include "builder/GB_build.h"
 
-#define GB_MATRIX_BUILD(function_name,ctype,xtype)                            \
+#define GB_BUILD(function_name,ctype,xtype)                                   \
 GrB_Info function_name          /* build a matrix from tuples */              \
 (                                                                             \
     GrB_Matrix C,               /* matrix to build                    */      \
@@ -37,18 +37,18 @@ GrB_Info function_name          /* build a matrix from tuples */              \
 }
 
 // with 32-bit I and I arrays:
-GB_MATRIX_BUILD (GxB_Matrix_build_32_BOOL  , bool      , GrB_BOOL  )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_INT8  , int8_t    , GrB_INT8  )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_INT16 , int16_t   , GrB_INT16 )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_INT32 , int32_t   , GrB_INT32 )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_INT64 , int64_t   , GrB_INT64 )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_UINT8 , uint8_t   , GrB_UINT8 )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_UINT16, uint16_t  , GrB_UINT16)
-GB_MATRIX_BUILD (GxB_Matrix_build_32_UINT32, uint32_t  , GrB_UINT32)
-GB_MATRIX_BUILD (GxB_Matrix_build_32_UINT64, uint64_t  , GrB_UINT64)
-GB_MATRIX_BUILD (GxB_Matrix_build_32_FP32  , float     , GrB_FP32  )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_FP64  , double    , GrB_FP64  )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_FC32  , GxB_FC32_t, GxB_FC32  )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_FC64  , GxB_FC64_t, GxB_FC64  )
-GB_MATRIX_BUILD (GxB_Matrix_build_32_UDT   , void      , C->type   )
+GB_BUILD (GxB_Matrix_build_32_BOOL  , bool      , GrB_BOOL  )
+GB_BUILD (GxB_Matrix_build_32_INT8  , int8_t    , GrB_INT8  )
+GB_BUILD (GxB_Matrix_build_32_INT16 , int16_t   , GrB_INT16 )
+GB_BUILD (GxB_Matrix_build_32_INT32 , int32_t   , GrB_INT32 )
+GB_BUILD (GxB_Matrix_build_32_INT64 , int64_t   , GrB_INT64 )
+GB_BUILD (GxB_Matrix_build_32_UINT8 , uint8_t   , GrB_UINT8 )
+GB_BUILD (GxB_Matrix_build_32_UINT16, uint16_t  , GrB_UINT16)
+GB_BUILD (GxB_Matrix_build_32_UINT32, uint32_t  , GrB_UINT32)
+GB_BUILD (GxB_Matrix_build_32_UINT64, uint64_t  , GrB_UINT64)
+GB_BUILD (GxB_Matrix_build_32_FP32  , float     , GrB_FP32  )
+GB_BUILD (GxB_Matrix_build_32_FP64  , double    , GrB_FP64  )
+GB_BUILD (GxB_Matrix_build_32_FC32  , GxB_FC32_t, GxB_FC32  )
+GB_BUILD (GxB_Matrix_build_32_FC64  , GxB_FC64_t, GxB_FC64  )
+GB_BUILD (GxB_Matrix_build_32_UDT   , void      , C->type   )
 

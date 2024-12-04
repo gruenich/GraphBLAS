@@ -756,7 +756,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             // Construct the "row" indices of C, which are "column" indices of
             // A.  This array becomes the permanent T->i on output.
-            GB_OK (GB_extract_vector_list (iwork, A, Werk)) ;   // FIXME
+            GB_OK (GB_extract_vector_list (iwork, Ai_is_32, A, Werk)) ;
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and Swork)

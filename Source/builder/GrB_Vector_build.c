@@ -16,7 +16,7 @@
 
 #include "builder/GB_build.h"
 
-#define GB_VECTOR_BUILD(function_name,ctype,xtype)                            \
+#define GB_BUILD(function_name,ctype,xtype)                                   \
 GrB_Info function_name          /* build a vector from tuples */              \
 (                                                                             \
     GrB_Vector w,               /* vector to build                    */      \
@@ -37,18 +37,18 @@ GrB_Info function_name          /* build a vector from tuples */              \
 }
 
 // with 64-bit I arrays:
-GB_VECTOR_BUILD (GrB_Vector_build_BOOL  , bool      , GrB_BOOL  )
-GB_VECTOR_BUILD (GrB_Vector_build_INT8  , int8_t    , GrB_INT8  )
-GB_VECTOR_BUILD (GrB_Vector_build_INT16 , int16_t   , GrB_INT16 )
-GB_VECTOR_BUILD (GrB_Vector_build_INT32 , int32_t   , GrB_INT32 )
-GB_VECTOR_BUILD (GrB_Vector_build_INT64 , int64_t   , GrB_INT64 )
-GB_VECTOR_BUILD (GrB_Vector_build_UINT8 , uint8_t   , GrB_UINT8 )
-GB_VECTOR_BUILD (GrB_Vector_build_UINT16, uint16_t  , GrB_UINT16)
-GB_VECTOR_BUILD (GrB_Vector_build_UINT32, uint32_t  , GrB_UINT32)
-GB_VECTOR_BUILD (GrB_Vector_build_UINT64, uint64_t  , GrB_UINT64)
-GB_VECTOR_BUILD (GrB_Vector_build_FP32  , float     , GrB_FP32  )
-GB_VECTOR_BUILD (GrB_Vector_build_FP64  , double    , GrB_FP64  )
-GB_VECTOR_BUILD (GxB_Vector_build_FC32  , GxB_FC32_t, GxB_FC32  )
-GB_VECTOR_BUILD (GxB_Vector_build_FC64  , GxB_FC64_t, GxB_FC64  )
-GB_VECTOR_BUILD (GrB_Vector_build_UDT   , void      , w->type   )
+GB_BUILD (GrB_Vector_build_BOOL  , bool      , GrB_BOOL  )
+GB_BUILD (GrB_Vector_build_INT8  , int8_t    , GrB_INT8  )
+GB_BUILD (GrB_Vector_build_INT16 , int16_t   , GrB_INT16 )
+GB_BUILD (GrB_Vector_build_INT32 , int32_t   , GrB_INT32 )
+GB_BUILD (GrB_Vector_build_INT64 , int64_t   , GrB_INT64 )
+GB_BUILD (GrB_Vector_build_UINT8 , uint8_t   , GrB_UINT8 )
+GB_BUILD (GrB_Vector_build_UINT16, uint16_t  , GrB_UINT16)
+GB_BUILD (GrB_Vector_build_UINT32, uint32_t  , GrB_UINT32)
+GB_BUILD (GrB_Vector_build_UINT64, uint64_t  , GrB_UINT64)
+GB_BUILD (GrB_Vector_build_FP32  , float     , GrB_FP32  )
+GB_BUILD (GrB_Vector_build_FP64  , double    , GrB_FP64  )
+GB_BUILD (GxB_Vector_build_FC32  , GxB_FC32_t, GxB_FC32  )
+GB_BUILD (GxB_Vector_build_FC64  , GxB_FC64_t, GxB_FC64  )
+GB_BUILD (GrB_Vector_build_UDT   , void      , w->type   )
 

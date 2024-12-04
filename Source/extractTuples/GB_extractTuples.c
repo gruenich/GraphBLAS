@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Extracts all tuples from a matrix, like [I,J,X] = find (A).  If any
 // parameter I, J and/or X is NULL, then that component is not extracted.  The
@@ -30,12 +30,13 @@
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
-    GrB_Index *I_out, // FIXME  // array for returning row indices of tuples
-    GrB_Index *J_out, // FIXME  // array for returning col indices of tuples
+    void *I_out,                // array for returning row indices of tuples
+    void *J_out,                // array for returning col indices of tuples
     void *X,                    // array for returning values of tuples
-    GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
+    uint64_t *p_nvals,          // I,J,X size on input; # tuples on output
     const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
+    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 )
 {
@@ -45,8 +46,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
-
+    void *Cp = NULL ; size_t Cp_size = 0 ;
     ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
     ASSERT_TYPE_OK (xtype, "xtype to extract", GB0) ;
     ASSERT (p_nvals != NULL) ;
@@ -88,7 +88,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // handle the CSR/CSC format
     //--------------------------------------------------------------------------
 
-    GrB_Index *I, *J ;
+    void *I, *J ;
     if (A->is_csc)
     { 
         I = I_out ;
@@ -111,7 +111,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // allocate workspace
         //----------------------------------------------------------------------
 
-        Cp = GB_MALLOC_WORK (A->vdim+1, uint64_t, &Cp_size) ; // FIXME
+        bool Cp_is_32 = GB_validate_p_is_32 (true, anz) ;
+        size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        Cp = GB_malloc_memory (A->vdim+1, cpsize, &Cp_size) ;
         if (Cp == NULL)
         { 
             // out of memory
@@ -126,9 +128,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // Extract the pattern and the values, typecasting if needed.  If A is
         // iso or X is NULL, GB_convert_b2s only does the symbolic work.
 
-        GB_OK (GB_convert_b2s (Cp, (int64_t *) I, (int64_t *) J,
-            (GB_void *) X, NULL, /* FIXME: */ false, false, false,
-            xtype, A, Werk)) ;
+        GB_OK (GB_convert_b2s (Cp, I, J, (GB_void *) X, NULL,
+            Cp_is_32, is_32, is_32, xtype, A, Werk)) ;
 
         if (A->iso && X != NULL)
         { 
@@ -154,6 +155,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (I != NULL)
         {
+            GB_IDECL (I, , u) ; GB_IPTR (I, is_32) ;
             if (A->i == NULL)
             {
                 // A is full; construct the row indices
@@ -162,13 +164,18 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (p = 0 ; p < anz ; p++)
                 { 
-                    I [p] = (p % avlen) ;   // FIXME
+                    int64_t i = (p % avlen) ;
+                    // I [p] = i ;
+                    GB_ISET (I, p, i) ;
                 }
             }
             else
             { 
-                // FIXME: cast_int here
-                GB_memcpy (I, A->i, anz * sizeof (int64_t), nthreads) ;
+                // A is sparse or hypersparse; copy/cast A->i into I
+                GB_cast_int (
+                    I,         is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    A->i, A->i_is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    anz, nthreads_max) ;
             }
         }
 
@@ -178,7 +185,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (J != NULL)
         {
-            GB_OK (GB_extract_vector_list ((int64_t *) J, A, Werk)) ; // FIXME
+            GB_OK (GB_extract_vector_list (J, is_32, A, Werk)) ;
         }
 
         //----------------------------------------------------------------------
