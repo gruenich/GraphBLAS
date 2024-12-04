@@ -7,7 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_A0_t uint64_t /* FIXME: allow A->i to be 32-bit */
+#if GB_Ai_IS_32
+#define GB_A0_t uint32_t
+#else
+#define GB_A0_t uint64_t
+#endif
 #define GB_A1_t GB_A_TYPE
 #include "include/GB_qsort_1b_kernel.h"
 
@@ -15,12 +19,11 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_UNJUMBLE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_UNJUMBLE_PROTO (GB_jit_kernel)
 {
     // get A
-    const uint64_t *restrict Ap = A->p ;     // FIXME
-    int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE   (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ai_DECLARE_U (Ai,      ) ; GB_Ai_PTR (Ai, A) ;
     GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     // sort its vectors
-    #define GB_QSORT GB_qsort_1b_kernel ((GB_A0_t *) (Ai+pA_start), \
-        Ax+pA_start, aknz)
+    #define GB_QSORT GB_qsort_1b_kernel (Ai+p, Ax+p, n)
     #include "template/GB_unjumbled_template.c"
     return (GrB_SUCCESS) ;
 }

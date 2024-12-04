@@ -2,19 +2,22 @@
 // GB_wait:  finish all pending computations on a single matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+#define GB_DEBUG
+
+// DONE: 32/64 bit, but requires GB_selector and GB_add to be 32/64 bit
 
 // CALLS:     GB_builder
 
 // The matrix A has zombies and/or pending tuples placed there by
-// GrB_setElement, GrB_*assign, or GB_mxm.  Zombies must now be deleted, and
-// pending tuples must now be assembled together and added into the matrix.
-// The indices in A might also be jumbled; if so, they are sorted now.
+// GrB_setElement, GrB_*assign, GB_mxm, or any other GraphBLAS method with an
+// accum operator and a small update.  Zombies must now be deleted, and pending
+// tuples must now be assembled together and added into the matrix.  The
+// indices in A might also be jumbled; if so, they are sorted now.
 
 // When the function returns, and all pending tuples and zombies have been
 // deleted.  This is true even the function fails due to lack of memory (in
@@ -22,8 +25,8 @@
 
 // If A is hypersparse, the time taken is at most O(nnz(A) + t log t), where t
 // is the number of pending tuples in A, and nnz(A) includes both zombies and
-// live entries.  There is no O(m) or O(n) time component, if A is m-by-n.
-// If the number of non-empty vectors of A grows too large, then A can be
+// live entries.  There is no O(m) or O(n) time component, if A is m-by-n.  If
+// the number of non-empty vectors of A grows too large, then A can be
 // converted to non-hypersparse.
 
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
@@ -128,6 +131,7 @@ GrB_Info GB_wait                // finish all pending computations
         {
             A->nvec_nonempty = GB_nvec_nonempty (A) ;
         }
+        #pragma omp flush
         return (GrB_SUCCESS) ;
     }
 
@@ -143,8 +147,9 @@ GrB_Info GB_wait                // finish all pending computations
         // nor accessed, and remains NULL if it is NULL on input.  If it is
         // present, it remains valid.
         GB_OK (GB_unjumble (A, Werk)) ;
-        ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
-        return (info) ;
+        ASSERT (A->nvec_nonempty >= 0) ;
+        #pragma omp flush
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -198,7 +203,7 @@ GrB_Info GB_wait                // finish all pending computations
             Werk,
             A->i_is_32, A->i_is_32, // true if Pending->[ij] are 32-bit,
                                     // false if 64-bit
-            false, false
+            true, true              // create T with 32/64 bits
         ) ;
 
         //----------------------------------------------------------------------
@@ -228,12 +233,7 @@ GrB_Info GB_wait                // finish all pending computations
 
         // Finally check the status of the builder.  The pending tuples, must
         // be freed (just above), whether or not the builder is successful.
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory in GB_builder
-            GB_FREE_ALL ;
-            return (info) ;
-        }
+        GB_OK (info) ;
 
         ASSERT_MATRIX_OK (T, "T = hypersparse matrix of pending tuples", GB0) ;
         ASSERT (GB_IS_HYPERSPARSE (T)) ;
@@ -292,10 +292,11 @@ GrB_Info GB_wait                // finish all pending computations
     if (npending == 0)
     { 
         // conform A to its desired sparsity structure and return result
-        info = GB_conform (A, Werk) ;
-        ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
+        GB_OK (GB_conform (A, Werk)) ;
+        ASSERT (A->nvec_nonempty >= 0) ;
+        GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
         #pragma omp flush
-        return (info) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -307,10 +308,11 @@ GrB_Info GB_wait                // finish all pending computations
     { 
         // A has no entries so just transplant T into A, then free T and
         // conform A to its desired hypersparsity.
-        info = GB_transplant_conform (A, A->type, &T, Werk) ;
-        ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
+        GB_OK (GB_transplant_conform (A, A->type, &T, Werk)) ;
+        ASSERT (A->nvec_nonempty >= 0) ;
+        GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
         #pragma omp flush
-        return (info) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -343,11 +345,15 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anvec = A->nvec ;
     bool ignore ;
 
+    GB_OK (GB_convert_int (T, false, false)) ;      // FIXME
+
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
     GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
         false, NULL, NULL, op_2nd, false, true, Werk)) ;
     GB_Matrix_free (&T) ;
     ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
+
+    GB_OK (GB_convert_int (S, false, false)) ;      // FIXME
 
     if (A->no_hyper_hash)
     { 
@@ -357,61 +363,74 @@ GrB_Info GB_wait                // finish all pending computations
     }
 
     if (GB_IS_HYPERSPARSE (A) && GB_IS_HYPERSPARSE (S) && A->Y != NULL
-        && !A->Y_shallow && !GB_is_shallow (A->Y))
+        && !A->Y_shallow && !GB_is_shallow (A->Y) && A->i_is_32 == S->i_is_32
+        && S->nvec == anvec)
     {
         // A and S are both hypersparse, and the old A->Y exists and is not
         // shallow.  Check if S->h and A->h are identical.  If so, remove
         // A->Y from A and save it.  Then after the transplant of S into A,
         // below, if A is still hyperparse, transplant Y back into A->Y.
-        if (S->nvec == anvec)
-        {
-            // A and S have the same number of vectors.  Compare Ah and Sh
-            int64_t *restrict Ah = A->h ;   // FIXME
-            int64_t *restrict Sh = S->h ;
-            bool hsame = true ;
-            int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
-            if (nthreads == 1)
+
+        GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+        GB_Sh_DECLARE (Sh, const) ; GB_Sh_PTR (Sh, S) ;
+        bool Ai_is_32 = A->i_is_32 ;
+
+        bool hsame = true ;
+        int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
+        if (nthreads == 1)
+        { 
+            // compare Ah and Sh with a single thread
+            if (Ai_is_32)
             { 
-                // compare Ah and Sh with a single thread
-                hsame = (memcmp (Ah, Sh, anvec * sizeof (int64_t)) //FIXME
-                    == 0) ;
+                hsame = (memcmp (Ah32, Sh32, anvec * sizeof (uint32_t)) == 0) ;
             }
             else
             { 
-                // compare Ah and Sh with several threads
-                int ntasks = 64 * nthreads ;
-                int tid ;
-                #pragma omp parallel for num_threads(nthreads) \
-                    schedule(dynamic)
-                for (tid = 0 ; tid < ntasks ; tid++)
+                hsame = (memcmp (Ah64, Sh64, anvec * sizeof (uint64_t)) == 0) ;
+            }
+        }
+        else
+        { 
+            // compare Ah and Sh with several threads
+            int ntasks = 64 * nthreads ;
+            int tid ;
+            #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+            for (tid = 0 ; tid < ntasks ; tid++)
+            {
+                int64_t kstart, kend ;
+                GB_PARTITION (kstart, kend, anvec, tid, ntasks) ;
+                bool my_hsame ;
+                GB_ATOMIC_READ
+                my_hsame = hsame ;
+                if (my_hsame)
                 {
-                    int64_t kstart, kend ;
-                    GB_PARTITION (kstart, kend, anvec, tid, ntasks) ;
-                    bool my_hsame ;
-                    GB_ATOMIC_READ
-                    my_hsame = hsame ;
-                    if (my_hsame)
-                    {
-                        // compare this task's region of Ah and Sh
-                        my_hsame = (memcmp (Ah + kstart, Sh + kstart,
-                            (kend - kstart) * sizeof (int64_t)) //FIXME
-                            == 0) ;
-                        if (!my_hsame)
-                        {
-                            // tell other tasks to exit early
-                            GB_ATOMIC_WRITE
-                            hsame = false ;
-                        }
+                    // compare this task's region of Ah and Sh
+                    if (Ai_is_32)
+                    { 
+                        my_hsame = (memcmp (Ah32 + kstart, Sh32 + kstart,
+                            (kend - kstart) * sizeof (uint32_t)) == 0) ;
+                    }
+                    else
+                    { 
+                        my_hsame = (memcmp (Ah64 + kstart, Sh64 + kstart,
+                            (kend - kstart) * sizeof (uint64_t)) == 0) ;
+                    }
+                    if (!my_hsame)
+                    { 
+                        // tell other tasks to exit early
+                        GB_ATOMIC_WRITE
+                        hsame = false ;
                     }
                 }
             }
-            if (hsame)
-            { 
-                // Ah and Sh are the same, so keep A->Y
-                Y = A->Y ;
-                A->Y = NULL ;
-                A->Y_shallow = false ;
-            }
+        }
+
+        if (hsame)
+        { 
+            // Ah and Sh are the same, so keep A->Y
+            Y = A->Y ;
+            A->Y = NULL ;
+            A->Y_shallow = false ;
         }
     }
 
@@ -436,7 +455,9 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
+    GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
+    ASSERT_MATRIX_OK (A, "A final for GB_wait", GB0) ;
     #pragma omp flush
-    return (info) ;
+    return (GrB_SUCCESS) ;
 }
 
