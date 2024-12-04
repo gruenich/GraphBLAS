@@ -359,7 +359,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      sparse          bitmap  (method: 9)
             //      sparse  sparse      sparse          full    (method: 9)
 
-            // TODO: this will use Method9 (M,A,B, flipxy=false)
+            // TODO: this will use Method9 (M,A,B)
 
             // The method will compute the 2-way intersection of M and A,
             // using the same parallization as C=A.*B when both A and B are
@@ -374,7 +374,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
             //      sparse  sparse      bitmap          sparse  (method: 10)
             //      sparse  sparse      full            sparse  (method: 10)
 
-            // TODO: this will use Method10 (M,B,A, flipxy=true)
+            // TODO: this will use Method10 (M,B,A)
             // M and B must not be jumbled.
 
         default:;

@@ -146,9 +146,9 @@
    #define GxB_NO_ATANH     1
 
    #define GxB_NO_SIGNUM    1
-// #define GxB_NO_CEIL      1
-// #define GxB_NO_FLOOR     1
-// #define GxB_NO_ROUND     1
+   #define GxB_NO_CEIL      1
+   #define GxB_NO_FLOOR     1
+   #define GxB_NO_ROUND     1
    #define GxB_NO_TRUNC     1
 
    #define GxB_NO_EXP2      1
@@ -171,9 +171,9 @@
 // #define GxB_NO_CIMAG     1
    #define GxB_NO_CARG      1
 
-// #define GxB_NO_ISINF     1
-// #define GxB_NO_ISNAN     1
-// #define GxB_NO_ISFINITE  1
+   #define GxB_NO_ISINF     1
+   #define GxB_NO_ISNAN     1
+   #define GxB_NO_ISFINITE  1
 
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the binary operators for all types
@@ -193,10 +193,10 @@
 // #define GxB_NO_MAX       1
 // #define GxB_NO_PLUS      1
 // #define GxB_NO_MINUS     1
-// #define GxB_NO_RMINUS    1
 // #define GxB_NO_TIMES     1
 // #define GxB_NO_DIV       1
-// #define GxB_NO_RDIV      1
+   #define GxB_NO_RDIV      1
+   #define GxB_NO_RMINUS    1
 
 // #define GxB_NO_EQ        1
 // #define GxB_NO_NE        1
@@ -228,12 +228,13 @@
 // #define GxB_NO_CMPLX     1
 
 // #define GxB_NO_FIRSTI    1
-   #define GxB_NO_FIRSTI1   1
 // #define GxB_NO_FIRSTJ    1
-   #define GxB_NO_FIRSTJ1   1
 // #define GxB_NO_SECONDI   1
-   #define GxB_NO_SECONDI1  1
 // #define GxB_NO_SECONDJ   1
+
+   #define GxB_NO_FIRSTI1   1
+   #define GxB_NO_FIRSTJ1   1
+   #define GxB_NO_SECONDI1  1
    #define GxB_NO_SECONDJ1  1
 
 //------------------------------------------------------------------------------
@@ -636,23 +637,29 @@
 // #define GxB_NO_BSHIFT_UINT32    1
 // #define GxB_NO_BSHIFT_UINT64    1
 
-// #define GxB_NO_FIRSTI_INT64    1
-// #define GxB_NO_FIRSTI1_INT64   1
-// #define GxB_NO_FIRSTJ_INT64    1
-// #define GxB_NO_FIRSTJ1_INT64   1
-// #define GxB_NO_SECONDI_INT64   1
-// #define GxB_NO_SECONDI1_INT64  1
-// #define GxB_NO_SECONDJ_INT64   1
-// #define GxB_NO_SECONDJ1_INT64  1
-
 // #define GxB_NO_FIRSTI_INT32    1
-// #define GxB_NO_FIRSTI1_INT32   1
+// #define GxB_NO_FIRSTI_INT64    1
+
 // #define GxB_NO_FIRSTJ_INT32    1
-// #define GxB_NO_FIRSTJ1_INT32   1
+// #define GxB_NO_FIRSTJ_INT64    1
+
 // #define GxB_NO_SECONDI_INT32   1
-// #define GxB_NO_SECONDI1_INT32  1
+// #define GxB_NO_SECONDI_INT64   1
+
 // #define GxB_NO_SECONDJ_INT32   1
+// #define GxB_NO_SECONDJ_INT64   1
+
+// #define GxB_NO_FIRSTI1_INT32   1
+// #define GxB_NO_FIRSTI1_INT64   1
+
+// #define GxB_NO_FIRSTJ1_INT32   1
+// #define GxB_NO_FIRSTJ1_INT64   1
+
+// #define GxB_NO_SECONDI1_INT32  1
+// #define GxB_NO_SECONDI1_INT64  1
+
 // #define GxB_NO_SECONDJ1_INT32  1
+// #define GxB_NO_SECONDJ1_INT64  1
 
 //------------------------------------------------------------------------------
 // uncomment any of these lines to disable the corresponding semiring
@@ -1456,27 +1463,27 @@
 // also needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_FIRST_FP32       1
 // #define GxB_NO_PLUS_FIRST_FP64       1
-   #define GxB_NO_PLUS_FIRST_INT16      1
 // #define GxB_NO_PLUS_FIRST_INT32      1
 // #define GxB_NO_PLUS_FIRST_INT64      1
    #define GxB_NO_PLUS_FIRST_INT8       1
+   #define GxB_NO_PLUS_FIRST_INT16      1
+   #define GxB_NO_PLUS_FIRST_UINT8      1
    #define GxB_NO_PLUS_FIRST_UINT16     1
    #define GxB_NO_PLUS_FIRST_UINT32     1
    #define GxB_NO_PLUS_FIRST_UINT64     1
-   #define GxB_NO_PLUS_FIRST_UINT8      1
 
 // not GrB_*, used in LAGraph: Betweeness-Centrality and PageRank
 // also needed by GrB_reduce to vector
 // #define GxB_NO_PLUS_SECOND_FP32      1
 // #define GxB_NO_PLUS_SECOND_FP64      1
-   #define GxB_NO_PLUS_SECOND_INT16     1
 // #define GxB_NO_PLUS_SECOND_INT32     1
 // #define GxB_NO_PLUS_SECOND_INT64     1
    #define GxB_NO_PLUS_SECOND_INT8      1
+   #define GxB_NO_PLUS_SECOND_INT16     1
+   #define GxB_NO_PLUS_SECOND_UINT8     1
    #define GxB_NO_PLUS_SECOND_UINT16    1
    #define GxB_NO_PLUS_SECOND_UINT32    1
    #define GxB_NO_PLUS_SECOND_UINT64    1
-   #define GxB_NO_PLUS_SECOND_UINT8     1
 
    #define GxB_NO_PLUS_DIV_FP32         1
    #define GxB_NO_PLUS_DIV_FP64         1
