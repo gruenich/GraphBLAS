@@ -106,7 +106,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     int64_t avdim = A->vdim ;
 
     GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
-//  GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ; // not needed here
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
 
     //--------------------------------------------------------------------------
@@ -137,13 +136,8 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         ctype, avdim, avlen, GB_ph_malloc, C_is_csc,
         GxB_SPARSE, true, A->hyper_switch, avlen, anz, true, C_iso,
         Cp_is_32, Ci_is_32)) ;
-
-    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
-
     C->nvals = anz ;
-
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-//  size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -174,14 +168,11 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // phase1: symbolic analysis
-    //==========================================================================
-
     //--------------------------------------------------------------------------
+
     // slice the A matrix, perfectly balanced for one task per thread
-    //--------------------------------------------------------------------------
-
     GB_WERK_PUSH (A_slice, nthreads + 1, int64_t) ;
     if (A_slice == NULL)
     { 
@@ -191,275 +182,23 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     }
     GB_p_slice (A_slice, Ap, A->p_is_32, A->nvec, nthreads, true) ;
 
-    //--------------------------------------------------------------------------
     // sum up the row counts and find C->p
-    //--------------------------------------------------------------------------
-
-    if (nthreads == 1)
+    if (Cp_is_32)
     {
-
-        //----------------------------------------------------------------------
-        // sequential method: A is not sliced
-        //----------------------------------------------------------------------
-
-        // FIXME: can do this with no workspace; just use Cp directly
-
-        // Only requires a single workspace of size avlen for a single thread.
-        // The resulting C matrix is not jumbled.
-        GBURBLE ("(1-thread bucket transpose) ") ;
-
-        // compute the row counts of A.  No need to scan the A->p pointers
-        ASSERT (nworkspaces == 1) ;
-
-        // FIXME: use factory templates, not cut-and-paste
-        if (Cp_is_32)
-        {
-            // Cp and workspace are uint32_t
-            uint32_t *restrict workspace = Workspaces [0] ;
-            memset (workspace, 0, (avlen + 1) * sizeof (uint32_t)) ;
-            for (int64_t p = 0 ; p < anz ; p++)
-            { 
-                int64_t i = GB_IGET (Ai, p) ;
-                workspace [i]++ ;
-            }
-        }
-        else
-        {
-            // Cp and workspace are uint64_t
-            uint64_t *restrict workspace = Workspaces [0] ;
-            memset (workspace, 0, (avlen + 1) * sizeof (uint64_t)) ;
-            for (int64_t p = 0 ; p < anz ; p++)
-            { 
-                int64_t i = GB_IGET (Ai, p) ;
-                workspace [i]++ ;
-            }
-        }
-
-        // cumulative sum of the workspace, and copy back into C->p
-        void *workspace = Workspaces [0] ;
-        GB_cumsum (workspace, Cp_is_32, avlen, &(C->nvec_nonempty), 1, NULL) ;
-        memcpy (Cp, workspace, (avlen + 1) * cpsize) ;
-
-    }
-    else if (nworkspaces == 1)
-    {
-
-        //----------------------------------------------------------------------
-        // atomic method: A is sliced but workspace is shared
-        //----------------------------------------------------------------------
-
-        // FIXME: can do this with no workspace; just use Cp directly
-
-        // Only requires a single workspace of size avlen, shared by all
-        // threads.  Scales well, but requires atomics.  If the # of rows is
-        // very small and the average row degree is high, this can be very slow
-        // because of contention on the atomic workspace.  Otherwise, it is
-        // typically faster than the non-atomic method.  The resulting C matrix
-        // is jumbled.
-
-        GBURBLE ("(%d-thread atomic bucket transpose) ", nthreads) ;
-
-        // compute the row counts of A.  No need to scan the A->p pointers
-
-        // FIXME: put this in a factory
-        int64_t p ;
-        if (Cp_is_32)
-        {
-            // Cp and workspace are uint32_t
-            uint32_t *restrict workspace = Workspaces [0] ;
-            GB_memset (workspace, 0, (avlen + 1) * sizeof (uint32_t), nth) ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (p = 0 ; p < anz ; p++)
-            { 
-                int64_t i = GB_IGET (Ai, p) ;
-                // update workspace [i]++ automically:
-                GB_ATOMIC_UPDATE
-                workspace [i]++ ;
-            }
-        }
-        else
-        {
-            // Cp and workspace are uint64_t
-            uint64_t *restrict workspace = Workspaces [0] ;
-            GB_memset (workspace, 0, (avlen + 1) * sizeof (uint64_t), nth) ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (p = 0 ; p < anz ; p++)
-            { 
-                int64_t i = GB_IGET (Ai, p) ;
-                // update workspace [i]++ automically:
-                GB_ATOMIC_UPDATE
-                workspace [i]++ ;
-            }
-        }
-
-        C->jumbled = true ; // atomic transpose leaves C jumbled
-
-        // cumulative sum of the workspace, and copy back into C->p
-        void *workspace = Workspaces [0] ;
-        GB_cumsum (workspace, Cp_is_32, avlen, &(C->nvec_nonempty), nth, Werk) ;
-        GB_memcpy (Cp, workspace, (avlen + 1) * cpsize, nth) ;
-
+        #define GB_Cp_TYPE uint32_t
+        #include "transpose/factory/GB_transpose_bucket_template.c"
     }
     else
     {
-
-        //----------------------------------------------------------------------
-        // non-atomic method
-        //----------------------------------------------------------------------
-
-        // FIXME: reduce workspaces by one; one thread can use Cp itself.
-
-        // compute the row counts of A for each slice, one per thread; This
-        // method is parallel, but not highly scalable.  Each thread requires
-        // workspace of size avlen, but no atomics are required.  The resulting
-        // C matrix is not jumbled, so this can save work if C needs to be
-        // unjumbled later.
-
-        GBURBLE ("(%d-thread non-atomic bucket transpose) ", nthreads) ;
-
-        ASSERT (nworkspaces == nthreads) ;
-
-        int tid ;
-        int64_t i ;
-        // FIXME: put this in a factory
-        if (Cp_is_32)
-        {
-
-            //------------------------------------------------------------------
-            // Cp and workspace are uint32_t
-            //------------------------------------------------------------------
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (tid = 0 ; tid < nthreads ; tid++)
-            {
-                // get the row counts for this slice, of size A->vlen
-                uint32_t *restrict workspace = Workspaces [tid] ;
-                memset (workspace, 0, (avlen + 1) * sizeof (uint32_t)) ;
-                for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
-                {
-                    // iterate over the entries in A(:,j)
-                    // int64_t j = GBh (Ah, k) ; // not needed here
-                    int64_t pA_start = GB_IGET (Ap, k) ;
-                    int64_t pA_end = GB_IGET (Ap, k+1) ;
-                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    { 
-                        // count one more entry in C(i,:) for this slice
-                        int64_t i = GB_IGET (Ai, pA) ;
-                        workspace [i]++ ;
-                    }
-                }
-            }
-
-            // cumulative sum of the workspaces across the slices
-            #pragma omp parallel for num_threads(nth) schedule(static)
-            for (i = 0 ; i < avlen ; i++)
-            {
-                uint32_t s = 0 ;
-                for (int tid = 0 ; tid < nthreads ; tid++)
-                { 
-                    uint32_t *restrict workspace = Workspaces [tid] ;
-                    uint32_t c = workspace [i] ;
-                    workspace [i] = s ;
-                    s += c ;
-                }
-                Cp32 [i] = s ;
-            }
-            Cp32 [avlen] = 0 ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // Cp and workspace are uint64_t
-            //------------------------------------------------------------------
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (tid = 0 ; tid < nthreads ; tid++)
-            {
-                // get the row counts for this slice, of size A->vlen
-                uint64_t *restrict workspace = Workspaces [tid] ;
-                memset (workspace, 0, (avlen + 1) * sizeof (uint64_t)) ;
-                for (int64_t k = A_slice [tid] ; k < A_slice [tid+1] ; k++)
-                {
-                    // iterate over the entries in A(:,j)
-                    // int64_t j = GBh (Ah, k) ; // not needed here
-                    int64_t pA_start = GB_IGET (Ap, k) ;
-                    int64_t pA_end = GB_IGET (Ap, k+1) ;
-                    for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                    { 
-                        // count one more entry in C(i,:) for this slice
-                        int64_t i = GB_IGET (Ai, pA) ;
-                        workspace [i]++ ;
-                    }
-                }
-            }
-
-            // cumulative sum of the workspaces across the slices
-            #pragma omp parallel for num_threads(nth) schedule(static)
-            for (i = 0 ; i < avlen ; i++)
-            {
-                uint64_t s = 0 ;
-                for (int tid = 0 ; tid < nthreads ; tid++)
-                { 
-                    uint64_t *restrict workspace = Workspaces [tid] ;
-                    uint64_t c = workspace [i] ;
-                    workspace [i] = s ;
-                    s += c ;
-                }
-                Cp64 [i] = s ;
-            }
-            Cp64 [avlen] = 0 ;
-        }
-
-        //----------------------------------------------------------------------
-        // compute the vector pointers for C
-        //----------------------------------------------------------------------
-
-        GB_cumsum (Cp, Cp_is_32, avlen, &(C->nvec_nonempty), nth, Werk) ;
-
-        //----------------------------------------------------------------------
-        // add Cp back to all Workspaces
-        //----------------------------------------------------------------------
-
-        // FIXME: put this in a factory
-        if (Cp_is_32)
-        {
-            #pragma omp parallel for num_threads(nth) schedule(static)
-            for (i = 0 ; i < avlen ; i++)
-            {
-                uint32_t s = Cp32 [i] ;
-                uint32_t *restrict workspace = Workspaces [0] ;
-                workspace [i] = s ;
-                for (int tid = 1 ; tid < nthreads ; tid++)
-                { 
-                    uint32_t *restrict workspace = Workspaces [tid] ;
-                    workspace [i] += s ;
-                }
-            }
-        }
-        else
-        {
-            #pragma omp parallel for num_threads(nth) schedule(static)
-            for (i = 0 ; i < avlen ; i++)
-            {
-                uint64_t s = Cp64 [i] ;
-                uint64_t *restrict workspace = Workspaces [0] ;
-                workspace [i] = s ;
-                for (int tid = 1 ; tid < nthreads ; tid++)
-                { 
-                    uint64_t *restrict workspace = Workspaces [tid] ;
-                    workspace [i] += s ;
-                }
-            }
-        }
+        #define GB_Cp_TYPE uint64_t
+        #include "transpose/factory/GB_transpose_bucket_template.c"
     }
 
     C->magic = GB_MAGIC ;
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // phase2: transpose A into C
-    //==========================================================================
+    //--------------------------------------------------------------------------
 
     // transpose both the pattern and the values
     if (op == NULL)
