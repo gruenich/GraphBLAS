@@ -1340,14 +1340,13 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     const int nthreads
 ) ;
 
-GrB_Info GB_select_phase1_jit      // select phase1
+GrB_Info GB_select_phase1_jit       // select phase1
 (
     // output:
-    uint64_t *restrict Cp,
+    GrB_Matrix C,                   // C->p computed, with counts
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     // input:
-    const bool C_iso,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,

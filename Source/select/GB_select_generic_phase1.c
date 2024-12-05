@@ -15,7 +15,7 @@
 
 GrB_Info GB_select_generic_phase1
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -37,6 +37,8 @@ GrB_Info GB_select_generic_phase1
     ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
     ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
+
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
     // phase1: generic entry selector

@@ -26,7 +26,7 @@
 
 GrB_Info GB (_sel_phase1__eq_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,

@@ -12,14 +12,13 @@
 
 typedef GB_JIT_KERNEL_SELECT_PHASE1_PROTO ((*GB_jit_dl_function)) ;
 
-GrB_Info GB_select_phase1_jit      // select phase1
+GrB_Info GB_select_phase1_jit       // select phase1
 (
     // output:
-    uint64_t *restrict Cp,
+    GrB_Matrix C,                   // C->p computed, with counts
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     // input:
-    const bool C_iso,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,
@@ -28,7 +27,7 @@ GrB_Info GB_select_phase1_jit      // select phase1
     const int A_ntasks,
     const int A_nthreads
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // encodify the problem
@@ -37,7 +36,7 @@ GrB_Info GB_select_phase1_jit      // select phase1
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_select (&encoding, &suffix,
-        GB_JIT_KERNEL_SELECT1, C_iso, op, flipij, A) ;
+        GB_JIT_KERNEL_SELECT1, C->iso, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -56,7 +55,7 @@ GrB_Info GB_select_phase1_jit      // select phase1
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cp, Wfirst, Wlast, A, ythunk, A_ek_slicing,
+    return (GB_jit_kernel (C, Wfirst, Wlast, A, ythunk, A_ek_slicing,
         A_ntasks, A_nthreads, &GB_callback)) ;
 }
 

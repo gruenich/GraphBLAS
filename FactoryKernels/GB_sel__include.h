@@ -193,7 +193,7 @@ GrB_Info GB (_sel_phase2__nonzombie_fc64)
 
 GrB_Info GB (_sel_phase1__ne_thunk_int8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -228,7 +228,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_int8)
 
 GrB_Info GB (_sel_phase1__ne_thunk_int16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -263,7 +263,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_int16)
 
 GrB_Info GB (_sel_phase1__ne_thunk_int32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -298,7 +298,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_int32)
 
 GrB_Info GB (_sel_phase1__ne_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -333,7 +333,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_int64)
 
 GrB_Info GB (_sel_phase1__ne_thunk_uint8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -368,7 +368,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_uint8)
 
 GrB_Info GB (_sel_phase1__ne_thunk_uint16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -403,7 +403,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_uint16)
 
 GrB_Info GB (_sel_phase1__ne_thunk_uint32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -438,7 +438,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_uint32)
 
 GrB_Info GB (_sel_phase1__ne_thunk_uint64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -473,7 +473,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_uint64)
 
 GrB_Info GB (_sel_phase1__ne_thunk_fp32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -508,7 +508,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_fp32)
 
 GrB_Info GB (_sel_phase1__ne_thunk_fp64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -543,7 +543,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_fp64)
 
 GrB_Info GB (_sel_phase1__ne_thunk_fc32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -578,7 +578,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_fc32)
 
 GrB_Info GB (_sel_phase1__ne_thunk_fc64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -613,7 +613,7 @@ GrB_Info GB (_sel_bitmap__ne_thunk_fc64)
 
 GrB_Info GB (_sel_phase1__eq_thunk_bool)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -648,7 +648,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_bool)
 
 GrB_Info GB (_sel_phase1__eq_thunk_int8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -683,7 +683,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_int8)
 
 GrB_Info GB (_sel_phase1__eq_thunk_int16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -718,7 +718,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_int16)
 
 GrB_Info GB (_sel_phase1__eq_thunk_int32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -753,7 +753,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_int32)
 
 GrB_Info GB (_sel_phase1__eq_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -788,7 +788,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_int64)
 
 GrB_Info GB (_sel_phase1__eq_thunk_uint8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -823,7 +823,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_uint8)
 
 GrB_Info GB (_sel_phase1__eq_thunk_uint16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -858,7 +858,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_uint16)
 
 GrB_Info GB (_sel_phase1__eq_thunk_uint32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -893,7 +893,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_uint32)
 
 GrB_Info GB (_sel_phase1__eq_thunk_uint64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -928,7 +928,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_uint64)
 
 GrB_Info GB (_sel_phase1__eq_thunk_fp32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -963,7 +963,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_fp32)
 
 GrB_Info GB (_sel_phase1__eq_thunk_fp64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -998,7 +998,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_fp64)
 
 GrB_Info GB (_sel_phase1__eq_thunk_fc32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1033,7 +1033,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_fc32)
 
 GrB_Info GB (_sel_phase1__eq_thunk_fc64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1068,7 +1068,7 @@ GrB_Info GB (_sel_bitmap__eq_thunk_fc64)
 
 GrB_Info GB (_sel_phase1__gt_thunk_int8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1103,7 +1103,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_int8)
 
 GrB_Info GB (_sel_phase1__gt_thunk_int16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1138,7 +1138,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_int16)
 
 GrB_Info GB (_sel_phase1__gt_thunk_int32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1173,7 +1173,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_int32)
 
 GrB_Info GB (_sel_phase1__gt_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1208,7 +1208,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_int64)
 
 GrB_Info GB (_sel_phase1__gt_thunk_uint8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1243,7 +1243,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_uint8)
 
 GrB_Info GB (_sel_phase1__gt_thunk_uint16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1278,7 +1278,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_uint16)
 
 GrB_Info GB (_sel_phase1__gt_thunk_uint32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1313,7 +1313,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_uint32)
 
 GrB_Info GB (_sel_phase1__gt_thunk_uint64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1348,7 +1348,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_uint64)
 
 GrB_Info GB (_sel_phase1__gt_thunk_fp32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1383,7 +1383,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_fp32)
 
 GrB_Info GB (_sel_phase1__gt_thunk_fp64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1418,7 +1418,7 @@ GrB_Info GB (_sel_bitmap__gt_thunk_fp64)
 
 GrB_Info GB (_sel_phase1__ge_thunk_int8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1453,7 +1453,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_int8)
 
 GrB_Info GB (_sel_phase1__ge_thunk_int16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1488,7 +1488,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_int16)
 
 GrB_Info GB (_sel_phase1__ge_thunk_int32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1523,7 +1523,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_int32)
 
 GrB_Info GB (_sel_phase1__ge_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1558,7 +1558,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_int64)
 
 GrB_Info GB (_sel_phase1__ge_thunk_uint8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1593,7 +1593,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_uint8)
 
 GrB_Info GB (_sel_phase1__ge_thunk_uint16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1628,7 +1628,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_uint16)
 
 GrB_Info GB (_sel_phase1__ge_thunk_uint32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1663,7 +1663,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_uint32)
 
 GrB_Info GB (_sel_phase1__ge_thunk_uint64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1698,7 +1698,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_uint64)
 
 GrB_Info GB (_sel_phase1__ge_thunk_fp32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1733,7 +1733,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_fp32)
 
 GrB_Info GB (_sel_phase1__ge_thunk_fp64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1768,7 +1768,7 @@ GrB_Info GB (_sel_bitmap__ge_thunk_fp64)
 
 GrB_Info GB (_sel_phase1__lt_thunk_int8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1803,7 +1803,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_int8)
 
 GrB_Info GB (_sel_phase1__lt_thunk_int16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1838,7 +1838,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_int16)
 
 GrB_Info GB (_sel_phase1__lt_thunk_int32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1873,7 +1873,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_int32)
 
 GrB_Info GB (_sel_phase1__lt_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1908,7 +1908,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_int64)
 
 GrB_Info GB (_sel_phase1__lt_thunk_uint8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1943,7 +1943,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_uint8)
 
 GrB_Info GB (_sel_phase1__lt_thunk_uint16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -1978,7 +1978,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_uint16)
 
 GrB_Info GB (_sel_phase1__lt_thunk_uint32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2013,7 +2013,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_uint32)
 
 GrB_Info GB (_sel_phase1__lt_thunk_uint64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2048,7 +2048,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_uint64)
 
 GrB_Info GB (_sel_phase1__lt_thunk_fp32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2083,7 +2083,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_fp32)
 
 GrB_Info GB (_sel_phase1__lt_thunk_fp64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2118,7 +2118,7 @@ GrB_Info GB (_sel_bitmap__lt_thunk_fp64)
 
 GrB_Info GB (_sel_phase1__le_thunk_int8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2153,7 +2153,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_int8)
 
 GrB_Info GB (_sel_phase1__le_thunk_int16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2188,7 +2188,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_int16)
 
 GrB_Info GB (_sel_phase1__le_thunk_int32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2223,7 +2223,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_int32)
 
 GrB_Info GB (_sel_phase1__le_thunk_int64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2258,7 +2258,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_int64)
 
 GrB_Info GB (_sel_phase1__le_thunk_uint8)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2293,7 +2293,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_uint8)
 
 GrB_Info GB (_sel_phase1__le_thunk_uint16)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2328,7 +2328,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_uint16)
 
 GrB_Info GB (_sel_phase1__le_thunk_uint32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2363,7 +2363,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_uint32)
 
 GrB_Info GB (_sel_phase1__le_thunk_uint64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2398,7 +2398,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_uint64)
 
 GrB_Info GB (_sel_phase1__le_thunk_fp32)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -2433,7 +2433,7 @@ GrB_Info GB (_sel_bitmap__le_thunk_fp32)
 
 GrB_Info GB (_sel_phase1__le_thunk_fp64)
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,

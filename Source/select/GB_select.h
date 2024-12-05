@@ -98,7 +98,7 @@ GrB_Info GB_selectop_to_idxunop
 
 GrB_Info GB_select_generic_phase1
 (
-    uint64_t *restrict Cp,
+    GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -127,8 +127,8 @@ GrB_Info GB_select_generic_phase2
 
 GrB_Info GB_select_positional_phase1
 (
+    GrB_Matrix C,
     uint64_t *restrict Zp,
-    uint64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,

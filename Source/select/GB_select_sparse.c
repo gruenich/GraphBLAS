@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64-bit.  Need GB_ek_slice_merge2 and _merge1 32/64-bit first
+
 #define GB_DEBUG
 
 #include "select/GB_select.h"
@@ -72,7 +74,6 @@ GrB_Info GB_select_sparse
     int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
-    uint64_t *restrict Cp = NULL ; // size_t Cp_size = 0 ;     // FIXME
     int64_t *restrict Ci = NULL ; // size_t Ci_size = 0 ;      // FIXME
     GB_void *restrict Cx = NULL ; // size_t Cx_size = 0 ;
 
@@ -113,7 +114,6 @@ GrB_Info GB_select_sparse
         csparsity, A->hyper_switch, A->plen,
         /* FIXME: */ false, false)) ;
 
-    Cp = C->p ;
     if (A_is_hyper)
     {
         // C->h is a deep copy of A->h
@@ -126,8 +126,12 @@ GrB_Info GB_select_sparse
 
     // C->Y is not yet constructed
     ASSERT (C->Y == NULL) ;
-
     ASSERT_MATRIX_OK (C, "C initialized as empty for GB_selector", GB0) ;
+    ASSERT (C->i == NULL) ;
+    ASSERT (C->x == NULL) ;
+
+    // C_iso: C will be constructed as iso
+    C->iso = C_iso ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -188,7 +192,7 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         // no JIT worker needed for these operators
-        info = GB_select_positional_phase1 (Zp, Cp, Wfirst, Wlast, A, ithunk,
+        info = GB_select_positional_phase1 (C, Zp, Wfirst, Wlast, A, ithunk,
             op, A_ek_slicing, A_ntasks, A_nthreads) ;
 
     }
@@ -216,7 +220,7 @@ GrB_Info GB_select_sparse
             #define GB_sel1(opname,aname) GB (_sel_phase1_ ## opname ## aname)
             #define GB_SEL_WORKER(opname,aname)                             \
             {                                                               \
-                info = GB_sel1 (opname, aname) (Cp, Wfirst, Wlast, A,       \
+                info = GB_sel1 (opname, aname) (C, Wfirst, Wlast, A,        \
                     ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;           \
             }                                                               \
             break ;
@@ -233,8 +237,8 @@ GrB_Info GB_select_sparse
 
         if (info == GrB_NO_VALUE)
         { 
-            info = GB_select_phase1_jit (Cp, Wfirst, Wlast, C_iso,
-                A, ythunk, op, flipij, A_ek_slicing, A_ntasks, A_nthreads) ;
+            info = GB_select_phase1_jit (C, Wfirst, Wlast, A, ythunk, op,
+                flipij, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
 
         //----------------------------------------------------------------------
@@ -245,12 +249,12 @@ GrB_Info GB_select_sparse
         { 
             // generic entry selector, phase1
             GBURBLE ("(generic select) ") ;
-            info = GB_select_generic_phase1 (Cp, Wfirst, Wlast,
-                A, flipij, ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+            info = GB_select_generic_phase1 (C, Wfirst, Wlast, A, flipij,
+                ythunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
     }
 
-    GB_OK (info) ;  // check for out-of-memory or other failurs in phase1
+    GB_OK (info) ;  // check for out-of-memory or other failures in phase1
 
     //==========================================================================
     // phase1b: cumulative sum and allocate C
@@ -260,15 +264,16 @@ GrB_Info GB_select_sparse
     // cumulative sum of Cp and compute Cp_kfirst
     //--------------------------------------------------------------------------
 
+    uint64_t *restrict Cp = C->p ;      // FIXME
     int64_t C_nvec_nonempty ;
-    GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, Cp, anvec,
+    GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, /* FIXME: */ Cp, anvec,
         Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted Ci and Cx
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [anvec] ;
+    int64_t cnz = Cp [anvec] ;  // FIXME
     cnz = GB_IMAX (cnz, 1) ;
     GB_OK (GB_bix_alloc (C, cnz, csparsity, false, true, C_iso)) ;
     Ci = C->i ;

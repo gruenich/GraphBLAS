@@ -170,13 +170,7 @@ GrB_Info GB_select_bitmap
     // return result
     //--------------------------------------------------------------------------
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
-        GB_FREE_ALL ;
-        return (info) ;
-    }
-
+    GB_OK (info) ;  // check for out-of-memory, or other error
     C->nvals = cnvals ;
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "C from bitmap selector", GB0) ;

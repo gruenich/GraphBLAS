@@ -427,7 +427,7 @@ GrB_Info GB_jit_kernel_select_bitmap                                    \
 #define GB_JIT_KERNEL_SELECT_PHASE1_PROTO(GB_jit_kernel_select_phase1)  \
 GrB_Info GB_jit_kernel_select_phase1                                    \
 (                                                                       \
-    uint64_t *restrict Cp,                                              \
+    GrB_Matrix C,                                                       \
     int64_t *restrict Wfirst,                                           \
     int64_t *restrict Wlast,                                            \
     const GrB_Matrix A,                                                 \

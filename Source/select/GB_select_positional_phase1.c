@@ -16,8 +16,8 @@
 
 GrB_Info GB_select_positional_phase1
 (
+    GrB_Matrix C,
     uint64_t *restrict Zp,
-    uint64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -39,6 +39,8 @@ GrB_Info GB_select_positional_phase1
     ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)
         || opcode == GB_NONZOMBIE_idxunop_code) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
+
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
     // phase1: positional operators and nonzombie selector
