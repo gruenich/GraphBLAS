@@ -98,9 +98,11 @@ GrB_Info GB_selectop_to_idxunop
 
 GrB_Info GB_select_generic_phase1
 (
+    // input/output:
     GrB_Matrix C,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
+    // input:
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,
@@ -112,9 +114,9 @@ GrB_Info GB_select_generic_phase1
 
 GrB_Info GB_select_generic_phase2
 (
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,
-    const uint64_t *restrict Cp,
+    // input/output:
+    GrB_Matrix C,
+    // input:
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
@@ -141,10 +143,10 @@ GrB_Info GB_select_positional_phase1
 
 GrB_Info GB_select_positional_phase2
 (
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,
+    // input/output:
+    GrB_Matrix C,
+    // input:
     const uint64_t *restrict Zp,
-    const uint64_t *restrict Cp,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,

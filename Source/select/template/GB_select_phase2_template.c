@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// C is sparse or hypersparse, but it is present only as Cp, Ci, and Cx.
-// A is never bitmap.  It is sparse or hypersparse in most cases.  It can also
-// by full for DIAG.
+// C is sparse or hypersparse.  Cp is not modifed but Ci and Cx are.  A is
+// never bitmap.  It is sparse or hypersparse in most cases.  It can also be
+// full for DIAG.
 
 {
     //--------------------------------------------------------------------------
@@ -29,6 +29,10 @@
     // if A is full, all opcodes except DIAG use the bitmap selector instead
     ASSERT (!GB_IS_FULL (A)) ;
     #endif
+
+    const uint64_t *restrict Cp = C->p ;    // FIXME
+           int64_t *restrict Ci = C->i ;
+    GB_A_TYPE      *restrict Cx = (GB_A_TYPE *) C->x ; // FIXME: use GB_C_TYPE
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;

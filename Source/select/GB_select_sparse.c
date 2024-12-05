@@ -304,8 +304,8 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         // no JIT worker needed for these operators
-        info = GB_select_positional_phase2 (Ci, Cx, Zp, Cp, Cp_kfirst, A,
-            flipij, ithunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
+        info = GB_select_positional_phase2 (C, Zp, Cp_kfirst, A, flipij,
+            ithunk, op, A_ek_slicing, A_ntasks, A_nthreads) ;
 
     }
     else
@@ -334,8 +334,8 @@ GrB_Info GB_select_sparse
             #define GB_sel2(opname,aname) GB (_sel_phase2_ ## opname ## aname)
             #define GB_SEL_WORKER(opname,aname)                             \
             {                                                               \
-                info = GB_sel2 (opname, aname) (Ci, Cx, Cp, Cp_kfirst, A,   \
-                    ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;           \
+                info = GB_sel2 (opname, aname) (C, Cp_kfirst, A, ythunk,    \
+                    A_ek_slicing, A_ntasks, A_nthreads) ;                   \
             }                                                               \
             break ;
 
@@ -350,9 +350,8 @@ GrB_Info GB_select_sparse
 
         if (info == GrB_NO_VALUE)
         { 
-            info = GB_select_phase2_jit (Ci, C_iso ? NULL : Cx, Cp, C_iso,
-                Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing,
-                A_ntasks, A_nthreads) ;
+            info = GB_select_phase2_jit (C, Cp_kfirst, A, flipij, ythunk, op,
+                A_ek_slicing, A_ntasks, A_nthreads) ;
         }
 
         //----------------------------------------------------------------------
@@ -362,9 +361,8 @@ GrB_Info GB_select_sparse
         if (info == GrB_NO_VALUE)
         { 
             // generic entry selector, phase2
-            info = GB_select_generic_phase2 (Ci, C_iso ? NULL : Cx, Cp,
-                Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing, A_ntasks,
-                A_nthreads) ;
+            info = GB_select_generic_phase2 (C, Cp_kfirst, A, flipij, ythunk,
+                op, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
     }
 

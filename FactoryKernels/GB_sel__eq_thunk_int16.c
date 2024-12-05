@@ -47,9 +47,7 @@ GrB_Info GB (_sel_phase1__eq_thunk_int16)
 
 GrB_Info GB (_sel_phase2__eq_thunk_int16)
 (
-    int64_t *restrict Ci,
-    GB_void *restrict Cx_out,
-    const uint64_t *restrict Cp,
+    GrB_Matrix C,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
@@ -58,7 +56,6 @@ GrB_Info GB (_sel_phase2__eq_thunk_int16)
     const int A_nthreads
 )
 { 
-    GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
     #include "select/template/GB_select_phase2_template.c"
     return (GrB_SUCCESS) ;

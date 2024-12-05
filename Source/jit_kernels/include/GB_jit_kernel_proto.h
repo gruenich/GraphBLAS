@@ -441,9 +441,7 @@ GrB_Info GB_jit_kernel_select_phase1                                    \
 #define GB_JIT_KERNEL_SELECT_PHASE2_PROTO(GB_jit_kernel_select_phase2)  \
 GrB_Info GB_jit_kernel_select_phase2                                    \
 (                                                                       \
-    int64_t *restrict Ci,                                               \
-    GB_void *restrict Cx_out,                                           \
-    const uint64_t *restrict Cp,                                        \
+    GrB_Matrix C,                                                       \
     const int64_t *restrict Cp_kfirst,                                  \
     const GrB_Matrix A,                                                 \
     const GB_void *restrict ythunk,                                     \

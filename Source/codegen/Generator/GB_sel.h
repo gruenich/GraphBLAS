@@ -16,9 +16,7 @@ GrB_Info GB (_sel_phase1)
 m4_divert(if_phase2)
 GrB_Info GB (_sel_phase2)
 (
-    int64_t *restrict Ci,
-    GB_void *restrict Cx_out,
-    const uint64_t *restrict Cp,
+    GrB_Matrix C,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,

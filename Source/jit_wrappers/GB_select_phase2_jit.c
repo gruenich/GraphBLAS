@@ -14,12 +14,9 @@ typedef GB_JIT_KERNEL_SELECT_PHASE2_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_select_phase2_jit      // select phase2
 (
-    // output:
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,                   // NULL if C is iso-valued
+    // input/output:
+    GrB_Matrix C,                   // input: Cp; output: Ci, Cx
     // input:
-    const uint64_t *restrict Cp,
-    const bool C_iso,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
@@ -38,7 +35,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_select (&encoding, &suffix,
-        GB_JIT_KERNEL_SELECT2, C_iso, op, flipij, A) ;
+        GB_JIT_KERNEL_SELECT2, C->iso, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -57,7 +54,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Ci, Cx, Cp, Cp_kfirst, A, ythunk, A_ek_slicing,
-        A_ntasks, A_nthreads)) ;
+    return (GB_jit_kernel (C, Cp_kfirst, A, ythunk, A_ek_slicing, A_ntasks,
+        A_nthreads)) ;
 }
 

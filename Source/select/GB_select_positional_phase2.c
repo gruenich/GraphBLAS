@@ -16,10 +16,10 @@
 
 GrB_Info GB_select_positional_phase2
 (
-    int64_t *restrict Ci,
-    GB_void *restrict Cx,
+    // input/output:
+    GrB_Matrix C,
+    // input:
     const uint64_t *restrict Zp,
-    const uint64_t *restrict Cp,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
