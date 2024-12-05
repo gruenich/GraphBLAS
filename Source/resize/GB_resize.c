@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // FIXME: 32/64 bit
 
 #include "select/GB_select.h"
@@ -15,6 +17,7 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
+    GB_Matrix_free (&T) ;               \
     GB_FREE (&Ax_new, Ax_new_size) ;    \
     GB_FREE (&Ab_new, Ab_new_size) ;    \
     GB_phybix_free (A) ;                \
@@ -41,6 +44,9 @@ GrB_Info GB_resize              // change the size of a matrix
     GB_void *restrict Ax_new = NULL ; size_t Ax_new_size = 0 ;
     int8_t  *restrict Ab_new = NULL ; size_t Ab_new_size = 0 ;
     ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
+
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = NULL ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -129,8 +135,7 @@ GrB_Info GB_resize              // change the size of a matrix
             { 
                 // allocate new space for A->x; use calloc to ensure all space
                 // is initialized.
-                Ax_new = GB_CALLOC (nzmax_new*asize, GB_void, // x:OK:calloc
-                    &Ax_new_size) ;
+                Ax_new = GB_CALLOC (nzmax_new*asize, GB_void, &Ax_new_size) ;
                 ok = (Ax_new != NULL) ;
             }
         }
@@ -237,8 +242,6 @@ GrB_Info GB_resize              // change the size of a matrix
         A->vlen = vlen_new ;
         A->nvec = vdim_new ;
         A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
-        ASSERT_MATRIX_OK (A, "A bitmap/full shrunk", GB0) ;
-        return (GrB_SUCCESS) ;
 
     }
     else
@@ -293,10 +296,14 @@ GrB_Info GB_resize              // change the size of a matrix
         // if vlen is shrinking, delete entries outside the new matrix
         if (vlen_new < vlen_old)
         { 
+            // A = select (A), keeping entries in rows <= vlen_new-1
             struct GB_Scalar_opaque Thunk_header ;
             int64_t k = vlen_new - 1 ;
             GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
-            GB_OK (GB_selector (NULL, GrB_ROWLE, false, A, Thunk, Werk)) ;
+            GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+            GB_OK (GB_selector (T, GrB_ROWLE, false, A, Thunk, Werk)) ;
+            GB_OK (GB_transplant (A, A->type, &T, false, Werk)) ;
+            ASSERT_MATRIX_OK (A, "A rows pruned", GB0) ;
         }
 
         //----------------------------------------------------------------------
@@ -317,10 +324,12 @@ GrB_Info GB_resize              // change the size of a matrix
         // conform the matrix to its desired sparsity structure
         //----------------------------------------------------------------------
 
-        info = GB_conform (A, Werk) ;
-        ASSERT (GB_IMPLIES (info == GrB_SUCCESS, A->nvec_nonempty >= 0)) ;
-        ASSERT_MATRIX_OK (A, "A final resized", GB0) ;
-        return (info) ;
+        GB_OK (GB_conform (A, Werk)) ;  // FIXME: move below
+        ASSERT (A->nvec_nonempty >= 0) ;
     }
+
+    // FIXME: conform here
+    ASSERT_MATRIX_OK (A, "A final resized", GB0) ;
+    return (GrB_SUCCESS) ;
 }
 

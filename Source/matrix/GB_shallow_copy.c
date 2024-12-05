@@ -79,7 +79,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
     C->nvals = A->nvals ;
     C->magic = GB_MAGIC ;
-    C->iso = A->iso ;                   // OK: C has the same iso property as A
+    C->iso = A->iso ;                   // C has the same iso property as A
     if (A->iso)
     { 
         GB_BURBLE_MATRIX (A, "(iso copy) ") ;

@@ -367,7 +367,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
             info = GB_new (&Z, // sparse or hyper, existing header
                 C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc,
-                GB_sparsity (T), T->hyper_switch, T->plen, false, false) ;
+                GB_sparsity (T), T->hyper_switch, T->plen,
+                /* FIXME: */ false, false) ;
             GB_OK (info) ;
 
             // Transplant T into Z, typecasting if needed, and free T.  This
@@ -375,7 +376,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // by GB_transplant.
 
             // Z and T have same vlen, vdim, is_csc, hypersparsity
-            GB_OK (GB_transplant (Z, C->type, Thandle, Werk)) ;
+            GB_OK (GB_transplant (Z, C->type, Thandle, false, Werk)) ;
 
         }
         else

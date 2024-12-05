@@ -22,6 +22,7 @@
     info = method ;                     \
     if (info != GrB_SUCCESS)            \
     {                                   \
+        printf ("info %d line %d\n", info, __LINE__) ; \
         mexErrMsgTxt ("fail") ;         \
     }                                   \
 }

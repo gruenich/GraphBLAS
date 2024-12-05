@@ -49,7 +49,6 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     GB_Type_code ccode = ctype->code ;
     if (!GB_IS_FULL (C))
     { 
-        // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
         C->p_is_32 = false ;    // OK: full always has p_is_32 = false
         C->i_is_32 = false ;    // OK: full always has i_is_32 = false

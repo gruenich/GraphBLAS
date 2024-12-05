@@ -79,10 +79,10 @@ GrB_Info GB_split_full              // split a full matrix
             int64_t cnz = cvdim * cvlen ;
 
             C = NULL ;
-            // set C->iso = A_iso       OK
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_ph_null, csc, GxB_FULL, false,
-                hyper_switch, 0, cnz, true, A_iso, false, false)) ;
+                hyper_switch, 0, cnz, true, A_iso,
+                /* OK: */ false, false)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             int C_nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;

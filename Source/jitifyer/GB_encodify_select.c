@@ -19,7 +19,6 @@ uint64_t GB_encodify_select     // encode an select problem
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
     const bool C_iso,
-    const bool in_place_A,
     const GrB_IndexUnaryOp op,
     const bool flipij,
     const GrB_Matrix A
@@ -43,7 +42,7 @@ uint64_t GB_encodify_select     // encode an select problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_select (&encoding->code, C_iso, in_place_A, op, flipij, A) ;
+    GB_enumify_select (&encoding->code, C_iso, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

@@ -272,7 +272,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
     }
 
     GB_phybix_free (A) ;
-    A->iso = A_iso ;        // OK: convert_s2b, keep iso
+    A->iso = A_iso ;
 
     A->b = Cb ; A->b_size = Cb_size ; A->b_shallow = false ;
     Cb = NULL ;

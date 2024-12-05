@@ -945,7 +945,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (T->i == NULL) ;
     ASSERT (T->x == NULL) ;
 
-    T->iso = S_iso ;                // OK: T is iso if and only if Sx is iso
+    T->iso = S_iso ;    // T is iso if and only if Sx is iso
     do_burble = do_burble && (vlen > 1 || vdim > 1) && (nvals > 1) ;
     if (do_burble)
     {
@@ -1320,7 +1320,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // allocate T->x
         //----------------------------------------------------------------------
 
-        T->x = GB_XALLOC (false, S_iso, tnz, tsize, &(T->x_size)) ; // x:OK
+        T->x = GB_XALLOC (false, S_iso, tnz, tsize, &(T->x_size)) ;
         if (T->x == NULL)
         { 
             // out of memory

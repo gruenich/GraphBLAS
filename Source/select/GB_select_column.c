@@ -144,7 +144,7 @@ GrB_Info GB_select_column
         return (GB_new (&C, // auto (sparse or hyper), existing header
             A->type, avlen, avdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
-            false, false)) ;
+            /* FIXME: */ false, false)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -154,7 +154,7 @@ GrB_Info GB_select_column
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
         A->type, avlen, avdim, GB_ph_malloc, true, csparsity, false,
-        A->hyper_switch, cnvec, cnz, true, A_iso, false, false)) ;
+        A->hyper_switch, cnvec, cnz, true, A_iso, /* FIXME: */ false, false)) ;
 
     ASSERT (info == GrB_SUCCESS) ;
     int nth2 = GB_nthreads (cnvec, chunk, nth) ;
@@ -305,7 +305,7 @@ GrB_Info GB_select_column
     C->nvec = cnvec ;
     C->magic = GB_MAGIC ;
     C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
-    C->iso = C_iso ;            // OK: burble already done above
+    C->iso = C_iso ;
     C->nvals = Cp [cnvec] ;
     C->nvec_nonempty = GB_nvec_nonempty (C) ;
     ASSERT_MATRIX_OK (C, "C output for GB_select_column", GB0) ;

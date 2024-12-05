@@ -169,7 +169,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // C is sparse or hypersparse, not full or bitmap
-    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // sparse or hyper (from M), existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,

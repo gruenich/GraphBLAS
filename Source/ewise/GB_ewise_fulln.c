@@ -83,10 +83,10 @@ GrB_Info GB_ewise_fulln      // C = A+B
         // free the content of C and reallocate it as a non-iso full matrix
         ASSERT (C != A && C != B) ;
         GB_phybix_free (C) ;
-        // set C->iso = false   OK
         GB_OK (GB_new_bix (&C,  // existing header
             C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc, GxB_FULL, false,
-            C->hyper_switch, -1, GB_nnz_full (C), true, false, false, false)) ;
+            C->hyper_switch, -1, GB_nnz_full (C), true, false,
+            /* OK: */ false, false)) ;
         C->magic = GB_MAGIC ;
     }
     else if (!GB_IS_FULL (C))

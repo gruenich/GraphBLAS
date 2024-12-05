@@ -76,7 +76,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        // set Awork->iso = A->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (Awork, &Awork_header) ;
         GB_OK (GB_dup_worker (&Awork, A->iso, A, true, NULL)) ;
         ASSERT_MATRIX_OK (Awork, "dup Awork for kron (A,B)", GB0) ;
@@ -89,7 +88,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        // set Bwork->iso = B->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (Bwork, &Bwork_header) ;
         GB_OK (GB_dup_worker (&Bwork, B->iso, B, true, NULL)) ;
         ASSERT_MATRIX_OK (Bwork, "dup Bwork for kron (A,B)", GB0) ;
@@ -171,7 +169,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     bool Cp_is_32 = GB_validate_p_is_32 (hack32, cnzmax) ;          // FIXME
     bool Ci_is_32 = GB_validate_i_is_32 (hack32, cvlen, cvdim) ;    // FIXME
 
-    // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
         C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso,

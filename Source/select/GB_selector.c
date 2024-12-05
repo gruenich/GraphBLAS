@@ -47,9 +47,8 @@ GrB_Info GB_selector
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IMPLIES (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode),
         !GB_JUMBLED (A))) ;
-    ASSERT (C == NULL || (C != NULL && (C->static_header || GBNSTATIC))) ;
 
-    bool in_place_A = (C == NULL) ; // GrB_wait and GB_resize only
+    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     const bool A_iso = A->iso ;
 
     //--------------------------------------------------------------------------
@@ -110,7 +109,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     bool use_select_bitmap ;
-    if (opcode == GB_NONZOMBIE_idxunop_code || in_place_A)
+    if (opcode == GB_NONZOMBIE_idxunop_code)
     { 
         // GB_select_bitmap does not support the nonzombie opcode, nor does
         // it support operating on A in place.  For the NONZOMBIE operator, A
@@ -160,34 +159,24 @@ GrB_Info GB_selector
 
     info = GrB_NO_VALUE ;
 
-    // FIXME: pass in a T matrix, below, not C
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if (!in_place_A /* FIXME: Workaround for CUDA kernel not
-        handling in-place condition. Fix by building result
-        in T matrix for both CUDA and CPU and handle in-place case
-        separately at end */
-        && (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) /* It is possible for
+    if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) /* It is possible for
         non-sparse matrices to use the sparse kernel; see check for 
         use_select_bitmap above. The CUDA select_sparse kernel will not work
         in this case, so make this go to the CPU. */
         && GB_cuda_select_branch (A, op))
     {
-
         info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
     }
     #endif
 
     if (info == GrB_NO_VALUE)
     {
-        // FIXME: Extract in-place handling out of this function
         info = GB_select_sparse (C, C_iso, op, flipij, A, ithunk, athunk,
             ythunk, Werk) ;
     }
- 
-    // FIXME: handle in_place_A case here, not in select_sparse:
-    // transplant from T to either C (not in place) or A (in place)
 
-    ASSERT_MATRIX_OK (A, "A output of GB_selector", GB_ZOMBIE (GB0)) ;
+    ASSERT_MATRIX_OK (C, "A output of GB_selector", GB_ZOMBIE (GB0)) ;
     return (info) ;
 }
 

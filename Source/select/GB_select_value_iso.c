@@ -84,7 +84,7 @@ GrB_Info GB_select_value_iso
         return (GB_new (&C, // existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
-            false, false)) ;
+            /* FIXME: */ false, false)) ;
     }
     else
     { 

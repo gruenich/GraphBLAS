@@ -261,7 +261,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         //----------------------------------------------------------------------
 
         // create a new empty matrix T, with the new type and dimensions.
-        // set T->iso = false   OK
         GB_OK (GB_new_bix (&T, // hyper, existing header
             ctype, avdim, avlen, GB_ph_calloc, C_is_csc, GxB_HYPERSPARSE,
             true, A_hyper_switch, 1, 1, true, false, Cp_is_32, Ci_is_32)) ;
@@ -292,16 +291,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             GBURBLE ("(cheap transpose) ") ;
             info = GB_new (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc,
-                T_sparsity, A_hyper_switch, 1, false, false) ;
+                T_sparsity, A_hyper_switch, 1, /* OK: */ false, false) ;
             ASSERT (info == GrB_SUCCESS) ;
         }
         else
         { 
             // allocate all of T, including T->b and T->x
-            // set T->iso = C_iso   OK
             GB_OK (GB_new_bix (&T, // bitmap or full, existing header
                 ctype, avdim, avlen, GB_ph_null, C_is_csc, T_sparsity, true,
-                A_hyper_switch, 1, anz_held, true, C_iso, false, false)) ;
+                A_hyper_switch, 1, anz_held, true, C_iso,
+                /* OK: */ false, false)) ;
         }
 
         T->magic = GB_MAGIC ;
@@ -388,7 +387,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ; // x:OK
+            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ;
         }
         if (T->p == NULL || T->i == NULL || (allocate_Tx && T->x == NULL))
         { 
@@ -531,7 +530,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ; // x:OK
+            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ;
         }
 
         if (T->p == NULL || (T->i == NULL && !A_is_hyper) ||
@@ -793,8 +792,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             if (op != NULL && !C_iso)
             { 
-                Swork = (GB_void *) GB_XALLOC (false, C_iso, anz,   // x:OK
-                    csize, &Swork_size) ;
+                Swork = (GB_void *) GB_XALLOC (false, C_iso, anz, csize,
+                    &Swork_size) ;
                 ok = ok && (Swork != NULL) ;
             }
 
@@ -947,7 +946,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     C->hyper_switch = A_hyper_switch ;
     C->bitmap_switch = A_bitmap_switch ;
     C->sparsity_control = A_sparsity_control ;
-    GB_OK (GB_transplant (C, ctype, &T, Werk)) ;
+    GB_OK (GB_transplant (C, ctype, &T, false, Werk)) ;
     ASSERT_MATRIX_OK (C, "C transplanted in GB_transpose", GB0) ;
     ASSERT_TYPE_OK (ctype, "C type in GB_transpose", GB0) ;
 
@@ -963,7 +962,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // If C was constructed as iso; it needs to be expanded first,
             // but do not initialize the values.  These are computed by
             // GB_apply_op below.
-            // set C->iso = false    OK: no need to burble
             GB_OK (GB_convert_any_to_non_iso (C, false)) ;
         }
 
@@ -1000,12 +998,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (GB_IS_BITMAP (C))
             { 
                 // calloc the space so the new C->x has no uninitialized space
-                Cx_new = GB_CALLOC (anz_held*csize, GB_void, &Cx_size) ; // x:OK
+                Cx_new = GB_CALLOC (anz_held*csize, GB_void, &Cx_size) ;
             }
             else
             { 
                 // malloc is fine; all C->x will be written
-                Cx_new = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ; // x:OK
+                Cx_new = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ;
             }
             if (Cx_new == NULL)
             { 

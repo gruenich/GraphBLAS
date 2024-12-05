@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "select/GB_select.h"
 #include "slice/GB_ek_slice.h"
 #ifndef GBCOMPACT
@@ -20,10 +22,6 @@
     GB_FREE_WORK (&Zp, Zp_size) ;           \
     GB_WERK_POP (Work, int64_t) ;           \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
-    GB_FREE (&Cp, Cp_size) ;                \
-    GB_FREE (&Ch, Ch_size) ;                \
-    GB_FREE (&Ci, Ci_size) ;                \
-    GB_FREE (&Cx, Cx_size) ;                \
 }
 
 #define GB_FREE_ALL                         \
@@ -47,6 +45,14 @@ GrB_Info GB_select_sparse
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB0) ;
+    ASSERT_INDEXUNARYOP_OK (op, "op for GB_selector", GB0) ;
+
+    //--------------------------------------------------------------------------
     // declare workspace
     //--------------------------------------------------------------------------
 
@@ -58,13 +64,12 @@ GrB_Info GB_select_sparse
     int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;     // FIXME
-    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;      // FIXME
-    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;      // FIXME
-    GB_void *restrict Cx = NULL ; size_t Cx_size = 0 ;
+    uint64_t *restrict Cp = NULL ; // size_t Cp_size = 0 ;     // FIXME
+//  int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;      // FIXME
+    int64_t *restrict Ci = NULL ; // size_t Ci_size = 0 ;      // FIXME
+    GB_void *restrict Cx = NULL ; // size_t Cx_size = 0 ;
 
     GB_Opcode opcode = op->opcode ;
-    bool in_place_A = (C == NULL) ; // GrB_wait and GB_resize only
     const bool A_iso = A->iso ;
     const size_t asize = A->type->size ;
     const GB_Type_code acode = A->type->code ;
@@ -89,23 +94,52 @@ GrB_Info GB_select_sparse
     GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
-    bool A_is_hyper = (Ah != NULL) ;
+    bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
 
     //--------------------------------------------------------------------------
-    // allocate the new vector pointers of C
+    // create the C matrix: allocate C->p, and make C->h a shallow copy of A->h
     //--------------------------------------------------------------------------
 
-    int64_t cnz = 0 ;
-    int64_t cplen = (avdim == 1) ? 1 : anvec ;
+    int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+//  int64_t cplen = (A_is_hyper) ? A->plen : avdim ;
 
-    Cp = GB_CALLOC (cplen+1, uint64_t, &Cp_size) ;   // FIXME
-    if (Cp == NULL)
+    GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
+        A->type, avlen, avdim, GB_ph_calloc, A->is_csc,
+        csparsity, A->hyper_switch, A->plen,
+        /* FIXME: */ false, false)) ;
+
+#if 0
+    FIXME: delete this
+    cplen = C->plen ;
+    printf ("cplen %ld A->plen %ld\n", cplen, A->plen) ;
+    C->p = GB_CALLOC (cplen+1, uint64_t, &(C->p_size)) ;
+    if (C->p == NULL)
     { 
         // out of memory
+        GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+#endif
+
+    Cp = C->p ;
+
+    if (A_is_hyper)
+    {
+        // C->h is a copy of A->h
+        GB_memcpy (C->h, A->h, A->nvec * sizeof (uint64_t), nthreads_max) ;
+        // move A->Y into C
+        C->no_hyper_hash = A->no_hyper_hash ;
+        C->Y = A->Y ;
+        A->Y = NULL ;
+    }
+
+    C->nvec = A->nvec ;
+    C->nvals = 0 ;
+    C->magic = GB_MAGIC ;
+
+    ASSERT_MATRIX_OK (C, "C initialized as empty for GB_selector", GB0) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task
@@ -144,7 +178,7 @@ GrB_Info GB_select_sparse
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WORK (cplen, uint64_t, &Zp_size) ;
+        Zp = GB_MALLOC_WORK (C->plen + 1, uint64_t, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory
@@ -211,7 +245,7 @@ GrB_Info GB_select_sparse
 
         if (info == GrB_NO_VALUE)
         { 
-            info = GB_select_phase1_jit (Cp, Wfirst, Wlast, C_iso, in_place_A,
+            info = GB_select_phase1_jit (Cp, Wfirst, Wlast, C_iso,
                 A, ythunk, op, flipij, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
 
@@ -251,17 +285,23 @@ GrB_Info GB_select_sparse
     // allocate new space for the compacted Ci and Cx
     //--------------------------------------------------------------------------
 
-    cnz = Cp [anvec] ;
+    int64_t cnz = Cp [anvec] ;
     cnz = GB_IMAX (cnz, 1) ;
+    GB_OK (GB_bix_alloc (C, cnz, csparsity, false, true, C_iso)) ;
+    Ci = C->i ;
+    Cx = C->x ;
+
+    #if 0
+    FIXME: delete this
     Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
-    // use calloc since C is sparse, not bitmap
-    Cx = (GB_void *) GB_XALLOC (false, C_iso, cnz, asize, &Cx_size) ; // x:OK
+    Cx = (GB_void *) GB_XALLOC (false, C_iso, cnz, asize, &Cx_size) ;
     if (Ci == NULL || Cx == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    #endif
 
     //--------------------------------------------------------------------------
     // set the iso value of C
@@ -333,7 +373,7 @@ GrB_Info GB_select_sparse
         if (info == GrB_NO_VALUE)
         { 
             info = GB_select_phase2_jit (Ci, C_iso ? NULL : Cx, Cp, C_iso,
-                in_place_A, Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing,
+                Cp_kfirst, A, flipij, ythunk, op, A_ek_slicing,
                 A_ntasks, A_nthreads) ;
         }
 
@@ -359,131 +399,16 @@ GrB_Info GB_select_sparse
     }
 
     //==========================================================================
-    // finalize the result
+    // finalize the result, free workspace, and return result
     //==========================================================================
 
-    if (in_place_A)
-    {
-
-        //----------------------------------------------------------------------
-        // transplant Cp, Ci, Cx back into A
-        //----------------------------------------------------------------------
-
-        // TODO: this is not parallel: use GB_hyper_prune
-        if (A->h != NULL && C_nvec_nonempty < anvec)
-        {
-            // prune empty vectors from Ah and Ap
-            int64_t cnvec = 0 ;
-            for (int64_t k = 0 ; k < anvec ; k++)
-            {
-                if (Cp [k] < Cp [k+1])
-                { 
-                    Ah [cnvec] = Ah [k] ;
-                    Ap [cnvec] = Cp [k] ;
-                    cnvec++ ;
-                }
-            }
-            Ap [cnvec] = Cp [anvec] ;
-            A->nvec = cnvec ;
-            ASSERT (A->nvec == C_nvec_nonempty) ;
-            GB_FREE (&Cp, Cp_size) ;
-            // the A->Y hyper_hash is now invalid
-            GB_hyper_hash_free (A) ;
-        }
-        else
-        { 
-            // free the old A->p and transplant in Cp as the new A->p
-            GB_FREE (&Ap, Ap_size) ;
-            A->p = Cp ; Cp = NULL ; A->p_size = Cp_size ;
-            A->plen = cplen ;
-            Ap = A->p ;
-        }
-
-        ASSERT (Cp == NULL) ;
-
-        GB_FREE (&Ai, Ai_size) ;
-        GB_FREE (&Ax, Ax_size) ;
-        A->i = Ci ; Ci = NULL ; A->i_size = Ci_size ;
-        A->x = Cx ; Cx = NULL ; A->x_size = Cx_size ;
-        A->nvec_nonempty = C_nvec_nonempty ;
-        A->jumbled = A_jumbled ;        // A remains jumbled (in-place select)
-        A->iso = C_iso ;                // OK: burble already done above
-        A->nvals = Ap [A->nvec] ;
-
-        // the NONZOMBIE opcode may have removed all zombies, but A->nzombie
-        // is still nonzero.  It is set to zero in GB_wait.
-        ASSERT_MATRIX_OK (A, "A output for GB_selector", GB_ZOMBIE (GB0)) ;
-
-    }
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // create C and transplant Cp, Ch, Ci, Cx into C
-        //----------------------------------------------------------------------
-
-        int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-        ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
-        info = GB_new (&C, // sparse or hyper (from A), existing header
-            A->type, avlen, avdim, GB_ph_null, true,
-            csparsity, A->hyper_switch, anvec, false, false) ;
-        ASSERT (info == GrB_SUCCESS) ;
-
-        if (A->h != NULL)
-        {
-
-            //------------------------------------------------------------------
-            // A and C are hypersparse: copy non-empty vectors from Ah to Ch
-            //------------------------------------------------------------------
-
-            Ch = GB_MALLOC (anvec, int64_t, &Ch_size) ;
-            if (Ch == NULL)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (GrB_OUT_OF_MEMORY) ;
-            }
-
-            // TODO: do in parallel: use GB_hyper_prune
-            int64_t cnvec = 0 ;
-            for (int64_t k = 0 ; k < anvec ; k++)
-            {
-                if (Cp [k] < Cp [k+1])
-                { 
-                    Ch [cnvec] = Ah [k] ;
-                    Cp [cnvec] = Cp [k] ;
-                    cnvec++ ;
-                }
-            }
-            Cp [cnvec] = Cp [anvec] ;
-            C->nvec = cnvec ;
-            ASSERT (C->nvec == C_nvec_nonempty) ;
-        }
-
-        // note that C->Y is not yet constructed
-        C->p = Cp ; C->p_size = Cp_size ;
-        C->h = Ch ; C->h_size = Ch_size ;
-        C->i = Ci ; C->i_size = Ci_size ;
-        C->x = Cx ; C->x_size = Cx_size ;
-        C->plen = cplen ;
-        C->magic = GB_MAGIC ;
-        C->nvec_nonempty = C_nvec_nonempty ;
-        C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
-        C->iso = C_iso ;            // OK: burble already done above
-        C->nvals = Cp [C->nvec] ;
-        Cp = NULL ;
-        Ch = NULL ;
-        Ci = NULL ;
-        Cx = NULL ;
-
-        ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // free workspace and return result
-    //--------------------------------------------------------------------------
-
+    C->nvals = Cp [C->nvec] ;
+    C->jumbled = A->jumbled ;
+    C->nvec_nonempty = C_nvec_nonempty ;
+    ASSERT_MATRIX_OK (C, "C before hyper_prune for GB_selector", GB0) ;
+    GB_OK (GB_hyper_prune (C, Werk)) ;
     GB_FREE_WORKSPACE ;
+    ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

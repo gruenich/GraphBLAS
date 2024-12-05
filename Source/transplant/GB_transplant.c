@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // DONE: 32/64 bit
 
 // Transplant A into C, and then free A.  If any part of A is shallow, or if A
@@ -32,6 +34,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GrB_Matrix C,               // output matrix to overwrite with A
     const GrB_Type ctype,       // new type of C
     GrB_Matrix *Ahandle,        // input matrix to copy from and free
+    bool keep_hyper,            // if true, A->Y and A->h are already in C
     GB_Werk Werk
 )
 {
@@ -43,7 +46,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GrB_Info info ;
     ASSERT (Ahandle != NULL) ;
     GrB_Matrix A = *Ahandle ;
-    ASSERT (!GB_any_aliased (C, A)) ;
+    ASSERT (GB_IMPLIES (!keep_hyper, !GB_any_aliased (C, A))) ;
 
     ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;    // zombies in A transplanted into C
@@ -63,6 +66,36 @@ GrB_Info GB_transplant          // transplant one matrix into another
     int64_t avdim = A->vdim ;
     int64_t avlen = A->vlen ;
     const bool A_iso = A->iso ;
+
+    // determine if C should be constructed as a bitmap or full matrix
+    bool C_is_hyper = GB_IS_HYPERSPARSE (A) ;
+    bool C_is_bitmap = GB_IS_BITMAP (A) ;
+    bool C_is_full = GB_as_if_full (A) && !C_is_bitmap && !C_is_hyper ;
+
+    //--------------------------------------------------------------------------
+    // save hypersparse components from A, if requested
+    //--------------------------------------------------------------------------
+
+    if (keep_hyper)
+    {
+        if (A->Y != NULL && A->Y_shallow && A->Y == C->Y && !C->Y_shallow)
+        { 
+            // C->Y and A->Y are aliased; move the ownership of C->Y to A->Y
+            A->Y_shallow = false ;
+            C->Y = NULL ;
+            C->Y_shallow = false ;
+        }
+
+        if (A->h != NULL && A->h_shallow && A->h == C->h && !C->h_shallow)
+        { 
+            // C->h and A->h are aliased ; move the ownership of C->h to A->h
+            A->h_shallow = false ;
+            C->h = NULL ;
+            C->h_shallow = false ;
+        }
+    }
+
+    ASSERT (!GB_any_aliased (C, A)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -92,7 +125,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->vlen = avlen ;
     C->vdim = avdim ;
     C->nvec_nonempty = A->nvec_nonempty ;
-    C->iso = A_iso ;        // OK:transplant
+    C->iso = A_iso ;
 
     // C is not shallow, and has no content yet
     ASSERT (!GB_is_shallow (C)) ;
@@ -103,11 +136,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (C->x == NULL) ;
     ASSERT (C->Y == NULL) ;
     ASSERT (C->Pending == NULL) ;
-
-    // determine if C should be constructed as a bitmap or full matrix
-    bool C_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    bool C_is_bitmap = GB_IS_BITMAP (A) ;
-    bool C_is_full = GB_as_if_full (A) && !C_is_bitmap && !C_is_hyper ;
 
     //--------------------------------------------------------------------------
     // determine integer sizes of C

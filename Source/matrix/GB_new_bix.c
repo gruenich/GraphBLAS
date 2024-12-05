@@ -84,7 +84,6 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     // allocate the bitmap (A->b), indices (A->i), and values (A->x)
     //--------------------------------------------------------------------------
 
-    // set A->iso = A_iso   OK: burble in the caller
     info = GB_bix_alloc (A, nzmax, sparsity, bitmap_calloc, numeric, A_iso) ;
     if (info != GrB_SUCCESS)
     {

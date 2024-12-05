@@ -70,13 +70,18 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     float hyper_switch = C->hyper_switch ;
     float bitmap_switch = C->bitmap_switch ;
     int sparsity_control = C->sparsity_control ;
+
+    // free all content of C and reallocate it
     GB_phybix_free (C) ;
-    // set C->iso = C_iso   OK
+
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_ph_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, C_iso, false, false)) ;
+        hyper_switch, cvdim, cnz, true, C_iso, /* FIXME: */ false, false)) ;
+
+    // restore the settings of C
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
+
     uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ci = C->i ;
 
@@ -152,7 +157,6 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 if (T == NULL)
                 {
                     // copy A into T
-                    // set T->iso = A->iso  OK: no burble needed
                     GB_OK (GB_dup_worker (&T, A->iso, A, true, NULL)) ;
                     // save T in array S
                     if (csc)

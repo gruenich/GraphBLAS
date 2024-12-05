@@ -65,7 +65,7 @@ void GB_bix_free                // free A->b, A->i, and A->x of a matrix
     A->x = NULL ;               // GB_nnz_max (A) will report zero
     A->x_size = 0 ;
     A->x_shallow = false ;
-    A->iso = false ;            // OK: all components are freed; no longer iso
+    A->iso = false ;
 
     A->nvals = 0 ;
 

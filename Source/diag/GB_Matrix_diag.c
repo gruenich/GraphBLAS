@@ -67,7 +67,6 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     if (GB_IS_BITMAP (V_in))
     { 
         // make a deep copy of V_in and convert to CSC
-        // set T->iso = V_in->iso   OK
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
         GB_OK (GB_dup_worker (&T, V_in->iso, V_in, true, NULL)) ;
         GB_OK (GB_convert_bitmap_to_sparse (T, Werk)) ;
@@ -96,10 +95,9 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     const float bitmap_switch = C->bitmap_switch ;
     const int sparsity_control = C->sparsity_control ;
 
-    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
         ctype, n, n, GB_ph_malloc, csc, C_sparsity, false,
-        C->hyper_switch, vnz, vnz, true, C_iso, false, false)) ;
+        C->hyper_switch, vnz, vnz, true, C_iso, /* FIXME: */ false, false)) ;
     C->sparsity_control = sparsity_control ;
     C->bitmap_switch = bitmap_switch ;
 

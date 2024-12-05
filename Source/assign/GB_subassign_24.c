@@ -112,7 +112,6 @@ GrB_Info GB_subassign_24    // C = A, copy A into an existing matrix C
         bool C_is_csc = C->is_csc ;
         GB_phybix_free (C) ;
         // copy the pattern, not the values
-        // set C->iso = C_iso   OK
         GB_OK (GB_dup_worker (&C, C_iso, A, false, C->type)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
         // GB_assign_prep has assigned the C->x iso value, but this has just

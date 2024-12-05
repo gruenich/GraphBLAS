@@ -47,7 +47,8 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     info = GB_new ((GrB_Matrix *) v, // new user header
         type, vlen, 1, GB_ph_calloc,
         true,  // a GrB_Vector is always held by-column
-        GxB_SPARSE, GB_Global_hyper_switch_get ( ), 1, false, false) ;
+        GxB_SPARSE, GB_Global_hyper_switch_get ( ), 1,
+        /* FIXME: */ false, false) ;
     ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_VECTOR_OK (*v))) ;
     return (info) ;
 }

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// The enumfy/macrofy methods handle more cases than are currently used by
+// The enumify/macrofy methods handle more cases than are currently used by
 // the JIT kernels, such as (1) typecasting the output of the accum/monoid/op
 // to the type of C, (2) positional select operators, (3) positional index
 // unary operators, and (4) the case when the output C matrix is iso-valued.
@@ -196,7 +196,7 @@ void mexFunction
         printf ("GB_enumify_select / GB_macrofy_select: %s\n", op->name) ;
         // GxB_print (op, 3) ;
         GB_enumify_select (&method_code, /* C iso: */ false,
-            /* inplace A: */ false, op, /* flipij: */ false, A) ;
+            op, /* flipij: */ false, A) ;
         GB_macrofy_select (fp, method_code, op, GrB_BOOL) ;
     }
 
@@ -207,7 +207,7 @@ void mexFunction
     OK (GxB_IndexUnaryOp_new (&opi, (GxB_index_unary_function) opi32func,
         GxB_FC32, GxB_FC32, GxB_FC32, "opi32func", OPI32_DEFN)) ;
     GB_enumify_select (&method_code, /* C iso: */ false,
-        /* inplace A: */ false, opi, /* flipij: */ false, A) ;
+        opi, /* flipij: */ false, A) ;
     GB_macrofy_select (fp, method_code, opi, GxB_FC32) ;
     GrB_free (&opi) ;
 

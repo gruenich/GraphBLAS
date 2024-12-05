@@ -1297,7 +1297,6 @@ uint64_t GB_encodify_select     // encode an select problem
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
     const bool C_iso,
-    const bool in_place_A,
     const GrB_IndexUnaryOp op,
     const bool flipij,
     const GrB_Matrix A
@@ -1309,7 +1308,6 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool C_iso,
-    bool in_place_A,
     // operator:
     GrB_IndexUnaryOp op,    // the index unary operator to enumify
     bool flipij,            // if true, flip i and j
@@ -1350,7 +1348,6 @@ GrB_Info GB_select_phase1_jit      // select phase1
     int64_t *restrict Wlast,
     // input:
     const bool C_iso,
-    const bool in_place_A,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const GrB_IndexUnaryOp op,
@@ -1368,7 +1365,6 @@ GrB_Info GB_select_phase2_jit      // select phase2
     // input:
     const uint64_t *restrict Cp,
     const bool C_iso,
-    const bool in_place_A,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,

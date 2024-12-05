@@ -94,7 +94,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     GrB_Info info ;
     info = GB_new (&C, // any sparsity, existing header
         ztype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0, false, false) ;
+        GB_sparsity (A), A->hyper_switch, 0, /* FIXME: */ false, false) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -182,7 +182,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     //--------------------------------------------------------------------------
 
     // allocate new space for the numerical values of C; use calloc if bitmap
-    C->x = GB_XALLOC (GB_IS_BITMAP (C), C_iso, anz,     // x:OK
+    C->x = GB_XALLOC (GB_IS_BITMAP (C), C_iso, anz,
         C->type->size, &(C->x_size)) ;
     C->x_shallow = false ;          // free C->x when freeing C
     if (C->x == NULL)

@@ -53,7 +53,6 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     GB_Type_code ccode = ctype->code ;
     if (!GB_IS_BITMAP (C) || C->iso != C_iso)
     { 
-        // set C->iso = C_iso   OK
         GB_phybix_free (C) ;
         C->p_is_32 = false ;    // OK: bitmap always has p_is_32 = false
         C->i_is_32 = false ;    // OK: bitmap always has i_is_32 = false

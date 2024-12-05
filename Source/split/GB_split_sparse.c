@@ -212,7 +212,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
 
-            // set C->iso = A_iso       OK
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso)) ;
             int64_t *restrict Ci = C->i ;   // FIXME
             C->nvals = cnz ;

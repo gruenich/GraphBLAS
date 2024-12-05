@@ -116,7 +116,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             // T = A'
             GB_OK (GB_new (&T,  // new header
                 type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
-                GB_Global_hyper_switch_get ( ), 0, false, false)) ;
+                GB_Global_hyper_switch_get ( ), 0, /* FIXME: */ false, false)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
             in_place = true ;
@@ -233,7 +233,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             GB_OK (GB_new (&C, // new header
                 type, vlen_new, vdim_new, GB_ph_null, T_is_csc,
                 GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0,
-                false, false)) ;
+                /* FIXME: */ false, false)) ;
             // allocate new space for the future C->i
             I_work = GB_MALLOC (nvals, int64_t, &I_work_size) ;
             if (I_work == NULL)

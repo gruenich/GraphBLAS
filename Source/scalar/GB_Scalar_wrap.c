@@ -72,7 +72,7 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
 
     s->is_csc = true ;
     s->jumbled = false ;
-    s->iso = true ;         // OK: scalar wrap with a single entry
+    s->iso = true ;
 
     //--------------------------------------------------------------------------
     // return result

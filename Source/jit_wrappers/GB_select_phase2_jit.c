@@ -20,7 +20,6 @@ GrB_Info GB_select_phase2_jit      // select phase2
     // input:
     const uint64_t *restrict Cp,
     const bool C_iso,
-    const bool in_place_A,
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
@@ -39,7 +38,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_select (&encoding, &suffix,
-        GB_JIT_KERNEL_SELECT2, C_iso, in_place_A, op, flipij, A) ;
+        GB_JIT_KERNEL_SELECT2, C_iso, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

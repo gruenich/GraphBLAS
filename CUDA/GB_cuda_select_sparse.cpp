@@ -58,7 +58,7 @@ GrB_Info GB_cuda_select_sparse
 
     // Initialize C to be a user-returnable hypersparse empty matrix.
     // If needed, we handle the hyper->sparse conversion below.
-    GB_OK (GB_new (&C, A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
+    GB_OK (GB_new (&C, A->type, A->vlen, A->vdim, GB_Ap_calloc, A->is_csc,
             GxB_HYPERSPARSE, A->hyper_switch, 1)) ;
     C->jumbled = A->jumbled ;
     C->iso = C_iso ;

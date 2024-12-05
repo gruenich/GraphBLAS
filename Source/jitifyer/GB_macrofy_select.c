@@ -30,8 +30,8 @@ void GB_macrofy_select          // construct all macros for GrB_select
     bool C_iso      = GB_RSHIFT (method_code, 37, 1) ;
     bool A_iso      = GB_RSHIFT (method_code, 36, 1) ;
 
-    // inplace, i/j dependency and flipij (4 bits)
-//  int inplace     = GB_RSHIFT (method_code, 35, 1) ;
+    // i/j dependency and flipij (3 bits)
+//  unused bit:       GB_RSHIFT (method_code, 35, 1) ;
     int i_dep       = GB_RSHIFT (method_code, 34, 1) ;
     int j_dep       = GB_RSHIFT (method_code, 33, 1) ;
     bool flipij     = GB_RSHIFT (method_code, 32, 1) ;

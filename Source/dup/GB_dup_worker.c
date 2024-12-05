@@ -90,7 +90,6 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     // allocate a new user header for C if (*Chandle) is NULL, or reuse the
     // existing static or dynamic header if (*Chandle) is not NULL.
     GrB_Matrix C = (*Chandle) ;
-    // set C->iso = C_iso   OK: burble in the caller
     GB_OK (GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,

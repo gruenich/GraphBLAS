@@ -99,7 +99,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
-    // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
     info = GrB_NO_VALUE ;
     ASSERT (C->type == ztype) ;

@@ -59,7 +59,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // C = A
     //--------------------------------------------------------------------------
 
-    // set C->iso = A->iso      OK
     GB_BURBLE_MATRIX (A, "(iso dup) ") ;
     return (GB_dup_worker (Chandle, A->iso, A, true, NULL)) ;
 }

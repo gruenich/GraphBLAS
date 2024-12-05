@@ -130,7 +130,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     GB_OK (GB_new (&C, // sparse or hyper (same as M), existing header
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, M->hyper_switch, nvec, false, false)) ;
+        C_sparsity, M->hyper_switch, nvec, /* FIXME: */ false, false)) ;
     uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
@@ -226,7 +226,6 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
 
     int64_t cnz = Cp [nvec] ;
-    // set C->iso = C_iso   OK
     GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
 
     //--------------------------------------------------------------------------

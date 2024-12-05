@@ -263,8 +263,9 @@ GrB_Info GB_wait                // finish all pending computations
         struct GB_Scalar_opaque Thunk_header ;
         int64_t k = 0 ;
         GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
-        GB_OK (GB_selector (NULL, GxB_NONZOMBIE, false, A, Thunk, Werk)) ;
-        ASSERT (A->nzombies == (anz_orig - GB_nnz (A))) ;
+        GB_CLEAR_STATIC_HEADER (W, &W_header) ;
+        GB_OK (GB_selector (W, GxB_NONZOMBIE, false, A, Thunk, Werk)) ;
+        GB_OK (GB_transplant (A, A->type, &W, false, Werk)) ;
         A->nzombies = 0 ;
     }
 

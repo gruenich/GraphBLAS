@@ -38,7 +38,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     // Free the existing A->b, A->x, and A->i content, if any.
     // Leave A->p and A->h unchanged.
     GB_bix_free (A) ;
-    A->iso = A_iso  ;       // OK: see caller for iso burble
+    A->iso = A_iso ;
 
     bool ok = true ;
     if (sparsity == GxB_BITMAP)

@@ -61,7 +61,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
 
-    // ensure p_is_32 and i_is_32 are valid
+    // ensure p_is_32 and i_is_32 are valid; p_is_32 is always OK
+    // since nzmax is not yet known
 //  p_is_32 = GB_validate_p_is_32 (p_is_32, 1) ; (nzmax not yet known)
     i_is_32 = GB_validate_i_is_32 (i_is_32, vlen, vdim) ;
 
@@ -178,7 +179,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nzombies = 0 ;
     A->jumbled = false ;
     A->Pending = NULL ;
-    A->iso = false ;            // OK: if iso, burble in the caller
+    A->iso = false ;
     A->p_is_32 = p_is_32 ;
     A->i_is_32 = i_is_32 ;
 

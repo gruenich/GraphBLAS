@@ -130,7 +130,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     // C->p is allocated but not initialized.
     GrB_Info info ;
-    // set C->iso = C_iso
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, avdim, avlen, GB_ph_malloc, C_is_csc,

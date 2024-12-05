@@ -85,7 +85,7 @@ GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
     // finalize the matrix and return result
     //--------------------------------------------------------------------------
 
-    A->iso = false ;        // OK: convert_any_to_non_iso
+    A->iso = false ;
     ASSERT_MATRIX_OK (A, "A converted to non-iso", GB0) ;
     return (GrB_SUCCESS) ;
 }

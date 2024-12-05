@@ -118,10 +118,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_CLEAR_STATIC_HEADER (B, &B_header) ;
     info = GB_new (&B, // full, existing header
         ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
-        false, false) ;
+        /* OK: */ false, false) ;
     ASSERT (info == GrB_SUCCESS) ;
     B->magic = GB_MAGIC ;
-    B->iso = true ;             // OK: B is a temporary matrix; no burble
+    B->iso = true ;
     size_t zsize = ztype->size ;
     GB_void bscalar [GB_VLA(zsize)] ;
     memset (bscalar, 0, zsize) ;

@@ -19,7 +19,6 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     bool C_iso,
-    bool in_place_A,
     // operator:
     GrB_IndexUnaryOp op,    // the index unary operator to enumify
     bool flipij,            // if true, flip i and j
@@ -94,13 +93,11 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
     GB_enumify_sparsity (&asparsity, A_sparsity) ;
 
-    int inplace = (in_place_A) ? 1 : 0 ;
-
     //--------------------------------------------------------------------------
     // construct the select method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits:  38 (10 hex digits)
+    // total method_code bits:  37 (10 hex digits)
 
     // FIXME: 32/64 bits: 4 bits for C, A
 
@@ -110,8 +107,8 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
                 GB_LSHIFT (C_iso_code , 37) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
 
-                // inplace, i/j dependency and flipij (1 hex digit)
-                GB_LSHIFT (inplace    , 35) |  // 0 or 1       1
+                // i/j dependency and flipij (1 hex digit)
+                // one bit unused
                 GB_LSHIFT (i_dep      , 34) |  // 0 or 1       1
                 GB_LSHIFT (j_dep      , 33) |  // 0 or 1       1
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1
