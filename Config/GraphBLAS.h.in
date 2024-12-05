@@ -8379,9 +8379,9 @@ GrB_Info GxB_Matrix_select (GrB_Matrix, const GrB_Matrix, const GrB_BinaryOp,
     const GxB_SelectOp, const GrB_Matrix, const GrB_Scalar,
     const GrB_Descriptor) ;
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_select(C,Mask,accum,op,A,Thunk,desc) _Generic ((C),             \
-    GrB_Vector : GxB_Vector_select ,                                        \
-    GrB_Matrix : GxB_Matrix_select ) (C, Mask, accum, op, A, Thunk, desc)
+#define GxB_select(C,Mask,accum,op,A,y,desc) _Generic ((C),             \
+    GrB_Vector : GxB_Vector_select ,                                    \
+    GrB_Matrix : GxB_Matrix_select ) (C, Mask, accum, op, A, y, desc)
 #endif
 
 // GxB_deserialize_* queries: use GrB_get instead

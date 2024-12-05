@@ -25,9 +25,9 @@
     CHECK (i == value) ;                                                      \
     OK (GrB_Scalar_clear (s_int32)) ;                                         \
     OK (GrB_Descriptor_get_Scalar (desc, s_int32, (GrB_Field) (field))) ;     \
-    int32_t iscalar = -1 ;                                                    \
-    OK (GrB_Scalar_extractElement_INT32 (&iscalar, s_int32)) ;                \
-    CHECK (iscalar == value) ;                                                \
+    int32_t ii = -1 ;                                                         \
+    OK (GrB_Scalar_extractElement_INT32 (&ii, s_int32)) ;                     \
+    CHECK (ii == value) ;                                                     \
     OK (GrB_Descriptor_get_SIZE (desc, &size, GrB_NAME)) ;                    \
     CHECK (size == GxB_MAX_NAME_LEN) ;                                        \
     OK (GrB_Descriptor_get_String (desc, name, GrB_NAME)) ;                   \

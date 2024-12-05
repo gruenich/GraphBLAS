@@ -28,7 +28,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
         const GB_Operator op_in,        // unary/idxunop/binop to apply
-        const GrB_Scalar scalar_in,     // scalar to bind to binop, or thunk
+        const GrB_Scalar scalar_in,     // scalar to bind to binop
         bool binop_bind1st,             // if true, binop(x,A) else binop(A,y)
     const GrB_Matrix A,             // first or 2nd input:  matrix A
     bool A_transpose,               // A matrix descriptor
@@ -62,7 +62,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     bool op_is_binop = GB_IS_BINARYOP_CODE (opcode) ;
     bool op_is_idxunop = GB_IS_INDEXUNARYOP_CODE (opcode) ;
     bool op_is_positional = GB_OPCODE_IS_POSITIONAL (opcode) ;
-    struct GB_Scalar_opaque Thunk_header ;
+    struct GB_Scalar_opaque scalar_header ;
     int64_t ithunk = 0 ;
 
     if (GB_IS_INDEXBINARYOP_CODE (opcode))
@@ -150,14 +150,14 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     }
     else // op_is_idxunop
     {
-        // apply an idxunop operator, with a thunk scalar
+        // apply an idxunop operator, with a y scalar
         ASSERT_OP_OK (op, "idxunop for GB_apply", GB0) ;
-        ASSERT_SCALAR_OK (scalar, "thunk for GB_apply", GB0) ;
+        ASSERT_SCALAR_OK (scalar, "y for GB_apply", GB0) ;
         // A must be compatible with op->xtype
         if (!GB_Type_compatible (A->type, op->xtype))
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Incompatible type for z=%s(x,i,j,thunk):\n"
+                "Incompatible type for z=%s(x,i,j,y):\n"
                 "input A of type [%s]\n"
                 "cannot be typecast to x input of type [%s]",
                 op->name, A->type->name, op->xtype->name) ;
@@ -166,9 +166,9 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         if (!GB_Type_compatible (scalar->type, op->ytype))
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH,
-                "Incompatible type for z=%s(x,i,j,thunk):\n"
+                "Incompatible type for z=%s(x,i,j,y):\n"
                 "input scalar of type [%s]\n"
-                "cannot be typecast to thunk input of type [%s]",
+                "cannot be typecast to y input of type [%s]",
                 op->name, scalar->type->name, op->ytype->name) ;
         }
     }
@@ -230,7 +230,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GB_cast_scalar (&ithunk, GB_INT64_code, scalar->x, scalar->type->code,
             scalar->type->size) ;
         // wrap ithunk in the new scalar
-        scalar = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &ithunk) ;
+        scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &ithunk) ;
     }
 
     //--------------------------------------------------------------------------

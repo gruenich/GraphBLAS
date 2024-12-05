@@ -103,10 +103,10 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // extract the kth diagonal of A into the temporary hypersparse matrix T
     //--------------------------------------------------------------------------
 
-    struct GB_Scalar_opaque Thunk_header ;
-    GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
+    struct GB_Scalar_opaque scalar_header ;
+    GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-    GB_OK (GB_selector (T, GrB_DIAG, false, A, Thunk, Werk)) ;
+    GB_OK (GB_selector (T, GrB_DIAG, false, A, scalar, Werk)) ;
     GB_OK (GB_convert_any_to_hyper (T, Werk)) ;
     GB_MATRIX_WAIT (T) ;
     ASSERT_MATRIX_OK (T, "T = diag (A,k)", GB0) ;

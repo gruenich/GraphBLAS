@@ -297,11 +297,11 @@ GrB_Info GB_resize              // change the size of a matrix
         if (vlen_new < vlen_old)
         { 
             // A = select (A), keeping entries in rows <= vlen_new-1
-            struct GB_Scalar_opaque Thunk_header ;
+            struct GB_Scalar_opaque scalar_header ;
             int64_t k = vlen_new - 1 ;
-            GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
+            GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
             GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-            GB_OK (GB_selector (T, GrB_ROWLE, false, A, Thunk, Werk)) ;
+            GB_OK (GB_selector (T, GrB_ROWLE, false, A, scalar, Werk)) ;
             GB_OK (GB_transplant (A, A->type, &T, Werk)) ;
             ASSERT_MATRIX_OK (A, "A rows pruned", GB0) ;
         }

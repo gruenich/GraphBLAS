@@ -249,11 +249,11 @@ GrB_Info GB_wait                // finish all pending computations
     if (nzombies > 0)
     { 
         // remove all zombies from A
-        struct GB_Scalar_opaque Thunk_header ;
+        struct GB_Scalar_opaque scalar_header ;
         int64_t k = 0 ;
-        GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
+        GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
         GB_CLEAR_STATIC_HEADER (W, &W_header) ;
-        GB_OK (GB_selector (W, GxB_NONZOMBIE, false, A, Thunk, Werk)) ;
+        GB_OK (GB_selector (W, GxB_NONZOMBIE, false, A, scalar, Werk)) ;
         GB_OK (GB_transplant (A, A->type, &W, Werk)) ;
         A->nzombies = 0 ;
     }
@@ -436,7 +436,7 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL &&
-        Ai_is_32 == A->i_is_32) ;
+        Ai_is_32 == A->i_is_32)
     { 
         // The hyperlist of A has not changed.  A is still hypersparse, and has
         // no A->Y after the transplant/conform above.  The integer sizes in
@@ -447,7 +447,7 @@ GrB_Info GB_wait                // finish all pending computations
         A->Y = Y ;
         A->Y_shallow = false ;
         Y = NULL ;
-        ASSERT (A->Y->i_is_32 == A->is_32) ;
+        ASSERT (A->Y->i_is_32 == A->i_is_32) ;
     }
 
     //--------------------------------------------------------------------------
