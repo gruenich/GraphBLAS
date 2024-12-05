@@ -15,6 +15,8 @@
 // empty matrix.  The select factory is not needed, except to check the iso
 // value via GB_select_bitmap.
 
+// This method takes O(1) time and space.
+
 #define GB_FREE_ALL                         \
 {                                           \
     GB_phybix_free (C) ;                    \

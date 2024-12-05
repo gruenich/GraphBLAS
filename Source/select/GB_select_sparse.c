@@ -48,9 +48,17 @@ GrB_Info GB_select_sparse
     // check inputs
     //--------------------------------------------------------------------------
 
+    // C is always an empty header on input.  A is never bitmap.  It is
+    // sparse/hypersparse, with one exception: for the DIAG operator, A may be
+    // sparse, hypersparse, or full.
+
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
-    ASSERT_MATRIX_OK (A, "A input for GB_selector", GB0) ;
-    ASSERT_INDEXUNARYOP_OK (op, "op for GB_selector", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_select_sparse", GB0) ;
+    ASSERT_INDEXUNARYOP_OK (op, "op for GB_select_sparse", GB0) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A) || GB_IS_FULL (A)) ;
+    ASSERT (GB_IMPLIES (op->opcode != GB_DIAG_idxunop_code,
+        GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -65,7 +73,6 @@ GrB_Info GB_select_sparse
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     uint64_t *restrict Cp = NULL ; // size_t Cp_size = 0 ;     // FIXME
-//  int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;      // FIXME
     int64_t *restrict Ci = NULL ; // size_t Ci_size = 0 ;      // FIXME
     GB_void *restrict Cx = NULL ; // size_t Cx_size = 0 ;
 
@@ -85,9 +92,6 @@ GrB_Info GB_select_sparse
     // get A: sparse, hypersparse, or full
     //--------------------------------------------------------------------------
 
-    // the case when A is bitmap is always handled above by GB_select_bitmap
-    ASSERT (!GB_IS_BITMAP (A)) ;
-
     uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ; // FIXME
     int64_t *restrict Ah = A->h ; // FIXME
     int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ; // FIXME
@@ -99,45 +103,29 @@ GrB_Info GB_select_sparse
     int64_t avdim = A->vdim ;
 
     //--------------------------------------------------------------------------
-    // create the C matrix: allocate C->p, and make C->h a shallow copy of A->h
+    // create the C matrix
     //--------------------------------------------------------------------------
 
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
-//  int64_t cplen = (A_is_hyper) ? A->plen : avdim ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, avlen, avdim, GB_ph_calloc, A->is_csc,
         csparsity, A->hyper_switch, A->plen,
         /* FIXME: */ false, false)) ;
 
-#if 0
-    FIXME: delete this
-    cplen = C->plen ;
-    printf ("cplen %ld A->plen %ld\n", cplen, A->plen) ;
-    C->p = GB_CALLOC (cplen+1, uint64_t, &(C->p_size)) ;
-    if (C->p == NULL)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-#endif
-
     Cp = C->p ;
-
     if (A_is_hyper)
     {
-        // C->h is a copy of A->h
+        // C->h is a deep copy of A->h
         GB_memcpy (C->h, A->h, A->nvec * sizeof (uint64_t), nthreads_max) ;
-        // move A->Y into C
-        C->no_hyper_hash = A->no_hyper_hash ;
-        C->Y = A->Y ;
-        A->Y = NULL ;
     }
 
     C->nvec = A->nvec ;
     C->nvals = 0 ;
     C->magic = GB_MAGIC ;
+
+    // C->Y is not yet constructed
+    ASSERT (C->Y == NULL) ;
 
     ASSERT_MATRIX_OK (C, "C initialized as empty for GB_selector", GB0) ;
 
@@ -262,12 +250,7 @@ GrB_Info GB_select_sparse
         }
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;  // check for out-of-memory or other failurs in phase1
 
     //==========================================================================
     // phase1b: cumulative sum and allocate C
@@ -291,17 +274,7 @@ GrB_Info GB_select_sparse
     Ci = C->i ;
     Cx = C->x ;
 
-    #if 0
-    FIXME: delete this
-    Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
-    Cx = (GB_void *) GB_XALLOC (false, C_iso, cnz, asize, &Cx_size) ;
-    if (Ci == NULL || Cx == NULL)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (GrB_OUT_OF_MEMORY) ;
-    }
-    #endif
+    // FIXME: pass C to the methods below, not Cp, Ci, Cx
 
     //--------------------------------------------------------------------------
     // set the iso value of C
@@ -390,13 +363,7 @@ GrB_Info GB_select_sparse
         }
     }
 
-    if (info != GrB_SUCCESS)
-    {
-        // sparse select phase 2 cannot fail but this is here in case it does
-        // in the future; this block of code thus cannot be tested.
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;  // phase2 cannot fail but check, for future cases
 
     //==========================================================================
     // finalize the result, free workspace, and return result

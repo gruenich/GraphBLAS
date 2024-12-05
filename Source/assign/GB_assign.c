@@ -374,7 +374,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // Transplant the content of Cwork into C_in and free Cwork.  Zombies
         // and pending tuples can be transplanted from Cwork into C_in, and if
         // Cwork is jumbled, C_in becomes jumbled too.
-        GB_OK (GB_transplant (C_in, C_in->type, &Cwork, false, Werk)) ;
+        GB_OK (GB_transplant (C_in, C_in->type, &Cwork, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

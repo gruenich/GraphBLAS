@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // GB_selector does the work for GB_select.  It also deletes zombies for
 // GB_wait using the GxB_NONZOMBIE operator, deletes entries outside a smaller
 // matrix for GxB_*resize using GrB_ROWLE, and extracts the diagonal entries
@@ -101,6 +103,8 @@ GrB_Info GB_selector
     if (A_iso && opcode >= GB_VALUENE_idxunop_code
               && opcode <= GB_VALUELE_idxunop_code)
     { 
+        // C is either entirely empty, or a completely shallow copy of A.
+        // This method takes O(1) time and space.
         return (GB_select_value_iso (C, op, A, ithunk, athunk, ythunk, Werk)) ;
     }
 
@@ -111,9 +115,8 @@ GrB_Info GB_selector
     bool use_select_bitmap ;
     if (opcode == GB_NONZOMBIE_idxunop_code)
     { 
-        // GB_select_bitmap does not support the nonzombie opcode, nor does
-        // it support operating on A in place.  For the NONZOMBIE operator, A
-        // will never be bitmap.
+        // GB_select_bitmap does not support the nonzombie opcode.  For the
+        // NONZOMBIE operator, A will never be full or bitmap.
         use_select_bitmap = false ;
     }
     else if (opcode == GB_DIAG_idxunop_code)
@@ -121,25 +124,24 @@ GrB_Info GB_selector
         // GB_select_bitmap supports the DIAG operator, but it is currently
         // not efficient (GB_select_bitmap should return a sparse diagonal
         // matrix, not bitmap).  So use the sparse case if A is not bitmap,
-        // since the sparse case below does not support the bitmap case.
+        // since the sparse case below does not support the bitmap case.  For
+        // this case, GB_select_sparse is used when A is a sparse, hypersparse,
+        // or full matrix.  The full case is not handled in the CUDA kernel
+        // below, however.
         use_select_bitmap = GB_IS_BITMAP (A) ;
     }
     else
     { 
-        // For bitmap, full, or as-if-full matrices (sparse/hypersparse with
-        // all entries present, not jumbled, no zombies, and no pending
-        // tuples), use the bitmap selector for all other operators (TRIL,
-        // TRIU, OFFDIAG, NONZERO, EQ*, GT*, GE*, LT*, LE*, and user-defined
-        // operators).
+        // For bitmap and full matrices, all other opcodes use GB_select_bitmap
         use_select_bitmap = GB_IS_BITMAP (A) || GB_IS_FULL (A) ;
     }
 
     if (use_select_bitmap)
     { 
+        // A is bitmap/full.  C is always computed as bitmap.
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
-        ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
-        return (GB_select_bitmap (C, C_iso, op,                  
-            flipij, A, ithunk, athunk, ythunk, Werk)) ;
+        return (GB_select_bitmap (C, C_iso, op, flipij, A, ithunk, athunk,
+            ythunk, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -150,22 +152,34 @@ GrB_Info GB_selector
         opcode == GB_COLLE_idxunop_code ||
         opcode == GB_COLGT_idxunop_code)
     { 
+        // A is sparse or hypersparse, never bitmap or full.
+        // COLINDEX: C = A(:,j)
+        // COLLE:    C = A(:,0:j)
+        // COLGT:    C = A(:,j+1:n)
+        // where j = ithunk.
         return (GB_select_column (C, C_iso, op, A, ithunk, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
-    // sparse/hypersparse general case
+    // general case: usually sparse/hypersparse, with one exception
     //--------------------------------------------------------------------------
+
+    // C is computed as sparse/hypersparse.  A is sparse/hypersparse, except
+    // for a single case: for the DIAG operator, A may be full.  See
+    // use_select_bitmap above.
 
     info = GrB_NO_VALUE ;
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
-    if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) /* It is possible for
-        non-sparse matrices to use the sparse kernel; see check for 
-        use_select_bitmap above. The CUDA select_sparse kernel will not work
-        in this case, so make this go to the CPU. */
+    if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
         && GB_cuda_select_branch (A, op))
     {
+        // It is possible for non-sparse matrices to use the sparse kernel; see
+        // the use_select_bitmap test above (the DIAG operator). The CUDA
+        // select_sparse kernel will not work in this case, so make this go to
+        // the CPU.
+        // FIXME: put the test of sparse(A) or hypersparse(A) in
+        // GB_cuda_select_branch.
         info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
     }
     #endif
@@ -176,7 +190,13 @@ GrB_Info GB_selector
             ythunk, Werk) ;
     }
 
+    GB_OK (info) ;  // check for out-of-memory or other failures
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
     ASSERT_MATRIX_OK (C, "A output of GB_selector", GB_ZOMBIE (GB0)) ;
-    return (info) ;
+    return (GrB_SUCCESS) ;
 }
 

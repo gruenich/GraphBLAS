@@ -23,15 +23,6 @@
 // deleted.  This is true even the function fails due to lack of memory (in
 // that case, the matrix is cleared as well).
 
-// If A is hypersparse, the time taken is at most O(nnz(A) + t log t), where t
-// is the number of pending tuples in A, and nnz(A) includes both zombies and
-// live entries.  There is no O(m) or O(n) time component, if A is m-by-n.  If
-// the number of non-empty vectors of A grows too large, then A can be
-// converted to non-hypersparse.
-
-// If A is non-hypersparse, then O(n) is added in the worst case, to prune
-// zombies and to update the vector pointers for A.
-
 // If A->nvec_nonempty is unknown (-1) it is computed.
 
 // The A->Y hyper_hash is freed if the A->h hyperlist has to be constructed.
@@ -125,7 +116,7 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     if (npending == 0 && nzombies == 0 && !A->jumbled)
-    {
+    { 
         // A->Y is not modified.  If not NULL, it remains valid
         if (A->nvec_nonempty < 0)
         {
@@ -161,7 +152,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     int64_t tnz = 0 ;
     if (npending > 0)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // construct a new hypersparse matrix T with just the pending tuples
@@ -258,14 +249,12 @@ GrB_Info GB_wait                // finish all pending computations
     if (nzombies > 0)
     { 
         // remove all zombies from A
-        // GB_selector frees A->Y if it changes A->h, or leaves it
-        // unmodified (and valid) otherwise.
         struct GB_Scalar_opaque Thunk_header ;
         int64_t k = 0 ;
         GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
         GB_CLEAR_STATIC_HEADER (W, &W_header) ;
         GB_OK (GB_selector (W, GxB_NONZOMBIE, false, A, Thunk, Werk)) ;
-        GB_OK (GB_transplant (A, A->type, &W, false, Werk)) ;
+        GB_OK (GB_transplant (A, A->type, &W, Werk)) ;
         A->nzombies = 0 ;
     }
 
@@ -317,18 +306,10 @@ GrB_Info GB_wait                // finish all pending computations
     }
 
     //--------------------------------------------------------------------------
-    // create the SECOND_ATYPE binary operator
-    //--------------------------------------------------------------------------
-
-    struct GB_BinaryOp_opaque op_header ;
-    GrB_BinaryOp op_2nd = GB_binop_second (A->type, &op_header) ;
-
-    //--------------------------------------------------------------------------
-    // A = A+T
+    // S = A+T using the SECOND_ATYPE binary operator
     //--------------------------------------------------------------------------
 
     // A single parallel add: S=A+T, free T, and then transplant S back into A.
-    // The nzmax of A is tight, with no room for future incremental growth.
 
     // FUTURE:: if GB_add could tolerate zombies in A, then the initial
     // prune of zombies can be skipped.
@@ -337,6 +318,9 @@ GrB_Info GB_wait                // finish all pending computations
     // is still valid, if present, for the matrix A prior to added the
     // pending tuples in T.  GB_add may need A->Y to compute S, but it does
     // not compute S->Y.
+
+    struct GB_BinaryOp_opaque op_header ;
+    GrB_BinaryOp op_2nd = GB_binop_second (A->type, &op_header) ;
 
     // If anz > 0, T is hypersparse, even if A is a GrB_Vector
     ASSERT (GB_IS_HYPERSPARSE (T)) ;
@@ -356,6 +340,10 @@ GrB_Info GB_wait                // finish all pending computations
 
     GB_OK (GB_convert_int (S, false, false)) ;      // FIXME
 
+    //--------------------------------------------------------------------------
+    // check if the A->Y hyper-hash can be kept
+    //--------------------------------------------------------------------------
+
     if (A->no_hyper_hash)
     { 
         // A does not want the hyper_hash, so free A->Y and S->Y if present
@@ -363,18 +351,19 @@ GrB_Info GB_wait                // finish all pending computations
         GB_hyper_hash_free (S) ;
     }
 
+    bool Ai_is_32 = A->i_is_32 ;
+
     if (GB_IS_HYPERSPARSE (A) && GB_IS_HYPERSPARSE (S) && A->Y != NULL
-        && !A->Y_shallow && !GB_is_shallow (A->Y) && A->i_is_32 == S->i_is_32
-        && S->nvec == anvec)
+        && S->Y == NULL && !A->Y_shallow && !GB_is_shallow (A->Y)
+        && Ai_is_32 == S->i_is_32 && S->nvec == anvec)
     {
         // A and S are both hypersparse, and the old A->Y exists and is not
-        // shallow.  Check if S->h and A->h are identical.  If so, remove
-        // A->Y from A and save it.  Then after the transplant of S into A,
-        // below, if A is still hyperparse, transplant Y back into A->Y.
+        // shallow.  Check if S->h and A->h are identical.  If so, remove A->Y
+        // from A and save it.  Then after the transplant of S into A, below,
+        // if A is still hyperparse, transplant Y back into A->Y.
 
         GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
         GB_Sh_DECLARE (Sh, const) ; GB_Sh_PTR (Sh, S) ;
-        bool Ai_is_32 = A->i_is_32 ;
 
         bool hsame = true ;
         int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
@@ -435,27 +424,38 @@ GrB_Info GB_wait                // finish all pending computations
         }
     }
 
-    // transplant S into A
+    //--------------------------------------------------------------------------
+    // transplant S into A, and conform it to its desired sparsity structure
+    //--------------------------------------------------------------------------
+
     GB_OK (GB_transplant_conform (A, A->type, &S, Werk)) ;
     ASSERT (A->nvec_nonempty >= 0) ;
 
-    if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL)
+    //--------------------------------------------------------------------------
+    // restore the A->Y hyper_hash, if A is still hypersparse
+    //--------------------------------------------------------------------------
+
+    if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL &&
+        Ai_is_32 == A->i_is_32) ;
     { 
-        // The hyperlist of A has not changed.  A is still hypersparse, and
-        // has no A->Y after the transplant/conform above.  The original
-        // A->Y is valid, so transplant it back into A.
+        // The hyperlist of A has not changed.  A is still hypersparse, and has
+        // no A->Y after the transplant/conform above.  The integer sizes in
+        // the Y matrix still match those of A, so the transplant/conform did
+        // not modify them.  The original A->Y is thus valid, so transplant it
+        // back into A.  If A is no longer hypersparse, Y is not transplanted
+        // into A, and is freed by GB_FREE_WORKSPACE.
         A->Y = Y ;
         A->Y_shallow = false ;
         Y = NULL ;
+        ASSERT (A->Y->i_is_32 == A->is_32) ;
     }
 
-    ASSERT_MATRIX_OK (A, "A after GB_wait:add", GB0) ;
-
     //--------------------------------------------------------------------------
-    // flush the matrix and return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
+    ASSERT_MATRIX_OK (A, "A for GB_wait", GB0) ;
     GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
     ASSERT_MATRIX_OK (A, "A final for GB_wait", GB0) ;
     #pragma omp flush

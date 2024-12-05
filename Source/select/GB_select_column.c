@@ -43,6 +43,7 @@ GrB_Info GB_select_column
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // get A

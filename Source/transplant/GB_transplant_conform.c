@@ -41,7 +41,7 @@ GrB_Info GB_transplant_conform      // transplant and conform sparsity structure
     // transplant and typecast T into C, and free T
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_transplant (C, ctype, Thandle, false, Werk) ;
+    GrB_Info info = GB_transplant (C, ctype, Thandle, Werk) ;
 
     // T is always freed, even if the transplant runs out of memory
     ASSERT (*Thandle == NULL ||

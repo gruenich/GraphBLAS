@@ -376,7 +376,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // by GB_transplant.
 
             // Z and T have same vlen, vdim, is_csc, hypersparsity
-            GB_OK (GB_transplant (Z, C->type, Thandle, false, Werk)) ;
+            GB_OK (GB_transplant (Z, C->type, Thandle, Werk)) ;
 
         }
         else

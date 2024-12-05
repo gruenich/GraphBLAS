@@ -302,7 +302,7 @@ GrB_Info GB_resize              // change the size of a matrix
             GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
             GB_CLEAR_STATIC_HEADER (T, &T_header) ;
             GB_OK (GB_selector (T, GrB_ROWLE, false, A, Thunk, Werk)) ;
-            GB_OK (GB_transplant (A, A->type, &T, false, Werk)) ;
+            GB_OK (GB_transplant (A, A->type, &T, Werk)) ;
             ASSERT_MATRIX_OK (A, "A rows pruned", GB0) ;
         }
 

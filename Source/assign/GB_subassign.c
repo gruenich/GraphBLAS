@@ -121,7 +121,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // and pending tuples can be transplanted from Cwork into C_in, and if
         // Cwork is jumbled, C_in becomes jumbled too.
         ASSERT (Cwork->static_header || GBNSTATIC) ;
-        GB_OK (GB_transplant (C_in, C_in->type, &Cwork, false, Werk)) ;
+        GB_OK (GB_transplant (C_in, C_in->type, &Cwork, Werk)) ;
     }
 
     //--------------------------------------------------------------------------

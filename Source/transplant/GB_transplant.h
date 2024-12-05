@@ -17,7 +17,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GrB_Matrix C,               // output matrix to overwrite with A
     const GrB_Type ctype,       // new type of C
     GrB_Matrix *Ahandle,        // input matrix to copy from and free
-    bool keep_hyper,            // if true, A->Y and A->h are already in C
     GB_Werk Werk
 ) ;
 

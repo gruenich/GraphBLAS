@@ -59,7 +59,7 @@ GrB_Info GB_hyper_prune
     #endif
 
     //--------------------------------------------------------------------------
-    // prune empty vectors
+    // prune empty vectors must be pruned
     //--------------------------------------------------------------------------
 
     GB_Ap_DECLARE (Ap_old, const) ; GB_Ap_PTR (Ap_old, A) ;
@@ -96,7 +96,7 @@ GrB_Info GB_hyper_prune
     GB_IPTR (W, A->i_is_32) ;
 
     //--------------------------------------------------------------------------
-    // count the # of nonempty vectors
+    // count the # of nonempty vectors and mark their locations in W
     //--------------------------------------------------------------------------
 
     int64_t k ;
@@ -106,7 +106,7 @@ GrB_Info GB_hyper_prune
         // W [k] = 1 if the kth vector is nonempty; 0 if empty
         int nonempty = (GB_IGET (Ap_old, k) < GB_IGET (Ap_old, k+1)) ;
         // W [k] = nonempty ;
-        GB_ISET(W, k, nonempty) ;
+        GB_ISET (W, k, nonempty) ;
     }
 
     int64_t nvec_new ;
@@ -155,7 +155,7 @@ GrB_Info GB_hyper_prune
     GB_ISET (Ap_new, nvec_new, nvals) ;
 
     //--------------------------------------------------------------------------
-    // free workspace and old matrix components
+    // free workspace and old matrix components, including the A->Y hyper_hash
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK (&W, W_size) ;

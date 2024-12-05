@@ -946,7 +946,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     C->hyper_switch = A_hyper_switch ;
     C->bitmap_switch = A_bitmap_switch ;
     C->sparsity_control = A_sparsity_control ;
-    GB_OK (GB_transplant (C, ctype, &T, false, Werk)) ;
+    GB_OK (GB_transplant (C, ctype, &T, Werk)) ;
     ASSERT_MATRIX_OK (C, "C transplanted in GB_transpose", GB0) ;
     ASSERT_TYPE_OK (ctype, "C type in GB_transpose", GB0) ;
 
