@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // DONE: 32/64 bit, but requires GB_selector and GB_add to be 32/64 bit
 
 // CALLS:     GB_builder

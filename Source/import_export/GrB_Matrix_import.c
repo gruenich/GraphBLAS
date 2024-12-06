@@ -258,8 +258,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         default : // GrB_COO_FORMAT
             {
                 // build A as hypersparse by row or by column
-                int64_t *no_I_work = NULL ; size_t I_work_size = 0 ;
-                int64_t *no_J_work = NULL ; size_t J_work_size = 0 ;
+                void *no_I_work = NULL ; size_t I_work_size = 0 ;
+                void *no_J_work = NULL ; size_t J_work_size = 0 ;
                 GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
                 bool is_csc = GB_Global_is_csc_get ( ) ;
                 int64_t vlen = is_csc ? nrows : ncols ;

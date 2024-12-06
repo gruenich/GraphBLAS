@@ -78,7 +78,7 @@ void GB_macrofy_family
             break ;
 
         case GB_jit_sort_family : 
-            GB_macrofy_sort (fp, method_code, op, type1) ;
+            GB_macrofy_sort (fp, method_code, (GrB_BinaryOp) op, type1) ;
             break ;
 
         default: ;

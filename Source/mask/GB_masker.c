@@ -107,7 +107,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     //--------------------------------------------------------------------------
 
     int64_t Rnvec, Rnvec_nonempty ;
-    int64_t *Rp     = NULL ; size_t Rp_size = 0 ;
+    void *Rp        = NULL ; size_t Rp_size = 0 ;
     int64_t *Rh     = NULL ; size_t Rh_size = 0 ;
     int64_t *R_to_M = NULL ; size_t R_to_M_size = 0 ;
     int64_t *R_to_C = NULL ; size_t R_to_C_size = 0 ;
@@ -178,7 +178,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // count the number of entries in each vector of R
         info = GB_masker_phase1 (
             // computed or used by phase1:
-            &Rp, &Rp_size, &Rnvec_nonempty,
+            (uint64_t **) &Rp, &Rp_size, &Rnvec_nonempty,
             // from phase1a:
             TaskList, R_ntasks, R_nthreads,
             // from phase0:
@@ -220,7 +220,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // computed or used by phase2:
         R, R_is_csc,
         // from phase1:
-        &Rp, Rp_size, Rnvec_nonempty,
+        (uint64_t **) &Rp, Rp_size, Rnvec_nonempty,
         // from phase1a:
         TaskList, R_ntasks, R_nthreads,
         // from phase0:

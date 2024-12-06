@@ -263,8 +263,8 @@ GrB_Info GB_build               // build matrix
     // X must be treated as read-only, so GB_builder is not allowed to
     // transplant it into T->x.
 
-    int64_t *no_I_work = NULL ; size_t I_work_size = 0 ;
-    int64_t *no_J_work = NULL ; size_t J_work_size = 0 ;
+    void *no_I_work = NULL ; size_t I_work_size = 0 ;
+    void *no_J_work = NULL ; size_t J_work_size = 0 ;
     GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;

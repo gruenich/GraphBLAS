@@ -344,9 +344,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             vlen_new,       // new vlen
             vdim_new,       // new vdim
             T_is_csc,       // same format as T
-            &I_work,        // transplanted into C->i
+            (void **) &I_work,        // transplanted into C->i
             &I_work_size,
-            &J_work,        // freed when done
+            (void **) &J_work,        // freed when done
             &J_work_size,
             &S_work,        // array of values; transplanted into C->x in-place
             &S_work_size,

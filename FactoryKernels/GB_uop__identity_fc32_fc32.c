@@ -54,7 +54,7 @@ GrB_Info GB (_uop_tran__identity_fc32_fc32)
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
