@@ -2,7 +2,7 @@
 // GB_select.h: definitions for GrB_select and related functions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ GrB_Info GB_select_generic_phase2
 GrB_Info GB_select_positional_phase1
 (
     GrB_Matrix C,
-    uint64_t *restrict Zp,
+    uint64_t *restrict Zp,      // FIXME
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
     const GrB_Matrix A,
@@ -146,7 +146,7 @@ GrB_Info GB_select_positional_phase2
     // input/output:
     GrB_Matrix C,
     // input:
-    const uint64_t *restrict Zp,
+    const uint64_t *restrict Zp,        // FIXME
     const int64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,

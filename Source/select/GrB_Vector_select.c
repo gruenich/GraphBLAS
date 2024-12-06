@@ -81,7 +81,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_select_, T)                              \
     GB_WHERE (w, GB_STR(prefix) "_Vector_select_" GB_STR(T)                 \
         " (w, M, accum, op, u, y, desc)") ;                                 \
     GB_SCALAR_WRAP (yscalar, y, GB_EVAL3 (prefix, _, T)) ;                  \
-    return (GB_sel (w, M, accum, op, u, yscalar, desc, Werk)) ;               \
+    return (GB_sel (w, M, accum, op, u, yscalar, desc, Werk)) ;             \
 }
 
 GB_SEL (GrB, bool      , BOOL  )

@@ -2,7 +2,7 @@
 // GB_select_entry_phase1_template: count entries for C=select(A,thunk)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@
 
             int64_t j = GBH_A (Ah, k) ;
             GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                Ap [k], Ap [k+1]) ;
+                Ap [k], Ap [k+1]) ; // FIXME
 
             //------------------------------------------------------------------
             // count entries in Ax [pA ... pA_end-1]
@@ -91,7 +91,7 @@
             int64_t cjnz = 0 ;
             for ( ; pA < pA_end ; pA++)
             { 
-                int64_t i = Ai [pA] ;
+                int64_t i = Ai [pA] ;   // FIXME
                 GB_TEST_VALUE_OF_ENTRY (keep, pA) ;
                 if (keep) cjnz++ ;
             }
@@ -105,7 +105,7 @@
             }
             else
             { 
-                Cp [k] = cjnz ; 
+                Cp [k] = cjnz ;     // FIXME
             }
         }
     }
