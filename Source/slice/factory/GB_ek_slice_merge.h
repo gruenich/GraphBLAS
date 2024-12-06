@@ -64,7 +64,7 @@ static inline void GB_ek_slice_merge1   // merge column counts for the matrix C
     void *Cp,                           // column counts
     // input:
     const bool Cp_is_32,                // if true, Cp is 32-bit; else 64
-    const uint64_t *restrict Wfirst,    // size A_ntasks FIXME: make uint64_t
+    const uint64_t *restrict Wfirst,    // size A_ntasks
     const uint64_t *restrict Wlast,     // size A_ntasks
     const int64_t *A_ek_slicing,        // size 3*A_ntasks+1
     const int A_ntasks                  // # of tasks to slice A
