@@ -282,17 +282,12 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     int64_t *Map = Keep ;             // Keep has been replaced with Map
     cnz = Map [A->nvals - 1] ;        // total # of entries kept, for C
 
-    if (cnz != 0) {
-        // The caller (GB_cuda_select_sparse()) has already initialized
-        // C to be an empty hypersparse matrix. Initialize Ci, Cx. If
-        // C is iso, the caller handles populating the iso result using
-        // GB_select_iso().
-        GB_OK (GB_bix_alloc (C, cnz, GxB_HYPERSPARSE, false,
-            true, GB_ISO_SELECT)) ;
-    } else {
-        // C is empty; indicate this to the caller (GB_cuda_select_sparse())
-        // by setting C->nvals = 0. Nothing more to do.
-        C->nvals = 0 ;
+    GB_OK (GB_bix_alloc (C, cnz, GxB_HYPERSPARSE, false, true, GB_ISO_SELECT)) ;
+    C->nvals = cnz ;
+
+    if (cnz == 0) {
+        // C is empty; nothing more to do
+        printf ("C is empty, iso %d\n", C->iso) ;
         GB_FREE_WORKSPACE ;
         return (GrB_SUCCESS) ;
     }
