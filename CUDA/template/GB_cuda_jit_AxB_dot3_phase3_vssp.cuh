@@ -36,25 +36,27 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
     #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
-          int64_t *__restrict__ Ci = C->i ;
-    const int64_t *__restrict__ Mi = M->i ;
+          int64_t *__restrict__ Ci = (int64_t *) C->i ;
+    const int64_t *__restrict__ Mi = (int64_t *) M->i ;
     #if GB_M_IS_HYPER
-    const int64_t *__restrict__ Mh = M->h ;
+    const int64_t *__restrict__ Mh = (int64_t *) M->h ;
     #endif
 
     ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
-    const int64_t *__restrict__ Ai = A->i ;
-    const int64_t *__restrict__ Ap = A->p ;
+    const int64_t *__restrict__ Ai = (int64_t *) A->i ;
+    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
 
     ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
-    const int64_t *__restrict__ Bi = B->i ;
-    const int64_t *__restrict__ Bp = B->p ;
+    const int64_t *__restrict__ Bi = (int64_t *) B->i ;
+    const int64_t *__restrict__ Bp = (int64_t *) B->p ;
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;
-    const int64_t *__restrict__ Ah = A->h ;
-    const int64_t *__restrict__ A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
-    const int64_t *__restrict__ A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const int64_t *__restrict__ Ah = (int64_t *) A->h ;
+    const int64_t *__restrict__ A_Yp = (int64_t *)
+        ((A->Y == NULL) ? NULL : A->Y->p) ;
+    const int64_t *__restrict__ A_Yi = (int64_t *)
+        ((A->Y == NULL) ? NULL : A->Y->i) ;
     const int64_t *__restrict__ A_Yx = (int64_t *)
         ((A->Y == NULL) ? NULL : A->Y->x) ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
@@ -62,9 +64,11 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
 
     #if GB_B_IS_HYPER
     const int64_t bnvec = B->nvec ;
-    const int64_t *__restrict__ Bh = B->h ;
-    const int64_t *__restrict__ B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
-    const int64_t *__restrict__ B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
+    const int64_t *__restrict__ Bh = (int64_t *) B->h ;
+    const int64_t *__restrict__ B_Yp = (int64_t *)
+        ((B->Y == NULL) ? NULL : B->Y->p) ;
+    const int64_t *__restrict__ B_Yi = (int64_t *)
+        ((B->Y == NULL) ? NULL : B->Y->i) ;
     const int64_t *__restrict__ B_Yx = (int64_t *)
         ((B->Y == NULL) ? NULL : B->Y->x) ;
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;

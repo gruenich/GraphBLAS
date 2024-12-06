@@ -79,7 +79,7 @@ __global__ void GB_cuda_reduce_kernel
         #if GB_A_HAS_ZOMBIES
         {
             // check for zombies during the reduction
-            const int64_t *__restrict__ Ai = A->i ;
+            const int64_t *__restrict__ Ai = (int64_t *) A->i ;
             // grid-stride loop:
             for (int64_t p = blockIdx.x * blockDim.x + threadIdx.x ;
                          p < anz ;
