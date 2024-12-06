@@ -25,7 +25,7 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads

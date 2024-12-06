@@ -25,7 +25,7 @@
 GrB_Info GB (_sel_phase2__nonzombie_fc32)
 (
     GrB_Matrix C,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int64_t *A_ek_slicing,

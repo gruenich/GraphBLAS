@@ -25,8 +25,8 @@
 GrB_Info GB (_sel_phase1__ne_thunk_uint64)
 (
     GrB_Matrix C,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int64_t *A_ek_slicing,
@@ -46,7 +46,7 @@ GrB_Info GB (_sel_phase1__ne_thunk_uint64)
 GrB_Info GB (_sel_phase2__ne_thunk_uint64)
 (
     GrB_Matrix C,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int64_t *A_ek_slicing,

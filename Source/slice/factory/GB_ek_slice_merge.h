@@ -18,14 +18,14 @@
 
 // GB_ek_slice slices the entries of a matrix or vector into A_ntasks slices.
 // Its prototype is in Source/callback:
-//
-//  void GB_ek_slice            /* slice a matrix */
+
+//  void GB_ek_slice                    // slice a matrix
 //  (
-//      /* output: */
-//      int64_t *restrict A_ek_slicing, /* size 3*A_ntasks+1 */
-//      /* input: */
-//      GrB_Matrix A,                   /* matrix to slice */
-//      int A_ntasks                    /* # of tasks */
+//      // output:
+//      int64_t *restrict A_ek_slicing, // size 3*A_ntasks+1
+//      // input:
+//      GrB_Matrix A,                   // matrix to slice
+//      int A_ntasks                    // # of tasks
 //  ) ;
 
 // Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
@@ -36,8 +36,8 @@
 // case, A_ntasks must be 1.
 
 // GB_ek_slice can optionally be followed by GB_ek_slice_merge1 and
-// GB_ek_slice_merge2 to finalize the work on the output matrix C->p, for
-// sparse select and emult methods.
+// GB_ek_slice_merge2, defined below, to finalize the work on the output matrix
+// C->p, for sparse select and emult methods.
 
 //------------------------------------------------------------------------------
 // GB_ek_slice_merge1: merge column counts for a matrix
@@ -61,20 +61,28 @@
 static inline void GB_ek_slice_merge1   // merge column counts for the matrix C
 (
     // input/output:
-    void *Cp,                       // column counts
+    void *Cp,                           // column counts
     // input:
-    const bool Cp_is_32,            // if true, Cp is 32-bit; else 64
-    const int64_t *restrict Wfirst, // size A_ntasks FIXME: make uint64_t
-    const int64_t *restrict Wlast,  // size A_ntasks
-    const int64_t *A_ek_slicing,    // size 3*A_ntasks+1
-    const int A_ntasks              // # of tasks to slice A
+    const bool Cp_is_32,                // if true, Cp is 32-bit; else 64
+    const uint64_t *restrict Wfirst,    // size A_ntasks FIXME: make uint64_t
+    const uint64_t *restrict Wlast,     // size A_ntasks
+    const int64_t *A_ek_slicing,        // size 3*A_ntasks+1
+    const int A_ntasks                  // # of tasks to slice A
 )
 {
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
 
     GB_IDECL (Cp, , u) ; GB_IPTR (Cp, Cp_is_32) ;
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
 //  const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+
+    //--------------------------------------------------------------------------
+    // merge column counts
+    //--------------------------------------------------------------------------
 
     int64_t kprior = -1 ;
 
@@ -143,8 +151,6 @@ static inline void GB_ek_slice_merge1   // merge column counts for the matrix C
 // C(:,kfirst), and Wlast [tid] is the number of entries task tid contributes
 // to C(:,klast).
 
-// On output, Cp [0:cnvec] is overwritten with its cumulative sum.
-// C_nvec_nonempty is the count of how many vectors in C are empty.
 // Cp_kfirst [tid] is the position in C where task tid owns entries in
 // C(:,kfirst), which is a cumulative sum of the entries computed in C(:,k) for
 // all tasks that cooperate to compute that vector, starting at Cp [kfirst].
@@ -155,40 +161,33 @@ static inline void GB_ek_slice_merge1   // merge column counts for the matrix C
 
 static inline void GB_ek_slice_merge2   // merge final results for matrix C
 (
-    // output
-    int64_t *C_nvec_nonempty,       // # of non-empty vectors in C
-    int64_t *restrict Cp_kfirst,    // size A_ntasks
-    // input/output
-    void *Cp,                       // size cnvec+1
-    // input
-    const bool Cp_is_32,            // if true, Cp is 32-bit; else 64
-    const int64_t cnvec,
-    const int64_t *restrict Wfirst, // size A_ntasks
-    const int64_t *restrict Wlast,  // size A_ntasks
-    const int64_t *A_ek_slicing,    // size 3*A_ntasks+1
-    const int A_ntasks,             // # of tasks to slice A and construct C
-    const int nthreads,             // # of threads to use
-    GB_Werk Werk
+    // output:
+    uint64_t *restrict Cp_kfirst,       // size A_ntasks
+    // input:
+    const void *Cp,                     // size C->nvec+1
+    const bool Cp_is_32,                // if true, Cp is 32-bit; else 64
+    const uint64_t *restrict Wfirst,    // size A_ntasks
+    const uint64_t *restrict Wlast,     // size A_ntasks
+    const int64_t *A_ek_slicing,        // size 3*A_ntasks+1
+    const int A_ntasks                  // # of tasks to slice A and construct C
 )
 {
 
     //--------------------------------------------------------------------------
-    // Cp = cumsum (Cp)
+    // get inputs
     //--------------------------------------------------------------------------
 
-    GB_IDECL (Cp, , u) ; GB_IPTR (Cp, Cp_is_32) ;
-    GB_cumsum (Cp, Cp_is_32, cnvec, C_nvec_nonempty, nthreads, Werk) ;
+    GB_IDECL (Cp, const, u) ; GB_IPTR (Cp, Cp_is_32) ;
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+//  const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // determine the slice boundaries in the new C matrix
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
-    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
-//  const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
-
     int64_t kprior = -1 ;
-    int64_t pC = 0 ;
+    uint64_t pC = 0 ;
 
     for (int tid = 0 ; tid < A_ntasks ; tid++)
     {

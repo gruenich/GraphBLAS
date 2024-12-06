@@ -160,10 +160,10 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     const int A_ntasks,
     const int A_nthreads,
     // workspace:
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     // output:
-    int64_t *Cp_kfirst,
+    uint64_t *Cp_kfirst,
     GB_Werk Werk
 ) ;
 
@@ -244,7 +244,7 @@ GrB_Info GB_emult_generic       // generic emult
     // from GB_emult_sparsity:
     const int ewise_method,
     // from GB_emult_04, GB_emult_03, GB_emult_02:
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     // to slice M, A, and/or B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads,

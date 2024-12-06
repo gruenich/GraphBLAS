@@ -74,7 +74,7 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (Work, uint64_t) ;          \
     GB_WERK_POP (B_ek_slicing, int64_t) ;   \
 }
 
@@ -185,10 +185,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Work, int64_t) ;
+    GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (B_ek_slicing, int64_t) ;
-    int64_t *restrict Wfirst = NULL ;
-    int64_t *restrict Wlast  = NULL ;
 
     //--------------------------------------------------------------------------
     // construct the parallel tasks
@@ -201,15 +199,15 @@ GrB_Info GB_AxB_saxpy3_flopcount
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_PUSH (Work, 2*B_ntasks, int64_t) ;
+    GB_WERK_PUSH (Work, 2*B_ntasks, uint64_t) ;
     if (Work == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    Wfirst = Work ;
-    Wlast  = Work + B_ntasks ;
+    uint64_t *restrict Wfirst = Work ;
+    uint64_t *restrict Wlast  = Work + B_ntasks ;
 
     //--------------------------------------------------------------------------
     // compute flop counts for C=A*B, C<M>=A*B, or C<!M>=A*B

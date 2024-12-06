@@ -17,7 +17,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     // input/output:
     GrB_Matrix C,                   // input: Cp; output: Ci, Cx
     // input:
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,

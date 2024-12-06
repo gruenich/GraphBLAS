@@ -16,9 +16,9 @@
 GrB_Info GB_select_positional_phase1
 (
     GrB_Matrix C,
-    uint64_t *restrict Zp,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Zp,          // FIXME
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     const GrB_Matrix A,
     const int64_t ithunk,
     const GrB_IndexUnaryOp op,

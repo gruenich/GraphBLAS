@@ -22,7 +22,7 @@
 #define GB_FREE_WORKSPACE                   \
 {                                           \
     GB_FREE_WORK (&Zp, Zp_size) ;           \
-    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (Work, uint64_t) ;          \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
@@ -68,10 +68,7 @@ GrB_Info GB_select_sparse
 
     GrB_Info info ;
     uint64_t *restrict Zp = NULL ; size_t Zp_size = 0 ;     // FIXME
-    GB_WERK_DECLARE (Work, int64_t) ;
-    int64_t *restrict Wfirst = NULL ;
-    int64_t *restrict Wlast = NULL ;
-    int64_t *restrict Cp_kfirst = NULL ;
+    GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     GB_Opcode opcode = op->opcode ;
@@ -134,16 +131,16 @@ GrB_Info GB_select_sparse
     // allocate workspace for each task
     //--------------------------------------------------------------------------
 
-    GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
+    GB_WERK_PUSH (Work, 3*A_ntasks, uint64_t) ;
     if (Work == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    Wfirst    = Work ;
-    Wlast     = Work + A_ntasks ;
-    Cp_kfirst = Work + A_ntasks * 2 ;
+    uint64_t *restrict Wfirst    = Work ;
+    uint64_t *restrict Wlast     = Work + A_ntasks ;
+    uint64_t *restrict Cp_kfirst = Work + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for phase1
@@ -249,11 +246,10 @@ GrB_Info GB_select_sparse
     //==========================================================================
 
     //--------------------------------------------------------------------------
-    // cumulative sum of Cp and compute Cp_kfirst
+    // finalize Cp, cumulative sum of Cp, and compute Cp_kfirst
     //--------------------------------------------------------------------------
 
     uint64_t *restrict Cp = C->p ;      // FIXME
-    int64_t C_nvec_nonempty ;
     if (!op_is_positional)
     { 
         // GB_select_positional_phase1 finalizes Cp in the
@@ -264,16 +260,17 @@ GrB_Info GB_select_sparse
             Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
     }
 
-    // All kernels need to this phase to compute cumsum(Cp) and Cp_kfirst:
-    GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst,
+    GB_cumsum (Cp, /* FIXME: */ false,
+        anvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+
+    GB_ek_slice_merge2 (Cp_kfirst,
         Cp, /* FIXME: */ false,
-        anvec, Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+        Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted C->i and C->x
     //--------------------------------------------------------------------------
 
-    C->nvec_nonempty = C_nvec_nonempty ;
     uint64_t cnz = Cp [anvec] ; // FIXME
     GB_OK (GB_bix_alloc (C, cnz, csparsity, false, true, C_iso)) ;
     C->jumbled = A->jumbled ;

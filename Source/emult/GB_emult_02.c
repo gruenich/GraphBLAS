@@ -65,7 +65,7 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (Work, uint64_t) ;          \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
@@ -135,7 +135,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Work, int64_t) ;
+    GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
@@ -188,16 +188,16 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_PUSH (Work, 3*A_ntasks, int64_t) ;
+    GB_WERK_PUSH (Work, 3*A_ntasks, uint64_t) ;
     if (Work == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    int64_t *restrict Wfirst    = Work ;
-    int64_t *restrict Wlast     = Work + A_ntasks ;
-    int64_t *restrict Cp_kfirst = Work + A_ntasks * 2 ;
+    uint64_t *restrict Wfirst    = Work ;
+    uint64_t *restrict Wlast     = Work + A_ntasks ;
+    uint64_t *restrict Cp_kfirst = Work + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // phase1: count entries in C and allocate C->i and C->x

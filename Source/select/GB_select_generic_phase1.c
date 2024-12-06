@@ -15,8 +15,8 @@
 GrB_Info GB_select_generic_phase1
 (
     GrB_Matrix C,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,

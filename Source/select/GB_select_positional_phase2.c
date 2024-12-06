@@ -19,7 +19,7 @@ GrB_Info GB_select_positional_phase2
     GrB_Matrix C,
     // input:
     const uint64_t *restrict Zp,    // FIXME
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
     const int64_t ithunk,

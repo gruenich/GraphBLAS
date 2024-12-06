@@ -17,7 +17,7 @@ GrB_Info GB_select_generic_phase2
     // input/output:
     GrB_Matrix C,
     // input:
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,

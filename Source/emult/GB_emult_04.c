@@ -37,7 +37,7 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_WERK_POP (Work, int64_t) ;           \
+    GB_WERK_POP (Work, uint64_t) ;          \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
 }
 
@@ -94,10 +94,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // declare workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_DECLARE (Work, int64_t) ;
-    int64_t *restrict Wfirst = NULL ;
-    int64_t *restrict Wlast = NULL ;
-    int64_t *restrict Cp_kfirst = NULL ;
+    GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (M_ek_slicing, int64_t) ;
 
     //--------------------------------------------------------------------------
@@ -147,16 +144,16 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_WERK_PUSH (Work, 3*M_ntasks, int64_t) ;
+    GB_WERK_PUSH (Work, 3*M_ntasks, uint64_t) ;
     if (Work == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    Wfirst    = Work ;
-    Wlast     = Work + M_ntasks ;
-    Cp_kfirst = Work + M_ntasks * 2 ;
+    uint64_t *restrict Wfirst    = Work ;
+    uint64_t *restrict Wlast     = Work + M_ntasks ;
+    uint64_t *restrict Cp_kfirst = Work + M_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
     // count entries in C
@@ -218,9 +215,13 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
         Wfirst, Wlast, M_ek_slicing, M_ntasks) ;
-    GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst,
+
+    GB_cumsum (Cp, /* FIXME: */ false,
+        nvec, &(C->nvec_nonempty), M_nthreads, Werk) ;
+
+    GB_ek_slice_merge2 (Cp_kfirst,
         Cp, /* FIXME: */ false,
-        nvec, Wfirst, Wlast, M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+        Wfirst, Wlast, M_ek_slicing, M_ntasks) ;
 
     //--------------------------------------------------------------------------
     // allocate C->i and C->x

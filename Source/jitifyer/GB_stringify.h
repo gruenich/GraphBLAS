@@ -277,7 +277,7 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
@@ -296,7 +296,7 @@ GrB_Info GB_emult_03_jit      // C<#M>=A.*B, emult_03, via the JIT
     const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *B_ek_slicing,
     const int B_ntasks,
     const int B_nthreads
@@ -314,7 +314,7 @@ GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
     const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads
@@ -1342,8 +1342,8 @@ GrB_Info GB_select_phase1_jit       // select phase1
 (
     // output:
     GrB_Matrix C,                   // C->p computed, with counts
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     // input:
     const GrB_Matrix A,
     const GB_void *restrict ythunk,
@@ -1359,7 +1359,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     // input/output:
     GrB_Matrix C,                   // input: Cp; output: Ci, Cx
     // input:
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,

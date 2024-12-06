@@ -302,7 +302,7 @@ GrB_Info GB_jit_kernel_emult_02                                         \
     const bool Mask_comp,                                               \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
     const int A_nthreads,                                               \
@@ -318,7 +318,7 @@ GrB_Info GB_jit_kernel_emult_03                                         \
     const bool Mask_comp,                                               \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const int64_t *B_ek_slicing,                                        \
     const int B_ntasks,                                                 \
     const int B_nthreads,                                               \
@@ -333,7 +333,7 @@ GrB_Info GB_jit_kernel_emult_04                                         \
     const bool Mask_struct,                                             \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const int64_t *M_ek_slicing,                                        \
     const int M_ntasks,                                                 \
     const int M_nthreads,                                               \
@@ -427,8 +427,8 @@ GrB_Info GB_jit_kernel_select_bitmap                                    \
 GrB_Info GB_jit_kernel_select_phase1                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
-    int64_t *restrict Wfirst,                                           \
-    int64_t *restrict Wlast,                                            \
+    uint64_t *restrict Wfirst,                                          \
+    uint64_t *restrict Wlast,                                           \
     const GrB_Matrix A,                                                 \
     const GB_void *restrict ythunk,                                     \
     const int64_t *A_ek_slicing,                                        \
@@ -441,7 +441,7 @@ GrB_Info GB_jit_kernel_select_phase1                                    \
 GrB_Info GB_jit_kernel_select_phase2                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const GrB_Matrix A,                                                 \
     const GB_void *restrict ythunk,                                     \
     const int64_t *A_ek_slicing,                                        \

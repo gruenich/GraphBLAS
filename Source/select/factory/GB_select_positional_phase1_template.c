@@ -168,7 +168,7 @@
     //--------------------------------------------------------------------------
 
     // Wfirst [0..A_ntasks-1] and Wlast [0..A_ntasks-1] are required for
-    // constructing Cp_kfirst [0..A_ntasks-1] in GB_selector.
+    // constructing Cp_kfirst [0..A_ntasks-1] in GB_select_sparse.
 
     for (int tid = 0 ; tid < A_ntasks ; tid++)
     {

@@ -35,10 +35,10 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     const int A_ntasks,
     const int A_nthreads,
     // workspace:
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     // output:
-    int64_t *Cp_kfirst,
+    uint64_t *Cp_kfirst,
     GB_Werk Werk
 )
 {
@@ -192,9 +192,13 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 
         GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
             Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
-        GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst,
+
+        GB_cumsum (Cp, /* FIXME: */ false,
+            nvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+
+        GB_ek_slice_merge2 (Cp_kfirst,
             Cp, /* FIXME: */ false,
-            nvec, Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+            Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
     }
 
     //--------------------------------------------------------------------------
