@@ -13,7 +13,6 @@
 GB_type_enabled
 #if GB_TYPE_ENABLED
 #include "GB.h"
-#include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_aop__include.h"
 
 // accum operator

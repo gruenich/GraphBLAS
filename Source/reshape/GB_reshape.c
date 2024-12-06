@@ -16,7 +16,6 @@
 #include "GB.h"
 #include "reshape/GB_reshape.h"
 #include "transpose/GB_transpose.h"
-#include "slice/GB_ek_slice.h"
 #include "builder/GB_build.h"
 
 #define GB_FREE_WORKSPACE                       \

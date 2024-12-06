@@ -7,17 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64-bit.  Need GB_ek_slice_merge2 and _merge1 32/64-bit first
+// FIXME: 32/64-bit.
 
 #define GB_DEBUG
 
 #include "select/GB_select.h"
-#include "slice/GB_ek_slice.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_sel__include.h"
 #endif
 #include "scalar/GB_Scalar_wrap.h"
 #include "jitifyer/GB_stringify.h"
+#include "slice/factory/GB_ek_slice_merge.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -260,12 +260,14 @@ GrB_Info GB_select_sparse
         // select/factory/GB_select_positional_phase1_template.c.  This phase
         // is only needed for entry-style selectors, done by
         // select/template/GB_select_entry_phase1_template.c:
-        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+        GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
+            Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
     }
 
     // All kernels need to this phase to compute cumsum(Cp) and Cp_kfirst:
-    GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, /* FIXME: */ Cp, anvec,
-        Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+    GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst,
+        Cp, /* FIXME: */ false,
+        anvec, Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted C->i and C->x

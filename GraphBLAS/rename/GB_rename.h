@@ -284,8 +284,6 @@
 #define GB_dup GM_dup
 #define GB_dup_worker GM_dup_worker
 #define GB_ek_slice GM_ek_slice
-#define GB_ek_slice_merge1 GM_ek_slice_merge1
-#define GB_ek_slice_merge2 GM_ek_slice_merge2
 #define GB_emult_02 GM_emult_02
 #define GB_emult_02_jit GM_emult_02_jit
 #define GB_emult_02_phase1 GM_emult_02_phase1

@@ -40,7 +40,6 @@
 
 #include "mxm/GB_mxm.h"
 #include "extract/GB_subref.h"
-#include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "jitifyer/GB_stringify.h"
 #include "mxm/GB_AxB__include1.h"

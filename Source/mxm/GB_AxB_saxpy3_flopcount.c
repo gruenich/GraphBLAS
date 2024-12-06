@@ -69,7 +69,6 @@
 */ 
 
 #include "mxm/GB_mxm.h"
-#include "slice/GB_ek_slice.h"
 #include "mxm/GB_AxB_saxpy3.h"
 #include "include/GB_unused.h"
 

@@ -10,6 +10,8 @@
 #ifndef GB_BINOP_H
 #define GB_BINOP_H
 
+#include "GB.h"
+
 bool GB_binop_builtin               // true if binary operator is builtin
 (
     // inputs:

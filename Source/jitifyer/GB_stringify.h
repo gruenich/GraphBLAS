@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_stringify.h: prototype definitions construction of *.h definitions
+// GB_stringify.h: encodify / enumify / macrofy and *_jit definitions
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

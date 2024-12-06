@@ -15,7 +15,6 @@
 // via the JIT kernel.
 
 #include "apply/GB_apply.h"
-#include "slice/GB_ek_slice.h"
 #include "jitifyer/GB_stringify.h"
 
 #define GB_FREE_WORKSPACE                   \

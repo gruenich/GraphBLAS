@@ -19,8 +19,8 @@
 
 // C += scalar where C is full
 
-#include "assign/GB_subassign_dense.h"
 #include "binaryop/GB_binop.h"
+#include "assign/GB_subassign_dense.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT

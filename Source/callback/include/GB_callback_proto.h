@@ -57,10 +57,10 @@ GrB_Info GX_bix_alloc       /* allocate A->b, A->i, and A->x in a matrix */ \
 void GX_ek_slice            /* slice a matrix */                            \
 (                                                                           \
     /* output: */                                                           \
-    int64_t *restrict A_ek_slicing, /* size 3*ntasks+1 */                   \
+    int64_t *restrict A_ek_slicing, /* size 3*A_ntasks+1 */                 \
     /* input: */                                                            \
     GrB_Matrix A,                   /* matrix to slice */                   \
-    int ntasks                      /* # of tasks */                        \
+    int A_ntasks                    /* # of tasks */                        \
 )
 
 #define GB_CALLBACK_FREE_MEMORY_PROTO(GX_free_memory)                       \

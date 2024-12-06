@@ -45,7 +45,6 @@
 //------------------------------------------------------------------------------
 
 #include "mxm/GB_AxB_saxpy.h"
-#include "slice/GB_ek_slice.h"
 #include "binaryop/GB_binop.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "mxm/include/GB_mxm_shared_definitions.h"

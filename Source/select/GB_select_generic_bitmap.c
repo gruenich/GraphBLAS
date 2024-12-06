@@ -10,7 +10,6 @@
 // A is bitmap or full, C is bitmap
 
 #include "select/GB_select.h"
-#include "slice/GB_ek_slice.h"
 
 GrB_Info GB_select_generic_bitmap
 (

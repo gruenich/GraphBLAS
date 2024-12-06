@@ -17,7 +17,6 @@
 
 #include "apply/GB_apply.h"
 #include "binaryop/GB_binop.h"
-#include "slice/GB_ek_slice.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT

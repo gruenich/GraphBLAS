@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "select/GB_select.h"
-#include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_sel__include.h"
 
 #define GB_ENTRY_SELECTOR

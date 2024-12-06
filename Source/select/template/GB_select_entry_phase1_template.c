@@ -39,8 +39,8 @@
     // Thread tid+1, and following threads, may also do some of the reduces for
     // A(:,klast).
 
-    // The work for the first and last vector of each phase is handled by
-    // GB_ek_slice_merge1 and GB_ek_slice_merge2, in GB_select_sparse.
+    // The work to compute Cp for the first and last vector of each phase is
+    // done by GB_ek_slice_merge1 and GB_ek_slice_merge2, in GB_select_sparse.
 
     //--------------------------------------------------------------------------
     // get A

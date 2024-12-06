@@ -18,10 +18,10 @@ UNAME := $(shell uname)
 # CC = gcc-11
 # CC = icc
 ifeq ($(UNAME),Darwin)
-    CFLAGS  = -O3 -Xclang -fopenmp -std=c11 -fPIC -Wno-pragmas -fno-common
+    CFLAGS  = -g -Xclang -fopenmp -std=c11 -fPIC -Wno-pragmas -fno-common
     LDFLAGS = -Xclang -fopenmp
 else
-    CFLAGS  = -O3 -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
+    CFLAGS  = -g -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
     LDFLAGS = -fopenmp
 endif
 

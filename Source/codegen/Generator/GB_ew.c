@@ -12,7 +12,6 @@ GB_type_enabled
 #if GB_TYPE_ENABLED
 #include "GB.h"
 #include "emult/GB_emult.h"
-#include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_ew__include.h"
 

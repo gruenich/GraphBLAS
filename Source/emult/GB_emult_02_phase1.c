@@ -18,6 +18,7 @@
 #include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
+#include "slice/factory/GB_ek_slice_merge.h"
 
 GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 (
@@ -187,11 +188,13 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
         //----------------------------------------------------------------------
 
-        // FIXME: in GB_ek_slice_merge*: reallocate Cp if cumsum too large
+        // FIXME: make sure Cp is OK for cumsum
 
-        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
-        GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+        GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
+            Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+        GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst,
+            Cp, /* FIXME: */ false,
+            nvec, Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
     }
 
     //--------------------------------------------------------------------------

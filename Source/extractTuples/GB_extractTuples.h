@@ -12,6 +12,8 @@
 #ifndef GB_EXTRACTTUPLES_H
 #define GB_EXTRACTTUPLES_H
 
+#include "GB.h"
+
 GrB_Info GB_extract_vector_list // extract vector list from a matrix
 (
     // output:

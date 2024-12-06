@@ -33,6 +33,7 @@
 #include "GB_control.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
+#include "slice/factory/GB_ek_slice_merge.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -213,11 +214,13 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
     //--------------------------------------------------------------------------
 
-    // FIXME: in GB_ek_slice_merge*: reallocate Cp if cumsum too large
+    // FIXME: make sure Cp is OK for cumsum
 
-    GB_ek_slice_merge1 (Cp, Wfirst, Wlast, M_ek_slicing, M_ntasks) ;
-    GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-        Wfirst, Wlast, M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
+    GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
+        Wfirst, Wlast, M_ek_slicing, M_ntasks) ;
+    GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst,
+        Cp, /* FIXME: */ false,
+        nvec, Wfirst, Wlast, M_ek_slicing, M_ntasks, M_nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate C->i and C->x

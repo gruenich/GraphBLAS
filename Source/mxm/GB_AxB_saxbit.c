@@ -27,7 +27,6 @@
 #include "jitifyer/GB_stringify.h"
 #include "mxm/GB_AxB_saxpy.h"
 #include "binaryop/GB_binop.h"
-#include "slice/GB_ek_slice.h"
 #include "mxm/GB_AxB_saxpy_generic.h"
 #include "mxm/GB_AxB__include1.h"
 #ifndef GBCOMPACT

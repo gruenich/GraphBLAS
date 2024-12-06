@@ -9,7 +9,6 @@
 
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"
-#include "slice/GB_ek_slice.h"
 #include "jitifyer/GB_stringify.h"
 
 //  macros:

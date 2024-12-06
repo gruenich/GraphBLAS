@@ -26,7 +26,6 @@
 // R is iso if both C and Z are iso and zij == cij.
 
 #include "mask/GB_mask.h"
-#include "slice/GB_ek_slice.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #include "include/GB_masker_shared_definitions.h"
