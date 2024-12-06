@@ -225,12 +225,12 @@ GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
 GrB_Info GB_jit_kernel_build                                            \
 (                                                                       \
     GB_void *restrict Tx_void,                                          \
-    int64_t *restrict Ti,                                               \
+    void *restrict Ti_void,                                             \
     const GB_void *restrict Sx_void,                                    \
     const int64_t nvals,                                                \
-    const int64_t ndupl,                                                \
-    const int64_t *restrict I_work,                                     \
-    const int64_t *restrict K_work,                                     \
+    const void *restrict I_work_void,                                   \
+    const void *restrict K_work_void,                                   \
+    const int64_t duplicate_entry_input,                                \
     const int64_t *restrict tstart_slice,                               \
     const int64_t *restrict tnz_slice,                                  \
     const int nthreads                                                  \
@@ -302,7 +302,7 @@ GrB_Info GB_jit_kernel_emult_02                                         \
     const bool Mask_comp,                                               \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
     const int A_nthreads,                                               \
@@ -318,7 +318,7 @@ GrB_Info GB_jit_kernel_emult_03                                         \
     const bool Mask_comp,                                               \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const int64_t *B_ek_slicing,                                        \
     const int B_ntasks,                                                 \
     const int B_nthreads,                                               \
@@ -333,7 +333,7 @@ GrB_Info GB_jit_kernel_emult_04                                         \
     const bool Mask_struct,                                             \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int64_t *restrict Cp_kfirst,                                  \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const int64_t *M_ek_slicing,                                        \
     const int M_ntasks,                                                 \
     const int M_nthreads,                                               \
@@ -417,8 +417,7 @@ GrB_Info GB_jit_kernel_rowscale                                         \
 #define GB_JIT_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap)  \
 GrB_Info GB_jit_kernel_select_bitmap                                    \
 (                                                                       \
-    int8_t *Cb,                                                         \
-    int64_t *cnvals_handle,                                             \
+    GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                       \
     const GB_void *restrict ythunk,                                     \
     const int nthreads                                                  \
@@ -427,9 +426,9 @@ GrB_Info GB_jit_kernel_select_bitmap                                    \
 #define GB_JIT_KERNEL_SELECT_PHASE1_PROTO(GB_jit_kernel_select_phase1)  \
 GrB_Info GB_jit_kernel_select_phase1                                    \
 (                                                                       \
-    int64_t *restrict Cp,                                               \
-    int64_t *restrict Wfirst,                                           \
-    int64_t *restrict Wlast,                                            \
+    GrB_Matrix C,                                                       \
+    uint64_t *restrict Wfirst,                                          \
+    uint64_t *restrict Wlast,                                           \
     const GrB_Matrix A,                                                 \
     const GB_void *restrict ythunk,                                     \
     const int64_t *A_ek_slicing,                                        \
@@ -441,10 +440,8 @@ GrB_Info GB_jit_kernel_select_phase1                                    \
 #define GB_JIT_KERNEL_SELECT_PHASE2_PROTO(GB_jit_kernel_select_phase2)  \
 GrB_Info GB_jit_kernel_select_phase2                                    \
 (                                                                       \
-    int64_t *restrict Ci,                                               \
-    GB_void *restrict Cx_out,                                           \
-    const int64_t *restrict Cp,                                         \
-    const int64_t *restrict Cp_kfirst,                                  \
+    GrB_Matrix C,                                                       \
+    const uint64_t *restrict Cp_kfirst,                                 \
     const GrB_Matrix A,                                                 \
     const GB_void *restrict ythunk,                                     \
     const int64_t *A_ek_slicing,                                        \
@@ -479,7 +476,7 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
     GrB_Matrix A,                                                       \
     const int64_t akstart,                                              \
     const int64_t aistart,                                              \
-    int64_t *restrict Wp,                                               \
+    uint64_t *restrict Wp,                                              \
     const int64_t *C_ek_slicing,                                        \
     const int C_ntasks,                                                 \
     const int C_nthreads                                                \
@@ -522,7 +519,7 @@ GrB_Info GB_jit_kernel_trans_bind1st                                    \
     GrB_Matrix C,                                                       \
     const GB_void *x_input,                                             \
     const GrB_Matrix A,                                                 \
-    int64_t *restrict *Workspaces,                                      \
+    void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
     const int nthreads                                                  \
@@ -534,7 +531,7 @@ GrB_Info GB_jit_kernel_trans_bind2nd                                    \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
     const GB_void *y_input,                                             \
-    int64_t *restrict *Workspaces,                                      \
+    void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
     const int nthreads                                                  \
@@ -545,7 +542,7 @@ GrB_Info GB_jit_kernel_trans_unop                                       \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
-    int64_t *restrict *Workspaces,                                      \
+    void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
     const int nthreads                                                  \
@@ -584,7 +581,7 @@ GrB_Info GB_jit_kernel_union                                            \
 #define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
 GrB_Info GB_jit_kernel_masker1                                          \
 (                                                                       \
-    int64_t *Rp,                                                        \
+    uint64_t *Rp,                                                       \
     int64_t *Rnvec_nonempty,                                            \
     GB_task_struct *restrict TaskList,                                  \
     const int R_ntasks,                                                 \
@@ -634,8 +631,8 @@ GrB_Info GB_jit_kernel_subref_sparse                                    \
     const bool post_sort,                                               \
     const int64_t *Mark,                                                \
     const int64_t *Inext,                                               \
-    const int64_t *restrict Ap_start,                                   \
-    const int64_t *restrict Ap_end,                                     \
+    const uint64_t *restrict Ap_start,                                  \
+    const uint64_t *restrict Ap_end,                                    \
     const int64_t nI,                                                   \
     const int64_t Icolon [3],                                           \
     const GrB_Matrix A,                                                 \
@@ -683,12 +680,12 @@ GrB_Info GB_jit_kernel_unjumble                                         \
 #define GB_JIT_KERNEL_CONVERT_B2S_PROTO(GB_jit_kernel_convert_b2s)      \
 GrB_Info GB_jit_kernel_convert_b2s                                      \
 (                                                                       \
-    const int64_t *restrict Cp,                                         \
-    int64_t *restrict Ci,                                               \
-    int64_t *restrict Cj,                                               \
-    GB_void *restrict Cx_new,                                           \
+    const void *Cp_input,                                               \
+    void *Ci_input,                                                     \
+    void *Cj_input,                                                     \
+    void *Cx_new,                                                       \
     const GrB_Matrix A,                                                 \
-    const int64_t *restrict W,                                          \
+    const void *W_input,                                                \
     const int nthreads                                                  \
 )
 
@@ -784,8 +781,7 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
 #define GB_JIT_CUDA_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap) \
 GrB_Info GB_jit_kernel_select_bitmap                                        \
 (                                                                           \
-    int8_t *Cb,                                                             \
-    uint64_t *cnvals,                                                       \
+    GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                           \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \

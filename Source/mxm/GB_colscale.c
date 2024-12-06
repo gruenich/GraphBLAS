@@ -10,7 +10,6 @@
 #include "mxm/GB_mxm.h"
 #include "binaryop/GB_binop.h"
 #include "apply/GB_apply.h"
-#include "slice/GB_ek_slice.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
@@ -99,7 +98,6 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     // allocate C->x but do not initialize it
-    // set C->iso = C_iso   OK
     GB_OK (GB_dup_worker (&C, C_iso, A, false, ztype)) ;
     info = GrB_NO_VALUE ;
     ASSERT (C->type == ztype) ;

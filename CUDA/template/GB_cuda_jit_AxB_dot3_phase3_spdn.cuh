@@ -135,8 +135,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_spdn_kernel
 
         #if GB_A_IS_HYPER
         int64_t pA, pA_end ;
-        GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
-            i, &pA, &pA_end) ;
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, i, &pA, &pA_end) ;
         #elif GB_A_IS_SPARSE
         int64_t pA     = Ap [i] ;
         int64_t pA_end = Ap [i+1] ;
@@ -151,8 +151,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_spdn_kernel
 
         #if GB_B_IS_HYPER
         int64_t pB, pB_end ;
-        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
-           j, &pB, &pB_end) ;
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits, j, &pB, &pB_end) ;
         #elif GB_B_IS_SPARSE
         int64_t pB     = Bp [j] ;
         int64_t pB_end = Bp [j+1] ;

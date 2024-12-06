@@ -267,20 +267,20 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // get A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;   //FIXME
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-    const int64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_nnz_held (B) ;
     const int64_t bnvec = B->nvec ;
@@ -484,7 +484,8 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_p_slice (Coarse_initial, Bflops, bnvec, ntasks_initial, true) ;
+        GB_p_slice (Coarse_initial, Bflops, false, // FIXME
+            bnvec, ntasks_initial, true) ;
 
         //----------------------------------------------------------------------
         // split the work into coarse and fine tasks
@@ -678,8 +679,9 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                             if (A_is_hyper)
                             { 
                                 // A is hypersparse: find A(:,k) in hyper_hash
-                                GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp,
-                                    A_Yi, A_Yx, A_hash_bits, k, &pA, &pA_end) ;
+                                GB_hyper_hash_lookup (false, false, // FIXME
+                                    Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
+                                    A_hash_bits, k, &pA, &pA_end) ;
                             }
                             else
                             { 
@@ -694,13 +696,13 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                         }
 
                         // cumulative sum of flops to compute A*B(:,j)
-                        GB_cumsum (Fine_fl, bjnz, NULL, nth, Werk) ;
+                        GB_cumsum (Fine_fl, false, bjnz, NULL, nth, Werk) ;
 
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;
                         ASSERT (Fine_slice != NULL) ;
-                        GB_p_slice (Fine_slice, Fine_fl, bjnz, team_size,
-                            false);
+                        GB_p_slice (Fine_slice, Fine_fl, false, // FIXME
+                            bjnz, team_size, false) ;
 
                         // shared hash table for all fine tasks for A*B(:,j)
                         int64_t hsize = 

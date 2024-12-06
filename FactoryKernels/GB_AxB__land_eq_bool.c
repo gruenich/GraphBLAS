@@ -464,5 +464,7 @@ GrB_Info GB (_Asaxpy3B__land_eq_bool)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -63,6 +63,7 @@ GrB_Info GB_AxB_saxpy3_jit      // C<M>=A*B, saxpy3, via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, M_in_place, A, B,
         (GB_saxpy3task_struct *) SaxpyTasks, ntasks, nfine, nthreads, do_sort,

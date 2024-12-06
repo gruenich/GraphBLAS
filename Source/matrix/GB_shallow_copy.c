@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Create a purely shallow copy C of a matrix A.  No typecasting is done.  If A
 // has zombies or pending tuples, those are finished first.
 
@@ -54,8 +56,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // C has the exact same sparsity structure as A.
     GrB_Info info ;
     info = GB_new (&C, // sparse or hyper, existing header
-        A->type, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0) ;
+        A->type, A->vlen, A->vdim, GB_ph_null, C_is_csc,
+        GB_sparsity (A), A->hyper_switch, 0, A->p_is_32, A->i_is_32) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -67,6 +69,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->h_shallow = (A->h != NULL) ;     // C->h not freed when freeing C
     C->p = A->p ;                       // C->p is of size A->plen + 1
     C->h = A->h ;                       // C->h is of size A->plen
+    C->p_is_32 = A->p_is_32 ;
+    C->i_is_32 = A->i_is_32 ;
     C->p_size = A->p_size ;
     C->h_size = A->h_size ;
     C->plen = A->plen ;                 // C and A have the same hyperlist size
@@ -75,7 +79,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
     C->nvals = A->nvals ;
     C->magic = GB_MAGIC ;
-    C->iso = A->iso ;                   // OK: C has the same iso property as A
+    C->iso = A->iso ;                   // C has the same iso property as A
     if (A->iso)
     { 
         GB_BURBLE_MATRIX (A, "(iso copy) ") ;

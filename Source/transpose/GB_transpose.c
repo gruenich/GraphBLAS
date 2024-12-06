@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit: need 32-bit GB_extract_vector_list
+
 // CALLS:     GB_builder
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or
@@ -39,7 +41,7 @@
     GB_FREE (&iwork, iwork_size) ;      \
     GB_FREE (&jwork, jwork_size) ;      \
     GB_FREE (&Swork, Swork_size) ;      \
-    GB_WERK_POP (Count, int64_t) ;      \
+    GB_WERK_POP (Count, uint64_t) ;     \
 }
 
 #define GB_FREE_ALL                     \
@@ -83,9 +85,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     ASSERT (C != NULL) ;
     ASSERT (A != NULL) ;
     bool in_place = (A == C) ;
-    GB_WERK_DECLARE (Count, int64_t) ;
-    int64_t *iwork = NULL ; size_t iwork_size = 0 ;
-    int64_t *jwork = NULL ; size_t jwork_size = 0 ;
+    GB_WERK_DECLARE (Count, uint64_t) ;
+    void *iwork = NULL ; size_t iwork_size = 0 ;
+    void *jwork = NULL ; size_t jwork_size = 0 ;
     GB_void *Swork = NULL ; size_t Swork_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
@@ -129,6 +131,17 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     int64_t anz_held = GB_nnz_held (A) ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
+    bool Ap_is_32 = A->p_is_32 ;
+    bool Ai_is_32 = A->i_is_32 ;
+
+    bool hack32 = false ; // GB_Global_hack_get (4) ; // FIXME: enable 32-bit
+    bool Cp_is_32 = GB_validate_p_is_32 (hack32, anz) ;
+    bool Ci_is_32 = GB_validate_i_is_32 (hack32, avdim, avlen) ;
+
+//  size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // determine the max number of threads to use
@@ -248,10 +261,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         //----------------------------------------------------------------------
 
         // create a new empty matrix T, with the new type and dimensions.
-        // set T->iso = false   OK
         GB_OK (GB_new_bix (&T, // hyper, existing header
-            ctype, avdim, avlen, GB_Ap_calloc, C_is_csc, GxB_HYPERSPARSE,
-            true, A_hyper_switch, 1, 1, true, false)) ;
+            ctype, avdim, avlen, GB_ph_calloc, C_is_csc, GxB_HYPERSPARSE,
+            true, A_hyper_switch, 1, 1, true, false, Cp_is_32, Ci_is_32)) ;
 
     }
     else if (A_is_bitmap || GB_IS_FULL (A))
@@ -278,17 +290,17 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // just initialize the static header of T, not T->b or T->x
             GBURBLE ("(cheap transpose) ") ;
             info = GB_new (&T, // bitmap or full, existing header
-                ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-                T_sparsity, A_hyper_switch, 1) ;
+                ctype, avdim, avlen, GB_ph_null, C_is_csc,
+                T_sparsity, A_hyper_switch, 1, /* OK: */ false, false) ;
             ASSERT (info == GrB_SUCCESS) ;
         }
         else
         { 
             // allocate all of T, including T->b and T->x
-            // set T->iso = C_iso   OK
             GB_OK (GB_new_bix (&T, // bitmap or full, existing header
-                ctype, avdim, avlen, GB_Ap_null, C_is_csc, T_sparsity, true,
-                A_hyper_switch, 1, anz_held, true, C_iso)) ;
+                ctype, avdim, avlen, GB_ph_null, C_is_csc, T_sparsity, true,
+                A_hyper_switch, 1, anz_held, true, C_iso,
+                /* OK: */ false, false)) ;
         }
 
         T->magic = GB_MAGIC ;
@@ -359,22 +371,23 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         //----------------------------------------------------------------------
 
         // Initialized the header of T, with no content, and initialize the
-        // type and dimension of T.  T is hypersparse.
+        // type and dimension of T.  T is hypersparse.  T must be allocated
+        // with the same integer sizes as A.
 
         info = GB_new (&T, // hyper; existing header
-            ctype, 1, avlen, GB_Ap_null, C_is_csc,
-            GxB_HYPERSPARSE, A_hyper_switch, 0) ;
+            ctype, 1, avlen, GB_ph_null, C_is_csc,
+            GxB_HYPERSPARSE, A_hyper_switch, 0, Ap_is_32, Ai_is_32) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         // allocate T->p, T->i, and optionally T->x, but not T->h
         int64_t tplen = GB_IMAX (1, anz) ;
-        T->p = GB_MALLOC (tplen+1, int64_t, &(T->p_size)) ;
-        T->i = GB_MALLOC (anz    , int64_t, &(T->i_size)) ;
+        T->p = GB_malloc_memory (tplen+1, apsize, &(T->p_size)) ;
+        T->i = GB_malloc_memory (anz    , aisize, &(T->i_size)) ;
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ; // x:OK
+            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ;
         }
         if (T->p == NULL || T->i == NULL || (allocate_Tx && T->x == NULL))
         { 
@@ -440,16 +453,22 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         T->nvec = anz ;
         T->nvec_nonempty = anz ;
 
+        GB_Ap_DECLARE (Tp, ) ; GB_Ap_PTR (Tp, T) ;
+        GB_Ai_DECLARE (Ti, ) ; GB_Ai_PTR (Ti, T) ;
+
         // fill the vector pointers T->p
         int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
         int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (k = 0 ; k < anz ; k++)
         { 
-            T->i [k] = 0 ;
-            T->p [k] = k ;
+            // Ti [k] = 0 ;
+            GB_ISET (Ti, k, 0) ;
+            // Tp [k] = k ;
+            GB_ISET (Tp, k, k) ;
         }
-        T->p [anz] = anz ;
+        // Tp [anz] = anz ;
+        GB_ISET (Tp, anz, anz) ;
 
         T->iso = C_iso ;
         T->nvals = anz ;
@@ -464,7 +483,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         //----------------------------------------------------------------------
 
         // transpose a "row" matrix (1-by-avdim) into a vector (avdim-by-1).
-        // if A->vlen is 1, all vectors of A are implicitly sorted
+        // if A->vlen is 1, all vectors of A are implicitly sorted.  T must be
+        // allocated with the same integers as A.
+
         GBURBLE ("(sparse vector transpose (b)) ") ;
         ASSERT_MATRIX_OK (A, "1-by-n input A already sorted", GB0) ;
 
@@ -480,7 +501,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             ntasks = 8 * nth ;
             ntasks = GB_IMIN (ntasks, avdim) ;
             ntasks = GB_IMAX (ntasks, 1) ;
-            GB_WERK_PUSH (Count, ntasks+1, int64_t) ;
+            GB_WERK_PUSH (Count, ntasks+1, uint64_t) ;
             if (Count == NULL)
             { 
                 // out of memory
@@ -492,24 +513,24 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // Allocate the header of T, with no content
         // and initialize the type and dimension of T.
         info = GB_new (&T, // sparse; existing header
-            ctype, avdim, 1, GB_Ap_null, C_is_csc,
-            GxB_SPARSE, A_hyper_switch, 0) ;
+            ctype, avdim, 1, GB_ph_null, C_is_csc,
+            GxB_SPARSE, A_hyper_switch, 0, Ap_is_32, Ai_is_32) ;
         ASSERT (info == GrB_SUCCESS) ;
 
         T->iso = C_iso ;    // OK
 
         // allocate new space for the values and pattern
-        T->p = GB_CALLOC (2, int64_t, &(T->p_size)) ;
+        T->p = GB_calloc_memory (2, apsize, &(T->p_size)) ;
         if (!A_is_hyper)
         { 
             // A is sparse, so new space is needed for T->i
-            T->i = GB_MALLOC (anz, int64_t, &(T->i_size)) ;
+            T->i = GB_malloc_memory (anz, aisize, &(T->i_size)) ;
         }
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ; // x:OK
+            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ;
         }
 
         if (T->p == NULL || (T->i == NULL && !A_is_hyper) ||
@@ -587,6 +608,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // find the non-empty vectors of A, which become entries in T
             //------------------------------------------------------------------
 
+            GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+            GB_Ai_DECLARE (Ti,      ) ; GB_Ai_PTR (Ti, T) ;
+
             if (nth == 1)
             {
 
@@ -597,9 +621,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 int64_t k = 0 ;
                 for (int64_t j = 0 ; j < avdim ; j++)
                 {
-                    if (A->p [j] < A->p [j+1])
+                    if (GB_IGET (Ap, j) < GB_IGET (Ap, j+1))
                     { 
-                        T->i [k++] = j ;
+                        // Ti [k++] = j ;
+                        GB_ISET (Ti, k, j) ;
+                        k++ ;
                     }
                 }
                 ASSERT (k == anz) ;
@@ -620,7 +646,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
                     for (int64_t j = jstart ; j < jend ; j++)
                     {
-                        if (A->p [j] < A->p [j+1])
+                        if (GB_IGET (Ap, j) < GB_IGET (Ap, j+1))
                         { 
                             k++ ;
                         }
@@ -628,7 +654,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     Count [tid] = k ;
                 }
 
-                GB_cumsum1 (Count, ntasks) ;
+                GB_cumsum1_64 (Count, ntasks) ;
                 ASSERT (Count [ntasks] == anz) ;
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
@@ -638,9 +664,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
                     for (int64_t j = jstart ; j < jend ; j++)
                     {
-                        if (A->p [j] < A->p [j+1])
+                        if (GB_IGET (Ap, j) < GB_IGET (Ap, j+1))
                         { 
-                            T->i [k++] = j ;
+                            // Ti [k++] = j ;
+                            GB_ISET (Ti, k, j) ;
+                            k++ ;
                         }
                     }
                 }
@@ -650,9 +678,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             int64_t k = 0 ;
             for (int64_t j = 0 ; j < avdim ; j++)
             {
-                if (A->p [j] < A->p [j+1])
+                if (GB_IGET (Ap, j) < GB_IGET (Ap, j+1))
                 {
-                    ASSERT (T->i [k] == j) ;
+                    ASSERT (GB_IGET (Ti, k) == j) ;
                     k++ ;
                 }
             }
@@ -668,7 +696,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         ASSERT (T->plen == 1) ;
         ASSERT (T->nvec == 1) ;
         T->nvec_nonempty = (anz == 0) ? 0 : 1 ;
-        T->p [1] = anz ;
+
+        GB_Ap_DECLARE (Tp, ) ; GB_Ap_PTR (Tp, T) ;
+        // Tp [0] = 0 ;
+        // Tp [1] = anz ;
+        GB_ISET (Tp, 0, 0) ;
+        GB_ISET (Tp, 1, anz) ;
+
         T->nvals = anz ;
         T->magic = GB_MAGIC ;
         ASSERT (!GB_JUMBLED (T)) ;
@@ -711,7 +745,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             //------------------------------------------------------------------
 
             // allocate iwork of size anz
-            iwork = GB_MALLOC (anz, int64_t, &iwork_size) ;
+            iwork = GB_malloc_memory (anz, aisize, &iwork_size) ;
             if (iwork == NULL)
             { 
                 // out of memory
@@ -721,8 +755,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             // Construct the "row" indices of C, which are "column" indices of
             // A.  This array becomes the permanent T->i on output.
-
-            GB_OK (GB_extract_vector_list (iwork, A, Werk)) ;
+            GB_OK (GB_extract_vector_list (iwork, Ai_is_32, A, Werk)) ;
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and Swork)
@@ -732,8 +765,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // and initialize the type and dimension of T.
 
             info = GB_new (&T, // hyper, existing header
-                ctype, avdim, avlen, GB_Ap_null, C_is_csc,
-                GxB_HYPERSPARSE, A_hyper_switch, 0) ;
+                ctype, avdim, avlen, GB_ph_null, C_is_csc,
+                GxB_HYPERSPARSE, A_hyper_switch, 0, Cp_is_32, Ci_is_32) ;
             ASSERT (info == GrB_SUCCESS) ;
 
             // if in_place, the prior A->p and A->h can now be freed
@@ -753,14 +786,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (!recycle_Ai)
             { 
                 // allocate jwork of size anz
-                jwork = GB_MALLOC (anz, int64_t, &jwork_size) ;
+                jwork = GB_malloc_memory (anz, aisize, &jwork_size) ;
                 ok = ok && (jwork != NULL) ;
             }
 
             if (op != NULL && !C_iso)
             { 
-                Swork = (GB_void *) GB_XALLOC (false, C_iso, anz,   // x:OK
-                    csize, &Swork_size) ;
+                Swork = (GB_void *) GB_XALLOC (false, C_iso, anz, csize,
+                    &Swork_size) ;
                 ok = ok && (Swork != NULL) ;
             }
 
@@ -789,7 +822,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             { 
                 // copy A->i into jwork, making a deep copy.  jwork is freed by
                 // GB_builder.  A->i is not modified, even if out of memory.
-                GB_memcpy (jwork, A->i, anz * sizeof (int64_t), nthreads_max) ;
+                GB_memcpy (jwork, A->i, anz * aisize, nthreads_max) ;
             }
 
             // numerical values: apply the op, typecast, or make shallow copy
@@ -831,7 +864,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             //------------------------------------------------------------------
 
             // internally, jwork is freed and then T->x is allocated, so the
-            // total memory usage is anz * max (csize, sizeof(int64_t)).  T is
+            // total memory usage is anz * max (csize, sizeof(aisize)).  T is
             // always hypersparse.  Either T, Swork, and S_input are all iso,
             // or all non-iso, depending on C_iso.
 
@@ -858,7 +891,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                 NULL,       // no dup operator needed (input has no duplicates)
                 stype,      // type of S_input or Swork
                 false,      // no burble (already burbled above)
-                Werk
+                Werk,
+                Ai_is_32, Ai_is_32, // integer sizes of iwork and jwork
+                Cp_is_32, Ci_is_32  // how to build T->p and T->i
             )) ;
 
             // GB_builder always frees jwork, and either frees iwork or
@@ -885,6 +920,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             ASSERT (GB_JUMBLED_OK (T)) ;
         }
     }
+
+    GB_convert_int (T, false, false) ;  // FIXME
 
     //==========================================================================
     // free workspace, apply positional op, and transplant/conform T into C
@@ -925,7 +962,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // If C was constructed as iso; it needs to be expanded first,
             // but do not initialize the values.  These are computed by
             // GB_apply_op below.
-            // set C->iso = false    OK: no need to burble
             GB_OK (GB_convert_any_to_non_iso (C, false)) ;
         }
 
@@ -962,12 +998,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (GB_IS_BITMAP (C))
             { 
                 // calloc the space so the new C->x has no uninitialized space
-                Cx_new = GB_CALLOC (anz_held*csize, GB_void, &Cx_size) ; // x:OK
+                Cx_new = GB_CALLOC (anz_held*csize, GB_void, &Cx_size) ;
             }
             else
             { 
                 // malloc is fine; all C->x will be written
-                Cx_new = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ; // x:OK
+                Cx_new = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ;
             }
             if (Cx_new == NULL)
             { 

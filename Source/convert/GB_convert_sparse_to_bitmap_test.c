@@ -2,10 +2,12 @@
 // GB_convert_sparse_to_bitmap_test: test conversion of hyper/sparse to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Returns true if a sparse or hypersparse matrix should be converted to bitmap
 // (or full if all entries are present, but in that case, this function is not

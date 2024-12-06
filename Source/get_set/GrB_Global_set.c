@@ -277,6 +277,8 @@ GrB_Info GrB_Global_set_INT32
 // GrB_Global_set_VOID
 //------------------------------------------------------------------------------
 
+#include "include/GB_pedantic_disable.h"
+
 GrB_Info GrB_Global_set_VOID
 (
     GrB_Global g,

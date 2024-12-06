@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C = A, making a deep copy.  Not user-callable; this function does the work
 // for user-callable functions GrB_*_dup.
 
@@ -57,7 +59,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // C = A
     //--------------------------------------------------------------------------
 
-    // set C->iso = A->iso      OK
     GB_BURBLE_MATRIX (A, "(iso dup) ") ;
     return (GB_dup_worker (Chandle, A->iso, A, true, NULL)) ;
 }

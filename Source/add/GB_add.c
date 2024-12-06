@@ -111,7 +111,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec = 0 , Cnvec_nonempty = 0  ;
-    int64_t *Cp     = NULL ; size_t Cp_size = 0 ;
+    void *Cp        = NULL ; size_t Cp_size = 0 ;
     int64_t *Ch     = NULL ; size_t Ch_size = 0 ; 
     int64_t *C_to_M = NULL ; size_t C_to_M_size = 0 ;
     int64_t *C_to_A = NULL ; size_t C_to_A_size = 0 ;
@@ -177,7 +177,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // count the number of entries in each vector of C
         info = GB_add_phase1 (
             // computed or used by phase1:
-            &Cp, &Cp_size, &Cnvec_nonempty, A_and_B_are_disjoint,
+            (uint64_t **) &Cp, &Cp_size, &Cnvec_nonempty, A_and_B_are_disjoint,
             // from phase1a:
             TaskList, C_ntasks, C_nthreads,
             // from phase0:
@@ -219,7 +219,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // computed or used by phase2:
         C, ctype, C_is_csc, op, flipij, A_and_B_are_disjoint,
         // from phase1
-        &Cp, Cp_size, Cnvec_nonempty,
+        (uint64_t **) &Cp, Cp_size, Cnvec_nonempty,
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:

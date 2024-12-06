@@ -18,9 +18,13 @@
 #ifndef GB_CUMSUM1_H
 #define GB_CUMSUM1_H
 
-static inline void GB_cumsum1    // cumulative sum of an array
+//------------------------------------------------------------------------------
+// GB_cumsum1_64: uint64_t variant
+//------------------------------------------------------------------------------
+
+static inline bool GB_cumsum1_64    // cumulative sum of an array
 (
-    int64_t *restrict count,     // size n+1, input/output
+    uint64_t *restrict count,       // size n+1, input/output
     const int64_t n
 )
 {
@@ -36,14 +40,52 @@ static inline void GB_cumsum1    // cumulative sum of an array
     // count = cumsum ([0 count[0:n-1]]) ;
     //--------------------------------------------------------------------------
 
-    int64_t s = 0 ;
+    uint64_t s = 0 ;
     for (int64_t i = 0 ; i < n ; i++)
     { 
-        int64_t c = count [i] ;
+        uint64_t c = count [i] ;
         count [i] = s ;
         s += c ;
     }
     count [n] = s ;
+
+    return (true) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_cumsum1_32: uint32_t variant
+//------------------------------------------------------------------------------
+
+// Returns true if successful, false if integer overflow occurs.
+
+static inline bool GB_cumsum1_32   // cumulative sum of an array
+(
+    uint32_t *restrict count,   // size n+1, input/output
+    const int64_t n
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (count != NULL) ;
+    ASSERT (n >= 0) ;
+
+    //--------------------------------------------------------------------------
+    // count = cumsum ([0 count[0:n-1]]) ;
+    //--------------------------------------------------------------------------
+
+    uint64_t s = 0 ;
+    for (int64_t i = 0 ; i < n ; i++)
+    { 
+        uint64_t c = count [i] ;
+        count [i] = s ;
+        s += c ;
+    }
+    count [n] = s ;
+
+    return (s <= UINT32_MAX) ;
 }
 
 #endif

@@ -96,8 +96,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
         // find A(:,i):  A is always sparse or hypersparse
         int64_t pA, pA_end ;
         #if GB_A_IS_HYPER
-        GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
-           i, &pA, &pA_end) ;
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, i, &pA, &pA_end) ;
         #else
         pA     = Ap [i] ;
         pA_end = Ap [i+1] ;
@@ -106,8 +106,8 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
         // find B(:,j):  B is always sparse or hypersparse
         int64_t pB, pB_end ;
         #if GB_B_IS_HYPER
-        GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
-           j, &pB, &pB_end) ;
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits, j, &pB, &pB_end) ;
         #else
         pB     = Bp [j] ;
         pB_end = Bp [j+1] ;

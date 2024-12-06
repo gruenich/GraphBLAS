@@ -151,7 +151,8 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (B_slice, B->p, bnvec, ntasks, false) ;
+    GB_p_slice (B_slice, B->p, false,   // FIXME
+        bnvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
     // via the factory kernel

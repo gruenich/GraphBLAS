@@ -2,10 +2,12 @@
 // GB_bix_free: free A->(b,i,x) pending tuples, zombies; A->p, A->h unchanged
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Since A->p and A->h are unchanged, the matrix is still valid (unless it was
 // invalid on input).  nnz(A) would report zero, and so would GrB_Matrix_nvals.
@@ -63,7 +65,7 @@ void GB_bix_free                // free A->b, A->i, and A->x of a matrix
     A->x = NULL ;               // GB_nnz_max (A) will report zero
     A->x_size = 0 ;
     A->x_shallow = false ;
-    A->iso = false ;            // OK: all components are freed; no longer iso
+    A->iso = false ;
 
     A->nvals = 0 ;
 

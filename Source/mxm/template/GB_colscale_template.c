@@ -28,7 +28,7 @@
     // get C, A, and D
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     const GB_B_TYPE *restrict Dx = (GB_B_TYPE *) D->x ;

@@ -289,6 +289,8 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 // GxB_Global_Option_set_FUNCTION: set a global option (function pointer)
 //------------------------------------------------------------------------------
 
+#include "include/GB_pedantic_disable.h"
+
 GrB_Info GxB_Global_Option_set_FUNCTION      // set a global default option
 (
     GxB_Option_Field field,         // option to change

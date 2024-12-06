@@ -2,7 +2,7 @@
 // GB_macrofy_select: construct all macros for select methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ void GB_macrofy_select          // construct all macros for GrB_select
     uint64_t method_code,
     // operator:
     const GrB_IndexUnaryOp op,
-    GrB_Type atype
-)
+    GrB_Type atype              // also the type of C
+) 
 {
 
     //--------------------------------------------------------------------------
@@ -30,8 +30,8 @@ void GB_macrofy_select          // construct all macros for GrB_select
     bool C_iso      = GB_RSHIFT (method_code, 37, 1) ;
     bool A_iso      = GB_RSHIFT (method_code, 36, 1) ;
 
-    // inplace, i/j dependency and flipij (4 bits)
-//  int inplace     = GB_RSHIFT (method_code, 35, 1) ;
+    // i/j dependency and flipij (3 bits)
+//  unused bit:       GB_RSHIFT (method_code, 35, 1) ;
     int i_dep       = GB_RSHIFT (method_code, 34, 1) ;
     int j_dep       = GB_RSHIFT (method_code, 33, 1) ;
     bool flipij     = GB_RSHIFT (method_code, 32, 1) ;
@@ -47,7 +47,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     int acode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-//  int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
     int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
@@ -82,9 +82,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    GrB_Type ctype = atype ;    // this may change in the future
-
-    GB_macrofy_typedefs (fp, ctype, atype, NULL,
+    GB_macrofy_typedefs (fp, NULL, atype, NULL,
         xtype, ytype, ztype) ;
 
     fprintf (fp, "// unary operator types:\n") ;
@@ -211,19 +209,20 @@ void GB_macrofy_select          // construct all macros for GrB_select
     }
 
     //--------------------------------------------------------------------------
-    // macros for the Cx array
+    // construct the macros for C
     //--------------------------------------------------------------------------
 
-    // Cx has the same type as A for now
-    fprintf (fp, "\n// C type:\n") ;
-    GB_macrofy_type (fp, "C", "_", ctype->name) ;
+    // C has the same type as A
+    GB_macrofy_output (fp, "c", "C", "C", atype, atype,
+        csparsity, C_iso, C_iso, /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A
     //--------------------------------------------------------------------------
 
     GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-        atype, asparsity, acode, 0, -1) ;
+        atype, asparsity, acode, 0, -1,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

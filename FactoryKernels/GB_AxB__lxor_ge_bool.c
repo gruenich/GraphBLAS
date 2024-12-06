@@ -461,5 +461,7 @@ GrB_Info GB (_Asaxpy3B__lxor_ge_bool)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

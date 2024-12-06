@@ -24,7 +24,7 @@
 GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
 (
     // computed by phase1:
-    int64_t **Cp_handle,                    // output of size Cnvec+1
+    uint64_t **Cp_handle,                   // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
     // tasks from phase1a:
@@ -83,8 +83,8 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = NULL ;
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;     // FIXME
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), uint64_t, &Cp_size) ;      // FIXME
     if (Cp == NULL)
     { 
         // out of memory

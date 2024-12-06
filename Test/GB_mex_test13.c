@@ -66,7 +66,7 @@ void mexFunction
     {
         unsetenv ("GRAPHBLAS_CACHE_PATH") ;
     }
-    system ("rm -rf /tmp/grbcache13") ;
+    int ignore = system ("rm -rf /tmp/grbcache13") ;
     cache_env = getenv ("GRAPHBLAS_CACHE_PATH") ;
     CHECK (cache_env == NULL) ;
 

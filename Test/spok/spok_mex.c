@@ -29,7 +29,7 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    SPOK_INT *Ap, *Ai ;
+    mwIndex *Ap, *Ai ;
     double *Ax, *Az ;
     char *As ;
     SPOK_INT i, j, p, njumbled, nzeros, m, n, nzmax ;
@@ -55,7 +55,7 @@ void mexFunction
         return ;
     }
 
-    Ap = (SPOK_INT *) mxGetJc (pargin [0]) ;
+    Ap = (mwIndex *) mxGetJc (pargin [0]) ;
     Ai = (SPOK_INT *) mxGetIr (pargin [0]) ;
     m = mxGetM (pargin [0]) ;
     n = mxGetN (pargin [0]) ;

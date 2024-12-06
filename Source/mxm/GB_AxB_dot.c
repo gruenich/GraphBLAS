@@ -26,7 +26,8 @@
 // very large matrices C.  GB_AxB_dot4 computes C+=A'*B when C is full.
 
 // The output matrix C has not been allocated.  It is an uninitialzed static
-// header on input.  The mask M is optional.
+// header on input.  The mask M is optional.  The type of C (ctype) always
+// matches the ztype of the monoid, and also the accumulator for GB_AxB_dot4.
 
 // If the result is computed in-place, then the C parameter is ignored, and the
 // result is computed in C_in instead.  This case requires the accum operator
@@ -113,8 +114,9 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
             (*mask_applied) = false ;
             // set C->iso = true    OK
             info = GB_new_bix (&C, // existing header
-                ztype, A->vdim, B->vdim, GB_Ap_null, true, GxB_FULL, false,
-                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true) ;
+                ztype, A->vdim, B->vdim, GB_ph_null, true, GxB_FULL, false,
+                GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true,
+                /* OK: */ false, false) ;
             if (info == GrB_SUCCESS)
             { 
                 C->magic = GB_MAGIC ;
@@ -134,7 +136,9 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
     { 
         // C_in must be full on input.  M must be NULL and not
         // complemented.  the C iso case is not handled (where C is iso on
-        // output), but C_in might be iso on input.
+        // output), but C_in might be iso on input.  Its type must match
+        // the monoid.
+        ASSERT (C_in->type == semiring->add->op->ztype) ;
 
         (*mask_applied) = false ;    // no mask to apply
         info = GB_AxB_dot4 (C_in, A, B, semiring, flipxy, done_in_place, Werk) ;
@@ -156,8 +160,8 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         GBURBLE ("(empty dot) ") ;
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, // auto sparsity, existing header
-            ztype, A->vdim, B->vdim, GB_Ap_calloc, true, GxB_AUTO_SPARSITY,
-            GB_Global_hyper_switch_get ( ), 1)) ;
+            ztype, A->vdim, B->vdim, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
+            GB_Global_hyper_switch_get ( ), 1, /* FIXME: */ false, false)) ;
     }
 
     //--------------------------------------------------------------------------

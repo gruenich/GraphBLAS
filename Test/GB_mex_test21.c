@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// The enumfy/macrofy methods handle more cases than are currently used by
+// The enumify/macrofy methods handle more cases than are currently used by
 // the JIT kernels, such as (1) typecasting the output of the accum/monoid/op
 // to the type of C, (2) positional select operators, (3) positional index
 // unary operators, and (4) the case when the output C matrix is iso-valued.
@@ -63,7 +63,7 @@ void mexFunction
     // results are written to a single log file
     //--------------------------------------------------------------------------
 
-    FILE *fp = fopen ("log_GB_mex_test21.txt", "w") ;
+    FILE *fp = fopen ("tmp/log_GB_mex_test21.txt", "w") ;
     CHECK (fp != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -130,6 +130,7 @@ void mexFunction
     printf ("GB_enumify_ewise / GB_macrofy_ewise, C iso\n") ;
     GB_enumify_ewise (&method_code, false, false, false, true,
         /* C_iso: */ true, /* C_in_iso: */ false, GxB_SPARSE, GrB_BOOL,
+        /* is32: */ false, false,
         /* M: */ NULL, false, false, GrB_LAND, false, false, A, B) ;
     GB_macrofy_ewise (fp, method_code, GB_JIT_KERNEL_ADD,
         GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
@@ -139,6 +140,7 @@ void mexFunction
     printf ("GB_enumify_ewise / GB_macrofy_ewise, C non iso\n") ;
     GB_enumify_ewise (&method_code, false, false, false, true,
         /* C_iso: */ false, /* C_in_iso: */ false, GxB_SPARSE, GrB_BOOL,
+        /* is32: */ false, false,
         /* M: */ NULL, false, false, GrB_LAND, false, false, A, B) ;
     GB_macrofy_ewise (fp, method_code, GB_JIT_KERNEL_ADD,
         GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
@@ -193,8 +195,8 @@ void mexFunction
         fprintf (fp, "GB_enumify_select / GB_macrofy_select: %s\n", op->name) ;
         printf ("GB_enumify_select / GB_macrofy_select: %s\n", op->name) ;
         // GxB_print (op, 3) ;
-        GB_enumify_select (&method_code, /* C iso: */ false,
-            /* inplace A: */ false, op, /* flipij: */ false, A) ;
+        GB_enumify_select (&method_code, /* C: */ A,
+            op, /* flipij: */ false, A) ;
         GB_macrofy_select (fp, method_code, op, GrB_BOOL) ;
     }
 
@@ -204,8 +206,8 @@ void mexFunction
     GrB_IndexUnaryOp opi ;
     OK (GxB_IndexUnaryOp_new (&opi, (GxB_index_unary_function) opi32func,
         GxB_FC32, GxB_FC32, GxB_FC32, "opi32func", OPI32_DEFN)) ;
-    GB_enumify_select (&method_code, /* C iso: */ false,
-        /* inplace A: */ false, opi, /* flipij: */ false, A) ;
+    GB_enumify_select (&method_code, /* C: */ A,
+        opi, /* flipij: */ false, A) ;
     GB_macrofy_select (fp, method_code, opi, GxB_FC32) ;
     GrB_free (&opi) ;
 
@@ -226,8 +228,8 @@ void mexFunction
         fprintf (fp, "GB_enumify_apply / GB_macrofy_apply: %s\n", op->name) ;
         printf ("GB_enumify_apply / GB_macrofy_apply: %s\n", op->name) ;
         GB_enumify_apply (&method_code, GxB_SPARSE, true, GrB_INT32,
-            (GB_Operator) op, false,
-            GB_sparsity (A), true, GrB_INT32, A->iso, A->nzombies) ;
+            false, false, false, (GB_Operator) op, false, GB_sparsity (A),
+            true, GrB_INT32, false, false, A->iso, A->nzombies) ;
         GB_macrofy_apply (fp, method_code, (GB_Operator) op,
             GrB_INT32, GrB_INT32) ;
     }
@@ -237,8 +239,8 @@ void mexFunction
     fprintf (fp, "GB_enumify_apply / GB_macrofy_apply: %s\n", op1->name) ;
     printf ("GB_enumify_apply / GB_macrofy_apply: %s\n", op1->name) ;
     GB_enumify_apply (&method_code, GxB_SPARSE, true, GrB_INT32,
-        (GB_Operator) op1, false,
-        GB_sparsity (A), true, GrB_INT32, A->iso, A->nzombies) ;
+        false, false, false, (GB_Operator) op1, false, GB_sparsity (A),
+        true, GrB_INT32, false, false, A->iso, A->nzombies) ;
     GB_macrofy_apply (fp, method_code, (GB_Operator) op1,
         GrB_INT32, GrB_INT32) ;
 
@@ -250,14 +252,16 @@ void mexFunction
     GrB_BinaryOp op2 = GxB_TIMES_FC32 ;
     fprintf (fp, "GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
     printf ("GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
-    GB_enumify_build (&method_code, op2, GrB_BOOL, GrB_BOOL) ;
+    GB_enumify_build (&method_code, op2, GrB_BOOL, GrB_BOOL, false, false,
+        false, false, false) ;
     GB_macrofy_build (fp, method_code, op2, GrB_BOOL, GrB_BOOL) ;
 
     HEADER ;
     op2 = GrB_LAND ;
     fprintf (fp, "GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
     printf ("GB_enumify_build / GB_macrofy_build: %s\n", op2->name) ;
-    GB_enumify_build (&method_code, op2, GxB_FC32, GxB_FC32) ;
+    GB_enumify_build (&method_code, op2, GxB_FC32, GxB_FC32, false, false,
+        false, false, true) ;
     GB_macrofy_build (fp, method_code, op2, GxB_FC32, GxB_FC32) ;
 
     //--------------------------------------------------------------------------

@@ -57,7 +57,9 @@
 
         int64_t kfirst = TaskList_IxJ [taskid].kfirst ;
         int64_t klast  = TaskList_IxJ [taskid].klast ;
+        #ifndef GB_NO_CNVALS
         int64_t task_cnvals = 0 ;
+        #endif
         bool fine_task = (klast == -1) ;
         int64_t iA_start = 0, iA_end = nI ;
         if (fine_task)

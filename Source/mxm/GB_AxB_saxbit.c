@@ -27,7 +27,6 @@
 #include "jitifyer/GB_stringify.h"
 #include "mxm/GB_AxB_saxpy.h"
 #include "binaryop/GB_binop.h"
-#include "slice/GB_ek_slice.h"
 #include "mxm/GB_AxB_saxpy_generic.h"
 #include "mxm/GB_AxB__include1.h"
 #ifndef GBCOMPACT
@@ -119,10 +118,10 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
     GrB_Type ctype = semiring->add->op->ztype ;
     int64_t cnzmax = 1 ;
     (void) GB_int64_multiply ((GrB_Index *) (&cnzmax), A->vlen, B->vdim) ;
-    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // existing header
-        ctype, A->vlen, B->vdim, GB_Ap_null, true, GxB_BITMAP, true,
-        GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso)) ;
+        ctype, A->vlen, B->vdim, GB_ph_null, true, GxB_BITMAP, true,
+        GB_HYPER_SWITCH_DEFAULT, -1, cnzmax, true, C_iso,
+        /* OK: */ false, false)) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
@@ -167,7 +166,8 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
-            GB_p_slice (A_slice, A->p, A->nvec, nfine_tasks_per_vector, true) ;
+            GB_p_slice (A_slice, A->p, false,   // FIXME
+                A->nvec, nfine_tasks_per_vector, true) ;
         }
 
         //----------------------------------------------------------------------

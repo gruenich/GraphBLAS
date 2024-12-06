@@ -2,10 +2,12 @@
 // GB_convert_sparse_to_hyper_test: test for sparse to hypersparse conversion
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Returns true if a sparse matrix should be converted to hypersparse.
 // Returns false if the matrix should stay sparse.

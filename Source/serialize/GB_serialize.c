@@ -99,11 +99,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_blocks *Ab_Blocks = NULL ; size_t Ab_Blocks_size = 0 ;
     GB_blocks *Ai_Blocks = NULL ; size_t Ai_Blocks_size = 0 ;
     GB_blocks *Ax_Blocks = NULL ; size_t Ax_Blocks_size = 0 ;
-    int64_t *Ap_Sblocks = NULL  ; size_t Ap_Sblocks_size = 0 ;
-    int64_t *Ah_Sblocks = NULL  ; size_t Ah_Sblocks_size = 0 ;
-    int64_t *Ab_Sblocks = NULL  ; size_t Ab_Sblocks_size = 0 ;
-    int64_t *Ai_Sblocks = NULL  ; size_t Ai_Sblocks_size = 0 ;
-    int64_t *Ax_Sblocks = NULL  ; size_t Ax_Sblocks_size = 0 ;
+    uint64_t *Ap_Sblocks = NULL ; size_t Ap_Sblocks_size = 0 ;
+    uint64_t *Ah_Sblocks = NULL ; size_t Ah_Sblocks_size = 0 ;
+    uint64_t *Ab_Sblocks = NULL ; size_t Ab_Sblocks_size = 0 ;
+    uint64_t *Ai_Sblocks = NULL ; size_t Ai_Sblocks_size = 0 ;
+    uint64_t *Ax_Sblocks = NULL ; size_t Ax_Sblocks_size = 0 ;
     int32_t Ap_nblocks = 0      ; size_t Ap_compressed_size = 0 ;
     int32_t Ah_nblocks = 0      ; size_t Ah_compressed_size = 0 ;
     int32_t Ab_nblocks = 0      ; size_t Ab_compressed_size = 0 ;
@@ -116,6 +116,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 
     GB_OK (GB_wait (A, "A to serialize", Werk)) ;
     ASSERT (A->nvec_nonempty >= 0) ;
+
+    // the matrix has no pending work
+    ASSERT (!GB_PENDING (A)) ;
+    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_JUMBLED (A)) ;
 
     //--------------------------------------------------------------------------
     // determine maximum # of threads
@@ -152,10 +157,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     float hyper_switch = A->hyper_switch ;
     float bitmap_switch = A->bitmap_switch ;
     int32_t sparsity_control = A->sparsity_control ;
-    // the matrix has no pending work
-    ASSERT (A->Pending == NULL) ;
-    ASSERT (A->nzombies == 0) ;
-    ASSERT (!A->jumbled) ;
     GrB_Type atype = A->type ;
     int64_t typesize = atype->size ;
     int32_t typecode = (int32_t) (atype->code) ;
@@ -229,11 +230,11 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         // header information
         GB_BLOB_HEADER_SIZE
         // Sblocks for each array
-        + Ap_nblocks * sizeof (int64_t)     // Ap_Sblocks [1:Ap_nblocks]
-        + Ah_nblocks * sizeof (int64_t)     // Ah_Sblocks [1:Ah_nblocks]
-        + Ab_nblocks * sizeof (int64_t)     // Ab_Sblocks [1:Ab_nblocks]
-        + Ai_nblocks * sizeof (int64_t)     // Ai_Sblocks [1:Ai_nblocks]
-        + Ax_nblocks * sizeof (int64_t)     // Ax_Sblocks [1:Ax_nblocks]
+        + Ap_nblocks * sizeof (uint64_t)    // Ap_Sblocks [1:Ap_nblocks]
+        + Ah_nblocks * sizeof (uint64_t)    // Ah_Sblocks [1:Ah_nblocks]
+        + Ab_nblocks * sizeof (uint64_t)    // Ab_Sblocks [1:Ab_nblocks]
+        + Ai_nblocks * sizeof (uint64_t)    // Ai_Sblocks [1:Ai_nblocks]
+        + Ax_nblocks * sizeof (uint64_t)    // Ax_Sblocks [1:Ax_nblocks]
         // type_name for user-defined types
         + ((typecode == GB_UDT_code) ? GxB_MAX_NAME_LEN : 0) ;
 
@@ -311,6 +312,20 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // so write a 64-bit blob size, regardless of the size of size_t
     uint64_t blob_size_required64 = (uint64_t) blob_size_required ;
     GB_BLOB_WRITE (blob_size_required64, uint64_t) ;
+
+    // FIXME: augment typecode with an encoding of the integer sizes of
+    // A->p and A->h/A->i (2 bits).
+
+    // typecode is current 4 bytes, but only 1 byte is required.
+    // Use the 2nd byte for A->p and A->i integer sizes.
+    #ifdef todo
+        int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+        int Ai_is_32 = (A->i_is_32) ? 1 : 0 ;
+        uint32_t encoding =
+            GB_LSHIFT (Ap_is_32, 5) |
+            GB_LSHIFT (Ai_is_32, 4) |
+            (typecode & 0xF) ;
+    #endif
 
     GB_BLOB_WRITE (typecode, int32_t) ;
     GB_BLOB_WRITE (version, int32_t) ;

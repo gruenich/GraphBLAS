@@ -2,10 +2,12 @@
 // GB_task_methods.h: parallel task descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 #ifndef GB_TASK_METHODS_H
 #define GB_TASK_METHODS_H
@@ -90,7 +92,7 @@ void GB_slice_vector
 
 void GB_task_cumsum
 (
-    int64_t *Cp,                        // size Cnvec+1
+    uint64_t *Cp,                       // size Cnvec+1 FIXME
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *restrict TaskList,  // array of structs

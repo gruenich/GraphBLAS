@@ -2,10 +2,12 @@
 // GB_convert_any_to_hyper: convert any matrix to hypersparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 #include "GB.h"
 #define GB_FREE_ALL ;

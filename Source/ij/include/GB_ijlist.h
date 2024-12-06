@@ -10,6 +10,24 @@
 #ifndef GB_IJLIST_H
 #define GB_IJLIST_H
 
+//------------------------------------------------------------------------------
+// kind of index list, Ikind and Jkind, and assign variations
+//------------------------------------------------------------------------------
+
+#define GB_ALL 0
+#define GB_RANGE 1
+#define GB_STRIDE 2
+#define GB_LIST 3
+
+#define GB_ASSIGN 0
+#define GB_SUBASSIGN 1
+#define GB_ROW_ASSIGN 2
+#define GB_COL_ASSIGN 3
+
+//------------------------------------------------------------------------------
+// GB_ijlist
+//------------------------------------------------------------------------------
+
 // given k, return the kth item i = I [k] in the list
 static inline int64_t GB_ijlist     // get the kth item in a list of indices
 (

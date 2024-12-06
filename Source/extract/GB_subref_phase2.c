@@ -7,8 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // GB_subref_phase2 counts the number of entries in each vector of C, for
-// C=A(I,J) and then does a cumulative sum to find Cp.
+// C=A(I,J) and then does a cumulative sum to find Cp.  A is sparse or
+// hypersparse.
 
 // Cp is either freed by phase2, or transplanted into C.
 
@@ -17,7 +20,7 @@
 GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 (
     // computed by phase2:
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    uint64_t **Cp_handle,               // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase1:
@@ -28,8 +31,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // analysis from phase0:
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -50,7 +53,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Cp_size_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // allocate the result
@@ -58,8 +61,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), int64_t, &Cp_size) ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
+    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), uint64_t, &Cp_size) ;  // FIXME
     if (Cp == NULL)
     { 
         // out of memory

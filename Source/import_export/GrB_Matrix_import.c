@@ -135,13 +135,13 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         case GrB_CSC_FORMAT : 
             Ap_copy = GB_MALLOC (plen,           GrB_Index, &Ap_size) ;
             Ai_copy = GB_MALLOC (nvals,          GrB_Index, &Ai_size) ;
-            Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ; // x:OK
+            Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
 
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
-//          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ; // x:OK
+//          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
 //          ok = (Ax_copy != NULL) ;
 //          break ;
 
@@ -258,8 +258,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         default : // GrB_COO_FORMAT
             {
                 // build A as hypersparse by row or by column
-                int64_t *no_I_work = NULL ; size_t I_work_size = 0 ;
-                int64_t *no_J_work = NULL ; size_t J_work_size = 0 ;
+                void *no_I_work = NULL ; size_t I_work_size = 0 ;
+                void *no_J_work = NULL ; size_t J_work_size = 0 ;
                 GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
                 bool is_csc = GB_Global_is_csc_get ( ) ;
                 int64_t vlen = is_csc ? nrows : ncols ;
@@ -267,8 +267,9 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 
                 // allocate the header for A
                 GB_OK (GB_new (A, // new header
-                    type, vlen, vdim, GB_Ap_null, is_csc, GxB_AUTO_SPARSITY,
-                    GB_Global_hyper_switch_get ( ), 0)) ;
+                    type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
+                    GB_Global_hyper_switch_get ( ), 0,
+                    /* FIXME: */ false, false)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (
@@ -287,15 +288,16 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     false,          // known_no_duplicates: not yet known
                     0,              // I_work, J_work, and X_work not used here
                     true,           // A is a GrB_Matrix
-                    (int64_t *) (is_csc ? Ap : Ai),     // row/col indices
-                    (int64_t *) (is_csc ? Ai : Ap),     // col/row indices
+                    is_csc ? Ap : Ai,     // row/col indices
+                    is_csc ? Ai : Ap,     // col/row indices
                     (const GB_void *) Ax,               // values
                     false,          // matrix is not iso
                     nvals,          // number of tuples
                     NULL,           // implicit SECOND operator for duplicates
                     type,           // type of the X array
                     true,           // burble is allowed
-                    Werk
+                    Werk,
+                    false, false, false, false  // FIXME
                 )) ;
             }
             break ;

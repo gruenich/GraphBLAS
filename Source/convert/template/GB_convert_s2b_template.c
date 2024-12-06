@@ -2,10 +2,12 @@
 // GB_convert_s2b_template: convert A from sparse to bitmap
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // A is sparse or hypersparse.  Cx and Cb have the same type as A,
 // and represent a bitmap format.
@@ -13,14 +15,13 @@
 {
 
     //--------------------------------------------------------------------------
-    // get A
+    // get A and Cx_new
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
     const int64_t avlen = A->vlen ;
-
     #ifdef GB_A_TYPE
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_new ;

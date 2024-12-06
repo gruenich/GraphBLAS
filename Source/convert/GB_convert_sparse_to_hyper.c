@@ -2,10 +2,12 @@
 // GB_convert_sparse_to_hyper: convert a matrix from sparse to hyperspasre
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // On input, the matrix may have shallow A->p content; it is safely removed.
 // On output, the matrix is always hypersparse (even if out of memory).  If the
@@ -64,7 +66,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         ASSERT (A->nvec == A->plen && A->plen == n) ;
 
-        const int64_t *restrict Ap_old = A->p ;
+        GB_Ap_DECLARE (Ap_old, const) ; GB_Ap_PTR (Ap_old, A) ;
         size_t Ap_old_size = A->p_size ;
         bool Ap_old_shallow = A->p_shallow ;
 
@@ -83,8 +85,11 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
             int64_t jstart, jend, my_nvec_nonempty = 0 ; ;
             GB_PARTITION (jstart, jend, n, tid, ntasks) ;
             for (int64_t j = jstart ; j < jend ; j++)
-            { 
-                if (Ap_old [j] < Ap_old [j+1]) my_nvec_nonempty++ ;
+            {
+                if (GB_IGET (Ap_old, j) < GB_IGET (Ap_old, j+1))
+                { 
+                    my_nvec_nonempty++ ;
+                }
             }
             Count [tid] = my_nvec_nonempty ;
         }
@@ -93,7 +98,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // compute cumulative sum of Counts and nvec_nonempty
         //----------------------------------------------------------------------
 
-        GB_cumsum1 (Count, ntasks) ;
+        GB_cumsum1_64 ((uint64_t *) Count, ntasks) ;
         int64_t nvec_nonempty = Count [ntasks] ;
         A->nvec_nonempty = nvec_nonempty ;
 
@@ -101,11 +106,13 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         // allocate the new A->p and A->h
         //----------------------------------------------------------------------
 
-        int64_t *restrict Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        int64_t *restrict Ah_new = NULL ; size_t Ah_new_size = 0 ;
+        GB_Ap_DECLARE (Ap_new, ) ; size_t Ap_new_size = 0 ;
+        GB_Ah_DECLARE (Ah_new, ) ; size_t Ah_new_size = 0 ;
         int64_t plen_new = (n == 1) ? 1 : nvec_nonempty ;
-        Ap_new = GB_MALLOC (plen_new+1, int64_t, &Ap_new_size) ;
-        Ah_new = GB_MALLOC (plen_new  , int64_t, &Ah_new_size) ;
+        size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        Ap_new = GB_malloc_memory (plen_new+1, psize, &Ap_new_size) ;
+        Ah_new = GB_malloc_memory (plen_new  , isize, &Ah_new_size) ;
         if (Ap_new == NULL || Ah_new == NULL)
         { 
             // out of memory
@@ -114,6 +121,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
             GB_FREE (&Ah_new, Ah_new_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+        GB_IPTR (Ap_new, A->p_is_32) ;
+        GB_IPTR (Ah_new, A->i_is_32) ;
 
         //----------------------------------------------------------------------
         // transplant the new A->p and A->h into the matrix
@@ -137,18 +146,22 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
             GB_PARTITION (jstart, jend, n, tid, ntasks) ;
             for (int64_t j = jstart ; j < jend ; j++)
             {
-                if (Ap_old [j] < Ap_old [j+1])
+                int64_t p = GB_IGET (Ap_old, j) ;
+                if (p < GB_IGET (Ap_old, j+1))
                 { 
                     // vector index j is the kth vector in the new Ah
-                    Ap_new [k] = Ap_old [j] ;
-                    Ah_new [k] = j ;
+                    // Ap_new [k] = p
+                    GB_ISET (Ap_new, k, p) ;
+                    // Ah_new [k] = j
+                    GB_ISET (Ah_new, k, j) ;
                     k++ ;
                 }
             }
             ASSERT (k == Count [tid+1]) ;
         }
 
-        Ap_new [nvec_nonempty] = anz ;
+        // Ap_new [nvec_nonempty] = anz ;
+        GB_ISET (Ap_new, nvec_nonempty, anz) ;
         A->magic = GB_MAGIC ;
 
         //----------------------------------------------------------------------

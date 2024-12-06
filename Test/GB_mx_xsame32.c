@@ -33,8 +33,8 @@ bool GB_mx_xsame32  // true if arrays X and Y are the same (ignoring zombies)
         // check X [i] and Y [i], but ignore zombies
         if (I == NULL || I [i] >= 0)
         {
-            float xi = GBX (X, i, X_iso) ;
-            float yi = GBX (Y, i, Y_iso) ;
+            float xi = X [X_iso ? 0 : i] ;
+            float yi = Y [Y_iso ? 0 : i] ;
             int c = fpclassify (xi) ;
             if (c != fpclassify (yi)) return (false) ;
             if (c == FP_ZERO)

@@ -32,10 +32,10 @@
 
     int taskid ;
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
-    const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
     const int64_t vlen = A->vlen ;
 
     #ifdef GB_JIT_KERNEL
@@ -53,10 +53,10 @@
     const bool A_iso = A->iso ;
     #endif
 
-    const int64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
 
     #ifdef GB_JIT_KERNEL
     #define B_is_hyper  GB_B_IS_HYPER
@@ -72,10 +72,10 @@
     const bool B_iso = B->iso ;
     #endif
 
-    const int64_t *restrict Mp = NULL ;
+    const uint64_t *restrict Mp = NULL ;    // FIXME
     const int64_t *restrict Mh = NULL ;
-    const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
+    const int8_t  *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
     size_t msize = 0 ;
 
@@ -99,8 +99,8 @@
     { 
         Mp = M->p ;
         Mh = M->h ;
-        Mb = M->b ;
         Mi = M->i ;
+        Mb = M->b ;
         Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
     }
@@ -133,10 +133,10 @@
         ASSERT (!C->iso) ;
         #endif
 
-        const int64_t  *restrict Cp = C->p ;
+        const uint64_t *restrict Cp = C->p ;    // FIXME
         const int64_t  *restrict Ch = C->h ;
-              int8_t   *restrict Cb = C->b ;
               int64_t  *restrict Ci = C->i ;
+              int8_t   *restrict Cb = C->b ;
         GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
 
     #endif

@@ -49,6 +49,7 @@
     // disable warnings from -Wall -Wextra -Wpendantic
     #pragma GCC diagnostic ignored "-Wunused-parameter"
     #pragma GCC diagnostic ignored "-Wsign-compare"
+    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
     #if defined ( __cplusplus )
     #pragma GCC diagnostic ignored "-Wwrite-strings"
     #else
@@ -56,7 +57,9 @@
     #endif
 
     // enable these warnings as errors
+    #pragma GCC diagnostic error "-Wpointer-sign"
     #pragma GCC diagnostic error "-Wswitch-default"
+    #pragma GCC diagnostic error "-Wreturn-type"
     #if !defined ( __cplusplus )
     #pragma GCC diagnostic error "-Wmissing-prototypes"
     #endif
@@ -64,8 +67,8 @@
 #elif GB_COMPILER_CLANG
 
     // disable warnings for clang
-    #pragma clang diagnostic ignored "-Wpointer-sign"
     #pragma clang diagnostic ignored "-Wpass-failed"
+    #pragma clang diagnostic error "-Wpointer-sign"
 
 #elif GB_COMPILER_MSC
 

@@ -88,8 +88,12 @@ J0 = uint64 (J) - 1 ;
 
 A1 = sparse (I, J, X, m, n) ;
 A2 = GB_mex_Matrix_build (I0, J0, X, m, n, [ ]) ;
-
 assert (norm (A1 - A2.matrix, 1) < 1e-12)
+
+I0 = uint32 (I) - 1 ;
+J0 = uint32 (J) - 1 ;
+A3 = GB_mex_Matrix_build (I0, J0, X, m, n, [ ]) ;
+assert (norm (A1 - A3.matrix, 1) < 1e-12)
 
 %----------------------------------------------------------------------
 
@@ -102,5 +106,6 @@ assert (norm (v1 - v2.matrix, 1) / norm (v1,1) < 1e-12)
 % restore # of threads
 nthreads_set (nthreads) ;
 
+GrB.burble (0) ;
 fprintf ('\ntest184: all tests passed\n') ;
 

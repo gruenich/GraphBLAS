@@ -2,7 +2,7 @@
 // GB_macrofy_subref: construct all macros for subref methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     int Jkind       = GB_RSHIFT (method_code,  8, 2) ;
 
     // type of C and A (1 hex digit)
-    int ccode       = GB_RSHIFT (method_code,  4, 4) ;
+//  int ccode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
     int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
@@ -90,11 +90,13 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_nvals (fp, "C", csparsity, false) ;
     GB_macrofy_type (fp, "C", "_", ctype->name) ;
+    GB_macrofy_bits (fp, "C", false, false) ;       // FIXME
 
     GrB_Type atype = ctype ;        // C and A have the same type
     GB_macrofy_sparsity (fp, "A", asparsity) ;
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
     GB_macrofy_type (fp, "A", "_", atype->name) ;
+    GB_macrofy_bits (fp, "A", false, false) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // include the final default definitions

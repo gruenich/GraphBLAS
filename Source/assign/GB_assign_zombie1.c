@@ -37,20 +37,22 @@ GrB_Info GB_assign_zombie1
     // get C(:,j)
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
+    int64_t *restrict Ci = C->i ;
     int64_t pC_start, pC_end ;
     const int64_t Cnvec = C->nvec ;
 
     if (Ch != NULL)
     { 
         // C is hypersparse
-        const int64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
+        // FIXME
+        const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
         const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
         const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
         const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
-        GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+        GB_hyper_hash_lookup (false, false, // FIXME
+            Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
             j, &pC_start, &pC_end) ;
     }
     else

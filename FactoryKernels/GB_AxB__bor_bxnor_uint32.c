@@ -464,5 +464,7 @@ GrB_Info GB (_Asaxpy3B__bor_bxnor_uint32)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

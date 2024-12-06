@@ -18,6 +18,7 @@
 #include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
+#include "slice/factory/GB_ek_slice_merge.h"
 
 GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 (
@@ -34,13 +35,15 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     const int A_ntasks,
     const int A_nthreads,
     // workspace:
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     // output:
-    int64_t *Cp_kfirst,
+    uint64_t *Cp_kfirst,
     GB_Werk Werk
 )
 {
+
+    // FIXME: if C->p_is_32, make sure cnz doesn't overflow
 
     //--------------------------------------------------------------------------
     // get C, M, A, and B
@@ -56,7 +59,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const int64_t vlen = A->vlen ;
@@ -66,7 +69,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     const int8_t *restrict Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
-    int64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
@@ -185,17 +188,26 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
         //----------------------------------------------------------------------
 
-        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
-        GB_ek_slice_merge2 (&(C->nvec_nonempty), Cp_kfirst, Cp, nvec,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
+        // FIXME: make sure Cp is OK for cumsum
+
+        GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
+            Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+
+        GB_cumsum (Cp, /* FIXME: */ false,
+            nvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+
+        GB_ek_slice_merge2 (Cp_kfirst,
+            Cp, /* FIXME: */ false,
+            Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
     }
 
     //--------------------------------------------------------------------------
     // allocate C->i and C->x
     //--------------------------------------------------------------------------
 
+    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
+
     int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
-    // set C->iso = C_iso   OK
     GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
 
     //--------------------------------------------------------------------------

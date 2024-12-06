@@ -16,7 +16,6 @@ GB_callback_struct GB_callback =
     .GB_bitmap_M_scatter_whole_func = GB_bitmap_M_scatter_whole,
     .GB_bix_alloc_func              = GB_bix_alloc,
     .GB_ek_slice_func               = GB_ek_slice,
-    .GB_ek_slice_merge1_func        = GB_ek_slice_merge1,
     .GB_free_memory_func            = GB_free_memory,
     .GB_malloc_memory_func          = GB_malloc_memory,
     .GB_memset_func                 = GB_memset,

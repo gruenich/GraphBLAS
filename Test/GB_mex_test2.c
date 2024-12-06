@@ -93,7 +93,8 @@ void mexFunction
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
     CHECK (scalar->i != NULL) ;
-    scalar->i [0] = GB_ZOMBIE (0) ;
+    int64_t *Si = scalar->i ;
+    Si [0] = GB_ZOMBIE (0) ;
     scalar->nzombies = 1 ;
     OK (GxB_Scalar_fprint (scalar, "scalar with zombie", 3, NULL)) ;
     expected = GrB_NO_VALUE ;
@@ -129,12 +130,18 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t Slice [30] ;
-    GB_p_slice (Slice, A->p, n, 2, true) ;
+    GB_p_slice (Slice, A->p, false, n, 2, true) ;
     CHECK (Slice [0] == 0) ;
 
     int64_t Ap [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
-    GB_p_slice (Slice, Ap, 10, 10, false) ;
+    GB_p_slice (Slice, Ap, false, 10, 10, false) ;
     printf ("Slice: ") ;
+    for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
+    printf ("\n") ;
+
+    int32_t Ap_32 [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
+    GB_p_slice (Slice, Ap_32, true, 10, 10, false) ;
+    printf ("Slice32: ") ;
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;
 
@@ -188,7 +195,7 @@ void mexFunction
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have zombies",
         GxB_SHORT, NULL)) ;
     A->nzombies = 0 ;
-    CHECK (GB_Pending_alloc (&(A->Pending), false, GrB_INT32, NULL, true, 4)) ;
+    CHECK (GB_Pending_alloc (A, false, GrB_INT32, NULL, 4)) ;
     ERR (GxB_Matrix_fprint (A, "full matrix cannot have pending tuples",
         GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
@@ -376,8 +383,9 @@ void mexFunction
 
     // jumble the matrix
     C->jumbled = true ;
-    C->i [0] = 1 ;
-    C->i [1] = 0 ;
+    int64_t *Ci = C->i ;
+    Ci [0] = 1 ;
+    Ci [1] = 0 ;
     OK (GxB_Matrix_fprint (C, "wild matrix jumbled", GxB_SHORT, NULL)) ;
 
     // unjumble the matrix
@@ -423,7 +431,7 @@ void mexFunction
     GrB_Matrix_free (&X) ;
 
     //--------------------------------------------------------------------------
-    // hypermatrix prune
+    // hyper_prune
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&C, GrB_FP32, GB_NMAX, GB_NMAX)) ;
@@ -431,7 +439,7 @@ void mexFunction
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
     OK (GxB_Matrix_fprint (C, "huge matrix", GxB_SHORT, NULL)) ;
     C->nvec_nonempty = -1 ;
-    OK (GB_hypermatrix_prune (C, NULL)) ;
+    OK (GB_hyper_prune (C, NULL)) ;
     CHECK (C->nvec_nonempty == 1) ;
     GrB_Matrix_free (&C) ;
 

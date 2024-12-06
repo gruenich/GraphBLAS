@@ -222,8 +222,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         //----------------------------------------------------------------------
 
         int64_t pC_start, pC_end ;
+        const uint64_t *restrict Cp = C->p ;    // FIXME
         const int64_t *restrict Ch = C->h ;
-        const int64_t *restrict Cp = C->p ;
         if (C->nvals == 0)
         { 
             // C is empty
@@ -232,13 +232,15 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         else if (Ch != NULL)
         {
             // C is hypersparse, with at least one entry
-            const int64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
+            // FIXME:
+            const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
             const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
             const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
             const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
             const int64_t cnvec = C->nvec ;
-            int64_t k = GB_hyper_hash_lookup (Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx,
-                C_hash_bits, j, &pC_start, &pC_end) ;
+            int64_t k = GB_hyper_hash_lookup (false, false, // FIXME
+                Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+                j, &pC_start, &pC_end) ;
             found = (k >= 0) ;
             ASSERT (GB_IMPLIES (found, j == Ch [k])) ;
         }
@@ -261,7 +263,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             int64_t pright = pC_end - 1 ;
 
             // Time taken for this step is at most O(log(nnz(C(:,j))).
-            const int64_t *restrict Ci = C->i ;
+            const int64_t *restrict Ci = C->i ; // FIXME
             GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found,
                 C->nzombies, is_zombie) ;
         }
@@ -326,7 +328,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (is_zombie)
         { 
             // bring the zombie back to life
-            C->i [pleft] = i ;
+            int64_t *restrict Ci = C->i ;   // FIXME
+            Ci [pleft] = i ;
             C->nzombies-- ;
         }
         else if (C_is_bitmap)
@@ -428,8 +431,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // tuples becomes the type of this scalar, and the pending operator
             // becomes NULL, which is the implicit SECOND_ctype operator,
             // or non-NULL if accum is present.
-            if (!GB_Pending_add (&(C->Pending), C->iso, (GB_void *) scalar,
-                stype, accum, i, j, C->vdim > 1, Werk))
+            if (!GB_Pending_add (C, (GB_void *) scalar, stype, accum, i, j,
+                Werk))
             { 
                 // out of memory
                 GB_phybix_free (C) ;

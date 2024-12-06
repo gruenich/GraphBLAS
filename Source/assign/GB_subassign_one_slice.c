@@ -80,15 +80,14 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     // get M and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
-//  const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
     const int64_t mnz = GB_nnz_held (M) ;
     const int64_t Mnvec = M->nvec ;
     const int64_t Mvlen = M->vlen ;
 
-    const int64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Ci = C->i ;
     const bool C_is_hyper = (Ch != NULL) ;
@@ -149,7 +148,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Mp, Mnvec, ntasks1, false) ;
+    GB_p_slice (Coarse, Mp, false, Mnvec, ntasks1, false) ; // FIXME
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

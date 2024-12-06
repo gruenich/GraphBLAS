@@ -18,7 +18,6 @@
 
 #if GB_TYPE_ENABLED
 #include "GB.h"
-#include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_as__include.h"
 
 // A and C matrices
@@ -115,5 +114,7 @@ GrB_Info GB (_subassign_25__uint8)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -140,8 +140,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     // allocate the matrix with info from the header
     GB_OK (GB_new (&C,  // new header (C is NULL on input)
-        ctype, vlen, vdim, GB_Ap_null, is_csc,
-        sparsity, hyper_switch, nvec)) ;
+        ctype, vlen, vdim, GB_ph_null, is_csc,
+        sparsity, hyper_switch, nvec, /* FIXME: */ false, false)) ;
 
     C->nvec = nvec ;
     C->nvec_nonempty = nvec_nonempty ;
@@ -149,11 +149,6 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
     C->iso = iso ;
-
-    // the matrix has no pending work
-    ASSERT (C->Pending == NULL) ;
-    ASSERT (C->nzombies == 0) ;
-    ASSERT (!C->jumbled) ;
 
     //--------------------------------------------------------------------------
     // decompress each array (Cp, Ch, Cb, Ci, and Cx)
@@ -213,9 +208,10 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         // correct value, so that blobs written by v7.2.0 and earlier can be
         // read by v7.2.1 and later.  For both variants, ignore nvals in the
         // blob and use Cp [nvec] when C is sparse or hypersparse.
+        const uint64_t *restrict Cp = C->p ;    // FIXME
         ASSERT (GB_IMPLIES (version > GxB_VERSION (7,2,0),
-            C->nvals == C->p [C->nvec])) ;
-        C->nvals = C->p [C->nvec] ;
+            C->nvals == Cp [C->nvec])) ;
+        C->nvals = Cp [C->nvec] ;
     }
     C->magic = GB_MAGIC ;
 
@@ -234,12 +230,13 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         //----------------------------------------------------------------------
 
         int nfound = 0 ;
-        size_t ss [2] ;
+//      size_t ss [2] ;
         for (size_t p = s ; p < blob_size && nfound < 2 ; p++)
         {
             if (blob [p] == 0)
-            { 
-                ss [nfound++] = p ;
+            {
+//              ss [nfound] = p ;
+                nfound++ ;
             }
         }
 

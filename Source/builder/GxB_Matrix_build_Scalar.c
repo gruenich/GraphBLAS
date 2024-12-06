@@ -2,10 +2,12 @@
 // GxB_Matrix_build_Scalar: build a sparse GraphBLAS matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // GxB_Matrix_build_Scalar builds a matrix C whose values in its sparsity
 // pattern are all equal to a value given by a GrB_Scalar.  Unlike the
@@ -19,10 +21,10 @@
 GrB_Info GxB_Matrix_build_Scalar
 (
     GrB_Matrix C,                   // matrix to build
-    const GrB_Index *I,             // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
+    const uint64_t *I,              // array of row indices of tuples
+    const uint64_t *J,              // array of column indices of tuples
     GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
+    uint64_t nvals                  // number of tuples
 )
 { 
 
@@ -44,7 +46,7 @@ GrB_Info GxB_Matrix_build_Scalar
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_build (C, I, J, scalar->x, nvals, GxB_IGNORE_DUP,
-        scalar->type, true, true, Werk) ;
+        scalar->type, true, true, false, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // free all the content of a matrix.  After GrB_Matrix_free (&A), A is set
 // to NULL
 

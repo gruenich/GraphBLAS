@@ -184,14 +184,13 @@
     ASSERT_MATRIX_OK (C, "C for subassign kernel", GB0) ;                   \
     ASSERT (!GB_IS_BITMAP (C)) ;                                            \
     const bool C_iso = C->iso ;                                             \
-    int64_t *restrict Ci = C->i ;                                           \
+    int64_t *restrict Ci = C->i ; /* FIXME */                               \
     GB_C_TYPE *restrict Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;       \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t Cvdim = C->vdim ;                                         \
     const int64_t Cvlen = C->vlen ;                                         \
-    int64_t nzombies = C->nzombies ;                                        \
-    const bool is_matrix = (Cvdim > 1) ;
+    int64_t nzombies = C->nzombies ;
 
 #ifndef GB_DECLAREC
 #define GB_DECLAREC(cwork) GB_void cwork [GB_VLA(csize)] ;
@@ -199,7 +198,8 @@
 
 #define GB_GET_C_HYPER_HASH                                                 \
     GB_OK (GB_hyper_hash_build (C, Werk)) ;                                 \
-    const int64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;        \
+    /* FIXME */ \
+    const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;       \
     const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;        \
     const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;        \
     const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
@@ -212,10 +212,10 @@
 
 #define GB_GET_MASK                                                         \
     ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
-    const int64_t *Mp = M->p ;                                              \
-    const int8_t  *Mb = M->b ;                                              \
+    const uint64_t *Mp = M->p ;      /* FIXME*/                             \
     const int64_t *Mh = M->h ;                                              \
     const int64_t *Mi = M->i ;                                              \
+    const int8_t  *Mb = M->b ;                                              \
     const GB_M_TYPE *Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;  \
     const size_t msize = M->type->size ;                                    \
     const size_t Mvlen = M->vlen ;                                          \
@@ -225,7 +225,8 @@
 
 #define GB_GET_MASK_HYPER_HASH                                              \
     GB_OK (GB_hyper_hash_build (M, Werk)) ;                                 \
-    const int64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;        \
+    /* FIXME */ \
+    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;       \
     const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;        \
     const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;        \
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
@@ -274,9 +275,9 @@
     ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
     const GrB_Type atype = A->type ;                                        \
     const size_t asize = atype->size ;                                      \
-    const int64_t *Ap = A->p ;                                              \
-    const int8_t  *Ab = A->b ;                                              \
+    const uint64_t *Ap = A->p ;   /* FIXME*/                                \
     const int64_t *Ai = A->i ;                                              \
+    const int8_t  *Ab = A->b ;                                              \
     const int64_t Avlen = A->vlen ;                                         \
     const GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;                              \
     const bool A_iso = A->iso ;                                             \
@@ -351,14 +352,15 @@
 
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
-    const int64_t *restrict Sp = S->p ;                                     \
+    const uint64_t *restrict Sp = S->p ; /* FIXME*/                         \
     const int64_t *restrict Sh = S->h ;                                     \
     const int64_t *restrict Si = S->i ;                                     \
     const int64_t *restrict Sx = (int64_t *) S->x ;                         \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
     const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;                         \
-    const int64_t *restrict S_Yp = (S->Y == NULL) ? NULL : S->Y->p ;        \
+    /* FIXME */ \
+    const uint64_t *restrict S_Yp = (S->Y == NULL) ? NULL : S->Y->p ;       \
     const int64_t *restrict S_Yi = (S->Y == NULL) ? NULL : S->Y->i ;        \
     const int64_t *restrict S_Yx = (S->Y == NULL) ? NULL : S->Y->x ;        \
     const int64_t S_hash_bits = (S->Y == NULL) ? 0 : (S->Y->vdim - 1) ;
@@ -1385,8 +1387,9 @@
     {                                                               \
         if (GB_C_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp,              \
-                C_Yi, C_Yx, C_hash_bits, j, &pC_start, &pC_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,       \
+                j, &pC_start, &pC_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1400,8 +1403,9 @@
     {                                                               \
         if (GB_M_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp,              \
-                M_Yi, M_Yx, M_hash_bits, j, &pM_start, &pM_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,       \
+                j, &pM_start, &pM_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1415,8 +1419,9 @@
     {                                                               \
         if (GB_A_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp,              \
-                A_Yi, A_Yx, A_hash_bits, j, &pA_start, &pA_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,       \
+                j, &pA_start, &pA_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1430,8 +1435,9 @@
     {                                                               \
         if (GB_S_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (Sh, Snvec, Sp, S_Yp,              \
-                S_Yi, S_Yx, S_hash_bits, j, &pS_start, &pS_end) ;   \
+            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+                Sh, Snvec, Sp, S_Yp, S_Yi, S_Yx, S_hash_bits,       \
+                j, &pS_start, &pS_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
@@ -1562,7 +1568,7 @@
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
     /* cumsum Npending for each task, and get total from all tasks */       \
-    GB_cumsum1 (Npending, ntasks) ;                                         \
+    GB_cumsum1_64 ((uint64_t *) Npending, ntasks) ;                         \
     int64_t total_new_npending = Npending [ntasks] ;                        \
     if (total_new_npending == 0)                                            \
     {                                                                       \
@@ -1574,16 +1580,16 @@
     /* ensure C->Pending is large enough to handle total_new_npending */    \
     /* more tuples.  The type of Pending->x is atype, the type of A or */   \
     /* the scalar. */                                                       \
-    if (!GB_Pending_ensure (&(C->Pending), GB_C_ISO, atype, accum,          \
-        is_matrix, total_new_npending, Werk))                               \
+    if (!GB_Pending_ensure (C, GB_C_ISO, atype, accum, total_new_npending,  \
+        Werk))                                                              \
     {                                                                       \
         GB_FREE_ALL ;                                                       \
         return (GrB_OUT_OF_MEMORY) ;                                        \
     }                                                                       \
     GB_Pending Pending = C->Pending ;                                       \
-    int64_t *restrict Pending_i = Pending->i ;                              \
-    int64_t *restrict Pending_j = Pending->j ;                              \
-    GB_A_TYPE *restrict Pending_x = Pending->x ; /* NULL if C is iso */     \
+    GB_CPending_DECLARE (Pending_i) ; GB_CPending_PTR (Pending_i, C, i) ;   \
+    GB_CPending_DECLARE (Pending_j) ; GB_CPending_PTR (Pending_j, C, j) ;   \
+    GB_A_TYPE *restrict Pending_x = (GB_A_TYPE *) Pending->x ;              \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;
 
@@ -1614,7 +1620,7 @@
 // Pending->x is NULL.
 
 // The type of Pending_x is always identical to the type of A, or the scalar,
-// so no typecasting is required.
+// so no typecasting is required.  Pending_x is NULL if C is iso.
 
 // insert a scalar into Pending_x:
 #undef GB_COPY_scalar_to_PENDING_X
@@ -1648,8 +1654,13 @@
             task_sorted = false ;                                           \
         }                                                                   \
     }                                                                       \
-    Pending_i [my_npending] = iC ;                                          \
-    if (Pending_j != NULL) Pending_j [my_npending] = jC ;                   \
+    /* Pending_i [my_npending] = iC ; */                                    \
+    GB_ISET (Pending_i, my_npending, iC) ;                                  \
+    if (Pending_j != NULL)                                                  \
+    {                                                                       \
+        /* Pending_j [my_npending] = jC ; */                                \
+        GB_ISET (Pending_j, my_npending, jC) ;                              \
+    }                                                                       \
     if (Pending_x != NULL) copy_to_Pending_x ;                              \
     my_npending++ ;                                                         \
     ilast = iC ;                                                            \
@@ -1684,12 +1695,12 @@
                 /* (i,j) is the first pending tuple for this task; check */ \
                 /* with the pending tuple just before it                 */ \
                 ASSERT (my_npending < npending_orig + total_new_npending) ; \
-                int64_t i = Pending_i [my_npending] ;                       \
+                int64_t i = GB_IGET (Pending_i, my_npending) ;              \
                 int64_t j = (Pending_j != NULL) ?                           \
-                            Pending_j [my_npending] : 0 ;                   \
-                int64_t ilast = Pending_i [my_npending-1] ;                 \
+                            GB_IGET (Pending_j, my_npending) : 0 ;          \
+                int64_t ilast = GB_IGET (Pending_i, my_npending-1) ;        \
                 int64_t jlast = (Pending_j != NULL) ?                       \
-                                 Pending_j [my_npending-1] : 0 ;            \
+                                 GB_IGET (Pending_j, my_npending-1) : 0 ;   \
                 pending_sorted = pending_sorted &&                          \
                     ((jlast < j) || (jlast == j && ilast <= i)) ;           \
             }                                                               \
@@ -1740,10 +1751,10 @@
     const int64_t cnzmax = Cvlen * Cvdim ;                                  \
     int64_t cnvals = C->nvals ;                                             \
     /* A matrix and scalar: */                                              \
-    const int64_t *Ap = NULL ;                                              \
+    const uint64_t *Ap = NULL ;  /* FIXME */                                \
     const int64_t *Ah = NULL ;                                              \
-    const int8_t  *Ab = NULL ;                                              \
     const int64_t *Ai = NULL ;                                              \
+    const int8_t  *Ab = NULL ;                                              \
     const GB_A_TYPE *Ax = NULL ;                                            \
     const bool A_iso = (GB_SCALAR_ASSIGN) ? false : A->iso ;                \
     const GrB_Type atype = (GB_SCALAR_ASSIGN) ? scalar_type : A->type ;     \
@@ -1755,8 +1766,8 @@
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
         Ap = A->p ;                                                         \
         Ah = A->h ;                                                         \
-        Ab = A->b ;                                                         \
         Ai = A->i ;                                                         \
+        Ab = A->b ;                                                         \
         Ax = (GB_C_ISO) ? NULL : (GB_A_TYPE *) A->x ;                       \
         Avlen = A->vlen ;                                                   \
     }                                                                       \

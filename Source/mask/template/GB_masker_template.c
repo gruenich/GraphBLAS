@@ -28,10 +28,10 @@
 
     int taskid ;
 
-    const int64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
-    const int8_t  *restrict Cb = C->b ;
     const int64_t *restrict Ci = C->i ;
+    const int8_t  *restrict Cb = C->b ;
     const int64_t vlen = C->vlen ;
     #ifndef GB_JIT_KERNEL
     const bool C_is_hyper = GB_IS_HYPERSPARSE (C) ;
@@ -40,10 +40,10 @@
     const bool C_is_full = GB_IS_FULL (C) ;
     #endif
 
-    const int64_t *restrict Zp = Z->p ;
+    const uint64_t *restrict Zp = Z->p ;    // FIXME
     const int64_t *restrict Zh = Z->h ;
-    const int8_t  *restrict Zb = Z->b ;
     const int64_t *restrict Zi = Z->i ;
+    const int8_t  *restrict Zb = Z->b ;
     #ifndef GB_JIT_KERNEL
     const bool Z_is_hyper = GB_IS_HYPERSPARSE (Z) ;
     const bool Z_is_sparse = GB_IS_SPARSE (Z) ;
@@ -51,10 +51,10 @@
     const bool Z_is_full = GB_IS_FULL (Z) ;
     #endif
 
-    const int64_t *restrict Mp = NULL ;
+    const uint64_t *restrict Mp = NULL ;    // FIXME
     const int64_t *restrict Mh = NULL ;
-    const int8_t  *restrict Mb = NULL ;
     const int64_t *restrict Mi = NULL ;
+    const int8_t  *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
     #ifndef GB_JIT_KERNEL
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
@@ -67,8 +67,8 @@
     { 
         Mp = M->p ;
         Mh = M->h ;
-        Mb = M->b ;
         Mi = M->i ;
+        Mb = M->b ;
         Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
         msize = M->type->size ;
     }
@@ -83,10 +83,10 @@
     const GB_R_TYPE *restrict Zx = (GB_R_TYPE *) Z->x ;
           GB_R_TYPE *restrict Rx = (GB_R_TYPE *) R->x ;
     #endif
-    const int64_t *restrict Rp = R->p ;
+    const uint64_t *restrict Rp = R->p ;    // FIXME
     const int64_t *restrict Rh = R->h ;
-          int8_t  *restrict Rb = R->b ;
           int64_t *restrict Ri = R->i ;
+          int8_t  *restrict Rb = R->b ;
     size_t rsize = R->type->size ;
     // when R is bitmap or full:
 //  const int64_t rnz = GB_nnz_held (R) ;

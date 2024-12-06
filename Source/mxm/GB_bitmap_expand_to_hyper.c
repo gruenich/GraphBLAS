@@ -52,21 +52,21 @@ GrB_Info GB_bitmap_expand_to_hyper
     // bitmap, and expanded in size to be cvlen_final by cvdim_final (A->vdim
     // by B->vdim for C=A'*B, or A->vlen by B->vdim for C=A*B).
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // allocate the sparse/hypersparse structure of the final C
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;
-    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
-    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;
+    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
+    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;  // FIXME
+    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;  // FIXME
 
-    Cp = GB_MALLOC (cvdim+1, int64_t, &Cp_size) ;
+    Cp = GB_MALLOC (cvdim+1, uint64_t, &Cp_size) ;   // FIXME
     Ch = NULL ;
     if (B_is_hyper)
     { 
-        Ch = GB_MALLOC (cvdim, int64_t, &Ch_size) ;
+        Ch = GB_MALLOC (cvdim, int64_t, &Ch_size) ; // FIXME
     }
-    Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;
+    Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;   // FIXME
     if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
     { 
         // out of memory
@@ -74,9 +74,9 @@ GrB_Info GB_bitmap_expand_to_hyper
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // construct the hyperlist of C, if B is hypersparse
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
@@ -85,23 +85,23 @@ GrB_Info GB_bitmap_expand_to_hyper
     { 
         // C becomes hypersparse
         ASSERT (cvdim == B->nvec) ;
-        GB_memcpy (Ch, B->h, cvdim * sizeof (int64_t), nthreads) ;
+        GB_memcpy (Ch, B->h, cvdim * sizeof (int64_t), nthreads) ;  // FIXME
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // construct the vector pointers of C
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     int64_t pC ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (pC = 0 ; pC < cvdim+1 ; pC++)
     { 
-        Cp [pC] = pC * cvlen ;
+        Cp [pC] = pC * cvlen ;  // FIXME
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // construct the pattern of C from its bitmap
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     // C(i,j) becomes a zombie if not present in the bitmap
     nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
@@ -114,13 +114,13 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            GrB_Index *restrict Ah = (GrB_Index *) A->h ;
+            const GrB_Index *restrict Ah = (GrB_Index *) A->h ; // FIXME
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = Ah [pC % cvlen] ;
-                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;
+                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;   // FIXME
             }
         }
         else
@@ -131,7 +131,7 @@ GrB_Info GB_bitmap_expand_to_hyper
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = pC % cvlen ;
-                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;
+                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;   // FIXME
             }
         }
     }
@@ -141,13 +141,13 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            GrB_Index *restrict Ah = (GrB_Index *) A->h ;
+            const GrB_Index *restrict Ah = (GrB_Index *) A->h ; // FIXME
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = Ah [pC % cvlen] ;
-                Ci [pC] = i ;
+                Ci [pC] = i ;   // FIXME
             }
         }
         else
@@ -158,14 +158,14 @@ GrB_Info GB_bitmap_expand_to_hyper
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = pC % cvlen ;
-                Ci [pC] = i ;
+                Ci [pC] = i ;   // FIXME
             }
         }
     }
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // transplant the new content and finalize C
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     C->p = Cp ; Cp = NULL ; C->p_size = Cp_size ;
     C->h = Ch ; Ch = NULL ; C->h_size = Ch_size ;

@@ -464,5 +464,7 @@ GrB_Info GB (_Asaxpy3B__plus_rminus_fc32)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

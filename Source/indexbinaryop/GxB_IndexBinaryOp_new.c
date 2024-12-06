@@ -123,6 +123,7 @@ GrB_Info GxB_IndexBinaryOp_new
             // and cannot be compiled by the JIT).
             return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
+        #include "include/GB_pedantic_disable.h"
         op->idxbinop_function = (GxB_index_binary_function) user_function ;
         GB_BURBLE_END ;
     }

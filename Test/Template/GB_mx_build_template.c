@@ -95,28 +95,9 @@
 
 bool malloc_debug = false ;
 
-GrB_Info builder
-(
-    #ifdef MATRIX
-    GrB_Matrix *Chandle,
-    #else
-    GrB_Vector *Chandle,
-    #endif
-    GrB_Type ctype,
-    GrB_Index nrows,
-    GrB_Index ncols,
-    GrB_Index *I,
-    GrB_Index *J,
-    GB_void *X, bool scalar_build,
-    GrB_Index ni,
-    GrB_BinaryOp dup,
-    bool C_is_csc,
-    GrB_Type xtype
-) ;
-
 //------------------------------------------------------------------------------
 
-GrB_Info builder
+static GrB_Info builder
 (
     #ifdef MATRIX
     GrB_Matrix *Chandle,
@@ -126,8 +107,9 @@ GrB_Info builder
     GrB_Type ctype,
     GrB_Index nrows,
     GrB_Index ncols,
-    GrB_Index *I,
-    GrB_Index *J,
+    void *I,
+    void *J,
+    bool I_is_32,
     GB_void *X, bool scalar_build,
     GrB_Index ni,
     GrB_BinaryOp dup,
@@ -147,15 +129,15 @@ GrB_Info builder
     {
         // create a hypersparse CSC matrix
         info = GB_new (Chandle, // sparse/hyper, new header
-            ctype, nrows, ncols, GB_Ap_calloc,
-            true, sparsity, GxB_HYPER_DEFAULT, 1) ;
+            ctype, nrows, ncols, GB_ph_calloc,
+            true, sparsity, GxB_HYPER_DEFAULT, 1, false, false) ;
     }
     else
     {
         // create a hypersparse CSR matrix
         info = GB_new (Chandle, // sparse/hyper, new header
-            ctype, ncols, nrows, GB_Ap_calloc,
-            false, sparsity, GxB_HYPER_DEFAULT, 1) ;
+            ctype, ncols, nrows, GB_ph_calloc,
+            false, sparsity, GxB_HYPER_DEFAULT, 1, false, false) ;
     }
     #else
     info = GrB_Vector_new (Chandle, ctype, nrows) ;
@@ -172,6 +154,8 @@ GrB_Info builder
     ASSERT_TYPE_OK (ctype, "ctype for build", GB0) ;
     ASSERT_BINARYOP_OK (dup, "dup for build", GB0) ;
 
+    // double t = omp_get_wtime ( ) ;
+
     if (scalar_build)
     {
 
@@ -179,35 +163,63 @@ GrB_Info builder
 
         // build an iso matrix or vector from the tuples and the scalar
         #ifdef MATRIX
-        #define BUILD(prefix,suffix,type)                                   \
-            OK1 (prefix ## Scalar_setElement ## suffix (scalar, * (type *) X)) ;  \
-            OK1 (GxB_Matrix_build_Scalar (C, I, J, scalar, ni)) ;
+            #define BUILD(prefix,ibits,i_t,suffix,type) \
+                OK1 (prefix ## Scalar_setElement ## suffix (scalar, * (type *) X)) ;  \
+                OK1 (GxB_Matrix_build ## ibits ## _Scalar (C, (i_t *) I, (i_t *) J, scalar, ni)) ;
         #else
-        #define BUILD(prefix,suffix,type)                                   \
-            OK1 (prefix ## Scalar_setElement ## suffix (scalar, * (type *) X)) ;  \
-            OK1 (GxB_Vector_build_Scalar (C, I,    scalar, ni)) ;
+            #define BUILD(prefix,ibits,i_t,suffix,type) \
+                OK1 (prefix ## Scalar_setElement ## suffix (scalar, * (type *) X)) ;  \
+                OK1 (GxB_Vector_build ## ibits ## _Scalar (C, (i_t *) I,    scalar, ni)) ;
         #endif
 
-        switch (xtype->code)
+        if (I_is_32)
         {
-            case GB_BOOL_code    : BUILD (GrB_, _BOOL,   bool    ) ; break ;
-            case GB_INT8_code    : BUILD (GrB_, _INT8,   int8_t  ) ; break ;
-            case GB_INT16_code   : BUILD (GrB_, _INT16,  int16_t ) ; break ;
-            case GB_INT32_code   : BUILD (GrB_, _INT32,  int32_t ) ; break ;
-            case GB_INT64_code   : BUILD (GrB_, _INT64,  int64_t ) ; break ;
-            case GB_UINT8_code   : BUILD (GrB_, _UINT8,  uint8_t ) ; break ;
-            case GB_UINT16_code  : BUILD (GrB_, _UINT16, uint16_t) ; break ;
-            case GB_UINT32_code  : BUILD (GrB_, _UINT32, uint32_t) ; break ;
-            case GB_UINT64_code  : BUILD (GrB_, _UINT64, uint64_t) ; break ;
-            case GB_FP32_code    : BUILD (GrB_, _FP32,   float   ) ; break ;
-            case GB_FP64_code    : BUILD (GrB_, _FP64,   double  ) ; break ;
-            case GB_FC32_code    : BUILD (GxB_, _FC32,   GxB_FC32_t) ; break ;
-            case GB_FC64_code    : BUILD (GxB_, _FC64,   GxB_FC64_t) ; break ;
-            default              :
-                FREE_WORK ;
-                mexErrMsgTxt ("xtype not supported")  ;
-        }
 
+            switch (xtype->code)
+            {
+                case GB_BOOL_code    : BUILD (GxB_, _32, uint32_t, _BOOL,   bool    ) ; break ;
+                case GB_INT8_code    : BUILD (GxB_, _32, uint32_t, _INT8,   int8_t  ) ; break ;
+                case GB_INT16_code   : BUILD (GxB_, _32, uint32_t, _INT16,  int16_t ) ; break ;
+                case GB_INT32_code   : BUILD (GxB_, _32, uint32_t, _INT32,  int32_t ) ; break ;
+                case GB_INT64_code   : BUILD (GxB_, _32, uint32_t, _INT64,  int64_t ) ; break ;
+                case GB_UINT8_code   : BUILD (GxB_, _32, uint32_t, _UINT8,  uint8_t ) ; break ;
+                case GB_UINT16_code  : BUILD (GxB_, _32, uint32_t, _UINT16, uint16_t) ; break ;
+                case GB_UINT32_code  : BUILD (GxB_, _32, uint32_t, _UINT32, uint32_t) ; break ;
+                case GB_UINT64_code  : BUILD (GxB_, _32, uint32_t, _UINT64, uint64_t) ; break ;
+                case GB_FP32_code    : BUILD (GxB_, _32, uint32_t, _FP32,   float   ) ; break ;
+                case GB_FP64_code    : BUILD (GxB_, _32, uint32_t, _FP64,   double  ) ; break ;
+                case GB_FC32_code    : BUILD (GxB_, _32, uint32_t, _FC32,   GxB_FC32_t) ; break ;
+                case GB_FC64_code    : BUILD (GxB_, _32, uint32_t, _FC64,   GxB_FC64_t) ; break ;
+                default              :
+                    FREE_WORK ;
+                    mexErrMsgTxt ("xtype not supported")  ;
+            }
+
+        }
+        else
+        {
+
+            switch (xtype->code)
+            {
+                case GB_BOOL_code    : BUILD (GrB_, , uint64_t, _BOOL,   bool    ) ; break ;
+                case GB_INT8_code    : BUILD (GrB_, , uint64_t, _INT8,   int8_t  ) ; break ;
+                case GB_INT16_code   : BUILD (GrB_, , uint64_t, _INT16,  int16_t ) ; break ;
+                case GB_INT32_code   : BUILD (GrB_, , uint64_t, _INT32,  int32_t ) ; break ;
+                case GB_INT64_code   : BUILD (GrB_, , uint64_t, _INT64,  int64_t ) ; break ;
+                case GB_UINT8_code   : BUILD (GrB_, , uint64_t, _UINT8,  uint8_t ) ; break ;
+                case GB_UINT16_code  : BUILD (GrB_, , uint64_t, _UINT16, uint16_t) ; break ;
+                case GB_UINT32_code  : BUILD (GrB_, , uint64_t, _UINT32, uint32_t) ; break ;
+                case GB_UINT64_code  : BUILD (GrB_, , uint64_t, _UINT64, uint64_t) ; break ;
+                case GB_FP32_code    : BUILD (GrB_, , uint64_t, _FP32,   float   ) ; break ;
+                case GB_FP64_code    : BUILD (GrB_, , uint64_t, _FP64,   double  ) ; break ;
+                case GB_FC32_code    : BUILD (GxB_, , uint64_t, _FC32,   GxB_FC32_t) ; break ;
+                case GB_FC64_code    : BUILD (GxB_, , uint64_t, _FC64,   GxB_FC64_t) ; break ;
+                default              :
+                    FREE_WORK ;
+                    mexErrMsgTxt ("xtype not supported")  ;
+            }
+
+        }
     }
     else
     {
@@ -215,35 +227,66 @@ GrB_Info builder
         // build a non-iso matrix or vector from the tuples
         #undef BUILD
         #ifdef MATRIX
-        #define BUILD(prefix,suffix,type)               \
-            OK1 (prefix ## Matrix_build ## suffix       \
-                (C, I, J, (const type *) X, ni, dup))
+            #define BUILD(prefix,ibits,i_t,suffix,type)               \
+            OK1 (prefix ## Matrix_build ## ibits ## suffix       \
+                (C, (i_t *) I, (i_t *) J, (const type *) X, ni, dup))
         #else
-        #define BUILD(prefix,suffix,type)               \
-            OK1 (prefix ## Vector_build ## suffix       \
-                (C, I,    (const type *) X, ni, dup))
+            #define BUILD(prefix,ibits,i_t,suffix,type)               \
+            OK1 (prefix ## Vector_build ## ibits ## suffix       \
+                (C, (i_t *) I,    (const type *) X, ni, dup))
         #endif
 
-        switch (xtype->code)
+        if (I_is_32)
         {
-            case GB_BOOL_code    : BUILD (GrB_, _BOOL,   bool    ) ; break ;
-            case GB_INT8_code    : BUILD (GrB_, _INT8,   int8_t  ) ; break ;
-            case GB_INT16_code   : BUILD (GrB_, _INT16,  int16_t ) ; break ;
-            case GB_INT32_code   : BUILD (GrB_, _INT32,  int32_t ) ; break ;
-            case GB_INT64_code   : BUILD (GrB_, _INT64,  int64_t ) ; break ;
-            case GB_UINT8_code   : BUILD (GrB_, _UINT8,  uint8_t ) ; break ;
-            case GB_UINT16_code  : BUILD (GrB_, _UINT16, uint16_t) ; break ;
-            case GB_UINT32_code  : BUILD (GrB_, _UINT32, uint32_t) ; break ;
-            case GB_UINT64_code  : BUILD (GrB_, _UINT64, uint64_t) ; break ;
-            case GB_FP32_code    : BUILD (GrB_, _FP32,   float   ) ; break ;
-            case GB_FP64_code    : BUILD (GrB_, _FP64,   double  ) ; break ;
-            case GB_FC32_code    : BUILD (GxB_, _FC32,   GxB_FC32_t) ; break ;
-            case GB_FC64_code    : BUILD (GxB_, _FC64,   GxB_FC64_t) ; break ;
-            default              :
-                FREE_WORK ;
-                mexErrMsgTxt ("xtype not supported")  ;
+
+            switch (xtype->code)
+            {
+                case GB_BOOL_code    : BUILD (GxB_, _32, uint32_t, _BOOL,   bool    ) ; break ;
+                case GB_INT8_code    : BUILD (GxB_, _32, uint32_t, _INT8,   int8_t  ) ; break ;
+                case GB_INT16_code   : BUILD (GxB_, _32, uint32_t, _INT16,  int16_t ) ; break ;
+                case GB_INT32_code   : BUILD (GxB_, _32, uint32_t, _INT32,  int32_t ) ; break ;
+                case GB_INT64_code   : BUILD (GxB_, _32, uint32_t, _INT64,  int64_t ) ; break ;
+                case GB_UINT8_code   : BUILD (GxB_, _32, uint32_t, _UINT8,  uint8_t ) ; break ;
+                case GB_UINT16_code  : BUILD (GxB_, _32, uint32_t, _UINT16, uint16_t) ; break ;
+                case GB_UINT32_code  : BUILD (GxB_, _32, uint32_t, _UINT32, uint32_t) ; break ;
+                case GB_UINT64_code  : BUILD (GxB_, _32, uint32_t, _UINT64, uint64_t) ; break ;
+                case GB_FP32_code    : BUILD (GxB_, _32, uint32_t, _FP32,   float   ) ; break ;
+                case GB_FP64_code    : BUILD (GxB_, _32, uint32_t, _FP64,   double  ) ; break ;
+                case GB_FC32_code    : BUILD (GxB_, _32, uint32_t, _FC32,   GxB_FC32_t) ; break ;
+                case GB_FC64_code    : BUILD (GxB_, _32, uint32_t, _FC64,   GxB_FC64_t) ; break ;
+                default              :
+                    FREE_WORK ;
+                    mexErrMsgTxt ("xtype not supported")  ;
+            }
+
+        }
+        else
+        {
+
+            switch (xtype->code)
+            {
+                case GB_BOOL_code    : BUILD (GrB_, , uint64_t, _BOOL,   bool    ) ; break ;
+                case GB_INT8_code    : BUILD (GrB_, , uint64_t, _INT8,   int8_t  ) ; break ;
+                case GB_INT16_code   : BUILD (GrB_, , uint64_t, _INT16,  int16_t ) ; break ;
+                case GB_INT32_code   : BUILD (GrB_, , uint64_t, _INT32,  int32_t ) ; break ;
+                case GB_INT64_code   : BUILD (GrB_, , uint64_t, _INT64,  int64_t ) ; break ;
+                case GB_UINT8_code   : BUILD (GrB_, , uint64_t, _UINT8,  uint8_t ) ; break ;
+                case GB_UINT16_code  : BUILD (GrB_, , uint64_t, _UINT16, uint16_t) ; break ;
+                case GB_UINT32_code  : BUILD (GrB_, , uint64_t, _UINT32, uint32_t) ; break ;
+                case GB_UINT64_code  : BUILD (GrB_, , uint64_t, _UINT64, uint64_t) ; break ;
+                case GB_FP32_code    : BUILD (GrB_, , uint64_t, _FP32,   float   ) ; break ;
+                case GB_FP64_code    : BUILD (GrB_, , uint64_t, _FP64,   double  ) ; break ;
+                case GB_FC32_code    : BUILD (GxB_, , uint64_t, _FC32,   GxB_FC32_t) ; break ;
+                case GB_FC64_code    : BUILD (GxB_, , uint64_t, _FC64,   GxB_FC64_t) ; break ;
+                default              :
+                    FREE_WORK ;
+                    mexErrMsgTxt ("xtype not supported")  ;
+            }
         }
     }
+
+    // t = omp_get_wtime ( ) - t ;
+    // printf ("build time %g\n", t) ;
 
     GrB_Scalar_free_(&scalar) ;
     return (GrB_SUCCESS) ;
@@ -262,8 +305,10 @@ void mexFunction
 
     GrB_Info info ;
     malloc_debug = GB_mx_get_global (true) ;
-    GrB_Index *I = NULL, ni = 0, I_range [3] ;
-    GrB_Index *J = NULL, nj = 0, J_range [3] ;
+    void *I = NULL ;
+    uint64_t ni = 0, I_range [3] ;
+    void *J = NULL ;
+    uint64_t nj = 0, J_range [3] ;
     GrB_Scalar scalar = NULL ;
     bool is_list ; 
     #ifdef MATRIX
@@ -279,7 +324,9 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices (&I, pargin [I_ARG], &ni, I_range, &is_list))
+    bool I_is_32 = false ;
+    if (!GB_mx_mxArray_to_indices (&I, &I_is_32, pargin [I_ARG], &ni,
+        I_range, &is_list))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
@@ -291,7 +338,9 @@ void mexFunction
 
     #ifdef MATRIX
     // get J for a matrix
-    if (!GB_mx_mxArray_to_indices (&J, pargin [J_ARG], &nj, J_range, &is_list))
+    bool J_is_32 = false ;
+    if (!GB_mx_mxArray_to_indices (&J, &J_is_32, pargin [J_ARG], &nj,
+        J_range, &is_list))
     {
         FREE_ALL ;
         mexErrMsgTxt ("J failed") ;
@@ -299,6 +348,10 @@ void mexFunction
     if (!is_list)
     {
         mexErrMsgTxt ("J is invalid; must be a list") ;
+    }
+    if (I_is_32 != J_is_32)
+    { 
+        mexErrMsgTxt ("I and J must have the same type: uint32 or uint64") ;
     }
 
     if (ni != nj)
@@ -342,9 +395,21 @@ void mexFunction
     }
     else
     {
-        for (int64_t k = 0 ; k < ni ; k++)
+        if (I_is_32)
         {
-            nrows = GB_IMAX (nrows, I [k]) ;
+            uint32_t *I32 = I ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                nrows = GB_IMAX (nrows, I32 [k]) ;
+            }
+        }
+        else
+        {
+            uint64_t *I64 = I ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                nrows = GB_IMAX (nrows, I64 [k]) ;
+            }
         }
         nrows++ ;
     }
@@ -359,9 +424,21 @@ void mexFunction
     else
     {
         ncols = 0 ;
-        for (int64_t k = 0 ; k < ni ; k++)
+        if (J_is_32)
+        { 
+            uint32_t *J32 = J ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                ncols = GB_IMAX (ncols, J32 [k]) ;
+            }
+        }
+        else
         {
-            ncols = GB_IMAX (ncols, J [k]) ;
+            uint64_t *J64 = J ;
+            for (int64_t k = 0 ; k < ni ; k++)
+            {
+                ncols = GB_IMAX (ncols, J64 [k]) ;
+            }
         }
         ncols++ ;
     }
@@ -411,8 +488,8 @@ void mexFunction
     }
     #endif
 
-    METHOD (builder (&C, ctype, nrows, ncols, I, J, X, scalar_build, ni, dup,
-        C_is_csc, xtype)) ;
+    METHOD (builder (&C, ctype, nrows, ncols, I, J, I_is_32, 
+        X, scalar_build, ni, dup, C_is_csc, xtype)) ;
 
     ASSERT_MATRIX_OK (C, "C built", GB0) ;
 

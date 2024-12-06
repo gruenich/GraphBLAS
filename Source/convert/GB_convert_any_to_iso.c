@@ -2,10 +2,12 @@
 // GB_convert_any_to_iso: convert a matrix from non-iso to iso
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // If the matrix is not iso, it is changed to iso with the scalar value
 // provided or with A->x [0] if the scalar is NULL on input.  The A->x array is
@@ -56,7 +58,7 @@ GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
         }
 
         // allocate the new space
-        A->x = GB_MALLOC (asize, GB_void, &(A->x_size)) ; // x:OK
+        A->x = GB_MALLOC (asize, GB_void, &(A->x_size)) ;
         A->x_shallow = false ;
         if (A->x == NULL)
         { 

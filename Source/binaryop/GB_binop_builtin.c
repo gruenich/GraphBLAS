@@ -99,16 +99,6 @@ bool GB_binop_builtin               // true if binary operator is builtin
     if ((*xcode) == GB_BOOL_code)
     { 
         // z = op(x,y) where both x and y are boolean.
-        // DIV becomes FIRST
-        // RDIV becomes SECOND
-        // MIN and TIMES become LAND
-        // MAX and PLUS become LOR
-        // NE, ISNE, RMINUS, and MINUS become LXOR
-        // ISEQ becomes EQ
-        // ISGT becomes GT
-        // ISLT becomes LT
-        // ISGE and POW become GE
-        // ISLE becomes LE
         (*opcode) = GB_boolean_rename (*opcode) ;
     }
 

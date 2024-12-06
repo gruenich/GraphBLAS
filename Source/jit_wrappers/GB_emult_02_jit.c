@@ -25,7 +25,7 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     const bool flipij,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
@@ -40,8 +40,8 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_EMULT2, true,
-        false, false, C_sparsity, C->type, M, Mask_struct, Mask_comp,
-        binaryop, flipij, false, A, B) ;
+        false, false, C_sparsity, C->type, C->p_is_32, C->i_is_32,
+        M, Mask_struct, Mask_comp, binaryop, flipij, false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -58,6 +58,7 @@ GrB_Info GB_emult_02_jit      // C<#M>=A.*B, emult_02, via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, Mask_struct, Mask_comp, A, B,
         Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads, binaryop->theta)) ;

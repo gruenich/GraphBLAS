@@ -59,6 +59,7 @@ GrB_Info GB_subref_bitmap_jit
     double chunk = GB_Context_chunk ( ) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
         Werk, nthreads_max, chunk, &GB_callback)) ;

@@ -57,22 +57,10 @@ GrB_Info GX_bix_alloc       /* allocate A->b, A->i, and A->x in a matrix */ \
 void GX_ek_slice            /* slice a matrix */                            \
 (                                                                           \
     /* output: */                                                           \
-    int64_t *restrict A_ek_slicing, /* size 3*ntasks+1 */                   \
+    int64_t *restrict A_ek_slicing, /* size 3*A_ntasks+1 */                 \
     /* input: */                                                            \
     GrB_Matrix A,                   /* matrix to slice */                   \
-    int ntasks                      /* # of tasks */                        \
-)
-
-#define GB_CALLBACK_EK_SLICE_MERGE1_PROTO(GX_ek_slice_merge1)               \
-void GX_ek_slice_merge1     /* merge column counts for the matrix C */      \
-(                                                                           \
-    /* input/output: */                                                     \
-    int64_t *restrict Cp,               /* column counts */                 \
-    /* input: */                                                            \
-    const int64_t *restrict Wfirst,     /* size A_ntasks */                 \
-    const int64_t *restrict Wlast,      /* size A_ntasks */                 \
-    const int64_t *A_ek_slicing,        /* size 3*A_ntasks+1 */             \
-    const int A_ntasks                  /* # of tasks */                    \
+    int A_ntasks                    /* # of tasks */                        \
 )
 
 #define GB_CALLBACK_FREE_MEMORY_PROTO(GX_free_memory)                       \
@@ -214,11 +202,10 @@ GrB_Info GX_subassign_IxJ_slice                                             \
 #define GB_CALLBACK_PENDING_ENSURE_PROTO(GX_Pending_ensure)                 \
 bool GX_Pending_ensure                                                      \
 (                                                                           \
-    GB_Pending *PHandle,    /* input/output */                              \
+    GrB_Matrix C,           /* matrix with C->Pending */                    \
     bool iso,               /* if true, do not allocate Pending->x */       \
     GrB_Type type,          /* type of pending tuples */                    \
     GrB_BinaryOp op,        /* operator for assembling pending tuples */    \
-    bool is_matrix,         /* true if Pending->j must be allocated */      \
     int64_t nnew,           /* # of pending tuples to add */                \
     GB_Werk Werk                                                            \
 )
@@ -262,19 +249,21 @@ void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
 #define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
 void GX_qsort_1    /* sort array A of size 1-by-n */                        \
 (                                                                           \
-    int64_t *restrict A_0,      /* size n array */                          \
+    void *restrict A_0,             /* size n array */                      \
+    bool A0_is_32,                  /* if true: uint32_t, else uint64_t */  \
     const int64_t n                                                         \
 )
 
 #define GB_CALLBACK_P_SLICE_PROTO(GX_p_slice)                               \
-void GX_p_slice                     /* slice Ap */                          \
+void GX_p_slice                 /* slice Ap, 32-bit or 64-bit */            \
 (                                                                           \
     /* output: */                                                           \
-    int64_t *restrict Slice,        /* size ntasks+1 */                     \
+    int64_t *restrict Slice,    /* size ntasks+1 */                         \
     /* input: */                                                            \
-    const int64_t *restrict Ap,     /* array size n+1 (full/bitmap: NULL)*/ \
+    const void *Ap,             /* array size n+1 (full/bitmap: NULL)*/     \
+    bool Ap_is_32,              /* if true, Ap is uint32_t, else uint64_t */\
     const int64_t n,                                                        \
-    const int ntasks,               /* # of tasks */                        \
+    const int ntasks,           /* # of tasks */                            \
     const bool perfectly_balanced                                           \
 )
 

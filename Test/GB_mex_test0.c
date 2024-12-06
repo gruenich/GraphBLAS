@@ -166,7 +166,7 @@ void mexFunction
     GrB_Index I [5] = { 0,   7,   8,   3,    2 },       I2 [LEN] ;
     GrB_Index J [5] = { 4,   1,   2,   2,    1 },       J2 [LEN] ;
     double    X [5] = { 4.5, 8.2, 9.1, -1.2, 3.14159 }, X2 [LEN]  ;
-    GB_Pending AP = NULL ;
+    GB_Pending A_Pending = NULL ;
 
     size_t s ;
     bool        x_bool, ok ;
@@ -495,52 +495,6 @@ void mexFunction
     #undef GET_DEEP_COPY
 
     //--------------------------------------------------------------------------
-    // SelectOp
-    //--------------------------------------------------------------------------
-
-#if 0
-//  GxB_SelectOp selectop = NULL, selectopcrud = NULL, sel0 ;
-    printf ("GxB_SelectOp-------------------------------------------------\n") ;
-    CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-
-    expected = GrB_NULL_POINTER ;
-
-    CHECK (T == NULL) ;
-    ERR (GxB_SelectOp_xtype (&T, selectop)) ;
-    CHECK (T == NULL) ;
-
-    CHECK (T == NULL) ;
-    ERR (GxB_SelectOp_ttype (&T, selectop)) ;
-    CHECK (T == NULL) ;
-
-    CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-
-    CHECK (T == NULL) ;
-    OK (GxB_SelectOp_xtype (&T, selectop)) ;
-    CHECK (T == GrB_FP64) ;
-    T = NULL ;
-
-    CHECK (T == NULL) ;
-    OK (GxB_SelectOp_ttype (&T, selectop)) ;
-    CHECK (T == GrB_FP64) ;
-    T = NULL ;
-
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-
-    expected = GrB_NULL_POINTER ;
-    ERR (GxB_SelectOp_new (&selectop, NULL, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectop == NULL) ;
-
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-#endif
-
-    //--------------------------------------------------------------------------
     // Monoid
     //--------------------------------------------------------------------------
 
@@ -850,7 +804,8 @@ void mexFunction
     bool scalar_is_full = GB_IS_FULL (a_scalar) ;
     if (!scalar_is_full)
     {
-        a_scalar->i [0] = GB_ZOMBIE (0) ;
+        int64_t *Ai = a_scalar->i ; // FIXME
+        Ai [0] = GB_ZOMBIE (0) ;
         a_scalar->nzombies = 1 ;
     }
 
@@ -1065,8 +1020,6 @@ void mexFunction
 
     OK (GrB_Vector_new (&v, GrB_FP64, 10)) ;
     ERR1 (v, GrB_Vector_build_FP64 (v, I, NULL, 0, NULL)) ;
-//  dup NULL is now OK
-//  ERR1 (v, GrB_Vector_build_FP64_(v, I, X,    0, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
     o2 = GrB_SECOND_FP64 ;
@@ -1085,7 +1038,6 @@ void mexFunction
     printf ("build udt:\n") ;
     OK (GrB_Vector_free_(&v)) ;
     GrB_Type user_type = NULL ;
-//  OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
     OK (GxB_Type_new (&user_type, sizeof (user_int), "user_int",
         "typedef int16_t user_int ;")) ;
     OK (GrB_Vector_new (&v, user_type, 10)) ;
@@ -1531,8 +1483,6 @@ void mexFunction
     ERR1 (A, GrB_Matrix_build_FP64 (A, I,    NULL, NULL, 0, NULL)) ;
     ERR1 (A, GrB_Matrix_build_FP64 (A, NULL, NULL, NULL, 0, NULL)) ;
     ERR1 (A, GrB_Matrix_build_FP64 (A, I,    J,    NULL, 0, NULL)) ;
-//  dup of NULL is now OK
-//  ERR1 (A, GrB_Matrix_build_FP64_(A, I,    J,    X,    0, NULL)) ;
 
     expected = GrB_INVALID_VALUE ;
 
@@ -1840,8 +1790,6 @@ void mexFunction
     ERR (GxB_Desc_get_INT32 (dcrud, 0, &dval2)) ;
 
     double dval3 ;
-//  ERRD (dcrud, GxB_Desc_set_FP64 (dcrud, 0, 0)) ;
-//  ERR (GxB_Desc_get_FP64 (dcrud, 0, &dval3)) ;
 
     ERRD (dcrud, GrB_Descriptor_set (dcrud, 0, 0)) ;
     ERR (GxB_Descriptor_get (&dval, dcrud, 0)) ;
@@ -3398,98 +3346,6 @@ void mexFunction
     ERR1 (A,  GrB_Matrix_apply_(A , NULL, NULL, GrB_AINV_FP64, C , d0)) ;
 
     //--------------------------------------------------------------------------
-    // select
-    //--------------------------------------------------------------------------
-
-#if 0
-    printf ("GxB_select---------------------------------------------------\n") ;
-    CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectop != NULL) ;
-    OK (GB_SelectOp_check (selectop, "select op OK", G3, NULL)) ;
-
-    expected = GrB_NULL_POINTER ;
-
-    ERR1 (v0, GxB_Vector_select_(v0, NULL, NULL, NULL, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , NULL, NULL, NULL, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , NULL, NULL, NULL, v , NULL, d0)) ;
-
-    ERR1 (A0, GxB_Matrix_select_(A0, NULL, NULL, NULL, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, NULL, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , NULL, NULL, NULL, A , NULL, d0)) ;
-
-    CHECK (selectopcrud == NULL) ;
-    OK (GxB_SelectOp_new (&selectopcrud, (GxB_select_function) fselect, GrB_FP64, GrB_FP64)) ;
-    CHECK (selectopcrud != NULL) ;
-    selectopcrud->magic = 22309483 ;
-    expected = GrB_UNINITIALIZED_OBJECT ;
-    ERR (GB_SelectOp_check (selectopcrud, "select crud", G3, NULL)) ;
-
-    expected = GrB_UNINITIALIZED_OBJECT ;
-
-    v0 = vcrud ;
-    A0 = Acrud ;
-    d0 = dcrud ;
-    op0 = op2crud ;
-    sel0 = selectopcrud ;
-
-    ERR1 (v0, GxB_Vector_select_(v0, NULL, NULL, sel0, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v0  , NULL, sel0, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , NULL, sel0, v0, NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , NULL, sel0, v , NULL, d0)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , op0 , sel0, v , NULL, NULL)) ;
-    ERR1 (v,  GxB_Vector_select_(v , v   , NULL, sel0, v , NULL, NULL)) ;
-
-    ERR1 (A0, GxB_Matrix_select_(A0, NULL, NULL, sel0, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A0  , NULL, sel0, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , NULL, sel0, A0, NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , NULL, sel0, A , NULL, d0)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , op0 , sel0, A , NULL, NULL)) ;
-    ERR1 (A,  GxB_Matrix_select_(A , A   , NULL, sel0, A , NULL, NULL)) ;
-
-    expected = GrB_DOMAIN_MISMATCH ;
-
-    double thresh = 42 ;
-
-    GrB_Scalar Thunk = NULL ;
-    OK (GrB_Scalar_new (&Thunk, GrB_FP64)) ;
-    OK (GrB_Scalar_setElement_FP64 (Thunk, thresh)) ;
-
-    o2  = Complex_plus ;
-    expected = (Complex == GxB_FC64) ? GrB_DIMENSION_MISMATCH : GrB_DOMAIN_MISMATCH ;
-    if (Complex == GxB_FC64)
-    {
-        OK  (GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
-        OK  (GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
-    }
-    else
-    {
-        ERR1 (A,  GxB_Matrix_select_(A, NULL, o2  , selectop, A, Thunk, NULL)) ;
-        ERR1 (Z,  GxB_Matrix_select_(Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
-    }
-
-    ERR1 (A,  GxB_Matrix_select_(A, Z   , NULL, selectop, A, Thunk, NULL)) ;
-    ERR1 (A,  GxB_Matrix_select_(A, NULL, o2  , selectop, Z, Thunk, NULL)) ;
-    ERR1 (A,  GxB_Matrix_select_(A, NULL, NULL, selectop, Z, Thunk, NULL)) ;
-    ERR1 (Z,  GxB_Matrix_select_(Z, NULL, NULL, selectop, A, Thunk, NULL)) ;
-
-    v0 = NULL ;
-    A0 = NULL ;
-    d0 = NULL ;
-    op0 = NULL ;
-    sel0 = NULL ;
-
-    OK (GxB_SelectOp_free_(&selectop)) ;
-    CHECK (selectop == NULL) ;
-
-    expected = GrB_DIMENSION_MISMATCH ;
-
-    ERR1 (A, GxB_Matrix_select_(A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
-
-    OK (GrB_Scalar_free_(&Thunk)) ;
-#endif
-
-    //--------------------------------------------------------------------------
     // reduce to scalar
     //--------------------------------------------------------------------------
 
@@ -4139,11 +3995,12 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
     CHECK (!GB_IS_FULL (v)) ;
-    v->i [0] = 1 ;
-    v->i [1] = 0 ;
+    int64_t *Vi = v->i ;    // FIXME
+    Vi [0] = 1 ;
+    Vi [1] = 0 ;
     ERR (GxB_Vector_fprint (v, "v jumbled", G3, ff)) ;
-    v->i [0] = 0 ;
-    v->i [1] = 1 ;
+    Vi [0] = 0 ;
+    Vi [1] = 1 ;
     OK (GxB_Vector_fprint (v, "v fixed", G3, ff)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -4155,7 +4012,7 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
 
     v->vdim = 2 ;
-    int64_t *psave = v->p ;
+    void *psave = v->p ;
     size_t p_size_save = v->p_size ;
     GB_Global_memtable_remove (v->p) ;
     v->p_size = 3 * sizeof (int64_t) ;
@@ -4166,7 +4023,8 @@ void mexFunction
     v->vdim = 1 ;
 
     CHECK (!GB_IS_FULL (v)) ;
-    v->p [0] = 1 ;
+    uint64_t *Vp = v->p ;           // FIXME
+    Vp [0] = 1 ;            // FIXME
     ERR (GB_Vector_check (v, "v p[0] invalid", G1, ff)) ;
 
     mxFree (v->p) ;
@@ -4210,9 +4068,10 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    A->p [0] = 1 ;
+    uint64_t *Ap = A->p ;           // FIXME
+    Ap [0] = 1 ;            // FIXME
     ERR (GB_Matrix_check (A, "p[0] invalid", G1, ff)) ;
-    A->p [0] = 0 ;
+    Ap [0] = 0 ;            // FIXME
 
     A->vlen = -1 ;
     ERR (GB_Matrix_check (A, "invalid dimensions", G1, ff)) ;
@@ -4261,17 +4120,17 @@ void mexFunction
     OK (GrB_Matrix_setElement_FP64 (A, 3.14159, 3, 3)) ;
     OK (GB_Matrix_check (A, "with pi pending", G3, NULL)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 1) ;
-    CHECK (AP->type == GrB_FP64) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->n == 1) ;
+    CHECK (A_Pending->type == GrB_FP64) ;
 
     OK (GrB_Matrix_setElement_FP64 (A, 9.0909, 2, 1)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 2) ;
-    CHECK (AP->type == GrB_FP64) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->n == 2) ;
+    CHECK (A_Pending->type == GrB_FP64) ;
 
     OK (GB_Matrix_check (A, "with pi and 9.0909 pending", G3, NULL)) ;
 
@@ -4288,19 +4147,20 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pi", G0, NULL)) ;
 
     CHECK (!GB_IS_FULL (A)) ;
-    A->p [0] = 1 ;
+    Ap = A->p ;         // FIXME
+    Ap [0] = 1 ;            // FIXME
     ERR (GB_Matrix_check (A, "Ap[0] invalid", G1, NULL)) ;
-    A->p [0] = 0 ;
+    Ap [0] = 0 ;            // FIXME
 
-    int64_t isave = A->p [1] ;
-    A->p [1] = -1 ;
+    int64_t isave = Ap [1] ;
+    Ap [1] = -1 ;
     ERR (GB_Matrix_check (A, "Ap[1] invalid", G1, NULL)) ;
-    A->p [1] = isave ;
+    Ap [1] = isave ;
 
-    isave = A->p [4] ;
-    A->p [4] += 999 ;
+    isave = Ap [4] ;
+    Ap [4] += 999 ;
     ERR (GB_Matrix_check (A, "Ap[ncols] invalid", G1, NULL)) ;
-    A->p [4] = isave ;
+    Ap [4] = isave ;
 
     isave = A->nzombies ;
     A->nzombies = -1 ;
@@ -4312,18 +4172,19 @@ void mexFunction
     ERR (GB_Matrix_check (A, "too many zombies", G1, NULL)) ;
     A->nzombies = isave ;
 
-    isave = A->i [0] ;
-    A->i [0] = -1 ;
+    int64_t *Ai = A->i ;    // FIXME
+    isave = Ai [0] ;    // FIXME
+    Ai [0] = -1 ;   // FIXME
     ERR (GB_Matrix_check (A, "row index invalid", G3, NULL)) ;
-    A->i [0] = isave ;
+    Ai [0] = isave ;
 
     isave = A->nzombies ;
     A->nzombies = 1 ;
     ERR (GB_Matrix_check (A, "bad zombies", G3, NULL)) ;
     A->nzombies = isave ;
 
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
 
     printf ("\n========================================== valid [pi 7.1]\n") ;
     OK (GrB_Matrix_setElement_FP64 (A, 7.1, 1, 0)) ;
@@ -4332,29 +4193,31 @@ void mexFunction
 
     Werk->where = "GB_Matrix_check" ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    isave = AP->n ;
-    AP->n = -1 ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    isave = A_Pending->n ;
+    A_Pending->n = -1 ;
     ERR (GB_Matrix_check (A, "negative pending", G1, NULL)) ;
-    AP->n = isave ;
+    A_Pending->n = isave ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    psave = AP->i ;
-    AP->i = NULL ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    psave = A_Pending->i ;
+    A_Pending->i = NULL ;
     ERR (GB_Matrix_check (A, "missing pending", G3, NULL)) ;
-    AP->i = psave ;
+    A_Pending->i = psave ;
 
     OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G0, NULL)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->j != NULL) ;
-    isave = AP->j [0] ;
-    AP->j [0] = 1070 ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    GB_MDECL (Pending_j, , u) ;
+    GB_GET_PENDING_PTR (Pending_j, A, j) ;
+    CHECK (Pending_j != NULL) ;
+    isave = GB_IGET (Pending_j, 0) ;
+    GB_ISET (Pending_j, 0, 1070) ;
     ERR (GB_Matrix_check (A, "bad pending tuple", G3, NULL)) ;
-    AP->j [0] = isave ;
+    GB_ISET (Pending_j, 0, isave) ;
     OK (GB_Matrix_check (A, "valid pending [pi 7.1]", G0, NULL)) ;
 
     printf ("\n====================================== valid [pi 7.1 11.4]\n") ;
@@ -4364,24 +4227,21 @@ void mexFunction
 
     Werk->where = "GB_Matrix_check" ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    AP->sorted = !(AP->sorted) ;
-//  isave = AP->j [0] ;
-//  AP->j [0] = 2 ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    A_Pending->sorted = !(A_Pending->sorted) ;
     printf ("matrix check with jumbled pending tuples:\n") ;
     ERR (GxB_Matrix_fprint (A, "jumbled pending tuples", G3, ff)) ;
     ERR (GB_Matrix_check (A, "jumbled pending tuples", G3, ff)) ;
-    AP->sorted = !(AP->sorted) ;
-//  AP->j [0] = isave ;
+    A_Pending->sorted = !(A_Pending->sorted) ;
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G0, ff)) ;
 
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->op == NULL) ;
-    AP->op = op2crud ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->op == NULL) ;
+    A_Pending->op = op2crud ;
     ERR (GB_Matrix_check (A, "invalid operator", G3, NULL)) ;
-    AP->op = NULL ;
+    A_Pending->op = NULL ;
 
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", G3, NULL)) ;
     printf ("\n=========================================================\n") ;
@@ -4402,8 +4262,9 @@ void mexFunction
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (!GB_IS_BITMAP (A)) ;
-    A->i [0] = 1 ;
-    A->i [1] = 0 ;
+    Ai = A->i ;
+    Ai [0] = 1 ;
+    Ai [1] = 0 ;
 
     info = GB_Matrix_check (A, "jumbled", G3, NULL) ;
     printf ("jumbled info %d\n", info) ;
@@ -4415,15 +4276,16 @@ void mexFunction
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (!GB_IS_BITMAP (A)) ;
-    A->i [0] = 0 ;
-    A->i [1] = 1 ;
+    Ai = A->i ;
+    Ai [0] = 0 ;
+    Ai [1] = 1 ;
     OK (GB_Matrix_check (A, "OK", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     CHECK (nvals == 5) ;
 
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
     CHECK (A->nzombies == 0) ;
     OK (GrB_Matrix_new (&Empty1, GrB_FP64, 1, 1)) ;
     I [0] = 0 ;
@@ -4493,14 +4355,15 @@ void mexFunction
 
     // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
     CHECK (GB_IS_HYPERSPARSE (A)) ;
-    isave = A->p [1] ;
-    A->p [1] = 0 ;
+    Ap = A->p ;
+    isave = Ap [1] ;
+    Ap [1] = 0 ;
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
     ERR (GB_Matrix_check (A, "A with bad nvec_nonempty", G1, NULL)) ;
     expected = GrB_INVALID_OBJECT ;
     ERR (GxB_Matrix_fprint (A, "A", G1, ff)) ;
     CHECK (GB_IS_HYPERSPARSE (A)) ;
-    A->p [1] = isave ;
+    Ap [1] = isave ;
     OK (GB_Matrix_check (A, "A fixed", G0, NULL)) ;
 
     double hratio = 0.5;
@@ -4769,7 +4632,7 @@ void mexFunction
     A->h = Ah_save ;
     OK (GB_Matrix_check (A, "h restored", G1, NULL)) ;
 
-    int64_t nvec = A->nvec ;
+    uint64_t nvec = A->nvec ;
     A->nvec = -1 ;
     ERR (GB_Matrix_check (A, "nvec invalid", G1, NULL)) ;
     A->nvec = nvec ;
@@ -4777,10 +4640,11 @@ void mexFunction
 
     CHECK (!GB_IS_FULL (A)) ;
     CHECK (A->h != NULL) ;
-    int64_t jsave = A->h [0] ;
-    A->h [0] = -1 ;
+    int64_t *Ah = A->h ;
+    int64_t jsave = Ah [0] ;
+    Ah [0] = -1 ;
     ERR (GB_Matrix_check (A, "h[0] invalid", G1, NULL)) ;
-    A->h [0] = jsave ;
+    Ah [0] = jsave ;
     OK (GB_Matrix_check (A, "h[0] restored", G1, NULL)) ;
 
     GrB_Matrix Eleven ;
@@ -4835,20 +4699,20 @@ void mexFunction
 
     OK (GrB_Matrix_setElement_FP64 (A, 32.4, 3, 2)) ;
     OK (GB_Matrix_check (A, "A with one pending", G3, NULL)) ;
-    AP = A->Pending ;
-    CHECK (AP != NULL) ;
-    CHECK (AP->n == 1 && A->nzombies == 0) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending != NULL) ;
+    CHECK (A_Pending->n == 1 && A->nzombies == 0) ;
     GB_Global_mode_set (GrB_BLOCKING) ;
     OK (GB_block (A, Werk)) ;
     OK (GB_Matrix_check (A, "A with no pending", G3, NULL)) ;
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
     CHECK (A->nzombies == 0) ;
     OK (GrB_Matrix_setElement_FP64 (A, 99.4, 3, 3)) ;
     OK (GB_Matrix_check (A, "A blocking mode", G3, NULL)) ;
     GB_Global_mode_set (GrB_NONBLOCKING) ;
-    AP = A->Pending ;
-    CHECK (AP == NULL) ;
+    A_Pending = A->Pending ;
+    CHECK (A_Pending == NULL) ;
     CHECK (A->nzombies == 0) ;
 
     printf ("\nAll blocking/nonblocking mode tests passed\n") ;
@@ -4856,8 +4720,6 @@ void mexFunction
     //--------------------------------------------------------------------------
     // restore all 'crud' objects so they can be freed
     //--------------------------------------------------------------------------
-
-    // printf ("\n-------------- Restore crud objects:\n") ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
 
@@ -5005,17 +4867,6 @@ void mexFunction
     //--------------------------------------------------------------------------
     // internal GB * routines
     //--------------------------------------------------------------------------
-
-#if 0
-    OK (GxB_Matrix_fprint (A, "A for bix_alloc", G3, NULL)) ;
-    CHECK (A != NULL) ;
-    Werk->where = "GB_bix_alloc" ;
-    info = GB_bix_alloc (A, GB_NMAX+1, GxB_SPARSE, true, true, false,
-        Werk) ;
-    CHECK (info == GrB_OUT_OF_MEMORY) ;
-    OK (GrB_Matrix_free_(&A)) ;
-    OK (GrB_Matrix_new (&A, GrB_BOOL, 11, 11)) ;
-#endif
 
     Werk->where = "GB_ix_realloc" ;
 
@@ -5410,11 +5261,12 @@ void mexFunction
 
     printf ("\n----------------------------- import/export\n") ;
     OK (GxB_Matrix_fprint (A, "A to import/export", GxB_COMPLETE, stdout)) ;
-    GrB_Index *Ap, *Ai, *Aj, *Ah, nrows, ncols, nvecs ;
+    int64_t *Aj ;
+    GrB_Index nrows, ncols, nvecs ;
     double *Ax ;
     GrB_Type atype ;
     bool jumbled, iso ;
-    int64_t Ap_size, Aj_size, Ai_size, Ax_size, Ah_size, Ab_size ;
+    uint64_t Ap_size, Aj_size, Ai_size, Ax_size, Ah_size, Ab_size ;
 
     OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
         &Ap, &Aj, (void **) &Ax, &Ap_size, &Aj_size, &Ax_size, &iso,

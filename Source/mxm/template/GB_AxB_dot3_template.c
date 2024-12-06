@@ -72,8 +72,9 @@
             #if GB_B_IS_HYPER
                 // B is hyper: find B(:,j) using the B->Y hyper hash
                 int64_t pB_start, pB_end ;
-                GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx,
-                    B_hash_bits, j, &pB_start, &pB_end) ;
+                GB_hyper_hash_lookup (false, false, // FIXME
+                    Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+                    j, &pB_start, &pB_end) ;
             #elif GB_B_IS_SPARSE
                 // B is sparse
                 const int64_t pB_start = Bp [j] ;
@@ -116,10 +117,7 @@
                 //--------------------------------------------------------------
 
                 bool cij_exists = false ;
-                GB_CIJ_DECLARE (cij) ;
-                #if GB_IS_PLUS_PAIR_REAL_SEMIRING
-                cij = 0 ;
-                #endif
+                GB_DECLARE_IDENTITY (cij) ;
 
                 // get the value of M(i,j)
                 int64_t i = Mi [pC] ;
@@ -136,8 +134,9 @@
                     #if GB_A_IS_HYPER
                     // A is hyper: find A(:,i) using the A->Y hyper hash
                     int64_t pA, pA_end ;
-                    GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                        A_hash_bits, i, &pA, &pA_end) ;
+                    GB_hyper_hash_lookup (false, false, // FIXME
+                        Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                        i, &pA, &pA_end) ;
                     const int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     #elif GB_A_IS_SPARSE

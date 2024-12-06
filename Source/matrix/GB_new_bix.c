@@ -2,10 +2,12 @@
 // GB_new_bix: create a matrix and allocate space
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Creates a matrix (with GB_new), then allocates a given space for indices and
 // values.
@@ -36,7 +38,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const GrB_Type type,        // type of output matrix
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
+    const GB_ph_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const bool bitmap_calloc,   // if true, calloc A->b, otherwise use malloc
@@ -45,7 +47,9 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t nzmax,        // number of nonzeros the matrix must hold;
                                 // ignored if A is iso and full
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const bool A_iso            // if true, allocate A as iso
+    const bool A_iso,           // if true, allocate A as iso
+    bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
+    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
 )
 {
 
@@ -55,13 +59,17 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     ASSERT (Ahandle != NULL) ;
 
+    // ensure p_is_32 and i_is_32 are valid
+    p_is_32 = GB_validate_p_is_32 (p_is_32, nzmax) ;
+    i_is_32 = GB_validate_i_is_32 (p_is_32, vlen, vdim) ;
+
     //--------------------------------------------------------------------------
     // allocate the header and the vector pointers
     //--------------------------------------------------------------------------
 
     bool preexisting_header = (*Ahandle != NULL) ;
     GrB_Info info = GB_new (Ahandle, type, vlen, vdim,
-        Ap_option, is_csc, sparsity, hyper_switch, plen) ;
+        Ap_option, is_csc, sparsity, hyper_switch, plen, p_is_32, i_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory.
@@ -76,7 +84,6 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     // allocate the bitmap (A->b), indices (A->i), and values (A->x)
     //--------------------------------------------------------------------------
 
-    // set A->iso = A_iso   OK: burble in the caller
     info = GB_bix_alloc (A, nzmax, sparsity, bitmap_calloc, numeric, A_iso) ;
     if (info != GrB_SUCCESS)
     {

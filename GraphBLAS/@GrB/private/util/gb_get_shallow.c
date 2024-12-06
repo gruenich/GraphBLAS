@@ -20,6 +20,7 @@
 // For v5, iso is present but false, and the s component has length 10.
 // For v5_1, iso is true/false, and the s component has length 10.
 // For v7_3: the same content as v5_1, except that Yp, Yi, and Yx are added.
+// For v10: Ap, Ah, Ai, Yp, Yi, and Yx can be 32-bit FIXME
 
 // mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
 // because mxGetData works best for Octave, and it works fine for MATLAB
@@ -41,6 +42,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     //--------------------------------------------------------------------------
 
     CHECK_ERROR (X == NULL, "matrix missing") ;
+
+    //--------------------------------------------------------------------------
+    // turn off the burble
+    //--------------------------------------------------------------------------
+
+    int burble ;
+    OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // construct the shallow GrB_Matrix
@@ -183,12 +192,13 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // each component
-        uint64_t *Ap = NULL ; size_t Ap_size = 0 ;
+        uint64_t *Ap = NULL ; size_t Ap_size = 0 ;  // FIXME
         uint64_t *Ah = NULL ; size_t Ah_size = 0 ;
-        int8_t   *Ab = NULL ; size_t Ab_size = 0 ;
         uint64_t *Ai = NULL ; size_t Ai_size = 0 ;
+        int8_t   *Ab = NULL ; size_t Ab_size = 0 ;
         void     *Ax = NULL ; size_t Ax_size = 0 ; 
-        uint64_t *Yp = NULL ; size_t Yp_size = 0 ;
+
+        uint64_t *Yp = NULL ; size_t Yp_size = 0 ;  // FIXME
         uint64_t *Yi = NULL ; size_t Yi_size = 0 ;
         void     *Yx = NULL ; size_t Yx_size = 0 ;
         int64_t yvdim = 0 ; 
@@ -201,7 +211,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             mxArray *Ap_mx = mxGetField (X, 0, "p") ;
             IF (Ap_mx == NULL, ".p missing") ;
             IF (mxGetM (Ap_mx) != 1, ".p wrong size") ;
-            Ap = (int64_t *) mxGetData (Ap_mx) ;
+            Ap = (uint64_t *) mxGetData (Ap_mx) ;
             Ap_size = mxGetN (Ap_mx) * sizeof (int64_t) ;
 
             // get Ai
@@ -209,7 +219,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             IF (Ai_mx == NULL, ".i missing") ;
             IF (mxGetM (Ai_mx) != 1, ".i wrong size") ;
             Ai_size = mxGetN (Ai_mx) * sizeof (int64_t) ;
-            Ai = (Ai_size == 0) ? NULL : ((int64_t *) mxGetData (Ai_mx)) ;
+            Ai = (Ai_size == 0) ? NULL : ((uint64_t *) mxGetData (Ai_mx)) ;
         }
 
         // get the values
@@ -367,7 +377,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     {
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy of a built-in matrix
+        // construct a shallow GrB_Matrix copy of a built-in MATLAB matrix
         //----------------------------------------------------------------------
 
         // get the type and dimensions
@@ -508,9 +518,10 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     }
 
     //--------------------------------------------------------------------------
-    // return the result
+    // restore the burble and return result
     //--------------------------------------------------------------------------
 
+    OK (GrB_set (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     return (A) ;
 }
 

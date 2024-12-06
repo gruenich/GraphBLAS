@@ -8,6 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "include/GB_subref_method.h"
+#define GB_A0_t uint64_t /* FIXME: allow C->i to be 32-bit */
+#define GB_A1_t GB_C_TYPE
 #include "include/GB_qsort_1b_kernel.h"
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel) ;
@@ -15,7 +17,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel)
 {
 
     // get C and A
-    const int64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     int64_t *restrict Ci = C->i ;
     #define GB_COPY_RANGE(pC,pA,len) \
         memcpy (Cx + (pC), Ax + (pA), (len) * sizeof (GB_C_TYPE)) ;

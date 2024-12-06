@@ -44,7 +44,6 @@ void GB_binop_rename            // rename a bound binary op or an idxunop
 
         if (xcode == GB_BOOL_code)
         { 
-            // for boolean: DIV becomes FIRST, RDIV becomes SECOND
             opcode = GB_boolean_rename (opcode) ;
         }
 

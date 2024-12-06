@@ -29,8 +29,8 @@ GrB_Info GB_cuda_apply_bind2nd_jit
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_CUDA_KERNEL_APPLYBIND2, false,
-        false, false, GxB_FULL, ctype, NULL, false, false,
-        op, false, false, A, NULL) ;
+        false, false, GxB_FULL, ctype, false, false,
+        NULL, false, false, op, false, false, A, NULL) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

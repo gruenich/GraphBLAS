@@ -86,14 +86,14 @@ static inline GrB_Info GB_check_for_end_of_vector (GxB_Iterator iterator)
                 // the kth vector is done; move to the next non-empty vector
                 iterator->pstart = iterator->pend ;
                 iterator->k++ ;
-                while (iterator->Ap [iterator->k+1] == iterator->pend)
+                while (iterator->Ap [iterator->k+1] == iterator->pend)  // FIXME
                 { 
                     // iterator->k is an empty vector; move to the next one
                     iterator->k++ ;
                     ASSERT (iterator->k < iterator->anvec) ;
                 }
                 // iterator->k is now the next non-empty vector
-                iterator->pend = iterator->Ap [iterator->k+1] ;
+                iterator->pend = iterator->Ap [iterator->k+1] ; // FIXME
                 return (GrB_SUCCESS) ;
             }
         }
@@ -175,7 +175,7 @@ GrB_Info GxB_Matrix_Iterator_seek
     { 
         // seek to the first entry of the first vector A(:,0)
         iterator->pstart = 0 ;
-        iterator->pend = (iterator->Ap != NULL) ?
+        iterator->pend = (iterator->Ap != NULL) ?   // FIXME
             iterator->Ap [1] : iterator->avlen ;
         iterator->p = 0 ;
         iterator->k = 0 ;
@@ -193,10 +193,10 @@ GrB_Info GxB_Matrix_Iterator_seek
             case GxB_HYPERSPARSE : 
             { 
                 // find the vector k that contains position p
-                iterator->k = GB_search_for_vector (p, iterator->Ap,
-                    0, iterator->anvec, iterator->avlen) ;
-                iterator->pstart = iterator->Ap [iterator->k] ;
-                iterator->pend = iterator->Ap [iterator->k+1] ;
+                iterator->k = GB_search_for_vector_64 (iterator->Ap, // FIXME
+                    p, 0, iterator->anvec, iterator->avlen) ;
+                iterator->pstart = iterator->Ap [iterator->k] ; // FIXME
+                iterator->pend = iterator->Ap [iterator->k+1] ; // FIXME
             }
             break ;
             case GxB_BITMAP : 
@@ -263,13 +263,13 @@ void GxB_Matrix_Iterator_getIndex
         {
             if (iterator->by_col)
             { 
-                (*row) = (GrB_Index) (iterator->Ai [iterator->p]) ;
+                (*row) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
                 (*col) = (GrB_Index) (iterator->k) ;
             }
             else
             { 
                 (*row) = (GrB_Index) (iterator->k) ;
-                (*col) = (GrB_Index) (iterator->Ai [iterator->p]) ;
+                (*col) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
             }
         }
         break ;
@@ -278,13 +278,13 @@ void GxB_Matrix_Iterator_getIndex
         {
             if (iterator->by_col)
             { 
-                (*row) = (GrB_Index) (iterator->Ai [iterator->p]) ;
-                (*col) = (GrB_Index) (iterator->Ah [iterator->k]) ;
+                (*row) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
+                (*col) = (GrB_Index) (iterator->Ah [iterator->k]) ; // FIXME
             }
             else
             { 
-                (*row) = (GrB_Index) (iterator->Ah [iterator->k]) ;
-                (*col) = (GrB_Index) (iterator->Ai [iterator->p]) ;
+                (*row) = (GrB_Index) (iterator->Ah [iterator->k]) ; // FIXME
+                (*col) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
             }
         }
         break ;

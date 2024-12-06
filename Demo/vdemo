@@ -9,7 +9,6 @@ V="valgrind --error-limit=no --tool=memcheck -q --log-file=valgrind_%p.log"
 $V ../build/simple_demo                   > ../build/simple_demo.out
 $V ../build/complex_demo                  > ../build/complex_demo_out.m
 $V ../build/complex_demo 1                > ../build/complex_demo_out2.m
-$V ../build/openmp_demo                   > ../build/openmp_demo.out
 
 $V ../build/import_demo < Matrix/west0067 > ../build/import_demo.out
 $V ../build/wildtype_demo                 > ../build/wildtype_demo.out

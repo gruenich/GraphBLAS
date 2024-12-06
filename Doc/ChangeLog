@@ -1,3 +1,12 @@
+FIXME 2025: version 10.0.0
+
+    * 32/64 bit matrices and vectors: the GrB_Matrix and GrB_Vector
+        now exploit 32-bit integers when possible.  New methods added to pass
+        32-bit integer arrays to/from GrB_build, extract, assign, and
+        subassign.  The API is upward-compatible with 9.4.0, but only after
+        recompilation, since the non-opaque GxB_Iterator object must change.
+        As a result, the SO version must increase to 10.0.0
+
 Nov 18, 2024: version 9.4.2
 
     * clarified User Guide: regarding when the hyper-hash is built

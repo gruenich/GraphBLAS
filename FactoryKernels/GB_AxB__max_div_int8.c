@@ -465,5 +465,7 @@ GrB_Info GB (_Asaxpy3B__max_div_int8)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

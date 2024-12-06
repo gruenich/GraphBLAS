@@ -2,10 +2,12 @@
 // GB_task_cumsum: cumulative sum of Cp and fine tasks in TaskList
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // Cp is never NULL.  C is created as sparse or hypersparse.
 
@@ -13,7 +15,7 @@
 
 void GB_task_cumsum
 (
-    int64_t *Cp,                        // size Cnvec+1
+    uint64_t *Cp,                       // size Cnvec+1     FIXME
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *restrict TaskList,  // array of structs
@@ -53,7 +55,7 @@ void GB_task_cumsum
             // count of the entries in C(:,k).  The final Cp [k] is added to
             // each fine task below, after the GB_cumsum of Cp.
             int64_t pC = Cp [k] ;
-            Cp [k] += TaskList [taskid].pC ;
+            Cp [k] += TaskList [taskid].pC ;        // FIXME
             TaskList [taskid].pC = pC ;
         }
     }
@@ -62,7 +64,7 @@ void GB_task_cumsum
     // replace Cp with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads, Werk) ;
+    GB_cumsum (Cp, false, Cnvec, Cnvec_nonempty, nthreads, Werk) ;  // FIXME
 
     //--------------------------------------------------------------------------
     // shift the cumulative sum of the fine tasks
@@ -79,7 +81,7 @@ void GB_task_cumsum
             // computed by the first task, and so on.  Cp [k] needs to be added
             // to all offsets to get the final starting position for each fine
             // task in C.
-            TaskList [taskid].pC += Cp [k] ;
+            TaskList [taskid].pC += Cp [k] ;  // FIXME
         }
         else
         { 
@@ -90,14 +92,14 @@ void GB_task_cumsum
             // also given TaskList [taskid].pC = Cp [k], then taskid-1 will
             // always know its pC_end, which is TaskList [taskid].pC,
             // regardless of whether taskid is a fine or coarse task.
-            TaskList [taskid].pC = Cp [k] ;
+            TaskList [taskid].pC = Cp [k] ;  // FIXME
         }
     }
 
     // The last task is ntasks-1.  It may be a fine task, in which case it
     // computes the entries in C from TaskList [ntasks-1].pC to
     // TaskList [ntasks].pC-1, inclusive.
-    TaskList [ntasks].pC = Cp [Cnvec] ;
+    TaskList [ntasks].pC = Cp [Cnvec] ;  // FIXME
 
     //--------------------------------------------------------------------------
     // check result
@@ -129,7 +131,7 @@ void GB_task_cumsum
             ASSERT (pM == -1 || (0 <= pM && pM <= pM_end)) ;
             // pC and pC_end can be checked exactly.  This task t computes
             // entries pC:(pC_end-1) of C, inclusive.
-            ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;
+            ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;//FIXME
         }
         else
         {

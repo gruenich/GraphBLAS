@@ -187,8 +187,9 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                 #endif
 
                 #if GB_B_IS_HYPER
-                GB_hyper_hash_lookup (Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx,
-                    B_hash_bits, j, &pB, &pB_end) ;
+                GB_hyper_hash_lookup (false, false, // FIXME
+                    Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
+                    j, &pB, &pB_end) ;
                 bjnz = pB_end - pB ;
                 if (bjnz > 0)
                 #elif GB_B_IS_SPARSE
@@ -210,8 +211,9 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
                     #endif
 
                     #if GB_A_IS_HYPER
-                    GB_hyper_hash_lookup (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                        A_hash_bits, i, &pA, &pA_end) ;
+                    GB_hyper_hash_lookup (false, false, // FIXME
+                        Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                        i, &pA, &pA_end) ;
                     ainz = pA_end - pA ;
                     if (ainz > 0)
                     #elif GB_A_IS_SPARSE

@@ -61,7 +61,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const int64_t *Tile_vlen = csc ? Tile_rows : Tile_cols ;
 
     int64_t anvec = A->nvec ;
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
     const bool A_iso = A->iso ;
@@ -71,15 +71,15 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     //--------------------------------------------------------------------------
 
     size_t Wp_size = 0 ;
-    int64_t *restrict Wp = NULL ;
-    Wp = GB_MALLOC_WORK (anvec, int64_t, &Wp_size) ;
+    uint64_t *restrict Wp = NULL ;
+    Wp = GB_MALLOC_WORK (anvec, uint64_t, &Wp_size) ;
     if (Wp == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_memcpy (Wp, Ap, anvec * sizeof (int64_t), nthreads_max) ;
+    GB_memcpy (Wp, Ap, anvec * sizeof (uint64_t), nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // split A into tiles
@@ -140,12 +140,12 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
             C = NULL ;
             GB_OK (GB_new (&C, // new header
-                atype, cvlen, cvdim, GB_Ap_malloc, csc, A_sparsity,
-                hyper_switch, cnvec)) ;
+                atype, cvlen, cvdim, GB_ph_malloc, csc, A_sparsity,
+                hyper_switch, cnvec, /* FIXME: */ false, false)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;
-            int64_t *restrict Cp = C->p ;
+            uint64_t *restrict Cp = C->p ;  // FIXME
             int64_t *restrict Ch = C->h ;
 
             //------------------------------------------------------------------
@@ -202,16 +202,18 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 }
             }
 
-            GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+            // FIXME: if C->p_is_32 and cumsum overflows, reallocate C->p 
+            GB_cumsum (Cp, false, cnvec, &(C->nvec_nonempty), nth, Werk) ;
             int64_t cnz = Cp [cnvec] ;
 
             //------------------------------------------------------------------
             // allocate C->i and C->x for this tile
             //------------------------------------------------------------------
 
-            // set C->iso = A_iso       OK
+            // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
+
             GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, A_iso)) ;
-            int64_t *restrict Ci = C->i ;
+            int64_t *restrict Ci = C->i ;   // FIXME
             C->nvals = cnz ;
             C->magic = GB_MAGIC ;       // for GB_nnz_held(C), to slice C
 
@@ -361,7 +363,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (C, "C for GB_split", GB0) ;
-            GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+            GB_OK (GB_hyper_prune (C, Werk)) ;
             GB_OK (GB_conform (C, Werk)) ;
             if (csc)
             { 

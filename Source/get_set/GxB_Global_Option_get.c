@@ -362,6 +362,8 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
 // GxB_Global_Option_get_FUNCTION: get global options (function pointers)
 //------------------------------------------------------------------------------
 
+#include "include/GB_pedantic_disable.h"
+
 GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
 (
     GxB_Option_Field field,         // option to query

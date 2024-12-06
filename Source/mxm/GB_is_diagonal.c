@@ -83,7 +83,7 @@ bool GB_is_diagonal             // true if A is diagonal
     // examine each vector of A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ai = A->i ;
 
     int diagonal = true ;

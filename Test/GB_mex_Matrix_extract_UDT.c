@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
 
-#define USAGE "C = GB_mex_Matrix_extract (C, Mask, accum, A, I, J, desc, hack)"
+#define USAGE "C = GB_mex_Matrix_extract (C, Mask, accum, A, I, J, desc, use_mydouble)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -98,14 +98,14 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices (&I, pargin [4], &ni, I_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (&I, NULL, pargin [4], &ni, I_range, &ignore))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
     }
 
     // get J
-    if (!GB_mx_mxArray_to_indices (&J, pargin [5], &nj, J_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (&J, NULL, pargin [5], &nj, J_range, &ignore))
     {
         FREE_ALL ;
         mexErrMsgTxt ("J failed") ;
@@ -118,15 +118,15 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
-    // get the hack option
-    bool GET_SCALAR (7, bool, hack, false) ;
+    // get the use_mydouble option
+    bool GET_SCALAR (7, bool, use_mydouble, false) ;
 
-    if (hack)
+    if (use_mydouble)
     { 
         // A = (mydouble) A, if A is double
         if (A->type == GrB_FP64 && C->type == GrB_FP64)
         {
-//          printf ("hack A\n") ;
+//          printf ("use_mydouble A\n") ;
             OK (GrB_Type_new (&mydouble, sizeof (double))) ;
             OK (GrB_UnaryOp_new (&castdouble, cast_double, mydouble, GrB_FP64)) ;
             OK (GrB_UnaryOp_new (&castback,   cast_back,   GrB_FP64, mydouble)) ;

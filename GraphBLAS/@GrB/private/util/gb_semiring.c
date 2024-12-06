@@ -131,16 +131,6 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     if (xcode == GB_BOOL_code)
     { 
         // z = mult(x,y) where both x and y are Boolean.
-        // DIV becomes FIRST
-        // RDIV becomes SECOND
-        // MIN and TIMES become LAND
-        // MAX and PLUS become LOR
-        // NE, ISNE, MINUS, and RMINUS become LXOR
-        // ISEQ becomes EQ
-        // ISGT becomes GT
-        // ISLT becomes LT
-        // ISGE becomes GE
-        // ISLE becomes LE
         mult_binop_code = GB_boolean_rename (mult_binop_code) ;
     }
 

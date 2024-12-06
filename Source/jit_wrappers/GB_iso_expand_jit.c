@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -30,8 +32,8 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_ISO_EXPAND, GxB_FULL, false, xtype, op, false,
-        GxB_FULL, false, xtype, true, 0) ;
+        GB_JIT_KERNEL_ISO_EXPAND, GxB_FULL, false, xtype, false, false, false,
+        op, false, GxB_FULL, false, xtype, false, false, true, 0) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -48,6 +50,7 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (X, n, scalar, nthreads)) ;
 }

@@ -2,10 +2,12 @@
 // GB_ek_slice_kernels.h: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 #ifndef GB_EK_SLICE_KERNELS_H
 #define GB_EK_SLICE_KERNELS_H
@@ -145,7 +147,6 @@ static inline void GB_ek_slice_ntasks
         pA_start = p0 ;                                                     \
         pA_end   = p1 ;                                                     \
     }
-
 
 #endif
 

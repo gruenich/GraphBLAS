@@ -17,7 +17,6 @@
 #if GB_TYPE_ENABLED
 #include "GB.h"
 #include "emult/GB_emult.h"
-#include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_ew__include.h"
 
@@ -41,6 +40,8 @@
 
 // C matrix:
 #define GB_C_TYPE int16_t
+
+#define GB_Cp_IS_32 Cp_is_32
 
 // disable this operator and use the generic case if these conditions hold
 #if (defined(GxB_NO_BOR) || defined(GxB_NO_INT16) || defined(GxB_NO_BOR_INT16))
@@ -197,7 +198,7 @@ GrB_Info GB (_AemultB_02__bor_int16)
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads
@@ -222,7 +223,7 @@ GrB_Info GB (_AemultB_04__bor_int16)
     const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     const int64_t *M_ek_slicing,
     const int M_ntasks,
     const int M_nthreads
@@ -324,7 +325,7 @@ GrB_Info GB (_bind1st_tran__bor_int16)
     GrB_Matrix C,
     const GB_void *x_input,
     const GrB_Matrix A,
-    int64_t *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
@@ -335,6 +336,7 @@ GrB_Info GB (_bind1st_tran__bor_int16)
     return (GrB_NO_VALUE) ;
     #else
     GB_X_TYPE x = (*((const GB_X_TYPE *) x_input)) ;
+    bool Cp_is_32 = C->p_is_32 ;
     #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -359,7 +361,7 @@ GrB_Info GB (_bind2nd_tran__bor_int16)
     GrB_Matrix C,
     const GrB_Matrix A,
     const GB_void *y_input,
-    int64_t *restrict *Workspaces,
+    void **Workspaces,
     const int64_t *restrict A_slice,
     int nworkspaces,
     int nthreads
@@ -369,10 +371,13 @@ GrB_Info GB (_bind2nd_tran__bor_int16)
     return (GrB_NO_VALUE) ;
     #else
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
+    bool Cp_is_32 = C->p_is_32 ;
     #include "transpose/template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

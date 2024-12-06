@@ -50,7 +50,7 @@ if (is_monoid)
     fprintf (f, 'm4_define(`GB_declare_const_identity'', `#define GB_DECLARE_IDENTITY_CONST(z)%s'')\n', define_const_id) ;
 end
 
-% A is never iso, so GBX is not needed
+% A is never iso
 fprintf (f, 'm4_define(`GB_declarea'', `#define GB_DECLAREA(aij) %s aij'')\n', atype) ;
 fprintf (f, 'm4_define(`GB_geta'', `#define GB_GETA(aij,Ax,pA,A_iso) aij = Ax [pA]'')\n') ;
 

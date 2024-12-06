@@ -33,8 +33,8 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_APPLYBIND1, false,
-        false, false, GxB_FULL, ctype, NULL, false, false,
-        binaryop, false, false, NULL, B) ;
+        false, false, GxB_FULL, ctype, false, false,
+        NULL, false, false, binaryop, false, false, NULL, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -51,6 +51,7 @@ GrB_Info GB_apply_bind1st_jit   // Cx = op (x,B), apply bind1st via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Cx, xscalar, B->x, B->b, GB_nnz_held (B),
         nthreads)) ;

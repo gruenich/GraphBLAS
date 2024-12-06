@@ -18,7 +18,6 @@
 #include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
-#include "slice/GB_ek_slice.h"
 #include "generic/GB_generic.h"
 
 GrB_Info GB_emult_generic       // generic emult
@@ -40,7 +39,7 @@ GrB_Info GB_emult_generic       // generic emult
     // from GB_emult_sparsity
     const int ewise_method,
     // from GB_emult_04, GB_emult_03, GB_emult_02:
-    const int64_t *restrict Cp_kfirst,
+    const uint64_t *restrict Cp_kfirst,
     // to slice M, A, and/or B,
     const int64_t *M_ek_slicing, const int M_ntasks, const int M_nthreads,
     const int64_t *A_ek_slicing, const int A_ntasks, const int A_nthreads,

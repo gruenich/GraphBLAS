@@ -2,7 +2,7 @@
 // GB_enumify_mxm: enumerate a GrB_mxm problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -173,6 +173,8 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     //--------------------------------------------------------------------------
 
     // total method_code bits: 50 (13 hex digits): 14 bits to spare.
+
+    // FIXME: 32/64 bits: 8 bits for C, M, A, B
 
     (*method_code) =
                                                // range        bits

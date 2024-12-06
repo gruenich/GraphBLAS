@@ -2,7 +2,7 @@
 // GB_select_value_iso:  select when A is iso and the op is VALUE*
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -14,6 +14,8 @@
 // shallow copy of A, or no entries from A will be copied to C and thus C is an
 // empty matrix.  The select factory is not needed, except to check the iso
 // value via GB_select_bitmap.
+
+// This method takes O(1) time and space.
 
 #define GB_FREE_ALL                         \
 {                                           \
@@ -82,8 +84,9 @@ GrB_Info GB_select_value_iso
     { 
         // C is an empty matrix
         return (GB_new (&C, // existing header
-            A->type, A->vlen, A->vdim, GB_Ap_calloc, true,
-            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1)) ;
+            A->type, A->vlen, A->vdim, GB_ph_calloc, true,
+            GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
+            /* FIXME: */ false, false)) ;
     }
     else
     { 

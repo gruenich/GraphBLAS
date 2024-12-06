@@ -2,10 +2,12 @@
 // GB_macrofy_input: construct a macro to load values from an input matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // The macro, typically called GB_GETA or GB_GETB, also does typecasting.
 
@@ -17,7 +19,7 @@ void GB_macrofy_input
     FILE *fp,
     // input:
     const char *aname,      // name of the scalar aij = ...
-    const char *Amacro,     // name of the macro is GB_GET*(Amacro)
+    const char *Amacro,     // name of the macro is GB_GETA, if Amacro is 'A'
     const char *Aname,      // name of the input matrix (typically A or B)
     bool do_matrix_macros,  // if true, do the matrix macros
     GrB_Type a2type,        // type of aij after casting to x or y of f(x,y)
@@ -26,8 +28,10 @@ void GB_macrofy_input
     int acode,              // type code of the input (0 if pattern,
                             // 15 if A is NULL)
     int A_iso_code,         // 1 if A is iso
-    int azombies            // 1 if A has zombies, 0 if A has no zombies;
+    int azombies,           // 1 if A has zombies, 0 if A has no zombies;
                             // -1 if the macro should not be created.
+    int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int i_is_32             // if true, Ai is 32-bit, else 64-bit
 )
 {
 
@@ -142,4 +146,11 @@ void GB_macrofy_input
         GB_macrofy_cast_input (fp, macro_name, aname, xargs, xexpr, a2type,
             atype) ;
     }
+
+    //--------------------------------------------------------------------------
+    // construct macros for 32/64 integer types
+    //--------------------------------------------------------------------------
+
+    GB_macrofy_bits (fp, Aname, p_is_32, i_is_32) ;
 }
+

@@ -83,7 +83,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     int64_t pleft ;
     bool found ;
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
 
     if (Ap != NULL)
     {
@@ -93,7 +93,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         //----------------------------------------------------------------------
 
         int64_t pA_start, pA_end ;
-        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ah = A->h ; // FIXME
         if (Ah != NULL)
         {
 
@@ -101,12 +101,14 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             // A is hypersparse: look for j in hyperlist A->h [0 ... A->nvec-1]
             //------------------------------------------------------------------
 
-            const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+            // FIXME
+            const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
             const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
             const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
             const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
-            int64_t k = GB_hyper_hash_lookup (Ah, A->nvec, Ap, A_Yp, A_Yi, A_Yx,
-                A_hash_bits, j, &pA_start, &pA_end) ;
+            int64_t k = GB_hyper_hash_lookup (false, false, // FIXME
+                Ah, A->nvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+                j, &pA_start, &pA_end) ;
             found = (k >= 0) ;
             if (!found)
             { 
@@ -132,7 +134,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         int64_t pright = pA_end - 1 ;
 
         // Time taken for this step is at most O(log(nnz(A(:,j))).
-        const int64_t *restrict Ai = A->i ;
+        const int64_t *restrict Ai = A->i ; // FIXME
         GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
 
     }

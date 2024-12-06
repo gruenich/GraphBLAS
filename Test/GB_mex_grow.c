@@ -49,6 +49,7 @@ GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq)
     t = (WALLCLOCK - t) ;
     GrB_Matrix_free (&T) ;
     printf ("A and C match, time %g\n", t) ;
+    return (GrB_SUCCESS) ;
 }
 
 

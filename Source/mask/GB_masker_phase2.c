@@ -26,7 +26,6 @@
 // R is iso if both C and Z are iso and zij == cij.
 
 #include "mask/GB_mask.h"
-#include "slice/GB_ek_slice.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #include "include/GB_masker_shared_definitions.h"
@@ -50,7 +49,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Matrix R,                   // output matrix, static header
     const bool R_is_csc,            // format of output matrix R
     // from phase1:
-    int64_t **Rp_handle,            // vector pointers for R
+    uint64_t **Rp_handle,           // vector pointers for R    FIXME
     size_t Rp_size,
     const int64_t Rnvec_nonempty,   // # of non-empty vectors in R
     // tasks from phase1a:
@@ -109,8 +108,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rh_handle != NULL) ;
-    int64_t *Rp = (*Rp_handle) ;
-    int64_t *Rh = (*Rh_handle) ;
+    uint64_t *restrict Rp = (*Rp_handle) ;  // FIXME
+    int64_t *restrict Rh = (*Rh_handle) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix R
@@ -145,10 +144,10 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     }
 
     // allocate the result R (but do not allocate R->p or R->h)
-    // set R->iso = R_iso   OK
     GrB_Info info = GB_new_bix (&R, // any sparsity, existing header
-        C->type, C->vlen, C->vdim, GB_Ap_null, R_is_csc,
-        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso) ;
+        C->type, C->vlen, C->vdim, GB_ph_null, R_is_csc,
+        R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso,
+        /* FIXME: */ false, false) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
@@ -254,7 +253,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // prune empty vectors from Rh
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_hypermatrix_prune (R, Werk)) ;
+    GB_OK (GB_hyper_prune (R, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

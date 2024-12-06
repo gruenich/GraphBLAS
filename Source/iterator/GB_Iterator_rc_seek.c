@@ -72,7 +72,7 @@ GrB_Info GB_Iterator_rc_seek
                 // find k so that j = Ah [k], or if not found, return k as the
                 // smallest value so that j < Ah [k]. 
                 k = 0 ;
-                const int64_t *restrict Ah = iterator->Ah ;
+                const int64_t *restrict Ah = iterator->Ah ; // FIXME
                 if (j > 0)
                 { 
                     bool found ;

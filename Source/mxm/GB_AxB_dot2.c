@@ -40,7 +40,6 @@
 
 #include "mxm/GB_mxm.h"
 #include "extract/GB_subref.h"
-#include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "jitifyer/GB_stringify.h"
 #include "mxm/GB_AxB__include1.h"
@@ -125,8 +124,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
     bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
     bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
-    GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;
-    GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;
+    GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;    // FIXME
+    GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;    // FIXME
 
     if (A_is_hyper)
     { 
@@ -296,8 +295,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (A_slice, A->p, anvec, naslice, false) ;
-    GB_p_slice (B_slice, B->p, bnvec, nbslice, false) ;
+    GB_p_slice (A_slice, A->p, false, anvec, naslice, false) ;  // FIXME
+    GB_p_slice (B_slice, B->p, false, bnvec, nbslice, false) ;  // FIXME
 
     //--------------------------------------------------------------------------
     // allocate C
@@ -365,10 +364,10 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             GB_sparsity_char_matrix (B_in)) ;
     }
 
-    // set C->iso = C_iso
     GB_OK (GB_new_bix (&C, // bitmap/full, existing header
-        ctype, cvlen, cvdim, GB_Ap_malloc, true, C_sparsity,
-        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso)) ;
+        ctype, cvlen, cvdim, GB_ph_malloc, true, C_sparsity,
+        M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
+        /* OK: */ false, false)) ;
 
     //--------------------------------------------------------------------------
     // if M is sparse/hyper, scatter it into the C bitmap

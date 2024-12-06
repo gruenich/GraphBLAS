@@ -2,14 +2,21 @@
 // GB_ix_realloc: reallocate a sparse/hyper matrix to hold a given # of entries
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// Does not modify A->p.  Reallocates A->x and A->i to the requested size,
-// preserving the existing content of A->x and A->i.  Preserves pending tuples
-// and zombies, if any.
+// DONE: 32/64 bit
+
+// Reallocates A->x and A->i to the requested size, preserving the existing
+// content of A->x and A->i.  Preserves pending tuples and zombies, if any.
+// A->i_is_32 is unchanged since the matrix dimensions do not change, and thus
+// A->Y is not modified.
+
+// If nzmax_new is too large for the current value of A->p_is_32, then A->p
+// is converted to 64-bit integers and A->p_is_32 is set true.  The content of
+// A->p is preserved.
 
 #include "GB.h"
 
@@ -24,8 +31,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    // This method is used only by GB_ix_resize, which itself is used only by
-    // GB_wait.  Full and bitmap matrices never have pending work, so
+    // Full and bitmap matrices never have pending work, so
     // this function is only called for hypersparse and sparse matrices.
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
@@ -49,12 +55,28 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     }
 
     //--------------------------------------------------------------------------
-    // reallocate the space
+    // reallocate A->p if required
+    //--------------------------------------------------------------------------
+
+    if (A->p_is_32 != GB_validate_p_is_32 (A->p_is_32, nzmax_new))
+    { 
+        // convert A->p to 64-bit; do not change A->i_is_32
+        GrB_Info info = GB_convert_int (A, false, A->i_is_32) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            return (info) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // reallocate A->i
     //--------------------------------------------------------------------------
 
     size_t nzmax_new1 = GB_IMAX (nzmax_new, 1) ;
     bool ok1 = true, ok2 = true ;
-    GB_REALLOC (A->i, nzmax_new1, int64_t, &(A->i_size), &ok1) ;
+    size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
+    A->i = GB_realloc_memory (nzmax_new1, isize, A->i, &(A->i_size), &ok1) ;
     size_t asize = A->type->size ;
     if (A->iso)
     { 

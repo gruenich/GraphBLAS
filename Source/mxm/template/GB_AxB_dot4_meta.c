@@ -43,10 +43,10 @@
 
     const int64_t cvlen = C->vlen ;
 
-    const int64_t  *restrict Bp = B->p ;
-    const int8_t   *restrict Bb = B->b ;
+    const uint64_t  *restrict Bp = B->p ;    // FIXME
     const int64_t  *restrict Bh = B->h ;
     const int64_t  *restrict Bi = B->i ;
+    const int8_t   *restrict Bb = B->b ;
     const int64_t vlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
 
@@ -62,10 +62,10 @@
     const bool B_iso = B->iso ;
     #endif
 
-    const int64_t  *restrict Ap = A->p ;
-    const int8_t   *restrict Ab = A->b ;
+    const uint64_t  *restrict Ap = A->p ;   // FIXME
     const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
+    const int8_t   *restrict Ab = A->b ;
     const int64_t avdim = A->vdim ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (A->vdim == C->vlen) ;

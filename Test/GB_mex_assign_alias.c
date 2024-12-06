@@ -62,14 +62,14 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices (&I, PARGIN (2), &ni, I_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (&I, NULL, PARGIN (2), &ni, I_range, &ignore))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
     }
 
     // get J
-    if (!GB_mx_mxArray_to_indices (&J, PARGIN (3), &nj, J_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (&J, NULL, PARGIN (3), &nj, J_range, &ignore))
     {
         FREE_ALL ;
         mexErrMsgTxt ("J failed") ;

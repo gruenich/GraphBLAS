@@ -2,7 +2,7 @@
 // GrB_Matrix_select: select entries from a matrix using a GrB_IndexUnaryOp
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ static inline GrB_Info GB_sel   // C<M> = accum (C, select(A,k)) or select(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to select the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Thunk,         // optional input for select operator
+    const GrB_Scalar y,             // second input: scalar y
     const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Werk Werk
 )
@@ -56,7 +56,7 @@ static inline GrB_Info GB_sel   // C<M> = accum (C, select(A,k)) or select(A',k)
         accum,                      // optional accum for Z=accum(C,T)
         op,                         // operator to select the entries
         A,                          // first input: A
-        Thunk,                      // optional input for select operator
+        y,                          // optional input for select operator
         A_transpose,                // descriptor for A
         Werk) ;
 
@@ -76,14 +76,14 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_select_, T)                              \
     const GrB_BinaryOp accum,       /* optional accum for Z=accum(C,T) */   \
     const GrB_IndexUnaryOp op,      /* operator to select the entries */    \
     const GrB_Matrix A,             /* first input:  matrix A */            \
-    const type thunk,               /* optional input for select operator */\
+    const type y,                   /* second input: scalar y */            \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
     GB_WHERE (C, GB_STR(prefix) "_Matrix_select_" GB_STR(T)                 \
-        " (C, M, accum, op, A, thunk, desc)") ;                             \
-    GB_SCALAR_WRAP (Thunk, thunk, GB_EVAL3 (prefix, _, T)) ;                \
-    return (GB_sel (C, M, accum, op, A, Thunk, desc, Werk)) ;               \
+        " (C, M, accum, op, A, y, desc)") ;                                 \
+    GB_SCALAR_WRAP (yscalar, y, GB_EVAL3 (prefix, _, T)) ;                  \
+    return (GB_sel (C, M, accum, op, A, yscalar, desc, Werk)) ;             \
 }
 
 GB_SEL (GrB, bool      , BOOL  )
@@ -101,7 +101,7 @@ GB_SEL (GxB, GxB_FC32_t, FC32  )
 GB_SEL (GxB, GxB_FC64_t, FC64  )
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_select_UDT: select entries from matrix (thunk: user-defined type)
+// GrB_Matrix_select_UDT: select entries from matrix (y: user-defined type)
 //------------------------------------------------------------------------------
 
 GrB_Info GrB_Matrix_select_UDT
@@ -111,17 +111,17 @@ GrB_Info GrB_Matrix_select_UDT
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to select the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const void *thunk,              // optional input for select operator
+    const void *y,                  // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_select_UDT (C, M, accum, op, A, thunk, desc)") ;
-    GB_SCALAR_WRAP_UDT (Thunk, thunk, (op == NULL) ? NULL : op->ytype) ;
-    return (GB_sel (C, M, accum, op, A, Thunk, desc, Werk)) ;
+    GB_WHERE (C, "GrB_Matrix_select_UDT (C, M, accum, op, A, y, desc)") ;
+    GB_SCALAR_WRAP_UDT (yscalar, y, (op == NULL) ? NULL : op->ytype) ;
+    return (GB_sel (C, M, accum, op, A, yscalar, desc, Werk)) ;
 }
 
 //------------------------------------------------------------------------------
-// GrB_Matrix_select_Scalar: select entries from a matrix (thunk is GrB_Scalar)
+// GrB_Matrix_select_Scalar: select entries from a matrix (y is GrB_Scalar)
 //------------------------------------------------------------------------------
 
 GrB_Info GrB_Matrix_select_Scalar
@@ -131,11 +131,11 @@ GrB_Info GrB_Matrix_select_Scalar
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_IndexUnaryOp op,      // operator to select the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Scalar Thunk,         // optional input for select operator
+    const GrB_Scalar yscalar,       // second input: scalar y
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_select_Scalar (C, M, accum, op, A, thunk, desc)") ;
-    return (GB_sel (C, M, accum, op, A, Thunk, desc, Werk)) ;
+    GB_WHERE (C, "GrB_Matrix_select_Scalar (C, M, accum, op, A, y, desc)") ;
+    return (GB_sel (C, M, accum, op, A, yscalar, desc, Werk)) ;
 }
 

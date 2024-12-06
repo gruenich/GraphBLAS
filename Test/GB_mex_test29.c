@@ -371,7 +371,7 @@ void mexFunction
     OK (GrB_Global_set_String_ (GrB_GLOBAL, defn, (GrB_Field) GxB_JIT_CACHE_PATH)) ;
     OK (GrB_Global_get_String_ (GrB_GLOBAL, defn2, (GrB_Field) GxB_JIT_CACHE_PATH)) ;
     CHECK (MATCH (defn2, defn)) ;
-    system ("ls /tmp/stuff ; rm -rf /tmp/stuff") ;
+    int ignore = system ("ls /tmp/stuff ; rm -rf /tmp/stuff") ;
 
     ERR (GrB_Global_set_String_ (GrB_GLOBAL, defn, GrB_NAME)) ;
 

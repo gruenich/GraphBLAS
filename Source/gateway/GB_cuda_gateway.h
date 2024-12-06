@@ -210,9 +210,7 @@ bool GB_cuda_select_branch
 
 GrB_Info GB_cuda_select_bitmap
 (
-    int8_t *Cb,
-    int64_t *cnvals,
-    const bool C_iso,
+    GrB_Matrix C,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *ythunk,
@@ -226,6 +224,7 @@ GrB_Info GB_cuda_select_sparse
     const GrB_IndexUnaryOp op,
     const bool flipij,
     const GrB_Matrix A,
+    const GB_void *athunk,
     const GB_void *ythunk
 ) ;
 

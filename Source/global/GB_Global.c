@@ -96,7 +96,7 @@ typedef struct
     // for testing and development
     //--------------------------------------------------------------------------
 
-    int64_t hack [4] ;              // settings for testing/development only
+    int64_t hack [8] ;              // settings for testing/development only
 
     //--------------------------------------------------------------------------
     // diagnostic output
@@ -612,6 +612,8 @@ void GB_Global_memtable_remove (void *p)
 //------------------------------------------------------------------------------
 // malloc_function
 //------------------------------------------------------------------------------
+
+#include "include/GB_pedantic_disable.h"
 
 void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
 { 

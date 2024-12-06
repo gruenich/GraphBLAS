@@ -2,7 +2,7 @@
 // GB_select_positional_phase1: count entries for C=select(A,thunk)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -12,14 +12,13 @@
 // JIT: not need: use factory; 3 variants (A sparse, hyper, or full for DIAG)
 
 #include "select/GB_select.h"
-#include "slice/GB_ek_slice.h"
 
 GrB_Info GB_select_positional_phase1
 (
-    int64_t *restrict Zp,
-    int64_t *restrict Cp,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    GrB_Matrix C,
+    uint64_t *restrict Zp,          // FIXME
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     const GrB_Matrix A,
     const int64_t ithunk,
     const GrB_IndexUnaryOp op,
@@ -39,6 +38,8 @@ GrB_Info GB_select_positional_phase1
     ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)
         || opcode == GB_NONZOMBIE_idxunop_code) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
+
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
     // phase1: positional operators and nonzombie selector

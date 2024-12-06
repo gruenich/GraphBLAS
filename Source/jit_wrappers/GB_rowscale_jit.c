@@ -33,8 +33,8 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_ROWSCALE, false,
-        false, false, GB_sparsity (C), C->type, NULL, false, false,
-        binaryop, false, flipxy, D, B) ;
+        false, false, GB_sparsity (C), C->type, C->p_is_32, C->i_is_32,
+        NULL, false, false, binaryop, false, flipxy, D, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -51,6 +51,7 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, D, B, nthreads)) ;
 }

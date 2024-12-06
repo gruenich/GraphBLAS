@@ -77,22 +77,22 @@ GrB_Info GB_ijsort
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Work = GB_MALLOC_WORK (2*ni + ntasks + 1, GrB_Index, &Work_size) ;
+    Work = GB_MALLOC_WORK (2*ni + ntasks + 1, uint64_t, &Work_size) ;
     if (Work == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GrB_Index *restrict I1  = Work ;                         // size ni
-    GrB_Index *restrict I1k = Work + ni ;                    // size ni
-    int64_t *restrict Count = (int64_t *) (Work + 2*ni) ;    // size ntasks+1
+    uint64_t *restrict I1  = Work ;             // size ni
+    uint64_t *restrict I1k = Work + ni ;        // size ni
+    uint64_t *restrict Count = Work + 2*ni ;    // size ntasks+1
 
     //--------------------------------------------------------------------------
     // copy I into I1 and construct I1k
     //--------------------------------------------------------------------------
 
-    GB_memcpy (I1, I, ni * sizeof (GrB_Index), nthreads) ;
+    GB_memcpy (I1, I, ni * sizeof (uint64_t), nthreads) ;
 
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -108,7 +108,7 @@ GrB_Info GB_ijsort
     // sort [I1 I1k]
     //--------------------------------------------------------------------------
 
-    info = GB_msort_2 ((int64_t *) I1, (int64_t *) I1k, ni, nthreads) ;
+    info = GB_msort_2 (I1, false, I1k, false, ni, nthreads) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -136,15 +136,15 @@ GrB_Info GB_ijsort
         Count [tid] = my_count ;
     }
 
-    GB_cumsum1 (Count, ntasks) ;
+    GB_cumsum1_64 (Count, ntasks) ;
     int64_t ni2 = Count [ntasks] ;
 
     //--------------------------------------------------------------------------
     // allocate the result I2
     //--------------------------------------------------------------------------
 
-    I2  = GB_MALLOC_WORK (ni2, GrB_Index, &I2_size) ;
-    I2k = GB_MALLOC_WORK (ni2, GrB_Index, &I2k_size) ;
+    I2  = GB_MALLOC_WORK (ni2, uint64_t, &I2_size) ;
+    I2k = GB_MALLOC_WORK (ni2, uint64_t, &I2k_size) ;
     if (I2 == NULL || I2k == NULL)
     { 
         // out of memory
@@ -212,9 +212,9 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    *(p_I2 ) = (GrB_Index *) I2  ; (*I2_size_handle ) = I2_size ;
-    *(p_I2k) = (GrB_Index *) I2k ; (*I2k_size_handle) = I2k_size ;
-    *(p_ni ) = (int64_t    ) ni2 ;
+    *(p_I2 ) = (uint64_t *) I2  ; (*I2_size_handle ) = I2_size ;
+    *(p_I2k) = (uint64_t *) I2k ; (*I2k_size_handle) = I2k_size ;
+    *(p_ni ) = (int64_t   ) ni2 ;
     return (GrB_SUCCESS) ;
 }
 

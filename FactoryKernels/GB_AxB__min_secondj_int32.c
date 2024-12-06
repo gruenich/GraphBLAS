@@ -462,5 +462,7 @@ GrB_Info GB (_Asaxpy3B__min_secondj_int32)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

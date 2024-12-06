@@ -33,9 +33,9 @@ GrB_Info GB_subref_phase0
     // output
     int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL standard
     size_t *p_Ch_size,
-    int64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    uint64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
     size_t *p_Ap_start_size,
-    int64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    uint64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     size_t *p_Ap_end_size,
     int64_t *p_Cnvec,       // # of vectors in C
     bool *p_need_qsort,     // true if C must be sorted
@@ -67,8 +67,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     size_t *p_Inext_size,
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     // from phase0:
-    const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,   // location of A(imin:imax,kA)
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,            // # of vectors of C
     const bool need_qsort,          // true if C must be sorted
     const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
@@ -84,7 +84,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
 GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 (
     // computed by phase1:
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    uint64_t **Cp_handle,               // output of size Cnvec+1 FIXME
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
@@ -95,8 +95,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // analysis from phase0:
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -113,7 +113,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 (
     GrB_Matrix C,               // output matrix, static header
     // from phase1:
-    int64_t **Cp_handle,        // vector pointers for C
+    uint64_t **Cp_handle,       // vector pointers for C FIXME
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase0b:
@@ -127,8 +127,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // from phase0:
     int64_t **Ch_handle,
     size_t Ch_size,
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,

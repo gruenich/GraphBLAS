@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
@@ -19,7 +21,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 (
     GrB_Matrix C,               // output matrix, static header
     // from phase2:
-    int64_t **Cp_handle,        // vector pointers for C
+    uint64_t **Cp_handle,       // vector pointers for C FIXME
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase1:
@@ -33,8 +35,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // from phase0:
     int64_t **Ch_handle,
     size_t Ch_size,
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -60,12 +62,13 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
+    const uint64_t *restrict Cp = (*Cp_handle) ;    // FIXME
     const int64_t *restrict Ch = (*Ch_handle) ;
-    const int64_t *restrict Cp = (*Cp_handle) ;
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (!GB_IS_FULL (A)) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -77,10 +80,10 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
     // allocate the result C (but do not allocate C->p or C->h)
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
-    // set C->iso = C_iso       OK
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, existing header
-        ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso) ;
+        ctype, nI, nJ, GB_ph_null, C_is_csc,
+        sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
+        /* FIXME: */ false, false) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -89,7 +92,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         return (info) ;
     }
 
-    // add Cp as the vector pointers for C, from GB_subref_phase1
+    // add Cp as the vector pointers for C, from GB_subref_phase2
     C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
     (*Cp_handle) = NULL ;
 
@@ -114,7 +117,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_2_OF_2
-    int64_t *restrict Ci = C->i ;
+    int64_t *restrict Ci = C->i ;   // FIXME
     int64_t *restrict Cx = (int64_t *) C->x ;
     #define GB_I_KIND Ikind
     #define GB_NEED_QSORT need_qsort
@@ -139,8 +142,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 Cx [(pC) + k] = (pA) + k ;          \
             }
         #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
-        #define GB_QSORT_1B(Ci,Cx,pC,clen) \
-            GB_qsort_1b_size8 (Ci + pC, (uint64_t *) (Cx + pC), clen) ;
+        #define GB_QSORT_1B(Ci,Cx,pC,clen)                  \
+            GB_qsort_1b_64_size8 ((uint64_t *) (Ci + pC),   \
+                (uint64_t *) (Cx + pC), clen) ;
         #define GB_SYMBOLIC
         #include "extract/template/GB_subref_template.c"
 
@@ -187,8 +191,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, (len) * csize) ;
             #define GB_COPY_ENTRY(pC,pA)                                    \
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, csize) ;
-            #define GB_QSORT_1B(Ci,Cx,pC,clen) \
-                GB_qsort_1b (Ci+(pC), (GB_void *) (Cx+(pC)*csize), csize, clen);
+            #define GB_QSORT_1B(Ci,Cx,pC,clen)                  \
+                GB_qsort_1b_64_generic ((uint64_t *) (Ci+(pC)), \
+                    (GB_void *) (Cx+(pC)*csize), csize, clen) ;
             #include "extract/template/GB_subref_template.c"
             info = GrB_SUCCESS ;
         }
@@ -200,7 +205,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
     if (info == GrB_SUCCESS)
     { 
-        info = GB_hypermatrix_prune (C, Werk) ;
+        info = GB_hyper_prune (C, Werk) ;
     }
 
     //--------------------------------------------------------------------------

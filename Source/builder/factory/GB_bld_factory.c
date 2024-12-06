@@ -2,10 +2,12 @@
 // GB_bld_factory.c: switch factory for builder
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // This is a generic body of code for creating hard-coded versions of code for
 // 87 combinations of operators and built-in types:

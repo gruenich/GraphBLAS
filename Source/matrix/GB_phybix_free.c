@@ -2,10 +2,12 @@
 // GB_phybix_free: free all content of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Frees all allocatable content of a matrix, except for the header itself.
 // A->magic becomes GB_MAGIC2.  If this matrix is given to a user-callable

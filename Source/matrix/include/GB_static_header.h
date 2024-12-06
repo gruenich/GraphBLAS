@@ -7,6 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+// FIXME:  XX->static_header can be inferred from XX->header_size.
+// assert (XX->static_header == (XX->header_size == 0))
+// Remove the static_header bool from the matrix struct. 
+//
+// rename GB_CLEAR_STATIC_HEADER to just GB_CLEAR_HEADER.
+
 // By default, many internal temporary matrices use statically allocated
 // headers to reduce the number of calls to malloc/free.  This works fine for
 // matrices on the CPU, but the static headers do not get automatically

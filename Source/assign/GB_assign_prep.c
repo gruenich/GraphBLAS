@@ -987,8 +987,8 @@ GrB_Info GB_assign_prep
             // Instead of duplicating C, create a new empty matrix Cwork.
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
             GB_OK (GB_new (&Cwork, // sparse or hyper, existing header
-                ctype, C->vlen, C->vdim, GB_Ap_calloc, C_is_csc,
-                sparsity, C->hyper_switch, 1)) ;
+                ctype, C->vlen, C->vdim, GB_ph_calloc, C_is_csc,
+                sparsity, C->hyper_switch, 1, /* FIXME: */ false, false)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
             (*C_replace) = false ;
         }
@@ -1178,8 +1178,7 @@ GrB_Info GB_assign_prep
         // C has changed so recompute the subassigner method
         (*subassign_method) = GB_subassigner_method (&C_iso_out, cout, C,
             (*C_replace), M, Mask_comp, Mask_struct, accum, A, Ikind, Jkind,
-            nJ, J, /* FUTURE: Jcolon, */
-            scalar_expansion, scalar, scalar_type) ;
+            nJ, Jcolon, scalar_expansion, scalar, scalar_type) ;
     }
 
     ASSERT_MATRIX_OK (C, "C before subassign", GB0) ;

@@ -58,6 +58,7 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, A, A_slice, B, B_slice, nthreads, naslice,
         nbslice, semiring->multiply->theta)) ;

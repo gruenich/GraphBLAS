@@ -2,10 +2,12 @@
 // GB_hyper_shallow: create a sparse shallow version of a hypersparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // On input C must exist but the content of the C header is uninitialized
 // except for C->static_header and C->header_size.  No memory is allocated to

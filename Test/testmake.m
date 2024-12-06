@@ -50,7 +50,7 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-flags = '-g -R2018a -DGBNCPUFEAT' ;
+flags = '-O -R2018a -DGBNCPUFEAT' ;
 
 if (~have_octave)
     try
@@ -84,6 +84,7 @@ inc = '-ITemplate -I../Include -I../Source -I../lz4 -I../rmm_wrap' ;
 inc = [inc ' -I../zstd -I../zstd/zstd_subset -I.'] ;
 inc = [inc ' -I../Config '] ;
 inc = [inc ' -I../Source/builtin '] ;
+inc = [inc ' -I../Source/hyper '] ;
 
 if (ismac)
     % Mac (do 'make install' for GraphBLAS first)

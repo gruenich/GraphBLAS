@@ -21,6 +21,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
 )
 {
     void *p ;
+    n = GB_IMAX (n, 1) ;
     if (iso)
     { 
         // always calloc the iso entry

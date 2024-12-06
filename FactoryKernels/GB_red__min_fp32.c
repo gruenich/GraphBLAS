@@ -77,5 +77,7 @@ GrB_Info GB (_red__min_fp32)
     #endif
 }
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -2,7 +2,7 @@
 // GB_enumify_subref: enumerate a GrB_extract problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -54,6 +54,8 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     //--------------------------------------------------------------------------
 
     // total method_code bits: 14 (4 hex digits)
+
+    // FIXME: 32/64 bits: 4 bits for C, A
 
     (*method_code) =
                                                // range        bits

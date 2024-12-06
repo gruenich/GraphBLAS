@@ -11,6 +11,7 @@
 
 #include "extract/GB_subref.h"
 #include "jitifyer/GB_stringify.h"
+#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
@@ -113,10 +114,10 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     if (!ok) cnzmax = INT64_MAX ;
     GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;
     int sparsity = GB_IS_BITMAP (A) ? GxB_BITMAP : GxB_FULL ;
-    // set C->iso = C_iso   OK
     GB_OK (GB_new_bix (&C, // bitmap or full, existing header
-        ctype, nI, nJ, GB_Ap_null, C_is_csc,
-        sparsity, true, A->hyper_switch, -1, cnzmax, true, C_iso)) ;
+        ctype, nI, nJ, GB_ph_null, C_is_csc,
+        sparsity, true, A->hyper_switch, -1, cnzmax, true, C_iso,
+        /* OK: */ false, false)) ;
 
     //--------------------------------------------------------------------------
     // get C

@@ -9,19 +9,17 @@
 
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"
-#include "slice/GB_ek_slice.h"
 #include "jitifyer/GB_stringify.h"
 
 //  macros:
 
 //  GB_SORT (func)      defined as GB_sort_func_TYPE_ascend or _descend,
-//                      GB_msort_ISO_ascend or _descend,
-//                      or GB_msort_func_UDT
+//                      GB_sort_ISO_ascend or _descend, or GB_sort_func_UDT
 //  GB_C_TYPE           bool, int8_, ... or GB_void for UDT
 
 //  GB_ADDR(A,p)        A+p for builtin, A + p * GB_SIZE otherwise
 //  GB_SIZE             size of each entry: sizeof (GB_C_TYPE) for built-in
-//  GB_GET(x,X,i)       x = (op->xtype) X [i]
+//  GB_GETX(x,X,i)      x = (op->xtype) X [i]
 //  GB_COPY(A,i,C,k)    A [i] = C [k]
 //  GB_SWAP(A,i,k)      swap A [i] and A [k]
 //  GB_LT               compare two entries, x < y
@@ -32,7 +30,7 @@
 
 #define GB_SORT_UDT         0
 #define GB_ADDR(A,i)        ((A) + (i))
-#define GB_GET(x,A,i)       GB_C_TYPE x = A [i]
+#define GB_GETX(x,A,i)      GB_C_TYPE x = A [i]
 #define GB_COPY(A,i,B,j)    A [i] = B [j]
 #define GB_SIZE             sizeof (GB_C_TYPE)
 #define GB_SWAP(A,i,j)      \
@@ -150,14 +148,14 @@
 //------------------------------------------------------------------------------
 
 #undef  GB_ADDR
-#undef  GB_GET
+#undef  GB_GETX
 #undef  GB_COPY
 #undef  GB_SIZE
 #undef  GB_SWAP
 #undef  GB_LT
 
 #define GB_ADDR(A,i)        ((A) + (i) * csize)
-#define GB_GET(x,A,i)       GB_void x [GB_VLA(xsize)] ;                     \
+#define GB_GETX(x,A,i)      GB_void x [GB_VLA(xsize)] ;                     \
                             fcast (x, GB_ADDR (A, i), csize)
 #define GB_COPY(A,i,B,j)    memcpy (GB_ADDR (A, i), GB_ADDR (B, j), csize)
 #define GB_SIZE             csize
@@ -486,29 +484,29 @@ GrB_Info GB_sort
     //--------------------------------------------------------------------------
 
     int64_t cnvec = C->nvec ;
-    int64_t *restrict Ti = NULL ;
+    int64_t *restrict Ti = NULL ;       // FIXME
 
     if (P == NULL)
     { 
         // P is not constructed; use C->i to construct the new indices
-        Ti = C->i ;
+        Ti = C->i ; // FIXME
     }
     else
     {
         // allocate P->i and use it to construct the new indices
-        P->i = GB_MALLOC (cnz, int64_t, &(P->i_size)) ;
+        P->i = GB_MALLOC (cnz, int64_t, &(P->i_size)) ; // FIXME
         if (P->i == NULL)
         { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        Ti = P->i ;
+        Ti = P->i ; // FIXME
     }
 
     int C_nthreads, C_ntasks ;
     GB_SLICE_MATRIX (C, 1) ;
-    int64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int tid ;
     #pragma omp parallel for num_threads(C_nthreads) schedule(static,1)
     for (tid = 0 ; tid < C_ntasks ; tid++)
@@ -522,7 +520,7 @@ GrB_Info GB_sort
                 pC0, Cp [k+1]) ;
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             { 
-                Ti [pC] = pC - pC0 ;
+                Ti [pC] = pC - pC0 ;    // FIXME
             }
         }
     }
@@ -558,8 +556,8 @@ GrB_Info GB_sort
             // is copied to Ph.
             int64_t pplen = GB_IMAX (1, cnvec) ;
             P->plen = pplen ;
-            P->x = GB_MALLOC (cnz, int64_t, &(P->x_size)) ; // x:OK
-            P->p = GB_MALLOC (pplen+1, int64_t, &(P->p_size)) ;
+            P->x = GB_MALLOC (cnz, int64_t, &(P->x_size)) ;
+            P->p = GB_MALLOC (pplen+1, int64_t, &(P->p_size)) ; // FIXME
             P->h = NULL ;
             if (C_is_hyper)
             { 

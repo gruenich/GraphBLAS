@@ -32,8 +32,8 @@ GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_EWISEFA, false,
-        false, false, GxB_FULL, C->type, NULL, false, false,
-        binaryop, false, false, A, B) ;
+        false, false, GxB_FULL, C->type, false, false,
+        NULL, false, false, binaryop, false, false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -51,6 +51,7 @@ GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
     //--------------------------------------------------------------------------
 
     bool A_is_B = GB_all_aliased (A, B) ;
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, B, nthreads, A_is_B)) ;
 }

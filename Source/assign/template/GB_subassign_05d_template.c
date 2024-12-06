@@ -45,10 +45,10 @@
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
 
-    const int64_t *restrict Mp = M->p ;
-    const int8_t  *restrict Mb = M->b ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
+    const int8_t  *restrict Mb = M->b ;
     const GB_M_TYPE *restrict
         Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
     const size_t Mvlen = M->vlen ;

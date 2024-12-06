@@ -11,10 +11,11 @@
 // matrix C is nrows_new-by-ncols_new, then nrows*ncols must equal
 // nrows_new*ncols_new.
 
+// FIXME: i_is_32 might need to change, based on MAX(nrows_new,ncols_new)
+
 #include "GB.h"
 #include "reshape/GB_reshape.h"
 #include "transpose/GB_transpose.h"
-#include "slice/GB_ek_slice.h"
 #include "builder/GB_build.h"
 
 #define GB_FREE_WORKSPACE                       \
@@ -113,8 +114,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         { 
             // T = A'
             GB_OK (GB_new (&T,  // new header
-                type, A->vdim, A->vlen, GB_Ap_null, by_col, GxB_AUTO_SPARSITY,
-                GB_Global_hyper_switch_get ( ), 0)) ;
+                type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
+                GB_Global_hyper_switch_get ( ), 0, /* FIXME: */ false, false)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
             in_place = true ;
@@ -184,9 +185,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         //----------------------------------------------------------------------
 
         int64_t nvals = GB_nnz (T) ;
-        int64_t *Tp = T->p ;
-        int64_t *Th = T->h ;
-        int64_t *Ti = T->i ;
+        uint64_t *restrict Tp = T->p ;  // FIXME
+        int64_t *restrict Th = T->h ;
+        int64_t *restrict Ti = T->i ;
         bool T_iso = T->iso ;
         int64_t tvlen = T->vlen ;
         bool T_jumbled = T->jumbled ;
@@ -229,8 +230,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
             // create the output matrix (just the header; no content)
             GB_OK (GB_new (&C, // new header
-                type, vlen_new, vdim_new, GB_Ap_null, T_is_csc,
-                GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0)) ;
+                type, vlen_new, vdim_new, GB_ph_null, T_is_csc,
+                GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0,
+                /* FIXME: */ false, false)) ;
             // allocate new space for the future C->i
             I_work = GB_MALLOC (nvals, int64_t, &I_work_size) ;
             if (I_work == NULL)
@@ -284,7 +286,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                         // convert (iold,jold) to a 1D index
                         int64_t index_1d = iold + jold * tvlen ;
                         // save the new 1D index
-                        I_work [p] = index_1d ;
+                        I_work [p] = index_1d ;     // FIXME
                     }
                 }
             }
@@ -316,8 +318,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                         int64_t inew = index_1d % vlen_new ;
                         int64_t jnew = (index_1d - inew) / vlen_new ;
                         // save the new indices
-                        I_work [p] = inew ;
-                        J_work [p] = jnew ;
+                        I_work [p] = inew ;     // FIXME
+                        J_work [p] = jnew ;     // FIXME
                     }
                 }
             }
@@ -342,9 +344,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             vlen_new,       // new vlen
             vdim_new,       // new vdim
             T_is_csc,       // same format as T
-            &I_work,        // transplanted into C->i
+            (void **) &I_work,        // transplanted into C->i
             &I_work_size,
-            &J_work,        // freed when done
+            (void **) &J_work,        // freed when done
             &J_work_size,
             &S_work,        // array of values; transplanted into C->x in-place
             &S_work_size,
@@ -360,7 +362,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             NULL,           // no dup operator
             type,           // type of S_work and S_input
             true,           // burble is allowed
-            Werk
+            Werk,
+            false, false, false, false
         )) ;
 
         ASSERT (I_work == NULL) ;   // transplanted into C->i

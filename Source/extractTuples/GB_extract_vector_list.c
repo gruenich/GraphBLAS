@@ -2,10 +2,12 @@
 // GB_extract_vector_list: extract vector indices for all entries in a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // JIT: not needed; factory possible w/ 3 variants (sparse/hyper/full)
 
@@ -13,7 +15,6 @@
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort
 // method is used.
 
-#include "slice/GB_ek_slice.h"
 #include "extractTuples/GB_extractTuples.h"
 
 #define GB_FREE_ALL                         \
@@ -21,11 +22,12 @@
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }
 
-GrB_Info GB_extract_vector_list     // extract vector list from a matrix
+GrB_Info GB_extract_vector_list // extract vector list from a matrix
 (
     // output:
-    int64_t *restrict J,         // size nnz(A) or more
+    void *J,                    // size nnz(A) or more
     // input:
+    bool is_32,                 // if true, J is 32-bit; else 64-bit
     const GrB_Matrix A,
     GB_Werk Werk
 )
@@ -42,12 +44,14 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
     ASSERT (!GB_IS_BITMAP (A)) ;
 
     //--------------------------------------------------------------------------
-    // get A
+    // get A and J
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
     const int64_t avlen = A->vlen ;
+
+    GB_IDECL (J, , u) ; GB_IPTR (J, is_32) ;
 
     //--------------------------------------------------------------------------
     // determine the max number of threads to use
@@ -84,9 +88,9 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
             // find the part of A(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ah, k) ;
+            int64_t j = GBh_A (Ah, k) ;
             GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                GBP (Ap, k, avlen), GBP (Ap, k+1, avlen)) ;
+                GBp_A (Ap, k, avlen), GBp_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // extract vector indices of A(:,j)
@@ -94,7 +98,8 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
 
             for (int64_t p = pA_start ; p < pA_end ; p++)
             { 
-                J [p] = j ;
+                // J [p] = j ;
+                GB_ISET (J, p, j) ;
             }
         }
     }

@@ -2,7 +2,7 @@
 // GB_macrofy_assign: construct all macros for assign methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -323,13 +323,15 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     { 
         // C(i,j) = (ctype) cwork, no typecasting
         GB_macrofy_output (fp, "cwork", "C", "C", ctype, ctype, csparsity,
-            C_iso, C_iso) ;
+            C_iso, C_iso,
+            /* FIXME: */ false, false) ;
     }
     else
     { 
         // C(i,j) = (ctype) zwork, with possible typecasting
         GB_macrofy_output (fp, "zwork", "C", "C", ctype, ztype, csparsity,
-            C_iso, C_iso) ;
+            C_iso, C_iso,
+            /* FIXME: */ false, false) ;
     }
 
     fprintf (fp, "#define GB_DECLAREC(cwork) %s cwork\n", ctype->name) ;
@@ -394,7 +396,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
+        /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A or the scalar, including typecast to Y type
@@ -424,7 +427,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     {
         // matrix assignment
         GB_macrofy_input (fp, "a", "A", "A", true, ytype, atype, asparsity,
-            acode, A_iso, -1) ;
+            acode, A_iso, -1, /* FIXME: */ false, false) ;
         if (accum != NULL)
         { 
             // accum is present

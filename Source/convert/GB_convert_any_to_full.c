@@ -2,10 +2,12 @@
 // GB_convert_any_to_full: convert any matrix to full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // All entries in A must be present, with no pending work; GB_as_if_full (A)
 // must be true on input, or A must be iso.  A may be hypersparse, sparse,
@@ -45,6 +47,8 @@ void GB_convert_any_to_full     // convert any matrix to full
     if (!A->i_shallow) GB_FREE (&(A->i), A->i_size) ;
     A->i = NULL ;
     A->i_shallow = false ;
+    A->p_is_32 = false ;    // OK: full always has p_is_32 = false
+    A->i_is_32 = false ;    // OK: full always has i_is_32 = false
 
     if (!A->b_shallow) GB_FREE (&(A->b), A->b_size) ;
     A->b = NULL ;

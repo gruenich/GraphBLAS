@@ -60,8 +60,8 @@ GrB_Info GB_subassign_26
     int64_t Cnvec = C->nvec ;
     int64_t cnz = C->nvals ;
 
-    int64_t *restrict Ap = A->p ;
-    int64_t *restrict Ai = A->i ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
+    const int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anz = A->nvals ;
 
@@ -81,6 +81,9 @@ GrB_Info GB_subassign_26
     // resize C if necessary
     //--------------------------------------------------------------------------
 
+    // FIXME: change C->p_is_32 if problem grows too large.
+    // C->i_is_32 does not change since the matrix dimensions are constant.
+
     int64_t cnz_new = cnz + anz ;
 
     if (Cnvec + nJ > C->plen)
@@ -96,7 +99,7 @@ GrB_Info GB_subassign_26
         GB_OK (GB_ix_realloc (C, 2*cnz_new + 1)) ;
     }
 
-    int64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
     GB_void *restrict Cx = (GB_void *) C->x ;

@@ -2,7 +2,7 @@
 // GB_enumify_masker: enumerate a masker problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-uint64_t GB_enumify_masker  // enumify a masker problem
+void GB_enumify_masker      // enumify a masker problem
 (
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
@@ -68,6 +68,8 @@ uint64_t GB_enumify_masker  // enumify a masker problem
     //--------------------------------------------------------------------------
 
     // total method_code bits: 18 (5 hex digits)
+
+    // FIXME: 32/64 bits: 8 bits for R, M, C, Z
 
     (*method_code) =
                                                // range        bits

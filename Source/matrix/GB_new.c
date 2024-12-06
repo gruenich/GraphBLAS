@@ -7,10 +7,12 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
 // See GB_new_bix instead.
 
-// If the Ap_option is GB_Ap_calloc, the A->p and A->h are allocated and
+// If the Ap_option is GB_ph_calloc, the A->p and A->h are allocated and
 // initialized, and A->magic is set to GB_MAGIC to denote a valid matrix.
 // Otherwise, the matrix has not yet been completely initialized, and A->magic
 // is set to GB_MAGIC2 to denote this.  This case only occurs internally in
@@ -39,12 +41,14 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
+    const GB_ph_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int sparsity,         // hyper, sparse, bitmap, full, or auto
     const float hyper_switch,   // A->hyper_switch
-    const int64_t plen          // size of A->p and A->h, if A hypersparse.
+    const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
+    bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
+    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
 )
 {
 
@@ -57,6 +61,11 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
 
+    // ensure p_is_32 and i_is_32 are valid; p_is_32 is always OK
+    // since nzmax is not yet known
+//  p_is_32 = GB_validate_p_is_32 (p_is_32, 1) ; (nzmax not yet known)
+    i_is_32 = GB_validate_i_is_32 (i_is_32, vlen, vdim) ;
+
     //--------------------------------------------------------------------------
     // allocate the matrix header, if not already allocated on input
     //--------------------------------------------------------------------------
@@ -65,7 +74,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     if ((*Ahandle) == NULL)
     {
         size_t header_size ;
-        (*Ahandle) = GB_MALLOC (1, struct GB_Matrix_opaque, &header_size) ;
+        (*Ahandle) = GB_CALLOC (1, struct GB_Matrix_opaque, &header_size) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
@@ -76,7 +85,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         (*Ahandle)->header_size = header_size ;
     }
 //  else
-//  { 
+//  {
 //      // the header of A has been provided on input.  It may already be
 //      // malloc'd, or it might be statically allocated in the caller. 
 //      // (*Ahandle)->static_header is not modified.
@@ -139,6 +148,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->nvec = vdim ;
         // all vectors present, unless matrix has a zero dimension 
         A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
+        // full/bitmap matrices ignore the A->p_is_32 and A->i_is_32 flags
+        p_is_32 = false ;    // OK: bitmap/full always has p_is_32 = false
+        i_is_32 = false ;    // OK: bitmap/full always has i_is_32 = false
     }
     else if (A_is_hyper)
     { 
@@ -167,14 +179,19 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nzombies = 0 ;
     A->jumbled = false ;
     A->Pending = NULL ;
-    A->iso = false ;            // OK: if iso, burble in the caller
+    A->iso = false ;
+    A->p_is_32 = p_is_32 ;
+    A->i_is_32 = i_is_32 ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested
     //--------------------------------------------------------------------------
 
+    size_t psize = p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
     bool ok ;
-    if (A_is_full_or_bitmap || Ap_option == GB_Ap_null)
+    if (A_is_full_or_bitmap || Ap_option == GB_ph_null)
     { 
         // A is not initialized yet; A->p and A->h are both NULL.
         A->magic = GB_MAGIC2 ;
@@ -182,33 +199,31 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->h = NULL ;
         ok = true ;
     }
-    else if (Ap_option == GB_Ap_calloc)
+    else if (Ap_option == GB_ph_calloc)
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
-        A->p = GB_CALLOC (A->plen+1, int64_t, &(A->p_size)) ;
-        ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
+        A->p = GB_calloc_memory (A->plen+1, psize, &(A->p_size)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
-            A->h = GB_MALLOC (A->plen, int64_t, &(A->h_size)) ;
+            A->h = GB_malloc_memory (A->plen, isize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
-    else // Ap_option == GB_Ap_malloc
+    else // Ap_option == GB_ph_malloc
     {
         // This is faster but can only be used internally by GraphBLAS since
         // the matrix is allocated but not yet completely initialized.  The
         // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
         // before returning the matrix to the user application.
         A->magic = GB_MAGIC2 ;
-        A->p = GB_MALLOC (A->plen+1, int64_t, &(A->p_size)) ;
-        ASSERT (A->p_size == GB_Global_memtable_size (A->p)) ;
+        A->p = GB_malloc_memory (A->plen+1, psize, &(A->p_size)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
-            A->h = GB_MALLOC (A->plen, int64_t, &(A->h_size)) ;
+            A->h = GB_malloc_memory (A->plen, isize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
@@ -233,7 +248,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // return result
     //--------------------------------------------------------------------------
 
-    // The vector pointers A->p are initialized only if Ap_calloc is true
+    // The vector pointers A->p are initialized only if Ap_option is
+    // GB_ph_calloc
     if (A->magic == GB_MAGIC)
     { 
         ASSERT_MATRIX_OK (A, "new matrix from GB_new", GB0) ;

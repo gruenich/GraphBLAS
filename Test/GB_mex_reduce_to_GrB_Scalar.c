@@ -56,7 +56,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("S failed") ;
     }
-    int64_t Snrows, Sncols ;
+    uint64_t Snrows, Sncols ;
     GrB_Matrix_nrows (&Snrows, S) ;
     GrB_Matrix_ncols (&Sncols, S) ;
     if (Snrows != 1 || Sncols != 1)

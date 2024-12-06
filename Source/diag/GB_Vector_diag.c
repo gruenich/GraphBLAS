@@ -103,12 +103,10 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     // extract the kth diagonal of A into the temporary hypersparse matrix T
     //--------------------------------------------------------------------------
 
-    struct GB_Scalar_opaque Thunk_header ;
-    GrB_Scalar Thunk = GB_Scalar_wrap (&Thunk_header, GrB_INT64, &k) ;
-
+    struct GB_Scalar_opaque scalar_header ;
+    GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
-    GB_OK (GB_selector (T, GrB_DIAG, false, A, Thunk, Werk)) ;
-
+    GB_OK (GB_selector (T, GrB_DIAG, false, A, scalar, Werk)) ;
     GB_OK (GB_convert_any_to_hyper (T, Werk)) ;
     GB_MATRIX_WAIT (T) ;
     ASSERT_MATRIX_OK (T, "T = diag (A,k)", GB0) ;
@@ -122,8 +120,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     int sparsity_control = V->sparsity_control ;
 
     GB_OK (GB_new (&V, // existing header
-        vtype, n, 1, GB_Ap_malloc, true, GxB_SPARSE,
-        GxB_NEVER_HYPER, 1)) ;
+        vtype, n, 1, GB_ph_malloc, true, GxB_SPARSE,
+        GxB_NEVER_HYPER, 1, /* FIXME: */ false, false)) ;
 
     V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;
@@ -133,8 +131,9 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
         GBURBLE ("(iso diag) ") ;
     }
 
-    V->p [0] = 0 ;
-    V->p [1] = vnz ;
+    uint64_t *restrict Vp = V->p ;  // FIXME
+    Vp [0] = 0 ;
+    Vp [1] = vnz ;
     V->nvals = vnz ;
     if (k >= 0)
     { 

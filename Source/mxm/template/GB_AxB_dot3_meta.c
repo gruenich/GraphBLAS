@@ -63,15 +63,15 @@
     int64_t nzombies = 0 ;
 
     ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
-    const int64_t *restrict Cp = C->p ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     int64_t  *restrict Ci = C->i ;
     const int64_t cvlen = C->vlen ;
 
-    const int64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
     const int64_t bnvec = B->nvec ;
 
     #ifdef GB_JIT_KERNEL
@@ -87,10 +87,10 @@
     const bool B_iso = B->iso ;
     #endif
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
-    const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
     const int64_t anvec = A->nvec ;
 
     #ifdef GB_JIT_KERNEL
@@ -106,12 +106,12 @@
     const bool A_iso = A->iso ;
     #endif
 
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ; // FIXME
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-    const int64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+    const uint64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;  // FIXME
     const int64_t *restrict B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
     const int64_t *restrict B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
@@ -133,7 +133,7 @@
     #define Mask_struct GB_MASK_STRUCT
     #endif
 
-    const int64_t *restrict Mi = M->i ;
+    const int64_t *restrict Mi = M->i ; // FIXME
     const size_t mvlen = M->vlen ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
 

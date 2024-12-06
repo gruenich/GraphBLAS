@@ -2,7 +2,7 @@
 // GB_macrofy_masker: construct all macros for masker methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     int mask_ecode  = GB_RSHIFT (method_code, 12, 4) ;
 
     // type of R (1 hex digit)
-    int rcode       = GB_RSHIFT (method_code,  8, 4) ;
+//  int rcode       = GB_RSHIFT (method_code,  8, 4) ;
 
     // formats of R, M, C, and Z (2 hex digits)
     int rsparsity   = GB_RSHIFT (method_code,  6, 2) ;
@@ -111,6 +111,7 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "R", rsparsity) ;
     GB_macrofy_nvals (fp, "R", rsparsity, false) ;
     fprintf (fp, "#define GB_R_ISO 0\n") ;
+    GB_macrofy_bits (fp, "R", false, false) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // construct the macros for C, M, and Z
@@ -119,12 +120,15 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_nvals (fp, "C", csparsity, C_iso) ;
     fprintf (fp, "#define GB_C_ISO %d\n", C_iso) ;
+    GB_macrofy_bits (fp, "C", false, false) ;       // FIXME
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
+        /* FIXME: */ false, false) ;
 
     GB_macrofy_sparsity (fp, "Z", zsparsity) ;
     GB_macrofy_nvals (fp, "Z", zsparsity, Z_iso) ;
     fprintf (fp, "#define GB_Z_ISO %d\n", Z_iso) ;
+    GB_macrofy_bits (fp, "Z", false, false) ;       // FIXME
 
     //--------------------------------------------------------------------------
     // include the final default definitions

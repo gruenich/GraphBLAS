@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C = kron(A,B) where op determines the binary multiplier to use.  The type of
 // C is the ztype of the operator.  C is hypersparse if either A or B are
 // hypersparse, full if both A and B are full, or sparse otherwise.  C is never
@@ -57,6 +59,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
 
+    double tt = GB_OPENMP_GET_WTIME ;
+
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
@@ -72,7 +76,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (A))
     { 
         GBURBLE ("A:") ;
-        // set Awork->iso = A->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (Awork, &Awork_header) ;
         GB_OK (GB_dup_worker (&Awork, A->iso, A, true, NULL)) ;
         ASSERT_MATRIX_OK (Awork, "dup Awork for kron (A,B)", GB0) ;
@@ -85,7 +88,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (GB_IS_BITMAP (B))
     { 
         GBURBLE ("B:") ;
-        // set Bwork->iso = B->iso     OK: no need for burble
         GB_CLEAR_STATIC_HEADER (Bwork, &Bwork_header) ;
         GB_OK (GB_dup_worker (&Bwork, B->iso, B, true, NULL)) ;
         ASSERT_MATRIX_OK (Bwork, "dup Bwork for kron (A,B)", GB0) ;
@@ -98,17 +100,17 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // get inputs
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnvec = B->nvec ;
@@ -162,17 +164,23 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int C_sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
-    // set C->iso = C_iso   OK
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+//  printf ("hack32: %d\n", hack32) ;
+    bool Cp_is_32 = GB_validate_p_is_32 (hack32, cnzmax) ;          // FIXME
+    bool Ci_is_32 = GB_validate_i_is_32 (hack32, cvlen, cvdim) ;    // FIXME
+
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
-        ctype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_malloc, C_is_csc,
-        C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso)) ;
+        ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
+        C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso,
+        Cp_is_32, Ci_is_32)) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C: Cp and Ch if C is hypersparse
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = C->p ;
-    int64_t *restrict Ch = C->h ;
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
+    #define GB_Cp_IS_32 Cp_is_32
 
     if (!C_is_full)
     { 
@@ -184,22 +192,26 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             const int64_t kA = kC / bnvec ;
             const int64_t kB = kC % bnvec ;
             // get A(:,jA), the (kA)th vector of A
-            const int64_t jA = GBH (Ah, kA) ;
-            const int64_t aknz = (Ap == NULL) ? avlen : (Ap [kA+1] - Ap [kA]) ;
+            const int64_t jA = GBh_A (Ah, kA) ;
+            const int64_t aknz = (Ap == NULL) ? avlen :
+                (GB_IGET (Ap, kA+1) - GB_IGET (Ap, kA)) ;
             // get B(:,jB), the (kB)th vector of B
-            const int64_t jB = GBH (Bh, kB) ;
-            const int64_t bknz = (Bp == NULL) ? bvlen : (Bp [kB+1] - Bp [kB]) ;
+            const int64_t jB = GBh_B (Bh, kB) ;
+            const int64_t bknz = (Bp == NULL) ? bvlen :
+                (GB_IGET (Bp, kB+1) - GB_IGET (Bp, kB)) ;
             // determine # entries in C(:,jC), the (kC)th vector of C
             // int64_t kC = kA * bnvec + kB ;
-            Cp [kC] = aknz * bknz ;
+            // Cp [kC] = aknz * bknz ;
+            GB_ISET (Cp, kC, aknz * bknz) ;
             if (C_is_hyper)
             { 
-                Ch [kC] = jA * bvdim + jB ;
+                // Ch [kC] = jA * bvdim + jB ;
+                GB_ISET (Ch, kC, jA * bvdim + jB) ;
             }
         }
 
-        GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
-        C->nvals = Cp [cnvec] ;
+        GB_cumsum (Cp, Cp_is_32, cnvec, &(C->nvec_nonempty), nthreads, Werk) ;
+        C->nvals = GB_IGET (Cp, cnvec) ;
         if (C_is_hyper) C->nvec = cnvec ;
     }
 
@@ -323,7 +335,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     if (info == GrB_SUCCESS)
     { 
-        GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+        GB_OK (GB_hyper_prune (C, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -332,6 +344,12 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     GB_FREE_WORKSPACE ;
+    tt = GB_OPENMP_GET_WTIME - tt ;
+    GBURBLE ("(kron %d/%d nthreads: %d time: %g) ",
+        Cp_is_32 ? 32 : 64,
+        Ci_is_32 ? 32 : 64, nthreads, tt) ;
+    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
+    ASSERT_MATRIX_OK (C, "C=kron(A,B) converted", GB0) ;
     return (info) ;
 }
 

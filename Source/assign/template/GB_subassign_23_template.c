@@ -124,7 +124,7 @@
 
         ASSERT (GB_JUMBLED_OK (A)) ;
 
-        const int64_t *restrict Ap = A->p ;
+        const uint64_t *restrict Ap = A->p ;    // FIXME
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ai = A->i ;
         const int64_t avlen = A->vlen ;

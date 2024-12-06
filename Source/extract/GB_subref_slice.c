@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Determine the tasks for computing C=A(I,J).  The matrix C has Cnvec vectors,
 // and these are divided into coarse and fine tasks.  A coarse task will
 // compute one or more whole vectors of C.  A fine task operates on a slice of
@@ -28,6 +30,9 @@
 
 // Compare this function with GB_ewise_slice, which constructs coarse/fine
 // tasks for the eWise operations (C=A+B, C=A.*B, and C<M>=Z).
+
+// The matrices C and A are sparse or hypersparse, but the matrices themselves
+// do not appear in this method.
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
@@ -59,8 +64,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     size_t *p_Inext_size,
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     // from phase0:
-    const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)
-    const int64_t *restrict Ap_end,
+    const uint64_t *restrict Ap_start,   // location of A(imin:imax,kA)
+    const uint64_t *restrict Ap_end,
     const int64_t Cnvec,            // # of vectors of C
     const bool need_qsort,          // true if C must be sorted
     const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
@@ -193,7 +198,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
+    GB_cumsum (Cwork, false, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------
@@ -255,7 +260,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Cwork, Cnvec, ntasks1, false) ;
+    GB_p_slice (Coarse, Cwork, false, Cnvec, ntasks1, false) ;  // FIXME
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

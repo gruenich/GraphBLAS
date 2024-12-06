@@ -31,8 +31,12 @@
 
 ../build/wathen_demo 400 400 0 1
 ../build/wathen_demo 400 400 0 8
+../build/wathen_demo 400 400 0 16
+../build/wathen_demo 400 400 0 32
 
 ../build/wathen_demo 400 400 1 1
 ../build/wathen_demo 400 400 1 8
+../build/wathen_demo 400 400 1 16
+../build/wathen_demo 400 400 1 32
 
 exit 0

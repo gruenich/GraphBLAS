@@ -212,16 +212,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // get A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
     const int64_t avlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
 
-    const int64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_nnz_held (B) ;
     const int64_t bnvec = B->nvec ;
@@ -239,8 +239,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cnvec = bnvec ;
 
     info = GB_new (&C, // sparse or hyper, existing header
-        ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        C_sparsity, B->hyper_switch, cnvec) ;
+        ctype, cvlen, cvdim, GB_ph_malloc, true,
+        C_sparsity, B->hyper_switch, cnvec, /* FIXME: */ false, false) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -250,7 +250,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     C->iso = C_iso ;    // OK
 
-    int64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ch = C->h ;
     if (B_is_hyper)
     { 
@@ -690,7 +690,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     C->magic = GB_MAGIC ;
     GB_FREE_WORKSPACE ;
-    GB_OK (GB_hypermatrix_prune (C, Werk)) ;
+    GB_OK (GB_hyper_prune (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

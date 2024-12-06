@@ -115,6 +115,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
             // and cannot be compiled by the JIT).
             return (info == GrB_NO_VALUE ? GrB_NULL_POINTER : info) ;
         }
+        #include "include/GB_pedantic_disable.h"
         op->idxunop_function = (GxB_index_unary_function) user_function ;
         GB_BURBLE_END ;
     }

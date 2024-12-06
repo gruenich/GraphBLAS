@@ -12,7 +12,6 @@
 
 #include "GB.h"
 #include "assign/GB_bitmap_assign.h"
-#include "slice/GB_ek_slice.h"
 #include "ij/GB_ij.h"
 #include "include/GB_unused.h"
 #include "assign/include/GB_bitmap_scatter.h"

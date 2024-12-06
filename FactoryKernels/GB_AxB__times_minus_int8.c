@@ -464,5 +464,7 @@ GrB_Info GB (_Asaxpy3B__times_minus_int8)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

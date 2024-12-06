@@ -22,16 +22,15 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = C->p ;
+    uint64_t *restrict Cp = C->p ;  // FIXME
     ASSERT (Cp != NULL) ;
-    // const int64_t *restrict Ch = C->h ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
 
-    const int64_t *restrict Bp = B->p ;
+    const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bh = B->h ;
-    const int8_t  *restrict Bb = B->b ;
     const int64_t *restrict Bi = B->i ;
+    const int8_t  *restrict Bb = B->b ;
     const int64_t bvlen = B->vlen ;
     #ifdef GB_JIT_KERNEL
     #define B_iso GB_B_ISO
@@ -47,10 +46,10 @@
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
     #endif
 
-    const int64_t *restrict Ap = A->p ;
+    const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ah = A->h ;
-    const int8_t  *restrict Ab = A->b ;
     const int64_t *restrict Ai = A->i ;
+    const int8_t  *restrict Ab = A->b ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     #ifdef GB_JIT_KERNEL
@@ -68,16 +67,16 @@
     const bool A_ok_for_binary_search = 
         ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
 
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;//FIXME
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
     #if ( !GB_NO_MASK )
-    const int64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
-    const int8_t  *restrict Mb = M->b ;
     const int64_t *restrict Mi = M->i ;
+    const int8_t  *restrict Mb = M->b ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     #ifdef GB_JIT_KERNEL
     #define M_is_hyper  GB_M_IS_HYPER
@@ -91,7 +90,7 @@
     int64_t mnvec = M->nvec ;
     int64_t mvlen = M->vlen ;
     // get the M hyper_hash
-    const int64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;//FIXME
     const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
     const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
@@ -316,6 +315,7 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
+    // FIXME: if C->p_is_32 and cumsum overflows, reallocate to 64-bit
     GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
 
     //==========================================================================
@@ -325,6 +325,8 @@
     // C is iso for the ANY_PAIR semiring, and non-iso otherwise
     // allocate Ci and Cx
     int64_t cnz = Cp [cnvec] ;
+
+    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
 
     // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
     GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
@@ -338,7 +340,7 @@
     }
     C->nvals = cnz ;
 
-    int64_t  *restrict Ci = C->i ;
+    int64_t *restrict Ci = C->i ;   // FIXME
     #if ( !GB_IS_ANY_PAIR_SEMIRING )
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif

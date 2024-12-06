@@ -58,11 +58,11 @@
     // get C, M, and A
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
+    int64_t *restrict Ci = C->i ;   // FIXME
 
     ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
     ASSERT (GB_JUMBLED_OK (M)) ;
-    const int64_t *restrict Mp = M->p ;
+    const uint64_t *restrict Mp = M->p ;    // FIXME
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const int64_t Mvlen = M->vlen ;

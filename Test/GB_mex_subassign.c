@@ -309,7 +309,7 @@ GrB_Info assign (void)
         if (M != NULL)
         {
             // mask = M'
-            int64_t mnrows, mncols ;
+            uint64_t mnrows, mncols ;
             OK (GrB_Matrix_nrows (&mnrows, M)) ;
             OK (GrB_Matrix_ncols (&mncols, M)) ;
             OK (GrB_Matrix_new (&mask, M->type, mncols, mnrows)) ;
@@ -318,7 +318,7 @@ GrB_Info assign (void)
             ASSERT (GB_VECTOR_OK (mask)) ;
         }
         // u = A'
-        int64_t ancols, anrows ;
+        uint64_t ancols, anrows ;
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
         OK (GrB_Matrix_new (&u, A->type, ancols, anrows)) ;
@@ -422,7 +422,7 @@ GrB_Info many_subassign
 
         // get I
         p = mxGetFieldByNumber (pargin [1], k, fI) ;
-        if (!GB_mx_mxArray_to_indices (&I, p, &ni, I_range, &ignore))
+        if (!GB_mx_mxArray_to_indices (&I, NULL, p, &ni, I_range, &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
@@ -430,7 +430,7 @@ GrB_Info many_subassign
 
         // get J
         p = mxGetFieldByNumber (pargin [1], k, fJ) ;
-        if (!GB_mx_mxArray_to_indices (&J, p, &nj, J_range, &ignore))
+        if (!GB_mx_mxArray_to_indices (&J, NULL, p, &nj, J_range, &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;
@@ -641,14 +641,14 @@ void mexFunction
         }
 
         // get I
-        if (!GB_mx_mxArray_to_indices (&I, pargin [4], &ni, I_range, &ignore))
+        if (!GB_mx_mxArray_to_indices (&I, NULL, pargin [4], &ni, I_range, &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
         }
 
         // get J
-        if (!GB_mx_mxArray_to_indices (&J, pargin [5], &nj, J_range, &ignore))
+        if (!GB_mx_mxArray_to_indices (&J, NULL, pargin [5], &nj, J_range, &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;

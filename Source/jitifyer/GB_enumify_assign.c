@@ -2,7 +2,7 @@
 // GB_enumify_assign: enumerate a GrB_assign problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -132,7 +132,9 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     // construct the assign method_code,
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 48 (12 hex digits)
+    // total method_code bits: 48 (12 hex digits): 16 bits to sparse
+
+    // FIXME: 32/64: 8 bits for C, M, A, S
 
     (*method_code) =
                                                // range        bits

@@ -2,10 +2,12 @@
 // GB_build: build a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit: except converted to 64-bit when done
 
 // CALLED BY: GrB_Matrix_build_*, GrB_Vector_build_*,
 //            GxB_Matrix_build_Scalar, GxB_Vector_build_Scalar
@@ -102,14 +104,15 @@
 GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
-    const GrB_Index *I,         // row indices of tuples
-    const GrB_Index *J,         // col indices of tuples (NULL for vector)
+    const void *I,              // row indices of tuples
+    const void *J,              // col indices of tuples (NULL for vector)
     const void *X,              // values, size 1 if iso
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary op to assemble duplicates (or NULL)
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
+    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 )
 {
@@ -168,7 +171,7 @@ GrB_Info GB_build               // build matrix
     { 
         // problem too large
         GB_ERROR (GrB_INVALID_VALUE, "Problem too large: nvals " GBu
-            " exceeds " GBu, nvals, GB_NMAX) ;
+            " exceeds " GBu, nvals, (uint64_t) GB_NMAX) ;
     }
 
     //--------------------------------------------------------------------------
@@ -260,8 +263,8 @@ GrB_Info GB_build               // build matrix
     // X must be treated as read-only, so GB_builder is not allowed to
     // transplant it into T->x.
 
-    int64_t *no_I_work = NULL ; size_t I_work_size = 0 ;
-    int64_t *no_J_work = NULL ; size_t J_work_size = 0 ;
+    void *no_I_work = NULL ; size_t I_work_size = 0 ;
+    void *no_J_work = NULL ; size_t J_work_size = 0 ;
     GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
@@ -284,16 +287,23 @@ GrB_Info GB_build               // build matrix
         false,          // known_no_duplicates: not yet known
         0,              // I_work, J_work, and X_work not used here
         is_matrix,      // true if T is a GrB_Matrix
-        (int64_t *) ((C->is_csc) ? I : J),  // size nvals
-        (int64_t *) ((C->is_csc) ? J : I),  // size nvals, or NULL for vector
+        C->is_csc ? I : J,  // size nvals
+        C->is_csc ? J : I,  // size nvals, or NULL for vector
         (const GB_void *) X,                // values, size nvals or 1 if iso
         X_iso,          // true if X is iso
         nvals,          // number of tuples
         dup2,           // operator to assemble duplicates (may be NULL)
         xtype,          // type of the X array
         true,           // burble is OK
-        Werk
+        Werk,
+        is_32, is_32,   // if true, I and J are 32 bit; otherwise 64-bit
+        true, true      // allow Tp_is_32 and Ti_is_32 to be true.  Tp_is_32
+                        // is set false is nnz(T) is too large, and Ti_is_32
+                        // is set false if the dimensions are too large.  This
+                        // constructs the most compact T possible.
     )) ;
+
+    double tt = GB_OPENMP_GET_WTIME ;
 
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
@@ -342,6 +352,17 @@ GrB_Info GB_build               // build matrix
     ASSERT (!GB_ZOMBIES (T)) ;
     ASSERT (!GB_JUMBLED (T)) ;
     ASSERT (!GB_PENDING (T)) ;
-    return (GB_transplant_conform (C, C->type, &T, Werk)) ;
+    GB_OK (GB_transplant_conform (C, C->type, &T, Werk)) ;
+
+    if (nvals > 1000)
+    { 
+        tt = GB_OPENMP_GET_WTIME - tt;
+        GB_BURBLE_MATRIX (T, "(wrapup %s/%s time: %g) ",
+            is_32 ? "32" : "64",
+            is_32 ? "32" : "64", tt) ;
+    }
+
+    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME: temporary: all 64-bit
+    return (GrB_SUCCESS) ;
 }
 

@@ -2,7 +2,7 @@
 // GB_select: apply a select operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -378,8 +378,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     { 
         // T is an empty non-iso matrix
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header
-            A->type, A->vlen, A->vdim, GB_Ap_calloc, A_csc,
-            GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1)) ;
+            A->type, A->vlen, A->vdim, GB_ph_calloc, A_csc,
+            GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1,
+            /* FIXME: */ false, false)) ;
     }
     else
     { 

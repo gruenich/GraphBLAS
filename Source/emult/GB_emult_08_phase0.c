@@ -114,7 +114,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     ASSERT ((*C_sparsity) == GxB_SPARSE || (*C_sparsity) == GxB_HYPERSPARSE) ;
 
-    const int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;
+    const int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;    // FIXME
     int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
     int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
     int64_t *restrict C_to_B = NULL ; size_t C_to_B_size = 0 ;
@@ -127,15 +127,15 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 
     int64_t Anvec = A->nvec ;
     int64_t vlen  = A->vlen ;
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ah = A->h ; // FIXME
     bool A_is_hyper = (Ah != NULL) ;
 
     int64_t Bnvec = B->nvec ;
-    const int64_t *restrict Bh = B->h ;
+    const int64_t *restrict Bh = B->h ; // FIXME
     bool B_is_hyper = (Bh != NULL) ;
 
     int64_t Mnvec = 0 ;
-    const int64_t *restrict Mh = NULL ;
+    const int64_t *restrict Mh = NULL ; // FIXME
     bool M_is_hyper = false ;
 
     if (M != NULL)
@@ -423,8 +423,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // create the M->Y hyper_hash
         GB_OK (GB_hyper_hash_build (M, Werk)) ;
 
-        const int64_t *restrict Mp = M->p ;
-        const int64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+        const uint64_t *restrict Mp = M->p ;    // FIXME
+        const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
         const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
         const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
         const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
@@ -436,8 +436,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pM, pM_end ;
             int64_t j = Ch [k] ;
-            int64_t kM = GB_hyper_hash_lookup (Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx,
-                M_hash_bits, j, &pM, &pM_end) ;
+            int64_t kM = GB_hyper_hash_lookup (false, false, // FIXME
+                Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits, j, &pM, &pM_end) ;
             C_to_M [k] = (pM < pM_end) ? kM : -1 ;
         }
     }
@@ -461,8 +461,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // create the A->Y hyper_hash
         GB_OK (GB_hyper_hash_build (A, Werk)) ;
 
-        const int64_t *restrict Ap = A->p ;
-        const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+        const uint64_t *restrict Ap = A->p ;    // FIXME
+        const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
         const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
         const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
         const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
@@ -474,8 +474,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pA, pA_end ;
             int64_t j = Ch [k] ;
-            int64_t kA = GB_hyper_hash_lookup (Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx,
-                A_hash_bits, j, &pA, &pA_end) ;
+            int64_t kA = GB_hyper_hash_lookup (false, false, // FIXME
+                Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, j, &pA, &pA_end) ;
             C_to_A [k] = (pA < pA_end) ? kA : -1 ;
         }
     }
@@ -499,8 +499,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         // create the B->Y hyper_hash
         GB_OK (GB_hyper_hash_build (B, Werk)) ;
 
-        const int64_t *restrict Bp = B->p ;
-        const int64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+        const uint64_t *restrict Bp = B->p ;    // FIXME
+        const uint64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
         const int64_t *restrict B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
         const int64_t *restrict B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
         const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
@@ -512,8 +512,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         { 
             int64_t pB, pB_end ;
             int64_t j = Ch [k] ;
-            int64_t kB = GB_hyper_hash_lookup (Bh, Bnvec, Bp, B_Yp, B_Yi, B_Yx,
-                B_hash_bits, j, &pB, &pB_end) ;
+            int64_t kB = GB_hyper_hash_lookup (false, false, // FIXME
+                Bh, Bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits, j, &pB, &pB_end) ;
             C_to_B [k] = (pB < pB_end) ? kB : -1 ;
         }
     }
@@ -571,14 +571,14 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                int64_t jA = A->h [kA] ;
+                int64_t jA = Ah [kA] ;
                 ASSERT (j == jA) ;
             }
         }
         else if (A_is_hyper)
         {
             // A is hypersparse, and Ch is a shallow copy of A->h
-            ASSERT (Ch == A->h) ;
+            ASSERT (Ch == Ah) ;
         }
 
         // see if B (:,j) exists
@@ -590,42 +590,42 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                int64_t jB = B->h [kB] ;
+                int64_t jB = Bh [kB] ;
                 ASSERT (j == jB) ;
             }
         }
         else if (B_is_hyper)
         {
             // A is hypersparse, and Ch is a shallow copy of A->h
-            ASSERT (Ch == B->h) ;
+            ASSERT (Ch == Bh) ;
         }
 
         // see if M (:,j) exists
-        if (Ch != NULL && M != NULL && Ch == M->h)
+        if (Ch != NULL && M != NULL && Ch == Mh)
         {
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
-            ASSERT (M->h != NULL) ;
-            ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
+            ASSERT (Mh != NULL) ;
+            ASSERT (Ch != NULL && Mh != NULL && Ch [k] == Mh [k]) ;
             ASSERT (C_to_M == NULL) ;
         }
         else if (C_to_M != NULL)
         {
             // M is present and hypersparse
             ASSERT (M != NULL) ;
-            ASSERT (M->h != NULL) ;
+            ASSERT (Mh != NULL) ;
             int64_t kM = C_to_M [k] ;
             ASSERT (kM >= -1 && kM < M->nvec) ;
             if (kM >= 0)
             {
-                int64_t jM = M->h [kM] ;
+                int64_t jM = Mh [kM] ;
                 ASSERT (j == jM) ;
             }
         }
         else
         {
             // M is not present, or in sparse form
-            ASSERT (M == NULL || M->h == NULL) ;
+            ASSERT (M == NULL || Mh == NULL) ;
         }
     }
 

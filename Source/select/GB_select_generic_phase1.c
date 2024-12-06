@@ -2,7 +2,7 @@
 // GB_select_generic_phase1.c: count entries for C=select(A,thunk)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,13 +11,12 @@
 // C is sparse or hypersparse.
 
 #include "select/GB_select.h"
-#include "slice/GB_ek_slice.h"
 
 GrB_Info GB_select_generic_phase1
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Wfirst,
-    int64_t *restrict Wlast,
+    GrB_Matrix C,
+    uint64_t *restrict Wfirst,
+    uint64_t *restrict Wlast,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,
@@ -37,6 +36,8 @@ GrB_Info GB_select_generic_phase1
     ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
     ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
+
+    uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
     // phase1: generic entry selector

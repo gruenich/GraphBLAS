@@ -2,7 +2,7 @@
 // GB_enumify_select: enumerate a GrB_select problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -18,13 +18,10 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
-    bool C_iso,
-    bool in_place_A,
-    // operator:
-    GrB_IndexUnaryOp op,    // the index unary operator to enumify
-    bool flipij,            // if true, flip i and j
-    // A matrix:
-    GrB_Matrix A
+    const GrB_Matrix C,
+    const GrB_IndexUnaryOp op,   // the index unary operator to enumify
+    const bool flipij,           // if true, flip i and j
+    const GrB_Matrix A
 )
 {
 
@@ -72,35 +69,23 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     int acode = atype->code ;               // 1 to 14
     int ccode = acode ;                     // this may change in the future
     int A_iso_code = (A->iso) ? 1 : 0 ;
-    int C_iso_code = (C_iso) ? 1 : 0 ;
+    int C_iso_code = (C->iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // enumify the sparsity structure of A
+    // enumify the sparsity structure of A and C
     //--------------------------------------------------------------------------
-
-    int A_sparsity = GB_sparsity (A) ;
-    int C_sparsity ;
-
-    if (opcode == GB_DIAG_idxunop_code)
-    { 
-        C_sparsity = (A_sparsity == GxB_FULL) ? GxB_SPARSE : A_sparsity ;
-    }
-    else
-    { 
-        C_sparsity = (A_sparsity == GxB_FULL) ? GxB_BITMAP : A_sparsity ;
-    }
 
     int asparsity, csparsity ;
-    GB_enumify_sparsity (&csparsity, C_sparsity) ;
-    GB_enumify_sparsity (&asparsity, A_sparsity) ;
-
-    int inplace = (in_place_A) ? 1 : 0 ;
+    GB_enumify_sparsity (&csparsity, GB_sparsity (C)) ;
+    GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
 
     //--------------------------------------------------------------------------
     // construct the select method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits:  38 (10 hex digits)
+    // total method_code bits:  37 (10 hex digits)
+
+    // FIXME: 32/64 bits: 4 bits for C, A
 
     (*method_code) =
                                                // range        bits
@@ -108,8 +93,8 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
                 GB_LSHIFT (C_iso_code , 37) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
 
-                // inplace, i/j dependency and flipij (1 hex digit)
-                GB_LSHIFT (inplace    , 35) |  // 0 or 1       1
+                // i/j dependency and flipij (1 hex digit)
+                // one bit unused
                 GB_LSHIFT (i_dep      , 34) |  // 0 or 1       1
                 GB_LSHIFT (j_dep      , 33) |  // 0 or 1       1
                 GB_LSHIFT (flipij     , 32) |  // 0 or 1       1

@@ -69,7 +69,7 @@ GrB_Info GB_subassign_zombie
     //--------------------------------------------------------------------------
 
     const int64_t *restrict Sx = (int64_t *) S->x ;
-    int64_t *restrict Ci = C->i ;
+    int64_t *restrict Ci = C->i ;   // FIXME
 
     //--------------------------------------------------------------------------
     // Method 00: C(I,J)<!,repl> = empty ; using S

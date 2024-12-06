@@ -268,9 +268,9 @@ GrB_Info GB_mask                // C<M> = Z
                 // set C0->iso = false  OK
                 GB_CLEAR_STATIC_HEADER (C0, &C0_header) ;
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, existing header
-                    C_result->type, vlen, vdim, GB_Ap_calloc, R_is_csc,
+                    C_result->type, vlen, vdim, GB_ph_calloc, R_is_csc,
                     GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
-                    true, false)) ;
+                    true, false, /* FIXME: */ false, false)) ;
                 C = C0 ;
                 ASSERT (C->static_header || GBNSTATIC) ;
             }

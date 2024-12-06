@@ -2,10 +2,12 @@
 // GB_slice_vector:  slice a vector for GB_add, GB_emult, and GB_mask
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // A(:,kA) and B(:,kB) are two long vectors that will be added with GB_add,
 // GB_emult, or GB_mask, and the work to compute them needs to be split into
@@ -54,13 +56,13 @@ void GB_slice_vector
     // input:
     const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
     const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
-    const int64_t *restrict Mi,  // indices of M (or NULL)
+    const int64_t *restrict Mi,  // indices of M (or NULL)  FIXME
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *restrict Ai,  // indices of A (or NULL)
+    const int64_t *restrict Ai,  // indices of A (or NULL)  FIXME
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *restrict Bi,  // indices of B (or NULL)
+    const int64_t *restrict Bi,  // indices of B (or NULL)  FIXME
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 )

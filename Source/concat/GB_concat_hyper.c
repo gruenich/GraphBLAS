@@ -41,8 +41,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat hyper", GB0) ;
 
-    int64_t *restrict Wi = NULL ; size_t Wi_size = 0 ;
-    int64_t *restrict Wj = NULL ; size_t Wj_size = 0 ;
+    int64_t *restrict Wi = NULL ; size_t Wi_size = 0 ;      // FIXME
+    int64_t *restrict Wj = NULL ; size_t Wj_size = 0 ;      // FIXME
     GB_void *restrict Wx = NULL ; size_t Wx_size = 0 ;
 
     GrB_Type ctype = C->type ;
@@ -130,7 +130,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
                 (GrB_Index *) ((csc ? Wi : Wj) + pC),
                 (GrB_Index *) ((csc ? Wj : Wi) + pC),
                 (C_iso) ? NULL : (Wx + pC * csize),
-                (GrB_Index *) (&anz), ctype, A, Werk)) ;
+                (GrB_Index *) (&anz), ctype, A, /* FIXME: */false, Werk)) ;
 
             //------------------------------------------------------------------
             // adjust the indices to reflect their new place in C
@@ -190,9 +190,9 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         cvlen,                  // C->vlen
         cvdim,                  // C->vdim
         csc,                    // C->is_csc
-        (int64_t **) &Wi,       // Wi is C->i on output, or freed on error
+        (void **) &Wi,          // Wi is C->i on output, or freed on error
         &Wi_size,
-        (int64_t **) &Wj,       // Wj, free on output
+        (void **) &Wj,          // Wj, free on output
         &Wj_size,
         (GB_void **) &Wx,       // Wx, free on output; or NULL if C is iso
         &Wx_size,
@@ -207,7 +207,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
         NULL,                   // no duplicates, so dup is NUL
         ctype,                  // the type of Wx (no typecasting)
         true,                   // burble is allowed
-        Werk
+        Werk,
+        false, false, false, false
     )) ;
 
     C->hyper_switch = hyper_switch ;

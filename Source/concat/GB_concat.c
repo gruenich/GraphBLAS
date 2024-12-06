@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORKSPACE               \
-    GB_WERK_POP (Tile_cols, int64_t) ;  \
+    GB_WERK_POP (Tile_cols, int64_t) ; \
     GB_WERK_POP (Tile_rows, int64_t) ;
 
 #define GB_FREE_ALL                     \
@@ -197,8 +197,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     // replace Tile_rows and Tile_cols with their cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum1 (Tile_rows, m) ;
-    GB_cumsum1 (Tile_cols, n) ;
+    GB_cumsum1_64 ((uint64_t *) Tile_rows, m) ;
+    GB_cumsum1_64 ((uint64_t *) Tile_cols, n) ;
     int64_t cnrows = Tile_rows [m] ;
     int64_t cncols = Tile_cols [n] ;
     if (cnrows != GB_NROWS (C) || cncols != GB_NCOLS (C))

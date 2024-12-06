@@ -2,7 +2,7 @@
 // GB_enumify_sort: enumerate a GxB_sort problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -62,6 +62,8 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     //--------------------------------------------------------------------------
 
     // total method_code bits: 14 (4 hex digits)
+
+    // FIXME: 32/64 bits: 4 bits for C, P
 
     (*method_code) =
                                                // range        bits

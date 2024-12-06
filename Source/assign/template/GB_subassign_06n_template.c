@@ -37,18 +37,19 @@
     GB_GET_C ;      // C must not be bitmap
     int64_t zorig = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
+    const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
     const bool C_is_hyper = (Ch != NULL) ;
     GB_GET_C_HYPER_HASH ;
     GB_GET_MASK ;
     GB_GET_A ;
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ah = A->h ;     // FIXME
     const int64_t Anvec = A->nvec ;
     const bool A_is_hyper = (Ah != NULL) ;
 
     GB_OK (GB_hyper_hash_build (A, Werk)) ;
-    const int64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    // FIXME
+    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
     const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
     const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;

@@ -357,5 +357,7 @@ GrB_Info GB (_Asaxpy3B__any_second_bool)
 
 #endif
 
+#else
+GB_EMPTY_PLACEHOLDER
 #endif
 

@@ -39,8 +39,8 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_EMULT_BITMAP, true,
-        false, false, GxB_BITMAP, C->type, M, Mask_struct, Mask_comp,
-        binaryop, flipij, false, A, B) ;
+        false, false, GxB_BITMAP, C->type, C->p_is_32, C->i_is_32,
+        M, Mask_struct, Mask_comp, binaryop, flipij, false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -57,6 +57,7 @@ GrB_Info GB_emult_bitmap_jit      // C<#M>=A.*B, emult_bitmap, via the JIT
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, Mask_struct, Mask_comp, A, B, M_ek_slicing,
         M_ntasks, M_nthreads, C_nthreads, &GB_callback, binaryop->theta)) ;

@@ -30,7 +30,7 @@
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     #endif
     #pragma GCC diagnostic ignored "-Wunused-variable"
-    #pragma GCC diagnostic ignored "-Wuninitialized"
+//  #pragma GCC diagnostic ignored "-Wuninitialized"
 
 #endif
 
