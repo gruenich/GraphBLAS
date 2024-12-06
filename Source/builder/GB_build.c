@@ -357,7 +357,7 @@ GrB_Info GB_build               // build matrix
     if (nvals > 1000)
     { 
         tt = GB_OPENMP_GET_WTIME - tt;
-        GB_BURBLE_MATRIX (T, "(wrapup %s/%s time: %g) ",
+        GBURBLE ("(wrapup %s/%s time: %g) ",
             is_32 ? "32" : "64",
             is_32 ? "32" : "64", tt) ;
     }

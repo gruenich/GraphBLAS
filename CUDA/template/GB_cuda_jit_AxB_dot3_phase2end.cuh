@@ -41,8 +41,10 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     // where bucket is the bucket assignment for C(i,j).  This phase does not
     // need k, just the bucket for each entry C(i,j).
 
-    int64_t *__restrict__ Ci = C->i ;       // for zombies, or bucket assignment
-    //int64_t *Mp = C->p ;       // for offset calculations
+    // for zombies, or bucket assignment:
+    int64_t *__restrict__ Ci = (int64_t *) C->i ;
+
+    //int64_t *Mp = (int64_t *) C->p ;       // for offset calculations
     //int64_t mnvec = C->nvec;
 
     //--------------------------------------------------------------------------

@@ -29,14 +29,14 @@ __global__ void GB_cuda_select_sparse_phase1
 )
 {
     #if ( GB_DEPENDS_ON_I )
-    const int64_t *__restrict__ Ai = A->i ;
+    const int64_t *__restrict__ Ai = (int64_t *) A->i ;
     #endif
 
     #if ( GB_DEPENDS_ON_J )
         #if ( GB_A_IS_HYPER )
-        const int64_t *__restrict__ Ah = A->h ;
+        const int64_t *__restrict__ Ah = (int64_t *) A->h ;
         #endif
-    const int64_t *__restrict__ Ap = A->p ;
+    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
     #endif
 
     #if ( GB_DEPENDS_ON_X )
@@ -107,8 +107,8 @@ __global__ void GB_cuda_select_sparse_phase2
     GB_C_TYPE *Cx
 )
 {
-    const int64_t *__restrict__ Ap = A->p ;
-    const int64_t *__restrict__ Ai = A->i ;
+    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
+    const int64_t *__restrict__ Ai = (int64_t *) A->i ;
     #if (!GB_ISO_SELECT)
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     #endif
@@ -192,7 +192,7 @@ __global__ void GB_cuda_select_sparse_phase4
 )
 {
     #if ( GB_A_IS_HYPER ) 
-    const int64_t *__restrict__ Ah = A->h;
+    const int64_t *__restrict__ Ah = (int64_t *) A->h;
     #endif
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
@@ -282,17 +282,12 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     int64_t *Map = Keep ;             // Keep has been replaced with Map
     cnz = Map [A->nvals - 1] ;        // total # of entries kept, for C
 
-    if (cnz != 0) {
-        // The caller (GB_cuda_select_sparse()) has already initialized
-        // C to be an empty hypersparse matrix. Initialize Ci, Cx. If
-        // C is iso, the caller handles populating the iso result using
-        // GB_select_iso().
-        GB_OK (GB_bix_alloc (C, cnz, GxB_HYPERSPARSE, false,
-            true, GB_ISO_SELECT)) ;
-    } else {
-        // C is empty; indicate this to the caller (GB_cuda_select_sparse())
-        // by setting C->nvals = 0. Nothing more to do.
-        C->nvals = 0 ;
+    GB_OK (GB_bix_alloc (C, cnz, GxB_HYPERSPARSE, false, true, GB_ISO_SELECT)) ;
+    C->nvals = cnz ;
+
+    if (cnz == 0) {
+        // C is empty; nothing more to do
+        printf ("C is empty, iso %d\n", C->iso) ;
         GB_FREE_WORKSPACE ;
         return (GrB_SUCCESS) ;
     }
@@ -320,7 +315,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
     
     GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
-        (Map, A, Ak_keep, C->i, (GB_C_TYPE *) C->x) ;
+        (Map, A, Ak_keep, (int64_t *) C->i, (GB_C_TYPE *) C->x) ;
     
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
@@ -350,16 +345,16 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // The caller has already allocated C->p, C->h for
     // a user-returnable empty hypersparse matrix.
     // Free them here before updating.
-    GB_FREE_WORK (&(C->p), C->p_size) ;
-    GB_FREE_WORK (&(C->h), C->h_size) ;
+    GB_FREE (&(C->p), C->p_size) ;
+    GB_FREE (&(C->h), C->h_size) ;
 
     // Allocate Cp, Ch, finalize matrix 
     C->plen = cnvec ;
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
     C->nvals = cnz ;
-    C->p = GB_MALLOC_WORK (C->plen + 1, int64_t, &(C->p_size)) ;
-    C->h = GB_MALLOC_WORK (C->plen, int64_t, &(A->h_size)) ;
+    C->p = GB_MALLOC (C->plen + 1, int64_t, &(C->p_size)) ;
+    C->h = GB_MALLOC (C->plen, int64_t, &(A->h_size)) ;
     if (C->p == NULL || C->h == NULL)
     {
         // The contents of C will be freed with GB_phybix_free()
@@ -368,16 +363,17 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+    int64_t *Cp = (int64_t *) C->p ;
 
     //--------------------------------------------------------------------------
     // Phase 3: Build Cp and Ch
     //--------------------------------------------------------------------------
     GB_cuda_select_sparse_phase4 <<<grid, block, 0, stream>>>
-        (A, cnz, Ak_keep, Ck_map, C->p, C->h) ;
+        (A, cnz, Ak_keep, Ck_map, Cp, (int64_t *) C->h) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // log the end of the last vector of C
-    C->p [Ck_map [cnz - 1]] = cnz;
+    Cp [Ck_map [cnz - 1]] = cnz;
 
     GB_FREE_ALL ;
     return (GrB_SUCCESS) ;

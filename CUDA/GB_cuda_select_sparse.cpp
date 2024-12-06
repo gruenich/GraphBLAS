@@ -1,11 +1,5 @@
 #include "GB_cuda_select.hpp"
 
-#undef GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                           \
-{                                                   \
-    GB_FREE_WORK (&ythunk_cuda, ythunk_cuda_size) ; \
-}
-
 #undef GB_FREE_ALL
 #define GB_FREE_ALL         \
 {                           \
@@ -53,9 +47,11 @@ GrB_Info GB_cuda_select_sparse
 
     info = GB_cuda_select_sparse_jit (C, A,
         flipij, ythunk, op, stream, gridsz, BLOCK_SIZE) ;
+    printf ("cuda select sparse jit, info %d\n", info) ;
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
+
 
     GB_OK (info) ;
 
@@ -72,11 +68,24 @@ GrB_Info GB_cuda_select_sparse
 
     if (C_iso)
     {
-        // If C is iso, initialize the iso entry
-        GB_select_iso (C->x, op->opcode, athunk, A->x, A->type->size) ;
+        if (C->nvals == 0)
+        {
+            // C->x is returned as NULL!
+            C->iso = false ;
+            printf ("hack ... \n") ;
+        }
+        else
+        {
+            // If C is iso, initialize the iso entry
+            printf ("info %d\n", info) ;
+            printf ("C->x is %p\n", (void *) C->x) ;
+            printf ("A->x is %p\n", (void *) A->x) ;
+            printf ("athunk is %p\n", (void *) athunk) ;
+            GB_select_iso ((GB_void *) C->x, op->opcode, athunk,
+                (GB_void *) A->x, A->type->size) ;
+        }
     }
 
-    GB_FREE_WORKSPACE ;
     return GrB_SUCCESS ;
 }
 

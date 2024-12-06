@@ -49,6 +49,7 @@ target_include_directories ( GraphBLAS_CUDA PRIVATE
         ../Include
         ../rmm_wrap
         ../Source
+        ../Source/hyper
         ../Source/builtin
         )
 

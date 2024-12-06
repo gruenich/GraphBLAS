@@ -55,14 +55,16 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup // k if j==Ah[k]; -1 if not found
         if (Ai_is_32)
         { 
             // Ap is 32-bit; Ah, A_Y[pix] are 32-bit
-            return (GB_hyper_hash_lookup_32_32 (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                hash_bits, j, pstart, pend)) ;
+            return (GB_hyper_hash_lookup_32_32 ((uint32_t *) Ah, anvec,
+                (uint32_t *) Ap, (uint32_t *) A_Yp, (uint32_t *) A_Yi,
+                (uint32_t *) A_Yx, hash_bits, j, pstart, pend)) ;
         }
         else
         { 
             // Ap is 32-bit; Ah, A_Y[pix] are 64-bit
-            return (GB_hyper_hash_lookup_32_64 (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                hash_bits, j, pstart, pend)) ;
+            return (GB_hyper_hash_lookup_32_64 ((uint64_t *) Ah, anvec,
+                (uint32_t *) Ap, (uint64_t *) A_Yp, (uint64_t *) A_Yi,
+                (uint64_t *) A_Yx, hash_bits, j, pstart, pend)) ;
         }
     }
     else
@@ -70,14 +72,16 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup // k if j==Ah[k]; -1 if not found
         if (Ai_is_32)
         { 
             // Ap is 64-bit; Ah, A_Y[pix] are 32-bit
-            return (GB_hyper_hash_lookup_64_32 (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                hash_bits, j, pstart, pend)) ;
+            return (GB_hyper_hash_lookup_64_32 ((uint32_t *) Ah, anvec,
+                (uint64_t *) Ap, (uint32_t *) A_Yp, (uint32_t *) A_Yi,
+                (uint32_t *) A_Yx, hash_bits, j, pstart, pend)) ;
         }
         else
         { 
             // Ap is 64-bit; Ah, A_Y[pix] are 64-bit
-            return (GB_hyper_hash_lookup_64_64 (Ah, anvec, Ap, A_Yp, A_Yi, A_Yx,
-                hash_bits, j, pstart, pend)) ;
+            return (GB_hyper_hash_lookup_64_64 ((uint64_t *) Ah, anvec,
+                (uint64_t *) Ap, (uint64_t *) A_Yp, (uint64_t *) A_Yi,
+                (uint64_t *) A_Yx, hash_bits, j, pstart, pend)) ;
         }
     }
 }

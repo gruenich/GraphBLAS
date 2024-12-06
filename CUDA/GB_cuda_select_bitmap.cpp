@@ -36,7 +36,5 @@ GrB_Info GB_cuda_select_bitmap
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
 
-    GB_FREE_WORKSPACE ;
     return GrB_SUCCESS ;
-
 }

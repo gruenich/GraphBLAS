@@ -23,8 +23,9 @@
 // (required for CUDA).  Leave static headers enabled by default by leaving
 // this commented out or setting GBNSTATIC to 0.
 
-// #undef  GBNSTATIC
-// #define GBNSTATIC 1
+// FIXME
+#undef  GBNSTATIC
+#define GBNSTATIC 1
 
 #ifndef GBNSTATIC
     #if defined ( GRAPHBLAS_HAS_CUDA )
