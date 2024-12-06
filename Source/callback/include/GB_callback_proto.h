@@ -63,18 +63,6 @@ void GX_ek_slice            /* slice a matrix */                            \
     int ntasks                      /* # of tasks */                        \
 )
 
-#define GB_CALLBACK_EK_SLICE_MERGE1_PROTO(GX_ek_slice_merge1)               \
-void GX_ek_slice_merge1     /* merge column counts for the matrix C */      \
-(                                                                           \
-    /* input/output: */                                                     \
-    uint64_t *restrict Cp,               /* column counts */                 \
-    /* input: */                                                            \
-    const int64_t *restrict Wfirst,     /* size A_ntasks */                 \
-    const int64_t *restrict Wlast,      /* size A_ntasks */                 \
-    const int64_t *A_ek_slicing,        /* size 3*A_ntasks+1 */             \
-    const int A_ntasks                  /* # of tasks */                    \
-)
-
 #define GB_CALLBACK_FREE_MEMORY_PROTO(GX_free_memory)                       \
 void GX_free_memory         /* free memory */                               \
 (                                                                           \

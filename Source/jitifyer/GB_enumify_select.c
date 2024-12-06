@@ -18,6 +18,7 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
+//  GrB_Matrix C,           // FIXME: add this, for C->p_is_32, C->i_is_32
     bool C_iso,
     // operator:
     GrB_IndexUnaryOp op,    // the index unary operator to enumify

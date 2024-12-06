@@ -34,14 +34,14 @@
 
 GrB_Info GB_select_sparse
 (
-    GrB_Matrix C,
-    const bool C_iso,
+    GrB_Matrix C,                   // output matrix; empty header on input
+    const bool C_iso,               // if true, construct C as iso
     const GrB_IndexUnaryOp op,
-    const bool flipij,
-    const GrB_Matrix A,
-    const int64_t ithunk,
-    const GB_void *restrict athunk,
-    const GB_void *restrict ythunk,
+    const bool flipij,              // if true, flip i and j for the op
+    const GrB_Matrix A,             // input matrix
+    const int64_t ithunk,           // input scalar, cast to int64_t
+    const GB_void *restrict athunk, // same input scalar, but cast to A->type
+    const GB_void *restrict ythunk, // same input scalar, but cast to op->ytype
     GB_Werk Werk
 )
 {
@@ -74,12 +74,8 @@ GrB_Info GB_select_sparse
     int64_t *restrict Cp_kfirst = NULL ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
-    int64_t *restrict Ci = NULL ; // size_t Ci_size = 0 ;      // FIXME
-    GB_void *restrict Cx = NULL ; // size_t Cx_size = 0 ;
-
     GB_Opcode opcode = op->opcode ;
     const bool A_iso = A->iso ;
-    const size_t asize = A->type->size ;
     const GB_Type_code acode = A->type->code ;
 
     //--------------------------------------------------------------------------
@@ -93,15 +89,8 @@ GrB_Info GB_select_sparse
     // get A: sparse, hypersparse, or full
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Ap = A->p ; size_t Ap_size = A->p_size ; // FIXME
-    int64_t *restrict Ah = A->h ; // FIXME
-    int64_t *restrict Ai = A->i ; size_t Ai_size = A->i_size ; // FIXME
-    GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
     int64_t anvec = A->nvec ;
-    bool A_jumbled = A->jumbled ;
     bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    int64_t avlen = A->vlen ;
-    int64_t avdim = A->vdim ;
 
     //--------------------------------------------------------------------------
     // create the C matrix
@@ -110,12 +99,12 @@ GrB_Info GB_select_sparse
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
-        A->type, avlen, avdim, GB_ph_calloc, A->is_csc,
+        A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
         csparsity, A->hyper_switch, A->plen,
         /* FIXME: */ false, false)) ;
 
     if (A_is_hyper)
-    {
+    { 
         // C->h is a deep copy of A->h
         GB_memcpy (C->h, A->h, A->nvec * sizeof (uint64_t), nthreads_max) ;
     }
@@ -130,7 +119,6 @@ GrB_Info GB_select_sparse
     ASSERT (C->i == NULL) ;
     ASSERT (C->x == NULL) ;
 
-    // C_iso: C will be constructed as iso
     C->iso = C_iso ;
 
     //--------------------------------------------------------------------------
@@ -170,7 +158,7 @@ GrB_Info GB_select_sparse
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WORK (C->plen + 1, uint64_t, &Zp_size) ;
+        Zp = GB_MALLOC_WORK (C->plen + 1, uint64_t, &Zp_size) ; // FIXME
         if (Zp == NULL)
         { 
             // out of memory
@@ -266,20 +254,28 @@ GrB_Info GB_select_sparse
 
     uint64_t *restrict Cp = C->p ;      // FIXME
     int64_t C_nvec_nonempty ;
+    if (!op_is_positional)
+    { 
+        // GB_select_positional_phase1 finalizes Cp in the
+        // select/factory/GB_select_positional_phase1_template.c.  This phase
+        // is only needed for entry-style selectors, done by
+        // select/template/GB_select_entry_phase1_template.c:
+        GB_ek_slice_merge1 (Cp, Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+    }
+
+    // All kernels need to this phase to compute cumsum(Cp) and Cp_kfirst:
     GB_ek_slice_merge2 (&C_nvec_nonempty, Cp_kfirst, /* FIXME: */ Cp, anvec,
         Wfirst, Wlast, A_ek_slicing, A_ntasks, A_nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
-    // allocate new space for the compacted Ci and Cx
+    // allocate new space for the compacted C->i and C->x
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [anvec] ;  // FIXME
-    cnz = GB_IMAX (cnz, 1) ;
+    C->nvec_nonempty = C_nvec_nonempty ;
+    uint64_t cnz = Cp [anvec] ; // FIXME
     GB_OK (GB_bix_alloc (C, cnz, csparsity, false, true, C_iso)) ;
-    Ci = C->i ;
-    Cx = C->x ;
-
-    // FIXME: pass C to the methods below, not Cp, Ci, Cx
+    C->jumbled = A->jumbled ;
+    C->nvals = cnz ;
 
     //--------------------------------------------------------------------------
     // set the iso value of C
@@ -288,7 +284,7 @@ GrB_Info GB_select_sparse
     if (C_iso)
     { 
         // The pattern of C is computed by the worker below.
-        GB_select_iso (Cx, opcode, athunk, Ax, asize) ;
+        GB_select_iso (C->x, opcode, athunk, A->x, A->type->size) ;
     }
 
     //==========================================================================
@@ -366,18 +362,15 @@ GrB_Info GB_select_sparse
         }
     }
 
-    GB_OK (info) ;  // phase2 cannot fail but check, for future cases
+    GB_OK (info) ;  // phase2 cannot fail, but check just in case
 
     //==========================================================================
     // finalize the result, free workspace, and return result
     //==========================================================================
 
-    C->nvals = Cp [C->nvec] ;
-    C->jumbled = A->jumbled ;
-    C->nvec_nonempty = C_nvec_nonempty ;
+    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C before hyper_prune for GB_selector", GB0) ;
     GB_OK (GB_hyper_prune (C, Werk)) ;
-    GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C output for GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }

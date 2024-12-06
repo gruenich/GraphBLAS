@@ -150,7 +150,7 @@ int main (int argc, char **argv)
 
     char **file_list = NULL;
     size_t nfiles = 0;
-    fprintf (stderr, "grb_jitpackage: building JITpackge\n") ;
+    fprintf (stderr, "grb_jitpackage: building JITpackage\n") ;
 
     if (argc == 2 && argv[1][0] == '@')
     {

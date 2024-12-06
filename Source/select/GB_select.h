@@ -39,14 +39,14 @@ GrB_Info GB_selector
 
 GrB_Info GB_select_sparse
 (
-    GrB_Matrix C,
-    const bool C_iso,
+    GrB_Matrix C,                   // output matrix; empty header on input
+    const bool C_iso,               // if true, construct C as iso
     const GrB_IndexUnaryOp op,
-    const bool flipij,
-    const GrB_Matrix A,
-    const int64_t ithunk,
-    const GB_void *restrict athunk,
-    const GB_void *restrict ythunk,
+    const bool flipij,              // if true, flip i and j for the op
+    const GrB_Matrix A,             // input matrix
+    const int64_t ithunk,           // input scalar, cast to int64_t
+    const GB_void *restrict athunk, // same input scalar, but cast to A->type
+    const GB_void *restrict ythunk, // same input scalar, but cast to op->ytype
     GB_Werk Werk
 ) ;
 

@@ -18,7 +18,6 @@ typedef GB_CALLBACK_SAXPY3_CUMSUM_PROTO ((*GB_AxB_saxpy3_cumsum_f)) ;
 typedef GB_CALLBACK_BITMAP_M_SCATTER_WHOLE_PROTO ((*GB_bitmap_M_scatter_whole_f)) ;
 typedef GB_CALLBACK_BIX_ALLOC_PROTO ((*GB_bix_alloc_f)) ;
 typedef GB_CALLBACK_EK_SLICE_PROTO ((*GB_ek_slice_f)) ;
-typedef GB_CALLBACK_EK_SLICE_MERGE1_PROTO ((*GB_ek_slice_merge1_f)) ;
 typedef GB_CALLBACK_FREE_MEMORY_PROTO ((*GB_free_memory_f)) ;
 typedef GB_CALLBACK_MALLOC_MEMORY_PROTO ((*GB_malloc_memory_f)) ;
 typedef GB_CALLBACK_MEMSET_PROTO ((*GB_memset_f)) ;
@@ -49,7 +48,6 @@ typedef struct
     GB_bitmap_M_scatter_whole_f GB_bitmap_M_scatter_whole_func ;
     GB_bix_alloc_f              GB_bix_alloc_func ;
     GB_ek_slice_f               GB_ek_slice_func ;
-    GB_ek_slice_merge1_f        GB_ek_slice_merge1_func ;
     GB_free_memory_f            GB_free_memory_func ;
     GB_malloc_memory_f          GB_malloc_memory_func ;
     GB_memset_f                 GB_memset_func ;
