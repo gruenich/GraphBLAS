@@ -52,10 +52,10 @@ __global__ void GB_cuda_AxB_dot3_phase3_dndn_kernel
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
     #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
-          int64_t *__restrict__ Ci = C->i ;
-    const int64_t *__restrict__ Mi = M->i ;
+          int64_t *__restrict__ Ci = (int64_t *) C->i ;
+    const int64_t *__restrict__ Mi = (int64_t *) M->i ;
     #if GB_M_IS_HYPER
-    const int64_t *__restrict__ Mh = M->h ;
+    const int64_t *__restrict__ Mh = (int64_t *) M->h ;
     #endif
     // A and B are either bitmap or full
     #if GB_A_IS_BITMAP

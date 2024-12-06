@@ -16,7 +16,7 @@ __global__ void GB_cuda_rowscale_kernel
     #define B_iso GB_B_ISO
 
     #if ( GB_B_IS_SPARSE || GB_B_IS_HYPER )
-    const int64_t *__restrict__ Bi = B->i ;
+    const int64_t *__restrict__ Bi = (int64_t *) B->i ;
     #endif
 
     #if ( GB_B_IS_BITMAP )

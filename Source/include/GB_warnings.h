@@ -57,10 +57,10 @@
     #endif
 
     // enable these warnings as errors
-    #pragma GCC diagnostic error "-Wpointer-sign"
     #pragma GCC diagnostic error "-Wswitch-default"
     #pragma GCC diagnostic error "-Wreturn-type"
     #if !defined ( __cplusplus )
+    #pragma GCC diagnostic error "-Wpointer-sign"
     #pragma GCC diagnostic error "-Wmissing-prototypes"
     #endif
 

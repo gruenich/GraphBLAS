@@ -34,7 +34,6 @@ GrB_Info GB_cuda_select_sparse_jit
     // input:
     const GrB_Matrix A,
     const bool flipij,
-    const GB_void *athunk,
     const GB_void *ythunk,
     const GrB_IndexUnaryOp op,
     // CUDA stream and launch parameters:

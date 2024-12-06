@@ -66,7 +66,7 @@ __global__ void GB_cuda_select_bitmap_kernel
     if (threadIdx.x == 0)
     {
         // thread 0 updates global cnvals with atomics
-        GB_cuda_atomic_add <uint64_t>(&(C->nvals), block_keep) ;
+        GB_cuda_atomic_add <uint64_t>((uint64_t *) &(C->nvals), block_keep) ;
     }
 }
 

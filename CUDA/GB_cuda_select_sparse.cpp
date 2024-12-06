@@ -1,11 +1,5 @@
 #include "GB_cuda_select.hpp"
 
-#undef GB_FREE_WORKSPACE
-#define GB_FREE_WORKSPACE                           \
-{                                                   \
-    GB_FREE_WORK (&ythunk_cuda, ythunk_cuda_size) ; \
-}
-
 #undef GB_FREE_ALL
 #define GB_FREE_ALL         \
 {                           \
@@ -73,10 +67,10 @@ GrB_Info GB_cuda_select_sparse
     if (C_iso)
     {
         // If C is iso, initialize the iso entry
-        GB_select_iso (C->x, op->opcode, athunk, A->x, A->type->size) ;
+        GB_select_iso ((GB_void *) C->x, op->opcode, athunk,
+            (GB_void *) A->x, A->type->size) ;
     }
 
-    GB_FREE_WORKSPACE ;
     return GrB_SUCCESS ;
 }
 
