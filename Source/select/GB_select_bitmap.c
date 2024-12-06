@@ -60,6 +60,8 @@ GrB_Info GB_select_bitmap
         GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso,
         /* OK: */ false, false)) ;
 
+    ASSERT (GxB_BITMAP == GB_sparsity (C)) ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
@@ -97,12 +99,7 @@ GrB_Info GB_select_bitmap
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if (GB_cuda_select_branch (A, op))
     {
-        // FIXME: pass in C itself, instead of C->b, &(cnvals), and C_iso
-        ASSERT (C_iso == C->iso) ;
-        int64_t cnvals ;
-        info = GB_cuda_select_bitmap (C->b, &cnvals, C_iso, A, flipij, ythunk,
-            op) ;
-        C->nvals = cnvals ;
+        info = GB_cuda_select_bitmap (C, A, flipij, ythunk, op) ;
     }
     #endif
 

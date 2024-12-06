@@ -35,7 +35,7 @@ GrB_Info GB_select_phase2_jit      // select phase2
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_select (&encoding, &suffix,
-        GB_JIT_KERNEL_SELECT2, C->iso, op, flipij, A) ;
+        GB_JIT_KERNEL_SELECT2, C, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

@@ -23,7 +23,9 @@
 
 #include "select/GB_select.h"
 
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL                         \
+    GB_FREE_WORK (&ythunk, ythunk_size) ;   \
+    GB_FREE_WORK (&athunk, athunk_size) ;
 
 GrB_Info GB_selector
 (
@@ -52,6 +54,8 @@ GrB_Info GB_selector
 
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     const bool A_iso = A->iso ;
+    void *ythunk = NULL ; size_t ythunk_size = 0 ;
+    void *athunk = NULL ; size_t athunk_size = 0 ;
 
     //--------------------------------------------------------------------------
     // get Thunk
@@ -61,10 +65,20 @@ GrB_Info GB_selector
     ASSERT (GB_nnz ((GrB_Matrix) Thunk) > 0) ;
     const GB_Type_code tcode = Thunk->type->code ;
 
+    // allocate the ythunk and athunk scalars.  Use calloc instead of putting
+    // them on the CPU stack, so the CUDA kernels can access them.
+    const size_t ysize = op->ytype->size ;
+    const size_t asize = A->type->size ;
+    ythunk = GB_CALLOC_WORK (ysize, GB_void, &ythunk_size) ;
+    athunk = GB_CALLOC_WORK (asize, GB_void, &athunk_size) ;
+    if (ythunk == NULL || athunk == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
     // ythunk = (op->ytype) Thunk
-    size_t ysize = op->ytype->size ;
-    GB_void ythunk [GB_VLA(ysize)] ;
-    memset (ythunk, 0, ysize) ;
     GB_cast_scalar (ythunk, op->ytype->code, Thunk->x, tcode, ysize) ;
 
     // ithunk = (int64) Thunk, if compatible
@@ -76,9 +90,6 @@ GrB_Info GB_selector
     }
 
     // athunk = (A->type) Thunk, for VALUEEQ operator only
-    const size_t asize = A->type->size ;
-    GB_void athunk [GB_VLA(asize)] ;
-    memset (athunk, 0, asize) ;
     if (opcode == GB_VALUEEQ_idxunop_code)
     {
         ASSERT (GB_Type_compatible (A->type, Thunk->type)) ;
@@ -105,7 +116,9 @@ GrB_Info GB_selector
     { 
         // C is either entirely empty, or a completely shallow copy of A.
         // This method takes O(1) time and space.
-        return (GB_select_value_iso (C, op, A, ithunk, athunk, ythunk, Werk)) ;
+        info = GB_select_value_iso (C, op, A, ithunk, athunk, ythunk, Werk) ;
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -140,8 +153,10 @@ GrB_Info GB_selector
     { 
         // A is bitmap/full.  C is always computed as bitmap.
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
-        return (GB_select_bitmap (C, C_iso, op, flipij, A, ithunk, athunk,
-            ythunk, Werk)) ;
+        info = GB_select_bitmap (C, C_iso, op, flipij, A, ithunk, athunk,
+            ythunk, Werk) ;
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -157,7 +172,9 @@ GrB_Info GB_selector
         // COLLE:    C = A(:,0:j)
         // COLGT:    C = A(:,j+1:n)
         // where j = ithunk.
-        return (GB_select_column (C, C_iso, op, A, ithunk, Werk)) ;
+        info = GB_select_column (C, op, A, ithunk, Werk) ;
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -180,7 +197,7 @@ GrB_Info GB_selector
         // the CPU.
         // FIXME: put the test of sparse(A) or hypersparse(A) in
         // GB_cuda_select_branch.
-        info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, ythunk) ;
+        info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, athunk, ythunk) ;
     }
     #endif
 
@@ -196,6 +213,7 @@ GrB_Info GB_selector
     // return result
     //--------------------------------------------------------------------------
 
+    GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "A output of GB_selector", GB_ZOMBIE (GB0)) ;
     return (GrB_SUCCESS) ;
 }

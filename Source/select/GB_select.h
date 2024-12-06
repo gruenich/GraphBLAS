@@ -11,6 +11,7 @@
 #define GB_SELECT_H
 #include "GB.h"
 #include "math/GB_math.h"
+#include "select/GB_select_iso.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 (
@@ -64,7 +65,6 @@ GrB_Info GB_select_value_iso
 GrB_Info GB_select_column
 (
     GrB_Matrix C,
-    const bool C_iso,
     const GrB_IndexUnaryOp op,
     GrB_Matrix A,
     int64_t ithunk,
@@ -179,31 +179,6 @@ GrB_Info GB_select_generic_bitmap
     const GrB_IndexUnaryOp op,
     const int nthreads
 ) ;
-
-//------------------------------------------------------------------------------
-// GB_select_iso: assign the iso value of C for GB_*selector
-//------------------------------------------------------------------------------
-
-static inline void GB_select_iso
-(
-    GB_void *Cx,                    // output iso value (same type as A)
-    const GB_Opcode opcode,         // selector opcode
-    const GB_void *athunk,          // thunk scalar, of size asize
-    const GB_void *Ax,              // Ax [0] scalar, of size asize
-    const size_t asize
-)
-{
-    if (opcode == GB_VALUEEQ_idxunop_code)
-    { 
-        // all entries in C are equal to thunk
-        memcpy (Cx, athunk, asize) ;
-    }
-    else
-    { 
-        // A and C are both iso
-        memcpy (Cx, Ax, asize) ;
-    }
-}
 
 //------------------------------------------------------------------------------
 // compiler diagnostics

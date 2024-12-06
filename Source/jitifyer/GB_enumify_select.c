@@ -18,13 +18,10 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
-//  GrB_Matrix C,           // FIXME: add this, for C->p_is_32, C->i_is_32
-    bool C_iso,
-    // operator:
-    GrB_IndexUnaryOp op,    // the index unary operator to enumify
-    bool flipij,            // if true, flip i and j
-    // A matrix:
-    GrB_Matrix A
+    const GrB_Matrix C,
+    const GrB_IndexUnaryOp op,   // the index unary operator to enumify
+    const bool flipij,           // if true, flip i and j
+    const GrB_Matrix A
 )
 {
 
@@ -72,27 +69,15 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     int acode = atype->code ;               // 1 to 14
     int ccode = acode ;                     // this may change in the future
     int A_iso_code = (A->iso) ? 1 : 0 ;
-    int C_iso_code = (C_iso) ? 1 : 0 ;
+    int C_iso_code = (C->iso) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // enumify the sparsity structure of A
+    // enumify the sparsity structure of A and C
     //--------------------------------------------------------------------------
-
-    int A_sparsity = GB_sparsity (A) ;
-    int C_sparsity ;
-
-    if (opcode == GB_DIAG_idxunop_code)
-    { 
-        C_sparsity = (A_sparsity == GxB_FULL) ? GxB_SPARSE : A_sparsity ;
-    }
-    else
-    { 
-        C_sparsity = (A_sparsity == GxB_FULL) ? GxB_BITMAP : A_sparsity ;
-    }
 
     int asparsity, csparsity ;
-    GB_enumify_sparsity (&csparsity, C_sparsity) ;
-    GB_enumify_sparsity (&asparsity, A_sparsity) ;
+    GB_enumify_sparsity (&csparsity, GB_sparsity (C)) ;
+    GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
 
     //--------------------------------------------------------------------------
     // construct the select method_code

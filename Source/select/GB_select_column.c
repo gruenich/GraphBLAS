@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // The column selectors can be done in a single pass.
+// C->iso and A->iso are identical.
 
 #include "select/GB_select.h"
 #include "transpose/GB_transpose.h"
@@ -21,7 +22,6 @@
 GrB_Info GB_select_column
 (
     GrB_Matrix C,
-    const bool C_iso,
     const GrB_IndexUnaryOp op,
     GrB_Matrix A,
     int64_t ithunk,
@@ -197,7 +197,8 @@ GrB_Info GB_select_column
             // Ch [0:k-1] = Ah [0:k-1]
             GB_memcpy (Ch, Ah, k * sizeof (int64_t), nth) ;     // FIXME
             // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
-            GB_memcpy (Ch + k, Ah + (k+1), (cnvec-k) * sizeof (int64_t), nth) ;     // FIXME
+            GB_memcpy (Ch + k, Ah + (k+1),
+                (cnvec-k) * sizeof (int64_t), nth) ;     // FIXME
         }
         else
         { 
@@ -306,7 +307,6 @@ GrB_Info GB_select_column
     C->nvec = cnvec ;
     C->magic = GB_MAGIC ;
     C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
-    C->iso = C_iso ;
     C->nvals = Cp [cnvec] ;
     C->nvec_nonempty = GB_nvec_nonempty (C) ;
     ASSERT_MATRIX_OK (C, "C output for GB_select_column", GB0) ;

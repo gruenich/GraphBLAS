@@ -100,6 +100,8 @@ GrB_Info GB_select_sparse
         csparsity, A->hyper_switch, A->plen,
         /* FIXME: */ false, false)) ;
 
+    ASSERT (csparsity == GB_sparsity (C)) ;
+
     if (A_is_hyper)
     { 
         // C->h is a deep copy of A->h

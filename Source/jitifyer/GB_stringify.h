@@ -1296,7 +1296,7 @@ uint64_t GB_encodify_select     // encode an select problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
-    const bool C_iso,
+    const GrB_Matrix C,
     const GrB_IndexUnaryOp op,
     const bool flipij,
     const GrB_Matrix A
@@ -1307,12 +1307,10 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
-    bool C_iso,
-    // operator:
-    GrB_IndexUnaryOp op,    // the index unary operator to enumify
-    bool flipij,            // if true, flip i and j
-    // A matrix:
-    GrB_Matrix A
+    const GrB_Matrix C,
+    const GrB_IndexUnaryOp op,   // the index unary operator to enumify
+    const bool flipij,           // if true, flip i and j
+    const GrB_Matrix A
 ) ;
 
 void GB_macrofy_select          // construct all macros for GrB_select
@@ -1323,7 +1321,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     uint64_t method_code,
     // operator:
     const GrB_IndexUnaryOp op,
-    GrB_Type atype
+    GrB_Type atype              // also the type of C
 ) ;
 
 GrB_Info GB_select_bitmap_jit      // select bitmap

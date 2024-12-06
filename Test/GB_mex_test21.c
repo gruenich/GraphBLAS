@@ -195,7 +195,7 @@ void mexFunction
         fprintf (fp, "GB_enumify_select / GB_macrofy_select: %s\n", op->name) ;
         printf ("GB_enumify_select / GB_macrofy_select: %s\n", op->name) ;
         // GxB_print (op, 3) ;
-        GB_enumify_select (&method_code, /* C iso: */ false,
+        GB_enumify_select (&method_code, /* C: */ A,
             op, /* flipij: */ false, A) ;
         GB_macrofy_select (fp, method_code, op, GrB_BOOL) ;
     }
@@ -206,7 +206,7 @@ void mexFunction
     GrB_IndexUnaryOp opi ;
     OK (GxB_IndexUnaryOp_new (&opi, (GxB_index_unary_function) opi32func,
         GxB_FC32, GxB_FC32, GxB_FC32, "opi32func", OPI32_DEFN)) ;
-    GB_enumify_select (&method_code, /* C iso: */ false,
+    GB_enumify_select (&method_code, /* C: */ A,
         opi, /* flipij: */ false, A) ;
     GB_macrofy_select (fp, method_code, opi, GxB_FC32) ;
     GrB_free (&opi) ;

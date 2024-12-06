@@ -32,7 +32,7 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_select (&encoding, &suffix,
-        GB_JIT_KERNEL_SELECT_BITMAP, C->iso, op, flipij, A) ;
+        GB_JIT_KERNEL_SELECT_BITMAP, C, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
