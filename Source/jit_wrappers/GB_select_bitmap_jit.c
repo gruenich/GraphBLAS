@@ -14,11 +14,9 @@ typedef GB_JIT_KERNEL_SELECT_BITMAP_PROTO ((*GB_jit_dl_function)) ;
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (
-    // output:
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    // input/output:
+    GrB_Matrix C,                   // C->b and C->nvals are computed
     // input:
-    const bool C_iso,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,
@@ -34,7 +32,7 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_select (&encoding, &suffix,
-        GB_JIT_KERNEL_SELECT_BITMAP, C_iso, op, flipij, A) ;
+        GB_JIT_KERNEL_SELECT_BITMAP, C->iso, op, flipij, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -53,6 +51,6 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (Cb, cnvals_handle, A, ythunk, nthreads)) ;
+    return (GB_jit_kernel (C, A, ythunk, nthreads)) ;
 }
 

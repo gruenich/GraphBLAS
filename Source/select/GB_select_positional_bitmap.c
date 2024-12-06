@@ -14,8 +14,9 @@
 
 GrB_Info GB_select_positional_bitmap
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    // input/output:
+    GrB_Matrix C,                   // C->b and C->nvals are computed
+    // input:
     GrB_Matrix A,
     const int64_t ithunk,
     const GrB_IndexUnaryOp op,
@@ -30,6 +31,7 @@ GrB_Info GB_select_positional_bitmap
     GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
     ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
+    ASSERT (GB_IS_BITMAP (C)) ;
 
     //--------------------------------------------------------------------------
     // positional operators when C is bitmap

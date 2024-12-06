@@ -14,8 +14,9 @@
 
 GrB_Info GB_select_generic_bitmap
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    // input/output:
+    GrB_Matrix C,                   // C->b and C->nvals are computed
+    // input:
     GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,
@@ -36,6 +37,7 @@ GrB_Info GB_select_generic_bitmap
     ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
              opcode <= GB_VALUELE_idxunop_code) ||
              (opcode == GB_USER_idxunop_code)) ;
+    ASSERT (GB_IS_BITMAP (C)) ;
 
     //--------------------------------------------------------------------------
     // generic entry selector when C is bitmap

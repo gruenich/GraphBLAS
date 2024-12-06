@@ -28,8 +28,7 @@ GrB_Info GB (_sel_phase2)
 m4_divert(if_bitmap)
 GrB_Info GB (_sel_bitmap)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads

@@ -1328,11 +1328,9 @@ void GB_macrofy_select          // construct all macros for GrB_select
 
 GrB_Info GB_select_bitmap_jit      // select bitmap
 (
-    // output:
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    // input/output:
+    GrB_Matrix C,                   // C->b and C->nvals are computed
     // input:
-    const bool C_iso,
     const GrB_Matrix A,
     const bool flipij,
     const GB_void *restrict ythunk,

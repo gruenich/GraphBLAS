@@ -10,12 +10,6 @@
 // C and A are bitmap.
 
 {
-    const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
-    const int64_t avlen = A->vlen ;
-    const int64_t avdim = A->vdim ;
-    const size_t asize = A->type->size ;
-    const int64_t anz = avlen * avdim ;
-    int64_t p, cnvals = 0 ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(+:cnvals)
     for (p = 0 ; p < anz ; p++)
@@ -57,6 +51,5 @@
         Cb [p] = cb ;
         cnvals += cb ;
     }
-    (*cnvals_handle) = cnvals ;
 }
 

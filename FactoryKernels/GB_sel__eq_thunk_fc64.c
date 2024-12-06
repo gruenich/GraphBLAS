@@ -67,9 +67,8 @@ GrB_Info GB (_sel_phase2__eq_thunk_fc64)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_fc64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
-    GrB_Matrix A,
+    GrB_Matrix C,
+    const GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
 )

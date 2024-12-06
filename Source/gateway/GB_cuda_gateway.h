@@ -210,7 +210,7 @@ bool GB_cuda_select_branch
 
 GrB_Info GB_cuda_select_bitmap
 (
-    int8_t *Cb,
+    int8_t *Cb,                     // FIXME: pass in C, not Cb and &cnvals
     int64_t *cnvals,
     const bool C_iso,
     const GrB_Matrix A,

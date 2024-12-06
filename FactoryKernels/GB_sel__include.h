@@ -190,8 +190,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_int8)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_int8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -223,8 +222,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_int16)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_int16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -256,8 +254,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_int32)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_int32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -289,8 +286,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_int64)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_int64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -322,8 +318,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_uint8)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_uint8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -355,8 +350,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_uint16)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_uint16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -388,8 +382,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_uint32)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_uint32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -421,8 +414,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_uint64)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_uint64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -454,8 +446,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_fp32)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_fp32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -487,8 +478,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_fp64)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_fp64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -520,8 +510,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_fc32)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_fc32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -553,8 +542,7 @@ GrB_Info GB (_sel_phase2__ne_thunk_fc64)
 
 GrB_Info GB (_sel_bitmap__ne_thunk_fc64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -586,8 +574,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_bool)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_bool)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -619,8 +606,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_int8)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_int8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -652,8 +638,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_int16)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_int16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -685,8 +670,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_int32)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_int32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -718,8 +702,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_int64)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_int64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -751,8 +734,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_uint8)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_uint8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -784,8 +766,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_uint16)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_uint16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -817,8 +798,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_uint32)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_uint32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -850,8 +830,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_uint64)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_uint64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -883,8 +862,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_fp32)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_fp32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -916,8 +894,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_fp64)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_fp64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -949,8 +926,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_fc32)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_fc32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -982,8 +958,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_fc64)
 
 GrB_Info GB (_sel_bitmap__eq_thunk_fc64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1015,8 +990,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_int8)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_int8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1048,8 +1022,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_int16)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_int16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1081,8 +1054,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_int32)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_int32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1114,8 +1086,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_int64)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_int64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1147,8 +1118,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_uint8)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_uint8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1180,8 +1150,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_uint16)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_uint16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1213,8 +1182,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_uint32)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_uint32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1246,8 +1214,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_uint64)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_uint64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1279,8 +1246,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_fp32)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_fp32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1312,8 +1278,7 @@ GrB_Info GB (_sel_phase2__gt_thunk_fp64)
 
 GrB_Info GB (_sel_bitmap__gt_thunk_fp64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1345,8 +1310,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_int8)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_int8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1378,8 +1342,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_int16)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_int16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1411,8 +1374,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_int32)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_int32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1444,8 +1406,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_int64)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_int64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1477,8 +1438,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_uint8)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_uint8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1510,8 +1470,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_uint16)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_uint16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1543,8 +1502,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_uint32)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_uint32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1576,8 +1534,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_uint64)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_uint64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1609,8 +1566,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_fp32)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_fp32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1642,8 +1598,7 @@ GrB_Info GB (_sel_phase2__ge_thunk_fp64)
 
 GrB_Info GB (_sel_bitmap__ge_thunk_fp64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1675,8 +1630,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_int8)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_int8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1708,8 +1662,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_int16)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_int16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1741,8 +1694,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_int32)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_int32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1774,8 +1726,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_int64)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_int64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1807,8 +1758,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_uint8)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_uint8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1840,8 +1790,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_uint16)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_uint16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1873,8 +1822,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_uint32)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_uint32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1906,8 +1854,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_uint64)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_uint64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1939,8 +1886,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_fp32)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_fp32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -1972,8 +1918,7 @@ GrB_Info GB (_sel_phase2__lt_thunk_fp64)
 
 GrB_Info GB (_sel_bitmap__lt_thunk_fp64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2005,8 +1950,7 @@ GrB_Info GB (_sel_phase2__le_thunk_int8)
 
 GrB_Info GB (_sel_bitmap__le_thunk_int8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2038,8 +1982,7 @@ GrB_Info GB (_sel_phase2__le_thunk_int16)
 
 GrB_Info GB (_sel_bitmap__le_thunk_int16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2071,8 +2014,7 @@ GrB_Info GB (_sel_phase2__le_thunk_int32)
 
 GrB_Info GB (_sel_bitmap__le_thunk_int32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2104,8 +2046,7 @@ GrB_Info GB (_sel_phase2__le_thunk_int64)
 
 GrB_Info GB (_sel_bitmap__le_thunk_int64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2137,8 +2078,7 @@ GrB_Info GB (_sel_phase2__le_thunk_uint8)
 
 GrB_Info GB (_sel_bitmap__le_thunk_uint8)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2170,8 +2110,7 @@ GrB_Info GB (_sel_phase2__le_thunk_uint16)
 
 GrB_Info GB (_sel_bitmap__le_thunk_uint16)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2203,8 +2142,7 @@ GrB_Info GB (_sel_phase2__le_thunk_uint32)
 
 GrB_Info GB (_sel_bitmap__le_thunk_uint32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2236,8 +2174,7 @@ GrB_Info GB (_sel_phase2__le_thunk_uint64)
 
 GrB_Info GB (_sel_bitmap__le_thunk_uint64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2269,8 +2206,7 @@ GrB_Info GB (_sel_phase2__le_thunk_fp32)
 
 GrB_Info GB (_sel_bitmap__le_thunk_fp32)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads
@@ -2302,8 +2238,7 @@ GrB_Info GB (_sel_phase2__le_thunk_fp64)
 
 GrB_Info GB (_sel_bitmap__le_thunk_fp64)
 (
-    int8_t *Cb,
-    int64_t *cnvals_handle,
+    GrB_Matrix C,
     GrB_Matrix A,
     const GB_void *restrict ythunk,
     const int nthreads

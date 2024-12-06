@@ -417,8 +417,7 @@ GrB_Info GB_jit_kernel_rowscale                                         \
 #define GB_JIT_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap)  \
 GrB_Info GB_jit_kernel_select_bitmap                                    \
 (                                                                       \
-    int8_t *Cb,                                                         \
-    int64_t *cnvals_handle,                                             \
+    GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                       \
     const GB_void *restrict ythunk,                                     \
     const int nthreads                                                  \
@@ -782,8 +781,8 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
 #define GB_JIT_CUDA_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap) \
 GrB_Info GB_jit_kernel_select_bitmap                                        \
 (                                                                           \
-    int8_t *Cb,                                                             \
-    uint64_t *cnvals,                                                       \
+    int8_t *Cb,        /* FIXME */                                          \
+    uint64_t *cnvals,            /* FIXME */                                \
     GrB_Matrix A,                                                           \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \
