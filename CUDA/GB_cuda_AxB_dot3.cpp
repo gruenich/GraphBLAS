@@ -254,7 +254,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB0) ;
+    ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB2) ;
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS;
 }
