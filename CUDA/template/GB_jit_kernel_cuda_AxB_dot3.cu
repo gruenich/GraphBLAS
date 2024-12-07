@@ -403,6 +403,14 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
                 all_in_one = true ;
             }
         }
+        printf ("mnz: %ld in buckets : %ld\n", mnz, s) ;
+        if (mnz != s)
+        {
+            printf ("Abort! Missing %ld entries\n", mnz-s) ;
+            fflush (stdout) ;
+            fflush (stderr) ;
+            abort ( ) ;
+        }
 
         // kernel_timer.Stop();
         // printf ("(GPU phase2 %12.6g ms )\n", kernel_timer.Elapsed()) ;
