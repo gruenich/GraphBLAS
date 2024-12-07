@@ -13,6 +13,8 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
+#define GB_DEBUG
+
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \
     /* FIXME: use a stream pool instead */                              \
@@ -209,6 +211,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
     C->nvec_nonempty = M->nvec_nonempty ;
+    C->nvec = cnvec ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
 
     GBURBLE ("(GPU C created and copied from M) ") ;
@@ -251,6 +254,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB0) ;
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS;
 }
