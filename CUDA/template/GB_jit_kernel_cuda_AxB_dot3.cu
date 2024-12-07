@@ -10,6 +10,8 @@
 
 // GB_jit_kernel_cuda_AxB_dot3: C<M>=A'*B using the dot3 method on the GPU.
 
+#define GB_DEBUG
+
 #define GB_FREE_ALL ;
 
 #if GB_C_ISO
@@ -400,6 +402,14 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
             {
                 all_in_one = true ;
             }
+        }
+        printf ("mnz: %ld in buckets : %ld\n", mnz, s) ;
+        if (mnz != s)
+        {
+            printf ("Abort! Missing %ld entries\n", mnz-s) ;
+            fflush (stdout) ;
+            fflush (stderr) ;
+            abort ( ) ;
         }
 
         // kernel_timer.Stop();

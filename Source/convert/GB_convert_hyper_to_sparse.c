@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // DONE: 32/64 bit
 
 // On input, the matrix may have shallow A->p and A->h content; it is safely
@@ -56,6 +58,8 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     bool Ap_is_32 = A->p_is_32 ;
     bool Ai_is_32 = A->i_is_32 ;
     size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    // FIXME: if A->nvec_nonempty == n, just free A->h and A-Y
 
     if (n == 1)
     { 

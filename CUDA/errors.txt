@@ -1,0 +1,110 @@
+cholesky $ ./build/experimental/test/test_AllKtruss > o6
+CUDA Error detected. cudaErrorIllegalAddress an illegal memory access was encountered
+test_AllKtruss: /home/faculty/d/davis/dev3/GraphBLAS/build/rmm_wrap/external_includes/rmm/include/rmm/mr/device/detail/stream_ordered_memory_resource.hpp:249: void rmm::mr::detail::stream_ordered_memory_resource<PoolResource, FreeListType>::do_deallocate(void*, std::size_t, rmm::cuda_stream_view) [with PoolResource = rmm::mr::pool_memory_resource<rmm::mr::managed_memory_resource>; FreeListType = rmm::mr::detail::coalescing_free_list; std::size_t = long unsigned int]: Assertion `status__ == cudaSuccess' failed.
+Aborted (core dumped)
+cholesky $ ./build/experimental/test/test_AllKtruss > o8
+cholesky $ tail o8
+ [ GrB_Matrix_nvals 
+   1.19e-07 sec ]
+ [ GrB_eWiseMult emult:(S<.>=H.*H) 
+   0.000248 sec ]
+ [ GrB_Matrix_nvals 
+   8.2e-08 sec ]
+ [ GrB_reduce  work:0 gpus:0 
+   4.33e-06 sec ]
+[ OK ]
+SUCCESS: All unit tests have passed.
+cholesky $ 
+cholesky $ tail o
+   0.017 sec ]
+ [ GrB_Matrix_nvals 
+   1.19e-07 sec ]
+ [ GrB_mxm C<M>=A'*B, masked_dot_product (dot3) (S{S} = S'*S)  work:2.97438e+06 GPUs:4 (GPU dot3) (GPU C created and copied from M) 
+zombies: 0
+bucket 1: 49104
+bucket 2: 794687
+bucket 3: 0
+bucket 4: 0
+assertion failed: /home/faculty/d/davis/dev3/GraphBLAS/CUDA/GB_cuda_AxB_dot3.cpp line 257
+cholesky $ 
+
+cholesky $ ./build/experimental/test/test_AllKtruss > o8
+cholesky $ tail o8
+ [ GrB_Matrix_nvals 
+   1.19e-07 sec ]
+ [ GrB_eWiseMult emult:(S<.>=H.*H) 
+   0.000248 sec ]
+ [ GrB_Matrix_nvals 
+   8.2e-08 sec ]
+ [ GrB_reduce  work:0 gpus:0 
+   4.33e-06 sec ]
+[ OK ]
+SUCCESS: All unit tests have passed.
+cholesky $ 
+cholesky $ tail o
+   0.017 sec ]
+ [ GrB_Matrix_nvals 
+   1.19e-07 sec ]
+ [ GrB_mxm C<M>=A'*B, masked_dot_product (dot3) (S{S} = S'*S)  work:2.97438e+06 GPUs:4 (GPU dot3) (GPU C created and copied from M) 
+zombies: 0
+bucket 1: 49104
+bucket 2: 794687
+bucket 3: 0
+bucket 4: 0
+assertion failed: /home/faculty/d/davis/dev3/GraphBLAS/CUDA/GB_cuda_AxB_dot3.cpp line 257
+cholesky $ 
+cholesky $ ./build/experimental/test/test_AllKtruss > o1
+cholesky $ tail o1
+ [ GrB_Matrix_nvals 
+   8.2e-08 sec ]
+ [ GrB_eWiseMult emult:(S<.>=H.*H) 
+   0.00025 sec ]
+ [ GrB_Matrix_nvals 
+   5.96e-08 sec ]
+ [ GrB_reduce  work:0 gpus:0 
+   4.19e-06 sec ]
+[ OK ]
+SUCCESS: All unit tests have passed.
+cholesky $ ./build/experimental/test/test_AllKtruss > o2
+Aborted (core dumped)
+cholesky $ tail o2
+    row 165:   14
+    row 166:   14
+    row 167:   18
+    row 168:   6
+    row 172:   6
+    row 173:   6
+  column: 1 : 27 entries [29:55]
+    ...
+  invalid zombie count: 1181 exist but A->nzombies = 54111
+assertion failed: /home/faculty/d/davis/dev3/GraphBLAS/CUDA/GB_cuda_AxB_dot3.cpp line 257
+cholesky $ ./build/experimental/test/test_AllKtruss > o3
+cholesky $ tail o3
+ [ GrB_Matrix_nvals 
+   5.96e-08 sec ]
+ [ GrB_eWiseMult emult:(S<.>=H.*H) 
+   0.000248 sec ]
+ [ GrB_Matrix_nvals 
+   7.45e-08 sec ]
+ [ GrB_reduce  work:0 gpus:0 
+   4.28e-06 sec ]
+[ OK ]
+SUCCESS: All unit tests have passed.
+cholesky $ ./build/experimental/test/test_AllKtruss > o4
+cholesky $ tail o4
+ [ GrB_Matrix_nvals 
+   6.71e-08 sec ]
+ [ GrB_eWiseMult emult:(S<.>=H.*H) 
+   0.000247 sec ]
+ [ GrB_Matrix_nvals 
+   8.2e-08 sec ]
+ [ GrB_reduce  work:0 gpus:0 
+   4.22e-06 sec ]
+[ OK ]
+SUCCESS: All unit tests have passed.
+cholesky $ ./build/experimental/test/test_AllKtruss > o5
+CUDA Error detected. cudaErrorIllegalAddress an illegal memory access was encountered
+test_AllKtruss: /home/faculty/d/davis/dev3/GraphBLAS/build/rmm_wrap/external_includes/rmm/include/rmm/mr/device/detail/stream_ordered_memory_resource.hpp:249: void rmm::mr::detail::stream_ordered_memory_resource<PoolResource, FreeListType>::do_deallocate(void*, std::size_t, rmm::cuda_stream_view) [with PoolResource = rmm::mr::pool_memory_resource<rmm::mr::managed_memory_resource>; FreeListType = rmm::mr::detail::coalescing_free_list; std::size_t = long unsigned int]: Assertion `status__ == cudaSuccess' failed.
+Aborted (core dumped)
+cholesky $ 
+

@@ -354,7 +354,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     C->nvec_nonempty = cnvec ;
     C->nvals = cnz ;
     C->p = GB_MALLOC (C->plen + 1, int64_t, &(C->p_size)) ;
-    C->h = GB_MALLOC (C->plen, int64_t, &(A->h_size)) ;
+    C->h = GB_MALLOC (C->plen, int64_t, &(C->h_size)) ; //BUG FIX: was A->h_size
     if (C->p == NULL || C->h == NULL)
     {
         // The contents of C will be freed with GB_phybix_free()
@@ -373,6 +373,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // log the end of the last vector of C
+    // FIXME: isn't this just Cp [cnvec] = cnz?
     Cp [Ck_map [cnz - 1]] = cnz;
 
     GB_FREE_ALL ;

@@ -1,3 +1,5 @@
+#define GB_DEBUG
+
 #include "GB_cuda_select.hpp"
 
 #undef GB_FREE_ALL
@@ -47,45 +49,29 @@ GrB_Info GB_cuda_select_sparse
 
     info = GB_cuda_select_sparse_jit (C, A,
         flipij, ythunk, op, stream, gridsz, BLOCK_SIZE) ;
-    printf ("cuda select sparse jit, info %d\n", info) ;
+//  printf ("cuda select sparse jit, info %d iso %d\n", info, C_iso) ;
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
     CUDA_OK (cudaStreamDestroy (stream)) ;
 
+    ASSERT (C->x != NULL) ;
 
     GB_OK (info) ;
 
-    if (A->h == NULL) {
-        // The result should be sparse, but the result is hypersparse.
-        // Perform the hyper->sparse conversion.
-        // FIXME: this is not the right approach.  The matrix C might in fact
-        // need to stay hypersparse because it could be extremely sparse.
-        // The GB_conform method will take care of this.
-        // See also GB_hyper_prune.  Let's talk it over.
-        ASSERT (GB_IS_HYPERSPARSE (C)) ;
-        GB_OK (GB_convert_hyper_to_sparse (C, false)) ;
-    }
-
     if (C_iso)
     {
-        if (C->nvals == 0)
-        {
-            // C->x is returned as NULL!
-            C->iso = false ;
-            printf ("hack ... \n") ;
-        }
-        else
-        {
-            // If C is iso, initialize the iso entry
-            printf ("info %d\n", info) ;
-            printf ("C->x is %p\n", (void *) C->x) ;
-            printf ("A->x is %p\n", (void *) A->x) ;
-            printf ("athunk is %p\n", (void *) athunk) ;
-            GB_select_iso ((GB_void *) C->x, op->opcode, athunk,
-                (GB_void *) A->x, A->type->size) ;
-        }
+        // If C is iso, initialize the iso entry
+        GB_select_iso ((GB_void *) C->x, op->opcode, athunk,
+            (GB_void *) A->x, A->type->size) ;
     }
 
+    if (C->nvec == C->vdim)
+    {
+        // C hypersparse with all vectors present; quick convert to sparse
+        GB_FREE (&(C->h), C->h_size) ;
+    }
+
+    ASSERT_MATRIX_OK (C, "C output of cuda_select_sparse", GB0) ;
     return GrB_SUCCESS ;
 }
 
