@@ -20,6 +20,19 @@
 
 #include "GB.h"
 
+// The prototype is in Source/callback:
+//
+//  GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x in a matrix
+//  (
+//      GrB_Matrix A,           // matrix to allocate space for
+//      const GrB_Index nzmax,  // number of entries the matrix can hold
+//                              // ignored if A is iso and full
+//      const int sparsity,     // sparse (=hyper/auto) / bitmap / full
+//      const bool bitmap_calloc,   // if true, calloc A->b, else use malloc
+//      const bool numeric,     // if true, allocate A->x, else A->x is NULL
+//      const bool A_iso        // if true, allocate A as iso
+//  )
+
 GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
 {
 

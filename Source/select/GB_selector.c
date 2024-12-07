@@ -214,7 +214,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "A output of GB_selector", GB_ZOMBIE (GB0)) ;
+    ASSERT_MATRIX_OK (C, "C output of GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }
 
