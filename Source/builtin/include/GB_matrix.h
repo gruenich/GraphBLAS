@@ -481,8 +481,15 @@ int32_t x_memory_location ;
 
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
-int sparsity_control ;  // controls sparsity structure: hypersparse,
-                        // sparse, bitmap, or full, or any combination.
+
+// the remaining content of this struct is exactly 16 bytes of int8_t and bool
+
+// 3 bytes:
+int8_t sparsity_control ;   // controls sparsity structure: hypersparse,
+                            // sparse, bitmap, or full, or any combination.
+
+int8_t p_control ;      // controls 32/64 setting for A->p
+int8_t i_control ;      // controls 32/64 setting for A->[hi] and A->Y
 
 //------------------------------------------------------------------------------
 // shallow matrices
@@ -499,6 +506,7 @@ int sparsity_control ;  // controls sparsity structure: hypersparse,
 // object is a pointer into components of another object.  They must not
 // be freed when freeing this object.
 
+// 8 bytes
 bool p_shallow ;        // true if p is a shallow copy
 bool h_shallow ;        // true if h is a shallow copy
 bool b_shallow ;        // true if b is a shallow copy
@@ -512,6 +520,7 @@ bool static_header ;    // true if this struct is statically allocated
 // other bool content
 //------------------------------------------------------------------------------
 
+// 2 bytes:
 bool is_csc ;           // true if stored by column, false if by row
 bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
                         // matrices are never jumbled.
@@ -538,6 +547,7 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 // If A is full, A->x is the only component present, and thus a full iso matrix
 // takes only O(1) memory, regardless of its dimension.
 
+// 1 bytes:
 bool iso ;              // true if all entries have the same value
 
 //------------------------------------------------------------------------------
@@ -547,6 +557,7 @@ bool iso ;              // true if all entries have the same value
 // A->h, A->p, and A->i can be either 32-bit or 64-bit integers.
 // A->h and A->i always have the same integer size.
 
+// 2 bytes:
 bool p_is_32 ;  // true if A->p is int32_t, false if int64_t
 bool i_is_32 ;  // true if A->h and A->i are int32_t, false if int64_t
 

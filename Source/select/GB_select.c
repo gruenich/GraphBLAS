@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
+// DONE: 32/64 bit, except GB_new
 
-// DONE: 32/64 bit
+#define GB_DEBUG
 
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
@@ -384,7 +384,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1,
-            /* FIXME: */ true, true)) ; // allow 32-bit
+            /* FIXME: */ true, true)) ; // allow 32-bit for now
     }
     else
     { 

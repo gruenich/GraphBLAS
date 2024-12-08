@@ -58,5 +58,17 @@ static inline bool GB_validate_p_is_32
     return (p_is_32) ;
 }
 
+// return true if the integer control settings are valid
+static inline bool GB_valid_control
+(
+    int8_t pi_control,  // global or per-matrix p_control or i_control
+    bool pi_is_32       // p_is_32 or i_is_32
+)
+{
+    return (pi_control == GxB_AUTO_BITS ||
+           (pi_control == GxB_STRICT_32_BITS &&  pi_is_32) ||
+           (pi_control == GxB_STRICT_64_BITS && !pi_is_32)) ;
+}
+
 #endif
 

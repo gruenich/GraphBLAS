@@ -173,7 +173,7 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
-    A->sparsity_control = 999 ;
+    A->sparsity_control = 0 ;
     ERR (GxB_Matrix_fprint (A, "invalid sparsity control", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
 

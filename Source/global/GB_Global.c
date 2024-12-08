@@ -133,6 +133,13 @@ typedef struct
     bool cpu_features_avx512f ;     // x86_64 with AVX512f
 
     //--------------------------------------------------------------------------
+    // integer control
+    //--------------------------------------------------------------------------
+
+    int8_t p_control ;      // 0 to 3: controls A->p
+    int8_t i_control ;      // 0 to 3: controls A->[hiY]
+
+    //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress):
     //--------------------------------------------------------------------------
 
@@ -216,6 +223,10 @@ static GB_Global_struct GB_Global =
     .cpu_features_avx2 = false,         // x86_64 with AVX2
     .cpu_features_avx512f = false,      // x86_64 with AVX512f
 
+    // integer control
+    .p_control = (int8_t) GxB_PREFER_32,
+    .i_control = (int8_t) GxB_PREFER_32,
+
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system
 
@@ -251,6 +262,30 @@ void GB_Global_GrB_init_called_set (bool init_called)
 bool GB_Global_GrB_init_called_get (void)
 { 
     return (GB_Global.init_called) ;
+}
+
+//------------------------------------------------------------------------------
+// integer control
+//------------------------------------------------------------------------------
+
+void GB_Global_p_control_set (int8_t p_control)
+{ 
+    GB_Global.p_control = p_control ;
+}
+
+int8_t GB_Global_p_control_get (void)
+{ 
+    return (GB_Global.p_control) ;
+}
+
+void GB_Global_i_control_set (int8_t i_control)
+{ 
+    GB_Global.i_control = i_control ;
+}
+
+int8_t GB_Global_i_control_get (void)
+{ 
+    return (GB_Global.i_control) ;
 }
 
 //------------------------------------------------------------------------------

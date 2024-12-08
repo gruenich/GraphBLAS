@@ -14,6 +14,48 @@
 // size 1, A->plen is 1, and contents A->x and A->i are NULL.  If this method
 // fails, *A is set to NULL.
 
+// FIXME: create global and per-matrix setting:
+//
+// For Ap and Ai, independently:
+//
+//  default: prefer 32 for global and per-matrix settings
+//
+//  Global settings: no matrix is converted if this is changed
+//
+//  strict_64   : report error if any matrix found to be 32
+//  strict_32   : report error if any matrix found to be 64
+//  prefer_32   : use 32 (or 64 if required) for new or recomputed matrices;
+//                  any prior 64 ok (default)
+
+//  per-matrix settings (only available if the global setting is prefer_64 or
+//      prefer_32):
+//
+//  strict_64   : use 64, convert now if already 32 (not an error); lock and do
+//                  not change in the future
+
+//  strict_32   : use 32, convert now if already 64 (report error if too big
+//                  for 32 and leave mtx and its per-matrix setting unchanged).
+//                  lock the matrix and do not change in the future
+
+//  prefer_32   : use 32, but do not convert now if already 64.
+//                  Also stays as 64 bit if the matrix is too large for 32.
+//                  May change to 32 in the future, at the discretion of the
+//                  library, if the matrix appears as an output matrix (such as
+//                  C for C=A*B), or by a call to GrB_wait.  No change is made
+//                  if the matrix is used as an input, such as A for C=A*B.
+
+// Changing the global settings has no impact on the block/non-blocking status
+// of any existing matrix.  If the per-matrix setting is changed, it may cause
+// future pending work that will be finalized by GrB_wait on that matrix.  If
+// GrB_wait is called to materialize the matrix, and the matrix is not modified
+// afterwards, it remains materialized and is not changed.
+
+// If the global setting is strict_64 or strict_32, no per-matrix setting may
+// be changed, even if the requested per-matrix setting matches the current
+// global setting.  Existing matrices with a setting that doesn't match the
+// current global strict_64 or strict_32 setting will cause an error if they
+// are passed to any method except GrB_free.
+
 #include "GB.h"
 
 GrB_Info GB_Matrix_new          // create a new matrix with no entries

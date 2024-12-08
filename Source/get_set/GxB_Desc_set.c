@@ -43,7 +43,7 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_WHERE (desc, "GxB_Desc_set_INT32 (desc, field, value)") ;
+    GB_WHERE_DESC (desc, "GxB_Desc_set_INT32 (desc, field, value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
@@ -197,7 +197,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_WHERE (desc, "GxB_Desc_set (desc, field, value)") ;
+    GB_WHERE_DESC (desc, "GxB_Desc_set (desc, field, value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 

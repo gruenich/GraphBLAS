@@ -129,5 +129,10 @@ void  *  GB_Global_malloc_function_get (void) ;
 void  *  GB_Global_calloc_function_get (void) ;
 void  *  GB_Global_realloc_function_get (void) ;
 void  *  GB_Global_free_function_get (void) ;
+
+void     GB_Global_p_control_set (int8_t p_control) ;
+int8_t   GB_Global_p_control_get (void) ;
+void     GB_Global_i_control_set (int8_t i_control) ;
+int8_t   GB_Global_i_control_get (void) ;
 #endif
 

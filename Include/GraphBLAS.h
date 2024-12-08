@@ -146,7 +146,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef GRAPHBLAS_HAS_CUDA
-#define GRAPHBLAS_HAS_CUDA
+/* #undef GRAPHBLAS_HAS_CUDA */
 #endif
 
 //------------------------------------------------------------------------------
@@ -1610,8 +1610,21 @@ typedef enum
 
     // GrB_BinaryOp or GrB_Semiring:
     GxB_THETA = 7052,               // to get the value of theta
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
+    GxB_INDEX_INTEGER = 7053,       // integer size control for row/col indices
+    GxB_OFFSET_INTEGER = 7054,      // integer size control for offsets
 }
 GrB_Field ;
+
+typedef enum
+{
+    GxB_PREFER_32 = 0,      // the default
+    GxB_PREFER_64 = 1,
+    GxB_STRICT_32 = 2,
+    GxB_STRICT_64 = 3,
+}
+GxB_Integer_Size ;
 
 typedef enum
 {

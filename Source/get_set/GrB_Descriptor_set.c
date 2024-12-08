@@ -27,7 +27,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_WHERE (desc, "GrB_Descriptor_set (desc, field, value)") ;
+    GB_WHERE_DESC (desc, "GrB_Descriptor_set (desc, field, value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
