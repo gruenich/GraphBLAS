@@ -10,10 +10,14 @@
 #ifndef GB_H
 #define GB_H
 
+// These methods and definitions are also available to JIT kernels;
+// see GB_jit_kernel.h:
 #include "include/GB_include.h"
+
+// These are not needed by JIT kernels and do not appear in GB_jit_kernel.h:
 #include "global/GB_Global.h"
 #include "print/GB_printf.h"
-#include "ok/GB_assert.h"
+#include "ok/GB_assert_library.h"
 #if defined ( GRAPHBLAS_HAS_CUDA )
 #include "rmm_wrap.h"
 #endif
@@ -52,5 +56,6 @@
 #include "gateway/GB_cuda_gateway.h"
 #include "callback/GB_callbacks.h"
 #include "helper/GB_factory.h"
+
 #endif
 

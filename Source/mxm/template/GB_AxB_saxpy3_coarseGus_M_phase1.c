@@ -49,7 +49,7 @@
             GB_GET_B_kj_INDEX ;         // get k of B(k,j)
             GB_GET_A_k ;                // get A(:,k)
             if (aknz == 0) continue ;
-            #define GB_IKJ                                          \
+            #define GB_UPDATE_IKJ                                   \
             {                                                       \
                 if (Hf [i] == f0)       /* if true, M(i,j) is 1 */  \
                 {                                                   \
@@ -59,7 +59,7 @@
             }
             GB_SCAN_M_j_OR_A_k (((GB_A_IS_SPARSE || GB_A_IS_HYPER) && 
                 !A_jumbled)) ;
-            #undef GB_IKJ
+            #undef GB_UPDATE_IKJ
         }
         Cp [kk] = cjnz ;                // count the entries in C(:,j)
     }

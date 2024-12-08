@@ -172,6 +172,18 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (GB_JUMBLED_OK (T)) ;
     ASSERT_MATRIX_OK (T, "[T = results of computation]", GB0) ;
 
+    GB_assert (!(C->p_is_32)) ;    // FIXME: not yet handled
+    GB_assert (!(C->i_is_32)) ;    // FIXME: not yet handled
+
+    GB_assert (!(T->p_is_32)) ;    // FIXME: not yet handled
+    GB_assert (!(T->i_is_32)) ;    // FIXME: not yet handled
+
+    if (M != NULL)
+    {
+        GB_assert (!(M->p_is_32)) ;    // FIXME: not yet handled
+        GB_assert (!(M->i_is_32)) ;    // FIXME: not yet handled
+    }
+
     //--------------------------------------------------------------------------
     // remove zombies and pending tuples from T, but leave it jumbled
     //--------------------------------------------------------------------------
@@ -426,6 +438,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
+    ASSERT_MATRIX_OK (C, "C<M>=accum(C,T) before", GB0) ;
+    GB_assert (!(C->p_is_32)) ;    // FIXME: not yet handled
+    GB_assert (!(C->i_is_32)) ;    // FIXME: not yet handled
+    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
     return (GB_block (C, Werk)) ;
 }

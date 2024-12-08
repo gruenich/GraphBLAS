@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_assert.h: assertions for all of GraphBLAS except JIT kernels.
+// GB_assert_library.h: assertions for all of GraphBLAS except JIT kernels.
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -14,9 +14,6 @@
 // debugging definitions
 //------------------------------------------------------------------------------
 
-#undef  GB_ABORT
-#define GB_ABORT GB_Global_abort ( )
-
 #undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
@@ -24,14 +21,7 @@
 #ifdef GB_DEBUG
 
     // assert X is true
-    #define ASSERT(X)                                                       \
-    {                                                                       \
-        if (!(X))                                                           \
-        {                                                                   \
-            GBDUMP ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
-            GB_ABORT ;                                                      \
-        }                                                                   \
-    }
+    #define ASSERT(X) GB_assert (X)
 
     // call a GraphBLAS method and assert that it returns GrB_SUCCESS
     #define ASSERT_OK(X)                                                    \
@@ -71,7 +61,7 @@
 {                                                                       \
     fprintf (stderr, "\ngotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
     GBDUMP ("\ngotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
-    GB_ABORT ;                                                          \
+    GB_Global_abort ( ) ;                                               \
 }
 #endif
 

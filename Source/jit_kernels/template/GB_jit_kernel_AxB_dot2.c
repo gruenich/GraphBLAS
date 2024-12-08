@@ -12,6 +12,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT2_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_AXB_DOT2_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     #include "template/GB_AxB_dot2_meta.c"
     return (GrB_SUCCESS) ;
 }

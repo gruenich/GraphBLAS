@@ -67,6 +67,9 @@ typedef struct
 
     // added for sort:
     GB_p_slice_f                GB_p_slice_func ;
+
+    // added for debugging:
+    GB_abort_f                  GB_abort_func ;
 }
 GB_callback_struct ;
 

@@ -87,6 +87,7 @@ extern "C" {
 
 GB_JIT_CUDA_KERNEL_COLSCALE_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (!GB_JUMBLED (D)) ;

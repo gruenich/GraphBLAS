@@ -112,6 +112,7 @@ extern "C" {
 
 GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
 

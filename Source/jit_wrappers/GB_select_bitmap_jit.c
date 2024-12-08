@@ -51,6 +51,6 @@ GrB_Info GB_select_bitmap_jit      // select bitmap
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, ythunk, nthreads)) ;
+    return (GB_jit_kernel (C, A, ythunk, nthreads, &GB_callback)) ;
 }
 

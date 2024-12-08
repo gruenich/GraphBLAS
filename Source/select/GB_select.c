@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
+// DONE: 32/64 bit
+
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
 #define GB_FREE_ALL         \
@@ -380,7 +384,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1,
-            /* FIXME: */ false, false)) ;
+            /* FIXME: */ true, true)) ; // allow 32-bit
     }
     else
     { 
@@ -390,7 +394,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     T->is_csc = A_csc ;
     ASSERT_MATRIX_OK (T, "T=select(A,Thunk) output", GB0) ;
-    ASSERT_MATRIX_OK (C, "C for accum; T=select(A,Thunk) output", GB0) ;
+    ASSERT_MATRIX_OK (C, "C before convert_int", GB0) ;
+    GB_OK (GB_convert_int (T, false, false)) ;  // FIXME
+    ASSERT_MATRIX_OK (C, "T for accum; T=select(A,Thunk) output", GB0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask

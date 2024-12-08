@@ -10,6 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_EWISE_FULLN_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_EWISE_FULLN_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     #include "template/GB_ewise_fulln_template.c"
     return (GrB_SUCCESS) ;
 }

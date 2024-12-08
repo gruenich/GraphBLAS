@@ -19,6 +19,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_TRANS_BIND2ND_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     GB_Y_TYPE y = (*((const GB_Y_TYPE *) y_input)) ;
     #include "template/GB_transpose_template.c"
     return (GrB_SUCCESS) ;

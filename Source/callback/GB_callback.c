@@ -36,5 +36,7 @@ GB_callback_struct GB_callback =
     // added for sort:
     .GB_p_slice_func                = GB_p_slice,
 
+    // added for debugging:
+    .GB_abort_func                  = GB_abort,
 } ;
 

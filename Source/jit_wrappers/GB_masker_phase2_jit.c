@@ -66,6 +66,6 @@ GrB_Info GB_masker_phase2_jit       // phase2 for R = masker (C,M,Z)
     return (GB_jit_kernel (R, TaskList, R_ntasks, R_nthreads,
         R_to_M, R_to_C, R_to_Z, M, Mask_comp, Mask_struct, C, Z,
         C_ek_slicing, C_ntasks, C_nthreads,
-        M_ek_slicing, M_ntasks, M_nthreads)) ;
+        M_ek_slicing, M_ntasks, M_nthreads, &GB_callback)) ;
 }
 

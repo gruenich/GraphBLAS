@@ -44,7 +44,7 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             {
                 case GB_INT32_code :
                 case GB_UINT32_code : 
-                    GB_memcpy (dest, src, n * sizeof (int32_t), nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (uint32_t), nthreads) ;
                     break ;
 
                 case GB_INT64_code :
@@ -77,7 +77,7 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
             {
                 case GB_INT32_code :
                 case GB_UINT32_code : 
-                    GB_memcpy (dest, src, n * sizeof (int32_t), nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (uint32_t), nthreads) ;
                     break ;
 
                 case GB_INT64_code :
@@ -126,7 +126,7 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
 
                 case GB_INT64_code :
                 case GB_UINT64_code :
-                    GB_memcpy (dest, src, n * sizeof (int64_t), nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (uint64_t), nthreads) ;
                     break ;
 
                 default: ;
@@ -159,7 +159,7 @@ void GB_cast_int                // parallel memcpy/cast of integer arrays
 
                 case GB_INT64_code :
                 case GB_UINT64_code :
-                    GB_memcpy (dest, src, n * sizeof (int64_t), nthreads) ;
+                    GB_memcpy (dest, src, n * sizeof (uint64_t), nthreads) ;
                     break ;
 
                 default: ;

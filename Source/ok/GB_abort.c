@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_jit_kernel_select_bitmap:  select bitmap JIT kernel
+// GB_abort.c: hard assertions for all of GraphBLAS, including JIT kernels
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,14 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_BITMAP_PROTO (GB_jit_kernel) ;
-GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_BITMAP_PROTO (GB_jit_kernel)
+// This function is always active; it is not controlled by #ifdef GB_DEBUG.
+
+#include "GB.h"
+
+void GB_abort
+(
+    const char *file,
+    int line
+)
 {
-    GB_GET_CALLBACKS ;
-    #if GB_DEPENDS_ON_Y
-    GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
-    #endif
-    #include "template/GB_select_bitmap_template.c"
-    return (GrB_SUCCESS) ;
+    GBDUMP ("\nGraphBLAS assertion failed: [ %s ]: line %d\n", file, line) ;
+    GB_Global_abort ( ) ;
 }
 

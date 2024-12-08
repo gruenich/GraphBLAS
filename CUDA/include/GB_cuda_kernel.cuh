@@ -52,6 +52,7 @@ using namespace cooperative_groups ;
 
 extern "C"
 {
+    #include "include/GB_math_macros.h"
     #include "include/GB_bytes.h"
     #include "include/GB_pun.h"
     #include "include/GB_partition.h"

@@ -287,7 +287,7 @@
             {                                                               \
                 /* C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method. */    \
                 /* M(i,j) is always 1, as given in the hash table */        \
-                GB_IKJ ;                                                    \
+                GB_UPDATE_IKJ ;                                             \
             }                                                               \
         }                                                                   \
     }                                                                       \
@@ -301,7 +301,7 @@
             GB_GET_A_ik_INDEX ;     /* get index i of A(i,j) */             \
             /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */      \
             /* M(i,j) may be 0 or 1, as given in the hash table */          \
-            GB_IKJ ;                                                        \
+            GB_UPDATE_IKJ ;                                                 \
         }                                                                   \
     }                                                                       \
 }

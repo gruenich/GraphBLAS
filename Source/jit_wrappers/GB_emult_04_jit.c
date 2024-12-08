@@ -60,6 +60,6 @@ GrB_Info GB_emult_04_jit      // C<M>=A.*B, emult_04, via the JIT
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, Mask_struct, A, B, Cp_kfirst, M_ek_slicing,
-        M_ntasks, M_nthreads, binaryop->theta)) ;
+        M_ntasks, M_nthreads, binaryop->theta, &GB_callback)) ;
 }
 

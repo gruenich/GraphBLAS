@@ -59,6 +59,6 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, akstart, aistart, Wp, C_ek_slicing, C_ntasks,
-        C_nthreads)) ;
+        C_nthreads, &GB_callback)) ;
 }
 

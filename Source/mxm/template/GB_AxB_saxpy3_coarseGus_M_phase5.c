@@ -56,7 +56,7 @@
                 GB_GET_A_k ;                // get A(:,k)
                 if (aknz == 0) continue ;
                 GB_GET_B_kj ;               // bkj = B(k,j)
-                #define GB_IKJ                                      \
+                #define GB_UPDATE_IKJ                               \
                 {                                                   \
                     int64_t hf = Hf [i] ;                           \
                     if (hf == mark)                                 \
@@ -74,7 +74,7 @@
                     }                                               \
                 }
                 GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
-                #undef GB_IKJ
+                #undef GB_UPDATE_IKJ
             }
             GB_GATHER_ALL_C_j(mark1) ;  // gather into C(:,j) 
 
@@ -92,7 +92,7 @@
                 GB_GET_A_k ;                // get A(:,k)
                 if (aknz == 0) continue ;
                 GB_GET_B_kj ;               // bkj = B(k,j)
-                #define GB_IKJ                                          \
+                #define GB_UPDATE_IKJ                                   \
                 {                                                       \
                     int64_t hf = Hf [i] ;                               \
                     if (hf == mark)                                     \
@@ -111,7 +111,7 @@
                     }                                                   \
                 }
                 GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
-                #undef GB_IKJ
+                #undef GB_UPDATE_IKJ
             }
             GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
         }

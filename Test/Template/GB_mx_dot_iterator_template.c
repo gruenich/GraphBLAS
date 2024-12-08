@@ -109,10 +109,10 @@
 
 {
     GrB_Index x_pmax = GxB_Vector_Iterator_getpmax (X_iterator) ;
-    Assert (x_pmax == ((x_sparsity == GxB_BITMAP && xnvals > 0) ? n : xnvals)) ;
+    my_assert (x_pmax == ((x_sparsity == GxB_BITMAP && xnvals > 0) ? n:xnvals));
 
     GrB_Index y_pmax = GxB_Vector_Iterator_getpmax (Y_iterator) ;
-    Assert (y_pmax == ((y_sparsity == GxB_BITMAP && ynvals > 0) ? n : ynvals)) ;
+    my_assert (y_pmax == ((y_sparsity == GxB_BITMAP && ynvals > 0) ? n:ynvals));
 
     if (kind == 0)
     {

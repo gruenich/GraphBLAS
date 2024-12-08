@@ -10,6 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE1_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SELECT_PHASE1_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     #if GB_DEPENDS_ON_Y
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
     #endif

@@ -10,6 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_MASKER_PHASE2_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_MASKER_PHASE2_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     #define GB_PHASE_2_OF_2
     #include "template/GB_masker_template.c"
     return (GrB_SUCCESS) ;

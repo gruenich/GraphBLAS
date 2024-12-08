@@ -55,6 +55,6 @@ GrB_Info GB_split_full_jit      // split A into a full tile C
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, avstart, aistart, C_nthreads)) ;
+    return (GB_jit_kernel (C, A, avstart, aistart, C_nthreads, &GB_callback)) ;
 }
 

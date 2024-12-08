@@ -60,6 +60,7 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, A, B, ntasks, nthreads, B_slice,
-        cpu_has_avx2, cpu_has_avx512f, semiring->multiply->theta)) ;
+        cpu_has_avx2, cpu_has_avx512f, semiring->multiply->theta,
+        &GB_callback)) ;
 }
 

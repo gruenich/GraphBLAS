@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // A is sparse or hypersparse
 
 // JIT: not need: use factory; 3 variants (A sparse, hyper, or full for DIAG)
@@ -15,10 +17,14 @@
 
 GrB_Info GB_select_positional_phase1
 (
+    // input/output:
     GrB_Matrix C,
-    uint64_t *restrict Zp,          // FIXME
+    // output:
+    uint64_t *restrict Zp,      // FIXME
+//  void *Zp,                       // if C->p_is_32: 32 bit, else 64-bit
     uint64_t *restrict Wfirst,
     uint64_t *restrict Wlast,
+    // input:
     const GrB_Matrix A,
     const int64_t ithunk,
     const GrB_IndexUnaryOp op,

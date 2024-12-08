@@ -203,6 +203,7 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
 
     #ifdef GB_JIT_RUNTIME
     // get callback functions
+    GB_GET_CALLBACKS ;
     GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
     GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
     #endif

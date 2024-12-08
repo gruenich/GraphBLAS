@@ -49,7 +49,8 @@ GrB_Info GB_jit_kernel_add                                              \
     const int B_ntasks,                                                 \
     const bool M_is_A,                                                  \
     const bool M_is_B,                                                  \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st)  \
@@ -60,7 +61,8 @@ GrB_Info GB_jit_kernel_apply_bind1st                                    \
     const GB_void *Bx_input,                                            \
     const int8_t *restrict Bb,                                          \
     const int64_t bnz,                                                  \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel_apply_bind2nd)  \
@@ -71,7 +73,8 @@ GrB_Info GB_jit_kernel_apply_bind2nd                                    \
     const GB_void *y_input,                                             \
     const int8_t *restrict Ab,                                          \
     const int64_t anz,                                                  \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_APPLY_UNOP_PROTO(GB_jit_kernel_apply_unop)        \
@@ -82,7 +85,8 @@ GrB_Info GB_jit_kernel_apply_unop                                       \
     const void *ythunk,         /* for idx unops (op->ytype scalar) */  \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT2_PROTO(GB_jit_kernel_AxB_dot2)            \
@@ -97,7 +101,8 @@ GrB_Info GB_jit_kernel_AxB_dot2                                         \
     const int nthreads,                                                 \
     const int naslice,                                                  \
     const int nbslice,                                                  \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT2N_PROTO(GB_jit_kernel_AxB_dot2n)          \
@@ -112,7 +117,8 @@ GrB_Info GB_jit_kernel_AxB_dot2n                                        \
     const int nthreads,                                                 \
     const int naslice,                                                  \
     const int nbslice,                                                  \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT3_PROTO(GB_jit_kernel_AxB_dot3)            \
@@ -125,7 +131,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
     const GB_task_struct *restrict TaskList,                            \
     const int ntasks,                                                   \
     const int nthreads,                                                 \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_DOT4_PROTO(GB_jit_kernel_AxB_dot4)            \
@@ -140,8 +147,8 @@ GrB_Info GB_jit_kernel_AxB_dot4                                         \
     const int nbslice,                                                  \
     const int nthreads,                                                 \
     GB_Werk Werk,                                                       \
-    const GB_callback_struct *restrict my_callback,                     \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXBIT_PROTO(GB_jit_kernel_AxB_saxbit)        \
@@ -165,8 +172,8 @@ GrB_Info GB_jit_kernel_AxB_saxbit                                       \
     int8_t *restrict Wf,                                                \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    const GB_callback_struct *restrict my_callback,                     \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY3_PROTO(GB_jit_kernel_AxB_saxpy3)        \
@@ -185,8 +192,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy3                                       \
     const int nthreads_max,                                             \
     double chunk,                                                       \
     GB_Werk Werk,                                                       \
-    const GB_callback_struct *restrict my_callback,                     \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY4_PROTO(GB_jit_kernel_AxB_saxpy4)        \
@@ -204,7 +211,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy4                                       \
     const int64_t *restrict H_slice,                                    \
     GB_void *restrict Wcx,                                              \
     int8_t *restrict Wf,                                                \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_AXB_SAXPY5_PROTO(GB_jit_kernel_AxB_saxpy5)        \
@@ -218,7 +226,8 @@ GrB_Info GB_jit_kernel_AxB_saxpy5                                       \
     const int64_t *restrict B_slice,                                    \
     bool cpu_has_avx2,                                                  \
     bool cpu_has_avx512f,                                               \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_BUILD_PROTO(GB_jit_kernel_build)                  \
@@ -233,7 +242,8 @@ GrB_Info GB_jit_kernel_build                                            \
     const int64_t duplicate_entry_input,                                \
     const int64_t *restrict tstart_slice,                               \
     const int64_t *restrict tnz_slice,                                  \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)            \
@@ -244,7 +254,8 @@ GrB_Info GB_jit_kernel_colscale                                         \
     const GrB_Matrix D,                                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_CONCAT_BITMAP_PROTO(GB_jit_kernel_concat_bitmap)  \
@@ -267,7 +278,8 @@ GrB_Info GB_jit_kernel_concat_full                                      \
     const int64_t cistart,                                              \
     const int64_t cvstart,                                              \
     const GrB_Matrix A,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_CONCAT_SPARSE_PROTO(GB_jit_kernel_concat_sparse)  \
@@ -279,7 +291,8 @@ GrB_Info GB_jit_kernel_concat_sparse                                    \
     int64_t *restrict W,                                                \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_CONVERT_S2B_PROTO(GB_jit_kernel_convert_s2b)      \
@@ -290,7 +303,8 @@ GrB_Info GB_jit_kernel_convert_s2b                                      \
     const GrB_Matrix A,                                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EMULT_02_PROTO(GB_jit_kernel_emult_02)            \
@@ -306,7 +320,8 @@ GrB_Info GB_jit_kernel_emult_02                                         \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
     const int A_nthreads,                                               \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EMULT_03_PROTO(GB_jit_kernel_emult_03)            \
@@ -322,7 +337,8 @@ GrB_Info GB_jit_kernel_emult_03                                         \
     const int64_t *B_ek_slicing,                                        \
     const int B_ntasks,                                                 \
     const int B_nthreads,                                               \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EMULT_04_PROTO(GB_jit_kernel_emult_04)            \
@@ -337,7 +353,8 @@ GrB_Info GB_jit_kernel_emult_04                                         \
     const int64_t *M_ek_slicing,                                        \
     const int M_ntasks,                                                 \
     const int M_nthreads,                                               \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EMULT_08_PROTO(GB_jit_kernel_emult_08)            \
@@ -355,7 +372,8 @@ GrB_Info GB_jit_kernel_emult_08                                         \
     const GB_task_struct *restrict TaskList,                            \
     const int C_ntasks,                                                 \
     const int C_nthreads,                                               \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EMULT_BITMAP_PROTO(GB_jit_kernel_emult_bitmap)    \
@@ -371,8 +389,8 @@ GrB_Info GB_jit_kernel_emult_bitmap                                     \
     const int M_ntasks,                                                 \
     const int M_nthreads,                                               \
     const int C_nthreads,                                               \
-    const GB_callback_struct *restrict my_callback,                     \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EWISE_FULLA_PROTO(GB_jit_kernel_ewise_fulla)      \
@@ -382,7 +400,8 @@ GrB_Info GB_jit_kernel_ewise_fulla                                      \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
     const int nthreads,                                                 \
-    const bool A_is_B                                                   \
+    const bool A_is_B,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_EWISE_FULLN_PROTO(GB_jit_kernel_ewise_fulln)      \
@@ -391,7 +410,8 @@ GrB_Info GB_jit_kernel_ewise_fulln                                      \
     GrB_Matrix C,                                                       \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_REDUCE_PROTO(GB_jit_kernel_reduce)                \
@@ -402,7 +422,8 @@ GrB_Info GB_jit_kernel_reduce                                           \
     GB_void *restrict Workspace,                                        \
     bool *restrict F,                                                   \
     const int ntasks,                                                   \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)            \
@@ -411,7 +432,8 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix C,                                                       \
     const GrB_Matrix D,                                                 \
     const GrB_Matrix B,                                                 \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap)  \
@@ -420,7 +442,8 @@ GrB_Info GB_jit_kernel_select_bitmap                                    \
     GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                       \
     const GB_void *restrict ythunk,                                     \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SELECT_PHASE1_PROTO(GB_jit_kernel_select_phase1)  \
@@ -446,7 +469,8 @@ GrB_Info GB_jit_kernel_select_phase2                                    \
     const GB_void *restrict ythunk,                                     \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
-    const int A_nthreads                                                \
+    const int A_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SPLIT_BITMAP_PROTO(GB_jit_kernel_split_bitmap)    \
@@ -456,7 +480,8 @@ GrB_Info GB_jit_kernel_split_bitmap                                     \
     GrB_Matrix A,                                                       \
     const int64_t avstart,                                              \
     const int64_t aistart,                                              \
-    const int C_nthreads                                                \
+    const int C_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SPLIT_FULL_PROTO(GB_jit_kernel_split_full)        \
@@ -466,7 +491,8 @@ GrB_Info GB_jit_kernel_split_full                                       \
     GrB_Matrix A,                                                       \
     const int64_t avstart,                                              \
     const int64_t aistart,                                              \
-    const int C_nthreads                                                \
+    const int C_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SPLIT_SPARSE_PROTO(GB_jit_kernel_split_sparse)    \
@@ -479,7 +505,8 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
     uint64_t *restrict Wp,                                              \
     const int64_t *C_ek_slicing,                                        \
     const int C_ntasks,                                                 \
-    const int C_nthreads                                                \
+    const int C_nthreads,                                               \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 // used for all subassign kernels:
@@ -522,7 +549,8 @@ GrB_Info GB_jit_kernel_trans_bind1st                                    \
     void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_TRANS_BIND2ND_PROTO(GB_jit_kernel_trans_bind2nd)  \
@@ -534,7 +562,8 @@ GrB_Info GB_jit_kernel_trans_bind2nd                                    \
     void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_TRANS_UNOP_PROTO(GB_jit_kernel_trans_unop)        \
@@ -545,7 +574,8 @@ GrB_Info GB_jit_kernel_trans_unop                                       \
     void **Workspaces,                                                  \
     const int64_t *restrict A_slice,                                    \
     const int nworkspaces,                                              \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_UNION_PROTO(GB_jit_kernel_union)                  \
@@ -575,7 +605,8 @@ GrB_Info GB_jit_kernel_union                                            \
     const int B_ntasks,                                                 \
     const bool M_is_A,                                                  \
     const bool M_is_B,                                                  \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
@@ -595,7 +626,8 @@ GrB_Info GB_jit_kernel_masker1                                          \
     const bool Mask_comp,                                               \
     const bool Mask_struct,                                             \
     const GrB_Matrix C,                                                 \
-    const GrB_Matrix Z                                                  \
+    const GrB_Matrix Z,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_MASKER_PHASE2_PROTO(GB_jit_kernel_masker2)        \
@@ -618,7 +650,8 @@ GrB_Info GB_jit_kernel_masker2                                          \
     const int C_ntasks,                                                 \
     const int64_t *restrict M_ek_slicing,                               \
     const int M_nthreads,                                               \
-    const int M_ntasks                                                  \
+    const int M_ntasks,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(GB_jit_kernel_subref_sparse)  \
@@ -665,7 +698,8 @@ GrB_Info GB_jit_kernel_iso_expand                                       \
     void *restrict X,                                                   \
     const int64_t n,                                                    \
     const void *restrict scalar,                                        \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_UNJUMBLE_PROTO(GB_jit_kernel_unjumble)            \
@@ -674,7 +708,8 @@ GrB_Info GB_jit_kernel_unjumble                                         \
     const GrB_Matrix A,                                                 \
     const int64_t *A_slice,                                             \
     const int ntasks,                                                   \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_CONVERT_B2S_PROTO(GB_jit_kernel_convert_b2s)      \
@@ -686,7 +721,8 @@ GrB_Info GB_jit_kernel_convert_b2s                                      \
     void *Cx_new,                                                       \
     const GrB_Matrix A,                                                 \
     const void *W_input,                                                \
-    const int nthreads                                                  \
+    const int nthreads,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_KRONER_PROTO(GB_jit_kernel_kroner)                \
@@ -696,7 +732,8 @@ GrB_Info GB_jit_kernel_kroner                                           \
     const GrB_Matrix A,                                                 \
     const GrB_Matrix B,                                                 \
     const int nthreads,                                                 \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_KERNEL_SORT_PROTO(GB_jit_kernel_sort)                    \
@@ -720,7 +757,8 @@ GrB_Info GB_jit_kernel_reduce                                           \
     const GrB_Matrix A,                                                 \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz                                                     \
+    int32_t blocksz,                                                    \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO(GB_jit_kernel_rowscale)       \
@@ -731,7 +769,8 @@ GrB_Info GB_jit_kernel_rowscale                                         \
     GrB_Matrix B,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz                                                     \
+    int32_t blocksz,                                                    \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_CUDA_KERNEL_COLSCALE_PROTO(GB_jit_kernel_colscale)       \
@@ -742,7 +781,8 @@ GrB_Info GB_jit_kernel_colscale                                         \
     GrB_Matrix D,                                                       \
     cudaStream_t stream,                                                \
     int32_t gridsz,                                                     \
-    int32_t blocksz                                                     \
+    int32_t blocksz,                                                    \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 #define GB_JIT_CUDA_KERNEL_APPLY_BIND1ST_PROTO(GB_jit_kernel_apply_bind1st) \
@@ -753,7 +793,8 @@ GrB_Info GB_jit_kernel_apply_bind1st                                        \
     GrB_Matrix B,                                                           \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz                                                         \
+    int32_t blocksz,                                                        \
+    const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 
 #define GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO(GB_jit_kernel_apply_bind2nd) \
@@ -764,7 +805,8 @@ GrB_Info GB_jit_kernel_apply_bind2nd                                        \
     const GB_void *scalarx,                                                 \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz                                                         \
+    int32_t blocksz,                                                        \
+    const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 
 #define GB_JIT_CUDA_KERNEL_APPLY_UNOP_PROTO(GB_jit_kernel_apply_unop)       \
@@ -775,18 +817,20 @@ GrB_Info GB_jit_kernel_apply_unop                                           \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz                                                         \
+    int32_t blocksz,                                                        \
+    const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 
 #define GB_JIT_CUDA_KERNEL_SELECT_BITMAP_PROTO(GB_jit_kernel_select_bitmap) \
 GrB_Info GB_jit_kernel_select_bitmap                                        \
 (                                                                           \
-    GrB_Matrix C,                                                       \
+    GrB_Matrix C,                                                           \
     GrB_Matrix A,                                                           \
     const GB_void *ythunk,                                                  \
     cudaStream_t stream,                                                    \
     int32_t gridsz,                                                         \
-    int32_t blocksz                                                         \
+    int32_t blocksz,                                                        \
+    const GB_callback_struct *restrict my_callback                          \
 )                                                                           \
 
 #define GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO(GB_jit_kernel_select_sparse) \
@@ -811,8 +855,8 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
     cudaStream_t stream,                                                \
     int device,                                                         \
     int number_of_sms,                                                  \
-    const GB_callback_struct *restrict my_callback,                     \
-    const void *theta                                                   \
+    const void *theta,                                                  \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 //------------------------------------------------------------------------------
@@ -884,10 +928,13 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #undef GB_GET_CALLBACK
 #ifdef GB_JIT_RUNTIME
     // JIT kernels (CPU and CUDA) require the function pointers
+    #define GB_GET_CALLBACKS \
+        GB_abort = my_callback->GB_abort_func
     #define GB_GET_CALLBACK(function) \
-        function ## _f function = my_callback->function ## _func ;
+        function ## _f function = my_callback->function ## _func
 #else
     // PreJIT kernels link against -lgraphblas and do not need function pointers
+    #define GB_GET_CALLBACKS
     #define GB_GET_CALLBACK(function)
 #endif
 

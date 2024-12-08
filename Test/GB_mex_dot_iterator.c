@@ -24,7 +24,7 @@
     GB_mx_put_global (true) ;                       \
 }
 
-#define Assert(x)                                   \
+#define my_assert(x)                                \
 {                                                   \
     if (!(x))                                       \
     {                                               \

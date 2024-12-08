@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // C is sparse or hypersparse.  Cp is not modifed but Ci and Cx are.  A is
 // never bitmap.  It is sparse or hypersparse in most cases.  It can also be
 // full for DIAG.

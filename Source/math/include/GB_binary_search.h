@@ -38,6 +38,18 @@
         /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
     }
 
+    // same as above, but with GB_IGET(X,k) instead of X [k]
+    #define GB_TRIM_BINARY_SEARCH_IGET(i,X,pleft,pright)                    \
+    {                                                                       \
+        while (pleft < pright)                                              \
+        {                                                                   \
+            int64_t pmiddle = (pleft + pright) >> 1 ;                       \
+            bool less = (GB_IGET (X, pmiddle) < i) ;                        \
+            pleft  = less ? (pmiddle+1) : pleft ;                           \
+            pright = less ? pright : pmiddle ;                              \
+        }                                                                   \
+    }
+
 #else
 
     // binary search on the CPU
@@ -63,6 +75,23 @@
         /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
     }
 
+    // same as above, but with GB_IGET(X,k) instead of X [k]
+    #define GB_TRIM_BINARY_SEARCH_IGET(i,X,pleft,pright)                    \
+    {                                                                       \
+        while (pleft < pright)                                              \
+        {                                                                   \
+            int64_t pmiddle = (pleft + pright) / 2 ;                        \
+            if (GB_IGET (X, pmiddle) < i)                                   \
+            {                                                               \
+                pleft = pmiddle + 1 ;                                       \
+            }                                                               \
+            else                                                            \
+            {                                                               \
+                pright = pmiddle ;                                          \
+            }                                                               \
+        }                                                                   \
+    }
+
 #endif
 
 //------------------------------------------------------------------------------
@@ -75,10 +104,18 @@
 //    X [original_pleft ... pleft-1] < i and
 //    X [pleft+1 ... original_pright] > i holds.
 // The value X [pleft] may be either < or > i.
+
 #define GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
 {                                                                           \
     GB_TRIM_BINARY_SEARCH (i, X, pleft, pright) ;                           \
     found = (pleft == pright && X [pleft] == i) ;                           \
+}
+
+// same as above, but with GB_IGET(X,k) instead of X [k]
+#define GB_BINARY_SEARCH_IGET(i,X,pleft,pright,found)                       \
+{                                                                           \
+    GB_TRIM_BINARY_SEARCH_IGET (i, X, pleft, pright) ;                      \
+    found = (pleft == pright && GB_IGET (X, pleft) == i) ;                  \
 }
 
 //------------------------------------------------------------------------------
@@ -93,12 +130,30 @@
 // If X has no duplicates, then whether or not i is found,
 //    X [original_pleft ... pleft-1] < i and
 //    X [pleft ... original_pright] >= i holds.
+
 #define GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
 {                                                                           \
     GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \
     if (!found && (pleft == pright))                                        \
     {                                                                       \
         if (i > X [pleft])                                                  \
+        {                                                                   \
+            pleft++ ;                                                       \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            pright++ ;                                                      \
+        }                                                                   \
+    }                                                                       \
+}
+
+// same as above, but with GB_IGET(X,k) instead of X [k]
+#define GB_SPLIT_BINARY_SEARCH_IGET(i,X,pleft,pright,found)                 \
+{                                                                           \
+    GB_BINARY_SEARCH_IGET (i, X, pleft, pright, found)                      \
+    if (!found && (pleft == pright))                                        \
+    {                                                                       \
+        if (i > GB_IGET (X, pleft))                                         \
         {                                                                   \
             pleft++ ;                                                       \
         }                                                                   \
@@ -135,6 +190,24 @@
     /* ASSERT (pleft == pright || pleft == pright + 1) ; */                 \
 }
 
+// same as above, but with GB_IGET(X,k) instead of X [k]
+#define GB_TRIM_BINARY_SEARCH_ZOMBIE_IGET(i,X,pleft,pright)                 \
+{                                                                           \
+    while (pleft < pright)                                                  \
+    {                                                                       \
+        int64_t pmiddle = (pleft + pright) / 2 ;                            \
+        int64_t xmiddle = GB_IGET (X, pmiddle) ;                            \
+        if (i > GB_UNZOMBIE (xmiddle))                                      \
+        {                                                                   \
+            pleft = pmiddle + 1 ;                                           \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            pright = pmiddle ;                                              \
+        }                                                                   \
+    }                                                                       \
+}
+
 //------------------------------------------------------------------------------
 // GB_BINARY_SEARCH_ZOMBIE: binary search with zombies; check if found
 //------------------------------------------------------------------------------
@@ -160,7 +233,33 @@
     else                                                                    \
     {                                                                       \
         is_zombie = false ;                                                 \
-        GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
+        GB_BINARY_SEARCH (i, X, pleft, pright, found)                       \
+    }                                                                       \
+}
+
+// same as above, but with GB_IGET(X,k) instead of X [k]
+#define GB_BINARY_SEARCH_ZOMBIE_IGET(i,X,pleft,pright,found,nzombies,is_zombie)\
+{                                                                           \
+    if (nzombies > 0)                                                       \
+    {                                                                       \
+        GB_TRIM_BINARY_SEARCH_ZOMBIE_IGET (i, X, pleft, pright) ;           \
+        found = false ;                                                     \
+        is_zombie = false ;                                                 \
+        if (pleft == pright)                                                \
+        {                                                                   \
+            int64_t i2 = GB_IGET (X, pleft) ;                               \
+            is_zombie = GB_IS_ZOMBIE (i2) ;                                 \
+            if (is_zombie)                                                  \
+            {                                                               \
+                i2 = GB_DEZOMBIE (i2) ;                                     \
+            }                                                               \
+            found = (i == i2) ;                                             \
+        }                                                                   \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        is_zombie = false ;                                                 \
+        GB_BINARY_SEARCH_IGET (i, X, pleft, pright, found)                  \
     }                                                                       \
 }
 
@@ -200,7 +299,44 @@
     else                                                                    \
     {                                                                       \
         is_zombie = false ;                                                 \
-        GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
+        GB_SPLIT_BINARY_SEARCH (i, X, pleft, pright, found)                 \
+    }                                                                       \
+}
+
+// same as above, but with GB_IGET(X,k) instead of X [k]
+#define GB_SPLIT_BINARY_SEARCH_ZOMBIE_IGET(i,X,pleft,pright,found,nzom,is_zom) \
+{                                                                           \
+    if (nzom > 0)                                                           \
+    {                                                                       \
+        GB_TRIM_BINARY_SEARCH_ZOMBIE_IGET (i, X, pleft, pright) ;           \
+        found = false ;                                                     \
+        is_zom = false ;                                                    \
+        if (pleft == pright)                                                \
+        {                                                                   \
+            int64_t i2 = GB_IGET (X, pleft) ;                               \
+            is_zom = GB_IS_ZOMBIE (i2) ;                                    \
+            if (is_zom)                                                     \
+            {                                                               \
+                i2 = GB_DEZOMBIE (i2) ;                                     \
+            }                                                               \
+            found = (i == i2) ;                                             \
+            if (!found)                                                     \
+            {                                                               \
+                if (i > i2)                                                 \
+                {                                                           \
+                    pleft++ ;                                               \
+                }                                                           \
+                else                                                        \
+                {                                                           \
+                    pright++ ;                                              \
+                }                                                           \
+            }                                                               \
+        }                                                                   \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        is_zom = false ;                                                    \
+        GB_SPLIT_BINARY_SEARCH_IGET (i, X, pleft, pright, found)            \
     }                                                                       \
 }
 

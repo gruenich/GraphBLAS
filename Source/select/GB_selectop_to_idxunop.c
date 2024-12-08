@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // The GxB_SelectOp is historical, and part of its functionality is now
 // deprecated.  In particular, user-defined GxB_SelectOps are not supported.
 // The GxB_EQ* and GxB_NE* operators are not supported for user-defined types.
@@ -210,7 +212,7 @@ GrB_Info GB_selectop_to_idxunop
     // allocate the NewThunk as a full scalar
     GB_OK (GB_new_bix ((GrB_Matrix *) &NewThunk, idxunop->ytype, 1, 1,
         GB_ph_calloc, true, GxB_FULL, false, GB_Global_hyper_switch_get ( ),
-        1, 1, true, false, /* FIXME: */ false, false)) ;
+        1, 1, true, false, false, false)) ;
 
     // NewThunk = 0
     memset (NewThunk->x, 0, idxunop->ytype->size) ;

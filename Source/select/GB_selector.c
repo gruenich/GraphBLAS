@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #define GB_DEBUG
 
 // GB_selector does the work for GB_select.  It also deletes zombies for
@@ -116,9 +118,9 @@ GrB_Info GB_selector
     { 
         // C is either entirely empty, or a completely shallow copy of A.
         // This method takes O(1) time and space.
-        info = GB_select_value_iso (C, op, A, ithunk, athunk, ythunk, Werk) ;
+        GB_OK (GB_select_value_iso (C, op, A, ithunk, athunk, ythunk, Werk)) ;
         GB_FREE_ALL ;
-        return (info) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -153,10 +155,10 @@ GrB_Info GB_selector
     { 
         // A is bitmap/full.  C is always computed as bitmap.
         GB_BURBLE_MATRIX (A, "(bitmap select) ") ;
-        info = GB_select_bitmap (C, C_iso, op, flipij, A, ithunk, athunk,
-            ythunk, Werk) ;
+        GB_OK (GB_select_bitmap (C, C_iso, op, flipij, A, ithunk, athunk,
+            ythunk, Werk)) ;
         GB_FREE_ALL ;
-        return (info) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -172,9 +174,10 @@ GrB_Info GB_selector
         // COLLE:    C = A(:,0:j)
         // COLGT:    C = A(:,j+1:n)
         // where j = ithunk.
-        info = GB_select_column (C, op, A, ithunk, Werk) ;
+        GB_OK (GB_select_column (C, op, A, ithunk, Werk)) ;
+        GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
         GB_FREE_ALL ;
-        return (info) ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -189,7 +192,8 @@ GrB_Info GB_selector
 
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
-        && GB_cuda_select_branch (A, op))
+        && GB_cuda_select_branch (A, op)
+        && !(A->p_is_32) && !(A->i_is_32))  // FIXME: CUDA kernel not yet 32/64
     {
         // It is possible for non-sparse matrices to use the sparse kernel; see
         // the use_select_bitmap test above (the DIAG operator). The CUDA
@@ -214,6 +218,8 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
+    ASSERT_MATRIX_OK (C, "C before convert_int", GB0) ;
+    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C output of GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }

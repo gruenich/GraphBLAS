@@ -27,7 +27,7 @@ GrB_Info GrB_Matrix_set_Scalar
 
     GB_WHERE1 ("GrB_Matrix_set_Scalar (A, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
+    ASSERT_MATRIX_OK (A, "GrB: A to set Scalar option", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the field
@@ -79,7 +79,7 @@ GrB_Info GrB_Matrix_set_String
     GB_WHERE1 ("GrB_Matrix_set_String (A, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (value) ;
-    ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
+    ASSERT_MATRIX_OK (A, "GrB: A to set String option", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the field
@@ -106,7 +106,7 @@ GrB_Info GrB_Matrix_set_INT32
 
     GB_WHERE1 ("GrB_Matrix_set_INT32 (A, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
+    ASSERT_MATRIX_OK (A, "GrB: A to set int32 option", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the field

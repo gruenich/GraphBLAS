@@ -65,6 +65,6 @@ GrB_Info GB_build_jit               // GB_builder JIT kernel
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Tx, Ti, Sx, nvals, I_work, K_work,
-        duplicate_entry, tstart_slice, tnz_slice, nthreads)) ;
+        duplicate_entry, tstart_slice, tnz_slice, nthreads, &GB_callback)) ;
 }
 

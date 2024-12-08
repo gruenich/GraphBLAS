@@ -49,6 +49,22 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     GrB_Matrix C = *handle ;
     GrB_Type ctype = C->type ;
 
+    //--------------------------------------------------------------------------
+    // ensure the matrix is 64/64 bit
+    //--------------------------------------------------------------------------
+
+    if (C->p_is_32 || C->i_is_32)
+    {
+        mexPrintf ("C has 32-bit components.  Where from?\n") ;
+        GxB_print (C, 2) ;
+        mexErrMsgTxt ("FIXME") ;
+    }
+    GB_convert_int (C, false, false) ;
+
+    //--------------------------------------------------------------------------
+    // check matrix
+    //--------------------------------------------------------------------------
+
     // may have pending tuples
     ASSERT_MATRIX_OK (C, name, GB0) ;
 
@@ -59,7 +75,10 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     ASSERT (!C->i_shallow) ;
     ASSERT (!C->x_shallow) ;
 
+    //--------------------------------------------------------------------------
     // make sure there are no pending computations
+    //--------------------------------------------------------------------------
+
     if (GB_IS_FULL (C) || GB_IS_BITMAP (C))
     {
         ASSERT (!GB_JUMBLED (C)) ;
@@ -133,18 +152,18 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         if (C->i == NULL)
         {
             ASSERT (cnz == 0) ;
-            C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),
+            C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),   // FIXME
                 &(C->i_size)) ;
-            int64_t *Ci = C->i ;
-            Ci [0] = 0 ;
+            int64_t *Ci = C->i ;    // FIXME
+            Ci [0] = 0 ;    // FIXME
             C->i_shallow = false ;
         }
         if (C->p == NULL)
         {
             ASSERT (cnz == 0) ;
             C->p = (int64_t *) GB_malloc_memory (C->vdim + 1, 
-                sizeof (int64_t), &(C->p_size)) ;
-            memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
+                sizeof (int64_t), &(C->p_size)) ;   // FIXME
+            memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;    // FIXME
             C->p_shallow = false ;
         }
     }
@@ -330,9 +349,17 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         GB_AS_IF_FREE (C->i) ;
     }
 
+    //--------------------------------------------------------------------------
+    // free C
+    //--------------------------------------------------------------------------
+
     // free C, but leave any shallow components untouched
     // since these have been transplanted into the built-in matrix.
     GrB_Matrix_free_(handle) ;
+
+    //--------------------------------------------------------------------------
+    // return result as a MATLAB struct or a MATLAB matrix
+    //--------------------------------------------------------------------------
 
     if (create_struct)
     {

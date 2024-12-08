@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "select/GB_select.h"
 #include "mask/GB_get_mask.h"
 #include "scalar/GB_Scalar_wrap.h"
@@ -57,6 +59,12 @@ static inline GrB_Info GB_sel   // w<M> = accum (w, select(w,k))
         y,                          // second input: scalar y
         false,                      // vector u is never transposed
         Werk) ;
+
+    if (info == GrB_SUCCESS)
+    {
+        GB_assert (!(w->p_is_32)) ;    // FIXME not yet handled
+        GB_assert (!(w->i_is_32)) ;    // FIXME not yet handled
+    }
 
     GB_BURBLE_END ;
     return (info) ;

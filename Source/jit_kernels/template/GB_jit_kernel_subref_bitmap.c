@@ -26,6 +26,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_BITMAP_SUBREF_PROTO (GB_jit_kernel)
     GrB_Info info = GrB_SUCCESS ;
 
     // get callback functions
+    GB_GET_CALLBACKS ;
     GB_GET_CALLBACK (GB_free_memory) ;
     GB_GET_CALLBACK (GB_subassign_IxJ_slice) ;
 

@@ -8,35 +8,20 @@
 //------------------------------------------------------------------------------
 
 // These methods are for JIT kernels.
-// For outside of JIT kernels, see ok/GB_assert.h.
+// For outside of JIT kernels, see ok/GB_assert_library.h.
 
 //------------------------------------------------------------------------------
 // debugging definitions
 //------------------------------------------------------------------------------
 
-// the JIT run time kernels use abort directly from libc:
-#undef  GB_ABORT
-#define GB_ABORT /* abort ( ) */ ;
-
 #undef ASSERT
 
 #ifdef GB_DEBUG
-
     // assert X is true
-    #define ASSERT(X)                                                       \
-    {                                                                       \
-        if (!(X))                                                           \
-        {                                                                   \
-            GBDUMP ("JIT assertion failed: " __FILE__ " line %d\n", __LINE__) ;\
-            GB_ABORT ;                                                      \
-        }                                                                   \
-    }
-
+    #define ASSERT(X) GB_assert (X)
 #else
-
     // debugging disabled
     #define ASSERT(X)
-
 #endif
 
 // ASSERT_OK* debugging disabled in the JIT kernels

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
 #include "select/GB_select.h"
@@ -59,6 +61,12 @@ static inline GrB_Info GB_sel   // C<M> = accum (C, select(A,k)) or select(A',k)
         y,                          // optional input for select operator
         A_transpose,                // descriptor for A
         Werk) ;
+
+    if (info == GrB_SUCCESS)
+    {
+        GB_assert (!(C->p_is_32)) ;    // FIXME not yet handled
+        GB_assert (!(C->i_is_32)) ;    // FIXME not yet handled
+    }
 
     GB_BURBLE_END ;
     return (info) ;

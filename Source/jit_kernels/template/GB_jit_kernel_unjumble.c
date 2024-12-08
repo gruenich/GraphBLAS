@@ -18,6 +18,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_UNJUMBLE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_UNJUMBLE_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     // get A
     GB_Ap_DECLARE   (Ap, const) ; GB_Ap_PTR (Ap, A) ;
     GB_Ai_DECLARE_U (Ai,      ) ; GB_Ai_PTR (Ai, A) ;

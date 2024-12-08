@@ -35,6 +35,7 @@ extern "C" {
 
 GB_JIT_CUDA_KERNEL_APPLY_BIND2ND_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     ASSERT (Cx != NULL) ;
 
     dim3 grid (gridsz) ;

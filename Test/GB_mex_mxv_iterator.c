@@ -24,7 +24,7 @@
     GB_mx_put_global (true) ;                       \
 }
 
-#define Assert(x)                                   \
+#define my_assert(x)                                \
 {                                                   \
     if (!(x))                                       \
     {                                               \
@@ -153,12 +153,12 @@ void mexFunction
     if (A->is_csc)
     {
         info = GxB_rowIterator_attach (iterator, A, NULL) ;
-        Assert (info == GrB_NOT_IMPLEMENTED) ;
+        my_assert (info == GrB_NOT_IMPLEMENTED) ;
     }
     else
     {
         info = GxB_colIterator_attach (iterator, A, NULL) ;
-        Assert (info == GrB_NOT_IMPLEMENTED) ;
+        my_assert (info == GrB_NOT_IMPLEMENTED) ;
     }
 
     //--------------------------------------------------------------------------

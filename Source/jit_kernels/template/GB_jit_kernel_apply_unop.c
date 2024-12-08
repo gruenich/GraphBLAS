@@ -26,6 +26,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_out ;
     GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
     #if GB_A_IS_BITMAP

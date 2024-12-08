@@ -571,6 +571,11 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     #define GB_ISET(I,k,i) \
         { if (I ## 64) { I ## 64 [k] = (i); } else { I ## 32 [k] = (i) ; } }
 
+    // GB_IK: &(I [k]) for a 32/64-bit integer array I
+    #define GB_IK(I,k) (I ## 32 ?   \
+        ((void *) (I ## 32 + k)) :  \
+        ((void *) (I ## 64 + k)))
+
     // helper macro: declare a 32/64-bit integer array I
     #define GB_IDECL(I,const,u)                         \
         const u ## int32_t *restrict I ## 32 = NULL ;   \

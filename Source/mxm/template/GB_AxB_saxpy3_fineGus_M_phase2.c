@@ -38,7 +38,7 @@
 
             // the double complex ANY monoid cannot use this method
 
-            #define GB_IKJ                                              \
+            #define GB_UPDATE_IKJ                                       \
                 int8_t f ;                                              \
                 GB_ATOMIC_READ                                          \
                 f = Hf [i] ;                /* grab the entry */        \
@@ -54,7 +54,7 @@
             // C(i,j) += A(i,k)*B(k,j) ; all other monoids
             //------------------------------------------------------------------
 
-            #define GB_IKJ                                              \
+            #define GB_UPDATE_IKJ                                       \
             {                                                           \
                 GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */       \
                 int8_t f ;                                              \
@@ -90,7 +90,7 @@
         #endif
 
         GB_SCAN_M_j_OR_A_k (A_ok_for_binary_search) ;
-        #undef GB_IKJ
+        #undef GB_UPDATE_IKJ
     }
 }
 

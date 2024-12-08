@@ -62,6 +62,7 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (Rp, Rnvec_nonempty, TaskList, R_ntasks, R_nthreads,
-        Rnvec, Rh, R_to_M, R_to_C, R_to_Z, M, Mask_comp, Mask_struct, C, Z)) ;
+        Rnvec, Rh, R_to_M, R_to_C, R_to_Z, M, Mask_comp, Mask_struct, C, Z,
+        &GB_callback )) ;
 }
 

@@ -139,6 +139,8 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
+
     GB_Z_TYPE z = (* ((GB_Z_TYPE *) result)) ;
     GB_Z_TYPE *W = (GB_Z_TYPE *) Workspace ;
     // The two templates below use the F and Workspace arrays to reduce A to

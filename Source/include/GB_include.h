@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef GB_TEMPLATE_H
-#define GB_TEMPLATE_H
+#ifndef GB_INCLUDE_H
+#define GB_INCLUDE_H
 
 //------------------------------------------------------------------------------
 // definitions that modify GraphBLAS.h
@@ -50,6 +50,7 @@
 // internal #include files
 //------------------------------------------------------------------------------
 
+#include "include/GB_abort.h"
 #include "include/GB_prefix.h"
 #include "include/GB_defaults.h"
 #include "include/GB_rand.h"
@@ -84,9 +85,9 @@
     #include "include/GB_saxpy3task_struct.h"
     #include "include/GB_callback.h"
     #include "include/GB_hyper_hash_lookup.h"
+    #include "include/GB_ok.h"
 
     // not used by CUDA
-    #include "include/GB_ok.h"
     #include "include/GB_ijlist.h"
     #include "include/GB_atomics.h"
     #include "include/GB_assert_kernels.h"
@@ -103,7 +104,6 @@
     //--------------------------------------------------------------------------
     // include files for the GraphBLAS libary
     //--------------------------------------------------------------------------
-
 
     // Original location in the GraphBLAS/Source folder, for compiling
     // the GraphBLAS library, including PreJIT kernels:
@@ -128,9 +128,9 @@
     #include "mxm/include/GB_saxpy3task_struct.h"
     #include "callback/include/GB_callback.h"
     #include "hyper/include/GB_hyper_hash_lookup.h"
+    #include "ok/include/GB_ok.h"
 
     // not used by CUDA
-    #include "ok/include/GB_ok.h"
     #include "ij/include/GB_ijlist.h"
     #include "omp/include/GB_atomics.h"
     #include "ok/include/GB_assert_kernels.h"

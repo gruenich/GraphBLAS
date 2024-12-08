@@ -12,6 +12,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_ISO_EXPAND_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_ISO_EXPAND_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     GB_A_TYPE *restrict Z = (GB_A_TYPE *) X ;
     GB_A_TYPE x = (* ((GB_A_TYPE *) scalar)) ;
     int64_t p ;

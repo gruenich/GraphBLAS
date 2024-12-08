@@ -78,6 +78,7 @@ extern "C"
 
 GB_JIT_CUDA_KERNEL_SELECT_BITMAP_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     dim3 grid (gridsz) ;
     dim3 block (blocksz) ;
     GB_cuda_select_bitmap_kernel <<<grid, block, 0, stream>>> (C, A, ythunk) ;

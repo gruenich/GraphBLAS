@@ -51,6 +51,7 @@ extern "C" {
 
 GB_JIT_CUDA_KERNEL_ROWSCALE_PROTO (GB_jit_kernel)
 {
+    GB_GET_CALLBACKS ;
     ASSERT (GB_JUMBLED_OK (C)) ;
     ASSERT (!GB_JUMBLED (D)) ;
     ASSERT (!GB_IS_BITMAP (D)) ;

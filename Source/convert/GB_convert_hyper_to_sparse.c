@@ -170,6 +170,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
             int64_t k = 0, pright = nvec-1 ;
             bool found ;
+            // FIXME: use binary _IGET method here
             if (Ai_is_32)
             { 
                 GB_SPLIT_BINARY_SEARCH (jstart, Ah_old32, k, pright, found) ;

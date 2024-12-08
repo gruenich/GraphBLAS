@@ -10,6 +10,7 @@
 extern "C"
 { 
     #include "include/GB_dev.h"
+    #include "include/GB_abort.h"
     #include "include/GB_compiler.h"
     #include "include/GB_warnings.h"
 }

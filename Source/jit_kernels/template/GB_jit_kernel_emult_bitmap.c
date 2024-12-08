@@ -10,7 +10,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_EMULT_BITMAP_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_EMULT_BITMAP_PROTO (GB_jit_kernel)
 {
-    // get callback functions
+    GB_GET_CALLBACKS ;
     GB_GET_CALLBACK (GB_bitmap_M_scatter_whole) ;
 
     #include "template/GB_emult_bitmap_template.c"

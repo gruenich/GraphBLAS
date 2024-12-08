@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // A is iso and the operator is VALUE*.
 
 // The VALUE* operators depend only on the value of A(i,j).  Since A is iso,

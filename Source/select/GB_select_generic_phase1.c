@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // A is sparse, hypersparse, or full, and the op is not positional.
 // C is sparse or hypersparse.
 
