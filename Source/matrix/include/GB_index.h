@@ -29,6 +29,10 @@
 #define GB_NMAX   ((uint64_t) (1ULL << 60))
 #define GB_NMAX32 ((uint64_t) (1ULL << 30))
 
+//------------------------------------------------------------------------------
+// GB_validate_i_is_32: returns a revised i_is_32, based on max dimension
+//------------------------------------------------------------------------------
+
 static inline bool GB_validate_i_is_32
 (
     bool i_is_32,       // if true, requesting 32-bit indices
@@ -44,6 +48,10 @@ static inline bool GB_validate_i_is_32
     return (i_is_32) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_validate_p_is_32: returns a revised p_is_32, based on nvals_max
+//------------------------------------------------------------------------------
+
 static inline bool GB_validate_p_is_32
 (
     bool p_is_32,       // if true, requesting 32-bit offsets
@@ -58,7 +66,10 @@ static inline bool GB_validate_p_is_32
     return (p_is_32) ;
 }
 
-// return true if the integer control settings are valid
+//------------------------------------------------------------------------------
+// GB_valid_control: return true if an integer control setting is valid
+//------------------------------------------------------------------------------
+
 static inline bool GB_valid_control
 (
     int8_t pi_control,  // global or per-matrix p_control or i_control
@@ -68,6 +79,39 @@ static inline bool GB_valid_control
     return (pi_control == GxB_AUTO_BITS ||
            (pi_control == GxB_STRICT_32_BITS &&  pi_is_32) ||
            (pi_control == GxB_STRICT_64_BITS && !pi_is_32)) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_valid_controls: check if a matrix is valid, based on the current control
+//------------------------------------------------------------------------------
+
+static inline bool GB_valid_controls    // returns true if OK
+(
+    GrB_Matrix A,               // matrix to validate
+    int8_t global_p_control,    // global p_control, from Global or Werk
+    int8_t global_i_control     // global i_control, from Global or Werk
+)
+{
+    // a NULL matrix has no integers
+    if (A == NULL) return (true) ;
+
+    // a full or bitmap matrix has no integers
+    if ((A->p == NULL && A->h == NULL &&
+         A->i == NULL && A->Y == NULL)) return (true) ;
+
+    // check the global pi_controls
+    if (!GB_valid_control (global_p_control, A->p_is_32)) return (false) ;
+    if (!GB_valid_control (global_i_control, A->i_is_32)) return (false) ;
+
+    // check the matrix pi_controls
+    if (!GB_valid_control (A->p_control, A->p_is_32)) return (false) ;
+    if (!GB_valid_control (A->i_control, A->i_is_32)) return (false) ;
+
+    // assert that the matrix status is large enough for its content
+    #ifdef GB_DEBUG
+    ASSERT (!A->p_is_32 || GB_validate_p_is_32 (true, A->nvals)) ;
+    ASSERT (!A->i_is_32 || GB_validate_i_is_32 (true, A->vlen, A->vdim)) ;
+    #endif
 }
 
 #endif

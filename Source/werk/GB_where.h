@@ -11,25 +11,9 @@
 #define GB_WHERE_H
 
 //------------------------------------------------------------------------------
-// GB_WHERE*: allocate the Werk stack and enable error logging
+// GB_Werk_init: initialize the Werk object
 //------------------------------------------------------------------------------
 
-// GB_WHERE keeps track of the currently running user-callable function.
-// User-callable functions in this implementation are written so that they do
-// not call other unrelated user-callable functions (except for GrB_*free).
-// Related user-callable functions can call each other since they all report
-// the same type-generic name.  Internal functions can be called by many
-// different user-callable functions, directly or indirectly.  It would not be
-// helpful to report the name of an internal function that flagged an error
-// condition.  Thus, each time a user-callable function is entered, it logs the
-// name of the function with the GB_WHERE macro.
-
-#define GB_WERK(where_string)                                       \
-    /* construct the Werk */                                        \
-    GB_Werk_struct Werk_struct ;                                    \
-    GB_Werk Werk = GB_Werk_init (&Werk_struct, where_string) ;
-
-// initialize the Werk object
 static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
 {
     // set Werk->where so GrB_error can report it if needed
@@ -52,37 +36,39 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
     return (Werk) ;
 }
 
-// return true if a matrix is valid, based on the current control
-static inline bool GB_valid_integers
+//------------------------------------------------------------------------------
+// GB_valid_int: return true if matrix has valid integer controls
+//------------------------------------------------------------------------------
+
+static inline bool GB_valid_int
 (
-    GrB_Matrix C,
+    GrB_Matrix A,
     GB_Werk Werk
 )
 {
-    // a NULL matrix has no integers
-    if (C == NULL) return (true) ;
-
-    // a full or bitmap matrix has no integers
-    if ((C->p == NULL && C->h == NULL &&
-         C->i == NULL && C->Y == NULL)) return (true) ;
-
-    const bool p_is_32 = C->p_is_32 ;
-    const bool i_is_32 = C->i_is_32 ;
-
-    // check the global pi_controls
-    if (!GB_valid_control (Werk->global_p_control, p_is_32)) return (false) ;
-    if (!GB_valid_control (Werk->global_i_control, i_is_32)) return (false) ;
-
-    // check the matrix pi_controls
-    if (!GB_valid_control (C->p_control, p_is_32)) return (false) ;
-    if (!GB_valid_control (C->i_control, i_is_32)) return (false) ;
-
-    // assert that the matrix status is large enough for its content
-    #ifdef GB_DEBUG
-    ASSERT (!A->p_is_32 || GB_validate_p_is_32 (true, A->nvals)) ;
-    ASSERT (!A->i_is_32 || GB_validate_i_is_32 (true, A->vlen, A->vdim)) ;
-    #endif
+    return (GB_valid_controls (A,
+        Werk->global_p_control,
+        Werk->global_i_control)) ;
 }
+
+//------------------------------------------------------------------------------
+// GB_WHERE*: allocate the Werk stack and enable error logging
+//------------------------------------------------------------------------------
+
+// GB_WHERE keeps track of the currently running user-callable function.
+// User-callable functions in this implementation are written so that they do
+// not call other unrelated user-callable functions (except for GrB_*free).
+// Related user-callable functions can call each other since they all report
+// the same type-generic name.  Internal functions can be called by many
+// different user-callable functions, directly or indirectly.  It would not be
+// helpful to report the name of an internal function that flagged an error
+// condition.  Thus, each time a user-callable function is entered, it logs the
+// name of the function with the GB_WHERE macro.
+
+#define GB_WERK(where_string)                                       \
+    /* construct the Werk */                                        \
+    GB_Werk_struct Werk_struct ;                                    \
+    GB_Werk Werk = GB_Werk_init (&Werk_struct, where_string) ;
 
 // C is a matrix, vector, or scalar
 #define GB_WHERE(C,where_string)                                    \
@@ -96,7 +82,7 @@ static inline bool GB_valid_integers
         /* free any prior error logged in the object */             \
         GB_FREE (&(C->logger), C->logger_size) ;                    \
         /* ensure the matrix has valid integers */                  \
-        if (!GB_valid_integers (C, Werk))                           \
+        if (!GB_valid_int (C, Werk))                                \
         {                                                           \
             return (GrB_INVALID_OBJECT) ;                           \
         }                                                           \
