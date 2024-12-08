@@ -46,5 +46,6 @@ GrB_Info GB_cuda_select_bitmap_jit
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, ythunk, stream, gridsz, blocksz)) ;
+    return (GB_jit_kernel (C, A, ythunk, stream, gridsz, blocksz,
+        &GB_callback)) ;
 }

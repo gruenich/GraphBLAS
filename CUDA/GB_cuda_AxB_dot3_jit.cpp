@@ -60,6 +60,6 @@ GrB_Info GB_cuda_AxB_dot3_jit
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
     return (GB_jit_kernel (C, M, A, B, stream, device, number_of_sms,
-        &GB_callback, semiring->multiply->theta)) ;
+        semiring->multiply->theta, &GB_callback)) ;
 }
 

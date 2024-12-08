@@ -57,6 +57,6 @@ GrB_Info GB_cuda_reduce_to_scalar_jit   // z = reduce_to_scalar (A) via CUDA JIT
     //--------------------------------------------------------------------------
 
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (z, V, A, stream, gridsz, blocksz)) ;
+    return (GB_jit_kernel (z, V, A, stream, gridsz, blocksz, &GB_callback)) ;
 }
 
