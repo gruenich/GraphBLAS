@@ -24,6 +24,10 @@
 #define GB_C_SIZE sizeof (GB_C_TYPE)
 #endif
 
+#ifndef GB_C_ISO
+#define GB_C_ISO 0
+#endif
+
 {
 
     if (use_coarse_tasks)
@@ -55,7 +59,7 @@
 
             // Hf and Hx workspace to compute the panel of C
             int8_t *restrict Hf = Wf + (H_slice [tid] * cvlen) ;
-            #if ( !GB_IS_ANY_PAIR_SEMIRING )
+            #if !GB_C_ISO
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
                 (Wcx + H_slice [tid] * cvlen * GB_C_SIZE) ;
             #endif
@@ -85,7 +89,7 @@
                 //--------------------------------------------------------------
 
                 int8_t *restrict Gb = (int8_t *) (Bb + (j1 * bvlen)) ;
-                #if ( !GB_IS_ANY_PAIR_SEMIRING )
+                #if !GB_B_IS_PATTERN
                 GB_B_TYPE *restrict Gx = (GB_B_TYPE *)
                      (((GB_void *) (B->x)) +
                        (B_iso ? 0 : ((j1 * bvlen) * GB_B_SIZE))) ;
@@ -255,7 +259,7 @@
             int64_t task_cnvals = 0 ;
 
             // for Hx Gustavason workspace: use C(:,j) in-place:
-            #if ( !GB_IS_ANY_PAIR_SEMIRING )
+            #if !GB_C_ISO
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
                 (((GB_void *) Cx) + (pC_start * GB_C_SIZE)) ;
             #endif
@@ -480,7 +484,7 @@
 
             // for Hf and Hx Gustavason workspace: use W(:,tid):
             int8_t *restrict Hf = Wf + pW_start ;
-            #if ( !GB_IS_ANY_PAIR_SEMIRING )
+            #if !GB_C_ISO
             GB_C_TYPE *restrict Hx = (GB_C_TYPE *)
                 (Wcx + (pW_start * GB_C_SIZE)) ;
             #endif

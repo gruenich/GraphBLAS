@@ -16,7 +16,7 @@
 GrB_Info GrB_Scalar_get_Scalar
 (
     GrB_Scalar s,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -25,9 +25,10 @@ GrB_Info GrB_Scalar_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Scalar_get_Scalar (s, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (s) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE2 (s, scalar, "GrB_Scalar_get_Scalar (s, scalar, field)") ;
+
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -39,7 +40,7 @@ GrB_Info GrB_Scalar_get_Scalar
     if (info == GrB_SUCCESS)
     { 
         // field specifies an int32_t: assign it to the scalar
-        info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
+        info = GB_setElement ((GrB_Matrix) scalar, NULL, &i, 0, 0,
             GB_INT32_code, Werk) ;
     }
     return (info) ;
@@ -61,8 +62,9 @@ GrB_Info GrB_Scalar_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_RETURN_IF_NULL_OR_INVALID (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;
 
@@ -89,8 +91,9 @@ GrB_Info GrB_Scalar_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_RETURN_IF_NULL_OR_INVALID (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;
 
@@ -117,8 +120,9 @@ GrB_Info GrB_Scalar_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_RETURN_IF_NULL_OR_INVALID (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;
 

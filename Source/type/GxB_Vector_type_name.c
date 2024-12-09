@@ -21,9 +21,8 @@ GrB_Info GxB_Vector_type_name      // return the name of the type of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GxB_Vector_type_name (type_name, v)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_WHERE_1 (v, "GxB_Vector_type_name (type_name, v)") ;
 
     //--------------------------------------------------------------------------
     // get the type_name

@@ -49,11 +49,12 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_serialize (&blob, &blob_size, A, desc)") ;
-    GB_BURBLE_START ("GxB_Matrix_serialize") ;
     GB_RETURN_IF_NULL (blob_handle) ;
     GB_RETURN_IF_NULL (blob_size_handle) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GxB_Matrix_serialize (&blob, &blob_size, A, desc)") ;
+    GB_BURBLE_START ("GxB_Matrix_serialize") ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     // get the compression method from the descriptor

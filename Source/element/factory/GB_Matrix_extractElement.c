@@ -34,7 +34,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GrB_Info info ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
     #ifdef GB_XTYPE
     GB_RETURN_IF_NULL (x) ;
     #endif
@@ -46,7 +47,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     // delete any lingering zombies, assemble any pending tuples, and unjumble
     if (A->Pending != NULL || A->nzombies > 0 || A->jumbled)
     { 
-        GB_WHERE0 (GB_WHERE_STRING) ;
+        GB_WHERE_1 (A, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Matrix_extractElement") ;
         GB_OK (GB_wait (A, "A", Werk)) ;
         GB_BURBLE_END ;

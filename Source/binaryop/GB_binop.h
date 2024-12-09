@@ -60,7 +60,7 @@ GrB_Info GB_binop_new
 
 GrB_Monoid GB_binop_to_monoid       // return the corresponding monoid, or NULL
 (
-    const GrB_BinaryOp op_in        // binary op to convert
+    GrB_BinaryOp op                 // binary op to convert
 ) ;
 
 void GB_binop_rename            // rename a bound binary op

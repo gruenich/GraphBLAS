@@ -16,7 +16,7 @@
 GrB_Info GxB_Context_get_Scalar
 (
     GxB_Context Context,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 
@@ -25,9 +25,10 @@ GrB_Info GxB_Context_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get_Scalar (Context, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_1 (scalar, "GxB_Context_get_Scalar (Context, scalar, field)") ;
+
     ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -65,12 +66,12 @@ GrB_Info GxB_Context_get_Scalar
 
         case GxB_CONTEXT_CHUNK :         // same as GxB_CHUNK
 
-            info = GB_setElement ((GrB_Matrix) value, NULL, &dvalue, 0, 0,
+            info = GB_setElement ((GrB_Matrix) scalar, NULL, &dvalue, 0, 0,
                 GB_FP64_code, Werk) ;
             break ;
 
         default : 
-            info = GB_setElement ((GrB_Matrix) value, NULL, &ivalue, 0, 0,
+            info = GB_setElement ((GrB_Matrix) scalar, NULL, &ivalue, 0, 0,
                 GB_INT32_code, Werk) ;
             break ;
     }

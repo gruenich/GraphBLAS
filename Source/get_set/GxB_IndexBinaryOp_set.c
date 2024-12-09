@@ -16,7 +16,7 @@
 GrB_Info GxB_IndexBinaryOp_set_Scalar
 (
     GxB_IndexBinaryOp op,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 

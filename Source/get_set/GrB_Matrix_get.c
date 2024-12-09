@@ -16,7 +16,7 @@
 GrB_Info GrB_Matrix_get_Scalar
 (
     GrB_Matrix A,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -25,9 +25,10 @@ GrB_Info GrB_Matrix_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_get_Scalar (A, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_2 (A, scalar, "GrB_Matrix_get_Scalar (A, scalar, field)") ;
+
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -39,7 +40,7 @@ GrB_Info GrB_Matrix_get_Scalar
     if (info == GrB_SUCCESS)
     { 
         // field specifies an int: assign it to the scalar
-        info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
+        info = GB_setElement ((GrB_Matrix) scalar, NULL, &i, 0, 0,
             GB_INT32_code, Werk) ;
     }
     else
@@ -59,7 +60,7 @@ GrB_Info GrB_Matrix_get_Scalar
                 return (GrB_INVALID_VALUE) ;
         }
         // field specifies a double: assign it to the scalar
-        info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
+        info = GB_setElement ((GrB_Matrix) scalar, NULL, &x, 0, 0,
             GB_FP64_code, Werk) ;
     }
 
@@ -82,8 +83,9 @@ GrB_Info GrB_Matrix_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 
@@ -110,8 +112,9 @@ GrB_Info GrB_Matrix_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 
@@ -138,8 +141,9 @@ GrB_Info GrB_Matrix_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 

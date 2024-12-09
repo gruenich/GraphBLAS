@@ -16,7 +16,7 @@
 GrB_Info GrB_Monoid_set_Scalar
 (
     GrB_Monoid monoid,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 

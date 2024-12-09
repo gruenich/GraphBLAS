@@ -28,10 +28,11 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, "
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GxB_Matrix_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, "
         "desc)") ;
     GB_BURBLE_START ("GxB_Matrix_split") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+
     if (m <= 0 || n <= 0)
     { 
         return (GrB_INVALID_VALUE) ;

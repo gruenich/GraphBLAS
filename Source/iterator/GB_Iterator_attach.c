@@ -25,8 +25,9 @@ GrB_Info GB_Iterator_attach
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_RETURN_IF_NULL (iterator) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
 
     if ((format == GxB_BY_ROW &&  A->is_csc) ||
         (format == GxB_BY_COL && !A->is_csc))

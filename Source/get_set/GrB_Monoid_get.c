@@ -16,7 +16,7 @@
 GrB_Info GrB_Monoid_get_Scalar
 (
     GrB_Monoid monoid,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 
@@ -25,17 +25,17 @@ GrB_Info GrB_Monoid_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GrB_Monoid_get_Scalar (monoid, value, field)") ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_WHERE_1 (scalar, "GrB_Monoid_get_Scalar (monoid, scalar, field)") ;
+
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_monoid_get (monoid, value, field, Werk)) ;
+    return (GB_monoid_get (monoid, scalar, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

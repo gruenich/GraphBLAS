@@ -16,7 +16,7 @@
 GrB_Info GxB_Context_set_Scalar
 (
     GxB_Context Context,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -25,9 +25,10 @@ GrB_Info GxB_Context_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL_OR_INVALID (scalar) ;
     ASSERT_CONTEXT_OK (Context, "Context to set", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -36,18 +37,17 @@ GrB_Info GxB_Context_set_Scalar
 
     int32_t ivalue = 0 ;
     double dvalue = 0 ;
-    GrB_Info info ;
 
     switch ((int) field)
     {
 
         case GxB_CONTEXT_NTHREADS :         // same as GxB_NTHREADS
         case GxB_CONTEXT_GPU_ID :           // same as GxB_GPU_ID
-            info = GrB_Scalar_extractElement_INT32 (&ivalue, value) ;
+            info = GrB_Scalar_extractElement_INT32 (&ivalue, scalar) ;
             break ;
 
         case GxB_CONTEXT_CHUNK :            // same as GxB_CHUNK
-            info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
+            info = GrB_Scalar_extractElement_FP64 (&dvalue, scalar) ;
             break ;
 
         default : 

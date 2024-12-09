@@ -49,11 +49,12 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_serialize (&blob, &blob_size, u, desc)") ;
-    GB_BURBLE_START ("GxB_Vector_serialize") ;
     GB_RETURN_IF_NULL (blob_handle) ;
     GB_RETURN_IF_NULL (blob_size_handle) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;
+    GB_RETURN_IF_NULL (u) ;
+    GB_WHERE_1 (u, "GxB_Vector_serialize (&blob, &blob_size, u, desc)") ;
+    GB_BURBLE_START ("GxB_Vector_serialize") ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     // get the compression method from the descriptor

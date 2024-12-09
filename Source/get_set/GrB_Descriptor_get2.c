@@ -20,6 +20,14 @@ static GrB_Info GB_desc_get
 {
 
     //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_RETURN_IF_FAULTY (desc) ;
+    GB_RETURN_IF_NULL (value) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
+
+    //--------------------------------------------------------------------------
     // get the parameter
     //--------------------------------------------------------------------------
 
@@ -83,7 +91,7 @@ static GrB_Info GB_desc_get
 GrB_Info GrB_Descriptor_get_Scalar
 (
     GrB_Descriptor desc,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -92,10 +100,8 @@ GrB_Info GrB_Descriptor_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Descriptor_get_Scalar (desc, value, field)") ;
-    GB_RETURN_IF_FAULTY (desc) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
-    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
+    GB_WHERE_1 (scalar, "GrB_Descriptor_get_Scalar (desc, scalar, field)") ;
+    GB_RETURN_IF_NULL (scalar) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -105,7 +111,7 @@ GrB_Info GrB_Descriptor_get_Scalar
     info = GB_desc_get (desc, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
-        info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,   
+        info = GB_setElement ((GrB_Matrix) scalar, NULL, &i, 0, 0,   
             GB_INT32_code, Werk) ;
     }
     return (info) ;
@@ -164,9 +170,6 @@ GrB_Info GrB_Descriptor_get_INT32
     //--------------------------------------------------------------------------
 
     GB_CHECK_INIT ;
-    GB_RETURN_IF_FAULTY (desc) ;
-    GB_RETURN_IF_NULL (value) ;
-    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field

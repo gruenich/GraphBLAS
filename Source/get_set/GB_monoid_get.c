@@ -12,7 +12,7 @@
 GrB_Info GB_monoid_get
 (
     GrB_Monoid monoid,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field,
     GB_Werk Werk
 )
@@ -28,22 +28,22 @@ GrB_Info GB_monoid_get
         case GrB_INP1_TYPE_CODE : 
         case GrB_OUTP_TYPE_CODE : 
 
-            return (GB_op_scalar_get ((GB_Operator) monoid->op, value, field,
+            return (GB_op_scalar_get ((GB_Operator) monoid->op, scalar, field,
                 Werk)) ;
 
         case GxB_MONOID_IDENTITY : 
 
-            if (value->type != monoid->op->ztype)
+            if (scalar->type != monoid->op->ztype)
             { 
                 // scalar type must match the monoid type
                 return (GrB_DOMAIN_MISMATCH) ;
             }
-            return (GB_setElement ((GrB_Matrix) value, NULL,
+            return (GB_setElement ((GrB_Matrix) scalar, NULL,
                 monoid->identity, 0, 0, monoid->op->ztype->code, Werk)) ;
 
         case GxB_MONOID_TERMINAL : 
 
-            if (value->type != monoid->op->ztype)
+            if (scalar->type != monoid->op->ztype)
             { 
                 // scalar type must match the monoid type
                 return (GrB_DOMAIN_MISMATCH) ;
@@ -52,12 +52,12 @@ GrB_Info GB_monoid_get
             { 
                 // monoid is not terminal: clear the output scalar.
                 // This is not an error
-                return (GB_clear ((GrB_Matrix) value, Werk)) ;
+                return (GB_clear ((GrB_Matrix) scalar, Werk)) ;
             }
             else
             { 
-                // monoid is terminal: return the terminal value.
-                return (GB_setElement ((GrB_Matrix) value, NULL,
+                // monoid is terminal: return the terminal scalar.
+                return (GB_setElement ((GrB_Matrix) scalar, NULL,
                     monoid->terminal, 0, 0, monoid->op->ztype->code,
                     Werk)) ;
             }

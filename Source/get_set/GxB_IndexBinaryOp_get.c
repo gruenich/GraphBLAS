@@ -16,7 +16,7 @@
 GrB_Info GxB_IndexBinaryOp_get_Scalar
 (
     GxB_IndexBinaryOp op,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 
@@ -25,17 +25,17 @@ GrB_Info GxB_IndexBinaryOp_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GxB_IndexBinaryOp_get_Scalar (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_1 (scalar, "GxB_IndexBinaryOp_get_Scalar (op, scalar, field)") ;
+
     ASSERT_INDEXBINARYOP_OK (op, "idxbinop for get", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_op_scalar_get ((GB_Operator) op, value, field, Werk)) ;
+    return (GB_op_scalar_get ((GB_Operator) op, scalar, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

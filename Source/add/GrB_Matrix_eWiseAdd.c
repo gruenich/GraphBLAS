@@ -17,6 +17,8 @@
     GB_RETURN_IF_NULL (C) ;                                                 \
     GB_RETURN_IF_NULL (A) ;                                                 \
     GB_RETURN_IF_NULL (B) ;                                                 \
+    GB_WHERE4 (C, M_in, A, B,                                               \
+        "GrB_Matrix_eWiseAdd (C, M, accum, op, A, B, desc)") ;              \
     GB_BURBLE_START ("GrB_eWiseAdd") ;                                      \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
@@ -33,7 +35,8 @@
         B,              B_tran,     /* B matrix and its descriptor */       \
         true,                       /* eWiseAdd                    */       \
         false, NULL, NULL,          /* not eWiseUnion              */       \
-        Werk) ;
+        Werk) ;                                                             \
+    GB_BURBLE_END ;
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseAdd_BinaryOp: matrix addition
@@ -44,27 +47,14 @@ GrB_Info GrB_Matrix_eWiseAdd_BinaryOp       // C<M> = accum (C, A+B)
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp add,         // defines '+' for T=A+B
+    const GrB_BinaryOp op,          // defines '+' for T=A+B
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Matrix B,             // second input: matrix B
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (C, M_in, A, B,
-        "GrB_Matrix_eWiseAdd_BinaryOp (C, M, accum, add, A, B, desc)");
-    GB_RETURN_IF_NULL_OR_FAULTY (add) ;
-
-    //--------------------------------------------------------------------------
-    // apply the eWise kernel (using set union)
-    //--------------------------------------------------------------------------
-
-    GB_EWISE (add) ;
-    GB_BURBLE_END ;
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_EWISE (op) ;
     return (info) ;
 }
 
@@ -85,21 +75,8 @@ GrB_Info GrB_Matrix_eWiseAdd_Monoid         // C<M> = accum (C, A+B)
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (C, M_in, A, B,
-        "GrB_Matrix_eWiseAdd_Monoid C, M, accum, monoid, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-
-    //--------------------------------------------------------------------------
-    // eWiseAdd using the monoid operator
-    //--------------------------------------------------------------------------
-
     GB_EWISE (monoid->op) ;
-    GB_BURBLE_END ;
     return (info) ;
 }
 
@@ -120,21 +97,8 @@ GrB_Info GrB_Matrix_eWiseAdd_Semiring       // C<M> = accum (C, A+B)
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (C, M_in, A, B,
-        "GrB_Matrix_eWiseAdd_Semiring (C, M, accum, semiring, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
-
-    //--------------------------------------------------------------------------
-    // eWise add using the semiring monoid operator
-    //--------------------------------------------------------------------------
-
     GB_EWISE (semiring->add->op) ;
-    GB_BURBLE_END ;
     return (info) ;
 }
 

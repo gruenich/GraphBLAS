@@ -2,7 +2,7 @@
 // GrB_Descriptor_set: set a field in a descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_NULL (desc) ;
     if (desc != NULL && desc->header_size == 0)
     { 
         // built-in descriptors may not be modified
@@ -28,7 +29,6 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
     }
 
     GB_WHERE_DESC (desc, "GrB_Descriptor_set (desc, field, value)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
     //--------------------------------------------------------------------------

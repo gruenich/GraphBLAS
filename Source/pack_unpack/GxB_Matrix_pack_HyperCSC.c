@@ -33,11 +33,11 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_pack_HyperCSC (A, "
-        "&Ap, &Ah, &Ai, &Ax, Ap_size, Ah_size, Ai_size, Ax_size, iso, "
-        "nvec, jumbled, desc)") ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GxB_Matrix_pack_HyperCSC (A, &Ap, &Ah, &Ai, &Ax, Ap_size,"
+        " Ah_size, Ai_size, Ax_size, iso, nvec, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_pack_HyperCSC") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 

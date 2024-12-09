@@ -17,6 +17,8 @@
     GB_RETURN_IF_NULL (w) ;                                                 \
     GB_RETURN_IF_NULL (u) ;                                                 \
     GB_RETURN_IF_NULL (v) ;                                                 \
+    GB_WHERE4 (w, M_in, u, v,                                               \
+        "GrB_Vector_eWiseMult (w, M, accum, op, u, v, desc)") ;             \
     GB_BURBLE_START ("GrB_eWiseMult") ;                                     \
     ASSERT (GB_VECTOR_OK (w)) ;                                             \
     ASSERT (GB_VECTOR_OK (u)) ;                                             \
@@ -37,7 +39,8 @@
         (GrB_Matrix) v, false,      /* v, never transposed         */       \
         false,                      /* eWiseMult                   */       \
         false, NULL, NULL,          /* not eWiseUnion              */       \
-        Werk) ;
+        Werk) ;                                                             \
+    GB_BURBLE_END ;
 
 //------------------------------------------------------------------------------
 // GrB_Vector_eWiseMult_BinaryOp: vector element-wise multiplication
@@ -48,27 +51,14 @@ GrB_Info GrB_Vector_eWiseMult_BinaryOp       // w<M> = accum (w, u.*v)
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp mult,        // defines '.*' for t=u.*v
+    const GrB_BinaryOp op,          // defines '.*' for t=u.*v
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector v,             // second input: vector v
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (w, M_in, u, v,
-        "GrB_Vector_eWiseMult_BinaryOp (w, M, accum, mult, u, v, desc)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
-
-    //--------------------------------------------------------------------------
-    // apply the eWise kernel (using set intersection)
-    //--------------------------------------------------------------------------
-
-    GB_EWISE (mult) ;
-    GB_BURBLE_END ;
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_EWISE (op) ;
     return (info) ;
 }
 
@@ -87,21 +77,8 @@ GrB_Info GrB_Vector_eWiseMult_Monoid         // w<M> = accum (w, u.*v)
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (w, M_in, u, v,
-        "GrB_Vector_eWiseMult_Monoid (w, M, accum, monoid, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-
-    //--------------------------------------------------------------------------
-    // eWise multiply using the monoid operator
-    //--------------------------------------------------------------------------
-
     GB_EWISE (monoid->op) ;
-    GB_BURBLE_END ;
     return (info) ;
 }
 
@@ -120,21 +97,8 @@ GrB_Info GrB_Vector_eWiseMult_Semiring       // w<M> = accum (w, u.*v)
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (w, M_in, u, v,
-        "GrB_Vector_eWiseMult_Semiring (w, M, accum, semiring, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
-
-    //--------------------------------------------------------------------------
-    // eWise multiply using the semiring multiply operator
-    //--------------------------------------------------------------------------
-
     GB_EWISE (semiring->multiply) ;
-    GB_BURBLE_END ;
     return (info) ;
 }
 

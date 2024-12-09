@@ -22,9 +22,9 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_setElement_, T) /* C (row,col) = x */    \
     GrB_Index col                       /* column index                   */\
 )                                                                           \
 {                                                                           \
+    GB_RETURN_IF_NULL (C) ;                                                 \
     GB_WHERE1 (C, GB_STR(prefix) "_Matrix_setElement_" GB_STR(T)            \
         " (C, row, col, x)");                                               \
-    GB_RETURN_IF_NULL (C) ;                                                 \
     return (GB_setElement (C, NULL, ampersand x, row, col,                  \
         GB_ ## T ## _code, Werk)) ;                                         \
 }

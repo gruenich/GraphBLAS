@@ -20,9 +20,10 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_nvals (&nvals, A)") ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GrB_Matrix_nvals (&nvals, A)") ;
+
     GB_BURBLE_START ("GrB_Matrix_nvals") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     //--------------------------------------------------------------------------
     // get the number of entries

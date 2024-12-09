@@ -28,7 +28,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_RETURN_IF_NULL_OR_FAULTY (S) ;
+    GrB_Info info ;
+    GB_RETURN_IF_NULL_OR_INVALID (S) ;
     GB_RETURN_IF_NULL (x) ;
 
     // delete any lingering zombies, assemble any pending tuples, and unjumble
@@ -36,7 +37,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     { 
         // extract scalar with pending tuples or zombies.  It cannot be
         // actually jumbled, but S->jumbled might true anyway.
-        GB_WHERE0 (GB_WHERE_STRING) ;
+        GB_WHERE_1 (S, GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Scalar_extractElement") ;
         GB_OK (GB_wait ((GrB_Matrix) S, "s", Werk)) ;
         GB_BURBLE_END ;

@@ -87,9 +87,7 @@ static inline bool GB_valid_control
 
 static inline GrB_Info GB_valid // returns GrB_SUCCESS, or error
 (
-    GrB_Matrix A,               // matrix to validate
-    int8_t global_p_control,    // global p_control, from Global or Werk
-    int8_t global_i_control     // global i_control, from Global or Werk
+    GrB_Matrix A                // matrix to validate
 )
 {
 
@@ -116,16 +114,6 @@ static inline GrB_Info GB_valid // returns GrB_SUCCESS, or error
     if (A->p == NULL && A->h == NULL && A->i == NULL && A->Y == NULL)
     {
         return (GrB_SUCCESS) ;
-    }
-
-    // check the global pi_controls
-    if (!GB_valid_control (global_p_control, A->p_is_32))
-    { 
-        return (GrB_INVALID_OBJECT) ;
-    }
-    if (!GB_valid_control (global_i_control, A->i_is_32))
-    { 
-        return (GrB_INVALID_OBJECT) ;
     }
 
     // check the matrix pi_controls

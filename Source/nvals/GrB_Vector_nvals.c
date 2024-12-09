@@ -20,9 +20,10 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Vector_nvals (&nvals, v)") ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_WHERE_1 (v, "GrB_Vector_nvals (&nvals, v)") ;
+
     GB_BURBLE_START ("GrB_Vector_nvals") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT (GB_VECTOR_OK (v)) ;
 
     //--------------------------------------------------------------------------

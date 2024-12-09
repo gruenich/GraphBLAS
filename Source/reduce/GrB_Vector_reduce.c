@@ -33,8 +33,9 @@ GrB_Info GB_EVAL3 (prefix, _Vector_reduce_, T) /* c = accum (c, reduce (u)) */  
     const GrB_Descriptor desc                                                  \
 )                                                                              \
 {                                                                              \
-    GB_WHERE0 ("GrB_Vector_reduce_" GB_STR(T) " (&c, accum, monoid, u, desc)");\
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                          \
+    GB_RETURN_IF_NULL (u) ;                                                    \
+    GB_WHERE_1 (u, "GrB_Vector_reduce_" GB_STR(T)                              \
+        " (&c, accum, monoid, u, desc)") ;                                     \
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     ASSERT (GB_VECTOR_OK (u)) ;                                                \
     info = GB_reduce_to_scalar (c, GB_EVAL3 (prefix, _, T), accum, monoid,     \
@@ -66,10 +67,11 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE0 ("GrB_Vector_reduce_UDT (&c, accum, monoid, u, desc)") ;
-    GB_BURBLE_START ("GrB_reduce") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;
+    GB_RETURN_IF_NULL (u) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
+    GB_WHERE_1 (u, "GrB_Vector_reduce_UDT (&c, accum, monoid, u, desc)") ;
+    GB_BURBLE_START ("GrB_reduce") ;
+
     ASSERT (GB_VECTOR_OK (u)) ;
     info = GB_reduce_to_scalar (c, monoid->op->ztype, accum, monoid,
         (GrB_Matrix) u, Werk) ;
@@ -112,9 +114,9 @@ GrB_Info GrB_Vector_reduce_BinaryOp_Scalar
     const GrB_Descriptor desc
 )
 { 
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_WHERE2 (S, u,
         "GrB_Vector_reduce_BinaryOp_Scalar (s, accum, binaryop, u, desc)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_BURBLE_START ("GrB_reduce") ;
 
     if (op->ztype != op->xtype || op->ztype != op->ytype)

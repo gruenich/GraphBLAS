@@ -15,7 +15,7 @@
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel)
 {
-    // GB_GET_CALLBACKS ;
+    GB_GET_CALLBACKS ;
 
     // get C and A
     const uint64_t *restrict Cp = C->p ;    // FIXME

@@ -27,9 +27,6 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     //--------------------------------------------------------------------------
 
     GB_CHECK_INIT ;
-    GrB_Info info ;
-//  GB_WHERE0 ("GrB_Vector_new (&v, type, n)") ; // FIXME need this
-
     GB_RETURN_IF_NULL (v) ;
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
@@ -46,7 +43,7 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
 
     int64_t vlen = (int64_t) n ;
 
-    info = GB_new ((GrB_Matrix *) v, // new user header
+    GrB_Info info = GB_new ((GrB_Matrix *) v, // new user header
         type, vlen, 1, GB_ph_calloc,
         true,  // a GrB_Vector is always held by-column
         GxB_SPARSE, GB_Global_hyper_switch_get ( ), 1,

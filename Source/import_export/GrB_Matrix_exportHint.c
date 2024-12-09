@@ -21,10 +21,9 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GrB_Matrix_exportHint (&format, A)") ;
     GB_RETURN_IF_NULL (format) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GrB_Matrix_exportHint (&format, A)") ;
 
     // finish any pending work since this can change the sparsity of A
     GB_MATRIX_WAIT (A) ;

@@ -33,11 +33,11 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols, "
-        "&Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, desc)") ;
-    // GB_BURBLE_START ("GxB_Matrix_export_BitmapC") ;
     GB_RETURN_IF_NULL (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
+    GB_WHERE_1 (*A, "GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols, "
+        "&Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, desc)") ;
+    GB_RETURN_IF_NULL (*A) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
@@ -82,7 +82,6 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
         ASSERT (sparsity == GxB_BITMAP) ;
         ASSERT (is_csc) ;
     }
-    // GB_BURBLE_END ;
     return (info) ;
 }
 

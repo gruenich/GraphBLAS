@@ -16,7 +16,7 @@
 GrB_Info GrB_Semiring_set_Scalar
 (
     GrB_Semiring semiring,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 

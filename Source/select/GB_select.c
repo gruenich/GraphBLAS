@@ -45,9 +45,10 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     // C may be aliased with M and/or A
 
+    GrB_Info info ;
     GrB_IndexUnaryOp op = op_in ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (Thunk) ;
+    GB_RETURN_IF_NULL_OR_INVALID (Thunk) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
     ASSERT_MATRIX_OK (C, "C input for GB_select", GB0) ;
@@ -61,7 +62,6 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GrB_Matrix T = NULL ;
 
     // check domains and dimensions for C<M> = accum (C,T)
-    GrB_Info info ;
     GB_OK (GB_compatible (C->type, C, M, Mask_struct, accum, A->type, Werk));
 
     GB_Type_code xcode = (op->xtype == NULL) ? GB_ignore_code : op->xtype->code;

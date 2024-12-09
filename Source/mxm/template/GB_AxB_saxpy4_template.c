@@ -23,6 +23,10 @@
 #define GB_C_SIZE sizeof (GB_C_TYPE)
 #endif
 
+#ifndef GB_C_ISO
+#define GB_C_ISO 0
+#endif
+
 {
 
     if (use_coarse_tasks)
@@ -75,9 +79,11 @@
                 //--------------------------------------------------------------
 
                 int8_t *restrict Gb = (int8_t *) (Bb + (j1 * bvlen)) ;
+                #if !GB_B_IS_PATTERN
                 GB_B_TYPE *restrict Gx = (GB_B_TYPE *)
                      (((GB_void *) (B->x)) +
                        (B_iso ? 0 : ((j1 * bvlen) * GB_B_SIZE))) ;
+                #endif
 
                 //--------------------------------------------------------------
                 // clear the panel H to compute C(:,j1:j2-1)

@@ -22,9 +22,8 @@ GrB_Info GxB_Matrix_type    // get the type of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GxB_Matrix_type (&type, A)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GxB_Matrix_type (&type, A)") ;
 
     //--------------------------------------------------------------------------
     // get the type

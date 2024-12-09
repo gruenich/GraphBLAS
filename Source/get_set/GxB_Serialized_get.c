@@ -205,7 +205,7 @@ static GrB_Info GB_blob_header_get
 GrB_Info GxB_Serialized_get_Scalar
 (
     const void * blob,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field,
     size_t blob_size
 )
@@ -215,9 +215,10 @@ GrB_Info GxB_Serialized_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Serialized_get_Scalar (blob, value, field, blobsize)") ;
+    GB_WHERE_1 (scalar, "GxB_Serialized_get_Scalar (blob, scalar, field,"
+        " blob_size)") ;
     GB_RETURN_IF_NULL (blob) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (scalar) ;
 
     //--------------------------------------------------------------------------
     // read the blob
@@ -285,13 +286,13 @@ GrB_Info GxB_Serialized_get_Scalar
         if (is_double)
         { 
             // field specifies a double: assign it to the scalar
-            info = GB_setElement ((GrB_Matrix) value, NULL, &dvalue, 0, 0,
+            info = GB_setElement ((GrB_Matrix) scalar, NULL, &dvalue, 0, 0,
                 GB_FP64_code, Werk) ;
         }
         else
         { 
             // field specifies an int32_t: assign it to the scalar
-            info = GB_setElement ((GrB_Matrix) value, NULL, &ivalue, 0, 0,
+            info = GB_setElement ((GrB_Matrix) scalar, NULL, &ivalue, 0, 0,
                 GB_INT32_code, Werk) ;
         }
     }

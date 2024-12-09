@@ -42,7 +42,7 @@ GrB_Info GB_matvec_set
 ) ;
 
 GrB_Info GB_op_enum_get   (GB_Operator op, int32_t *  value, GrB_Field field) ;
-GrB_Info GB_op_scalar_get (GB_Operator op, GrB_Scalar value, GrB_Field field,
+GrB_Info GB_op_scalar_get (GB_Operator op, GrB_Scalar scalar, GrB_Field field,
     GB_Werk Werk) ;
 GrB_Info GB_op_string_get (GB_Operator op, char *     value, GrB_Field field) ;
 GrB_Info GB_op_size_get   (GB_Operator op, size_t *   value, GrB_Field field) ;
@@ -73,7 +73,7 @@ GrB_Info GB_op_or_type_string_set
 GrB_Info GB_monoid_get
 (
     GrB_Monoid monoid,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field,
     GB_Werk Werk
 ) ;

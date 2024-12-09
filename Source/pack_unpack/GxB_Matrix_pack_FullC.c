@@ -24,10 +24,10 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_pack_FullC (A, "
-        "&Ax, Ax_size, iso, desc)") ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GxB_Matrix_pack_FullC (A, &Ax, Ax_size, iso, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_pack_FullC") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 

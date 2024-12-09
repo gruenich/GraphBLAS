@@ -22,9 +22,10 @@ GrB_Info GrB_Matrix_nrows   // get the number of rows of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (nrows) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
 
     //--------------------------------------------------------------------------
     // get the number of rows

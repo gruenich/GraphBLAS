@@ -17,6 +17,8 @@
     GB_RETURN_IF_NULL (C) ;                                                 \
     GB_RETURN_IF_NULL (A) ;                                                 \
     GB_RETURN_IF_NULL (B) ;                                                 \
+    GB_WHERE4 (C, M_in, A, B,                                               \
+        "GrB_Matrix_eWiseMult (C, M, accum, op, A, B, desc)") ;             \
     GB_BURBLE_START ("GrB_eWiseMult") ;                                     \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
@@ -33,7 +35,8 @@
         B,              B_tran,     /* B matrix and its descriptor */       \
         false,                      /* eWiseMult                   */       \
         false, NULL, NULL,          /* not eWiseUnion              */       \
-        Werk) ;
+        Werk) ;                                                             \
+    GB_BURBLE_END ;
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_eWiseMult_BinaryOp: matrix element-wise multiplication
@@ -44,27 +47,14 @@ GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<M> = accum (C, A.*B)
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_BinaryOp mult,        // defines '.*' for T=A.*B
+    const GrB_BinaryOp op,          // defines '.*' for T=A.*B
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Matrix B,             // second input: matrix B
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (C, M_in, A, B,
-        "GrB_Matrix_eWiseMult_BinaryOp (C, M, accum, mult, A, B, desc)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
-
-    //--------------------------------------------------------------------------
-    // apply the eWise kernel (using set intersection)
-    //--------------------------------------------------------------------------
-
-    GB_EWISE (mult) ;
-    GB_BURBLE_END ;
+    GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_EWISE (op) ;
     return (info) ;
 }
 
@@ -85,21 +75,8 @@ GrB_Info GrB_Matrix_eWiseMult_Monoid         // C<M> = accum (C, A.*B)
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (C, M_in, A, B,
-        "GrB_Matrix_eWiseMult_Monoid (C, M, accum, monoid, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-
-    //--------------------------------------------------------------------------
-    // eWise multiply using the monoid operator
-    //--------------------------------------------------------------------------
-
     GB_EWISE (monoid->op) ;
-    GB_BURBLE_END ;
     return (info) ;
 }
 
@@ -120,21 +97,8 @@ GrB_Info GrB_Matrix_eWiseMult_Semiring       // C<M> = accum (C, A.*B)
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE4 (C, M_in, A, B,
-        "GrB_Matrix_eWiseMult_Semiring (C, M, accum, semiring, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
-
-    //--------------------------------------------------------------------------
-    // eWise multiply using the semiring multiply operator
-    //--------------------------------------------------------------------------
-
     GB_EWISE (semiring->multiply) ;
-    GB_BURBLE_END ;
     return (info) ;
 }
 

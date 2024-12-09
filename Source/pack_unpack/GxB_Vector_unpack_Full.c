@@ -25,10 +25,10 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_unpack_Full (v, "
-        "&vx, &vx_size, &iso, desc)") ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_WHERE_1 (v, "GxB_Vector_unpack_Full (v, &vx, &vx_size, &iso, desc)") ;
     GB_BURBLE_START ("GxB_Vector_unpack_Full") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------

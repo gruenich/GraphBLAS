@@ -29,6 +29,7 @@ GrB_Info GxB_Vector_import_Full // import a full vector
 
     GB_WHERE0 ("GxB_Vector_import_Full (&v, type, n, "
         "&vx, vx_size, iso, desc)") ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 

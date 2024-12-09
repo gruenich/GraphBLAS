@@ -26,10 +26,11 @@ GrB_Info GxB_Vector_sort
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_sort (w, p, op, u, desc)") ;
-    GB_BURBLE_START ("GxB_Vector_sort") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;
+    GB_RETURN_IF_NULL (u) ;
+    GB_WHERE_3 (w, p, u, "GxB_Vector_sort (w, p, op, u, desc)") ;
+    GB_BURBLE_START ("GxB_Vector_sort") ;
+
     ASSERT (GB_VECTOR_OK (u)) ;
 
     //--------------------------------------------------------------------------

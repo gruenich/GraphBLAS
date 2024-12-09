@@ -43,7 +43,9 @@
     #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
     #pragma GCC diagnostic ignored "-Wtype-limits"
     // enable these warnings as errors
+    #ifndef GB_JIT_KERNEL
     #pragma GCC diagnostic error "-Wmisleading-indentation"
+    #endif
     #endif
 
     // disable warnings from -Wall -Wextra -Wpendantic
@@ -59,7 +61,7 @@
     // enable these warnings as errors
     #pragma GCC diagnostic error "-Wswitch-default"
     #pragma GCC diagnostic error "-Wreturn-type"
-    #if !defined ( __cplusplus )
+    #if !defined ( __cplusplus ) && !defined ( GB_JIT_KERNEL )
     #pragma GCC diagnostic error "-Wpointer-sign"
     #pragma GCC diagnostic error "-Wmissing-prototypes"
     #endif
@@ -68,7 +70,9 @@
 
     // disable warnings for clang
     #pragma clang diagnostic ignored "-Wpass-failed"
+    #ifndef GB_JIT_KERNEL
     #pragma clang diagnostic error "-Wpointer-sign"
+    #endif
 
 #elif GB_COMPILER_MSC
 

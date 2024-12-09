@@ -46,11 +46,11 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_serialize (blob, &blob_size, A)") ;
-    GB_BURBLE_START ("GrB_Matrix_serialize") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (blob_size_handle) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GrB_Matrix_serialize (blob, &blob_size, A)") ;
+    GB_BURBLE_START ("GrB_Matrix_serialize") ;
 
     // no descriptor, so assume the default method
     int method = GxB_DEFAULT ;

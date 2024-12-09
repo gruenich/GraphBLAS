@@ -19,6 +19,14 @@
 #include "include/GB_warnings.h"
 #include "include/GB_coverage.h"
 
+#ifdef GB_JIT_KERNEL
+// Because of the JIT code generation, the kernels often have unused variables,
+// parameters, and functions.  These warnings are disabled here.  They may also
+// generate warnings with -Wpedantic, so those are disabled as well.
+#include "include/GB_unused.h"
+#include "include/GB_pedantic_disable.h"
+#endif
+
 //------------------------------------------------------------------------------
 // user-visible GraphBLAS.h
 //------------------------------------------------------------------------------

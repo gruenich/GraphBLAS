@@ -28,10 +28,11 @@ GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_pack_CSC (v, "
-        "&vi, &vx, vi_size, vx_size, iso, nvals, jumbled, desc)") ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_WHERE_1 (v, "GxB_Vector_pack_CSC (v, &vi, &vx, vi_size, vx_size, iso,"
+        " nvals, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Vector_pack_CSC") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_GET_DESCRIPTOR_IMPORT (desc, fast_import) ;
 

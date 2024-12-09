@@ -143,7 +143,7 @@ static GrB_Info GB_global_enum_get (int32_t *value, int field)
 GrB_Info GrB_Global_get_Scalar
 (
     GrB_Global g,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -152,9 +152,9 @@ GrB_Info GrB_Global_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Global_get_Scalar (g, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (g) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (g) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_2 (g, scalar, "GrB_Global_get_Scalar (g, scalar, field)") ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -169,7 +169,7 @@ GrB_Info GrB_Global_get_Scalar
         if (info == GrB_SUCCESS)
         { 
             // field specifies an int: assign it to the scalar
-            info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,
+            info = GB_setElement ((GrB_Matrix) scalar, NULL, &i, 0, 0,
                 GB_INT32_code, Werk) ;
         }
         else
@@ -182,7 +182,7 @@ GrB_Info GrB_Global_get_Scalar
                 case GxB_HYPER_SWITCH : 
 
                     x = (double) GB_Global_hyper_switch_get ( ) ;
-                    info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
+                    info = GB_setElement ((GrB_Matrix) scalar, NULL, &x, 0, 0,
                         GB_FP64_code, Werk) ;
 
                     break ;
@@ -190,14 +190,14 @@ GrB_Info GrB_Global_get_Scalar
                 case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
 
                     x = GB_Context_chunk_get (NULL) ;
-                    info = GB_setElement ((GrB_Matrix) value, NULL, &x, 0, 0,
+                    info = GB_setElement ((GrB_Matrix) scalar, NULL, &x, 0, 0,
                         GB_FP64_code, Werk) ;
                     break ;
 
                 case GxB_HYPER_HASH : 
 
                     i64 = GB_Global_hyper_hash_get ( ) ;
-                    info = GB_setElement ((GrB_Matrix) value, NULL, &i64, 0, 0,
+                    info = GB_setElement ((GrB_Matrix) scalar, NULL, &i64, 0, 0,
                         GB_INT64_code, Werk) ;
                     break ;
 

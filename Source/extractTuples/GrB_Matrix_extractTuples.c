@@ -34,12 +34,11 @@ GrB_Info function_name      /* extract tuples from a matrix */              \
     const GrB_Matrix A      /* matrix to extract tuples from             */ \
 )                                                                           \
 {                                                                           \
-    GB_WHERE0 (GB_STR(function_name) " (I, J, X, nvals, A)") ;              \
-    GB_BURBLE_START (GB_STR(function_name)) ;                               \
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                       \
+    GB_WHERE_1 (A, GB_STR(function_name) " (I, J, X, nvals, A)") ;          \
+    GB_RETURN_IF_NULL (A) ;                                                 \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
-    info = GB_extractTuples (I, J, X, p_nvals, xtype, A, false,    \
-        Werk);                                                              \
+    GB_BURBLE_START (GB_STR(function_name)) ;                               \
+    info = GB_extractTuples (I, J, X, p_nvals, xtype, A, false, Werk);      \
     GB_BURBLE_END ;                                                         \
     GB_PRAGMA (omp flush)                                                   \
     return (info) ;                                                         \
@@ -73,10 +72,11 @@ GrB_Info GrB_Matrix_extractTuples_UDT
     const GrB_Matrix A      // matrix to extract tuples from
 )
 { 
-    GB_WHERE0 ("GrB_Matrix_extractTuples_UDT (I, J, X, nvals, A)") ;
-    GB_BURBLE_START ("GrB_Matrix_extractTuples_UDT") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_WHERE_1 (A, "GrB_Matrix_extractTuples_UDT (I, J, X, nvals, A)") ;
+    GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL (p_nvals) ;
+    GB_BURBLE_START ("GrB_Matrix_extractTuples_UDT") ;
+
     if (A->type->code != GB_UDT_code)
     { 
         // A must have a user-defined type

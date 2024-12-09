@@ -69,7 +69,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;   // FIXME
     int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;   // FIXME
     ASSERT (A != NULL) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;
     ASSERT (!GB_ZOMBIES (*A)) ;
     ASSERT (GB_JUMBLED_OK (*A)) ;

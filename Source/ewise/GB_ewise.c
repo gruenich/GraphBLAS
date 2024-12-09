@@ -83,8 +83,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         if (is_eWiseUnion)
         {
             // alpha and beta scalars must be present
-            GB_RETURN_IF_NULL_OR_FAULTY (alpha) ;
-            GB_RETURN_IF_NULL_OR_FAULTY (beta) ;
+            ASSERT_SCALAR_OK (alpha, "alpha for GB_ewise", GB0) ;
+            ASSERT_SCALAR_OK (beta, "beta for GB_ewise", GB0) ;
             GB_MATRIX_WAIT (alpha) ;
             GB_MATRIX_WAIT (beta) ;
             if (GB_nnz ((GrB_Matrix) alpha) == 0)

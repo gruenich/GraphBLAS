@@ -16,7 +16,7 @@
 GrB_Info GrB_Semiring_get_Scalar
 (
     GrB_Semiring semiring,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 
@@ -25,10 +25,10 @@ GrB_Info GrB_Semiring_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GrB_Semiring_get_Scalar (semiring, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_1 (scalar, "GrB_Semiring_get_Scalar (semiring, scalar, field)") ;
+
     ASSERT_SEMIRING_OK (semiring, "semiring to get option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -39,10 +39,10 @@ GrB_Info GrB_Semiring_get_Scalar
     {
         case GxB_MONOID_IDENTITY : 
         case GxB_MONOID_TERMINAL : 
-            return (GB_monoid_get (semiring->add, value, field, Werk)) ;
+            return (GB_monoid_get (semiring->add, scalar, field, Werk)) ;
         default : 
             return (GB_op_scalar_get ((GB_Operator) (semiring->multiply),
-                value, field, Werk)) ;
+                scalar, field, Werk)) ;
     }
 }
 

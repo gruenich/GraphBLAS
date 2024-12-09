@@ -24,7 +24,6 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     //--------------------------------------------------------------------------
 
     GB_CHECK_INIT ;
-//  GB_WHERE0 ("GrB_Scalar_new (&s, type)") ;   // FIXME will need
     GB_RETURN_IF_NULL (s) ;
     (*s) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;

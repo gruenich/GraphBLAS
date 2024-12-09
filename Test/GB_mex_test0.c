@@ -880,15 +880,13 @@ void mexFunction
 
     ERR (GrB_Vector_dup (NULL, NULL)) ;
     ERR (GrB_Vector_dup (NULL, v)) ;
-    ERR (GrB_Vector_dup (NULL, vcrud)) ;
     ERR (GrB_Vector_dup (NULL, vempty)) ;
     ERR (GrB_Vector_clear (NULL)) ;
-
+    ERR (GrB_Vector_dup (NULL, vcrud)) ;
     ERR (GrB_Vector_dup (&u, NULL)) ;
     CHECK (u == NULL) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
-
     ERR (GrB_Vector_dup (&u, vcrud)) ;
     CHECK (u == NULL) ;
 
@@ -907,7 +905,6 @@ void mexFunction
     CHECK (n == 32) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
-
     nvals = 7 ;
     ERR (GrB_Vector_dup (&u, vcrud)) ;
     ERR (GrB_Vector_nvals (&nvals, vcrud)) ;
@@ -1348,18 +1345,15 @@ void mexFunction
     CHECK (C == NULL) ;
 
     expected = GrB_NULL_POINTER ;
-
     ERR (GrB_Matrix_dup (NULL, NULL)) ;
     ERR (GrB_Matrix_dup (NULL, A)) ;
-    ERR (GrB_Matrix_dup (NULL, Acrud)) ;
     ERR (GrB_Matrix_dup (NULL, Aempty)) ;
     ERR (GrB_Matrix_clear (NULL)) ;
-
+    ERR (GrB_Matrix_dup (NULL, Acrud)) ;
     ERR (GrB_Matrix_dup (&C, NULL)) ;
     CHECK (C == NULL) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;
-
     ERR (GrB_Matrix_nrows (&n, Acrud)) ;
     ERR (GrB_Matrix_ncols (&n, Acrud)) ;
     ERR (GrB_Matrix_nvals (&n, Acrud)) ;
@@ -1369,7 +1363,6 @@ void mexFunction
     OK (GrB_Matrix_clear (A)) ;
 
     expected = GrB_NULL_POINTER ;
-
     n = 999 ;
     ERR (GrB_Matrix_nrows (NULL, NULL)) ;
     ERR (GrB_Matrix_nrows (NULL, A)) ;

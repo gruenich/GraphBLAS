@@ -22,9 +22,10 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (iso) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
 
     //--------------------------------------------------------------------------
     // return the iso status of a matrix

@@ -35,12 +35,12 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, "
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL (*A) ;
+    GB_WHERE_1 (*A, "GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, "
         "&Ap, &Aj, &Ax, &Ap_size, &Aj_size, &Ax_size, &iso, "
         "&jumbled, desc)") ;
-    // GB_BURBLE_START ("GxB_Matrix_export_CSR") ;
-    GB_RETURN_IF_NULL (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     ASSERT_MATRIX_OK (*A, "A to export as CSR", GB0) ;
 

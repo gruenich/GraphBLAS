@@ -928,7 +928,7 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #undef GB_GET_CALLBACK
 #ifdef GB_JIT_RUNTIME
     // JIT kernels (CPU and CUDA) require the function pointers
-    #define GB_GET_CALLBACKS \
+    #define GB_GET_CALLBACKS                    \
         GB_abort = my_callback->GB_abort_func
     #define GB_GET_CALLBACK(function) \
         function ## _f function = my_callback->function ## _func

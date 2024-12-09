@@ -33,13 +33,13 @@ GrB_Info function_name      /* extract tuples from a vector */              \
     const GrB_Vector v      /* vector to extract tuples from             */ \
 )                                                                           \
 {                                                                           \
-    GB_WHERE0 (GB_STR(function_name) " (I, X, nvals, v)") ;                 \
-    GB_BURBLE_START (GB_STR(function_name)) ;                               \
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                       \
+    GB_WHERE_1 (v, GB_STR(function_name) " (I, X, nvals, v)") ;             \
+    GB_RETURN_IF_NULL (v) ;                                                 \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
+    GB_BURBLE_START (GB_STR(function_name)) ;                               \
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
-    info = GB_extractTuples (I, NULL, X, p_nvals, xtype,           \
-        (GrB_Matrix) v, true, Werk) ;                                       \
+    info = GB_extractTuples (I, NULL, X, p_nvals, xtype, (GrB_Matrix) v,    \
+        true, Werk) ;                                                       \
     GB_BURBLE_END ;                                                         \
     GB_PRAGMA (omp flush)                                                   \
     return (info) ;                                                         \
@@ -72,10 +72,11 @@ GrB_Info GxB_Vector_extractTuples_32_UDT
     const GrB_Vector v      // vector to extract tuples from
 )
 { 
-    GB_WHERE0 ("GxB_Vector_extractTuples_32_UDT (I, X, nvals, v)") ;
-    GB_BURBLE_START ("GxB_Vector_extractTuples_32_UDT") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE_1 (v, "GxB_Vector_extractTuples_32_UDT (I, X, nvals, v)") ;
+    GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL (p_nvals) ;
+    GB_BURBLE_START ("GxB_Vector_extractTuples_32_UDT") ;
+
     ASSERT (GB_VECTOR_OK (v)) ;
     if (v->type->code != GB_UDT_code)
     { 

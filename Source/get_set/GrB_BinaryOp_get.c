@@ -16,7 +16,7 @@
 GrB_Info GrB_BinaryOp_get_Scalar
 (
     GrB_BinaryOp op,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 
@@ -25,20 +25,20 @@ GrB_Info GrB_BinaryOp_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GrB_BinaryOp_get_Scalar (op, value, field)") ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_1 (scalar, "GrB_BinaryOp_get_Scalar (op, scalar, field)") ;
+
     if (op != GxB_IGNORE_DUP) 
     { 
         GB_RETURN_IF_NULL_OR_FAULTY (op) ;
         ASSERT_BINARYOP_OK (op, "binaryop for get", GB0) ;
     }
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
 
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
 
-    return (GB_op_scalar_get ((GB_Operator) op, value, field, Werk)) ;
+    return (GB_op_scalar_get ((GB_Operator) op, scalar, field, Werk)) ;
 }
 
 //------------------------------------------------------------------------------

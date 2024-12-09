@@ -22,17 +22,16 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_BinaryOp_new_IndexOp (&binop, idxbinop, theta)") ;
+    GrB_Info info ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (binop_handle) ;
     (*binop_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (idxbinop) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (theta) ;
+    GB_RETURN_IF_NULL_OR_INVALID (theta) ;
 
     if (!GB_Type_compatible (idxbinop->theta_type, theta->type))
     { 
-        GB_ERROR (GrB_DOMAIN_MISMATCH,
-            "Scalar of type [%s] cannot be typecast to type [%s]\n",
-                theta->type->name, idxbinop->theta_type->name) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
 
     //--------------------------------------------------------------------------

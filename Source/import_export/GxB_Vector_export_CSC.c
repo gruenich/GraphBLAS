@@ -33,12 +33,12 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_export_CSC (&v, &type, &n, "
-        "&vi, &vx, &vi_size, &vx_size, &iso, &nvals, &jumbled, desc)") ;
-    // GB_BURBLE_START ("GxB_Vector_export_CSC") ;
-    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_RETURN_IF_NULL (v) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
+    GB_RETURN_IF_NULL (*v) ;
+    GB_WHERE_1 (*v, "GxB_Vector_export_CSC (&v, &type, &n, "
+        "&vi, &vx, &vi_size, &vx_size, &iso, &nvals, &jumbled, desc)") ;
+
+    GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
     GB_RETURN_IF_NULL (nvals) ;
     ASSERT_VECTOR_OK (*v, "v to export", GB0) ;
 
@@ -93,7 +93,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
         ASSERT (is_csc) ;
         ASSERT (vdim == 1) ;
     }
-    // GB_BURBLE_END ;
+
     return (info) ;
 }
 

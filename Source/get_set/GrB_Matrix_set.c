@@ -16,7 +16,7 @@
 GrB_Info GrB_Matrix_set_Scalar
 (
     GrB_Matrix A,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -25,8 +25,10 @@ GrB_Info GrB_Matrix_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_set_Scalar (A, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE_2 (A, scalar, "GrB_Matrix_set_Scalar (A, scalar, field)") ;
+
     ASSERT_MATRIX_OK (A, "GrB: A to set Scalar option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -42,12 +44,12 @@ GrB_Info GrB_Matrix_set_Scalar
         case GxB_HYPER_SWITCH : 
         case GxB_BITMAP_SWITCH : 
 
-            info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
+            info = GrB_Scalar_extractElement_FP64 (&dvalue, scalar) ;
             break ;
 
         default : 
 
-            info = GrB_Scalar_extractElement_INT32 (&ivalue, value) ;
+            info = GrB_Scalar_extractElement_INT32 (&ivalue, scalar) ;
             break ;
     }
 
@@ -75,8 +77,9 @@ GrB_Info GrB_Matrix_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL_OR_INVALID (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "GrB: A to set String option", GB0) ;
 
@@ -103,9 +106,9 @@ GrB_Info GrB_Matrix_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GrB_Matrix_set_INT32 (A, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_WHERE1 (A, "GrB_Matrix_set_INT32 (A, value, field)") ;
+
     ASSERT_MATRIX_OK (A, "GrB: A to set int32 option", GB0) ;
 
     //--------------------------------------------------------------------------

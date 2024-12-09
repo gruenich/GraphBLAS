@@ -16,7 +16,7 @@
 GrB_Info GrB_Type_set_Scalar
 (
     GrB_Type type,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 

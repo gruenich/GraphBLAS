@@ -38,17 +38,13 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
+    GB_RETURN_IF_FAULTY (desc) ;
+
     struct GB_Matrix_opaque B_header ;
     GrB_Matrix B = NULL ;
     struct GB_Semiring_opaque semiring_header ;
     GrB_Semiring semiring = NULL ;
-
-    // C may be aliased with M and/or A
-    GB_RETURN_IF_NULL (C) ;
-    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    GB_RETURN_IF_NULL (A) ;
-    GB_RETURN_IF_FAULTY (desc) ;
 
     ASSERT_MATRIX_OK (C, "C input for reduce-to-vector", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M_in for reduce-to-vector", GB0) ;

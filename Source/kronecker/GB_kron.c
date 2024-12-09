@@ -56,9 +56,6 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GrB_Matrix T = NULL, AT = NULL, BT = NULL ;
     GrB_BinaryOp op = op_in ;
 
-    GB_RETURN_IF_NULL (C) ;
-    GB_RETURN_IF_NULL (A) ;
-    GB_RETURN_IF_NULL (B) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
 

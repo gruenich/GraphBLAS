@@ -51,7 +51,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     for (int64_t k = 0 ; k < m*n ; k++)
     { 
         GrB_Matrix A = Tiles [k] ;
-        GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+        GB_RETURN_IF_NULL_OR_INVALID (A) ;
         ASSERT_MATRIX_OK (A, "Tile[k] input for GB_concat", GB0) ;
         GB_MATRIX_WAIT (A) ;
     }

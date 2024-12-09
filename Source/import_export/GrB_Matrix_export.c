@@ -248,14 +248,12 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_export_, Type) /* export a matrix */        \
     GrB_Matrix A            /* matrix to export                              */\
 )                                                                              \
 {                                                                              \
-    GB_WHERE0 (GB_STR(prefix) "_Matrix_export_" GB_STR(Type)                   \
+    GB_WHERE_1 (A, GB_STR(prefix) "_Matrix_export_" GB_STR(Type)               \
         " (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, format, A)") ;               \
-/*  GB_BURBLE_START (GB_STR(prefix) "_Matrix_export_" GB_STR(Type)) ; */       \
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
+    GB_RETURN_IF_NULL (A) ;                                                    \
     if (A->type->code != acode) return (GrB_DOMAIN_MISMATCH) ;                 \
-    info = GB_export_worker (Ap, Ai, (void *) Ax,                     \
+    info = GB_export_worker (Ap, Ai, (void *) Ax,                              \
         Ap_len, Ai_len, Ax_len, format, A, Werk) ;                             \
-/*  GB_BURBLE_END ;  */                                                        \
     return (info) ;                                                            \
 }
 

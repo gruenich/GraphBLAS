@@ -142,7 +142,7 @@ static GrB_Info GB_desc_set
 GrB_Info GrB_Descriptor_set_Scalar
 (
     GrB_Descriptor desc,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -157,9 +157,10 @@ GrB_Info GrB_Descriptor_set_Scalar
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_WHERE_DESC (desc, "GrB_Descriptor_set_Scalar (desc, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GrB_Info info ;
+    GB_RETURN_IF_NULL_OR_INVALID (scalar) ;
+    GB_WHERE_DESC (desc, "GrB_Descriptor_set_Scalar (desc, scalar, field)") ;
+
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -167,7 +168,7 @@ GrB_Info GrB_Descriptor_set_Scalar
     //--------------------------------------------------------------------------
 
     int32_t i ;
-    GrB_Info info = GrB_Scalar_extractElement_INT32 (&i, value) ;
+    info = GrB_Scalar_extractElement_INT32 (&i, scalar) ;
     if (info != GrB_SUCCESS)
     { 
         return ((info == GrB_NO_VALUE) ? GrB_EMPTY_OBJECT : info) ;
@@ -197,9 +198,9 @@ GrB_Info GrB_Descriptor_set_String
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_WHERE_DESC (desc, "GrB_Descriptor_set_String (desc, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
+    GB_WHERE_DESC (desc, "GrB_Descriptor_set_String (desc, value, field)") ;
+
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -233,7 +234,7 @@ GrB_Info GrB_Descriptor_set_INT32
     }
 
     GB_WHERE_DESC (desc, "GrB_Descriptor_set_INT32 (desc, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
+
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
     //--------------------------------------------------------------------------

@@ -16,7 +16,7 @@
 GrB_Info GrB_Vector_set_Scalar
 (
     GrB_Vector v,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -25,8 +25,10 @@ GrB_Info GrB_Vector_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Vector_set_Scalar (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE2 (v, scalar, "GrB_Vector_set_Scalar (v, scalar, field)") ;
+
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -39,10 +41,10 @@ GrB_Info GrB_Vector_set_Scalar
     switch ((int) field)
     {
         case GxB_BITMAP_SWITCH : 
-            info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
+            info = GrB_Scalar_extractElement_FP64 (&dvalue, scalar) ;
             break ;
         default : 
-            info = GrB_Scalar_extractElement_INT32 (&ivalue, value) ;
+            info = GrB_Scalar_extractElement_INT32 (&ivalue, scalar) ;
             break ;
     }
 
@@ -69,8 +71,9 @@ GrB_Info GrB_Vector_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_RETURN_IF_NULL_OR_INVALID (v) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
@@ -97,9 +100,9 @@ GrB_Info GrB_Vector_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GrB_Vector_set_INT32 (v, value, field)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_WHERE_1 (v, "GrB_Vector_set_INT32 (v, value, field)") ;
+
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
     //--------------------------------------------------------------------------

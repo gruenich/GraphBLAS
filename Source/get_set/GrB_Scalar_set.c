@@ -16,7 +16,7 @@
 GrB_Info GrB_Scalar_set_Scalar
 (
     GrB_Scalar s,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 
@@ -41,8 +41,9 @@ GrB_Info GrB_Scalar_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_RETURN_IF_NULL_OR_INVALID (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to set option", GB0) ;
 

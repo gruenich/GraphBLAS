@@ -23,8 +23,8 @@ GrB_Info GrB_Matrix_clear   // clear a matrix of all entries;
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 (A, "GrB_Matrix_clear (A)") ;
     GB_RETURN_IF_NULL (A) ;
+    GB_WHERE_1 (A, "GrB_Matrix_clear (A)") ;
 
     //--------------------------------------------------------------------------
     // clear the matrix

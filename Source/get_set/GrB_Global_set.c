@@ -86,7 +86,7 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
 GrB_Info GrB_Global_set_Scalar
 (
     GrB_Global g,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 {
@@ -95,15 +95,14 @@ GrB_Info GrB_Global_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_NO_VALUE ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (value) ;
+    GB_RETURN_IF_NULL_OR_INVALID (scalar) ;
 
     //--------------------------------------------------------------------------
     // set the field
     //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -115,7 +114,7 @@ GrB_Info GrB_Global_set_Scalar
 
             case GxB_HYPER_SWITCH : 
 
-                info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
+                info = GrB_Scalar_extractElement_FP64 (&dvalue, scalar) ;
                 if (info == GrB_SUCCESS)
                 {
                     GB_Global_hyper_switch_set ((float) dvalue) ;
@@ -124,7 +123,7 @@ GrB_Info GrB_Global_set_Scalar
 
             case GxB_GLOBAL_CHUNK :             // same as GxB_CHUNK
 
-                info = GrB_Scalar_extractElement_FP64 (&dvalue, value) ;
+                info = GrB_Scalar_extractElement_FP64 (&dvalue, scalar) ;
                 if (info == GrB_SUCCESS)
                 {
                     GB_Context_chunk_set (NULL, dvalue) ;
@@ -133,7 +132,7 @@ GrB_Info GrB_Global_set_Scalar
 
             case GxB_HYPER_HASH : 
 
-                info = GrB_Scalar_extractElement_INT64 (&i64value, value) ;
+                info = GrB_Scalar_extractElement_INT64 (&i64value, scalar) ;
                 if (info == GrB_SUCCESS)
                 {
                     GB_Global_hyper_hash_set (i64value) ;
@@ -142,7 +141,7 @@ GrB_Info GrB_Global_set_Scalar
 
             default : 
 
-                info = GrB_Scalar_extractElement_INT32 (&ivalue, value) ;
+                info = GrB_Scalar_extractElement_INT32 (&ivalue, scalar) ;
                 if (info == GrB_SUCCESS)
                 {
                     info = GB_global_enum_set (ivalue, field) ;
@@ -170,6 +169,7 @@ GrB_Info GrB_Global_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_NO_VALUE ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
     GB_RETURN_IF_NULL (value) ;
@@ -177,8 +177,6 @@ GrB_Info GrB_Global_set_String
     //--------------------------------------------------------------------------
     // get the field
     //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -256,14 +254,13 @@ GrB_Info GrB_Global_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_NO_VALUE ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------
     // set the field
     //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -292,14 +289,13 @@ GrB_Info GrB_Global_set_VOID
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info = GrB_SUCCESS ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------
     // set the field
     //--------------------------------------------------------------------------
-
-    GrB_Info info = GrB_SUCCESS ;
 
     #pragma omp critical (GB_global_get_set)
     {

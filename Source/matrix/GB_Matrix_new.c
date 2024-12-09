@@ -18,43 +18,33 @@
 //
 // For Ap and Ai, independently:
 //
-//  default: prefer 32 for global and per-matrix settings
-//
 //  Global settings: no matrix is converted if this is changed
 //
-//  strict_64   : report error if any matrix found to be 32
-//  strict_32   : report error if any matrix found to be 64
-//  prefer_32   : use 32 (or 64 if required) for new or recomputed matrices;
-//                  any prior 64 ok (default)
-
-//  per-matrix settings (only available if the global setting is prefer_64 or
-//      prefer_32):
+//  prefer 32  : use 32 (or 64 if required) for new or recomputed matrices;
+//              any prior 64 ok (will be the default; but use 64-bit for now)
 //
-//  strict_64   : use 64, convert now if already 32 (not an error); lock and do
-//                  not change in the future
-
-//  strict_32   : use 32, convert now if already 64 (report error if too big
-//                  for 32 and leave mtx and its per-matrix setting unchanged).
-//                  lock the matrix and do not change in the future
-
-//  prefer_32   : use 32, but do not convert now if already 64.
-//                  Also stays as 64 bit if the matrix is too large for 32.
-//                  May change to 32 in the future, at the discretion of the
-//                  library, if the matrix appears as an output matrix (such as
-//                  C for C=A*B), or by a call to GrB_wait.  No change is made
-//                  if the matrix is used as an input, such as A for C=A*B.
+//  prefer 64  : use 64 by default (this is the default for now)
+//
+//  per-matrix settings: via GrB_set
+//
+//  default : rely on the global settings
+//
+//  strict 32  : use 32, but return an error if the matrix is too big for
+//          32-bit.  convert now from 64 to 32.  If OK, lock the size of the
+//          integers and do not change in the future.  If the matrix nvals or
+//          dimension changes and 32-bit becomes too small, return an error and
+//          do not convert the matrix.
+//
+//  prefer 32 : use 32 bit if possible, but allow 64 bit if needed
+//
+//  strict 64  : use 64, convert now if already 32 (not an error); lock and do
+//          not change in the future
 
 // Changing the global settings has no impact on the block/non-blocking status
 // of any existing matrix.  If the per-matrix setting is changed, it may cause
 // future pending work that will be finalized by GrB_wait on that matrix.  If
 // GrB_wait is called to materialize the matrix, and the matrix is not modified
 // afterwards, it remains materialized and is not changed.
-
-// If the global setting is strict_64 or strict_32, no per-matrix setting may
-// be changed, even if the requested per-matrix setting matches the current
-// global setting.  Existing matrices with a setting that doesn't match the
-// current global strict_64 or strict_32 setting will cause an error if they
-// are passed to any method except GrB_free.
 
 #include "GB.h"
 
@@ -72,7 +62,6 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     //--------------------------------------------------------------------------
 
     GB_CHECK_INIT ;
-//  GB_WHERE0 ("GrB_Matrix_new (&A, type, nrows, ncols)") ; // FIXME will need
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;

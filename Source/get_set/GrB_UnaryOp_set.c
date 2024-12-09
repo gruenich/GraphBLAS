@@ -16,7 +16,7 @@
 GrB_Info GrB_UnaryOp_set_Scalar
 (
     GrB_UnaryOp op,
-    GrB_Scalar value,
+    GrB_Scalar scalar,
     GrB_Field field
 )
 { 

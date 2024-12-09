@@ -22,9 +22,8 @@ GrB_Info GxB_Scalar_type    // get the type of a GrB_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_CHECK_INIT ;
-    GB_WERK ("GxB_Scalar_type (&type, s)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_RETURN_IF_NULL (s) ;
+    GB_WHERE_1 (s, "GxB_Scalar_type (&type, s)") ;
 
     //--------------------------------------------------------------------------
     // get the type

@@ -30,11 +30,11 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols, "
-        "&Ax, &Ax_size, &iso, desc)") ;
-    // GB_BURBLE_START ("GxB_Matrix_export_FullR") ;
     GB_RETURN_IF_NULL (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (*A) ;
+    GB_RETURN_IF_NULL (*A) ;
+    GB_WHERE_1 (*A, "GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols, "
+        "&Ax, &Ax_size, &iso, desc)") ;
+
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------
@@ -91,7 +91,6 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
         ASSERT (sparsity == GxB_FULL) ;
         ASSERT (!is_csc) ;
     }
-    // GB_BURBLE_END ;
     return (info) ;
 }
 

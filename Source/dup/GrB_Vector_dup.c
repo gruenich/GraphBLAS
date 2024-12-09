@@ -24,10 +24,11 @@ GrB_Info GrB_Vector_dup     // make an exact copy of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Vector_dup (&w, u)") ;
-    GB_BURBLE_START ("GrB_Vector_dup") ;
     GB_RETURN_IF_NULL (w) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;
+    GB_RETURN_IF_NULL (u) ;
+    GB_WHERE_1 (u, "GrB_Vector_dup (&w, u)") ;
+    GB_BURBLE_START ("GrB_Vector_dup") ;
+
     ASSERT (GB_VECTOR_OK (u)) ;
 
     //--------------------------------------------------------------------------

@@ -27,7 +27,8 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" )
     # integer operations wrap
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fwrapv " )
     # check all warnings (uncomment for development only)
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic" )
+    # FIXME
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
