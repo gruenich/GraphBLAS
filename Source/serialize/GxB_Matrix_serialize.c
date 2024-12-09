@@ -49,7 +49,7 @@ GrB_Info GxB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_serialize (&blob, &blob_size, A, desc)") ;
+    GB_WHERE0 ("GxB_Matrix_serialize (&blob, &blob_size, A, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_serialize") ;
     GB_RETURN_IF_NULL (blob_handle) ;
     GB_RETURN_IF_NULL (blob_size_handle) ;

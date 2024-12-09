@@ -25,7 +25,7 @@ GrB_Info GrB_IndexUnaryOp_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_IndexUnaryOp_get_Scalar (op, value, field)") ;
+    GB_WHERE0 ("GrB_IndexUnaryOp_get_Scalar (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for get", GB0) ;
@@ -53,7 +53,7 @@ GrB_Info GrB_IndexUnaryOp_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_IndexUnaryOp_get_String (op, value, field)") ;
+    GB_WHERE0 ("GrB_IndexUnaryOp_get_String (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for get", GB0) ;
@@ -81,7 +81,7 @@ GrB_Info GrB_IndexUnaryOp_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_IndexUnaryOp_get_INT32 (op, value, field)") ;
+    GB_WHERE0 ("GrB_IndexUnaryOp_get_INT32 (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for get", GB0) ;
@@ -109,7 +109,7 @@ GrB_Info GrB_IndexUnaryOp_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_IndexUnaryOp_get_SIZE (op, value, field)") ;
+    GB_WHERE0 ("GrB_IndexUnaryOp_get_SIZE (op, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for get", GB0) ;

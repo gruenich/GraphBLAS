@@ -33,7 +33,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_reduce_, T) /* c = accum (c, reduce (A)) */ \
     const GrB_Descriptor desc                                                  \
 )                                                                              \
 {                                                                              \
-    GB_WHERE1 ("GrB_Matrix_reduce_" GB_STR(T) " (&c, accum, monoid, A, desc)");\
+    GB_WHERE0 ("GrB_Matrix_reduce_" GB_STR(T) " (&c, accum, monoid, A, desc)");\
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     info = GB_reduce_to_scalar (c, GB_EVAL3 (prefix, _, T), accum,             \
@@ -65,7 +65,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE1 ("GrB_Matrix_reduce_UDT (&c, accum, monoid, A, desc)") ;
+    GB_WHERE0 ("GrB_Matrix_reduce_UDT (&c, accum, monoid, A, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_BURBLE_START ("GrB_reduce") ;

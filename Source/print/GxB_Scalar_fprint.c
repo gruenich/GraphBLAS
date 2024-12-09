@@ -17,17 +17,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_Scalar_fprint (s, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_Scalar_check (s, name, pr, f)) ;
 }
 

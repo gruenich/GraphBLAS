@@ -36,7 +36,7 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set_INT32 (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set_INT32 (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -107,7 +107,7 @@ GrB_Info GxB_Global_Option_set_FP64      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set_FP64 (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set_FP64 (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -149,7 +149,7 @@ GrB_Info GxB_Global_Option_set_FP64_ARRAY      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set_FP64_ARRAY (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set_FP64_ARRAY (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -197,7 +197,7 @@ GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set_INT64_ARRAY (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set_INT64_ARRAY (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -234,7 +234,7 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set_CHAR (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set_CHAR (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -302,7 +302,7 @@ GrB_Info GxB_Global_Option_set_FUNCTION      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set_FUNCTION (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set_FUNCTION (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option
@@ -344,7 +344,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_set (field, value)") ;
+    GB_WHERE0 ("GxB_Global_Option_set (field, value)") ;
 
     //--------------------------------------------------------------------------
     // set the global option

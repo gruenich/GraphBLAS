@@ -24,7 +24,7 @@ GrB_Info GxB_IndexBinaryOp_wait   // no work, just check if valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_IndexBinaryOp_wait (op, waitmode)") ;
+    GB_WHERE0 ("GxB_IndexBinaryOp_wait (op, waitmode)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
     //--------------------------------------------------------------------------

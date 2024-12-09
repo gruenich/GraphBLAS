@@ -33,7 +33,7 @@ GrB_Info GxB_BinaryOp_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_BinaryOp_new (op, function, ztype, xtype, ytype"
+    GB_WHERE0 ("GxB_BinaryOp_new (op, function, ztype, xtype, ytype"
         ", name, defn)") ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;

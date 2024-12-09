@@ -71,6 +71,7 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;

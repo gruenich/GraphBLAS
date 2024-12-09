@@ -40,7 +40,7 @@ GrB_Info GxB_IndexBinaryOp_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_IndexBinaryOp_new (op, function, ztype, xtype, ytype"
+    GB_WHERE0 ("GxB_IndexBinaryOp_new (op, function, ztype, xtype, ytype"
         ", theta_type, name, defn)") ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;

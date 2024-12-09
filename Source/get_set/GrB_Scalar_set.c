@@ -41,7 +41,7 @@ GrB_Info GrB_Scalar_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Scalar_set_String (s, value, field)") ;
+    GB_WHERE0 ("GrB_Scalar_set_String (s, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to set option", GB0) ;

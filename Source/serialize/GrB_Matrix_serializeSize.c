@@ -29,7 +29,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_serializeSize (&blob_size, A)") ;
+    GB_WHERE0 ("GrB_Matrix_serializeSize (&blob_size, A)") ;
     GB_BURBLE_START ("GrB_Matrix_serialize") ;
     GB_RETURN_IF_NULL (blob_size_handle) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

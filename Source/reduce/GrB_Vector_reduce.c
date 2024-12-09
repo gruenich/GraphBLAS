@@ -33,7 +33,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_reduce_, T) /* c = accum (c, reduce (u)) */  
     const GrB_Descriptor desc                                                  \
 )                                                                              \
 {                                                                              \
-    GB_WHERE1 ("GrB_Vector_reduce_" GB_STR(T) " (&c, accum, monoid, u, desc)");\
+    GB_WHERE0 ("GrB_Vector_reduce_" GB_STR(T) " (&c, accum, monoid, u, desc)");\
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                          \
     GB_BURBLE_START ("GrB_reduce") ;                                           \
     ASSERT (GB_VECTOR_OK (u)) ;                                                \
@@ -66,7 +66,7 @@ GrB_Info GrB_Vector_reduce_UDT      // c = accum (c, reduce_to_scalar (u))
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE1 ("GrB_Vector_reduce_UDT (&c, accum, monoid, u, desc)") ;
+    GB_WHERE0 ("GrB_Vector_reduce_UDT (&c, accum, monoid, u, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;

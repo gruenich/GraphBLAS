@@ -17,17 +17,7 @@ GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_Monoid_fprint (monoid, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_Monoid_check (monoid, name, pr, f, false)) ;
 }
 

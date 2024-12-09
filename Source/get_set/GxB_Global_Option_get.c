@@ -35,7 +35,7 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_get_INT32 (field, &value)") ;
+    GB_WHERE0 ("GxB_Global_Option_get_INT32 (field, &value)") ;
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
@@ -140,7 +140,7 @@ GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_get_FP64 (field, &value)") ;
+    GB_WHERE0 ("GxB_Global_Option_get_FP64 (field, &value)") ;
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
@@ -192,7 +192,7 @@ GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_get_INT64 (field, &value)") ;
+    GB_WHERE0 ("GxB_Global_Option_get_INT64 (field, &value)") ;
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
@@ -235,7 +235,7 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_get_CHAR (field, &value)") ;
+    GB_WHERE0 ("GxB_Global_Option_get_CHAR (field, &value)") ;
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
@@ -375,7 +375,7 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_get_FUNCTION (field, &value)") ;
+    GB_WHERE0 ("GxB_Global_Option_get_FUNCTION (field, &value)") ;
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
@@ -440,7 +440,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Global_Option_get (field, &value)") ;
+    GB_WHERE0 ("GxB_Global_Option_get (field, &value)") ;
 
     //--------------------------------------------------------------------------
     // get the option

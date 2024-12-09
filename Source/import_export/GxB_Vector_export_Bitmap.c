@@ -32,7 +32,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_Bitmap (&v, &type, &n, "
+    GB_WHERE0 ("GxB_Vector_export_Bitmap (&v, &type, &n, "
         "&vb, &vx, &vb_size, &vx_size, &iso, &nvals, desc)") ;
     // GB_BURBLE_START ("GxB_Vector_export_Bitmap") ;
     GB_RETURN_IF_NULL (v) ;

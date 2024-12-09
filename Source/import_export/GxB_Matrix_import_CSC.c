@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_import_CSC (&A, type, nrows, ncols, "
+    GB_WHERE0 ("GxB_Matrix_import_CSC (&A, type, nrows, ncols, "
         "&Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso, "
         "jumbled, desc)") ;
     // GB_BURBLE_START ("GxB_Matrix_import_CSC") ;

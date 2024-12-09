@@ -24,7 +24,7 @@ GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_pack_FullR (A, "
+    GB_WHERE0 ("GxB_Matrix_pack_FullR (A, "
         "&Ax, Ax_size, iso, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_pack_FullR") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

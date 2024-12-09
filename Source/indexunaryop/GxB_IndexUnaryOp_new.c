@@ -36,7 +36,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_IndexUnaryOp_new (op, function, ztype, xtype, ytype"
+    GB_WHERE0 ("GxB_IndexUnaryOp_new (op, function, ztype, xtype, ytype"
         ", name, defn)") ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;

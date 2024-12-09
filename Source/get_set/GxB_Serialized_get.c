@@ -215,7 +215,7 @@ GrB_Info GxB_Serialized_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Serialized_get_Scalar (blob, value, field, blobsize)") ;
+    GB_WHERE0 ("GxB_Serialized_get_Scalar (blob, value, field, blobsize)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
 
@@ -317,7 +317,7 @@ GrB_Info GxB_Serialized_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Serialized_get_String (blob, value, field, blobsize)") ;
+    GB_WHERE0 ("GxB_Serialized_get_String (blob, value, field, blobsize)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -388,7 +388,7 @@ GrB_Info GxB_Serialized_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Serialized_get_INT32 (blob, value, field, blobsize)") ;
+    GB_WHERE0 ("GxB_Serialized_get_INT32 (blob, value, field, blobsize)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -463,7 +463,7 @@ GrB_Info GxB_Serialized_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Serialized_get_SIZE (blob, value, field, blobsize)") ;
+    GB_WHERE0 ("GxB_Serialized_get_SIZE (blob, value, field, blobsize)") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 

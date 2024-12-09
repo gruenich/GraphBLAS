@@ -33,7 +33,7 @@ GrB_Info function_name      /* extract tuples from a vector */              \
     const GrB_Vector v      /* vector to extract tuples from             */ \
 )                                                                           \
 {                                                                           \
-    GB_WHERE1 (GB_STR(function_name) " (I, X, nvals, v)") ;                 \
+    GB_WHERE0 (GB_STR(function_name) " (I, X, nvals, v)") ;                 \
     GB_BURBLE_START (GB_STR(function_name)) ;                               \
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                       \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
@@ -72,7 +72,7 @@ GrB_Info GrB_Vector_extractTuples_UDT
     const GrB_Vector v      // vector to extract tuples from
 )
 { 
-    GB_WHERE1 ("GrB_Vector_extractTuples_UDT (I, X, nvals, v)") ;
+    GB_WHERE0 ("GrB_Vector_extractTuples_UDT (I, X, nvals, v)") ;
     GB_BURBLE_START ("GrB_Vector_extractTuples_UDT") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     GB_RETURN_IF_NULL (p_nvals) ;

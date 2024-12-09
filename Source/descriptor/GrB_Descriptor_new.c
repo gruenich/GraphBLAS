@@ -21,7 +21,7 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Descriptor_new (&descriptor)") ;
+    GB_WHERE0 ("GrB_Descriptor_new (&descriptor)") ;
     GB_RETURN_IF_NULL (descriptor) ;
     (*descriptor) = NULL ;
 

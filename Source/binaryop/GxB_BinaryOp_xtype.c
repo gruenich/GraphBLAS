@@ -22,7 +22,7 @@ GrB_Info GxB_BinaryOp_xtype         // type of x
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_BinaryOp_xtype (&xtype, binaryop)") ;
+    GB_WHERE0 ("GxB_BinaryOp_xtype (&xtype, binaryop)") ;
     GB_RETURN_IF_NULL (xtype) ;
     GB_RETURN_IF_NULL_OR_FAULTY (binaryop) ;
     ASSERT_BINARYOP_OK (binaryop, "binaryop for xtype", GB0) ;

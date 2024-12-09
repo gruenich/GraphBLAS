@@ -22,6 +22,7 @@ GrB_Info GB_Context_check       // check a GraphBLAS Context
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_CHECK_INIT ;
     GBPR0 ("\n    GraphBLAS Context: %s ", ((name != NULL) ? name : "")) ;
 
     if (Context == NULL)

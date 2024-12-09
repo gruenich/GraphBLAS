@@ -17,17 +17,7 @@ GrB_Info GxB_Descriptor_fprint      // print and check a GrB_Descriptor
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_Descriptor_fprint (descriptor, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_Descriptor_check (descriptor, name, pr, f)) ;
 }
 

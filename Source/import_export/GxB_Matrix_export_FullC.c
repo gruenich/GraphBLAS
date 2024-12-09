@@ -30,7 +30,7 @@ GrB_Info GxB_Matrix_export_FullC  // export and free a full matrix, by column
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols, "
+    GB_WHERE0 ("GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols, "
         "&Ax, &Ax_size, &iso, desc)") ;
     // GB_BURBLE_START ("GxB_Matrix_export_FullC") ;
     GB_RETURN_IF_NULL (A) ;

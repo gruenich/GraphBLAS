@@ -95,7 +95,7 @@ GrB_Info GrB_Global_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Global_set_Scalar (g, value, field)") ;
+    GB_WHERE0 ("GrB_Global_set_Scalar (g, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
 
@@ -170,7 +170,7 @@ GrB_Info GrB_Global_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Global_set_String (g, value, field)") ;
+    GB_WHERE0 ("GrB_Global_set_String (g, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -256,7 +256,7 @@ GrB_Info GrB_Global_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Global_set_INT32 (g, value, field)") ;
+    GB_WHERE0 ("GrB_Global_set_INT32 (g, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------
@@ -292,7 +292,7 @@ GrB_Info GrB_Global_set_VOID
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Global_set_VOID (g, value, field, size)") ;
+    GB_WHERE0 ("GrB_Global_set_VOID (g, value, field, size)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------

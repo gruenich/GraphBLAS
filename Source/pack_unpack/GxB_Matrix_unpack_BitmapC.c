@@ -28,7 +28,7 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_unpack_BitmapC (A, "
+    GB_WHERE0 ("GxB_Matrix_unpack_BitmapC (A, "
         "&Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_BitmapC") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

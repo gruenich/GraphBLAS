@@ -21,7 +21,7 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_exportHint (&format, A)") ;
+    GB_WHERE0 ("GrB_Matrix_exportHint (&format, A)") ;
     // GB_BURBLE_START ("GrB_Matrix_exportHint") ;
     GB_RETURN_IF_NULL (format) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

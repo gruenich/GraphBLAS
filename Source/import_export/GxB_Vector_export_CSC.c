@@ -33,7 +33,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_CSC (&v, &type, &n, "
+    GB_WHERE0 ("GxB_Vector_export_CSC (&v, &type, &n, "
         "&vi, &vx, &vi_size, &vx_size, &iso, &nvals, &jumbled, desc)") ;
     // GB_BURBLE_START ("GxB_Vector_export_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;

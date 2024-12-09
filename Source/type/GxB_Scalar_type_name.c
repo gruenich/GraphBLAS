@@ -21,7 +21,7 @@ GrB_Info GxB_Scalar_type_name      // return the name of the type of a scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Scalar_type_name (type_name, s)") ;
+    GB_WHERE0 ("GxB_Scalar_type_name (type_name, s)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
 
     //--------------------------------------------------------------------------

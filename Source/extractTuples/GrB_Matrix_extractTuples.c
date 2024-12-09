@@ -34,7 +34,7 @@ GrB_Info function_name      /* extract tuples from a matrix */              \
     const GrB_Matrix A      /* matrix to extract tuples from             */ \
 )                                                                           \
 {                                                                           \
-    GB_WHERE1 (GB_STR(function_name) " (I, J, X, nvals, A)") ;              \
+    GB_WHERE0 (GB_STR(function_name) " (I, J, X, nvals, A)") ;              \
     GB_BURBLE_START (GB_STR(function_name)) ;                               \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                       \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
@@ -73,7 +73,7 @@ GrB_Info GrB_Matrix_extractTuples_UDT
     const GrB_Matrix A      // matrix to extract tuples from
 )
 { 
-    GB_WHERE1 ("GrB_Matrix_extractTuples_UDT (I, J, X, nvals, A)") ;
+    GB_WHERE0 ("GrB_Matrix_extractTuples_UDT (I, J, X, nvals, A)") ;
     GB_BURBLE_START ("GrB_Matrix_extractTuples_UDT") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (p_nvals) ;

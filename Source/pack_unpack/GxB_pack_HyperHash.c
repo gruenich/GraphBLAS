@@ -70,7 +70,7 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_pack_HyperHash (A, &Y, desc)") ;
+    GB_WHERE0 ("GxB_pack_HyperHash (A, &Y, desc)") ;
     GB_BURBLE_START ("GxB_pack_HyperHash") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (Y) ;

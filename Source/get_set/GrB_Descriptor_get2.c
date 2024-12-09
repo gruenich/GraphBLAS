@@ -92,7 +92,7 @@ GrB_Info GrB_Descriptor_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Descriptor_get_Scalar (desc, value, field)") ;
+    GB_WHERE0 ("GrB_Descriptor_get_Scalar (desc, value, field)") ;
     GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
@@ -127,7 +127,7 @@ GrB_Info GrB_Descriptor_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Descriptor_get_String (desc, value, field)") ;
+    GB_WHERE0 ("GrB_Descriptor_get_String (desc, value, field)") ;
     GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
@@ -163,7 +163,7 @@ GrB_Info GrB_Descriptor_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Descriptor_get_INT32 (desc, value, field)") ;
+    GB_WHERE0 ("GrB_Descriptor_get_INT32 (desc, value, field)") ;
     GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;
@@ -191,7 +191,7 @@ GrB_Info GrB_Descriptor_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Descriptor_get_SIZE (desc, value, field)") ;
+    GB_WHERE0 ("GrB_Descriptor_get_SIZE (desc, value, field)") ;
     GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for get", GB0) ;

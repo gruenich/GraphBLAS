@@ -248,7 +248,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_export_, Type) /* export a matrix */        \
     GrB_Matrix A            /* matrix to export                              */\
 )                                                                              \
 {                                                                              \
-    GB_WHERE1 (GB_STR(prefix) "_Matrix_export_" GB_STR(Type)                   \
+    GB_WHERE0 (GB_STR(prefix) "_Matrix_export_" GB_STR(Type)                   \
         " (Ap, Ai, Ax, &Ap_len, &Ai_len, &Ax_len, format, A)") ;               \
 /*  GB_BURBLE_START (GB_STR(prefix) "_Matrix_export_" GB_STR(Type)) ; */       \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \

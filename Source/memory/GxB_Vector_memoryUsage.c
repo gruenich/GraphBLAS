@@ -20,7 +20,7 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_memoryUsage (&size, v)") ;
+    GB_WHERE0 ("GxB_Vector_memoryUsage (&size, v)") ;
     GB_RETURN_IF_NULL (size) ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT (GB_VECTOR_OK (v)) ;

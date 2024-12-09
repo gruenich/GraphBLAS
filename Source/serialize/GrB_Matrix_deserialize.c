@@ -33,7 +33,7 @@ GrB_Info GrB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_deserialize (&C, type, blob, blob_size)") ;
+    GB_WHERE0 ("GrB_Matrix_deserialize (&C, type, blob, blob_size)") ;
     GB_BURBLE_START ("GrB_Matrix_deserialize") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (C) ;

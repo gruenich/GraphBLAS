@@ -38,7 +38,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, "
+    GB_WHERE0 ("GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, "
         "&Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size, "
         "&iso, &nvec, &jumbled, desc)") ;
     // GB_BURBLE_START ("GxB_Matrix_export_HyperCSR") ;

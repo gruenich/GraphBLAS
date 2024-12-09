@@ -25,7 +25,7 @@ GrB_Info GxB_Context_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Context_set_Scalar (Context, value, field)") ;
+    GB_WHERE0 ("GxB_Context_set_Scalar (Context, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
     ASSERT_CONTEXT_OK (Context, "Context to set", GB0) ;
@@ -98,7 +98,7 @@ GrB_Info GxB_Context_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Context_set_String (Context, value, field)") ;
+    GB_WHERE0 ("GxB_Context_set_String (Context, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_CONTEXT_OK (Context, "Context to get option", GB0) ;
@@ -133,7 +133,7 @@ GrB_Info GxB_Context_set_INT
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Context_set_INT (Context, value, field)") ;
+    GB_WHERE0 ("GxB_Context_set_INT (Context, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     ASSERT_CONTEXT_OK (Context, "Context to set", GB0) ;
 

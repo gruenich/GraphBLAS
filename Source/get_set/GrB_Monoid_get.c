@@ -25,7 +25,7 @@ GrB_Info GrB_Monoid_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Monoid_get_Scalar (monoid, value, field)") ;
+    GB_WHERE0 ("GrB_Monoid_get_Scalar (monoid, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;
@@ -53,7 +53,7 @@ GrB_Info GrB_Monoid_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Monoid_get_String (monoid, value, field)") ;
+    GB_WHERE0 ("GrB_Monoid_get_String (monoid, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;
@@ -105,7 +105,7 @@ GrB_Info GrB_Monoid_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Monoid_get_INT32 (monoid, value, field)") ;
+    GB_WHERE0 ("GrB_Monoid_get_INT32 (monoid, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;
@@ -133,7 +133,7 @@ GrB_Info GrB_Monoid_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Monoid_get_SIZE (monoid, value, field)") ;
+    GB_WHERE0 ("GrB_Monoid_get_SIZE (monoid, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;
@@ -188,7 +188,7 @@ GrB_Info GrB_Monoid_get_VOID
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Monoid_get_VOID (monoid, value, field)") ;
+    GB_WHERE0 ("GrB_Monoid_get_VOID (monoid, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;

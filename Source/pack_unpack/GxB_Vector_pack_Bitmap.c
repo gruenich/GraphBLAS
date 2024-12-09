@@ -27,7 +27,7 @@ GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_pack_Bitmap (v, "
+    GB_WHERE0 ("GxB_Vector_pack_Bitmap (v, "
         "&vb, &vx, vb_size, vx_size, iso, nvals, desc)") ;
     GB_BURBLE_START ("GxB_Vector_pack_Bitmap") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;

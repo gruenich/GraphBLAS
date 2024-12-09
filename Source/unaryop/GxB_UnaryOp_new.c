@@ -30,7 +30,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_UnaryOp_new (op, function, ztype, xtype, name, defn)") ;
+    GB_WHERE0 ("GxB_UnaryOp_new (op, function, ztype, xtype, name, defn)") ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;

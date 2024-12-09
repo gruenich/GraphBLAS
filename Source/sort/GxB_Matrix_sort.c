@@ -26,7 +26,7 @@ GrB_Info GxB_Matrix_sort
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_sort (C, P, op, A, desc)") ;
+    GB_WHERE0 ("GxB_Matrix_sort (C, P, op, A, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_sort") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

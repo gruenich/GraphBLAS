@@ -17,17 +17,7 @@ GrB_Info GxB_Type_fprint            // print and check a GrB_Type
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_Type_fprint (type, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_Type_check (type, name, pr, f)) ;
 }
 

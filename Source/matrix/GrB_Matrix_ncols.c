@@ -22,7 +22,7 @@ GrB_Info GrB_Matrix_ncols   // get the number of columns of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Matrix_ncols (&ncols, A)") ;
+    GB_WHERE0 ("GrB_Matrix_ncols (&ncols, A)") ;
     GB_RETURN_IF_NULL (ncols) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 

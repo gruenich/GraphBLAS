@@ -50,7 +50,7 @@ GrB_Info GrB_Semiring_new           // create a semiring
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Semiring_new (&semiring, add, multiply)") ;
+    GB_WHERE0 ("GrB_Semiring_new (&semiring, add, multiply)") ;
     GB_RETURN_IF_NULL (semiring) ;
 
     (*semiring) = NULL ;

@@ -346,7 +346,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_import_, T) /* import a matrix */           \
     GrB_Format format       /* import format                                 */\
 )                                                                              \
 {                                                                              \
-    GB_WHERE1 (GB_STR(prefix) "_Matrix_import_" GB_STR(T) " (&A, type, nrows," \
+    GB_WHERE0 (GB_STR(prefix) "_Matrix_import_" GB_STR(T) " (&A, type, nrows," \
         " ncols, Ap, Ai, Ax, Ap_len, Ai_len, Ax_len, format)") ;               \
 /*  GB_BURBLE_START (GB_STR(prefix) "_Matrix_import_" GB_STR(T)) ;  */         \
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;                                       \

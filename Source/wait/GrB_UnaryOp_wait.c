@@ -24,7 +24,7 @@ GrB_Info GrB_UnaryOp_wait   // no work, just check if the GrB_UnaryOp is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_UnaryOp_wait (op, waitmode)") ;
+    GB_WHERE0 ("GrB_UnaryOp_wait (op, waitmode)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
     //--------------------------------------------------------------------------

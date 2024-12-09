@@ -17,17 +17,7 @@ GrB_Info GxB_Semiring_fprint        // print and check a GrB_Semiring
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_Semiring_fprint (semiring, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_Semiring_check (semiring, name, pr, f)) ;
 }
 

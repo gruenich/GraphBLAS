@@ -49,7 +49,7 @@ GrB_Info GxB_Vector_serialize       // serialize a GrB_Vector to a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_serialize (&blob, &blob_size, u, desc)") ;
+    GB_WHERE0 ("GxB_Vector_serialize (&blob, &blob_size, u, desc)") ;
     GB_BURBLE_START ("GxB_Vector_serialize") ;
     GB_RETURN_IF_NULL (blob_handle) ;
     GB_RETURN_IF_NULL (blob_size_handle) ;

@@ -24,7 +24,7 @@ GrB_Info GrB_Scalar_dup     // make an exact copy of a GrB_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GrB_Scalar_dup (&s, t)") ;
+    GB_WHERE0 ("GrB_Scalar_dup (&s, t)") ;
     GB_RETURN_IF_NULL (s) ;
     GB_RETURN_IF_NULL_OR_FAULTY (t) ;
     ASSERT (GB_SCALAR_OK (t)) ;

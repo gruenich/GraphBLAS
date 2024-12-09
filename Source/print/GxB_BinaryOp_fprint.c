@@ -17,17 +17,7 @@ GrB_Info GxB_BinaryOp_fprint        // print and check a GrB_BinaryOp
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_BinaryOp_fprint (binaryop, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_BinaryOp_check (binaryop, name, pr, f)) ;
 }
 

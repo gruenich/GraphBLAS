@@ -17,17 +17,7 @@ GrB_Info GxB_UnaryOp_fprint         // print and check a GrB_UnaryOp
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_UnaryOp_fprint (unaryop, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_UnaryOp_check (unaryop, name, pr, f)) ;
 }
 

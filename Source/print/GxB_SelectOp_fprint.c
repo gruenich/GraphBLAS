@@ -17,17 +17,7 @@ GrB_Info GxB_SelectOp_fprint        // print and check a GxB_SelectOp
     FILE *f                         // file for output
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_SelectOp_fprint (selectop, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
     return (GB_SelectOp_check (selectop, name, pr, f)) ;
 }
 

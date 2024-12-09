@@ -23,7 +23,7 @@ GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Descriptor_get (&value, desc, field)") ;
+    GB_WHERE0 ("GxB_Descriptor_get (&value, desc, field)") ;
     GB_RETURN_IF_NULL (val) ;
     GB_RETURN_IF_FAULTY (desc) ;
 

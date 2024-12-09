@@ -31,7 +31,7 @@ GrB_Info GxB_Vector_import_CSC  // import a vector in CSC format
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_import_CSC (&v, type, n, "
+    GB_WHERE0 ("GxB_Vector_import_CSC (&v, type, n, "
         "&vi, &vx, vi_size, vx_size, iso, nvals, jumbled, desc)") ;
     // GB_BURBLE_START ("GxB_Vector_import_CSC") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;

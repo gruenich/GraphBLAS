@@ -31,7 +31,7 @@ GrB_Info GxB_Matrix_import_BitmapR  // import a bitmap matrix, held by row
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_import_BitmapR (&A, type, nrows, ncols, "
+    GB_WHERE0 ("GxB_Matrix_import_BitmapR (&A, type, nrows, ncols, "
         "&Ab, &Ax, Ab_size, Ax_size, iso, nvals, desc)") ;
     // GB_BURBLE_START ("GxB_Matrix_import_BitmapR") ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;

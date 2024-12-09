@@ -83,6 +83,12 @@ static inline GrB_Info GB_valids
 // condition.  Thus, each time a user-callable function is entered, it logs the
 // name of the function with the GB_WHERE macro.
 
+#define GB_CHECK_INIT                                               \
+    if (!GB_Global_GrB_init_called_get ( ))                         \
+    {                                                               \
+        return (GrB_PANIC) ; /* GrB_init not called */              \
+    }                                                               \
+
 #define GB_WERK(where_string)                                       \
     /* construct the Werk */                                        \
     GB_Werk_struct Werk_struct ;                                    \
@@ -90,14 +96,9 @@ static inline GrB_Info GB_valids
 
 // C is a matrix, vector, or scalar
 #define GB_WHERE(C,arg2,arg3,arg4,arg5,arg6,where_string)           \
-    GrB_Info info ;                                                 \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
-    {                                                               \
-        return (GrB_PANIC) ; /* GrB_init not called */              \
-    }                                                               \
-    GB_WERK (where_string)                                          \
+    GB_WHERE0 (where_string)                                        \
     /* ensure the matrix has valid integers */                      \
-    info =  GB_valids (C, arg2, arg3, arg4, arg5, arg6, Werk) ;     \
+    info = GB_valids (C, arg2, arg3, arg4, arg5, arg6, Werk) ;      \
     if (info != GrB_SUCCESS)                                        \
     {                                                               \
         return (info) ;                                             \
@@ -116,10 +117,7 @@ static inline GrB_Info GB_valids
 
 // for descriptors
 #define GB_WHERE_DESC(desc,where_string)                            \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
-    {                                                               \
-        return (GrB_PANIC) ; /* GrB_init not called */              \
-    }                                                               \
+    GB_CHECK_INIT                                                   \
     GB_WERK (where_string)                                          \
     if (desc != NULL)                                               \
     {                                                               \
@@ -130,12 +128,9 @@ static inline GrB_Info GB_valids
     }
 
 // create the Werk, with no error logging
-#define GB_WHERE1(where_string)                                     \
+#define GB_WHERE0(where_string)                                     \
     GrB_Info info ;                                                 \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
-    {                                                               \
-        return (GrB_PANIC) ; /* GrB_init not called */              \
-    }                                                               \
+    GB_CHECK_INIT                                                   \
     GB_WERK (where_string)
 
 //------------------------------------------------------------------------------

@@ -23,6 +23,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_CHECK_INIT ;
     GBPR0 ("\n    GraphBLAS BinaryOp: %s ", ((name != NULL) ? name : "")) ;
 
     if (op == NULL)

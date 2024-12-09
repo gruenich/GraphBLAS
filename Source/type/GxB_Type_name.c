@@ -21,7 +21,7 @@ GrB_Info GxB_Type_name      // return the name of a GraphBLAS type
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Type_name (type_name, type)") ;
+    GB_WHERE0 ("GxB_Type_name (type_name, type)") ;
     GB_RETURN_IF_NULL (type_name) ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
 

@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_export_BitmapR  // export and free a bitmap matrix, by row
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols, "
+    GB_WHERE0 ("GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols, "
         "&Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, desc)") ;
     // GB_BURBLE_START ("GxB_Matrix_export_BitmapR") ;
     GB_RETURN_IF_NULL (A) ;

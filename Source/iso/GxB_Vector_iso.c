@@ -22,7 +22,7 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_iso (&iso, v)") ;
+    GB_WHERE0 ("GxB_Vector_iso (&iso, v)") ;
     GB_RETURN_IF_NULL (iso) ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT (GB_VECTOR_OK (v)) ;

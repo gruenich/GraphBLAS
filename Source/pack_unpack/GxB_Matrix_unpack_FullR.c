@@ -25,7 +25,7 @@ GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_unpack_FullR (A, "
+    GB_WHERE0 ("GxB_Matrix_unpack_FullR (A, "
         "&Ax, &Ax_size, &iso, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_FullR") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

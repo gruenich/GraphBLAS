@@ -29,7 +29,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Vector_export_Full (&v, &type, &n, "
+    GB_WHERE0 ("GxB_Vector_export_Full (&v, &type, &n, "
         "&vx, &vx_size, &iso, desc)") ;
     // GB_BURBLE_START ("GxB_Vector_export_Full") ;
     GB_RETURN_IF_NULL (v) ;

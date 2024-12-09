@@ -22,7 +22,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_BinaryOp_new_IndexOp (&binop, idxbinop, theta)") ;
+    GB_WHERE0 ("GxB_BinaryOp_new_IndexOp (&binop, idxbinop, theta)") ;
     GB_RETURN_IF_NULL (binop_handle) ;
     (*binop_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (idxbinop) ;

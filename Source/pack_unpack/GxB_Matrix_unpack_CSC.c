@@ -30,7 +30,7 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_unpack_CSC (A, "
+    GB_WHERE0 ("GxB_Matrix_unpack_CSC (A, "
         "&Ap, &Ai, &Ax, &Ap_size, &Ai_size, &Ax_size, &iso, "
         "&jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_CSC") ;

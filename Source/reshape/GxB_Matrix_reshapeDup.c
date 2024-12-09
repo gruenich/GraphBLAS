@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_reshapeDup (&C, A, nrows_new, ncols_new, desc)") ;
+    GB_WHERE0 ("GxB_Matrix_reshapeDup (&C, A, nrows_new, ncols_new, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_reshapeDup") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;

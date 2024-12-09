@@ -17,23 +17,8 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
     FILE *f                         // file for output
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 ("GxB_Matrix_fprint (A, name, pr, f)") ;
-
-    //--------------------------------------------------------------------------
-    // print and check the object
-    //--------------------------------------------------------------------------
-
-    info = GB_Matrix_check (A, name, pr, f) ;
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
+    GB_CHECK_INIT ;
+    GrB_Info info = GB_Matrix_check (A, name, pr, f) ;
     if (info == GrB_INDEX_OUT_OF_BOUNDS)
     { 
         // indices out of order

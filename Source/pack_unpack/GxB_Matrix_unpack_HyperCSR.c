@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 ("GxB_Matrix_unpack_HyperCSR (A, "
+    GB_WHERE0 ("GxB_Matrix_unpack_HyperCSR (A, "
         "&Ap, &Ah, &Aj, &Ax, &Ap_size, &Ah_size, &Aj_size, &Ax_size, "
         "&iso, &nvec, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_HyperCSR") ;
