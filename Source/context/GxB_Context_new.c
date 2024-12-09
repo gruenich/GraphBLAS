@@ -21,7 +21,7 @@ GrB_Info GxB_Context_new            // create a new Context
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GB_Context_new (&Context)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (Context_handle) ;
     (*Context_handle) = NULL ;
     GxB_Context Context = NULL ;

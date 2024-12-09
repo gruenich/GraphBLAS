@@ -34,7 +34,7 @@ GrB_Info GxB_Vector_Option_get_INT32    // gets the current option of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_Option_get_INT32 (v, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
     GB_RETURN_IF_NULL (value) ;
@@ -88,7 +88,7 @@ GrB_Info GxB_Vector_Option_get_FP64      // gets the current option of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_Option_get_FP64 (v, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
     GB_RETURN_IF_NULL (value) ;
@@ -131,7 +131,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_Option_get (v, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
 

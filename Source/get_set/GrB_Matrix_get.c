@@ -82,7 +82,7 @@ GrB_Info GrB_Matrix_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_get_String (A, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
@@ -110,7 +110,7 @@ GrB_Info GrB_Matrix_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_get_INT32 (A, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
@@ -138,7 +138,7 @@ GrB_Info GrB_Matrix_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_get_SIZE (A, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;

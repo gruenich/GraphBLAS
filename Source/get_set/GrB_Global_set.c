@@ -95,7 +95,7 @@ GrB_Info GrB_Global_set_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Global_set_Scalar (g, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
     GB_RETURN_IF_NULL_OR_FAULTY (value) ;
 
@@ -103,7 +103,7 @@ GrB_Info GrB_Global_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    info = GrB_NO_VALUE ;
+    GrB_Info info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -170,7 +170,7 @@ GrB_Info GrB_Global_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Global_set_String (g, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -178,7 +178,7 @@ GrB_Info GrB_Global_set_String
     // get the field
     //--------------------------------------------------------------------------
 
-    info = GrB_NO_VALUE ;
+    GrB_Info info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -256,14 +256,14 @@ GrB_Info GrB_Global_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Global_set_INT32 (g, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------
     // set the field
     //--------------------------------------------------------------------------
 
-    info = GrB_NO_VALUE ;
+    GrB_Info info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -292,14 +292,14 @@ GrB_Info GrB_Global_set_VOID
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Global_set_VOID (g, value, field, size)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (g) ;
 
     //--------------------------------------------------------------------------
     // set the field
     //--------------------------------------------------------------------------
 
-    info = GrB_SUCCESS ;
+    GrB_Info info = GrB_SUCCESS ;
 
     #pragma omp critical (GB_global_get_set)
     {

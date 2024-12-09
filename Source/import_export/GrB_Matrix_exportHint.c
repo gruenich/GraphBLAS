@@ -21,8 +21,8 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Matrix_exportHint (&format, A)") ;
-    // GB_BURBLE_START ("GrB_Matrix_exportHint") ;
+    GB_CHECK_INIT ;
+    GB_WERK ("GrB_Matrix_exportHint (&format, A)") ;
     GB_RETURN_IF_NULL (format) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
@@ -63,7 +63,6 @@ GrB_Info GrB_Matrix_exportHint  // suggest the best export format
             break ;
     }
 
-    // GB_BURBLE_END ;
     #pragma omp flush
     return (GrB_SUCCESS) ;
 }

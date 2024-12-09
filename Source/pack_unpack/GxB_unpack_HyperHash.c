@@ -63,8 +63,7 @@ GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_unpack_HyperHash (A, &Y, desc)") ;
-    GB_BURBLE_START ("GxB_unpack_HyperHash") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (Y) ;
     GB_RETURN_IF_FAULTY (*Y) ;
@@ -77,7 +76,6 @@ GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
     A->Y = NULL ;
     A->Y_shallow = false ;
 
-    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

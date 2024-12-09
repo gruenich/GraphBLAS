@@ -26,7 +26,10 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Vector_new (&v, type, n)") ;
+    GB_CHECK_INIT ;
+    GrB_Info info ;
+//  GB_WHERE0 ("GrB_Vector_new (&v, type, n)") ; // FIXME need this
+
     GB_RETURN_IF_NULL (v) ;
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;

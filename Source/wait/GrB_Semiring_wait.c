@@ -24,7 +24,7 @@ GrB_Info GrB_Semiring_wait   // no work, just check if the GrB_Semiring is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Semiring_wait (semiring, mode)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     //--------------------------------------------------------------------------

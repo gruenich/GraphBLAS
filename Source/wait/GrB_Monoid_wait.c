@@ -24,7 +24,7 @@ GrB_Info GrB_Monoid_wait   // no work, just check if the GrB_Monoid is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Monoid_wait (monoid, waitmode)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
     //--------------------------------------------------------------------------

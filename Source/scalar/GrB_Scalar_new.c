@@ -23,7 +23,8 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Scalar_new (&s, type)") ;
+    GB_CHECK_INIT ;
+//  GB_WHERE0 ("GrB_Scalar_new (&s, type)") ;   // FIXME will need
     GB_RETURN_IF_NULL (s) ;
     (*s) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
@@ -32,7 +33,7 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     // create the GrB_Scalar
     //--------------------------------------------------------------------------
 
-    info = GB_new ((GrB_Matrix *) s, // new user header
+    GrB_Info info = GB_new ((GrB_Matrix *) s, // new user header
         type, 1, 1, GB_ph_calloc, true, GxB_SPARSE,
         GB_Global_hyper_switch_get ( ), 1, /* FIXME: */ false, false) ;
     ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_SCALAR_OK (*s))) ;

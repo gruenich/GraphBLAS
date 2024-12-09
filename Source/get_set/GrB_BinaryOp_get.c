@@ -25,7 +25,8 @@ GrB_Info GrB_BinaryOp_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_BinaryOp_get_Scalar (op, value, field)") ;
+    GB_CHECK_INIT ;
+    GB_WERK ("GrB_BinaryOp_get_Scalar (op, value, field)") ;
     if (op != GxB_IGNORE_DUP) 
     { 
         GB_RETURN_IF_NULL_OR_FAULTY (op) ;
@@ -56,7 +57,7 @@ GrB_Info GrB_BinaryOp_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_BinaryOp_get_String (op, value, field)") ;
+    GB_CHECK_INIT ;
     if (op != GxB_IGNORE_DUP) 
     { 
         GB_RETURN_IF_NULL_OR_FAULTY (op) ;
@@ -87,7 +88,7 @@ GrB_Info GrB_BinaryOp_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_BinaryOp_get_INT32 (op, value, field)") ;
+    GB_CHECK_INIT ;
     if (op != GxB_IGNORE_DUP) 
     { 
         GB_RETURN_IF_NULL_OR_FAULTY (op) ;
@@ -118,7 +119,7 @@ GrB_Info GrB_BinaryOp_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_BinaryOp_get_SIZE (op, value, field)") ;
+    GB_CHECK_INIT ;
     if (op != GxB_IGNORE_DUP) 
     { 
         GB_RETURN_IF_NULL_OR_FAULTY (op) ;

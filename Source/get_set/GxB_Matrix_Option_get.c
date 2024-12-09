@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_Option_get_INT32    // gets the current option of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_Option_get_INT32 (A, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
     GB_RETURN_IF_NULL (value) ;
@@ -84,7 +84,7 @@ GrB_Info GxB_Matrix_Option_get_FP64     // gets the current option of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_Option_get_FP64 (A, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
     GB_RETURN_IF_NULL (value) ;
@@ -131,7 +131,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_Option_get (A, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 

@@ -36,7 +36,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_deserialize_type_name (type_name, blob, blob_size)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (type_name) ;
     GB_RETURN_IF_NULL (blob) ;
 

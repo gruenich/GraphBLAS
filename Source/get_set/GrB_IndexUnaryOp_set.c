@@ -39,7 +39,7 @@ GrB_Info GrB_IndexUnaryOp_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_IndexUnaryOp_set_String (op, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for set", GB0) ;

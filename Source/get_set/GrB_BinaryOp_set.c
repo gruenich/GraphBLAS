@@ -39,7 +39,7 @@ GrB_Info GrB_BinaryOp_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_BinaryOp_set_String (op, value, field)") ;
+    GB_CHECK_INIT
     if (op != GxB_IGNORE_DUP) 
     { 
         GB_RETURN_IF_NULL_OR_FAULTY (op) ;

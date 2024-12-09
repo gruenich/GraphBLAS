@@ -20,7 +20,7 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_memoryUsage (&size, A)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (size) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 

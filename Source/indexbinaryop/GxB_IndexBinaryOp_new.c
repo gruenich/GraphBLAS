@@ -40,8 +40,7 @@ GrB_Info GxB_IndexBinaryOp_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_IndexBinaryOp_new (op, function, ztype, xtype, ytype"
-        ", theta_type, name, defn)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
@@ -93,7 +92,7 @@ GrB_Info GxB_IndexBinaryOp_new
         (ytype->hash != UINT64_MAX) &&
         (theta_type->hash != UINT64_MAX) ;
 
-    info = GB_op_name_and_defn (
+    GrB_Info info = GB_op_name_and_defn (
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:

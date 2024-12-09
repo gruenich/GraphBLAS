@@ -61,7 +61,7 @@ GrB_Info GrB_Scalar_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Scalar_get_String (s, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;
@@ -89,7 +89,7 @@ GrB_Info GrB_Scalar_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Scalar_get_INT32 (s, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;
@@ -117,7 +117,7 @@ GrB_Info GrB_Scalar_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Scalar_get_SIZE (s, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_SCALAR_OK (s, "s to get option", GB0) ;

@@ -21,7 +21,8 @@ GrB_Info GxB_Matrix_type_name      // return the name of the type of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Matrix_type_name (type_name, A)") ;
+    GB_CHECK_INIT ;
+    GB_WERK ("GxB_Matrix_type_name (type_name, A)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     //--------------------------------------------------------------------------

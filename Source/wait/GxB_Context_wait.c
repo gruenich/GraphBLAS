@@ -24,7 +24,7 @@ GrB_Info GxB_Context_wait      // no work, just check if GxB_Context is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_wait (Context, waitmode)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
 
     //--------------------------------------------------------------------------

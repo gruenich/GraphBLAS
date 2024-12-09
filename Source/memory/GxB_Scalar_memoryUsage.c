@@ -20,7 +20,7 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Scalar_memoryUsage (&size, s)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (size) ;
     GB_RETURN_IF_NULL_OR_FAULTY (s) ;
 

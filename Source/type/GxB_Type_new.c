@@ -49,9 +49,11 @@ GrB_Info GxB_Type_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Type_new (&type, sizeof (ctype), type_name, type_defn)") ;
-    GB_BURBLE_START ("GxB_Type_new") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (type) ;
+    GB_BURBLE_START ("GxB_Type_new") ;
+
+    GrB_Info info ;
     (*type) = NULL ;
 
     if (sizeof_type == 0 && (type_defn == NULL || type_name == NULL))

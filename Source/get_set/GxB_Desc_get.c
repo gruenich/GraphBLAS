@@ -32,7 +32,7 @@ GrB_Info GxB_Desc_get_INT32     // get a parameter from a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Desc_get_INT32 (desc, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_FAULTY (desc) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -124,7 +124,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Desc_get (desc, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_FAULTY (desc) ;
 
     //--------------------------------------------------------------------------

@@ -33,8 +33,7 @@ GrB_Info GxB_BinaryOp_new
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_BinaryOp_new (op, function, ztype, xtype, ytype"
-        ", name, defn)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (op_handle) ;
     (*op_handle) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (ztype) ;
@@ -58,7 +57,7 @@ GrB_Info GxB_BinaryOp_new
     // create the binary op
     //--------------------------------------------------------------------------
 
-    info = GB_binop_new (op, function, ztype, xtype, ytype,
+    GrB_Info info = GB_binop_new (op, function, ztype, xtype, ytype,
         binop_name, binop_defn, GB_USER_binop_code) ;
     if (info != GrB_SUCCESS)
     { 

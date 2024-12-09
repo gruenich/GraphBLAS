@@ -70,8 +70,7 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     // check inputs and get the descriptor
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_pack_HyperHash (A, &Y, desc)") ;
-    GB_BURBLE_START ("GxB_pack_HyperHash") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (Y) ;
     GB_RETURN_IF_FAULTY (*Y) ;
@@ -107,7 +106,6 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     A->Y_shallow = false ;
     A->no_hyper_hash = false ;  // A now has a hyper_hash matrix A->Y
 
-    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

@@ -72,6 +72,7 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     //--------------------------------------------------------------------------
 
     GB_CHECK_INIT ;
+//  GB_WHERE0 ("GrB_Matrix_new (&A, type, nrows, ncols)") ; // FIXME will need
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;

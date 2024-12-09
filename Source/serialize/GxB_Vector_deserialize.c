@@ -34,10 +34,12 @@ GrB_Info GxB_Vector_deserialize     // deserialize blob into a GrB_Vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Vector_deserialize (&w, type, blob, blob_size, desc)") ;
+    GB_CHECK_INIT ;
     GB_BURBLE_START ("GxB_Vector_deserialize") ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (w) ;
+
+    GrB_Info info ;
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
 
     //--------------------------------------------------------------------------

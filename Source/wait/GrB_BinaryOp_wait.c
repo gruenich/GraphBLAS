@@ -24,7 +24,7 @@ GrB_Info GrB_BinaryOp_wait   // no work, just check if the GrB_BinaryOp is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_BinaryOp_wait (op, waitmode)") ;
+    GB_CHECK_INIT ;
     if (op == GxB_IGNORE_DUP) return (GrB_SUCCESS) ;    // nothing to do
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 

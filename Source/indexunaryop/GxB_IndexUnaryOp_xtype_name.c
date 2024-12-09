@@ -21,7 +21,7 @@ GrB_Info GxB_IndexUnaryOp_xtype_name    // return the name of the type of x
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_IndexUnaryOp_xtype_name (type_name, op)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (type_name) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     ASSERT_INDEXUNARYOP_OK (op, "op for xtype_name", GB0) ;

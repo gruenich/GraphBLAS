@@ -25,7 +25,7 @@ GrB_Info GxB_Context_get_INT32      // get a parameter of a Context
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get_INT32 (Context, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -71,7 +71,7 @@ GrB_Info GxB_Context_get_FP64       // get a parameter in a Context
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get_FP64 (Context, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -112,7 +112,7 @@ GrB_Info GxB_Context_get            // get a parameter in a Context
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get (desc, field, &value)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
 
     //--------------------------------------------------------------------------

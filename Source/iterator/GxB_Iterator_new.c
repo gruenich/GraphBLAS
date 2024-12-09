@@ -11,7 +11,7 @@
 
 GrB_Info GxB_Iterator_new (GxB_Iterator *iterator)
 {
-    GB_WHERE0 ("GxB_Iterator_new (&iterator)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (iterator) ;
     size_t header_size ;
     (*iterator) = GB_CALLOC (1, struct GB_Iterator_opaque, &header_size) ;

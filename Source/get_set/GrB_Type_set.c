@@ -39,7 +39,7 @@ GrB_Info GrB_Type_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Type_set_String (type, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_TYPE_OK (type, "unaryop for get", GB0) ;

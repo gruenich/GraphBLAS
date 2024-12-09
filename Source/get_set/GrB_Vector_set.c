@@ -69,7 +69,7 @@ GrB_Info GrB_Vector_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Vector_set_String (v, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
@@ -97,7 +97,8 @@ GrB_Info GrB_Vector_set_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Vector_set_INT32 (v, value, field)") ;
+    GB_CHECK_INIT ;
+    GB_WERK ("GrB_Vector_set_INT32 (v, value, field)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 

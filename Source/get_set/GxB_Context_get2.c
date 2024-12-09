@@ -94,7 +94,7 @@ GrB_Info GxB_Context_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get_String (Context, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;
@@ -140,7 +140,7 @@ GrB_Info GxB_Context_get_INT
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get_INT (Context, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;
@@ -187,7 +187,7 @@ GrB_Info GxB_Context_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Context_get_SIZE (Context, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (Context) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_CONTEXT_OK (Context, "context for get", GB0) ;

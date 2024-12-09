@@ -21,7 +21,7 @@ GrB_Info GxB_BinaryOp_ytype_name    // return the name of the type of x
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_BinaryOp_ytype_name (type_name, op)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (type_name) ;
     GB_RETURN_IF_NULL_OR_FAULTY (binaryop) ;
     ASSERT_BINARYOP_OK (binaryop, "binaryop for ytype_name", GB0) ;

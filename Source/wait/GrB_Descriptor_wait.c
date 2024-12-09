@@ -26,7 +26,7 @@ GrB_Info GrB_Descriptor_wait // no work, just check if GrB_Descriptor is valid
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Descriptor_wait (desc, waitmode)") ;
+    GB_CHECK_INIT ;
     if (desc != NULL) GB_RETURN_IF_FAULTY (desc) ;
 
     //--------------------------------------------------------------------------

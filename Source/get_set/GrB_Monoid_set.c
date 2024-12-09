@@ -39,7 +39,7 @@ GrB_Info GrB_Monoid_set_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GrB_Monoid_set_String (monoid, value, field)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
     GB_RETURN_IF_NULL (value) ;
     ASSERT_MONOID_OK (monoid, "monoid to get option", GB0) ;

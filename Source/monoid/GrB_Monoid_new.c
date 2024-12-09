@@ -22,10 +22,11 @@ GrB_Info GB_EVAL3 (prefix, _Monoid_new_, T) /* create a new monoid */       \
     type identity                   /* identity value of the monoid  */     \
 )                                                                           \
 {                                                                           \
-    GB_WHERE0 ("GrB_Monoid_new_" GB_STR(T) " (&monoid, op, identity)") ;    \
+    GB_CHECK_INIT ;                                                         \
+    GB_WERK ("GrB_Monoid_new_" GB_STR(T) " (&monoid, op, identity)") ;      \
     type id = identity ;                                                    \
     return (GB_Monoid_new (monoid, op, &id, NULL, GB_ ## T ## _code,        \
-        Werk)) ;                                                         \
+        Werk)) ;                                                            \
 }
 
 GB_MONOID_NEW (GrB, bool      , BOOL   )
@@ -49,7 +50,8 @@ GrB_Info GrB_Monoid_new_UDT         // create a monoid with a user-defined type
     void *identity                  // identity value of monoid
 )
 { 
-    GB_WHERE0 ("GrB_Monoid_new_UDT (&monoid, op, identity)") ;
+    GB_CHECK_INIT ;
+    GB_WERK ("GrB_Monoid_new_UDT (&monoid, op, identity)") ;
     return (GB_Monoid_new (monoid, op, identity, NULL, GB_UDT_code, Werk)) ;
 }
 

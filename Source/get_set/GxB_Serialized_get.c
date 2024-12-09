@@ -317,7 +317,7 @@ GrB_Info GxB_Serialized_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Serialized_get_String (blob, value, field, blobsize)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -329,8 +329,8 @@ GrB_Info GxB_Serialized_get_String
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+    GrB_Info info = GB_blob_header_get (type_name, &type_code,
+        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
@@ -388,7 +388,7 @@ GrB_Info GxB_Serialized_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Serialized_get_INT32 (blob, value, field, blobsize)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -400,8 +400,8 @@ GrB_Info GxB_Serialized_get_INT32
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+    GrB_Info info = GB_blob_header_get (type_name, &type_code,
+        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
@@ -463,7 +463,7 @@ GrB_Info GxB_Serialized_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE0 ("GxB_Serialized_get_SIZE (blob, value, field, blobsize)") ;
+    GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
@@ -475,8 +475,8 @@ GrB_Info GxB_Serialized_get_SIZE
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+    GrB_Info info = GB_blob_header_get (type_name, &type_code,
+        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
