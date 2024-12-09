@@ -19,8 +19,7 @@ GrB_Info GB_EVAL2 (GRB (Scalar_setElement_), T)    /* s = x */              \
     type x                              /* user scalar to assign to s */    \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (s, NULL, NULL, NULL, NULL, NULL,                              \
-        "GrB_Scalar_setElement_" GB_STR(T) " (w, x)") ;                     \
+    GB_WHERE1 (s, "GrB_Scalar_setElement_" GB_STR(T) " (w, x)") ;           \
     GB_RETURN_IF_NULL (s) ;                                                 \
     ASSERT (GB_SCALAR_OK (s)) ;                                             \
     return (GB_setElement ((GrB_Matrix) s, NULL, ampersand x, 0, 0,         \
@@ -51,8 +50,7 @@ GrB_Info GB_EVAL2 (GXB (Scalar_setElement_), T)    /* s = x */              \
     type x                              /* user scalar to assign to s */    \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (s, NULL, NULL, NULL, NULL, NULL,                              \
-        "GxB_Scalar_setElement_" GB_STR(T) " (w, x)") ;                     \
+    GB_WHERE1 (s, "GxB_Scalar_setElement_" GB_STR(T) " (w, x)") ;           \
     GB_RETURN_IF_NULL (s) ;                                                 \
     ASSERT (GB_SCALAR_OK (s)) ;                                             \
     return (GB_setElement ((GrB_Matrix) s, NULL, ampersand x, 0, 0,         \

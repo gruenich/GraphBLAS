@@ -32,7 +32,7 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, M_in, A, NULL, NULL, NULL,
+    GB_WHERE3 (w, M_in, A,
         "GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (A) ;

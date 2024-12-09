@@ -24,8 +24,7 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (s, NULL, NULL, NULL, NULL, NULL,
-        "GrB_Scalar_wait (s, waitmode)") ;
+    GB_WHERE1 (s, "GrB_Scalar_wait (s, waitmode)") ;
     GB_RETURN_IF_NULL (s) ;
 
     //--------------------------------------------------------------------------

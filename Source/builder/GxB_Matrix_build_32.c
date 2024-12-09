@@ -27,8 +27,7 @@ GrB_Info function_name          /* build a matrix from tuples */              \
     const GrB_BinaryOp dup      /* binary op to assemble duplicates   */      \
 )                                                                             \
 {                                                                             \
-    GB_WHERE (C, NULL, NULL, NULL, NULL, NULL,                                \
-        GB_STR(function_name) " (C, I, J, X, nvals, dup)") ;                  \
+    GB_WHERE1 (C, GB_STR(function_name) " (C, I, J, X, nvals, dup)") ;        \
     GB_RETURN_IF_NULL (C) ;            /* check now so C->type can be done */ \
     GB_BURBLE_START (GB_STR(function_name)) ;                                 \
     info = GB_build (C, I, J, X, nvals, dup, xtype, true, false, true, Werk) ;\

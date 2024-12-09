@@ -30,8 +30,7 @@ GrB_Info GB_EVAL2 (GXB (Vector_subassign_), T) /* w(I)<M> = accum (w(I),x)  */ \
     const GrB_Descriptor desc       /* descriptor for w(Rows) and M         */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (w, M, NULL, NULL, NULL, NULL,                                    \
-        "GxB_Vector_subassign_" GB_STR(T)                                      \
+    GB_WHERE2 (w, M, "GxB_Vector_subassign_" GB_STR(T)                         \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
     GB_RETURN_IF_NULL (w) ;                                                    \
     GB_BURBLE_START ("GxB_subassign") ;                                        \
@@ -90,7 +89,7 @@ GrB_Info GxB_Vector_subassign_Scalar   // w<Mask>(I) = accum (w(I),s)
     //--------------------------------------------------------------------------
 
     GrB_Matrix S = NULL ;
-    GB_WHERE (w, M_in, scalar, NULL, NULL, NULL,
+    GB_WHERE3 (w, M_in, scalar,
         "GxB_Vector_subassign_Scalar (w, M, accum, s, Rows, nRows, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (scalar) ;

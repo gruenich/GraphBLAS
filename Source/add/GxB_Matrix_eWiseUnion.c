@@ -73,7 +73,7 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, alpha, B, beta,
+    GB_WHERE6 (C, M_in, A, alpha, B, beta,
         "GxB_Matrix_eWiseUnion (C, M, accum, add, A, alpha,  B, beta, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 

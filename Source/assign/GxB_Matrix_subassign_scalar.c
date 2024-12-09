@@ -36,8 +36,7 @@ GrB_Info GB_EVAL2 (GXB (Matrix_subassign_), T) /* C(Rows,Cols)<M> += x      */ \
     const GrB_Descriptor desc       /* descriptor for C(Rows,Cols) and M */    \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (C, M, NULL, NULL, NULL, NULL,                                    \
-        "GxB_Matrix_subassign_" GB_STR(T)                                      \
+    GB_WHERE2 (C, M, "GxB_Matrix_subassign_" GB_STR(T)                         \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
     GB_RETURN_IF_NULL (C) ;                                                    \
     GB_BURBLE_START ("GxB_Matrix_subassign " GB_STR(T)) ;                      \
@@ -95,7 +94,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, scalar, NULL, NULL, NULL,
+    GB_WHERE3 (C, M_in, scalar,
         "GxB_Matrix_subassign_Scalar (C, M, accum, s, Rows, nRows, Cols, nCols,"
         " desc)") ;
     GB_RETURN_IF_NULL (C) ;

@@ -90,7 +90,7 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
     const GrB_Descriptor desc       // descriptor for w, M, and A
 )
 { 
-    GB_WHERE (w, M, A, NULL, NULL, NULL,
+    GB_WHERE3 (w, M, A,
         "GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
     info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M, accum, monoid,
@@ -115,7 +115,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     const GrB_Descriptor desc       // descriptor for w, M, and A
 )
 {
-    GB_WHERE (w, M, A, NULL, NULL, NULL,
+    GB_WHERE3 (w, M, A,
         "GrB_Matrix_reduce_BinaryOp (w, M, accum, op, A, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_BURBLE_START ("GrB_reduce") ;
@@ -152,7 +152,7 @@ GrB_Info GrB_Matrix_reduce_Monoid_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, A, NULL, NULL, NULL, NULL,
+    GB_WHERE2 (S, A,
         "GrB_Matrix_reduce_Monoid_Scalar (s, accum, monoid, A, desc)");
     GB_BURBLE_START ("GrB_reduce") ;
     info = GB_Scalar_reduce (S, accum, monoid, A, Werk) ;
@@ -173,7 +173,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, A, NULL, NULL, NULL, NULL,
+    GB_WHERE2 (S, A,
         "GrB_Matrix_reduce_BinaryOp_Scalar (s, accum, binaryop, A, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_BURBLE_START ("GrB_reduce") ;

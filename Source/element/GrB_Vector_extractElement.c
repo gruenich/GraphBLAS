@@ -31,8 +31,7 @@ GrB_Info GrB_Vector_extractElement_Scalar   // S = V(i,j)
     // check inputs (just the GrB_Scalar S)
     //--------------------------------------------------------------------------
 
-    GB_WHERE (S, V, NULL, NULL, NULL, NULL,
-        "GrB_Vector_extractElement_Scalar (s, V, i)") ;
+    GB_WHERE2 (S, V, "GrB_Vector_extractElement_Scalar (s, V, i)") ;
     GB_RETURN_IF_NULL (S) ;
     GB_RETURN_IF_NULL (V) ;
 

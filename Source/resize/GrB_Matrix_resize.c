@@ -22,8 +22,7 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, NULL, NULL, NULL, NULL, NULL,
-        "GrB_Matrix_resize (C, nrows_new, ncols_new)") ;
+    GB_WHERE1 (C, "GrB_Matrix_resize (C, nrows_new, ncols_new)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_BURBLE_START ("GrB_Matrix_resize") ;
 

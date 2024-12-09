@@ -29,7 +29,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, NULL, NULL, NULL,
+    GB_WHERE3 (C, M_in, A,
         "GrB_Matrix_assign (C, M, accum, A, Rows, nRows, Cols, nCols, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;

@@ -85,7 +85,7 @@ static inline bool GB_valid_control
 // GB_valid: check if a matrix is valid, based on the current control
 //------------------------------------------------------------------------------
 
-static inline bool GB_valid     // returns GrB_SUCCESS, or error
+static inline GrB_Info GB_valid // returns GrB_SUCCESS, or error
 (
     GrB_Matrix A,               // matrix to validate
     int8_t global_p_control,    // global p_control, from Global or Werk

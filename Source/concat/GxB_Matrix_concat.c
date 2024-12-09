@@ -25,8 +25,7 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 
     // FIXME: validate controls of each Tile input matrix
 
-    GB_WHERE (C, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Matrix_concat (C, Tiles, m, n, desc)") ;
+    GB_WHERE1 (C, "GxB_Matrix_concat (C, Tiles, m, n, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (Tiles) ;
     GB_BURBLE_START ("GxB_Matrix_concat") ;

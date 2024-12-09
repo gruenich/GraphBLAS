@@ -24,8 +24,7 @@ GrB_Info GrB_Vector_wait    // finish all work on a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
-        "GrB_Vector_wait (v, waitmode)") ;
+    GB_WHERE1 (v, "GrB_Vector_wait (v, waitmode)") ;
     GB_RETURN_IF_NULL (v) ;
 
     //--------------------------------------------------------------------------

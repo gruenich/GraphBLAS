@@ -36,8 +36,7 @@ GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Vector_Option_set_INT32 (v, field, value)") ;
+    GB_WHERE1 (v, "GxB_Vector_Option_set_INT32 (v, field, value)") ;
     GB_RETURN_IF_NULL (v) ;
     GB_BURBLE_START ("GxB_set") ;
 
@@ -86,8 +85,7 @@ GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Vector_Option_set_FP64 (v, field, value)") ;
+    GB_WHERE1 (v, "GxB_Vector_Option_set_FP64 (v, field, value)") ;
     GB_RETURN_IF_NULL (v) ;
     GB_BURBLE_START ("GxB_set") ;
 
@@ -136,8 +134,7 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Vector_Option_set (v, field, value)") ;
+    GB_WHERE1 (v, "GxB_Vector_Option_set (v, field, value)") ;
     GB_RETURN_IF_NULL (v) ;
     GB_BURBLE_START ("GxB_set") ;
 

@@ -35,7 +35,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, M_in, u, Thunk_in, NULL, NULL,
+    GB_WHERE4 (w, M_in, u, Thunk_in,
         "GxB_Vector_select (w, M, accum, op, u, Thunk, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;

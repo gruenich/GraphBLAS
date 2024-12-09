@@ -44,7 +44,7 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
     info = GB_valid ((GrB_Matrix) arg, p_control, i_control) ;      \
     if (info != GrB_SUCCESS) return (info) ;
 
-static inline GrB_Info GB_valids
+static inline GrB_Info GB_valid6
 (
     void *arg1,
     void *arg2,
@@ -64,6 +64,91 @@ static inline GrB_Info GB_valids
     GB_CHECK_IF_VALID (arg4) ;
     GB_CHECK_IF_VALID (arg5) ;
     GB_CHECK_IF_VALID (arg6) ;
+    return (GrB_SUCCESS) ;
+}
+
+static inline GrB_Info GB_valid5
+(
+    void *arg1,
+    void *arg2,
+    void *arg3,
+    void *arg4,
+    void *arg5,
+    GB_Werk Werk
+)
+{
+    GrB_Info info ;
+    int8_t p_control = Werk->global_p_control ;
+    int8_t i_control = Werk->global_i_control ;
+    GB_CHECK_IF_VALID (arg1) ;
+    GB_CHECK_IF_VALID (arg2) ;
+    GB_CHECK_IF_VALID (arg3) ;
+    GB_CHECK_IF_VALID (arg4) ;
+    GB_CHECK_IF_VALID (arg5) ;
+    return (GrB_SUCCESS) ;
+}
+
+static inline GrB_Info GB_valid4
+(
+    void *arg1,
+    void *arg2,
+    void *arg3,
+    void *arg4,
+    GB_Werk Werk
+)
+{
+    GrB_Info info ;
+    int8_t p_control = Werk->global_p_control ;
+    int8_t i_control = Werk->global_i_control ;
+    GB_CHECK_IF_VALID (arg1) ;
+    GB_CHECK_IF_VALID (arg2) ;
+    GB_CHECK_IF_VALID (arg3) ;
+    GB_CHECK_IF_VALID (arg4) ;
+    return (GrB_SUCCESS) ;
+}
+
+static inline GrB_Info GB_valid3
+(
+    void *arg1,
+    void *arg2,
+    void *arg3,
+    GB_Werk Werk
+)
+{
+    GrB_Info info ;
+    int8_t p_control = Werk->global_p_control ;
+    int8_t i_control = Werk->global_i_control ;
+    GB_CHECK_IF_VALID (arg1) ;
+    GB_CHECK_IF_VALID (arg2) ;
+    GB_CHECK_IF_VALID (arg3) ;
+    return (GrB_SUCCESS) ;
+}
+
+static inline GrB_Info GB_valid2
+(
+    void *arg1,
+    void *arg2,
+    GB_Werk Werk
+)
+{
+    GrB_Info info ;
+    int8_t p_control = Werk->global_p_control ;
+    int8_t i_control = Werk->global_i_control ;
+    GB_CHECK_IF_VALID (arg1) ;
+    GB_CHECK_IF_VALID (arg2) ;
+    return (GrB_SUCCESS) ;
+}
+
+static inline GrB_Info GB_valid1
+(
+    void *arg1,
+    GB_Werk Werk
+)
+{
+    GrB_Info info ;
+    int8_t p_control = Werk->global_p_control ;
+    int8_t i_control = Werk->global_i_control ;
+    GB_CHECK_IF_VALID (arg1) ;
     return (GrB_SUCCESS) ;
 }
 
@@ -98,9 +183,13 @@ static inline GrB_Info GB_valids
 #define GB_WHERE(C,arg2,arg3,arg4,arg5,arg6,where_string)           \
     GB_WHERE0 (where_string)                                        \
     /* ensure the matrix has valid integers */                      \
-    info = GB_valids (C, arg2, arg3, arg4, arg5, arg6, Werk) ;      \
+    info = GB_valid6 (C, arg2, arg3, arg4, arg5, arg6, Werk) ;      \
+    GB_WHERE_C_LOGGER (C)
+
+#define GB_WHERE_C_LOGGER(C)                                        \
     if (info != GrB_SUCCESS)                                        \
     {                                                               \
+        /* GB_valid[n] failed */                                    \
         return (info) ;                                             \
     }                                                               \
     if (C != NULL)                                                  \
@@ -114,6 +203,36 @@ static inline GrB_Info GB_valids
         Werk->matrix_p_control = C->p_control ;                     \
         Werk->matrix_i_control = C->i_control ;                     \
     }
+
+#define GB_WHERE6(C,arg2,arg3,arg4,arg5,arg6,where_string)          \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid6 (C, arg2, arg3, arg4, arg5, arg6, Werk) ;      \
+    GB_WHERE_C_LOGGER (C)
+
+#define GB_WHERE5(C,arg2,arg3,arg4,arg5,where_string)               \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid5 (C, arg2, arg3, arg4, arg5, Werk) ;            \
+    GB_WHERE_C_LOGGER (C)
+
+#define GB_WHERE4(C,arg2,arg3,arg4,where_string)                    \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid4 (C, arg2, arg3, arg4, Werk) ;                  \
+    GB_WHERE_C_LOGGER (C)
+
+#define GB_WHERE3(C,arg2,arg3,where_string)                         \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid3 (C, arg2, arg3, Werk) ;                        \
+    GB_WHERE_C_LOGGER (C)
+
+#define GB_WHERE2(C,arg2,where_string)                              \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid2 (C, arg2, Werk) ;                              \
+    GB_WHERE_C_LOGGER (C)
+
+#define GB_WHERE1(C,where_string)                                   \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid1 (C, Werk) ;                                    \
+    GB_WHERE_C_LOGGER (C)
 
 // for descriptors
 #define GB_WHERE_DESC(desc,where_string)                            \

@@ -193,8 +193,7 @@ GrB_Info GrB_Vector_removeElement
     GrB_Index i                 // index
 )
 {
-    GB_WHERE (V, NULL, NULL, NULL, NULL, NULL,
-        "GrB_Vector_removeElement (v, i)") ;
+    GB_WHERE1 (V, "GrB_Vector_removeElement (v, i)") ;
     GB_RETURN_IF_NULL (V) ;
 
     ASSERT (GB_VECTOR_OK (V)) ;

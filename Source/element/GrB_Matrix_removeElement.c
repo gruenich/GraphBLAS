@@ -257,8 +257,7 @@ GrB_Info GrB_Matrix_removeElement
     GrB_Index col               // column index
 )
 { 
-    GB_WHERE (C, NULL, NULL, NULL, NULL, NULL,
-        "GrB_Matrix_removeElement (C, row, col)") ;
+    GB_WHERE1 (C, "GrB_Matrix_removeElement (C, row, col)") ;
     GB_RETURN_IF_NULL (C) ;
     return (GB_Matrix_removeElement (C, row, col, Werk)) ;
 }

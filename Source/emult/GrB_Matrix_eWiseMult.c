@@ -55,7 +55,7 @@ GrB_Info GrB_Matrix_eWiseMult_BinaryOp       // C<M> = accum (C, A.*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, B, NULL, NULL,
+    GB_WHERE4 (C, M_in, A, B,
         "GrB_Matrix_eWiseMult_BinaryOp (C, M, accum, mult, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
 
@@ -90,7 +90,7 @@ GrB_Info GrB_Matrix_eWiseMult_Monoid         // C<M> = accum (C, A.*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, B, NULL, NULL,
+    GB_WHERE4 (C, M_in, A, B,
         "GrB_Matrix_eWiseMult_Monoid (C, M, accum, monoid, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
@@ -125,7 +125,7 @@ GrB_Info GrB_Matrix_eWiseMult_Semiring       // C<M> = accum (C, A.*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, B, NULL, NULL,
+    GB_WHERE4 (C, M_in, A, B,
         "GrB_Matrix_eWiseMult_Semiring (C, M, accum, semiring, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 

@@ -28,8 +28,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_assign_, T) /* w<M>(Rows)=accum(w(Rows),x)*/\
     const GrB_Descriptor desc       /* descriptor for w and mask            */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (w, M, NULL, NULL, NULL, NULL,                                    \
-        "GrB_Vector_assign_" GB_STR(T)                                         \
+    GB_WHERE2 (w, M, "GrB_Vector_assign_" GB_STR(T)                            \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
     GB_RETURN_IF_NULL (w) ;                                                    \
     GB_BURBLE_START ("GrB_assign") ;                                           \
@@ -88,7 +87,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     //--------------------------------------------------------------------------
 
     GrB_Matrix S = NULL ;
-    GB_WHERE (w, M_in, scalar, NULL, NULL, NULL,
+    GB_WHERE3 (w, M_in, scalar,
         "GrB_Vector_assign_Scalar (w, M, accum, s, Rows, nRows, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (scalar) ;

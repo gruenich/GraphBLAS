@@ -90,7 +90,7 @@ GrB_Info GrB_Vector_reduce_Monoid_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, u, NULL, NULL, NULL, NULL,
+    GB_WHERE2 (S, u,
         "GrB_Vector_reduce_Monoid_Scalar (s, accum, monoid, u, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
 
@@ -112,7 +112,7 @@ GrB_Info GrB_Vector_reduce_BinaryOp_Scalar
     const GrB_Descriptor desc
 )
 { 
-    GB_WHERE (S, u, NULL, NULL, NULL, NULL,
+    GB_WHERE2 (S, u,
         "GrB_Vector_reduce_BinaryOp_Scalar (s, accum, binaryop, u, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_BURBLE_START ("GrB_reduce") ;

@@ -29,8 +29,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, NULL, NULL, NULL,
-        "GrB_transpose (C, M, accum, A, desc)") ;
+    GB_WHERE3 (C, M_in, A, "GrB_transpose (C, M, accum, A, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (A) ;

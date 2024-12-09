@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, A, Thunk_in, NULL, NULL,
+    GB_WHERE4 (C, M_in, A, Thunk_in,
         "GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;

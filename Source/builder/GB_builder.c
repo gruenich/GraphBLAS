@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // DONE: 32/64 bit
 
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper

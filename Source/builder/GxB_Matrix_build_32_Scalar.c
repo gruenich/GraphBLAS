@@ -32,7 +32,7 @@ GrB_Info GxB_Matrix_build_32_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, scalar, NULL, NULL, NULL, NULL,
+    GB_WHERE2 (C, scalar,
         "GxB_Matrix_build_32_Scalar (C, I, J, scalar, nvals)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (scalar) ;

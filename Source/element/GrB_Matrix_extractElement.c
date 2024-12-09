@@ -32,8 +32,7 @@ GrB_Info GrB_Matrix_extractElement_Scalar   // S = A(i,j)
     // check inputs (just the GrB_Scalar S)
     //--------------------------------------------------------------------------
 
-    GB_WHERE (S, A, NULL, NULL, NULL, NULL,
-        "GrB_Matrix_extractElement_Scalar (s, A, row, col)") ;
+    GB_WHERE2 (S, A, "GrB_Matrix_extractElement_Scalar (s, A, row, col)") ;
     GB_RETURN_IF_NULL (S) ;
     GB_RETURN_IF_NULL (A) ;
 

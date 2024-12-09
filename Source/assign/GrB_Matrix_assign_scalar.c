@@ -38,8 +38,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_assign_, T) /* C<M>(Rows,Cols) += x */      \
     const GrB_Descriptor desc       /* descriptor for C and M               */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (C, M, NULL, NULL, NULL, NULL,                                    \
-        "GrB_Matrix_assign_" GB_STR(T)                                         \
+    GB_WHERE2 (C, M, "GrB_Matrix_assign_" GB_STR(T)                            \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
     GB_RETURN_IF_NULL (C) ;                                                    \
     GB_BURBLE_START ("GrB_assign") ;                                           \
@@ -98,7 +97,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, scalar, NULL, NULL, NULL,
+    GB_WHERE3 (C, M_in, scalar,
         "GrB_Matrix_assign_Scalar (C, M, accum, s, Rows, nRows, Cols, nCols,"
         " desc)") ;
     GB_RETURN_IF_NULL (C) ;

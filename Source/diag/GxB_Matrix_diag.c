@@ -22,8 +22,7 @@ GrB_Info GxB_Matrix_diag        // build a diagonal matrix from a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, v, NULL, NULL, NULL, NULL,
-        "GxB_Matrix_diag (C, v, k, desc)") ;
+    GB_WHERE2 (C, v, "GxB_Matrix_diag (C, v, k, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (v) ;
     GB_BURBLE_START ("GxB_Matrix_diag") ;

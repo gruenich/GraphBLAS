@@ -29,7 +29,7 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, M_in, u, NULL, NULL, NULL,
+    GB_WHERE3 (C, M_in, u,
         "GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (u) ;

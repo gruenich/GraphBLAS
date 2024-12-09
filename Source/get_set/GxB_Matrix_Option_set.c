@@ -36,8 +36,7 @@ GrB_Info GxB_Matrix_Option_set_INT32    // set an option in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (A, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Matrix_Option_set_INT32 (A, field, value)") ;
+    GB_WHERE1 (A, "GxB_Matrix_Option_set_INT32 (A, field, value)") ;
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_Matrix_Option_set_INT32") ;
 
@@ -107,8 +106,7 @@ GrB_Info GxB_Matrix_Option_set_FP64     // set an option in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (A, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Matrix_Option_set_FP64 (A, field, value)") ;
+    GB_WHERE1 (A, "GxB_Matrix_Option_set_FP64 (A, field, value)") ;
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_Matrix_Option_set_FP64") ;
 
@@ -163,8 +161,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (A, NULL, NULL, NULL, NULL, NULL,
-        "GxB_Matrix_Option_set (A, field, value)") ;
+    GB_WHERE1 (A, "GxB_Matrix_Option_set (A, field, value)") ;
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_Matrix_Option_set") ;
 

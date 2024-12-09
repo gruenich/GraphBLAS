@@ -86,8 +86,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_select_, T)                              \
     const GrB_Descriptor desc       /* descriptor for w and M */            \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (w, M, u, NULL, NULL, NULL,                                    \
-        GB_STR(prefix) "_Vector_select_" GB_STR(T)                          \
+    GB_WHERE3 (w, M, u, GB_STR(prefix) "_Vector_select_" GB_STR(T)          \
         " (w, M, accum, op, u, y, desc)") ;                                 \
     GB_SCALAR_WRAP (yscalar, y, GB_EVAL3 (prefix, _, T)) ;                  \
     return (GB_sel (w, M, accum, op, u, yscalar, desc, Werk)) ;             \
@@ -122,7 +121,7 @@ GrB_Info GrB_Vector_select_UDT
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
-    GB_WHERE (w, M, u, NULL, NULL, NULL,
+    GB_WHERE3 (w, M, u,
         "GrB_Vector_select_UDT (w, M, accum, op, u, y, desc)") ;
     GB_SCALAR_WRAP_UDT (yscalar, y, (op == NULL) ? NULL : op->ytype) ;
     return (GB_sel (w, M, accum, op, u, yscalar, desc, Werk)) ;
@@ -143,7 +142,7 @@ GrB_Info GrB_Vector_select_Scalar
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
-    GB_WHERE (w, M, u, y, NULL, NULL,
+    GB_WHERE4 (w, M, u, y,
         "GrB_Vector_select_Scalar (w, M, accum, op, u, y, desc)") ;
     return (GB_sel (w, M, accum, op, u, y, desc, Werk)) ;
 }

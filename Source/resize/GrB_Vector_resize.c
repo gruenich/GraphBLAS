@@ -21,8 +21,7 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, NULL, NULL, NULL, NULL, NULL,
-        "GrB_Vector_resize (w, nrows_new)") ;
+    GB_WHERE1 (w, "GrB_Vector_resize (w, nrows_new)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_BURBLE_START ("GrB_Vector_resize") ;
 

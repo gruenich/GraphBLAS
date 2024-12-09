@@ -88,8 +88,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_select_, T)                              \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (C, M, A, NULL, NULL, NULL,                                    \
-        GB_STR(prefix) "_Matrix_select_" GB_STR(T)                          \
+    GB_WHERE3 (C, M, A, GB_STR(prefix) "_Matrix_select_" GB_STR(T)          \
         " (C, M, accum, op, A, y, desc)") ;                                 \
     GB_SCALAR_WRAP (yscalar, y, GB_EVAL3 (prefix, _, T)) ;                  \
     return (GB_sel (C, M, accum, op, A, yscalar, desc, Werk)) ;             \
@@ -124,7 +123,7 @@ GrB_Info GrB_Matrix_select_UDT
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, M, A, NULL, NULL, NULL,
+    GB_WHERE3 (C, M, A,
         "GrB_Matrix_select_UDT (C, M, accum, op, A, y, desc)") ;
     GB_SCALAR_WRAP_UDT (yscalar, y, (op == NULL) ? NULL : op->ytype) ;
     return (GB_sel (C, M, accum, op, A, yscalar, desc, Werk)) ;
@@ -145,7 +144,7 @@ GrB_Info GrB_Matrix_select_Scalar
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, M, A, yscalar, NULL, NULL,
+    GB_WHERE4 (C, M, A, yscalar,
         "GrB_Matrix_select_Scalar (C, M, accum, op, A, y, desc)") ;
     return (GB_sel (C, M, accum, op, A, yscalar, desc, Werk)) ;
 }

@@ -68,7 +68,7 @@ GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, M_in, u, alpha, v, beta,
+    GB_WHERE6 (w, M_in, u, alpha, v, beta,
         "GxB_Vector_eWiseUnion (w, M, accum, add, u, alpha, v, beta, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 

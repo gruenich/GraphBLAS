@@ -21,8 +21,7 @@ GrB_Info GB_EVAL3 (prefix, _Vector_setElement_, T)    /* w(row) = x */      \
     GrB_Index row                       /* row index                  */    \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (w, NULL, NULL, NULL, NULL, NULL,                              \
-        "GrB_Vector_setElement_" GB_STR(T) " (w, x, row)") ;                \
+    GB_WHERE1 (w, "GrB_Vector_setElement_" GB_STR(T) " (w, x, row)") ;      \
     GB_RETURN_IF_NULL (w) ;                                                 \
     ASSERT (GB_VECTOR_OK (w)) ;                                             \
     return (GB_setElement ((GrB_Matrix) w, NULL, ampersand x, row, 0,       \
@@ -64,8 +63,7 @@ GrB_Info GrB_Vector_setElement_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, scalar, NULL, NULL, NULL, NULL,
-        "GrB_Vector_setElement_Scalar (w, x, row)") ;
+    GB_WHERE2 (w, scalar, "GrB_Vector_setElement_Scalar (w, x, row)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (scalar) ;
 
