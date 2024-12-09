@@ -412,6 +412,8 @@
 #define GB_Global_hyper_hash_set GM_Global_hyper_hash_set
 #define GB_Global_hyper_switch_get GM_Global_hyper_switch_get
 #define GB_Global_hyper_switch_set GM_Global_hyper_switch_set
+#define GB_Global_i_control_get GM_Global_i_control_get
+#define GB_Global_i_control_set GM_Global_i_control_set
 #define GB_Global_is_csc_get GM_Global_is_csc_get
 #define GB_Global_is_csc_set GM_Global_is_csc_set
 #define GB_Global_malloc_debug_count_decrement GM_Global_malloc_debug_count_decrement
@@ -436,6 +438,8 @@
 #define GB_Global_mode_set GM_Global_mode_set
 #define GB_Global_nmalloc_clear GM_Global_nmalloc_clear
 #define GB_Global_nmalloc_get GM_Global_nmalloc_get
+#define GB_Global_p_control_get GM_Global_p_control_get
+#define GB_Global_p_control_set GM_Global_p_control_set
 #define GB_Global_persistent_free GM_Global_persistent_free
 #define GB_Global_persistent_malloc GM_Global_persistent_malloc
 #define GB_Global_persistent_set GM_Global_persistent_set
