@@ -36,10 +36,11 @@ GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
-    GB_WHERE (v, "GxB_Vector_Option_set_INT32 (v, field, value)") ;
-    GB_BURBLE_START ("GxB_set (vector option)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
+        "GxB_Vector_Option_set_INT32 (v, field, value)") ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_BURBLE_START ("GxB_set") ;
+
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -85,10 +86,11 @@ GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
-    GB_WHERE (v, "GxB_Vector_Option_set_FP64 (v, field, value)") ;
-    GB_BURBLE_START ("GxB_set (vector option)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
+        "GxB_Vector_Option_set_FP64 (v, field, value)") ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_BURBLE_START ("GxB_set") ;
+
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
     //--------------------------------------------------------------------------
@@ -134,10 +136,11 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
-    GB_WHERE (v, "GxB_Vector_Option_set (v, field, value)") ;
-    GB_BURBLE_START ("GxB_set (vector option)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL,
+        "GxB_Vector_Option_set (v, field, value)") ;
+    GB_RETURN_IF_NULL (v) ;
+    GB_BURBLE_START ("GxB_set") ;
+
     ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
 
     //--------------------------------------------------------------------------

@@ -28,7 +28,7 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
     // print and check the object
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_Matrix_check (A, name, pr, f) ;
+    info = GB_Matrix_check (A, name, pr, f) ;
 
     //--------------------------------------------------------------------------
     // return result

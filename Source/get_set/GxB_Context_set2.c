@@ -34,7 +34,6 @@ GrB_Info GxB_Context_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     int32_t ivalue = 0 ;
     double dvalue = 0 ;
 

@@ -35,7 +35,7 @@ GrB_Info GrB_Matrix_get_Scalar
     //--------------------------------------------------------------------------
 
     int32_t i ;
-    GrB_Info info = GB_matvec_enum_get (A, &i, field) ;
+    info = GB_matvec_enum_get (A, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
         // field specifies an int: assign it to the scalar

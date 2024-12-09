@@ -22,15 +22,16 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Matrix_resize (C, nrows_new, ncols_new)") ;
+    GB_WHERE (C, NULL, NULL, NULL, NULL, NULL,
+        "GrB_Matrix_resize (C, nrows_new, ncols_new)") ;
+    GB_RETURN_IF_NULL (C) ;
     GB_BURBLE_START ("GrB_Matrix_resize") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
 
     //--------------------------------------------------------------------------
     // resize the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_resize (C, nrows_new, ncols_new, Werk) ;
+    info = GB_resize (C, nrows_new, ncols_new, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

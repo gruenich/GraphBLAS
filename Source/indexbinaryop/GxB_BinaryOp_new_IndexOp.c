@@ -63,7 +63,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
 
     bool jitable = (idxbinop->hash != UINT64_MAX) ;
 
-    GrB_Info info = GB_op_name_and_defn (
+    info = GB_op_name_and_defn (
         // output:
         binop->name, &(binop->name_len), &(binop->hash),
         &(binop->defn), &(binop->defn_size),

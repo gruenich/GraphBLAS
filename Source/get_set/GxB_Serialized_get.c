@@ -227,7 +227,7 @@ GrB_Info GxB_Serialized_get_Scalar
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
+    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 
@@ -329,7 +329,7 @@ GrB_Info GxB_Serialized_get_String
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
+    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 
@@ -400,7 +400,7 @@ GrB_Info GxB_Serialized_get_INT32
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
+    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 
@@ -475,7 +475,7 @@ GrB_Info GxB_Serialized_get_SIZE
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
+    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
         &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
         &user_name, &eltype_string, blob, blob_size) ;
 

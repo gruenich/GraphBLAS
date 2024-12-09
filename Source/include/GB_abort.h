@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_abort.h: hard assertions for all of GraphBLAS, including JIT kernels
+// GB_abort.h: assertions for all of GraphBLAS, including JIT kernels
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -33,6 +33,16 @@ typedef void (*GB_abort_f) (const char *file, int line) ;
         GB_abort (__FILE__, __LINE__) ;     \
     }                                       \
 }
+
+#ifdef GB_DEBUG
+    // assert X is true
+    #define ASSERT(X) GB_assert (X)
+#else
+    // debugging disabled
+    #define ASSERT(X)
+#endif
+
+#define GB_IMPLIES(p,q) (!(p) || (q))
 
 #endif
 

@@ -30,11 +30,12 @@ GrB_Info GrB_Col_assign             // C<M>(Rows,col) = accum (C(Rows,col),u)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)") ;
+    GB_WHERE (C, M_in, u, NULL, NULL, NULL,
+        "GrB_Col_assign (C, M, accum, u, Rows, nRows, col, desc)") ;
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (u) ;
     GB_BURBLE_START ("GrB_assign") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;
+
     ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 

@@ -38,7 +38,7 @@ GrB_Info function_name      /* extract tuples from a matrix */              \
     GB_BURBLE_START (GB_STR(function_name)) ;                               \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                       \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
-    GrB_Info info = GB_extractTuples (I, J, X, p_nvals, xtype, A, true,     \
+    info = GB_extractTuples (I, J, X, p_nvals, xtype, A, true,     \
         Werk);                                                              \
     GB_BURBLE_END ;                                                         \
     GB_PRAGMA (omp flush)                                                   \
@@ -82,8 +82,7 @@ GrB_Info GxB_Matrix_extractTuples_32_UDT
         // A must have a user-defined type
         return (GrB_DOMAIN_MISMATCH) ;
     }
-    GrB_Info info = GB_extractTuples (I, J, X, p_nvals, A->type, A, true,
-        Werk) ;
+    info = GB_extractTuples (I, J, X, p_nvals, A->type, A, true, Werk) ;
     GB_BURBLE_END ;
     GB_PRAGMA (omp flush)
     return (info) ;

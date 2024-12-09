@@ -2,7 +2,7 @@
 // GB_where.h: definitions for Werk space and error logging
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -37,19 +37,37 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
 }
 
 //------------------------------------------------------------------------------
-// GB_valid_int: return true if matrix has valid integer controls
+// GB_valids: return GrB_SUCCESS if matrices are valid, error otherwise
 //------------------------------------------------------------------------------
 
-static inline bool GB_valid_int
+#define GB_CHECK_IF_VALID(arg)                                      \
+    info = GB_valid ((GrB_Matrix) arg, p_control, i_control) ;      \
+    if (info != GrB_SUCCESS) return (info) ;
+
+static inline GrB_Info GB_valids
 (
-    GrB_Matrix A,
+    void *arg1,
+    void *arg2,
+    void *arg3,
+    void *arg4,
+    void *arg5,
+    void *arg6,
     GB_Werk Werk
 )
 {
-    return (GB_valid_controls (A,
-        Werk->global_p_control,
-        Werk->global_i_control)) ;
+    GrB_Info info ;
+    int8_t p_control = Werk->global_p_control ;
+    int8_t i_control = Werk->global_i_control ;
+    GB_CHECK_IF_VALID (arg1) ;
+    GB_CHECK_IF_VALID (arg2) ;
+    GB_CHECK_IF_VALID (arg3) ;
+    GB_CHECK_IF_VALID (arg4) ;
+    GB_CHECK_IF_VALID (arg5) ;
+    GB_CHECK_IF_VALID (arg6) ;
+    return (GrB_SUCCESS) ;
 }
+
+#undef GB_CHECK_IF_VALID
 
 //------------------------------------------------------------------------------
 // GB_WHERE*: allocate the Werk stack and enable error logging
@@ -71,21 +89,23 @@ static inline bool GB_valid_int
     GB_Werk Werk = GB_Werk_init (&Werk_struct, where_string) ;
 
 // C is a matrix, vector, or scalar
-#define GB_WHERE(C,where_string)                                    \
+#define GB_WHERE(C,arg2,arg3,arg4,arg5,arg6,where_string)           \
+    GrB_Info info ;                                                 \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
         return (GrB_PANIC) ; /* GrB_init not called */              \
     }                                                               \
     GB_WERK (where_string)                                          \
+    /* ensure the matrix has valid integers */                      \
+    info =  GB_valids (C, arg2, arg3, arg4, arg5, arg6, Werk) ;     \
+    if (info != GrB_SUCCESS)                                        \
+    {                                                               \
+        return (info) ;                                             \
+    }                                                               \
     if (C != NULL)                                                  \
     {                                                               \
         /* free any prior error logged in the object */             \
         GB_FREE (&(C->logger), C->logger_size) ;                    \
-        /* ensure the matrix has valid integers */                  \
-        if (!GB_valid_int (C, Werk))                                \
-        {                                                           \
-            return (GrB_INVALID_OBJECT) ;                           \
-        }                                                           \
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
         Werk->logger_size_handle = &(C->logger_size) ;              \
@@ -111,6 +131,7 @@ static inline bool GB_valid_int
 
 // create the Werk, with no error logging
 #define GB_WHERE1(where_string)                                     \
+    GrB_Info info ;                                                 \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \
         return (GrB_PANIC) ; /* GrB_init not called */              \

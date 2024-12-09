@@ -44,11 +44,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GrB_Semiring semiring = NULL ;
 
     // C may be aliased with M and/or A
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
+    GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
     ASSERT_MATRIX_OK (C, "C input for reduce-to-vector", GB0) ;
@@ -61,6 +60,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     ASSERT (GB_IMPLIES (M_in != NULL, GB_VECTOR_OK (M_in))) ;
 
     // get the descriptor
+    GrB_Info info ;
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, do_sort) ;
 

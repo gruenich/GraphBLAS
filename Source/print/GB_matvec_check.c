@@ -285,8 +285,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (is_hyper || is_sparse)
     {
-        if (A->p_is_32 && !GB_validate_p_is_32 (true, A->nvals)) ||
-           (A->i_is_32 && !GB_validate_i_is_32 (true, A->vlen, A->vdim))
+        if ((A->p_is_32 && !GB_validate_p_is_32 (true, A->nvals)) ||
+            (A->i_is_32 && !GB_validate_i_is_32 (true, A->vlen, A->vdim)))
         {
             GBPR0 ("  invalid 32/64 bit structure\n") ;
             return (GrB_INVALID_OBJECT) ;

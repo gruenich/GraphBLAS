@@ -30,10 +30,10 @@
 
 #define GB_EWISE(op)                                                        \
     /* check inputs */                                                      \
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                       \
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                       \
-    GB_RETURN_IF_NULL_OR_FAULTY (B) ;                                       \
-    GB_RETURN_IF_FAULTY (M_in) ;                                            \
+    GB_RETURN_IF_NULL (C) ;                                                 \
+    GB_RETURN_IF_NULL (A) ;                                                 \
+    GB_RETURN_IF_NULL (B) ;                                                 \
+    GB_BURBLE_START ("GxB_eWiseUnion") ;                                    \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
         A_tran, B_tran, xx, xx7) ;                                          \
@@ -73,9 +73,8 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GxB_Matrix_eWiseUnion (C, M, accum, add, A, alpha,"
-        " B, beta, desc)") ;
-    GB_BURBLE_START ("GxB_eWiseUnion") ;
+    GB_WHERE (C, M_in, A, alpha, B, beta,
+        "GxB_Matrix_eWiseUnion (C, M, accum, add, A, alpha,  B, beta, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 
     //--------------------------------------------------------------------------

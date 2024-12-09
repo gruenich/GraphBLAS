@@ -33,9 +33,6 @@ using namespace cooperative_groups ;
 
 #define GB_CUDA_KERNEL
 
-#undef  ASSERT
-#define ASSERT(x)
-
 // for internal static inline functions
 #undef  GB_STATIC_INLINE
 #define GB_STATIC_INLINE static __device__ __inline__
@@ -52,6 +49,8 @@ using namespace cooperative_groups ;
 
 extern "C"
 {
+    #include "include/GB_opaque.h"
+    #include "include/GB_index.h"
     #include "include/GB_math_macros.h"
     #include "include/GB_bytes.h"
     #include "include/GB_pun.h"
@@ -60,13 +59,11 @@ extern "C"
     #include "include/GB_zombie.h"
     #include "include/GB_int64_mult.h"
     #include "include/GB_math_macros.h"
-    #include "include/GB_index.h"
     #include "include/GB_hash.h"
     #include "include/GB_complex.h"
     #include "include/GB_iceil.h"
     #include "include/GB_memory_macros.h"
     #include "include/GB_printf_kernels.h"
-    #include "include/GB_opaque.h"
     #include "include/GB_static_header.h"
     #include "include/GB_werk.h"
     #include "include/GB_task_struct.h"

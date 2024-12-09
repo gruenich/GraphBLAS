@@ -1619,10 +1619,9 @@ GrB_Field ;
 
 typedef enum
 {
-    GxB_PREFER_32 = 0,      // the default
-    GxB_PREFER_64 = 1,
-    GxB_STRICT_32 = 2,
-    GxB_STRICT_64 = 3,
+    GxB_AUTO_BITS = 0,      // the default
+    GxB_STRICT_32_BITS = 1,
+    GxB_STRICT_64_BITS = 2,
 }
 GxB_Integer_Size ;
 

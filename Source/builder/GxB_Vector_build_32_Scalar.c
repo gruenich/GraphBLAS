@@ -31,10 +31,12 @@ GrB_Info GxB_Vector_build_32_Scalar  // build a vector from (i,scalar) tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GxB_Vector_build_32_Scalar (w, I, scalar, nvals)") ;
+    GB_WHERE (w, scalar, NULL, NULL, NULL, NULL,
+        "GxB_Vector_build_32_Scalar (w, I, scalar, nvals)") ;
+    GB_RETURN_IF_NULL (w) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_BURBLE_START ("GxB_Vector_build_32_Scalar") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (scalar) ;
+
     ASSERT (GB_VECTOR_OK (w)) ;
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
@@ -46,8 +48,8 @@ GrB_Info GxB_Vector_build_32_Scalar  // build a vector from (i,scalar) tuples
     // build the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_build ((GrB_Matrix) w, I, NULL, scalar->x, nvals,
-        GxB_IGNORE_DUP, scalar->type, false, true, true, Werk) ;
+    info = GB_build ((GrB_Matrix) w, I, NULL, scalar->x, nvals, GxB_IGNORE_DUP,
+        scalar->type, false, true, true, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

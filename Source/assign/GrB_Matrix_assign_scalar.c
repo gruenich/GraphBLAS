@@ -38,13 +38,13 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_assign_, T) /* C<M>(Rows,Cols) += x */      \
     const GrB_Descriptor desc       /* descriptor for C and M               */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (C, "GrB_Matrix_assign_" GB_STR(T)                                \
+    GB_WHERE (C, M, NULL, NULL, NULL, NULL,                                    \
+        "GrB_Matrix_assign_" GB_STR(T)                                         \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
+    GB_RETURN_IF_NULL (C) ;                                                    \
     GB_BURBLE_START ("GrB_assign") ;                                           \
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                          \
-    GB_RETURN_IF_FAULTY (M) ;                                                  \
-    GrB_Info info = GB_assign_scalar (C, M, accum, ampersand x,                \
-        GB_## T ## _code, Rows, nRows, Cols, nCols, desc, Werk) ;              \
+    info = GB_assign_scalar (C, M, accum, ampersand x, GB_## T ## _code, Rows, \
+        nRows, Cols, nCols, desc, Werk) ;                                      \
     GB_BURBLE_END ;                                                            \
     return (info) ;                                                            \
 }
@@ -98,15 +98,16 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix S = NULL ;
-    GB_WHERE (C, "GrB_Matrix_assign_Scalar"
-        " (C, M, accum, s, Rows, nRows, Cols, nCols, desc)") ;
-    GB_BURBLE_START ("GrB_assign") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (scalar) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
+    GB_WHERE (C, M_in, scalar, NULL, NULL, NULL,
+        "GrB_Matrix_assign_Scalar (C, M, accum, s, Rows, nRows, Cols, nCols,"
+        " desc)") ;
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I) ;
     GB_RETURN_IF_NULL (J) ;
+    GB_BURBLE_START ("GrB_assign") ;
+
+    GrB_Matrix S = NULL ;
 
     // if C has a user-defined type, its type must match the scalar type
     if (C->type->code == GB_UDT_code && C->type != scalar->type)

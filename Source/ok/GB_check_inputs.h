@@ -71,7 +71,6 @@
 
 // check the descriptor and extract its contents
 #define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo,dsort)          \
-    GrB_Info info ;                                                          \
     bool dout, dmc, dms, d0, d1 ;                                            \
     int dsort ;                                                              \
     GrB_Desc_Value dalgo ;                                                   \

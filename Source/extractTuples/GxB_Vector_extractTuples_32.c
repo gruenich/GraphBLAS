@@ -38,7 +38,7 @@ GrB_Info function_name      /* extract tuples from a vector */              \
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                       \
     GB_RETURN_IF_NULL (p_nvals) ;                                           \
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
-    GrB_Info info = GB_extractTuples (I, NULL, X, p_nvals, xtype,           \
+    info = GB_extractTuples (I, NULL, X, p_nvals, xtype,           \
         (GrB_Matrix) v, true, Werk) ;                                       \
     GB_BURBLE_END ;                                                         \
     GB_PRAGMA (omp flush)                                                   \
@@ -82,8 +82,8 @@ GrB_Info GxB_Vector_extractTuples_32_UDT
         // v must have a user-defined type
         return (GrB_DOMAIN_MISMATCH) ;
     }
-    GrB_Info info = GB_extractTuples (I, NULL, X, p_nvals, v->type,
-        (GrB_Matrix) v, true, Werk) ;
+    info = GB_extractTuples (I, NULL, X, p_nvals, v->type, (GrB_Matrix) v,
+        true, Werk) ;
     GB_BURBLE_END ;
     GB_PRAGMA (omp flush)
     return (info) ;

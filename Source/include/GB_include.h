@@ -64,6 +64,7 @@
     // Placed in the SuiteSparse/GrB(version)/src/include folder by GrB_init,
     // via the JITPackage.  These files are used by the CPU JIT kernels (via
     // this file) and the CUDA JIT kernels (CUDA/include/GB_cuda_kernel.cuh):
+    #include "include/GB_opaque.h"
     #include "include/GB_math_macros.h"
     #include "include/GB_bytes.h"
     #include "include/GB_pun.h"
@@ -77,7 +78,6 @@
     #include "include/GB_iceil.h"
     #include "include/GB_memory_macros.h"
     #include "include/GB_printf_kernels.h"
-    #include "include/GB_opaque.h"
     #include "include/GB_static_header.h"
     #include "include/GB_werk.h"
     #include "include/GB_task_struct.h"
@@ -107,6 +107,7 @@
 
     // Original location in the GraphBLAS/Source folder, for compiling
     // the GraphBLAS library, including PreJIT kernels:
+    #include "builtin/include/GB_opaque.h"
     #include "math/include/GB_math_macros.h"
     #include "type/include/GB_bytes.h"
     #include "type/include/GB_pun.h"
@@ -120,7 +121,6 @@
     #include "math/include/GB_iceil.h"
     #include "memory/include/GB_memory_macros.h"
     #include "print/include/GB_printf_kernels.h"
-    #include "builtin/include/GB_opaque.h"
     #include "matrix/include/GB_static_header.h"
     #include "werk/include/GB_werk.h"
     #include "slice/include/GB_task_struct.h"

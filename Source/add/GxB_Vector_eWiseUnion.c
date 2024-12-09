@@ -24,8 +24,8 @@
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                       \
-    GB_RETURN_IF_FAULTY (M_in) ;                                            \
     ASSERT (GB_VECTOR_OK (w)) ;                                             \
+    GB_BURBLE_START ("GxB_eWiseUnion") ;                                    \
     ASSERT (GB_VECTOR_OK (u)) ;                                             \
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
     ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;                          \
@@ -68,9 +68,8 @@ GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GxB_Vector_eWiseUnion (w, M, accum, add, u, alpha,"
-        " v, beta, desc)") ;
-    GB_BURBLE_START ("GxB_eWiseUnion") ;
+    GB_WHERE (w, M_in, u, alpha, v, beta,
+        "GxB_Vector_eWiseUnion (w, M, accum, add, u, alpha, v, beta, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 
     //--------------------------------------------------------------------------

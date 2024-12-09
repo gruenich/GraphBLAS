@@ -14,10 +14,10 @@
 
 #define GB_EWISE(op)                                                        \
     /* check inputs */                                                      \
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                       \
-    GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                       \
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                       \
-    GB_RETURN_IF_FAULTY (M_in) ;                                            \
+    GB_RETURN_IF_NULL (w) ;                                                 \
+    GB_RETURN_IF_NULL (u) ;                                                 \
+    GB_RETURN_IF_NULL (v) ;                                                 \
+    GB_BURBLE_START ("GrB_eWiseMult") ;                                     \
     ASSERT (GB_VECTOR_OK (w)) ;                                             \
     ASSERT (GB_VECTOR_OK (u)) ;                                             \
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
@@ -59,9 +59,8 @@ GrB_Info GrB_Vector_eWiseMult_BinaryOp       // w<M> = accum (w, u.*v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GrB_Vector_eWiseMult_BinaryOp "
-        "(w, M, accum, mult, u, v, desc)") ;
-    GB_BURBLE_START ("GrB_eWiseMult") ;
+    GB_WHERE (w, M_in, u, v, NULL, NULL,
+        "GrB_Vector_eWiseMult_BinaryOp (w, M, accum, mult, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
 
     //--------------------------------------------------------------------------
@@ -93,9 +92,8 @@ GrB_Info GrB_Vector_eWiseMult_Monoid         // w<M> = accum (w, u.*v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GrB_Vector_eWiseMult_Monoid "
-        "(w, M, accum, monoid, u, v, desc)") ;
-    GB_BURBLE_START ("GrB_eWiseMult") ;
+    GB_WHERE (w, M_in, u, v, NULL, NULL,
+        "GrB_Vector_eWiseMult_Monoid (w, M, accum, monoid, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
     //--------------------------------------------------------------------------
@@ -127,9 +125,8 @@ GrB_Info GrB_Vector_eWiseMult_Semiring       // w<M> = accum (w, u.*v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GrB_Vector_eWiseMult_Semiring "
-        "(w, M, accum, semiring, u, v, desc)") ;
-    GB_BURBLE_START ("GrB_eWiseMult") ;
+    GB_WHERE (w, M_in, u, v, NULL, NULL,
+        "GrB_Vector_eWiseMult_Semiring (w, M, accum, semiring, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     //--------------------------------------------------------------------------

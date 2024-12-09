@@ -32,11 +32,12 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
+    GB_WHERE (w, M_in, A, NULL, NULL, NULL,
+        "GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
+    GB_RETURN_IF_NULL (w) ;
+    GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GrB_extract") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_IMPLIES (M_in != NULL, GB_VECTOR_OK (M_in))) ;
 

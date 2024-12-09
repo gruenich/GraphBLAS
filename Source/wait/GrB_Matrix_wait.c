@@ -24,8 +24,9 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (A, "GrB_Matrix_wait (A, waitmode)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_WHERE (A, NULL, NULL, NULL, NULL, NULL,
+        "GrB_Matrix_wait (A, waitmode)") ;
+    GB_RETURN_IF_NULL (A) ;
 
     //--------------------------------------------------------------------------
     // finish all pending work on the matrix, including creating A->Y
@@ -34,7 +35,6 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     if (waitmode != GrB_COMPLETE &&
         (GB_ANY_PENDING_WORK (A) || GB_hyper_hash_need (A)))
     { 
-        GrB_Info info ;
         GB_BURBLE_START ("GrB_Matrix_wait") ;
         GB_OK (GB_wait (A, "matrix", Werk)) ;
         GB_OK (GB_hyper_hash_build (A, Werk)) ;

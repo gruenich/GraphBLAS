@@ -30,7 +30,8 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)");
+    GB_WHERE (C, M_in, A, B, NULL, NULL,
+        "GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)") ;
     GB_BURBLE_START ("GrB_kronecker") ;
 
     // get the descriptor
@@ -78,10 +79,10 @@ GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Matrix_kronecker_Monoid "
-        "(C, M, accum, op, monoid, B, desc)");
-    GB_BURBLE_START ("GrB_kronecker") ;
+    GB_WHERE (C, M_in, A, B, NULL, NULL,
+        "GrB_Matrix_kronecker_Monoid (C, M, accum, op, monoid, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
+    GB_BURBLE_START ("GrB_kronecker") ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -128,10 +129,10 @@ GrB_Info GrB_Matrix_kronecker_Semiring  // C<M> = accum (C, kron(A,B))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Matrix_kronecker_Semiring "
-        "(C, M, accum, semiring, A, B, desc)") ;
-    GB_BURBLE_START ("GrB_kronecker") ;
+    GB_WHERE (C, M_in, A, B, NULL, NULL,
+        "GrB_Matrix_kronecker_Semiring (C, M, accum, semiring, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
+    GB_BURBLE_START ("GrB_kronecker") ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,

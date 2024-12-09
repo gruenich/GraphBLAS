@@ -63,8 +63,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     //--------------------------------------------------------------------------
 
     size_t blob_size = (size_t) (*blob_size_handle) ;
-    GrB_Info info = GB_serialize ((GB_void **) &blob, &blob_size, A, method,
-        Werk) ;
+    info = GB_serialize ((GB_void **) &blob, &blob_size, A, method, Werk) ;
     if (info == GrB_SUCCESS)
     { 
         (*blob_size_handle) = (GrB_Index) blob_size ;

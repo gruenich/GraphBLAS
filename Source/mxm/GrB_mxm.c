@@ -32,12 +32,12 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_mxm (C, M, accum, semiring, A, B, desc)") ;
+    GB_WHERE (C, M_in, A, B, NULL, NULL,
+        "GrB_mxm (C, M, accum, semiring, A, B, desc)") ;
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL (B) ;
     GB_BURBLE_START ("GrB_mxm") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (B) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,

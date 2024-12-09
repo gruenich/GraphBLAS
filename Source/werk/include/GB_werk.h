@@ -2,7 +2,7 @@
 // GB_werk.h: definitions for werkspace management on the Werk stack
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -59,8 +59,6 @@ typedef GB_Werk_struct *GB_Werk ;
 // The werkspace is allocated from the Werk static if it small enough and space
 // is available.  Otherwise it is allocated by malloc.
 
-// See GB_callbacks.h for the prototype.
-
 #ifdef comments_only
 void *GB_werk_push    // return pointer to newly allocated space
 (
@@ -82,8 +80,6 @@ void *GB_werk_push    // return pointer to newly allocated space
 // the stack to free it properly.  Freeing a werkspace in the middle of the
 // Werk stack also frees everything above it.  Freeing werkspace from the Werk
 // stack is done in LIFO order, like a stack.
-
-// See GB_callbacks.h for the prototype.
 
 #ifdef comments_only
 void *GB_werk_pop     // free the top block of werkspace memory

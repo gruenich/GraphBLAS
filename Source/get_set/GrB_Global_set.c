@@ -103,7 +103,7 @@ GrB_Info GrB_Global_set_Scalar
     // set the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -178,7 +178,7 @@ GrB_Info GrB_Global_set_String
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -263,7 +263,7 @@ GrB_Info GrB_Global_set_INT32
     // set the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -299,7 +299,7 @@ GrB_Info GrB_Global_set_VOID
     // set the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_SUCCESS ;
+    info = GrB_SUCCESS ;
 
     #pragma omp critical (GB_global_get_set)
     {

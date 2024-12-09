@@ -30,11 +30,11 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GrB_Matrix_apply (C, M, accum, op, A, desc)") ;
+    GB_WHERE (C, M_in, A, NULL, NULL, NULL,
+        "GrB_Matrix_apply (C, M, accum, op, A, desc)") ;
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GrB_apply") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -80,13 +80,13 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (x) ;
+    GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GrB_apply") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (x) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor, using GrB_INP1 to transpose the matrix
+    GrB_Info info ;
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, A_transpose, xx2, xx7) ;
 
@@ -130,13 +130,13 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL (y) ;
     GB_BURBLE_START ("GrB_apply") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (y) ;
 
     // get the descriptor, using GrB_INP0 to transpose the matrix
+    GrB_Info info ;
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;
 
@@ -174,8 +174,8 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_Scalar    // C<M>=accum(C,op(x,A))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_Scalar"
-        " (C, M, accum, op, x, A, desc)") ;
+    GB_WHERE (C, M, x, A, NULL, NULL,
+        "GrB_Matrix_apply_BinaryOp1st_Scalar (C, M, accum, op, x, A, desc)") ;
     return (GB_1st (C, M, accum, op, x, A, desc, Werk)) ;
 }
 
@@ -213,8 +213,8 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_Scalar    // C<M>=accum(C,op(A,y))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_Scalar"
-        " (C, M, accum, op, A, y, desc)") ;
+    GB_WHERE (C, M, A, y, NULL, NULL,
+        "GrB_Matrix_apply_BinaryOp2nd_Scalar (C, M, accum, op, A, y, desc)") ;
     return (GB_2nd (C, M, accum, (GB_Operator) op, A, y, desc, Werk)) ;
 }
 
@@ -253,7 +253,8 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp1st_, T)                   \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (C, GB_STR(prefix) "_Matrix_apply_BinaryOp1st_" GB_STR(T)      \
+    GB_WHERE (C, M, A, NULL, NULL, NULL,                                    \
+        GB_STR(prefix) "_Matrix_apply_BinaryOp1st_" GB_STR(T)               \
         " (C, M, accum, op, x, A, desc)") ;                                 \
     GB_SCALAR_WRAP (scalar, x, GB_EVAL3 (prefix, _, T)) ;                   \
     return (GB_1st (C, M, accum, op, scalar, A, desc, Werk)) ;              \
@@ -288,8 +289,8 @@ GrB_Info GrB_Matrix_apply_BinaryOp1st_UDT
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp1st_UDT "
-        " (C, M, accum, op, x, A, desc)") ;
+    GB_WHERE (C, M, A, NULL, NULL, NULL,
+        "GrB_Matrix_apply_BinaryOp1st_UDT (C, M, accum, op, x, A, desc)") ;
     GB_SCALAR_WRAP_UDT (scalar, x, (op == NULL) ? NULL : op->xtype) ;
     return (GB_1st (C, M, accum, op, scalar, A, desc, Werk)) ;
 }
@@ -310,7 +311,8 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_apply_BinaryOp2nd_, T)                   \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (C, GB_STR(prefix) "_Matrix_apply_BinaryOp2nd_" GB_STR(T)      \
+    GB_WHERE (C, M, A, NULL, NULL, NULL,                                    \
+        GB_STR(prefix) "_Matrix_apply_BinaryOp2nd_" GB_STR(T)               \
         " (C, M, accum, op, A, y, desc)") ;                                 \
     GB_SCALAR_WRAP (scalar, y, GB_EVAL3 (prefix, _, T)) ;                   \
     return (GB_2nd (C, M, accum, (GB_Operator) op, A, scalar, desc, Werk)) ;\
@@ -345,8 +347,8 @@ GrB_Info GrB_Matrix_apply_BinaryOp2nd_UDT
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_BinaryOp2nd_UDT"
-        " (C, M, accum, op, A, y, desc)") ;
+    GB_WHERE (C, M, A, NULL, NULL, NULL,
+        "GrB_Matrix_apply_BinaryOp2nd_UDT (C, M, accum, op, A, y, desc)") ;
     GB_SCALAR_WRAP_UDT (scalar, y, (op == NULL) ? NULL : op->ytype) ;
     return (GB_2nd (C, M, accum, (GB_Operator) op, A, scalar, desc, Werk)) ;
 }
@@ -367,7 +369,8 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_apply_IndexOp_, T)                       \
     const GrB_Descriptor desc       /* descriptor for C, M, and A */        \
 )                                                                           \
 {                                                                           \
-    GB_WHERE (C, GB_STR(prefix) "_Matrix_apply_IndexOp_" GB_STR(T)          \
+    GB_WHERE (C, M, A, NULL, NULL, NULL,                                    \
+        GB_STR(prefix) "_Matrix_apply_IndexOp_" GB_STR(T)                   \
         " (C, M, accum, op, A, thunk, desc)") ;                             \
     GB_SCALAR_WRAP (scalar, thunk, GB_EVAL3 (prefix, _, T)) ;               \
     return (GB_2nd (C, M, accum, (GB_Operator) op, A, scalar, desc, Werk)) ;\
@@ -402,8 +405,8 @@ GrB_Info GrB_Matrix_apply_IndexOp_UDT
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_IndexOp_UDT"
-        " (C, M, accum, op, A, thunk, desc)") ;
+    GB_WHERE (C, M, A, NULL, NULL, NULL,
+        "GrB_Matrix_apply_IndexOp_UDT (C, M, accum, op, A, thunk, desc)") ;
     GB_SCALAR_WRAP_UDT (scalar, thunk, (op == NULL) ? NULL : op->ytype) ;
     return (GB_2nd (C, M, accum, (GB_Operator) op, A, scalar, desc, Werk)) ;
 }
@@ -423,8 +426,8 @@ GrB_Info GrB_Matrix_apply_IndexOp_Scalar    // C<M>=accum(C,op(A,i,j,thunk))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_apply_IndexOp_Scalar"
-        " (C, M, accum, op, A, thunk, desc)") ;
+    GB_WHERE (C, M, A, thunk, NULL, NULL,
+        "GrB_Matrix_apply_IndexOp_Scalar (C, M, accum, op, A, thunk, desc)") ;
     return (GB_2nd (C, M, accum, (GB_Operator) op, A, thunk, desc, Werk)) ;
 }
 

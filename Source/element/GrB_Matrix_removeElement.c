@@ -156,9 +156,9 @@ GrB_Info GB_Matrix_removeElement
     // if C is jumbled, wait on the matrix first.  If full, convert to nonfull
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     if (C->jumbled || GB_IS_FULL (C))
     {
-        GrB_Info info ;
         if (GB_IS_FULL (C))
         { 
             // convert C from full to sparse
@@ -235,7 +235,6 @@ GrB_Info GB_Matrix_removeElement
     // assemble any pending tuples; zombies are OK
     if (C_is_pending)
     { 
-        GrB_Info info ;
         GB_OK (GB_wait (C, "C (removeElement:pending tuples)", Werk)) ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_JUMBLED (C)) ;
@@ -258,8 +257,9 @@ GrB_Info GrB_Matrix_removeElement
     GrB_Index col               // column index
 )
 { 
-    GB_WHERE (C, "GrB_Matrix_removeElement (C, row, col)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
+    GB_WHERE (C, NULL, NULL, NULL, NULL, NULL,
+        "GrB_Matrix_removeElement (C, row, col)") ;
+    GB_RETURN_IF_NULL (C) ;
     return (GB_Matrix_removeElement (C, row, col, Werk)) ;
 }
 

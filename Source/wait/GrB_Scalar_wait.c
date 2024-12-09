@@ -24,8 +24,9 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (s, "GrB_Scalar_wait (s, waitmode)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_WHERE (s, NULL, NULL, NULL, NULL, NULL,
+        "GrB_Scalar_wait (s, waitmode)") ;
+    GB_RETURN_IF_NULL (s) ;
 
     //--------------------------------------------------------------------------
     // finish all pending work on the scalar
@@ -33,7 +34,6 @@ GrB_Info GrB_Scalar_wait    // finish all work on a scalar
 
     if (waitmode != GrB_COMPLETE && GB_ANY_PENDING_WORK (s))
     { 
-        GrB_Info info ;
         GB_BURBLE_START ("GrB_Scalar_wait") ;
         GB_OK (GB_wait ((GrB_Matrix) s, "scalar", Werk)) ;
         GB_BURBLE_END ;

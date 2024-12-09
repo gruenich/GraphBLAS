@@ -102,7 +102,7 @@ GrB_Info GrB_Descriptor_get_Scalar
     //--------------------------------------------------------------------------
 
     int32_t i ;
-    GrB_Info info = GB_desc_get (desc, &i, field) ;
+    info = GB_desc_get (desc, &i, field) ;
     if (info == GrB_SUCCESS)
     { 
         info = GB_setElement ((GrB_Matrix) value, NULL, &i, 0, 0,   

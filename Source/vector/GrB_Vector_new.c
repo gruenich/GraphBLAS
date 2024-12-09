@@ -41,7 +41,6 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     // create the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     int64_t vlen = (int64_t) n ;
 
     info = GB_new ((GrB_Matrix *) v, // new user header

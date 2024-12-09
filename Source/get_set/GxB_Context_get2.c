@@ -36,7 +36,6 @@ GrB_Info GxB_Context_get_Scalar
 
     double dvalue = 0 ;
     int32_t ivalue = 0 ;
-    GrB_Info info ;
 
     switch ((int) field)
     {

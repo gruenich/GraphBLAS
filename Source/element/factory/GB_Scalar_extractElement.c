@@ -36,7 +36,6 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
     { 
         // extract scalar with pending tuples or zombies.  It cannot be
         // actually jumbled, but S->jumbled might true anyway.
-        GrB_Info info ;
         GB_WHERE1 (GB_WHERE_STRING) ;
         GB_BURBLE_START ("GrB_Scalar_extractElement") ;
         GB_OK (GB_wait ((GrB_Matrix) S, "s", Werk)) ;

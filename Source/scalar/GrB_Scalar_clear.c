@@ -19,8 +19,9 @@ GrB_Info GrB_Scalar_clear   // clear a GrB_Scalar of its entry
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (s, "GrB_Scalar_clear (s)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (s) ;
+    GB_WHERE (s, NULL, NULL, NULL, NULL, NULL, "GrB_Scalar_clear (s)") ;
+    GB_RETURN_IF_NULL (s) ;
+
     ASSERT (GB_SCALAR_OK (s)) ;
 
     //--------------------------------------------------------------------------

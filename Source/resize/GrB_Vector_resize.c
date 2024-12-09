@@ -21,15 +21,16 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (w, "GrB_Vector_resize (w, nrows_new)") ;
+    GB_WHERE (w, NULL, NULL, NULL, NULL, NULL,
+        "GrB_Vector_resize (w, nrows_new)") ;
+    GB_RETURN_IF_NULL (w) ;
     GB_BURBLE_START ("GrB_Vector_resize") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
 
     //--------------------------------------------------------------------------
     // resize the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_resize ((GrB_Matrix) w, nrows_new, 1, Werk) ;
+    info = GB_resize ((GrB_Matrix) w, nrows_new, 1, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

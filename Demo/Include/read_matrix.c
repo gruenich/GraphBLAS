@@ -128,7 +128,8 @@ GrB_Info read_matrix        // read a double-precision or boolean matrix
         }
         if (i < 0 || j < 0)
         {
-            if (pr) printf ("invalid matrix entry (row %ld, col %ld)\n", i, j) ;
+            if (pr) printf ("invalid matrix entry (row %g, col %g)\n",
+                (double) i, (double) j) ;
             FREE_ALL ;
             return (GrB_INVALID_INDEX) ;
         }

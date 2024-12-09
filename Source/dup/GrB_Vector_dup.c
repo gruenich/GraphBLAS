@@ -34,7 +34,7 @@ GrB_Info GrB_Vector_dup     // make an exact copy of a vector
     // duplicate the vector
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_dup ((GrB_Matrix *) w, (GrB_Matrix) u, Werk) ;
+    info = GB_dup ((GrB_Matrix *) w, (GrB_Matrix) u, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

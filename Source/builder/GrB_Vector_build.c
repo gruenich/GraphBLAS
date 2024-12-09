@@ -26,12 +26,13 @@ GrB_Info function_name          /* build a vector from tuples */              \
     const GrB_BinaryOp dup      /* binary op to assemble duplicates   */      \
 )                                                                             \
 {                                                                             \
-    GB_WHERE (w, GB_STR(function_name) " (w, I, X, nvals, dup)") ;            \
+    GB_WHERE (w, NULL, NULL, NULL, NULL, NULL,                                \
+        GB_STR(function_name) " (w, I, X, nvals, dup)") ;                     \
+    GB_RETURN_IF_NULL (w) ;  /* check now so w->type can be done */           \
     GB_BURBLE_START (GB_STR(function_name)) ;                                 \
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;  /* check now so w->type can be done */ \
     ASSERT (GB_VECTOR_OK (w)) ;                                               \
-    GrB_Info info = GB_build ((GrB_Matrix) w, I, NULL, X, nvals, dup, xtype,  \
-        false, false, false, Werk) ;                                          \
+    info = GB_build ((GrB_Matrix) w, I, NULL, X, nvals, dup, xtype, false,    \
+        false, false, Werk) ;                                                 \
     GB_BURBLE_END ;                                                           \
     return (info) ;                                                           \
 }

@@ -31,9 +31,10 @@ GrB_Info GrB_Vector_extractElement_Scalar   // S = V(i,j)
     // check inputs (just the GrB_Scalar S)
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-    GB_WHERE (S, "GrB_Vector_extractElement_Scalar (s, V, i)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (S) ;
+    GB_WHERE (S, V, NULL, NULL, NULL, NULL,
+        "GrB_Vector_extractElement_Scalar (s, V, i)") ;
+    GB_RETURN_IF_NULL (S) ;
+    GB_RETURN_IF_NULL (V) ;
 
     //--------------------------------------------------------------------------
     // ensure S is bitmap

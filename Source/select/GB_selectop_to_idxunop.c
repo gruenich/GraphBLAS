@@ -44,7 +44,6 @@ GrB_Info GB_selectop_to_idxunop
     GrB_Scalar NewThunk = NULL ;
     GrB_IndexUnaryOp idxunop = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (selectop) ;
-    GB_RETURN_IF_FAULTY (Thunk) ;
 
     ASSERT (idxunop_handle != NULL) ;
     ASSERT (NewThunk_handle != NULL) ;

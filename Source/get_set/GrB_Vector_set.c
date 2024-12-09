@@ -35,7 +35,6 @@ GrB_Info GrB_Vector_set_Scalar
 
     double dvalue = 0 ;
     int32_t ivalue = 0 ;
-    GrB_Info info ;
 
     switch ((int) field)
     {

@@ -14,14 +14,10 @@
 // debugging definitions
 //------------------------------------------------------------------------------
 
-#undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
 
 #ifdef GB_DEBUG
-
-    // assert X is true
-    #define ASSERT(X) GB_assert (X)
 
     // call a GraphBLAS method and assert that it returns GrB_SUCCESS
     #define ASSERT_OK(X)                                                    \
@@ -41,7 +37,6 @@
 #else
 
     // debugging disabled
-    #define ASSERT(X)
     #define ASSERT_OK(X)
     #define ASSERT_OK_OR_NULL(X)
 

@@ -28,7 +28,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
     // print and check the object
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_Vector_check (v, name, pr, f) ;
+    info = GB_Vector_check (v, name, pr, f) ;
 
     //--------------------------------------------------------------------------
     // return result

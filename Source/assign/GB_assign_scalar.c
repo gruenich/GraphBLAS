@@ -47,6 +47,7 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     ASSERT (scalar_code <= GB_UDT_code) ;
 
     // get the descriptor
+    GrB_Info info ;
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
 

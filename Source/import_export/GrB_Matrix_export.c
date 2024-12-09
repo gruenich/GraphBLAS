@@ -253,7 +253,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_export_, Type) /* export a matrix */        \
 /*  GB_BURBLE_START (GB_STR(prefix) "_Matrix_export_" GB_STR(Type)) ; */       \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
     if (A->type->code != acode) return (GrB_DOMAIN_MISMATCH) ;                 \
-    GrB_Info info = GB_export_worker (Ap, Ai, (void *) Ax,                     \
+    info = GB_export_worker (Ap, Ai, (void *) Ax,                     \
         Ap_len, Ai_len, Ax_len, format, A, Werk) ;                             \
 /*  GB_BURBLE_END ;  */                                                        \
     return (info) ;                                                            \

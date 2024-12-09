@@ -160,7 +160,7 @@ GrB_Info GrB_Global_get_Scalar
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -359,7 +359,7 @@ GrB_Info GrB_Global_get_String
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -399,7 +399,7 @@ GrB_Info GrB_Global_get_INT32
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -435,7 +435,7 @@ GrB_Info GrB_Global_get_SIZE
     //--------------------------------------------------------------------------
 
     const char *s ;
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {
@@ -505,7 +505,7 @@ GrB_Info GrB_Global_get_VOID
     // get the field
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GrB_NO_VALUE ;
+    info = GrB_NO_VALUE ;
 
     #pragma omp critical (GB_global_get_set)
     {

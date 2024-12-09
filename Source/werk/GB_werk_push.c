@@ -2,7 +2,7 @@
 // GB_werk_push: allocate werkspace from the Werk stack or malloc
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,19 @@
 
 // The werkspace is allocated from the Werk static if it small enough and space
 // is available.  Otherwise it is allocated by malloc.
+
+#ifdef comments_only
+void *GB_werk_push    // return pointer to newly allocated space
+(
+    // output
+    size_t *size_allocated,     // # of bytes actually allocated
+    bool *on_stack,             // true if werkspace is from Werk stack
+    // input
+    size_t nitems,              // # of items to allocate
+    size_t size_of_item,        // size of each item
+    GB_Werk Werk
+) ;
+#endif
 
 GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push)
 {

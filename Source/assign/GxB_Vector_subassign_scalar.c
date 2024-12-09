@@ -30,16 +30,15 @@ GrB_Info GB_EVAL2 (GXB (Vector_subassign_), T) /* w(I)<M> = accum (w(I),x)  */ \
     const GrB_Descriptor desc       /* descriptor for w(Rows) and M         */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (w, "GxB_Vector_subassign_" GB_STR(T)                             \
+    GB_WHERE (w, M, NULL, NULL, NULL, NULL,                                    \
+        "GxB_Vector_subassign_" GB_STR(T)                                      \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
+    GB_RETURN_IF_NULL (w) ;                                                    \
     GB_BURBLE_START ("GxB_subassign") ;                                        \
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                          \
-    GB_RETURN_IF_FAULTY (M) ;                                                  \
     ASSERT (GB_VECTOR_OK (w)) ;                                                \
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                        \
-    GrB_Info info = GB_subassign_scalar ((GrB_Matrix) w, (GrB_Matrix) M,       \
-        accum, ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc,   \
-        Werk) ;                                                                \
+    info = GB_subassign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,         \
+        ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc, Werk) ;  \
     GB_BURBLE_END ;                                                            \
     return (info) ;                                                            \
 }
@@ -91,13 +90,13 @@ GrB_Info GxB_Vector_subassign_Scalar   // w<Mask>(I) = accum (w(I),s)
     //--------------------------------------------------------------------------
 
     GrB_Matrix S = NULL ;
-    GB_WHERE (w, "GxB_Vector_subassign_Scalar"
-        " (w, M, accum, s, Rows, nRows, desc)") ;
-    GB_BURBLE_START ("GxB_subassign") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (scalar) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
+    GB_WHERE (w, M_in, scalar, NULL, NULL, NULL,
+        "GxB_Vector_subassign_Scalar (w, M, accum, s, Rows, nRows, desc)") ;
+    GB_RETURN_IF_NULL (w) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I) ;
+    GB_BURBLE_START ("GxB_subassign") ;
+
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
 

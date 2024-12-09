@@ -85,7 +85,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
         (xtype->hash != UINT64_MAX) &&
         (ytype->hash != UINT64_MAX) ;
 
-    GrB_Info info = GB_op_name_and_defn (
+    info = GB_op_name_and_defn (
         // output:
         op->name, &(op->name_len), &(op->hash), &(op->defn), &(op->defn_size),
         // input:

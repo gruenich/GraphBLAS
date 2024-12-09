@@ -19,8 +19,9 @@ GrB_Info GrB_Vector_clear   // clear a vector of all entries;
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (v, "GrB_Vector_clear (v)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
+    GB_WHERE (v, NULL, NULL, NULL, NULL, NULL, "GrB_Vector_clear (v)") ;
+    GB_RETURN_IF_NULL (v) ;
+
     ASSERT (GB_VECTOR_OK (v)) ;
 
     //--------------------------------------------------------------------------

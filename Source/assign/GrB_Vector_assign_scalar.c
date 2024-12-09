@@ -28,14 +28,14 @@ GrB_Info GB_EVAL3 (prefix, _Vector_assign_, T) /* w<M>(Rows)=accum(w(Rows),x)*/\
     const GrB_Descriptor desc       /* descriptor for w and mask            */ \
 )                                                                              \
 {                                                                              \
-    GB_WHERE (w, "GrB_Vector_assign_" GB_STR(T)                                \
+    GB_WHERE (w, M, NULL, NULL, NULL, NULL,                                    \
+        "GrB_Vector_assign_" GB_STR(T)                                         \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
+    GB_RETURN_IF_NULL (w) ;                                                    \
     GB_BURBLE_START ("GrB_assign") ;                                           \
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                          \
-    GB_RETURN_IF_FAULTY (M) ;                                                  \
     ASSERT (GB_VECTOR_OK (w)) ;                                                \
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                        \
-    GrB_Info info = GB_assign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,   \
+    info = GB_assign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,            \
         ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc, Werk) ;  \
     GB_BURBLE_END ;                                                            \
     return (info) ;                                                            \
@@ -88,13 +88,13 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     //--------------------------------------------------------------------------
 
     GrB_Matrix S = NULL ;
-    GB_WHERE (w, "GrB_Vector_assign_Scalar"
-        " (w, M, accum, s, Rows, nRows, desc)") ;
-    GB_BURBLE_START ("GrB_assign") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (scalar) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
+    GB_WHERE (w, M_in, scalar, NULL, NULL, NULL,
+        "GrB_Vector_assign_Scalar (w, M, accum, s, Rows, nRows, desc)") ;
+    GB_RETURN_IF_NULL (w) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I) ;
+    GB_BURBLE_START ("GrB_assign") ;
+
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
 

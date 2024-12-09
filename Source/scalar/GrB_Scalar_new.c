@@ -32,8 +32,6 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     // create the GrB_Scalar
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
-
     info = GB_new ((GrB_Matrix *) s, // new user header
         type, 1, 1, GB_ph_calloc, true, GxB_SPARSE,
         GB_Global_hyper_switch_get ( ), 1, /* FIXME: */ false, false) ;

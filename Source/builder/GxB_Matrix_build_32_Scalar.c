@@ -32,9 +32,12 @@ GrB_Info GxB_Matrix_build_32_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GxB_Matrix_build_32_Scalar (C, I, J, scalar, nvals)") ;
+    GB_WHERE (C, scalar, NULL, NULL, NULL, NULL,
+        "GxB_Matrix_build_32_Scalar (C, I, J, scalar, nvals)") ;
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (scalar) ;
     GB_BURBLE_START ("GxB_Matrix_build_32_Scalar") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (scalar) ;
+
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
@@ -45,8 +48,8 @@ GrB_Info GxB_Matrix_build_32_Scalar
     // build the matrix, ignoring duplicates
     //--------------------------------------------------------------------------
 
-    GrB_Info info = GB_build (C, I, J, scalar->x, nvals, GxB_IGNORE_DUP,
-        scalar->type, true, true, true, Werk) ;
+    info = GB_build (C, I, J, scalar->x, nvals, GxB_IGNORE_DUP, scalar->type,
+        true, true, true, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

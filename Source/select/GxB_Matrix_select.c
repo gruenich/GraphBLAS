@@ -35,11 +35,11 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (C, "GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)") ;
+    GB_WHERE (C, M_in, A, Thunk_in, NULL, NULL,
+        "GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)") ;
+    GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_select:DEPRECATED") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (M_in) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,

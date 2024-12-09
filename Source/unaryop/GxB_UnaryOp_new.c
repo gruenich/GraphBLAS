@@ -51,8 +51,8 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 
     op->header_size = header_size ;
 
-    GrB_Info info = GB_unop_new (op, function, ztype, xtype, unop_name,
-        unop_defn, GB_USER_unop_code) ;
+    info = GB_unop_new (op, function, ztype, xtype, unop_name, unop_defn,
+        GB_USER_unop_code) ;
 
     if (info != GrB_SUCCESS)
     { 

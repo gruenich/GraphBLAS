@@ -14,26 +14,6 @@
 // debugging definitions
 //------------------------------------------------------------------------------
 
-#undef ASSERT
-
-#ifdef GB_DEBUG
-    // assert X is true
-    #define ASSERT(X) GB_assert (X)
-#else
-    // debugging disabled
-    #define ASSERT(X)
-#endif
-
-// ASSERT_OK* debugging disabled in the JIT kernels
-#undef  ASSERT_OK
-#define ASSERT_OK(X)
-
-#undef  ASSERT_OK_OR_NULL
-#define ASSERT_OK_OR_NULL(X)
-
-#undef  GB_IMPLIES
-#define GB_IMPLIES(p,q) (!(p) || (q))
-
 // The JIT kernels do not trigger the 'gotcha'.
 #undef  GB_GOTCHA
 #define GB_GOTCHA

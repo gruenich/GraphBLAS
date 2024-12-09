@@ -22,10 +22,11 @@ GrB_Info GxB_Vector_diag    // extract a diagonal from a matrix, as a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE (v, "GxB_Vector_diag (v, A, k, desc)") ;
+    GB_WHERE (v, A, NULL, NULL, NULL, NULL,
+        "GxB_Vector_diag (v, A, k, desc)") ;
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_NULL (v) ;
     GB_BURBLE_START ("GxB_Vector_diag") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
