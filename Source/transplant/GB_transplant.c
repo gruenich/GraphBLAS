@@ -426,7 +426,6 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     GB_Matrix_free (Ahandle) ;
-    ASSERT (*Ahandle == NULL) ;
 
     //--------------------------------------------------------------------------
     // convert the integers of C if their control is strict
