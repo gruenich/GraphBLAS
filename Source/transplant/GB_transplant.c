@@ -17,7 +17,12 @@
 // must be compatible with A->type.
 
 // C->hyper_switch, C->bitmap_switch, C->sparsity_control, C->static_header,
-// C->user_name, and C->user_name_size are not modified by the transplant.
+// C->user_name, C->user_name_size, C->p_control, and C->i_control are not
+// modified by the transplant.
+
+// C->p_is_32 and/or C->i_is_32 may be revised, if their controls are strict.
+
+#define GB_DEBUG
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -417,10 +422,50 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->b_shallow = false ;
 
     //--------------------------------------------------------------------------
-    // free A and return result
+    // free A; all content is now in C
     //--------------------------------------------------------------------------
 
     GB_Matrix_free (Ahandle) ;
+    ASSERT (*Ahandle == NULL) ;
+
+    //--------------------------------------------------------------------------
+    // convert the integers of C if their control is strict
+    //--------------------------------------------------------------------------
+
+    // FIXME: make this a separate function?
+
+    if (!GB_valid_strict (C->p_control, C->p_is_32) ||
+        !GB_valid_strict (C->i_control, C->i_is_32))
+    { 
+        // determine the new integer settings: either strict, or as-is
+        const bool Cp_is_32_new = (C->p_control == GxB_STRICT_32_BITS) ? true :
+                                 ((C->p_control == GxB_STRICT_64_BITS) ? false :
+                                   C->p_is_32) ;
+        const bool Ci_is_32_new = (C->i_control == GxB_STRICT_32_BITS) ? true :
+                                 ((C->i_control == GxB_STRICT_64_BITS) ? false :
+                                   C->i_is_32) ;
+
+        // make sure they are valid for the size of the matrix
+        if (!GB_valid_pi_is_32 (Cp_is_32_new, Ci_is_32_new,
+            anvals, avlen, avdim))
+        { 
+            // matrix is invalid; free C and A and return the error code
+            GB_FREE_ALL ;
+            return (GrB_INVALID_VALUE) ;
+        }
+
+        // convert the integers to match their strict controls
+        GB_OK (GB_convert_int (C, Cp_is_32_new, Ci_is_32_new)) ;
+
+        // any strict settings are now valid
+        GB_assert (GB_valid_strict (C->p_control, C->p_is_32)) ;    // FIXME
+        GB_assert (GB_valid_strict (C->i_control, C->i_is_32)) ;    // FIXME
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
     ASSERT_MATRIX_OK (C, "C after transplant", GB0) ;
     return (GrB_SUCCESS) ;
 }

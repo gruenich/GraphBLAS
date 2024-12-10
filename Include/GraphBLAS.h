@@ -1619,9 +1619,15 @@ GrB_Field ;
 
 typedef enum
 {
-    GxB_AUTO_BITS = 0,      // the default
+    // for global and per-matrix settings:
+    GxB_AUTO_BITS = 0,      // the default for individual matrices:
+                            // use the global default
+
     GxB_STRICT_32_BITS = 1,
-    GxB_STRICT_64_BITS = 2,
+    GxB_PREFER_32_BITS = 2, // the global default
+
+    GxB_STRICT_64_BITS = 3,
+    GxB_PREFER_64_BITS = 4
 }
 GxB_Integer_Size ;
 

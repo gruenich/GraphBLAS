@@ -10,7 +10,7 @@
 // DONE: 32/64 bit
 
 // The integer arrays A->[phi] and A->Y in the matrix A are converted to match
-// the request p_is_32_new and i_is_32_new.  If converted, A->[phi] are no
+// the requested p_is_32_new and i_is_32_new.  If converted, A->[phi] are no
 // longer shallow.  If A->Y is entirely shallow, it is simply removed from A.
 // If A->Y is itself not shallow but contains any shallow A->Y->[phi]
 // components, those components are converted and are no longer shallow.
@@ -33,6 +33,12 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    if (A == NULL)
+    { 
+        // nothing to convert 
+        return (GrB_SUCCESS) ;
+    }
 
     ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
@@ -77,7 +83,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         A->Y_shallow = false ;
     }
 
-    bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
+    bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;   // (A->h != NULL)
     int64_t plen = A->plen ;
     GrB_Matrix Y = A->Y ;
     GB_Pending Pending = A->Pending ;
@@ -111,7 +117,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 
     bool ok = true ;
 
-    if (p_is_32 != p_is_32_new)
+    if (p_is_32 != p_is_32_new && A->p != NULL)
     { 
         // allocate new space for A->p
         Ap_new = GB_malloc_memory (plen+1, psize_new, &Ap_new_size) ;
@@ -121,8 +127,11 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     if (i_is_32 != i_is_32_new)
     { 
         // allocate new space for A->i
-        Ai_new = GB_malloc_memory (anz, isize_new, &Ai_new_size) ;
-        ok = ok && (Ai_new != NULL) ;
+        if (A->i != NULL)
+        {
+            Ai_new = GB_malloc_memory (anz, isize_new, &Ai_new_size) ;
+            ok = ok && (Ai_new != NULL) ;
+        }
         if (A_is_hyper)
         { 
             // allocate new space for A->h
@@ -175,7 +184,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
 
-    if (p_is_32 != p_is_32_new)
+    if (p_is_32 != p_is_32_new && A->p != NULL)
     { 
         GB_cast_int (Ap_new, p_is_32_new ? GB_UINT32_code : GB_UINT64_code,
                      A->p  , p_is_32     ? GB_UINT32_code : GB_UINT64_code,
@@ -187,8 +196,9 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         A->p = Ap_new ;
         A->p_size = Ap_new_size ;
         A->p_shallow = false ;
-        A->p_is_32 = p_is_32_new ;
     }
+
+    A->p_is_32 = p_is_32_new ;
 
     //--------------------------------------------------------------------------
     // convert A->h, A->i, Y->p, Y->i, Pending->i, and Pending->j
@@ -206,15 +216,17 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         // convert A->i
         //----------------------------------------------------------------------
 
-        GB_cast_int (Ai_new, icode_new, A->i, icode, anz, nthreads_max) ;
-        if (!A->i_shallow)
+        if (A->i != NULL)
         { 
-            GB_FREE (&(A->i), A->i_size) ;
+            GB_cast_int (Ai_new, icode_new, A->i, icode, anz, nthreads_max) ;
+            if (!A->i_shallow)
+            { 
+                GB_FREE (&(A->i), A->i_size) ;
+            }
+            A->i = Ai_new ;
+            A->i_size = Ai_new_size ;
+            A->i_shallow = false ;
         }
-        A->i = Ai_new ;
-        A->i_size = Ai_new_size ;
-        A->i_shallow = false ;
-        A->i_is_32 = i_is_32_new ;
 
         //----------------------------------------------------------------------
         // convert A->h if present
@@ -318,6 +330,8 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             Pending->j_size = Pending_j_new_size ;
         }
     }
+
+    A->i_is_32 = i_is_32_new ;
 
     //--------------------------------------------------------------------------
     // return result

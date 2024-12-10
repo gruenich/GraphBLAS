@@ -114,7 +114,7 @@ GrB_Info GB_build               // build matrix
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
-    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
+    bool I_is_32,               // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 )
 {
@@ -125,6 +125,8 @@ GrB_Info GB_build               // build matrix
 
     // check C
     GrB_Info info ;
+    struct GB_Matrix_opaque T_header ;
+    GrB_Matrix T = NULL ;
     ASSERT (C != NULL) ;
     if (GB_nnz (C) > 0 || GB_PENDING (C))
     { 
@@ -257,19 +259,26 @@ GrB_Info GB_build               // build matrix
     // build the matrix T
     //--------------------------------------------------------------------------
 
+    // Determine the Tp_is_32 and Ti_is_32 settings for the new matrix,
+    // assuming that nvals is not reduced by a massive # of duplicates.
+    // C->p_control and C->i_control may be strict; if so, T is created with
+    // these integer sizes.
+    bool Tp_is_32, Ti_is_32 ;
+    GB_OK (GB_determine_pi_is_32 (&Tp_is_32, &Ti_is_32, Werk->p_control,
+        Werk->i_control, GxB_HYPERSPARSE, nvals, C->vlen, C->vdim, true)) ;
+
     // T is always built as hypersparse.  Its type is the same as the z output
     // of the z=dup(x,y) operator if dup is present, or xtype if dup is NULL.
     // If C->type differs from T->type, it is typecasted by
     // GB_transplant_conform.
 
-    // X must be treated as read-only, so GB_builder is not allowed to
-    // transplant it into T->x.
+    // I, J, and X must be treated as read-only, so GB_builder is not allowed
+    // to transplant them into T->x.
 
     void *no_I_work = NULL ; size_t I_work_size = 0 ;
     void *no_J_work = NULL ; size_t J_work_size = 0 ;
     GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
-    struct GB_Matrix_opaque T_header ;
-    GrB_Matrix T = NULL ;
+
     GB_CLEAR_STATIC_HEADER (T, &T_header) ;
     GrB_Type ttype = (discard_duplicates) ? xtype : dup->ztype ;
 
@@ -298,11 +307,8 @@ GrB_Info GB_build               // build matrix
         xtype,          // type of the X array
         true,           // burble is OK
         Werk,
-        is_32, is_32,   // if true, I and J are 32 bit; otherwise 64-bit
-        true, true      // allow Tp_is_32 and Ti_is_32 to be true.  Tp_is_32
-                        // is set false is nnz(T) is too large, and Ti_is_32
-                        // is set false if the dimensions are too large.  This
-                        // constructs the most compact T possible.
+        I_is_32, I_is_32,   // if true, I and J are 32 bit; otherwise 64-bit
+        Tp_is_32, Ti_is_32
     )) ;
 
     double tt = GB_OPENMP_GET_WTIME ;
@@ -360,8 +366,8 @@ GrB_Info GB_build               // build matrix
     { 
         tt = GB_OPENMP_GET_WTIME - tt;
         GBURBLE ("(wrapup %s/%s time: %g) ",
-            is_32 ? "32" : "64",
-            is_32 ? "32" : "64", tt) ;
+            I_is_32 ? "32" : "64",
+            I_is_32 ? "32" : "64", tt) ;
     }
 
     GB_OK (GB_convert_int (C, false, false)) ;  // FIXME: temporary: all 64-bit

@@ -46,6 +46,10 @@
 // GrB_wait is called to materialize the matrix, and the matrix is not modified
 // afterwards, it remains materialized and is not changed.
 
+#define GB_DEBUG
+
+#define GB_FREE_ALL GB_Matrix_free (A)
+
 #include "GB.h"
 
 GrB_Info GB_Matrix_new          // create a new matrix with no entries
@@ -61,6 +65,7 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (A) ;
     (*A) = NULL ;
@@ -90,7 +95,7 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     }
     else
     { 
-        // m-by-n (including 0-by-0) with m != and n != use the global setting
+        // m-by-n (including 0-by-0) with m != 1 or n != 1 use global setting
         A_is_csc = GB_Global_is_csc_get ( ) ;
     }
 
@@ -105,11 +110,32 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
-    bool Ap_is_32 = false ; // GB_validate_p_is_32 (true, 1) ;  // FIXME
-    bool Ai_is_32 = false ; // GB_validate_i_is_32 (true, avlen, avdim) ;
+#if 0
+    // get global pi_control
+    int8_t p_control = GB_Global_p_control_get ( ) ;
+    int8_t i_control = GB_Global_i_control_get ( ) ;
+#else
+    // HACK for now:
+    int8_t p_control = GxB_PREFER_32_BITS ;
+    int8_t i_control = GxB_PREFER_32_BITS ;
+#endif
 
-    return (GB_new (A, // auto sparsity, new header
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool Ap_is_32, Ai_is_32 ;
+    GB_OK (GB_determine_pi_is_32 (&Ap_is_32, &Ai_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, 1, vlen, vdim, true)) ;
+
+    // create the matrix
+    GB_OK (GB_new (A, // auto sparsity (sparse/hyper), new header
         type, vlen, vdim, GB_ph_calloc, A_is_csc, GxB_AUTO_SPARSITY,
         GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Ai_is_32)) ;
+
+    // HACK for now:
+    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new before convert", GB5) ;
+    GB_OK (GB_convert_int (*A, false, false)) ; // FIXME
+    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new after convert", GB5) ;
+    GB_OK (GB_valid_matrix (*A)) ; 
+
+    return (GrB_SUCCESS) ;
 }
 

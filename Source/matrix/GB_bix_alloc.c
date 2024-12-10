@@ -72,11 +72,10 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     else if (sparsity != GxB_FULL)
     {
         // sparsity: sparse or hypersparse
-        if ((A->p_is_32 != GB_validate_p_is_32 (A->p_is_32, nzmax)) ||
-            (A->i_is_32 != GB_validate_i_is_32 (A->i_is_32, A->vlen, A->vdim)))
-        { 
-            // p_is_32 and/or i_is_32 are invalid; cannot allocate safely
-            return (-911) ;     // FIXME: p_is_32 or i_is_32 invalid
+        if (!GB_valid_pi_is_32 (A->p_is_32, A->i_is_32, nzmax, A->vlen,A->vdim))
+        {
+            // matrix is too large for its requested integer settings
+            return (GrB_INVALID_VALUE) ;
         }
         size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
         A->i = GB_malloc_memory (nzmax, isize, &(A->i_size)) ;

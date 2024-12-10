@@ -24,7 +24,7 @@ GrB_Info GB_build               // build matrix
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
-    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
+    bool I_is_32,               // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 ) ;
 

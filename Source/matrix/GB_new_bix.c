@@ -59,9 +59,12 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     ASSERT (Ahandle != NULL) ;
 
-    // ensure p_is_32 and i_is_32 are valid
-    p_is_32 = GB_validate_p_is_32 (p_is_32, nzmax) ;
-    i_is_32 = GB_validate_i_is_32 (p_is_32, vlen, vdim) ;
+    if ((!(sparsity == GxB_FULL || sparsity == GxB_BITMAP)) &&
+        !GB_valid_pi_is_32 (p_is_32, i_is_32, nzmax, vlen, vdim))
+    { 
+        // sparse/hyper matrix is too large for its requested integer settings
+        return (GrB_INVALID_VALUE) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate the header and the vector pointers

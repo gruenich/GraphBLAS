@@ -61,10 +61,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
 
-    // ensure p_is_32 and i_is_32 are valid; p_is_32 is always OK
-    // since nzmax is not yet known
-//  p_is_32 = GB_validate_p_is_32 (p_is_32, 1) ; (nzmax not yet known)
-    i_is_32 = GB_validate_i_is_32 (i_is_32, vlen, vdim) ;
+    if ((!(sparsity == GxB_FULL || sparsity == GxB_BITMAP)) &&
+        !GB_valid_pi_is_32 (p_is_32, i_is_32, 1, vlen, vdim))
+    {
+        // sparse/hyper matrix is too large for its requested integer settings
+        return (GrB_INVALID_VALUE) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate the matrix header, if not already allocated on input
@@ -108,7 +110,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // CSR/CSC format
     A->is_csc = is_csc ;
 
-    // initial sparsity format
+    // sparsity format
     bool A_is_hyper ;
     bool A_is_full_or_bitmap = false ;
     A->hyper_switch = hyper_switch ;
@@ -182,6 +184,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->iso = false ;
     A->p_is_32 = p_is_32 ;
     A->i_is_32 = i_is_32 ;
+    A->p_control = GxB_AUTO_BITS ;
+    A->i_control = GxB_AUTO_BITS ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested

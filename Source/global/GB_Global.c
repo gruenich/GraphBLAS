@@ -136,8 +136,8 @@ typedef struct
     // integer control
     //--------------------------------------------------------------------------
 
-    int8_t p_control ;      // 0 to 3: controls A->p
-    int8_t i_control ;      // 0 to 3: controls A->[hiY]
+    int8_t p_control ;      // -2 to 2: controls A->p
+    int8_t i_control ;      // -2 to 2: controls A->[hiY]
 
     //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress):
@@ -224,8 +224,8 @@ static GB_Global_struct GB_Global =
     .cpu_features_avx512f = false,      // x86_64 with AVX512f
 
     // integer control
-    .p_control = (int8_t) GxB_AUTO_BITS,
-    .i_control = (int8_t) GxB_AUTO_BITS,
+    .p_control = (int8_t) GxB_PREFER_64_BITS,   // FIXME: make it PREFER_32
+    .i_control = (int8_t) GxB_PREFER_64_BITS,   // FIXME: make it PREFER_32
 
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system

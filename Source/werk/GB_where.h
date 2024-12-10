@@ -26,9 +26,10 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
     // initialize the Werk stack
     Werk->pwerk = 0 ;
 
-    // initialize the matrix integer control
-    Werk->matrix_p_control = GB_Global_p_control_get ( ) ;
-    Werk->matrix_i_control = GB_Global_i_control_get ( ) ;
+    // get the global integer control; revised with C->[pi]_control by
+    // GB_WHERE_C_LOGGER (C).
+    Werk->p_control = GB_Global_p_control_get ( ) ;
+    Werk->i_control = GB_Global_i_control_get ( ) ;
 
     // return result
     return (Werk) ;
@@ -38,11 +39,11 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
 // GB_valids: return GrB_SUCCESS if matrices are valid, error otherwise
 //------------------------------------------------------------------------------
 
-#define GB_RETURN_IF_INVALID(arg)           \
-    info = GB_valid ((GrB_Matrix) arg) ;    \
-    if (info != GrB_SUCCESS)                \
-    {                                       \
-        return (info) ;                     \
+#define GB_RETURN_IF_INVALID(arg)               \
+    info = GB_valid_matrix ((GrB_Matrix) arg) ; \
+    if (info != GrB_SUCCESS)                    \
+    {                                           \
+        return (info) ;                         \
     }
 
 static inline GrB_Info GB_valid6
@@ -194,9 +195,9 @@ static inline GrB_Info GB_valid1
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
         Werk->logger_size_handle = &(C->logger_size) ;              \
-        /* get the matrix p_control and i_control */                \
-        Werk->matrix_p_control = C->p_control ;                     \
-        Werk->matrix_i_control = C->i_control ;                     \
+        /* combine the matrix and global pi_control */              \
+        Werk->p_control = GB_pi_control (C->p_control, Werk->p_control) ; \
+        Werk->i_control = GB_pi_control (C->i_control, Werk->i_control) ; \
     }
 
 // GB_WHEREn: check n arguments, first one is input/output matrix C for logger

@@ -16,7 +16,10 @@
 
 // If nzmax_new is too large for the current value of A->p_is_32, then A->p
 // is converted to 64-bit integers and A->p_is_32 is set true.  The content of
-// A->p is preserved.
+// A->p is preserved.  The conversion of A->p to 64-bit fails if the matrix
+// control setting is GxB_STRICT_32_BITS.
+
+#define GB_FREE_ALL ;
 
 #include "GB.h"
 
@@ -58,8 +61,13 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     // reallocate A->p if required
     //--------------------------------------------------------------------------
 
-    if (A->p_is_32 != GB_validate_p_is_32 (A->p_is_32, nzmax_new))
+    if (!GB_valid_p_is_32 (A->p_is_32, nzmax_new))
     { 
+        if (A->p_control == GxB_STRICT_32_BITS)
+        { 
+            // matrix has strict 32-bit A->p but too many entries requested
+            return (GrB_INVALID_VALUE) ;
+        }
         // convert A->p to 64-bit; do not change A->i_is_32
         GrB_Info info = GB_convert_int (A, false, A->i_is_32) ;
         if (info != GrB_SUCCESS)

@@ -20,6 +20,14 @@ GrB_Info GB_transplant          // transplant one matrix into another
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_transplant          // transplant one matrix into another
+(
+    GrB_Matrix C,               // output matrix to overwrite with A
+    const GrB_Type ctype,       // new type of C
+    GrB_Matrix *Ahandle,        // input matrix to copy from and free
+    GB_Werk Werk
+) ;
+
 GrB_Info GB_transplant_conform      // transplant and conform hypersparsity
 (
     GrB_Matrix C,                   // destination matrix to transplant into

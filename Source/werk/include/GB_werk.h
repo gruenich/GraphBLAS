@@ -35,8 +35,10 @@ typedef struct
     char **logger_handle ;          // error report
     size_t *logger_size_handle ;
     int pwerk ;                     // top of Werk stack, initially zero
-    int8_t matrix_p_control ;       // C->p_control from input/output matrix C
-    int8_t matrix_i_control ;       // C->i_control from input/output matrix C
+
+    // integer control, combines C->[pi]_control and Global [pi]_control:
+    int8_t p_control ;              // effective p_control for this method
+    int8_t i_control ;              // effective i_control for this method
 }
 GB_Werk_struct ;
 

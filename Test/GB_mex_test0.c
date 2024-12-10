@@ -4052,6 +4052,8 @@ void mexFunction
     OK (GB_Matrix_check (A, "A ok", G3, ff)) ;
     CHECK (A->h != NULL) ;
 
+    CHECK (A->i == NULL) ;
+
     expected = GrB_UNINITIALIZED_OBJECT ;
 
     A->magic = GB_FREED ;

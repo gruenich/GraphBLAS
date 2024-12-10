@@ -12,6 +12,8 @@
 // Since A->p and A->h are unchanged, the matrix is still valid (unless it was
 // invalid on input).  nnz(A) would report zero, and so would GrB_Matrix_nvals.
 
+// A->p_is_32 and A->i_is_32 are unchanged.
+
 #include "pending/GB_Pending.h"
 
 void GB_bix_free                // free A->b, A->i, and A->x of a matrix

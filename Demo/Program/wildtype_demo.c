@@ -282,7 +282,7 @@ int main (void)
     // create the WildType
     GxB_Type_new (&WildType, sizeof (wildtype), "wildtype", WILDTYPE_DEFN) ;
     GxB_Type_fprint (WildType, "WildType", GxB_COMPLETE, stdout) ;
-    GrB_Matrix_set_String (WildType, "WildType", GrB_NAME) ;
+    GrB_Type_set_String (WildType, "WildType", GrB_NAME) ;
 
     // get its properties
     size_t s ;

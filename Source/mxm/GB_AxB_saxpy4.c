@@ -23,6 +23,8 @@
 #ifndef GBCOMPACT
 #include "GB_control.h"
 #include "FactoryKernels/GB_AxB__include2.h"
+#else
+#include "include/GB_unused.h"
 #endif
 
 #define GB_FREE_WORKSPACE                   \

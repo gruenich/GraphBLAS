@@ -1621,14 +1621,13 @@ typedef enum
 {
     // for global and per-matrix settings:
     GxB_AUTO_BITS = 0,      // the default for individual matrices:
-                            // if used for global setting: same as prefer_32
+                            // use the global default
 
-    GxB_PREFER_32_BITS = 1, // the global default
-    GxB_PREFER_64_BITS = 2,
+    GxB_STRICT_32_BITS = 1,
+    GxB_PREFER_32_BITS = 2, // the global default
 
-    // not for global settings, only individual matrices:
-    GxB_STRICT_32_BITS = 3,
-    GxB_STRICT_64_BITS = 4,
+    GxB_STRICT_64_BITS = 3,
+    GxB_PREFER_64_BITS = 4
 }
 GxB_Integer_Size ;
 
