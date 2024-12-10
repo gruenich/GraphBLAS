@@ -2726,7 +2726,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
     // compile the library and return result
-    GBURBLE ("(jit: %s) ", GB_jit_temp) ;
+//  GBURBLE ("(jit: %s) ", GB_jit_temp) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // remove the *.o file
