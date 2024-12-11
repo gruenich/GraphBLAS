@@ -14,8 +14,7 @@ hack = save ;
 if (nargin < 1)
     dohack = 2 ;
 end
-hack (1) = dohack ;     % modify "very_costly" in GxB_AxB_saxpy3_slice_balanced
-GB_mex_hack (hack) ;
+hack (1) = dohack ; GB_mex_hack (hack) ; % "very_costly" in saxpy3
 
 load west0479 ;
 A.matrix = west0479 ;

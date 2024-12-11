@@ -57,7 +57,7 @@ logstat ;             % start the log.txt
 hack = GB_mex_hack ;
 
 % start with the Werk stack enabled
-hack (2) = 0 ; GB_mex_hack (hack) ;
+hack (2) = 0 ; GB_mex_hack (hack) ;     % enable the Werk stack
 
 % save the current malloc debug status
 debug_save = stat ;

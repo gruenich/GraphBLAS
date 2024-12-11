@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // DONE: 32/64 bit: except converted to 64-bit when done
 
 // CALLED BY: GrB_Matrix_build_*, GrB_Vector_build_*,

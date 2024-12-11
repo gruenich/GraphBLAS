@@ -22,8 +22,6 @@
 
 // C->p_is_32 and/or C->i_is_32 may be revised, if their controls are strict.
 
-#define GB_DEBUG
-
 #define GB_FREE_ALL                 \
 {                                   \
     GB_phybix_free (C) ;            \

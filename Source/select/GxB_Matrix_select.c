@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // DEPRECATED: use GrB_Matrix_select instead.
 
 #define GB_FREE_ALL             \

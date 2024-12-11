@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "select/GB_select.h"
 #include "mask/GB_get_mask.h"
 #include "scalar/GB_Scalar_wrap.h"

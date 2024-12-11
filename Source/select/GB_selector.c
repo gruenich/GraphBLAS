@@ -9,8 +9,6 @@
 
 // FIXME: 32/64 bit
 
-#define GB_DEBUG
-
 // GB_selector does the work for GB_select.  It also deletes zombies for
 // GB_wait using the GxB_NONZOMBIE operator, deletes entries outside a smaller
 // matrix for GxB_*resize using GrB_ROWLE, and extracts the diagonal entries

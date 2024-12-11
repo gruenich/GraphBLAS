@@ -40,8 +40,7 @@ for iso = 0:1
     clear C1
 
     for is_32 = 0:1
-        hack (5) = is_32 ;
-        GB_mex_hack (hack) ;
+        hack (5) = is_32 ; GB_mex_hack (hack) ; % modify is_32 (0 or 1)
         C1 {is_32+1} = GB_mex_kron (Cin, [ ], [ ], op, A, B, [ ]) ;
         assert (C1 {is_32+1}.iso == iso) ;
     end

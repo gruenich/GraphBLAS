@@ -165,9 +165,13 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
     bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
 //  printf ("hack32: %d\n", hack32) ;
-    bool Cp_is_32 = GB_validate_p_is_32 (hack32, cnzmax) ;          // FIXME
-    bool Ci_is_32 = GB_validate_i_is_32 (hack32, cvlen, cvdim) ;    // FIXME
+
+    bool Cp_is_32, Ci_is_32 ;
+    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim, true)) ;
 
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,

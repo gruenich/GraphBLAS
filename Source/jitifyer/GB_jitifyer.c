@@ -2450,7 +2450,7 @@ void GB_jitifyer_cmake_compile (char *kernel_name, uint64_t hash)
 #ifndef NJIT
 
     uint32_t bucket = hash & 0xFF ;
-    GBURBLE ("(jit: %s)\n", "cmake") ;
+    GBURBLE ("(jit compile with cmake)\n") ;
     char *burble_stdout = GB_Global_burble_get ( ) ? "" : GB_DEV_NULL ;
     bool have_log = (GB_STRLEN (GB_jit_error_log) > 0) ;
     char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
@@ -2587,7 +2587,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     char *err_redirect = have_log ?  " 2>> " : " 2>&1 " ;
     char *log_quote = have_log ? "'" : "" ;
 
-    GBURBLE ("(jit compiling cuda with nvcc: %s/c/%02x/%s.cu) ",
+    GBURBLE ("(jit compiling cuda kernel: %s/c/%02x/%s.cu) ",
         GB_jit_cache_path, bucket, kernel_name) ;
 
     snprintf (GB_jit_temp, GB_jit_temp_allocated,
@@ -2643,7 +2643,7 @@ void GB_jitifyer_nvcc_compile (char *kernel_name, uint32_t bucket)
     err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
     // compile the library and return result
-    GBURBLE ("\n(jit: %s) ", GB_jit_temp) ;
+    GBURBLE ("(jit compile cuda:)\n%s\n", GB_jit_temp) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // remove the *.o file
@@ -2726,7 +2726,7 @@ void GB_jitifyer_direct_compile (char *kernel_name, uint32_t bucket)
     err_redirect, log_quote, GB_jit_error_log, log_quote) ; // error log file
 
     // compile the library and return result
-//  GBURBLE ("(jit: %s) ", GB_jit_temp) ;
+    GBURBLE ("(jit compile:)\n%s\n", GB_jit_temp) ;
     GB_jitifyer_command (GB_jit_temp) ; // OK: see security comment above
 
     // remove the *.o file

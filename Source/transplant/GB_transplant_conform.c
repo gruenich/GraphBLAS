@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // DONE: 32/64 bit
 
 // C = (type) T, then conform C to its desired sparsity structure.  T is freed.

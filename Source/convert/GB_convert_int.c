@@ -62,6 +62,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     int64_t anz = GB_nnz (A) ;
     int64_t vlen = A->vlen ;
     int64_t vdim = A->vdim ;
+    bool zombies = (A->nzombies > 0) ;
 
     p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;
     i_is_32_new = GB_validate_i_is_32 (i_is_32_new, vlen, vdim) ;
@@ -207,10 +208,12 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     if (i_is_32 != i_is_32_new)
     { 
 
-        size_t icode_new = i_is_32_new ? GB_INT32_code  : GB_INT64_code  ;
-        size_t icode     = i_is_32     ? GB_INT32_code  : GB_INT64_code  ;
-        size_t ucode_new = i_is_32_new ? GB_UINT32_code : GB_UINT64_code ;
-        size_t ucode     = i_is_32     ? GB_UINT32_code : GB_UINT64_code ;
+        GB_Type_code zombie32  = zombies     ? GB_INT32_code  : GB_UINT32_code ;
+        GB_Type_code zombie64  = zombies     ? GB_INT32_code  : GB_UINT64_code ;
+        GB_Type_code icode_new = i_is_32_new ? zombie32       : zombie64       ;
+        GB_Type_code icode     = i_is_32     ? zombie32       : zombie64       ;
+        GB_Type_code ucode_new = i_is_32_new ? GB_UINT32_code : GB_UINT64_code ;
+        GB_Type_code ucode     = i_is_32     ? GB_UINT32_code : GB_UINT64_code ;
 
         //----------------------------------------------------------------------
         // convert A->i
@@ -218,7 +221,10 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 
         if (A->i != NULL)
         { 
+// double tt = omp_get_wtime ( ) ;
             GB_cast_int (Ai_new, icode_new, A->i, icode, anz, nthreads_max) ;
+// tt = omp_get_wtime ( ) - tt ; printf ("\ncast Ai (%d,%d) %g sec\n",
+// icode_new, icode, tt) ;
             if (!A->i_shallow)
             { 
                 GB_FREE (&(A->i), A->i_size) ;
@@ -273,7 +279,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             // convert Y->i
             //------------------------------------------------------------------
 
-            GB_cast_int (Yi_new, icode_new, Y->i, icode, ynz, nthreads_max) ;
+            GB_cast_int (Yi_new, ucode_new, Y->i, ucode, ynz, nthreads_max) ;
             if (!Y->i_shallow)
             { 
                 GB_FREE (&(Y->i), Y->i_size) ;

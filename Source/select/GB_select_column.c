@@ -9,8 +9,6 @@
 
 // DONE: 32/64-bit
 
-#define GB_DEBUG
-
 // The column selectors can be done in a single pass.
 // C->iso and A->iso are identical.
 

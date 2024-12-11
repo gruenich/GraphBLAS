@@ -1613,7 +1613,16 @@ typedef enum
 
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
     GxB_INDEX_INTEGER = 7053,       // integer size control for row/col indices
-    GxB_OFFSET_INTEGER = 7054,      // integer size control for offsets
+    // FIXME: name???  what do we call this??  This setting defines the
+    // integers used for the A->p array, internally.  It can be 32 bits if
+    // the max # entries in a matrix is < 2^32, or 64 bits otherwise.
+    // OK, but what do we call this for GrB_set/get?
+    // SparseBLAS would call the related integer type the "offset_integer"
+    // type (GraphBLAS does not expose that type to the API, but it does need
+    // to be named for get/set, here):
+//  GxB_MAXNVALS_INTEGER = 7054,      // integer size control for offsets ??
+    GxB_OFFSET_INTEGER = 7054,      // integer size control for offsets ??
+//  GxB_SIZE_INTEGER = 7054,      // integer size control for offsets ??
 }
 GrB_Field ;
 
@@ -3461,44 +3470,6 @@ GrB_Info GxB_Matrix_build_32_Scalar // build a matrix from (I,J,scalar) tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
-
-//------------------------------------------------------------------------------
-// GxB_build:  build a matrix or vector
-//------------------------------------------------------------------------------
-
-// GxB_build is a single polymorphic method that builds both matrices
-// and vectors, as a wrapper for 4 different sets of methods.
-//
-// GxB_build (C,I,J,X,nvals,dup):  GrB_Matrix_build_TYPE, I and J are uint64_t
-// GxB_build (C,I,J,X,nvals,dup):  GxB_Matrix_build_TYPE, I and J are uint32_t
-// GxB_build (v,I,X,nvals,dup):    GrB_Vector_build_TYPE, I is uint64_t
-// GxB_build (v,I,X,nvals,dup):    GxB_Vector_build_TYPE, I is uint32_t
-//
-// future: where I,J,X are all GrB_Vector, not C arrays.  The descriptor will
-// define what part of I,J,X to use: their indices or their values.
-//
-// GxB_build (C,I,J,X,nvals,dup,desc):  GxB_Matrix_build_Vector
-// GxB_build (v,I,X,nvals,dup,desc):    GxB_Vector_build_Vector
-
-#if GxB_STDC_VERSION >= 201112L
-#define GxB_build(C,arg2,arg3,arg4,...)                                        \
-_Generic ((C),                                                                 \
-GrB_Matrix :                                                                   \
-    _Generic ((arg2),                                                          \
-          /* GrB_Vector : GxB_Matrix_build_Vector, (future) */                 \
-          GxB_Index32 * : _Generic ((arg4), GB_PCASES (GxB, Matrix_build_32)), \
-    const GxB_Index32 * : _Generic ((arg4), GB_PCASES (GxB, Matrix_build_32)), \
-          GrB_Index   * : _Generic ((arg4), GB_PCASES (GrB, Matrix_build)),    \
-    const GrB_Index   * : _Generic ((arg4), GB_PCASES (GrB, Matrix_build))),   \
-GrB_Vector :                                                                   \
-    _Generic ((arg2),                                                          \
-          /* GrB_Vector : GxB_Vector_build_Vector, (future) */                 \
-          GxB_Index32 * : _Generic ((arg3), GB_PCASES (GxB, Matrix_build_32)), \
-    const GxB_Index32 * : _Generic ((arg3), GB_PCASES (GxB, Matrix_build_32)), \
-          GrB_Index   * : _Generic ((arg3), GB_PCASES (GrB, Matrix_build)),    \
-    const GrB_Index   * : _Generic ((arg3), GB_PCASES (GrB, Matrix_build))))   \
-(C, arg2, arg3, arg4, __VA_ARGS__)
-#endif
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_setElement

@@ -14,39 +14,57 @@
 // size 1, A->plen is 1, and contents A->x and A->i are NULL.  If this method
 // fails, *A is set to NULL.
 
+//      A->p        32-bit: UINT32_MAX entries, 64-bit: "inf"
+//                  'column pointers', Ap [0] = 0, Ap [n] = nvals(A)
+//                  size n+1, matrix is m-by-n
+//
+//                  [Ap [k] ... Ap [k+1]-1], kth nonempty col
+//                  j = Ah [k], gives A(:,j)
+
+//  let N = max(m,n)
+
+//      A->i, A->h  : 32-bit: N < 2^31 (INT32_MAX), 64-bit: 2^60 (2^62)
+
 // FIXME: create global and per-matrix setting:
 //
 // For Ap and Ai, independently:
 //
 //  Global settings: no matrix is converted if this is changed
+//  ----------------
 //
-//  prefer 32  : use 32 (or 64 if required) for new or recomputed matrices;
-//              any prior 64 ok (will be the default; but use 64-bit for now)
+//  GxB_PREFER_32_BITS : use 32 (or 64 if required) for new or recomputed
+//                      matrices; any prior 64 ok (will be the default; but use
+//                      64-bit for now)
 //
-//  prefer 64  : use 64 by default (this is the default for now)
+//  GxB_PREFER_64_BITS : use 64 by default (this is the default for now)
 //
-//  per-matrix settings: via GrB_set
+//  per-matrix settings:
+//  -------------------
 //
-//  default : rely on the global settings
-//
-//  strict 32  : use 32, but return an error if the matrix is too big for
-//          32-bit.  convert now from 64 to 32.  If OK, lock the size of the
-//          integers and do not change in the future.  If the matrix nvals or
-//          dimension changes and 32-bit becomes too small, return an error and
-//          do not convert the matrix.
-//
-//  prefer 32 : use 32 bit if possible, but allow 64 bit if needed
-//
-//  strict 64  : use 64, convert now if already 32 (not an error); lock and do
-//          not change in the future
+//  GxB_AUTO_BITS:  default : rely on the global settings
 
+//  GxB_PREFER_32_BITS : use 32 bits if possible, but allow 64 bit if needed
+//                      A hint.
+//
+//  GxB_PREFER_64_BITS : use 64 bits, convert now is already 32 bits,
+//                      but 32 bit is not an error in the future.  A hint.
+//
+//  GxB_STRICT_32_BITS  : use 32 bits, but return an error if the matrix is too
+//                      big for 32-bit.  convert now from 64 to 32.  If OK,
+//                      lock the size of the integers and do not change in the
+//                      future.  If the matrix nvals or dimension changes and
+//                      32-bit becomes too small, return an error and do not
+//                      convert the matrix.
+//
+//  GxB_STRICT_64_BITS : use 64, convert now if already 32;
+//                      lock and do not change in the future.
+//                      An error will occur if it 
+//
 // Changing the global settings has no impact on the block/non-blocking status
 // of any existing matrix.  If the per-matrix setting is changed, it may cause
 // future pending work that will be finalized by GrB_wait on that matrix.  If
 // GrB_wait is called to materialize the matrix, and the matrix is not modified
 // afterwards, it remains materialized and is not changed.
-
-#define GB_DEBUG
 
 #define GB_FREE_ALL GB_Matrix_free (A)
 
@@ -131,9 +149,9 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Ai_is_32)) ;
 
     // HACK for now:
-    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new before convert", GB5) ;
+    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new before convert", GB0) ;
     GB_OK (GB_convert_int (*A, false, false)) ; // FIXME
-    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new after convert", GB5) ;
+    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new after convert", GB0) ;
     GB_OK (GB_valid_matrix (*A)) ; 
 
     return (GrB_SUCCESS) ;

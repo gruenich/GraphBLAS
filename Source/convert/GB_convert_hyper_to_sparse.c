@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // DONE: 32/64 bit
 
 // On input, the matrix may have shallow A->p and A->h content; it is safely
