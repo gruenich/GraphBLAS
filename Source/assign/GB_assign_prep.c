@@ -494,7 +494,10 @@ GrB_Info GB_assign_prep
                     else
                     { 
                         GB_UNJUMBLE (C) ;
-                        GB_ENSURE_SPARSE (C) ;
+                        if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
+                        { 
+                            GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
+                        }
                         GBURBLE ("C(i,:)=zombie ") ;
                         GB_OK (GB_assign_zombie2 (C, I [0])) ;
                     }
@@ -527,7 +530,10 @@ GrB_Info GB_assign_prep
                     }
                     else
                     { 
-                        GB_ENSURE_SPARSE (C) ;
+                        if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
+                        { 
+                            GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
+                        }
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_OK (GB_hyper_hash_build (C, Werk)) ;
                         GB_OK (GB_assign_zombie1 (C, J [0])) ;
@@ -580,7 +586,10 @@ GrB_Info GB_assign_prep
                     { 
                         // Method 00: C(I,J) = empty, using S
                         GBURBLE ("C(I,J)=zombie ") ;
-                        GB_ENSURE_SPARSE (C) ;
+                        if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
+                        { 
+                            GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
+                        }
                         GB_OK (GB_subassign_zombie (C,
                             I, ni, nI, Ikind, Icolon,
                             J, nj, nJ, Jkind, Jcolon, Werk)) ;

@@ -78,6 +78,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // check inputs
     //--------------------------------------------------------------------------
 
+    // C is an empty header and not yet allocated
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT_TYPE_OK (ctype, "ctype for transpose", GB0) ;
     ASSERT_MATRIX_OK (A, "A input for transpose_bucket", GB0) ;
@@ -101,6 +102,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // get A
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     int64_t anz = GB_nnz (A) ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
@@ -124,17 +126,21 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // The bucket transpose only works when C is sparse.
     // A can be sparse or hypersparse.
 
-    bool hack32 = false ; // GB_Global_hack_get (4) ; // FIXME: enable 32-bit
-    bool Cp_is_32 = GB_validate_p_is_32 (hack32, anz) ;
-    bool Ci_is_32 = GB_validate_i_is_32 (hack32, avdim, avlen) ;
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    bool Cp_is_32, Ci_is_32 ;
+
+    // C is created using its requested integers
+    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
+        i_control, GxB_SPARSE, anz, avdim, avlen, true)) ;
 
     // C->p is allocated but not initialized.
-    GrB_Info info ;
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, // sparse, existing header
-        ctype, avdim, avlen, GB_ph_malloc, C_is_csc,
-        GxB_SPARSE, true, A->hyper_switch, avlen, anz, true, C_iso,
-        Cp_is_32, Ci_is_32)) ;
+        ctype, avdim, avlen, GB_ph_malloc, C_is_csc, GxB_SPARSE, true,
+        A->hyper_switch, avlen, anz, true, C_iso, Cp_is_32, Ci_is_32)) ;
+
     C->nvals = anz ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 

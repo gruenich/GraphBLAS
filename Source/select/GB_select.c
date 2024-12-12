@@ -378,11 +378,19 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     }
     else if (is_empty)
     { 
+        // get the integer sizes for T
+        bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+        int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+        int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+        bool Cp_is_32, Ci_is_32 ;
+        GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
+            i_control, GxB_SPARSE, 0, A->vlen, A->vdim, true)) ;
+
         // T is an empty non-iso matrix
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, A_csc,
             GxB_SPARSE + GxB_HYPERSPARSE, GB_Global_hyper_switch_get ( ), 1,
-            /* FIXME: */ true, true)) ; // allow 32-bit for now
+            Cp_is_32, Ci_is_32)) ;
     }
     else
     { 

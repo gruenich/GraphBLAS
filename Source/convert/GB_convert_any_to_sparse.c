@@ -41,7 +41,7 @@ GrB_Info GB_convert_any_to_sparse // convert to sparse
     else if (GB_IS_FULL (A))
     { 
         // convert from full to sparse
-        GB_OK (GB_convert_full_to_sparse (A)) ;
+        GB_OK (GB_convert_full_to_sparse (A, Werk)) ;
     }
     else if (GB_IS_BITMAP (A))
     { 

@@ -89,8 +89,8 @@ GrB_Info GB_determine_pi_is_32 // determine p_is_32 and i_is_32 for a new matrix
         bool i_prefer_32 = (i_control <= GxB_PREFER_32_BITS) ;
 
         // revise them accordering to the matrix content
-        (*p_is_32) = GB_validate_p_is_32 (p_prefer_32, nvals) ;
-        (*i_is_32) = GB_validate_i_is_32 (i_prefer_32, vlen, vdim) ;
+        (*p_is_32) = GB_validate_p_is_32 (p_prefer_32, nvals) ;         // OK
+        (*i_is_32) = GB_validate_i_is_32 (i_prefer_32, vlen, vdim) ;    // OK
 
         // check the matrix for strict pi_controls
         if (strict)

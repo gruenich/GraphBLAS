@@ -289,8 +289,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR0 ("  p_control: %d, i_control %d\n", A->p_control, A->i_control) ;
         #endif
 
-        if ((A->p_is_32 && !GB_validate_p_is_32 (true, A->nvals)) ||
-            (A->i_is_32 && !GB_validate_i_is_32 (true, A->vlen, A->vdim)))
+        if ((A->p_is_32 && !GB_validate_p_is_32 (true, A->nvals)) ||       // OK
+            (A->i_is_32 && !GB_validate_i_is_32 (true, A->vlen, A->vdim))) // OK
         {
             GBPR0 ("  matrix is too large for 32-bit integers\n") ;
             return (GrB_INVALID_OBJECT) ;

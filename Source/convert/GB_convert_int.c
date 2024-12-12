@@ -64,8 +64,8 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     int64_t vdim = A->vdim ;
     bool zombies = (A->nzombies > 0) ;
 
-    p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;
-    i_is_32_new = GB_validate_i_is_32 (i_is_32_new, vlen, vdim) ;
+    p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;          // OK
+    i_is_32_new = GB_validate_i_is_32 (i_is_32_new, vlen, vdim) ;   // OK
 
     if (p_is_32 == p_is_32_new && i_is_32 == i_is_32_new)
     { 

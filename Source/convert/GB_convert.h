@@ -94,7 +94,8 @@ bool GB_convert_sparse_to_bitmap_test    // test for hyper/sparse to bitmap
 
 GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 (
-    GrB_Matrix A                // matrix to convert from full to sparse
+    GrB_Matrix A,               // matrix to convert from full to sparse
+    GB_Werk Werk
 ) ;
 
 GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap
@@ -160,20 +161,11 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     GB_Werk Werk
 ) ;
 
-/* ensure C is sparse or hypersparse */
-#define GB_ENSURE_SPARSE(C)                                 \
-{                                                           \
-    if (GB_IS_BITMAP (C))                                   \
-    {                                                       \
-        /* convert C from bitmap to sparse */               \
-        GB_OK (GB_convert_bitmap_to_sparse (C, Werk)) ;     \
-    }                                                       \
-    else if (GB_IS_FULL (C))                                \
-    {                                                       \
-        /* convert C from full to sparse */                 \
-        GB_OK (GB_convert_full_to_sparse (C)) ;             \
-    }                                                       \
-}
+GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
+(
+    GrB_Matrix A,
+    GB_Werk Werk
+) ;
 
 //------------------------------------------------------------------------------
 // GB_is_dense

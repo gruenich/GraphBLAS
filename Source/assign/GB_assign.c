@@ -305,8 +305,11 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // delete entries outside C(I,J) for which M(i,j) is false
             //------------------------------------------------------------------
 
-            // C must be sparse or hypersparse
-            GB_ENSURE_SPARSE (C) ;
+            // C must be sparse or hypersparse; convert full/bitmap to sparse
+            if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
+            { 
+                GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
+            }
 
             if (assign_kind == GB_COL_ASSIGN)
             { 

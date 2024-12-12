@@ -167,8 +167,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
     int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
-//  printf ("hack32: %d\n", hack32) ;
-
     bool Cp_is_32, Ci_is_32 ;
     GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
         C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim, true)) ;

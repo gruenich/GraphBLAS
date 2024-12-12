@@ -52,8 +52,8 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     void *Cp = NULL ; size_t Cp_size = 0 ;
     void *Ci = NULL ; size_t Ci_size = 0 ;
     void *Cx = NULL ; size_t Cx_size = 0 ;
-    bool Cp_is_32 = false ; // GB_validate_p_is_32 (true, anvals) ;     FIXME
-    bool Ci_is_32 = false ; // GB_validate_i_is_32 (true, A->vlen, avdim) ;FIXME
+    bool Cp_is_32 = false ; // FIXME: use GB_determine_pi_is_32
+    bool Ci_is_32 = false ; // FIXME: use GB_determine_pi_is_32
     size_t psize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 

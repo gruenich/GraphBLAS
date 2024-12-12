@@ -127,6 +127,8 @@
     GB_FREE_WORK (&K_work, K_work_size) ;           \
 }
 
+#define GB_FREE_ALL GB_FREE_WORKSPACE
+
 //------------------------------------------------------------------------------
 // GB_builder
 //------------------------------------------------------------------------------
@@ -228,7 +230,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool K_is_32 = (nvals < UINT32_MAX) ;
     GB_MDECL (K_work, , u) ; size_t K_work_size = 0 ;
 
-    Ti_is_32 = GB_validate_i_is_32 (Ti_is_32, vlen, vdim) ;
+    Ti_is_32 = GB_validate_i_is_32 (Ti_is_32, vlen, vdim) ;     // OK
 
     // duplicate indices are flagged using an out-of-range index, after
     // any out-of-range indices on input have been checked.
@@ -334,7 +336,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // (if needed) would be a bit slower, and the transplant can only
         // happen if there are no duplicates.  If there are duplicates, T->i is
         // computed out-of-place from I_work, so there is no cast.
-        // I_is_32 = GB_validate_i_is_32 (true, vlen, vdim) ;
+        // I_is_32 = GB_validate_i_is_32 (true, vlen, vdim) ;   // OK
 
         // (2) This option allows the widest use of 32-bit indices for I_work,
         // which speeds up the sort when max(vlen,vdim) > GB_NMAX32.  However,
@@ -676,13 +678,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (S_iso)
             { 
                 // K_work is NULL; only sort (j,i)
-                info = GB_msort_2 (J_work, J_is_32, I_work, I_is_32, nvals,
-                    nthreads) ;
+                GB_OK (GB_msort_2 (J_work, J_is_32, I_work, I_is_32, nvals,
+                    nthreads)) ;
             }
             else
             { 
-                info = GB_msort_3 (J_work, J_is_32, I_work, I_is_32,
-                    K_work, K_is_32, nvals, nthreads) ;
+                GB_OK (GB_msort_3 (J_work, J_is_32, I_work, I_is_32,
+                    K_work, K_is_32, nvals, nthreads)) ;
             }
 
         }
@@ -696,20 +698,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (S_iso)
             { 
                 // K_work is NULL; only sort (i)
-                info = GB_msort_1 (I_work, I_is_32, nvals, nthreads) ;
+                GB_OK (GB_msort_1 (I_work, I_is_32, nvals, nthreads)) ;
             }
             else
             { 
-                info = GB_msort_2 (I_work, I_is_32, K_work, K_is_32, nvals,
-                    nthreads) ;
+                GB_OK (GB_msort_2 (I_work, I_is_32, K_work, K_is_32, nvals,
+                    nthreads)) ;
             }
-        }
-
-        if (info != GrB_SUCCESS)
-        {
-            // out of memory in GB_msort_*
-            GB_FREE_WORKSPACE ;
-            return (GrB_OUT_OF_MEMORY) ;
         }
     }
 
@@ -920,7 +915,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t tnz = tnz_slice [nthreads] ;
     int64_t ndupl = nvals - tnz ;
 
-    Tp_is_32 = GB_validate_p_is_32 (Tp_is_32, tnz) ;
+    Tp_is_32 = GB_validate_p_is_32 (Tp_is_32, tnz) ;        // OK
 
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse
@@ -929,15 +924,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.  The header T always exists on input, as
     // either a static or dynamic header.
-    info = GB_new (&T, // always hyper, existing header
+    GB_OK (GB_new (&T, // always hyper, existing header
         ttype, vlen, vdim, GB_ph_malloc, is_csc,
-        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Tp_is_32, Ti_is_32) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_WORKSPACE ;
-        return (info) ;
-    }
+        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Tp_is_32, Ti_is_32)) ;
 
     ASSERT (T->p != NULL) ;
     ASSERT (T->h != NULL) ;
