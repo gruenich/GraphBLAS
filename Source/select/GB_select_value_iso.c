@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64-bit, except for hack32
+#define GB_DEBUG
 
 // A is iso and the operator is VALUE*.
 
@@ -85,10 +86,19 @@ GrB_Info GB_select_value_iso
     if (C_empty)
     { 
         // C is an empty matrix
+        bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+        hack32 = true ; // FIXME
+        int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+        int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+        bool Cp_is_32, Ci_is_32 ;
+
+        GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
+            i_control, GxB_AUTO_SPARSITY, 0, A->vlen, A->vdim, true)) ;
+
         return (GB_new (&C, // existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
-            /* FIXME: */ false, false)) ;
+            Cp_is_32, Ci_is_32)) ;
     }
     else
     { 

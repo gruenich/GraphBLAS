@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit, except for trimming out 3 bits for idxop_ecode
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -79,17 +81,31 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     GB_enumify_sparsity (&csparsity, GB_sparsity (C)) ;
     GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
 
+    int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
+    int ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+    int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
+
     //--------------------------------------------------------------------------
     // construct the select method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits:  37 (10 hex digits)
+    // total method_code bits:  41 (11 hex digits): can reduce to 38 bits
 
-    // FIXME: 32/64 bits: 4 bits for C, A
+    // FIXME : reduce bits for idxop_ecode, by subtracting 231: then 0 to 23,
+    // which is 5 bits, not 8 bits
 
     (*method_code) =
                                                // range        bits
-                // iso of A aand C (2 bits)
+
+                // C, A: 32/64 (4 bits) (1 hex digit)
+                GB_LSHIFT (cp_is_32   , 43) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 42) |  // 0 or 1       1
+                GB_LSHIFT (ap_is_32   , 41) |  // 0 or 1       1
+                GB_LSHIFT (ai_is_32   , 40) |  // 0 or 1       1
+
+                // iso of A and C (2 bits, 1 hex digit)
+                // 2 bits unused
                 GB_LSHIFT (C_iso_code , 37) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
 
@@ -106,7 +122,7 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
                 GB_LSHIFT (ycode      , 12) |  // 0 to 14      4
 
                 // types of C and A (2 hex digits)
-                GB_LSHIFT (ccode      ,  8) |  // 0 to 15      4
+                GB_LSHIFT (ccode      ,  8) |  // 0 to 15      4    // == acode
                 GB_LSHIFT (acode      ,  4) |  // 0 to 15      4
 
                 // sparsity structures of C and A (1 hex digit)

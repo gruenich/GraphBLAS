@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64-bit.
+// DONE: 32/64-bit, except for hack32
+
+#define GB_DEBUG
 
 #include "select/GB_select.h"
 #ifndef GBCOMPACT
@@ -65,7 +67,7 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    uint64_t *restrict Zp = NULL ; size_t Zp_size = 0 ;     // FIXME
+    GB_MDECL (Zp, , u) ; size_t Zp_size = 0 ;
     GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
@@ -92,18 +94,40 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
+    int64_t anz = GB_nnz (A) ;
+
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+    hack32 = true ; // FIXME
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    bool Cp_is_32, Ci_is_32 ;
+    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        csparsity, anz, A->vlen, A->vdim, true)) ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
-        csparsity, A->hyper_switch, A->plen,
-        /* FIXME: */ false, false)) ;
+        csparsity, A->hyper_switch, A->plen, Cp_is_32, Ci_is_32)) ;
 
     ASSERT (csparsity == GB_sparsity (C)) ;
+    ASSERT (Cp_is_32 == C->p_is_32) ;
+    ASSERT (Ci_is_32 == C->i_is_32) ;
+
+    Cp_is_32 = C->p_is_32 ;
+    Ci_is_32 = C->i_is_32 ;
+
+    bool Ap_is_32 = A->p_is_32 ;
+    bool Ai_is_32 = A->i_is_32 ;
+
+    GB_Type_code aucode = Ai_is_32 ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code cucode = Ci_is_32 ? GB_UINT32_code : GB_UINT64_code ;
+
+    size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (A_is_hyper)
     { 
         // C->h is a deep copy of A->h
-        GB_memcpy (C->h, A->h, A->nvec * sizeof (uint64_t), nthreads_max) ;
+//      GB_memcpy (C->h, A->h, A->nvec * sizeof (uint64_t), nthreads_max) ;
+        GB_cast_int (C->h, cucode, A->h, aucode, A->nvec, nthreads_max) ;
     }
 
     C->nvec = A->nvec ;
@@ -123,9 +147,8 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     int A_ntasks, A_nthreads ;
-    int64_t anz_held = GB_nnz_held (A) ;
-    double work = 8*anvec + ((opcode == GB_DIAG_idxunop_code) ? 0 : anz_held) ;
-    GB_SLICE_MATRIX_WORK (A, 8, work, anz_held) ;
+    double work = 8*anvec + ((opcode == GB_DIAG_idxunop_code) ? 0 : anz) ;
+    GB_SLICE_MATRIX_WORK (A, 8, work, anz) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task
@@ -155,7 +178,7 @@ GrB_Info GB_select_sparse
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_MALLOC_WORK (C->plen + 1, uint64_t, &Zp_size) ; // FIXME
+        Zp = GB_malloc_memory (C->plen + 1, cpsize, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory
@@ -177,8 +200,8 @@ GrB_Info GB_select_sparse
         //----------------------------------------------------------------------
 
         // no JIT worker needed for these operators
-        info = GB_select_positional_phase1 (C, Zp, Wfirst, Wlast, A, ithunk,
-            op, A_ek_slicing, A_ntasks, A_nthreads) ;
+        GB_OK (GB_select_positional_phase1 (C, Zp, Wfirst, Wlast, A, ithunk,
+            op, A_ek_slicing, A_ntasks, A_nthreads)) ;
 
     }
     else
@@ -249,29 +272,27 @@ GrB_Info GB_select_sparse
     // finalize Cp, cumulative sum of Cp, and compute Cp_kfirst
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Cp = C->p ;      // FIXME
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+
     if (!op_is_positional)
     { 
         // GB_select_positional_phase1 finalizes Cp in the
         // select/factory/GB_select_positional_phase1_template.c.  This phase
         // is only needed for entry-style selectors, done by
         // select/template/GB_select_entry_phase1_template.c:
-        GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
-            Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+        GB_ek_slice_merge1 (Cp, Cp_is_32, Wfirst, Wlast, A_ek_slicing,
+            A_ntasks) ;
     }
 
-    GB_cumsum (Cp, /* FIXME: */ false,
-        anvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
-
-    GB_ek_slice_merge2 (Cp_kfirst,
-        Cp, /* FIXME: */ false,
-        Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
+    GB_cumsum (Cp, Cp_is_32, anvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+    GB_ek_slice_merge2 (Cp_kfirst, Cp, Cp_is_32, Wfirst, Wlast, A_ek_slicing,
+        A_ntasks) ;
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted C->i and C->x
     //--------------------------------------------------------------------------
 
-    uint64_t cnz = Cp [anvec] ; // FIXME
+    uint64_t cnz = GB_IGET (Cp, anvec) ;
     GB_OK (GB_bix_alloc (C, cnz, csparsity, false, true, C_iso)) ;
     C->jumbled = A->jumbled ;
     C->nvals = cnz ;

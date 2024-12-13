@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #ifndef GB_SELECT_H
 #define GB_SELECT_H
@@ -134,8 +134,7 @@ GrB_Info GB_select_positional_phase1
     // input/output:
     GrB_Matrix C,
     // output:
-    uint64_t *restrict Zp,      // FIXME
-//  void *Zp,                       // if C->p_is_32: 32 bit, else 64-bit
+    void *Zp,                       // if C->p_is_32: 32 bit, else 64-bit
     uint64_t *restrict Wfirst,
     uint64_t *restrict Wlast,
     // input:
@@ -152,8 +151,7 @@ GrB_Info GB_select_positional_phase2
     // input/output:
     GrB_Matrix C,
     // input:
-    const uint64_t *restrict Zp,        // FIXME
-//  const void *Zp,                 // if C->p_is_32: 32 bit, else 64-bit
+    const void *Zp,                 // if C->p_is_32: 32 bit, else 64-bit
     const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,

@@ -7,10 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
-// A is sparse, hypersparse, or full, and the op is not positional.
-// C is sparse or hypersparse.
+#define GB_DEBUG
+
+// A and C are sparse or hypersparse
 
 #include "select/GB_select.h"
 
@@ -38,8 +39,6 @@ GrB_Info GB_select_generic_phase1
     ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
     ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
     ASSERT (opcode != GB_NONZOMBIE_idxunop_code) ;
-
-    uint64_t *restrict Cp = C->p ;  // FIXME
 
     //--------------------------------------------------------------------------
     // phase1: generic entry selector

@@ -1848,7 +1848,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_select_family : 
             op1 = op ;
-            method_code_digits = 10 ;
+            method_code_digits = 11 ;
             break ;
 
         case GB_jit_user_type_family : 

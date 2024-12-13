@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 // A is sparse or hypersparse
 
@@ -20,8 +22,7 @@ GrB_Info GB_select_positional_phase2
     // input/output:
     GrB_Matrix C,
     // input:
-    const uint64_t *restrict Zp,        // FIXME
-//  const void *Zp,                 // if C->p_is_32: 32 bit, else 64-bit
+    const void *Zp,                 // if C->p_is_32: 32 bit, else 64-bit
     const uint64_t *restrict Cp_kfirst,
     const GrB_Matrix A,
     const bool flipij,
@@ -42,10 +43,13 @@ GrB_Info GB_select_positional_phase2
         (opcode == GB_DIAG_idxunop_code)) ;
     ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)
         || (opcode == GB_NONZOMBIE_idxunop_code && A->iso)) ;
+    ASSERT (!GB_IS_BITMAP (A)) ;
 
     //--------------------------------------------------------------------------
     // phase1: positional operators and nonzombie iso selector
     //--------------------------------------------------------------------------
+
+    GB_IDECL (Zp, const, u) ; GB_IPTR (Zp, C->p_is_32) ;
 
     #define GB_A_TYPE GB_void
     #include "select/include/GB_select_shared_definitions.h"

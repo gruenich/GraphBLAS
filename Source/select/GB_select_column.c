@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64-bit
+// DONE: 32/64-bit, except for hack32
+
+#define GB_DEBUG
 
 // The column selectors can be done in a single pass.
 // C->iso and A->iso are identical.
@@ -171,6 +173,9 @@ GrB_Info GB_select_column
     GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
         A->type, avlen, avdim, GB_ph_malloc, true, csparsity, false,
         A->hyper_switch, cnvec, cnz, true, A_iso, Cp_is_32, Ci_is_32)) ;
+
+    Cp_is_32 = C->p_is_32 ;
+    Ci_is_32 = C->i_is_32 ;
 
     ASSERT (info == GrB_SUCCESS) ;
     int nth2 = GB_nthreads (cnvec, chunk, nth) ;
