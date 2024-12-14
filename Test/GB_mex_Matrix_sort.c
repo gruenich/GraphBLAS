@@ -87,30 +87,42 @@ void mexFunction
 
     // P = GB_mex_Matrix_sort (op, A, desc, 1): do not compute C
     bool P_only = (arg1 >= 1 && nargout == 1) ;
-    if (!P_only)
-    {
-        GrB_Matrix_new (&C, A->type, nrows, ncols) ;
-    }
-    if (P_only || nargout > 1)
-    {
-        GrB_Matrix_new (&P, GrB_INT64, nrows, ncols) ;
-    }
 
-    if (nargout == 1 && !P_only)
+    if (nargout == 1)
     {
-        GrB_Matrix_free (&C) ;
-        #define FREE_DEEP_COPY GrB_Matrix_free (&C) ;
-        #define GET_DEEP_COPY  GrB_Matrix_dup (&C, A) ;
-        GET_DEEP_COPY ;
-        METHOD (GxB_Matrix_sort (C, NULL, op, C, desc)) ;
+        if (P_only)
+        {
+            // P = sort (op, A, desc), do not return C
+            #undef  FREE_DEEP_COPY
+            #define FREE_DEEP_COPY GrB_Matrix_free (&P) ;
+            #undef  GET_DEEP_COPY
+            #define GET_DEEP_COPY  GrB_Matrix_new (&P, GrB_INT64, nrows, ncols);
+            GET_DEEP_COPY ;
+            METHOD (GxB_Matrix_sort (NULL, P, op, A, desc)) ;
+        }
+        else
+        {
+            // C = sort (op, C, desc), in place
+            #undef  FREE_DEEP_COPY
+            #define FREE_DEEP_COPY GrB_Matrix_free (&C) ;
+            #undef  GET_DEEP_COPY
+            #define GET_DEEP_COPY  GrB_Matrix_dup (&C, A) ;
+            GET_DEEP_COPY ;
+            METHOD (GxB_Matrix_sort (C, NULL, op, C, desc)) ;
+        }
     }
     else
     {
-        // [C,P] = sort(op,A,desc)
+        // [C,P] = sort (op, A, desc)
         #undef  FREE_DEEP_COPY
-        #define FREE_DEEP_COPY ;
+        #define FREE_DEEP_COPY  \
+                GrB_Matrix_free (&C) ;  \
+                GrB_Matrix_free (&P) ;
         #undef  GET_DEEP_COPY
-        #define GET_DEEP_COPY ;
+        #define GET_DEEP_COPY   \
+            GrB_Matrix_new (&C, A->type, nrows, ncols) ;    \
+            GrB_Matrix_new (&P, GrB_INT64, nrows, ncols) ;
+        GET_DEEP_COPY ;
         METHOD (GxB_Matrix_sort (C, P, op, A, desc)) ;
     }
 

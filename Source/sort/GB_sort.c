@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"
 #include "jitifyer/GB_stringify.h"
@@ -245,7 +247,7 @@ GrB_Info GB_sort
     GrB_Type ptype = (P == NULL) ? GrB_INT64 : P->type ;
 
     if (op->ztype != GrB_BOOL || op->xtype != op->ytype || atype != ctype
-        || !(ptype == GrB_INT64 || ptype == GrB_UINT64)
+        || !(ptype == GrB_INT64 || ptype == GrB_UINT64) // FIXME: allow 32bit
         || !GB_Type_compatible (atype, op->xtype)
         || GB_IS_INDEXBINARYOP_CODE (op->opcode))
     { 
@@ -269,7 +271,7 @@ GrB_Info GB_sort
     bool sort_in_place = (A == C) ;
 
     // free any prior content of C and P
-    GB_phybix_free (P) ;
+    GB_phybix_free (P) ;    // FIXME: this frees A if A == P is aliased
     if (!sort_in_place)
     { 
         GB_phybix_free (C) ;

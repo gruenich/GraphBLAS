@@ -30,36 +30,47 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // extract the select method_code
     //--------------------------------------------------------------------------
 
-    // C, A, B: 32/64 (1 hex digit)
-    bool Cp_is_32   = GB_RSHIFT (method_code, 43, 1) ;
-    bool Ci_is_32   = GB_RSHIFT (method_code, 42, 1) ;
-    bool Ap_is_32   = GB_RSHIFT (method_code, 41, 1) ;
-    bool Ai_is_32   = GB_RSHIFT (method_code, 40, 1) ;
+    // C, A: 32/64 (1 hex digit)
+    bool Cp_is_32   = GB_RSHIFT (method_code, 31, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 30, 1) ;
+    bool Ap_is_32   = GB_RSHIFT (method_code, 29, 1) ;
+    bool Ai_is_32   = GB_RSHIFT (method_code, 28, 1) ;
 
-    // iso of A and C (2 bits)
-//  2 unused bits here
-    bool C_iso      = GB_RSHIFT (method_code, 37, 1) ;
-    bool A_iso      = GB_RSHIFT (method_code, 36, 1) ;
+    // op, z = f(x,i,j,y), flipij, and iso codes (5 hex digits)
+    bool C_iso      = GB_RSHIFT (method_code, 27, 1) ;
+    bool A_iso      = GB_RSHIFT (method_code, 26, 1) ;
+    bool flipij     = GB_RSHIFT (method_code, 25, 1) ;
+    #ifdef GB_DEBUG
+    int idxop_code  = GB_RSHIFT (method_code, 20, 5) ;
+    #endif
+    int zcode       = GB_RSHIFT (method_code, 16, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 12, 4) ;
+    int ycode       = GB_RSHIFT (method_code,  8, 4) ;
 
-    // i/j dependency and flipij (3 bits)
-//  unused bit:       GB_RSHIFT (method_code, 35, 1) ;
-    int i_dep       = GB_RSHIFT (method_code, 34, 1) ;  // FIXME: not needed
-    int j_dep       = GB_RSHIFT (method_code, 33, 1) ;  // FIXME: not needed
-    bool flipij     = GB_RSHIFT (method_code, 32, 1) ;
-
-    // op, z = f(x,i,j,y) (5 hex digits)
-    int idxop_ecode = GB_RSHIFT (method_code, 24, 8) ;  // FIXME: use idxop_code
-    int zcode       = GB_RSHIFT (method_code, 20, 4) ;
-    int xcode       = GB_RSHIFT (method_code, 16, 4) ;
-    int ycode       = GB_RSHIFT (method_code, 12, 4) ;
-
-    // types of C and A (2 hex digits)
-//  int ccode       = GB_RSHIFT (method_code,  8, 4) ;
+    // type of A (1 hex digit)
     int acode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
     int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
     int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
+
+    //--------------------------------------------------------------------------
+    // enumify the operator
+    //--------------------------------------------------------------------------
+
+    int idxop_ecode ;
+    bool x_dep, i_dep, j_dep, y_dep ;
+
+    ASSERT (zcode == op->ztype->code) ;
+    ASSERT (xcode == ((op->xtype == NULL) ? 0 : op->xtype->code)) ;
+    ASSERT (ycode == op->ytype->code) ;
+
+    GB_enumify_unop (&idxop_ecode, &x_dep, &i_dep, &j_dep, &y_dep,
+        flipij, op->opcode, xcode) ;
+    if (!x_dep) xcode = 0 ;
+    if (!y_dep) ycode = 0 ;
+
+    ASSERT (idxop_code == op->opcode - GB_ROWINDEX_idxunop_code) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -93,8 +104,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // construct the typedefs
     //--------------------------------------------------------------------------
 
-    GB_macrofy_typedefs (fp, NULL, atype, NULL,
-        xtype, ytype, ztype) ;
+    GB_macrofy_typedefs (fp, NULL, atype, NULL, xtype, ytype, ztype) ;
 
     fprintf (fp, "// unary operator types:\n") ;
     GB_macrofy_type (fp, "Z", "_", ztype_name) ;
@@ -105,21 +115,14 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // construct macros for the unary operator
     //--------------------------------------------------------------------------
 
-    int x_dep = (xtype != NULL) ? 1 : 0 ;       // FIXME not needed
-    int y_dep = (ycode == 0) ? 0 : 1 ;          // FIXME not needed
-
-// FIXME: do this instead
-//  GB_enumify_unop (&idxop_ecode, op->opcode, &x_dep, &i_dep, &j_dep, &y_dep,
-//      flipij, op->opcode, xcode) ;
-
     fprintf (fp, "\n// index unary operator%s:\n",
         flipij ? " (flipped ij)" : "") ;
     GB_macrofy_unop (fp, "GB_IDXUNOP", flipij, idxop_ecode, (GB_Operator) op) ;
 
-    fprintf (fp, "#define GB_DEPENDS_ON_X %d\n", x_dep) ;
-    fprintf (fp, "#define GB_DEPENDS_ON_I %d\n", i_dep) ;
-    fprintf (fp, "#define GB_DEPENDS_ON_J %d\n", j_dep) ;
-    fprintf (fp, "#define GB_DEPENDS_ON_Y %d\n", y_dep) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_X %d\n", x_dep ? 1 : 0) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_I %d\n", i_dep ? 1 : 0) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_J %d\n", j_dep ? 1 : 0) ;
+    fprintf (fp, "#define GB_DEPENDS_ON_Y %d\n", y_dep ? 1 : 0) ;
 
     char *kind ;
     switch (op->opcode)

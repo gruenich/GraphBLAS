@@ -9,6 +9,8 @@
 
 // DONE: 32/64 bit, except for trimming out 3 bits for idxop_ecode
 
+#define GB_DEBUG
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -34,42 +36,23 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     GrB_Type atype = A->type ;
     GB_Opcode opcode = op->opcode ;
     GB_Type_code zcode = op->ztype->code ;
-    GB_Type_code xcode = (op->xtype == NULL) ? 0 : op->xtype->code ;
+    GB_Type_code xcode = ((op->xtype == NULL) ? 0 : op->xtype->code) ;
     GB_Type_code ycode = op->ytype->code ;
+    ASSERT (A->type == C->type) ;
 
     //--------------------------------------------------------------------------
     // enumify the idxunop operator
     //--------------------------------------------------------------------------
 
-    bool depends_on_x, depends_on_i, depends_on_j, depends_on_y ;
-    int idxop_ecode ;
-    GB_enumify_unop (&idxop_ecode, &depends_on_x, &depends_on_i,
-        &depends_on_j, &depends_on_y, flipij, opcode, xcode) ;
-
-    ASSERT (idxop_ecode >= 231 && idxop_ecode <= 254) ;
-
-    if (!depends_on_x)
-    { 
-        // VALUE* ops and user-defined index unary ops depend on x.  The
-        // positional ops (tril, triu, row*, col*, diag*) do not.
-        xcode = 0 ;
-    }
-
-    if (!depends_on_y)
-    { 
-        // All index unary ops depend on y except for NONZOMBIE
-        ycode = 0 ;
-    }
-
-    int i_dep = (depends_on_i) ? 1 : 0 ;
-    int j_dep = (depends_on_j) ? 1 : 0 ;
+    ASSERT (opcode >= GB_ROWINDEX_idxunop_code) ;
+    ASSERT (opcode <= GB_USER_idxunop_code) ;
+    int idxop_code = opcode - GB_ROWINDEX_idxunop_code ;
 
     //--------------------------------------------------------------------------
     // enumify the types
     //--------------------------------------------------------------------------
 
     int acode = atype->code ;               // 1 to 14
-    int ccode = acode ;                     // this may change in the future
     int A_iso_code = (A->iso) ? 1 : 0 ;
     int C_iso_code = (C->iso) ? 1 : 0 ;
 
@@ -90,39 +73,26 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     // construct the select method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits:  41 (11 hex digits): can reduce to 38 bits
-
-    // FIXME : reduce bits for idxop_ecode, by subtracting 231: then 0 to 23,
-    // which is 5 bits, not 8 bits
+    // total method_code bits:  32 (8 hex digits)
 
     (*method_code) =
                                                // range        bits
+                // C, A: 32/64 (1 hex digit)
+                GB_LSHIFT (cp_is_32   , 31) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 30) |  // 0 or 1       1
+                GB_LSHIFT (ap_is_32   , 29) |  // 0 or 1       1
+                GB_LSHIFT (ai_is_32   , 28) |  // 0 or 1       1
 
-                // C, A: 32/64 (4 bits) (1 hex digit)
-                GB_LSHIFT (cp_is_32   , 43) |  // 0 or 1       1
-                GB_LSHIFT (ci_is_32   , 42) |  // 0 or 1       1
-                GB_LSHIFT (ap_is_32   , 41) |  // 0 or 1       1
-                GB_LSHIFT (ai_is_32   , 40) |  // 0 or 1       1
+                // op, z = f(x,i,j,y), flipij, and iso codes (5 hex digits)
+                GB_LSHIFT (C_iso_code , 27) |  // 0 or 1       1
+                GB_LSHIFT (A_iso_code , 26) |  // 0 or 1       1
+                GB_LSHIFT (flipij     , 25) |  // 0 or 1       1
+                GB_LSHIFT (idxop_code , 20) |  // 0 to 19      5
+                GB_LSHIFT (zcode      , 16) |  // 0 to 14      4
+                GB_LSHIFT (xcode      , 12) |  // 0 to 14      4
+                GB_LSHIFT (ycode      ,  8) |  // 0 to 14      4
 
-                // iso of A and C (2 bits, 1 hex digit)
-                // 2 bits unused
-                GB_LSHIFT (C_iso_code , 37) |  // 0 or 1       1
-                GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
-
-                // i/j dependency and flipij (1 hex digit)
-                // one bit unused
-                GB_LSHIFT (i_dep      , 34) |  // 0 or 1       1
-                GB_LSHIFT (j_dep      , 33) |  // 0 or 1       1
-                GB_LSHIFT (flipij     , 32) |  // 0 or 1       1
-
-                // op, z = f(x,i,j,y) (5 hex digits)
-                GB_LSHIFT (idxop_ecode, 24) |  // 231 to 254   8
-                GB_LSHIFT (zcode      , 20) |  // 0 to 14      4
-                GB_LSHIFT (xcode      , 16) |  // 0 to 14      4
-                GB_LSHIFT (ycode      , 12) |  // 0 to 14      4
-
-                // types of C and A (2 hex digits)
-                GB_LSHIFT (ccode      ,  8) |  // 0 to 15      4    // == acode
+                // type of (1 hex digit)
                 GB_LSHIFT (acode      ,  4) |  // 0 to 15      4
 
                 // sparsity structures of C and A (1 hex digit)

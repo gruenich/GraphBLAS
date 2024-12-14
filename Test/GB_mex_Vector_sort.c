@@ -75,21 +75,25 @@ void mexFunction
         mexErrMsgTxt ("A must be a column vector") ;
     }
 
-    GrB_Vector_new (&C, A->type, nrows) ;
-    if (nargout > 1)
-    {
-        GrB_Vector_new (&P, GrB_INT64, nrows) ;
-    }
-
     GrB_Vector u = (GrB_Vector) A ;
     if (!GB_VECTOR_OK (u))
     {
         mexErrMsgTxt ("invalid input vector") ;
     }
 
+    #define FREE_DEEP_COPY                              \
+        GrB_Vector_free (&C) ;                          \
+        GrB_Vector_free (&P) ;
+
+    #define GET_DEEP_COPY                               \
+        GrB_Vector_new (&C, A->type, nrows) ;           \
+        if (nargout > 1)                                \
+        {                                               \
+            GrB_Vector_new (&P, GrB_INT64, nrows) ;     \
+        }
+
     // [C,P] = sort(op,A,desc)
-    #define FREE_DEEP_COPY ;
-    #define GET_DEEP_COPY ;
+    GET_DEEP_COPY ;
     METHOD (GxB_Vector_sort (C, P, op, u, desc)) ;
 
     // return C as a struct and free the GraphBLAS C
