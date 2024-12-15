@@ -2,12 +2,12 @@
 // GB_transpose: C=A' or C=op(A'), with typecasting
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit: need 32-bit GB_extract_vector_list
+// DONE: 32/64 bit
 
 // CALLS:     GB_builder
 
