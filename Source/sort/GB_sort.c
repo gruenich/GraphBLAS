@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
+// FIXME: 32/64 bit
 
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"

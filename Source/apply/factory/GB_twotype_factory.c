@@ -2,10 +2,12 @@
 // GB_twotype_factory.c: 2-type switch factory
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // This is a generic switch factory for creating 169 workers that operate on
 // two built-in data types (13 types each), to be #include'd in another file.

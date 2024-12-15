@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit, except for trimming out 3 bits for idxop_ecode
 
-#define GB_DEBUG
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

@@ -2,10 +2,14 @@
 // GB_Vector_diag: extract a diagonal from a matrix, as a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 #define GB_FREE_WORKSPACE   \
 {                           \
@@ -119,9 +123,15 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     float bitmap_switch = V->bitmap_switch ;
     int sparsity_control = V->sparsity_control ;
 
+    bool Vp_is_32 = T->p_is_32 ;
+    bool Vi_is_32 = T->i_is_32 ;
+
     GB_OK (GB_new (&V, // existing header
         vtype, n, 1, GB_ph_malloc, true, GxB_SPARSE,
-        GxB_NEVER_HYPER, 1, /* FIXME: */ false, false)) ;
+        GxB_NEVER_HYPER, 1, Vp_is_32, Vi_is_32)) ;
+
+    ASSERT (Vp_is_32 == T->p_is_32) ;
+    ASSERT (Vi_is_32 == T->i_is_32) ;
 
     V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;
@@ -131,9 +141,10 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
         GBURBLE ("(iso diag) ") ;
     }
 
-    uint64_t *restrict Vp = V->p ;  // FIXME
-    Vp [0] = 0 ;
-    Vp [1] = vnz ;
+    GB_Cp_DECLARE (Vp, ) ; GB_Cp_PTR (Vp, V) ;
+    GB_ISET (Vp, 0, 0) ;    // Vp [0] = 0 ;
+    GB_ISET (Vp, 1, vnz) ;  // Vp [1] = vnz ;
+
     V->nvals = vnz ;
     if (k >= 0)
     { 
@@ -190,6 +201,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
+    ASSERT_MATRIX_OK (V, "V before convert_int for GB_Vector_diag", GB0) ;
+    GB_OK (GB_convert_int (V, false, false)) ;      // FIXME
     ASSERT_MATRIX_OK (V, "V before conform for GB_Vector_diag", GB0) ;
     GB_OK (GB_conform (V, Werk)) ;
     ASSERT_MATRIX_OK (V, "V output for GB_Vector_diag", GB0) ;

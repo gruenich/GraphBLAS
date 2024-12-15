@@ -2,10 +2,14 @@
 // GB_clear: clears the content of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 // All content of A is freed (or removed if shallow) and new A->p and A->h
 // content is created.  This puts the matrix A in the same initialized state it
@@ -20,11 +24,14 @@
 // the matrix A is left in an invalid state (A->magic == GB_MAGIC2).  Only the
 // header is left.
 
+// Depending on the sparsity control, A may be left in bitmap form.  Otherwise,
 // A is first converted to sparse or hypersparse, and then conformed via
 // GB_conform.  If A->sparsity_control disables the sparse and hypersparse
 // structures, A is converted bitmap instead.
 
 #include "GB.h"
+
+#define GB_FREE_ALL GB_phybix_free (A) ;
 
 GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
 (
@@ -37,6 +44,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (A != NULL) ;
     ASSERT (A->magic == GB_MAGIC || A->magic == GB_MAGIC2) ;
 
@@ -74,6 +82,27 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
+    // determine the integer sizes to use
+    //--------------------------------------------------------------------------
+
+#if 0
+    // get global pi_control
+    int8_t p_control = GB_Global_p_control_get ( ) ;
+    int8_t i_control = GB_Global_i_control_get ( ) ;
+#else
+    // HACK for now:
+    int8_t p_control = GxB_PREFER_32_BITS ;
+    int8_t i_control = GxB_PREFER_32_BITS ;
+#endif
+
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    GB_OK (GB_determine_pi_is_32 (&(A->p_is_32), &(A->i_is_32), p_control,
+        i_control, GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim, true)) ;
+
+    size_t apsize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t aisize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    //--------------------------------------------------------------------------
     // allocate new A->p and A->h components
     //--------------------------------------------------------------------------
 
@@ -92,7 +121,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         int64_t plen = A->vdim ;
         A->nvec = plen ;
         A->plen = plen ;
-        A->p = GB_MALLOC (plen+1, int64_t, &(A->p_size)) ;  // FIXME
+        A->p = GB_malloc_memory (plen+1, apsize, &(A->p_size)) ;
         ASSERT (A->h == NULL) ;
         if (A->p == NULL)
         { 
@@ -100,7 +129,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
             GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_memset (A->p, 0, (plen+1) * sizeof (int64_t), nthreads_max) ; //FIXME
+        GB_memset (A->p, 0, (plen+1) * apsize, nthreads_max) ;
 
     }
     else
@@ -113,21 +142,13 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         int64_t plen = GB_IMIN (1, A->vdim) ;
         A->nvec = 0 ;
         A->plen = plen ;
-        A->p = GB_MALLOC (plen+1, int64_t, &(A->p_size)) ;  // FIXME
-        A->h = GB_MALLOC (plen  , int64_t, &(A->h_size)) ;  // FIXME
+        A->p = GB_calloc_memory (plen+1, apsize, &(A->p_size)) ;
+        A->h = GB_calloc_memory (plen  , aisize, &(A->h_size)) ;
         if (A->p == NULL || A->h == NULL)
         { 
             // out of memory
             GB_phybix_free (A) ;
             return (GrB_OUT_OF_MEMORY) ;
-        }
-        uint64_t *restrict Ap = A->p ;  // FIXME
-        int64_t *restrict Ah = A->h ;   // FIXME
-        Ap [0] = 0 ;
-        if (plen > 0)
-        { 
-            Ap [1] = 0 ;
-            Ah [0] = 0 ;
         }
     }
 
@@ -137,6 +158,9 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // conform A to its desired sparsity 
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (A, "clear before convert int", GB0) ;
+    GB_OK (GB_convert_int (A, false, false)) ;  // FIXME
+    ASSERT_MATRIX_OK (A, "clear after convert int", GB0) ;
     return (GB_conform (A, Werk)) ;
 }
 

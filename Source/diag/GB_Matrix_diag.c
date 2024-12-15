@@ -2,10 +2,14 @@
 // GB_Matrix_diag: construct a diagonal matrix from a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 #define GB_FREE_WORKSPACE   \
 {                           \
@@ -38,7 +42,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     ASSERT_MATRIX_OK (C, "C input for GB_Matrix_diag", GB0) ;
     ASSERT_MATRIX_OK (V_in, "V input for GB_Matrix_diag", GB0) ;
     ASSERT (GB_VECTOR_OK (V_in)) ;       // V_in is a vector on input
-    ASSERT (!GB_any_aliased (C, V_in)) ;     // C and V_in cannot be aliased
+    ASSERT (!GB_any_aliased (C, V_in)) ; // C and V_in cannot be aliased
     ASSERT (!GB_IS_HYPERSPARSE (V_in)) ; // vectors cannot be hypersparse
 
     struct GB_Matrix_opaque T_header ;
@@ -95,9 +99,19 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     const float bitmap_switch = C->bitmap_switch ;
     const int sparsity_control = C->sparsity_control ;
 
+    // HACK for now:
+    bool hack32 = true ;    // FIXME
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;  // FIXME
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;  // FIXME
+
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool Cp_is_32, Ci_is_32 ;
+    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        C_sparsity, vnz, n, n, true)) ;
+
     GB_OK (GB_new_bix (&C, // existing header
         ctype, n, n, GB_ph_malloc, csc, C_sparsity, false,
-        C->hyper_switch, vnz, vnz, true, C_iso, /* FIXME: */ false, false)) ;
+        C->hyper_switch, vnz, vnz, true, C_iso, Cp_is_32, Ci_is_32)) ;
     C->sparsity_control = sparsity_control ;
     C->bitmap_switch = bitmap_switch ;
 
@@ -132,13 +146,17 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
     int nthreads = GB_nthreads (vnz, chunk, nthreads_max) ;
-    uint64_t *restrict Cp = C->p ;  // FIXME
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Ci = C->i ;
+
+    GB_Cp_DECLARE   (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ch_DECLARE   (Ch, ) ; GB_Ch_PTR (Ch, C) ;
+    GB_Ci_DECLARE_U (Ci, ) ; GB_Ci_PTR (Ci, C) ;
 
     //--------------------------------------------------------------------------
     // copy the contents of V into the kth diagonal of C
     //--------------------------------------------------------------------------
+
+    // C->x = (ctype) V->x
+    GB_OK (GB_cast_matrix (C, V)) ;
 
     if (C_sparsity == GxB_SPARSE)
     {
@@ -147,16 +165,13 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         // V is full, or can be treated as full, and k == 0
         //----------------------------------------------------------------------
 
-        // C->x = (ctype) V->x
-        GB_OK (GB_cast_matrix (C, V)) ;
-
         // construct Cp and Ci
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < vnz ; p++)
         { 
-            Cp [p] = p ;
-            Ci [p] = p ;
+            GB_ISET (Cp, p, p) ;    // Cp [p] = p ;
+            GB_ISET (Ci, p, p) ;    // Ci [p] = p ;
         }
 
     }
@@ -167,17 +182,16 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         // V is full, or can be treated as full, and k != 0
         //----------------------------------------------------------------------
 
-        // C->x = (ctype) V->x
-        GB_OK (GB_cast_matrix (C, V)) ;
-
         // construct Cp, Ch, and Ci
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < vnz ; p++)
         { 
-            Cp [p] = p ;
-            Ch [p] = p + kpositive ;
-            Ci [p] = p + knegative ;
+            int64_t j = p + kpositive ;
+            int64_t i = p + knegative ;
+            GB_ISET (Cp, p, p) ;        // Cp [p] = p ;
+            GB_ISET (Ch, p, j) ;        // Ch [p] = j ;
+            GB_ISET (Ci, p, i) ;        // Ci [p] = i ;
         }
 
     }
@@ -188,19 +202,19 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
         // V is sparse
         //----------------------------------------------------------------------
 
-        // C->x = (ctype) V->x
-        GB_OK (GB_cast_matrix (C, V)) ;
-
-        int64_t *restrict Vi = V->i ;   // FIXME
+        GB_Ai_DECLARE (Vi, const) ; GB_Ai_PTR (Vi, V) ;
 
         // construct Cp, Ch, and Ci
         int64_t p ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < vnz ; p++)
         { 
-            Cp [p] = p ;
-            Ch [p] = Vi [p] + kpositive ;
-            Ci [p] = Vi [p] + knegative ;
+            int64_t i = GB_IGET (Vi, p) ;   // i = Vi [p]
+            int64_t j = i + kpositive ;
+            i += knegative ;
+            GB_ISET (Cp, p, p) ;            // Cp [p] = p ;
+            GB_ISET (Ch, p, j) ;            // Ch [p] = j ;
+            GB_ISET (Ci, p, i) ;            // Ci [p] = i ;
         }
     }
 
@@ -208,7 +222,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     // finalize the matrix C
     //--------------------------------------------------------------------------
 
-    Cp [vnz] = vnz ;
+    GB_ISET (Cp, vnz, vnz) ;    // Cp [vnz] = vnz ;
     C->nvals = vnz ;
     C->nvec = vnz ;
     C->nvec_nonempty = vnz ;
@@ -219,6 +233,8 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
+    ASSERT_MATRIX_OK (C, "C before convert for GB_Matrix_diag", GB0) ;
+    GB_OK (GB_convert_int (C, false, false)) ;      // FIXME
     ASSERT_MATRIX_OK (C, "C before conform for GB_Matrix_diag", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_Matrix_diag", GB0) ;

@@ -978,7 +978,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #endif
 
 //------------------------------------------------------------------------------
-// OLD style: remove all of these (but see NVALS and NHELD above)
+// OLD style: remove all of these
 //------------------------------------------------------------------------------
 
 #define GBP(Ap,k,avlen) ((Ap) ? Ap [k] : ((k) * (avlen)))

@@ -2,10 +2,12 @@
 // GB_apply_bind1st_template: Cx = op (x,B)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 {
     GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_output ;
@@ -15,7 +17,7 @@
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < bnz ; p++)
     { 
-        if (!GBB_B (Bb, p)) continue ;
+        if (!GBB_B (Bb, p)) continue ;  // FIXME
         GB_DECLAREB (bij) ;
         GB_GETB (bij, Bx, p, false) ;
         GB_EWISEOP (Cx, p, x, bij, 0, 0) ;

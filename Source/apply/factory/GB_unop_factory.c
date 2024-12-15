@@ -2,10 +2,12 @@
 // GB_unop_factory.c:  switch factory for unary operators and 2 types
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
 
 // Switch factory for applying a non-positional unary operator.  This file is
 // #include'd into GB_apply_op.c and GB_transpose_op.c, which must define the
@@ -188,7 +190,8 @@
         }
 
     }
-    else if (code1 == GB_BOOL_code && (code2 >= GB_FP32_code && code2 <= GB_FC64_code))
+    else if (code1 == GB_BOOL_code && 
+            (code2 >= GB_FP32_code && code2 <= GB_FC64_code))
     { 
 
         //----------------------------------------------------------------------
@@ -329,7 +332,7 @@
                 }
                 break ;
 
-            case GB_BNOT_unop_code :    // z = ~x (bitwise complement), integers only
+            case GB_BNOT_unop_code :    // z = ~x (bitwise compl), integers only
 
                 switch (code1)
                 {
@@ -701,7 +704,7 @@
                 }
                 break ;
 
-            case GB_FREXPX_unop_code :  // z = frexpx (x), mantissa from C11 frexp
+            case GB_FREXPX_unop_code :  // z = frexpx (x), mantissa of C11 frexp
 
                 switch (code1)
                 {
@@ -711,7 +714,7 @@
                 }
                 break ;
 
-            case GB_FREXPE_unop_code :  // z = frexpe (x), exponent from C11 frexp
+            case GB_FREXPE_unop_code :  // z = frexpe (x), exponent of C11 frexp
 
                 switch (code1)
                 {

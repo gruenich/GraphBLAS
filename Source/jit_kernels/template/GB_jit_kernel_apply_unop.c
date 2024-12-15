@@ -12,7 +12,7 @@
     // cij = op (aij)
     #define GB_APPLY_OP(pC,pA)                      \
     {                                               \
-        int64_t i = GBI_A (Ai, pA, avlen) ;         \
+        int64_t i = GBI_A (Ai, pA, avlen) ; /* FIXME*/  \
         GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y) ;  \
     }
 
@@ -40,8 +40,8 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
     #if GB_DEPENDS_ON_J
     {
         const uint64_t *restrict Ap = A->p ;    // FIXME
-        const int64_t *restrict Ah = A->h ;
-        const int64_t *restrict Ai = A->i ;
+        const int64_t *restrict Ah = A->h ;     // FIXME
+        const int64_t *restrict Ai = A->i ;     // FIXME
         int64_t avlen = A->vlen ;
         #include "template/GB_apply_unop_ijp.c"
     }

@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

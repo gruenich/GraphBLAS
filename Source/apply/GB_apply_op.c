@@ -2,10 +2,12 @@
 // GB_apply_op: typecast and apply a unary/binary/idxunop operator to an array
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME 32/64 bit
 
 // Cx = op (A)
 
@@ -755,8 +757,8 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             // get A and C
             const uint64_t *restrict Ap = A->p ;    // FIXME
-            const int64_t *restrict Ah = A->h ;
-            const int64_t *restrict Ai = A->i ;
+            const int64_t *restrict Ah = A->h ;     // FIXME
+            const int64_t *restrict Ai = A->i ;     // FIXME
             int64_t avlen = A->vlen ;
             GB_Type_code acode = Atype->code ;
 
@@ -777,7 +779,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             // Cx [pC] = op (Ax [A_iso ? 0 : pA], i, j, ythunk)
             #define GB_APPLY_OP(pC,pA)                                      \
-                int64_t i = GBI (Ai, pA, avlen) ;                           \
+                int64_t i = GBI (Ai, pA, avlen) ;  /* FIXME */              \
                 GB_void xwork [GB_VLA(xsize)] ;                             \
                 cast_A_to_X (xwork, Ax +(A_iso ? 0 : (pA))*asize, asize) ;  \
                 fop (Cx +((pC)*zsize), xwork,                               \

@@ -2,10 +2,12 @@
 // GB_apply_unop_ijp: C = op (A), depending j
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit
 
 // A can be jumbled.  If A is jumbled, so is C.
 // if A and C are bitmap, C->b is copied from A->b in the caller.
@@ -40,9 +42,9 @@
             // find the part of A(:,k) and Cx to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH_A (Ah, k) ;
+            int64_t j = GBH_A (Ah, k) ; // FIXME
             GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
+                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ; // FIXME
 
             //------------------------------------------------------------------
             // C(:,j) = op (A(:,j))
