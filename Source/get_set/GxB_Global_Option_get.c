@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GxB_Global_Option_get: get a global default option for all future matrices
+// GxB_Global_Option_get: get a global default option
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------

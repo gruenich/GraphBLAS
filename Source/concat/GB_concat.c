@@ -2,13 +2,13 @@
 // GB_concat: concatenate an array of matrices into a single matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORKSPACE               \
-    GB_WERK_POP (Tile_cols, int64_t) ; \
+    GB_WERK_POP (Tile_cols, int64_t) ;  \
     GB_WERK_POP (Tile_rows, int64_t) ;
 
 #define GB_FREE_ALL                     \

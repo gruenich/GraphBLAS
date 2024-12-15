@@ -2,10 +2,12 @@
 // GB_zombie.h: definitions for zombies
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// FIXME: change the zombie?!? Try GB_ZOMBIE(i) = ~i
 
 #ifndef GB_ZOMBIE_H
 #define GB_ZOMBIE_H
@@ -34,33 +36,13 @@
 // Zombies are deleted and pending tuples are added into the matrix all at
 // once, by GB_wait.
 
-/* OLD:
-#define GB_FLIP(i)             (-(i)-2)
-#define GB_IS_FLIPPED(i)       ((i) < 0)
-#define GB_IS_ZOMBIE(i)        ((i) < 0)
-#define GB_IS_NOT_FLIPPED(i)   ((i) >= 0)
-#define GB_UNFLIP(i)           (((i) < 0) ? GB_FLIP(i) : (i))
-#define GBI_UNFLIP(Ai,p,avlen)      \
-    ((Ai == NULL) ? ((p) % (avlen)) : GB_UNFLIP (Ai [p]))
-*/
-
-// NEW:
-//  replace GB_FLIP with GB_ZOMBIE.
-//  add GB_DEZOMBIE (same as GB_FLIP and GB_ZOMBIE).
-//  no change to GB_IS_ZOMBIE.
-//  delete GB_IS_FLIPPED and GB_IS_NOT_FLIPPED.
-//  replace GB_UNFLIP with GB_UNZOMBIE.
-//  replace GBI_UNFLIP with GBI_UNZOMBIE.
-
 #define GB_ZOMBIE(i)        (-(i)-2)
 #define GB_DEZOMBIE(i)      (-(i)-2)
-
 #define GB_IS_ZOMBIE(i)     ((i) < 0)
-
 #define GB_UNZOMBIE(i)      (((i) < 0) ? GB_ZOMBIE(i) : (i))
 
-#define GBI_UNZOMBIE(Ai,p,avlen)      \
-    ((Ai == NULL) ? ((p) % (avlen)) : GB_UNZOMBIE (Ai [p]))
+#define GBI_UNZOMBIE(Ai,p,vlen) \
+    ((Ai == NULL) ? ((p) % (vlen)) : GB_UNZOMBIE (Ai [p]))
 
 #endif
 

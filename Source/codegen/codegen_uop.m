@@ -4,7 +4,7 @@ function codegen_uop
 % This function creates all files of the form GB_uop__*.[ch],
 % and the include file GB_uop__include.h.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\nunary operators:\n') ;
@@ -14,7 +14,7 @@ fprintf (fh, '//----------------------------------------------------------------
 fprintf (fh, '// GB_uop__include.h: definitions for GB_uop__*.c\n') ;
 fprintf (fh, '//------------------------------------------------------------------------------\n') ;
 fprintf (fh, '\n') ;
-fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n') ;
+fprintf (fh, '// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.\n') ;
 fprintf (fh, '// SPDX-License-Identifier: Apache-2.0\n\n') ;
 fprintf (fh, '// This file has been automatically generated from Generator/GB_uop.h') ;
 fprintf (fh, '\n#include "math/GB_math.h"\n\n') ;

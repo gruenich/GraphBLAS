@@ -2,7 +2,7 @@
 // GB_AxB_dot3_template: C<M>=A'*B via dot products, where C is sparse/hyper
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@
                     { 
                         // C(i,j) is a zombie
                         int64_t i = Mi [pC] ;
-                        Ci [pC] = GB_ZOMBIE (i) ;
+                        Ci [pC] = GB_ZOMBIE (i) ;   // FIXME
                     }
                     continue ;
                 }
@@ -159,7 +159,7 @@
                 { 
                     // C(i,j) is a zombie
                     task_nzombies++ ;
-                    Ci [pC] = GB_ZOMBIE (i) ;
+                    Ci [pC] = GB_ZOMBIE (i) ;   // FIXME
                 }
             }
         }

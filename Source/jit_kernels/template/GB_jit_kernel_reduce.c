@@ -2,7 +2,7 @@
 // GB_jit_kernel_reduce.c: JIT kernel for reduction to scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -31,7 +31,7 @@
     //--------------------------------------------------------------------------
     // GB_jit__reduce__14bb2.c
     //--------------------------------------------------------------------------
-    // SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
+    // SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2025,
     // All Rights Reserved.
     // SPDX-License-Identifier: Apache-2.0
     // The above copyright and license do not apply to any

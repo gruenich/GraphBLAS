@@ -9,6 +9,8 @@
 
 // DONE: 32/64 bit
 
+// FIXME: remove GB[PHIB]_* macros
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
