@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64-bit, except for hack32
-#define GB_DEBUG
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 

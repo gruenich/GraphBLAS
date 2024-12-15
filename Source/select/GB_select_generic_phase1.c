@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // A and C are sparse or hypersparse
 
 #include "select/GB_select.h"

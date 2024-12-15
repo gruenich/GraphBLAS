@@ -105,6 +105,9 @@ GrB_Info GrB_Vector_reduce_Monoid_Scalar
 // GrB_Vector_reduce_BinaryOp_Scalar: reduce vector to GrB_Scalar via binary op
 //------------------------------------------------------------------------------
 
+// Only binary ops that correspond to a known monoid are supported.
+// This method is not recommended.
+
 GrB_Info GrB_Vector_reduce_BinaryOp_Scalar
 (
     GrB_Scalar S,                   // result scalar
@@ -115,22 +118,20 @@ GrB_Info GrB_Vector_reduce_BinaryOp_Scalar
 )
 { 
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    GB_WHERE2 (S, u,
-        "GrB_Vector_reduce_BinaryOp_Scalar (s, accum, binaryop, u, desc)") ;
-    GB_BURBLE_START ("GrB_reduce") ;
+    GB_WHERE2 (S, u, "GrB_Vector_reduce_BinaryOp_Scalar : DEPRECATED!") ;
+    GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED!") ;
 
+    // convert the binary op to its corresponding monoid
     if (op->ztype != op->xtype || op->ztype != op->ytype)
     { 
-        GB_ERROR (GrB_DOMAIN_MISMATCH, "Invalid binary operator:"
-            " z=%s(x,y); all types of x,y,z must be the same\n", op->name) ;
+        return (GrB_DOMAIN_MISMATCH) ;
     }
-    // convert the binary op to its corresponding monoid
     GrB_Monoid monoid = GB_binop_to_monoid (op) ;
     if (monoid == NULL)
     { 
-        GB_ERROR (GrB_NOT_IMPLEMENTED, "Invalid binary operator:"
-            " z=%s(x,y) has no equivalent monoid\n", op->name) ;
+        return (GrB_NOT_IMPLEMENTED) ;
     }
+
     // S = reduce (A) via the monoid
     info = GB_Scalar_reduce (S, accum, monoid, (GrB_Matrix) u, Werk) ;
     GB_BURBLE_END ;

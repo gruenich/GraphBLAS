@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // A is sparse or hypersparse, or can be full if the op is DIAG
 
 // JIT: not need: use factory; 3 variants (A sparse, hyper, or full for DIAG)

@@ -146,12 +146,12 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    GB_WHERE3 (w, M, A, "GrB_Matrix_reduce_BinaryOp : DEPRECATED") ;
-    GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED") ;
+    GB_WHERE3 (w, M, A, "GrB_Matrix_reduce_BinaryOp : DEPRECATED!") ;
+    GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED!") ;
 
     // convert the binary op to its corresponding monoid
     if (op->ztype != op->xtype || op->ztype != op->ytype)
-    {
+    { 
         return (GrB_DOMAIN_MISMATCH) ;
     }
     GrB_Monoid monoid = GB_binop_to_monoid (op) ;
@@ -182,14 +182,14 @@ GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
     const GrB_Matrix A,             // matrix to reduce
     const GrB_Descriptor desc
 )
-{ 
+{
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
-    GB_WHERE2 (S, A, "GrB_Matrix_reduce_BinaryOp_Scalar : DEPRECATED") ;
-    GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED") ;
+    GB_WHERE2 (S, A, "GrB_Matrix_reduce_BinaryOp_Scalar : DEPRECATED!") ;
+    GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED!") ;
 
     // convert the binary op to its corresponding monoid
     if (op->ztype != op->xtype || op->ztype != op->ytype)
-    {
+    { 
         return (GrB_DOMAIN_MISMATCH) ;
     }
     GrB_Monoid monoid = GB_binop_to_monoid (op) ;

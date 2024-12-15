@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit, except GB_new
 
-#define GB_DEBUG
-
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
 #define GB_FREE_ALL         \

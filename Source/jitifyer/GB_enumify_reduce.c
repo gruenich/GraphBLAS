@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -70,13 +72,14 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
     int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
+    // the reduce methods do not access A->p
+    int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
+
     //--------------------------------------------------------------------------
     // construct the reduction method_code
     //--------------------------------------------------------------------------
 
     // total method_code bits: 17 (5 hex digits)
-
-    // FIXME: 32/64 bits: 2 bits for A (or just 1 bit for A->i_is_32)
 
     (*method_code) = 
                                                // range        bits
@@ -90,11 +93,9 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
                 // type of A: 1 hex digit
                 GB_LSHIFT (acode      ,  4) |  // 0 to 14      4
 
-                // sparsity structure and zombies: 1 hex digit
-                // unused bit            3                     1
-                // zombies
+                // sparsity structure, 32/64 bit, and zombies: 1 hex digit
+                GB_LSHIFT (ai_is_32   ,  3) |  // 0 to 1       1
                 GB_LSHIFT (azombies   ,  2) |  // 0 to 1       1
-                // sparsity structure of A
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
 
 }

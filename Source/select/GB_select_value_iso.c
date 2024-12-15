@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64-bit, except for hack32
-#define GB_DEBUG
 
 // A is iso and the operator is VALUE*.
 

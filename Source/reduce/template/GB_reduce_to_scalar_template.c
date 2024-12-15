@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Reduce a matrix to a scalar, with typecasting and generic operators.
 // No panel is used.  The workspace W always has the same type as the ztype
 // of the monoid, GB_Z_TYPE.
@@ -29,7 +31,8 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ai = A->i ; // FIXME
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+
     const int8_t  *restrict Ab = A->b ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
@@ -56,8 +59,12 @@
         for (int64_t p = 0 ; p < anz ; p++)
         { 
             // skip if the entry is a zombie or if not in the bitmap
-            if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
-            if (!GBB_A (Ab, p)) continue ;
+            if (A_has_zombies)
+            { 
+                int64_t i = GB_IGET (Ai, p) ;
+                if (GB_IS_ZOMBIE (i)) continue ;
+            }
+            if (!GBb_A (Ab, p)) continue ;
             // z += (ztype) Ax [p]
             GB_GETA_AND_UPDATE (z, Ax, p) ;
             #if GB_MONOID_IS_TERMINAL
@@ -92,8 +99,12 @@
                 for (int64_t p = pstart ; p < pend ; p++)
                 { 
                     // skip if the entry is a zombie or if not in the bitmap
-                    if (A_has_zombies && GB_IS_ZOMBIE (Ai [p])) continue ;
-                    if (!GBB_A (Ab, p)) continue ;
+                    if (A_has_zombies)
+                    { 
+                        int64_t i = GB_IGET (Ai, p) ;
+                        if (GB_IS_ZOMBIE (i)) continue ;
+                    }
+                    if (!GBb_A (Ab, p)) continue ;
                     found = true ;
                     // t += (ztype) Ax [p]
                     GB_GETA_AND_UPDATE (t, Ax, p) ;
