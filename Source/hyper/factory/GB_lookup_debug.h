@@ -29,21 +29,25 @@
 #define GB_PTYPE uint32_t
 #define GB_ITYPE uint32_t
 #define GB_lookup_debug_T GB_lookup_debug_32_32
+#define GB_binary_search_T GB_binary_search_32
 #include "hyper/factory/GB_lookup_debug_template.h"
 
 #define GB_PTYPE uint32_t
 #define GB_ITYPE uint64_t
 #define GB_lookup_debug_T GB_lookup_debug_32_64
+#define GB_binary_search_T GB_binary_search_64
 #include "hyper/factory/GB_lookup_debug_template.h"
 
 #define GB_PTYPE uint64_t
 #define GB_ITYPE uint32_t
 #define GB_lookup_debug_T GB_lookup_debug_64_32
+#define GB_binary_search_T GB_binary_search_32
 #include "hyper/factory/GB_lookup_debug_template.h"
 
 #define GB_PTYPE uint64_t
 #define GB_ITYPE uint64_t
 #define GB_lookup_debug_T GB_lookup_debug_64_64
+#define GB_binary_search_T GB_binary_search_64
 #include "hyper/factory/GB_lookup_debug_template.h"
 
 static inline bool GB_lookup_debug  // find j = Ah [k]

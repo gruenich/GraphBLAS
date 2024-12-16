@@ -71,7 +71,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
         int64_t pright = Vp [1] - 1 ;
         // Time taken for this step is at most O(log(nnz(V))).
         const int64_t *restrict Vi = V->i ; // FIXME
-        GB_BINARY_SEARCH (i, Vi, pleft, pright, found) ;
+//      GB_BINARY_SEARCH (i, Vi, pleft, pright, found) ;
+        found = GB_binary_search (i, Vi, false, &pleft, &pright) ;
     }
     else
     {

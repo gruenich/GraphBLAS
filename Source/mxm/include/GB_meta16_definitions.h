@@ -282,7 +282,8 @@
             bool found ;            /* search for A(i,k) */                 \
             if (M_jumbled) pA = pA_start ;                                  \
             int64_t apright = pA_end - 1 ;                                  \
-            GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;                  \
+         /* GB_BINARY_SEARCH (i, Ai, pA, apright, found) ; */               \
+            found = GB_binary_search (i, Ai, false, &pA, &apright) ;        \
             if (found)                                                      \
             {                                                               \
                 /* C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method. */    \

@@ -15,21 +15,25 @@
 #define GB_PTYPE uint32_t
 #define GB_ITYPE uint32_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_32_32
+#define GB_binary_search_T     GB_binary_search_32
 #include "include/GB_hyper_hash_lookup_template.h"
 
 #define GB_PTYPE uint32_t
 #define GB_ITYPE uint64_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_32_64
+#define GB_binary_search_T     GB_binary_search_64
 #include "include/GB_hyper_hash_lookup_template.h"
 
 #define GB_PTYPE uint64_t
 #define GB_ITYPE uint32_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_64_32
+#define GB_binary_search_T     GB_binary_search_32
 #include "include/GB_hyper_hash_lookup_template.h"
 
 #define GB_PTYPE uint64_t
 #define GB_ITYPE uint64_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_64_64
+#define GB_binary_search_T     GB_binary_search_64
 #include "include/GB_hyper_hash_lookup_template.h"
 
 GB_STATIC_INLINE int64_t GB_hyper_hash_lookup // k if j==Ah[k]; -1 if not found

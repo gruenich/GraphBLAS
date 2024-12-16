@@ -373,7 +373,8 @@
             // find i in A(:,j)
             int64_t pright = pA_end - 1 ;
             bool found ;
-            GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
+//          GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
+            found = GB_binary_search (i, Ai, false, &pA, &pright) ;
             if (found) cjnz-- ;
         }
 
@@ -394,7 +395,8 @@
             // find i in B(:,j)
             int64_t pright = pB_end - 1 ;
             bool found ;
-            GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
+//          GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
+            found = GB_binary_search (i, Bi, false, &pB, &pright) ;
             if (found) cjnz-- ;
         }
 

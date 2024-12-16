@@ -187,7 +187,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
                     int64_t pleft = pA + 1 ;
                     int64_t pright = pA_end - 1 ;
 //                  GB_TRIM_BINARY_SEARCH (ib, Ai, pleft, pright) ;
-                    GB_trim_binary_search (ib, Ai, false &pleft, &pright) ;
+                    GB_trim_binary_search (ib, Ai, false, &pleft, &pright) ;
                     //ASSERT (pleft > pA) ;
                     pA = pleft ;
                 }

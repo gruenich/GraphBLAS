@@ -52,7 +52,8 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup_T // k if j==Ah[k]; -1 not found
         {
             k = 0 ;
             int64_t pright = anvec - 1 ;
-            GB_BINARY_SEARCH (j, Ah, k, pright, found) ;
+//          GB_BINARY_SEARCH (j, Ah, k, pright, found) ;
+            found = GB_binary_search_T (j, Ah, &k, &pright) ;
         }
 
     }
@@ -80,7 +81,8 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup_T // k if j==Ah[k]; -1 not found
             // from 2 to 4.  Do a binary search as a fallback.
             int64_t p = ypstart ;
             int64_t pright = ypend - 1 ;
-            GB_BINARY_SEARCH (j, A_Yi, p, pright, found) ;
+//          GB_BINARY_SEARCH (j, A_Yi, p, pright, found) ;
+            found = GB_binary_search_T (j, A_Yi, &p, &pright) ;
             if (found)
             { 
                 k = A_Yx [p] ;
@@ -125,3 +127,4 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup_T // k if j==Ah[k]; -1 not found
 #undef GB_PTYPE
 #undef GB_ITYPE
 #undef GB_hyper_hash_lookup_T
+#undef GB_binary_search_T

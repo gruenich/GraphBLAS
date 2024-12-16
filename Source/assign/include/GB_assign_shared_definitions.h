@@ -1540,7 +1540,8 @@
         int64_t pM     = pM_start ;                                         \
         int64_t pright = pM_end - 1 ;                                       \
         bool found ;                                                        \
-        GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;                       \
+     /* GB_BINARY_SEARCH (i, Mi, pM, pright, found) ; */                    \
+        found = GB_binary_search (i, Mi, false, &pM, &pright) ;             \
         if (found)                                                          \
         {                                                                   \
             mij = GB_MCAST (Mx, pM, msize) ;                                \

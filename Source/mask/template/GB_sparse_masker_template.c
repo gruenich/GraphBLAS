@@ -737,7 +737,9 @@
                                     int64_t i = Mi [pM] ;
                                     int64_t pright = pZ_end - 1 ;
                                     bool found ;
-                                    GB_BINARY_SEARCH (i, Zi, pZ, pright, found);
+//                                  GB_BINARY_SEARCH (i, Zi, pZ, pright, found) ;
+                                    found = GB_binary_search (i, Zi, false,
+                                        &pZ, &pright) ;
                                     if (found) GB_COPY_Z ;
                                 }
                             }
@@ -759,7 +761,9 @@
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                GB_BINARY_SEARCH (i, Mi, pM, pright,found) ;
+//                              GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                                found = GB_binary_search (i, Mi, false,
+                                    &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_Z ;
                             }
@@ -837,7 +841,9 @@
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+//                              GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                                found = GB_binary_search (i, Mi, false,
+                                    &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_Z ;   // mask is complemented
                             }
@@ -893,7 +899,9 @@
                                     int64_t i = Mi [pM] ;
                                     int64_t pright = pC_end - 1 ;
                                     bool found ;
-                                    GB_BINARY_SEARCH (i, Ci, pC, pright, found);
+//                                  GB_BINARY_SEARCH (i, Ci, pC, pright, found) ;
+                                    found = GB_binary_search (i, Ci, false,
+                                        &pC, &pright) ;
                                     if (found) GB_COPY_C ;
                                 }
                             }
@@ -913,7 +921,9 @@
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                GB_BINARY_SEARCH (i, Mi, pM, pright, found);
+//                              GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                                found = GB_binary_search (i, Mi, false,
+                                    &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_C ;
                             }
@@ -992,7 +1002,9 @@
                                 bool mij = false ; 
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+//                              GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                                found = GB_binary_search (i, Mi, false,
+                                    &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_C ;
                             }

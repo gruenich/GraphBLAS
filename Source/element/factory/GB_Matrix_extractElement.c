@@ -135,7 +135,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
         // Time taken for this step is at most O(log(nnz(A(:,j))).
         const int64_t *restrict Ai = A->i ; // FIXME
-        GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
+//      GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
+        found = GB_binary_search (i, Ai, false, &pleft, &pright) ;
 
     }
     else

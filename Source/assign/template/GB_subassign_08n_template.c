@@ -204,7 +204,8 @@
                         int64_t pright = pA_end - 1 ;
                         bool found ;
                         // FUTURE::: exploit dense A(:,j)
-                        GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
+//                      GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
+                        found = GB_binary_search (iA, Ai, false, &pA, &pright) ;
                         if (found) GB_PHASE1_ACTION ;
                     }
                 }
@@ -340,7 +341,8 @@
                         int64_t pright = pA_end - 1 ;
                         bool found ;
                         // FUTURE::: exploit dense A(:,j)
-                        GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
+//                      GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
+                        found = GB_binary_search (iA, Ai, false, &pA, &pright) ;
                         if (found) GB_PHASE2_ACTION ;
                     }
                 }

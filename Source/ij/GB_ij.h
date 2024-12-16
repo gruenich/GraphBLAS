@@ -133,7 +133,8 @@ static inline bool GB_ij_is_in_list // determine if i is in the list I
         int64_t pright = nI-1 ;
         if (i < 0) return (false) ;
         GrB_Index ui = (GrB_Index) i ;
-        GB_BINARY_SEARCH (ui, I, pleft, pright, found) ;
+//      GB_BINARY_SEARCH (ui, I, pleft, pright, found) ;
+        found = GB_binary_search (ui, I, false, &pleft, &pright) ;
         return (found) ;
     }
 }

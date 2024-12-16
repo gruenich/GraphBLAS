@@ -22,7 +22,7 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
     int64_t *restrict pleft,        // on input: look in A->h [pleft..pright].
                                     // on output: pleft == k if found.
     // input:
-    int64_t pright,                 // normally A->nvec-1, but can be trimmed
+    int64_t pright_in,              // normally A->nvec-1, but can be trimmed
     const int64_t j,                // vector to find, as j = Ah [k]
     // output:
     int64_t *restrict pstart,       // start of vector: Ap [k]
@@ -33,7 +33,9 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
     {
         // binary search of Ah [pleft...pright] for the value j
         bool found ;
-        GB_BINARY_SEARCH (j, Ah, (*pleft), pright, found) ;
+//      GB_BINARY_SEARCH (j, Ah, (*pleft), pright, found) ;
+        int64_t pright = pright_in ;
+        found = GB_binary_search_T (j, Ah, pleft, &pright) ;
         if (found)
         {
             // j appears in the hyperlist at Ah [pleft]
@@ -63,4 +65,5 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
 #undef GB_PTYPE
 #undef GB_ITYPE
 #undef GB_lookup_debug_T
+#undef GB_binary_search_T
 

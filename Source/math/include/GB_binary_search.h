@@ -20,26 +20,6 @@
 // The list X [pleft ... pright] is in ascending order.  It may have
 // duplicates.
 
-#ifdef GB_CUDA_KERNEL
-
-    // binary search on the GPU, with fewer branches
-    #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                         \
-    {                                                                       \
-        /* binary search of X [pleft ... pright] for integer i */           \
-        while (pleft < pright)                                              \
-        {                                                                   \
-            int64_t pmiddle = (pleft + pright) >> 1 ;                       \
-            bool less = (X [pmiddle] < i) ;                                 \
-            pleft  = less ? (pmiddle+1) : pleft ;                           \
-            pright = less ? pright : pmiddle ;                              \
-        }                                                                   \
-        /* binary search is narrowed down to a single item */               \
-        /* or it has found the list is empty */                             \
-        /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
-    }
-
-#else
-
     // binary search on the CPU
     #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                         \
     {                                                                       \
@@ -62,8 +42,6 @@
         /* or it has found the list is empty */                             \
         /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
     }
-
-#endif
 
 GB_STATIC_INLINE void GB_trim_binary_search_32
 (
