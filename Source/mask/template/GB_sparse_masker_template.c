@@ -628,12 +628,14 @@
                         // Method04b: M(:,j) is sparse
                         //------------------------------------------------------
 
-                        // Use GB_SPLIT_BINARY_SEARCH so that pM can be used in
+                        // Use GB_split_binary_search so that pM can be used in
                         // the for loop with index pM in the wrapup phase.
                         ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                         int64_t pright = pM_end - 1 ;
                         bool found ;
-                        GB_SPLIT_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+//                      GB_SPLIT_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                        found = GB_split_binary_search (i, Mi, false,
+                            &pM, &pright) ;
                         if (found)
                         { 
                             ASSERT (i == Mi [pM]) ;

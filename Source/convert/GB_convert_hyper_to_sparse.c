@@ -156,7 +156,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 
             // task tid computes Ap_new [jstart:jend-1] from Ap_old, Ah_old.
 
-            // GB_SPLIT_BINARY_SEARCH of Ah_old [0..nvec-1] for jstart:
+            // GB_split_binary_search of Ah_old [0..nvec-1] for jstart:
             // If found is true then Ah_old [k] == jstart.
             // If found is false, and nvec > 0 then
             //    Ah_old [0 ... k-1] < jstart <  Ah_old [k ... nvec-1]
@@ -167,16 +167,19 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             // since Ah_old is completely empty (Ah_old [0] is invalid).
 
             int64_t k = 0, pright = nvec-1 ;
-            bool found ;
-            // FIXME: use binary _IGET method here
-            if (Ai_is_32)
-            { 
-                GB_SPLIT_BINARY_SEARCH (jstart, Ah_old32, k, pright, found) ;
-            }
-            else
-            { 
-                GB_SPLIT_BINARY_SEARCH (jstart, Ah_old64, k, pright, found) ;
-            }
+            #ifdef GB_DEBUG
+            bool found =
+            #endif
+//          if (Ai_is_32)
+//          { 
+//              GB_SPLIT_BINARY_SEARCH (jstart, Ah_old32, k, pright, found) ;
+//          }
+//          else
+//          { 
+//              GB_SPLIT_BINARY_SEARCH (jstart, Ah_old64, k, pright, found) ;
+//          }
+            GB_split_binary_search (jstart, Ah_old, Ai_is_32, &k, &pright) ;
+
             ASSERT (k >= 0 && k <= nvec) ;
             ASSERT (GB_IMPLIES (nvec == 0, !found && k == 0)) ;
             ASSERT (GB_IMPLIES (found, jstart == GB_IGET (Ah_old, k))) ;

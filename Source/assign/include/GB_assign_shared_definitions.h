@@ -1489,8 +1489,9 @@
             {                                                               \
                 /* S is sparse or hypersparse */                            \
                 int64_t pright = pS_end - 1 ;                               \
-                bool found ;                                                \
-                GB_SPLIT_BINARY_SEARCH (iQ_start, Si, pS, pright, found) ;  \
+/*              bool found ; */                                             \
+/*              GB_SPLIT_BINARY_SEARCH (iQ_start, Si, pS, pright, found) ;*/\
+                GB_split_binary_search (iQ_start, Si, false, &pS, &pright) ;\
             }                                                               \
         }
 
@@ -1509,8 +1510,9 @@
             {                                                               \
                 /* M is sparse or hypersparse */                            \
                 int64_t pright = pM_end - 1 ;                               \
-                bool found ;                                                \
-                GB_SPLIT_BINARY_SEARCH (iQ_start, Mi, pM, pright, found) ;  \
+            /*  bool found ; */                                             \
+            /*  GB_SPLIT_BINARY_SEARCH (iQ_start, Mi, pM, pright, found) ;*/\
+                GB_split_binary_search (iQ_start, Mi, false, &pM, &pright) ;\
             }                                                               \
         }
 

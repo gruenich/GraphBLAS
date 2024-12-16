@@ -13,7 +13,7 @@
 #define GB_BINARY_SEARCH_H
 
 //------------------------------------------------------------------------------
-// GB_TRIM_BINARY_SEARCH: simple binary search
+// GB_trim_binary_search: simple binary search
 //------------------------------------------------------------------------------
 
 // search for integer i in the list X [pleft...pright]; no zombies.
@@ -133,7 +133,7 @@ GB_STATIC_INLINE void GB_trim_binary_search
 }
 
 //------------------------------------------------------------------------------
-// GB_BINARY_SEARCH: binary search and check if found
+// GB_binary_search: binary search and check if found
 //------------------------------------------------------------------------------
 
 // If found is true then X [pleft == pright] == i.  If duplicates appear then
@@ -193,7 +193,7 @@ GB_STATIC_INLINE bool GB_binary_search
 }
 
 //------------------------------------------------------------------------------
-// GB_SPLIT_BINARY_SEARCH: binary search, and then partition the list
+// GB_split_binary_search: binary search, and then partition the list
 //------------------------------------------------------------------------------
 
 // If found is true then X [pleft] == i.  If duplicates appear then X [pleft]
@@ -278,11 +278,13 @@ GB_STATIC_INLINE bool GB_split_binary_search
 {
     if (X_is_32)
     {
-        return (GB_binary_search_32 (i, (const uint32_t *) X, pleft, pright)) ;
+        return (GB_split_binary_search_32 (i, (const uint32_t *) X,
+            pleft, pright)) ;
     }
     else
     {
-        return (GB_binary_search_64 (i, (const uint64_t *) X, pleft, pright)) ;
+        return (GB_split_binary_search_64 (i, (const uint64_t *) X,
+            pleft, pright)) ;
     }
 }
 

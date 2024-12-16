@@ -222,9 +222,9 @@ GrB_Info GB_subref_phase0
     // get A
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Ap = A->p ;   // Ap (but not A->p) may be trimmed
-    int64_t *restrict Ah = A->h ;   // Ah (but not A->h) may be trimmed
-    int64_t *restrict Ai = A->i ;
+    uint64_t *restrict Ap = A->p ;   // Ap (but not A->p) may be trimmed FIXME
+    int64_t *restrict Ah = A->h ;   // Ah (but not A->h) may be trimmed FIXME
+    int64_t *restrict Ai = A->i ;   // FIXME
     int64_t anvec = A->nvec ;       // may be trimmed
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
@@ -287,10 +287,11 @@ GrB_Info GB_subref_phase0
 
         if (jmin > 0)
         { 
-            bool found ;
+//          bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            GB_SPLIT_BINARY_SEARCH (jmin, Ah, kleft, kright, found) ;
+//          GB_SPLIT_BINARY_SEARCH (jmin, Ah, kleft, kright, found) ;
+            GB_split_binary_search (jmin, Ah, false, &kleft, &kright) ;
             Ah += kleft ;
             Ap += kleft ;
             anvec -= kleft ;
@@ -305,7 +306,8 @@ GrB_Info GB_subref_phase0
             bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            GB_SPLIT_BINARY_SEARCH (jmax, Ah, kleft, kright, found) ;
+//          GB_SPLIT_BINARY_SEARCH (jmax, Ah, kleft, kright, found) ;
+            found = GB_split_binary_search (jmax, Ah, false, &kleft, &kright) ;
             anvec = (found) ? (kleft + 1) : kleft ;
         }
 

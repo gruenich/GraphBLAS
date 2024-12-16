@@ -75,9 +75,10 @@ GrB_Info GB_Iterator_rc_seek
                 const int64_t *restrict Ah = iterator->Ah ; // FIXME
                 if (j > 0)
                 { 
-                    bool found ;
+//                  bool found ;
                     int64_t pright = iterator->anvec-1 ;
-                    GB_SPLIT_BINARY_SEARCH (j, Ah, k, pright, found) ;
+//                  GB_SPLIT_BINARY_SEARCH (j, Ah, k, pright, found) ;
+                    GB_split_binary_search (j, Ah, false, &k, &pright) ;
                 }
             }
             // If j is found, A(:,j) is the kth vector in the Ah hyperlist.

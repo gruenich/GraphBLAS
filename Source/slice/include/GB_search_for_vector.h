@@ -20,10 +20,12 @@
 
 #define GB_SV_TYPE uint32_t
 #define GB_search_for_vector_TYPE GB_search_for_vector_32
+#define GB_split_binary_search_TYPE GB_split_binary_search_32
 #include "include/GB_search_for_vector_template.h"
 
 #define GB_SV_TYPE uint64_t
 #define GB_search_for_vector_TYPE GB_search_for_vector_64
+#define GB_split_binary_search_TYPE GB_split_binary_search_64
 #include "include/GB_search_for_vector_template.h"
 
 static inline int64_t GB_search_for_vector // return vector k

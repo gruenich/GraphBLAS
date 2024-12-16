@@ -268,7 +268,9 @@ GrB_Info GB_resize              // change the size of a matrix
             int64_t pleft = 0 ;
             int64_t pright = GB_IMIN (A->nvec, vdim_new) - 1 ;
             bool found ;
-            GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;//FIXME
+//          GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;
+            found = GB_split_binary_search (vdim_new, Ah, false,
+                &pleft, &pright) ;
             A->nvec = pleft ;
             A->nvals = Ap [A->nvec] ;   // FIXME
 

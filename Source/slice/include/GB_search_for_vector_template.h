@@ -50,7 +50,8 @@ static inline int64_t GB_search_for_vector_TYPE // return vector k
     int64_t k = kleft ;
     int64_t kright = anvec ;
     bool found ;
-    GB_SPLIT_BINARY_SEARCH (p, Ap, k, kright, found) ;
+//  GB_SPLIT_BINARY_SEARCH (p, Ap, k, kright, found) ;
+    found = GB_split_binary_search_TYPE (p, Ap, &k, &kright) ;
     if (found)
     {
         // Ap [k] == p has been found, but if k is an empty vector, then the
@@ -84,4 +85,5 @@ static inline int64_t GB_search_for_vector_TYPE // return vector k
 
 #undef GB_SV_TYPE
 #undef GB_search_for_vector_TYPE
+#undef GB_split_binary_search_TYPE
 
