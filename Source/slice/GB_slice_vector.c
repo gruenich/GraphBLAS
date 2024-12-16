@@ -129,7 +129,6 @@ void GB_slice_vector
             #ifdef GB_DEBUG
             bool afound =
             #endif
-//          GB_SPLIT_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
             GB_split_binary_search (i, Ai, false, &pA, &apright) ;
             ASSERT (GB_IMPLIES (afound, GBI (Ai, pA, vlen) == i)) ;
             ASSERT (pA_start <= pA && pA <= pA_end) ;
@@ -178,7 +177,6 @@ void GB_slice_vector
             #ifdef GB_DEBUG
             bool bfound =
             #endif
-//          GB_SPLIT_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
             GB_split_binary_search (i, Bi, false, &pB, &bpright) ;
             ASSERT (pB_start <= pB && pB <= pB_end) ;
         }
@@ -269,7 +267,6 @@ void GB_slice_vector
         ASSERT (Mi != NULL) ;
         pM = pM_start ;
         int64_t mpright = pM_end - 1 ;
-//      GB_SPLIT_BINARY_SEARCH (i, Mi, pM, mpright, mfound) ;
         GB_split_binary_search (i, Mi, false, &pM, &mpright) ;
     }
 

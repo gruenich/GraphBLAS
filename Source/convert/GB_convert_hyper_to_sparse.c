@@ -170,14 +170,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             #ifdef GB_DEBUG
             bool found =
             #endif
-//          if (Ai_is_32)
-//          { 
-//              GB_SPLIT_BINARY_SEARCH (jstart, Ah_old32, k, pright, found) ;
-//          }
-//          else
-//          { 
-//              GB_SPLIT_BINARY_SEARCH (jstart, Ah_old64, k, pright, found) ;
-//          }
             GB_split_binary_search (jstart, Ah_old, Ai_is_32, &k, &pright) ;
 
             ASSERT (k >= 0 && k <= nvec) ;

@@ -287,10 +287,8 @@ GrB_Info GB_subref_phase0
 
         if (jmin > 0)
         { 
-//          bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-//          GB_SPLIT_BINARY_SEARCH (jmin, Ah, kleft, kright, found) ;
             GB_split_binary_search (jmin, Ah, false, &kleft, &kright) ;
             Ah += kleft ;
             Ap += kleft ;
@@ -306,7 +304,6 @@ GrB_Info GB_subref_phase0
             bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-//          GB_SPLIT_BINARY_SEARCH (jmax, Ah, kleft, kright, found) ;
             found = GB_split_binary_search (jmax, Ah, false, &kleft, &kright) ;
             anvec = (found) ? (kleft + 1) : kleft ;
         }

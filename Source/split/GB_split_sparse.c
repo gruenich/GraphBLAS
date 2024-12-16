@@ -108,8 +108,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             // Ah [akstart:akend-1].
             akend = akstart ;
             int64_t pright = anvec - 1 ;
-//          bool found ;
-//          GB_SPLIT_BINARY_SEARCH (avend, Ah, akend, pright, found) ;
             GB_split_binary_search (avend, Ah, false, &akend, &pright) ;
             ASSERT (GB_IMPLIES (akstart <= akend-1, Ah [akend-1] < avend)) ;
         }
@@ -167,9 +165,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 else if (aknz > 256)
                 { 
                     // use binary search to find aiend
-//                  bool found ;
                     int64_t pright = pA_end - 1 ;
-//                  GB_SPLIT_BINARY_SEARCH (aiend, Ai, pA, pright, found) ;
                     GB_split_binary_search (aiend, Ai, false, &pA, &pright) ;
                     #ifdef GB_DEBUG
                     // check the results with a linear search
@@ -190,10 +186,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                     }
                     #ifdef GB_DEBUG
                     // check the results with a binary search
-//                  bool found ;
                     int64_t p2 = Wp [k] ;
                     int64_t p2_end = Ap [k+1] - 1 ;
-//                  GB_SPLIT_BINARY_SEARCH (aiend, Ai, p2, p2_end, found) ;
                     GB_split_binary_search (aiend, Ai, false, &p2, &p2_end) ;
                     ASSERT (pA == p2) ;
                     #endif
