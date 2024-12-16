@@ -24,8 +24,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     const bool C_iso,               // if true, construct C as iso
     const GB_void *cscalar,         // iso value of C, if C is iso
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Werk Werk

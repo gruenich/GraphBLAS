@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------------
 
 {
+    ASSERT (GB_IS_FULL (A))
+    ASSERT (GB_IS_BITMAP (C)) ;
+
     const int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     int64_t pA ;
     #pragma omp parallel for num_threads(A_nthreads) schedule(static)

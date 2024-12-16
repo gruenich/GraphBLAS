@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------------
 
 {
+    ASSERT (GB_IS_BITMAP (A))
+    ASSERT (GB_IS_BITMAP (C)) ;
+
     const int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
     const int8_t *restrict Ab = A->b ;
     int64_t pA ;

@@ -13,8 +13,8 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const GrB_Descriptor desc       // unused, except threading control
 )
 {
@@ -22,8 +22,6 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    // FIXME: validate controls of each Tile input matrix
 
     GB_WHERE1 (C, "GxB_Matrix_concat (C, Tiles, m, n, desc)") ;
     GB_RETURN_IF_NULL (C) ;

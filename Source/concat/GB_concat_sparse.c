@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit, except Work can follow C->p_is_32 instead of int64_t
 
 #define GB_FREE_WORKSPACE                       \
     if (S != NULL)                              \
@@ -39,8 +39,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     const GB_void *cscalar,         // iso value of C, if C is iso 
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Werk Werk
@@ -74,16 +74,26 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // free all content of C and reallocate it
     GB_phybix_free (C) ;
 
+    // HACK for now:
+    bool hack32 = true ;
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool Cp_is_32, Ci_is_32 ;
+    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_SPARSE, cnz, cvlen, cvdim, true)) ;
+
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_ph_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, C_iso, /* FIXME: */ false, false)) ;
+        hyper_switch, cvdim, cnz, true, C_iso, Cp_is_32, Ci_is_32)) ;
 
     // restore the settings of C
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
-    int64_t *restrict Ci = C->i ;
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
@@ -97,6 +107,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // allocate workspace
     //--------------------------------------------------------------------------
 
+    // FIXME: Work can be uint32_t, following C->p_is_32
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
     Work = GB_CALLOC_WORK (ninner * cvdim, int64_t, &Work_size) ;
@@ -130,7 +141,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // T = (ctype) A', not in-place, using a dynamic header
                 GB_OK (GB_new (&T, // auto sparsity, new header
                     A->type, A->vdim, A->vlen, GB_ph_null, csc,
-                    GxB_AUTO_SPARSITY, -1, 1, false, false)) ;
+                    GxB_AUTO_SPARSITY, -1, 1, A->p_is_32, A->i_is_32)) ;
                 // save T in array S
                 if (csc)
                 { 
@@ -183,7 +194,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
             const int64_t anvec = A->nvec ;
             const int64_t avlen = A->vlen ;
-            int64_t cvstart = csc ?  Tile_cols [outer] : Tile_rows [outer] ;
+            int64_t cvstart = csc ? Tile_cols [outer] : Tile_rows [outer] ;
             int64_t *restrict W = Work + inner * cvdim + cvstart ;
             int nth = GB_nthreads (anvec, chunk, nthreads_max) ;
             if (GB_IS_FULL (A))
@@ -201,14 +212,14 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             { 
                 // A is sparse or hyper
                 int64_t k ;
-                const uint64_t *restrict Ap = A->p ;    // FIXME
-                const int64_t *restrict Ah = A->h ;
+                GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+                GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
                 #pragma omp parallel for num_threads(nth) schedule(static)
                 for (k = 0 ; k < anvec ; k++)
                 {
                     // W [j] = # of entries in A(:,j), the kth column of A
-                    int64_t j = GBH (Ah, k) ;
-                    W [j] = Ap [k+1] - Ap [k] ; 
+                    int64_t j = GBh_A (Ah, k) ;
+                    W [j] = GB_IGET (Ap, k+1) - GB_IGET (Ap, k) ; 
                 }
             }
         }
@@ -232,17 +243,17 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             s += c ;
         }
         // total number of entries in C(:,k)
-        Cp [k] = s ;
+        GB_ISET (Cp, k, s) ;    // Cp [k] = s ;
     }
 
-    GB_cumsum (Cp, false, cvdim, &(C->nvec_nonempty), nthreads_max, Werk) ;
-    ASSERT (cnz == Cp [cvdim]) ;
+    GB_cumsum (Cp, Cp_is_32, cvdim, &(C->nvec_nonempty), nthreads_max, Werk) ;
+    ASSERT (cnz == GB_IGET (Cp, cvdim)) ;
     C->nvals = cnz ;
 
     #pragma omp parallel for num_threads(nth) schedule(static)
     for (k = 0 ; k < cvdim ; k++)
     {
-        int64_t pC = Cp [k] ;
+        int64_t pC = GB_IGET (Cp, k) ;
         for (int64_t inner = 0 ; inner < ninner ; inner++)
         { 
             int64_t p = inner * cvdim + k ;
@@ -316,9 +327,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             ASSERT (avdim == A->vdim) ;
             ASSERT (avlen == A->vlen) ;
             int A_nthreads, A_ntasks ;
-            const uint64_t *restrict Ap = A->p ;     // FIXME
-            const int64_t *restrict Ah = A->h ;
-            const int64_t *restrict Ai = A->i ;
+            GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+            GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+            GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
             const bool A_iso = A->iso ;
             GB_SLICE_MATRIX (A, 1) ;
 

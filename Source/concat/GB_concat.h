@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #ifndef GB_CONCAT_H
 #define GB_CONCAT_H
 #include "GB.h"
@@ -19,8 +21,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     GB_Werk Werk
 ) ;
 
@@ -30,8 +32,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     const bool C_iso,               // if true, construct C as iso
     const GB_void *cscalar,         // iso value of C, if C is iso
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Werk Werk
@@ -44,8 +46,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
     const GB_void *cscalar,         // iso value of C, if C is iso
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Werk Werk
@@ -58,8 +60,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     const GB_void *cscalar,         // iso value of C, if C is iso
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Werk Werk
@@ -72,8 +74,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     const GB_void *cscalar,         // iso value of C, if C is iso
     const int64_t cnz,              // # of entries in C
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n,
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     GB_Werk Werk

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit, except for convert_int at the end
+
 #define GB_FREE_WORKSPACE               \
     GB_WERK_POP (Tile_cols, int64_t) ;  \
     GB_WERK_POP (Tile_rows, int64_t) ;
@@ -21,8 +23,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix *Tiles,        // 2D row-major array of size m-by-n
-    const GrB_Index m,
-    const GrB_Index n,
+    const uint64_t m,
+    const uint64_t n,
     GB_Werk Werk
 )
 {
@@ -51,7 +53,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     for (int64_t k = 0 ; k < m*n ; k++)
     { 
         GrB_Matrix A = Tiles [k] ;
-        GB_RETURN_IF_NULL_OR_INVALID (A) ;
+        GB_RETURN_IF_NULL (A) ;
+        GB_OK (GB_valid_matrix (A)) ;
         ASSERT_MATRIX_OK (A, "Tile[k] input for GB_concat", GB0) ;
         GB_MATRIX_WAIT (A) ;
     }
@@ -255,6 +258,8 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
+    ASSERT_MATRIX_OK (C, "C convert conform for GB_concat", GB0) ;
+    GB_OK (GB_convert_int (C, false, false)) ;   // FIXME
     ASSERT_MATRIX_OK (C, "C before conform for GB_concat", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_concat", GB0) ;
