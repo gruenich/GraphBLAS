@@ -145,7 +145,6 @@ static void GB_p_slice_TYPE     // slice Ap, 32-bit or 64-bit
                 // just pick what the binary search comes up with.
                 int64_t wtask = (int64_t) GB_PART (taskid, work, ntasks) ;
                 int64_t pright = n ;
-//              GB_TRIM_BINARY_SEARCH (wtask, Ap, k, pright) ;
                 GB_trim_binary_search_TYPE (wtask, Ap, &k, &pright) ;
                 Slice [taskid] = k ;
             }

@@ -353,7 +353,6 @@
                         GB_BINARY_SEARCH_ZOMBIE (i, Ai, pleft, pright, found,
                             nzombies, is_zombie) ;
                         #else
-//                      GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;
                         found = GB_binary_search (i, Ai, false,
                             &pleft, &pright) ;
                         #endif

@@ -499,7 +499,6 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using binary search
                     int64_t kright = anvec-1 ;
-//                  GB_BINARY_SEARCH (jA, Ah, kA, kright, found) ;
                     found = GB_binary_search (jA, Ah, false, &kA, &kright) ;
                 }
                 if (found)
@@ -698,7 +697,6 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using binary search
                     int64_t kright = anvec-1 ;
-//                  GB_BINARY_SEARCH (jA, Ah, kA, kright, found) ;
                     found = GB_binary_search (jA, Ah, false, &kA, &kright) ;
                 }
                 if (found)

@@ -107,7 +107,6 @@ static __device__ __inline__ void GB_cuda_ek_slice_setup
 
     (*kfirst) = 0 ;
     int64_t kright = anvec ;
-//  GB_TRIM_BINARY_SEARCH (pfirst, Ap, (*kfirst), kright) ;
     GB_trim_binary_search (pfirst, Ap, false, kfirst, &kright) ;
 
     // find klast, the last vector of the slice for this chunk.  klast is the
@@ -116,7 +115,6 @@ static __device__ __inline__ void GB_cuda_ek_slice_setup
 
     (*klast) = (*kfirst) ;
     kright = anvec ;
-//  GB_TRIM_BINARY_SEARCH (plast, Ap, (*klast), kright) ;
     GB_trim_binary_search (plast, Ap, false, klast, &kright) ;
 
     //--------------------------------------------------------------------------

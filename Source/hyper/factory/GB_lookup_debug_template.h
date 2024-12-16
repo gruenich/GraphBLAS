@@ -33,7 +33,6 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
     {
         // binary search of Ah [pleft...pright] for the value j
         bool found ;
-//      GB_BINARY_SEARCH (j, Ah, (*pleft), pright, found) ;
         int64_t pright = pright_in ;
         found = GB_binary_search_T (j, Ah, pleft, &pright) ;
         if (found)

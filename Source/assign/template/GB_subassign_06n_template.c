@@ -181,7 +181,6 @@
                         // find iA in A(:,j)
                         bool aij_found ;
                         int64_t apright = pA_end - 1 ;
-//                      GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
                         aij_found = GB_binary_search (iA, Ai, false,
                             &pA, &apright) ;
 
@@ -271,7 +270,6 @@
                         // find iA in A(:,j)
                         bool aij_found ;
                         int64_t apright = pA_end - 1 ;
-//                      GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
                         aij_found = GB_binary_search (iA, Ai, false,
                             &pA, &apright) ;
 
@@ -391,7 +389,6 @@
                             // A(:,j) is sparse; use binary search
                             int64_t apright = pA_end - 1 ;
                             bool aij_found ;
-//                          GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
                             aij_found = GB_binary_search (iA, Ai, false,
                                 &pA, &apright) ;
                             if (!aij_found) continue ;
