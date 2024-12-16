@@ -9,6 +9,8 @@
 
 // DONE: 32/64-bit, except for hack32
 
+#define GB_DEBUG
+
 // The column selectors can be done in a single pass.
 // C->iso and A->iso are identical.
 
@@ -101,7 +103,7 @@ GrB_Info GB_select_column
         // find the column j in the hyperlist of A
         // future:: use hyper_hash if present
         int64_t kright = anvec-1 ;
-        GB_SPLIT_BINARY_SEARCH_IGET (j, Ah, k, kright, found) ;
+        found = GB_split_binary_search (j, Ah, A->i_is_32, &k, &kright) ;
         // if found is true the Ah [k] == j
         // if found is false, then Ah [0..k-1] < j and Ah [k..anvec-1] > j
     }

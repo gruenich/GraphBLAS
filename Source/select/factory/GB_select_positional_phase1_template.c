@@ -81,10 +81,10 @@
             }
             else
             { 
-                // binary search for A (i,k), for sparse/hyper case only
+                // binary search in A(:,k) for A (i,k); sparse/hyper case only
                 int64_t pright = pA_end - 1 ;
                 ASSERT (Ai != NULL) ;
-                GB_SPLIT_BINARY_SEARCH_IGET (i, Ai, p, pright, found) ;
+                found = GB_split_binary_search (i, Ai, Ai_is_32, &p, &pright) ;
             }
 
             #if defined ( GB_TRIL_SELECTOR )

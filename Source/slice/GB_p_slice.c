@@ -26,11 +26,13 @@
 #define GB_Ap_TYPE             uint32_t
 #define GB_p_slice_TYPE        GB_p_slice_32
 #define GB_p_slice_worker_TYPE GB_p_slice_worker_32
+#define GB_trim_binary_search_TYPE GB_trim_binary_search_32
 #include "slice/factory/GB_p_slice_template.c"
 
 #define GB_Ap_TYPE             uint64_t
 #define GB_p_slice_TYPE        GB_p_slice_64
 #define GB_p_slice_worker_TYPE GB_p_slice_worker_64
+#define GB_trim_binary_search_TYPE GB_trim_binary_search_64
 #include "slice/factory/GB_p_slice_template.c"
 
 //------------------------------------------------------------------------------

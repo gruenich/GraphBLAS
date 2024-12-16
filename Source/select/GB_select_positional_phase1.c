@@ -59,6 +59,7 @@ GrB_Info GB_select_positional_phase1
     GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
     GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+    const bool Ai_is_32 = A->i_is_32 ;
 
     int64_t avlen = A->vlen ;
     int64_t anvec = A->nvec ;
