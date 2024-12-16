@@ -45,7 +45,7 @@ void GX_bitmap_M_scatter_whole  /* scatter M into the C bitmap */           \
 GrB_Info GX_bix_alloc       /* allocate A->b, A->i, and A->x in a matrix */ \
 (                                                                           \
     GrB_Matrix A,           /* matrix to allocate space for */              \
-    const GrB_Index nzmax,  /* number of entries the matrix can hold; */    \
+    const uint64_t nzmax,   /* number of entries the matrix can hold; */    \
                             /* ignored if A is iso and full */              \
     const int sparsity,     /* sparse (=hyper/auto) / bitmap / full */      \
     const bool bitmap_calloc,   /* if true, calloc A->b, else use malloc */ \
@@ -132,11 +132,11 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
     int *p_nthreads,                /* # of threads to use */               \
     /* input: */                                                            \
     const GrB_Matrix C,             /* output matrix C */                   \
-    const GrB_Index *I,                                                     \
+    const uint64_t *I,              /* FIXME */                             \
     const int64_t nI,                                                       \
     const int Ikind,                                                        \
     const int64_t Icolon [3],                                               \
-    const GrB_Index *J,                                                     \
+    const uint64_t *J,              /* FIXME */                             \
     const int64_t nJ,                                                       \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \
@@ -226,11 +226,11 @@ GrB_Info GX_subassign_08n_slice                                             \
     size_t *Z_to_M_size_handle,                                             \
     /* input: */                                                            \
     const GrB_Matrix C,             /* output matrix C */                   \
-    const GrB_Index *I,                                                     \
+    const uint64_t *I,              /* FIXME */                             \
     const int64_t nI,                                                       \
     const int Ikind,                                                        \
     const int64_t Icolon [3],                                               \
-    const GrB_Index *J,                                                     \
+    const uint64_t *J,              /* FIXME */                             \
     const int64_t nJ,                                                       \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \

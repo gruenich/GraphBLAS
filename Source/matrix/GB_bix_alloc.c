@@ -25,7 +25,7 @@
 //  GrB_Info GB_bix_alloc       // allocate A->b, A->i, and A->x in a matrix
 //  (
 //      GrB_Matrix A,           // matrix to allocate space for
-//      const GrB_Index nzmax,  // number of entries the matrix can hold
+//      const uint64_t nzmax,   // number of entries the matrix can hold
 //                              // ignored if A is iso and full
 //      const int sparsity,     // sparse (=hyper/auto) / bitmap / full
 //      const bool bitmap_calloc,   // if true, calloc A->b, else use malloc

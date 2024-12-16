@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -22,7 +22,7 @@ GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
     int64_t cistart,
     const GB_Operator op,
     const GrB_Matrix A,
-    int64_t *restrict W,            // FIXME: what type is W?
+    int64_t *restrict W,            // FIXME: ok for now; can match C->p_is_32
     const int64_t *restrict A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads

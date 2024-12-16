@@ -53,8 +53,7 @@ static inline GrB_Info GB_valid6
     void *arg3,
     void *arg4,
     void *arg5,
-    void *arg6,
-    GB_Werk Werk
+    void *arg6
 )
 {
     GrB_Info info ;
@@ -73,8 +72,7 @@ static inline GrB_Info GB_valid5
     void *arg2,
     void *arg3,
     void *arg4,
-    void *arg5,
-    GB_Werk Werk
+    void *arg5
 )
 {
     GrB_Info info ;
@@ -91,8 +89,7 @@ static inline GrB_Info GB_valid4
     void *arg1,
     void *arg2,
     void *arg3,
-    void *arg4,
-    GB_Werk Werk
+    void *arg4
 )
 {
     GrB_Info info ;
@@ -107,8 +104,7 @@ static inline GrB_Info GB_valid3
 (
     void *arg1,
     void *arg2,
-    void *arg3,
-    GB_Werk Werk
+    void *arg3
 )
 {
     GrB_Info info ;
@@ -121,8 +117,7 @@ static inline GrB_Info GB_valid3
 static inline GrB_Info GB_valid2
 (
     void *arg1,
-    void *arg2,
-    GB_Werk Werk
+    void *arg2
 )
 {
     GrB_Info info ;
@@ -133,8 +128,7 @@ static inline GrB_Info GB_valid2
 
 static inline GrB_Info GB_valid1
 (
-    void *arg1,
-    GB_Werk Werk
+    void *arg1
 )
 {
     GrB_Info info ;
@@ -177,7 +171,7 @@ static inline GrB_Info GB_valid1
 #define GB_WHERE(C,arg2,arg3,arg4,arg5,arg6,where_string)           \
     GB_WHERE0 (where_string)                                        \
     /* ensure the matrix has valid integers */                      \
-    info = GB_valid6 (C, arg2, arg3, arg4, arg5, arg6, Werk) ;      \
+    info = GB_valid6 (C, arg2, arg3, arg4, arg5, arg6) ;            \
     GB_WHERE_C_LOGGER (C)
 
 #define GB_WHERE_CHECK_INFO                                         \
@@ -203,48 +197,48 @@ static inline GrB_Info GB_valid1
 // GB_WHEREn: check n arguments, first one is input/output matrix C for logger
 #define GB_WHERE6(C,arg2,arg3,arg4,arg5,arg6,where_string)          \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid6 (C, arg2, arg3, arg4, arg5, arg6, Werk) ;      \
+    info = GB_valid6 (C, arg2, arg3, arg4, arg5, arg6) ;            \
     GB_WHERE_C_LOGGER (C)
 
 #define GB_WHERE5(C,arg2,arg3,arg4,arg5,where_string)               \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid5 (C, arg2, arg3, arg4, arg5, Werk) ;            \
+    info = GB_valid5 (C, arg2, arg3, arg4, arg5) ;                  \
     GB_WHERE_C_LOGGER (C)
 
 #define GB_WHERE4(C,arg2,arg3,arg4,where_string)                    \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid4 (C, arg2, arg3, arg4, Werk) ;                  \
+    info = GB_valid4 (C, arg2, arg3, arg4) ;                        \
     GB_WHERE_C_LOGGER (C)
 
 #define GB_WHERE3(C,arg2,arg3,where_string)                         \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid3 (C, arg2, arg3, Werk) ;                        \
+    info = GB_valid3 (C, arg2, arg3) ;                              \
     GB_WHERE_C_LOGGER (C)
 
 #define GB_WHERE2(C,arg2,where_string)                              \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid2 (C, arg2, Werk) ;                              \
+    info = GB_valid2 (C, arg2) ;                                    \
     GB_WHERE_C_LOGGER (C)
 
 #define GB_WHERE1(C,where_string)                                   \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid1 (C, Werk) ;                                    \
+    info = GB_valid1 (C) ;                                          \
     GB_WHERE_C_LOGGER (C)
 
 // GB_WHERE_n: check n arguments, no input/output matrix C for logger
 #define GB_WHERE_1(arg1,where_string)                               \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid1 (arg1, Werk) ;                                 \
+    info = GB_valid1 (arg1) ;                                       \
     GB_WHERE_CHECK_INFO
 
 #define GB_WHERE_2(arg1,arg2,where_string)                          \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid2 (arg1, arg2, Werk) ;                           \
+    info = GB_valid2 (arg1, arg2) ;                                 \
     GB_WHERE_CHECK_INFO
 
 #define GB_WHERE_3(arg1,arg2,arg3,where_string)                     \
     GB_WHERE0 (where_string)                                        \
-    info = GB_valid3 (arg1, arg2, arg3, Werk) ;                     \
+    info = GB_valid3 (arg1, arg2, arg3) ;                           \
     GB_WHERE_CHECK_INFO
 
 // for descriptors
