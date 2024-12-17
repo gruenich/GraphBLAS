@@ -21,6 +21,7 @@
 // duplicates.
 
     // binary search on the CPU
+    #if 0
     #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                         \
     {                                                                       \
         /* binary search of X [pleft ... pright] for integer i */           \
@@ -42,6 +43,7 @@
         /* or it has found the list is empty */                             \
         /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
     }
+    #endif
 
 GB_STATIC_INLINE void GB_trim_binary_search_32
 (
@@ -143,11 +145,13 @@ GB_STATIC_INLINE void GB_trim_binary_search
 //    X [pleft+1 ... original_pright] > i holds.
 // The value X [pleft] may be either < or > i.
 
+#if 0
 #define GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
 {                                                                           \
     GB_TRIM_BINARY_SEARCH (i, X, pleft, pright) ;                           \
     found = (pleft == pright && X [pleft] == i) ;                           \
 }
+#endif
 
 GB_STATIC_INLINE bool GB_binary_search_32
 (
@@ -205,6 +209,7 @@ GB_STATIC_INLINE bool GB_binary_search
 //    X [original_pleft ... pleft-1] < i and
 //    X [pleft ... original_pright] >= i holds.
 
+#if 0
 #define GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
 {                                                                           \
     GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \
@@ -220,6 +225,7 @@ GB_STATIC_INLINE bool GB_binary_search
         }                                                                   \
     }                                                                       \
 }
+#endif
 
 GB_STATIC_INLINE bool GB_split_binary_search_32
 (
@@ -292,6 +298,7 @@ GB_STATIC_INLINE bool GB_split_binary_search
 // GB_trim_binary_search_zombie: binary search in the presence of zombies
 //------------------------------------------------------------------------------
 
+#if 0
 #define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
@@ -313,6 +320,7 @@ GB_STATIC_INLINE bool GB_split_binary_search
     /* or it has found the list is empty */                                 \
     /* ASSERT (pleft == pright || pleft == pright + 1) ; */                 \
 }
+#endif
 
 GB_STATIC_INLINE void GB_trim_binary_search_zombie_32
 (
@@ -392,6 +400,7 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_64
 // GB_binary_search_zombie: binary search with zombies; check if found
 //------------------------------------------------------------------------------
 
+#if 0
 #define GB_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,may_see_zombies,is_zombie)  \
 {                                                                           \
     if (may_see_zombies)                                                    \
@@ -416,6 +425,7 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_64
         GB_BINARY_SEARCH (i, X, pleft, pright, found)                       \
     }                                                                       \
 }
+#endif
 
 GB_STATIC_INLINE bool GB_binary_search_zombie_32
 (
@@ -510,6 +520,7 @@ GB_STATIC_INLINE bool GB_binary_search_zombie
 // GB_SPLIT_BINARY_SEARCH_ZOMBIE: binary search with zombies; then partition
 //------------------------------------------------------------------------------
 
+#if 0
 #define GB_SPLIT_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,may_see_zombies,is_zombie) \
 {                                                                           \
     if (may_see_zombies)                                                    \
@@ -544,6 +555,120 @@ GB_STATIC_INLINE bool GB_binary_search_zombie
         is_zombie = false ;                                                 \
         GB_SPLIT_BINARY_SEARCH (i, X, pleft, pright, found)                 \
     }                                                                       \
+}
+#endif
+
+GB_STATIC_INLINE bool GB_split_binary_search_zombie_32
+(
+    const uint32_t i,           // item to look for
+    const int32_t *restrict X,  // array to search; with zombies
+    int64_t *pleft,             // look in X [pleft:pright]
+    int64_t *pright,
+    const bool may_see_zombies,
+    bool *is_zombie
+)
+{
+    bool found = false ;
+    *is_zombie = false ;
+    if (may_see_zombies)
+    {
+        GB_trim_binary_search_zombie_32 (i, X, pleft, pright) ;
+        if (*pleft == *pright)
+        {
+            int64_t i2 = X [*pleft] ;
+            *is_zombie = GB_IS_ZOMBIE (i2) ;        // 32-bit
+            if (*is_zombie)
+            {
+                i2 = GB_DEZOMBIE (i2) ;             // 32-bit
+            }
+            found = (i == i2) ;
+            if (!found)
+            {
+                if (i > i2)
+                {
+                    (*pleft)++ ;
+                }
+                else
+                {
+                    (*pright)++ ;
+                }
+            }
+        }
+    }
+    else
+    {
+        found = GB_split_binary_search_32 (i, (const uint32_t *) X,
+            pleft, pright) ;
+    }
+    return (found) ;
+}
+
+GB_STATIC_INLINE bool GB_split_binary_search_zombie_64
+(
+    const uint64_t i,           // item to look for
+    const int64_t *restrict X,  // array to search; with zombies
+    int64_t *pleft,             // look in X [pleft:pright]
+    int64_t *pright,
+    const bool may_see_zombies,
+    bool *is_zombie
+)
+{
+    bool found = false ;
+    *is_zombie = false ;
+    if (may_see_zombies)
+    {
+        GB_trim_binary_search_zombie_64 (i, X, pleft, pright) ;
+        if (*pleft == *pright)
+        {
+            int64_t i2 = X [*pleft] ;
+            *is_zombie = GB_IS_ZOMBIE (i2) ;        // 64-bit
+            if (*is_zombie)
+            {
+                i2 = GB_DEZOMBIE (i2) ;             // 64-bit
+            }
+            found = (i == i2) ;
+            if (!found)
+            {
+                if (i > i2)
+                {
+                    (*pleft)++ ;
+                }
+                else
+                {
+                    (*pright)++ ;
+                }
+            }
+        }
+    }
+    else
+    {
+        found = GB_split_binary_search_64 (i, (const uint64_t *) X,
+            pleft, pright) ;
+    }
+    return (found) ;
+}
+
+GB_STATIC_INLINE bool GB_split_binary_search_zombie
+(
+    const uint64_t i,           // item to look for
+    const void *X,              // array to search; with zombies
+    const bool X_is_32,         // if true, X is 32-bit, else 64
+    int64_t *pleft,             // look in X [pleft:pright]
+    int64_t *pright,
+    const bool may_see_zombies,
+    bool *is_zombie
+)
+{
+    if (X_is_32)
+    {
+        return (GB_split_binary_search_zombie_32 (i, (const int32_t *) X,
+            pleft, pright, may_see_zombies, is_zombie)) ;
+    }
+    else
+    {
+        return (GB_split_binary_search_zombie_64 (i, (const int64_t *) X,
+            pleft, pright, may_see_zombies, is_zombie)) ;
+    }
 }
 
 #endif

@@ -348,10 +348,10 @@
                         int64_t pright = pA_end - 1 ;
                         #if defined ( GB_SYMBOLIC )
                         bool is_zombie ;
-                        GB_BINARY_SEARCH_ZOMBIE (i, Ai, pleft, pright, found,
-                            may_see_zombies, is_zombie) ;
-//                      found = GB_binary_search_zombie (i, Ai, false,
-//                          &pleft, &pright, may_see_zombies, &is_zombie) ;
+//                      GB_BINARY_SEARCH_ZOMBIE (i, Ai, pleft, pright, found,
+//                          may_see_zombies, is_zombie) ;
+                        found = GB_binary_search_zombie (i, Ai, false,
+                            &pleft, &pright, may_see_zombies, &is_zombie) ;
                         #else
                         found = GB_binary_search (i, Ai, false,
                             &pleft, &pright) ;

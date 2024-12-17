@@ -265,10 +265,10 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // Time taken for this step is at most O(log(nnz(C(:,j))).
             const int64_t *restrict Ci = C->i ; // FIXME
             const bool may_see_zombies = (C->nzombies > 0) ;
-            GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found,
-                may_see_zombies, is_zombie) ;
-//          found = GB_binary_search_zombie (i, Ci, false, &pleft, &pright,
-//              may_see_zombies, &is_zombie) ;
+//          GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found,
+//              may_see_zombies, is_zombie) ;
+            found = GB_binary_search_zombie (i, Ci, false, &pleft, &pright,
+                may_see_zombies, &is_zombie) ;
         }
     }
 

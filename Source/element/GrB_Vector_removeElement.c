@@ -83,10 +83,10 @@ static inline bool GB_removeElement     // returns true if found
             // binary search for V(i): time is O(log(vnz))
             pright-- ;
             const bool may_see_zombies = (V->nzombies > 0) ;
-            GB_BINARY_SEARCH_ZOMBIE (i, Vi, pleft, pright, found,
-                may_see_zombies, is_zombie) ;
-//          found = GB_binary_search_zombie (i, Vi, false, &pleft, &pright,
-//              may_see_zombies, &is_zombie) ;
+//          GB_BINARY_SEARCH_ZOMBIE (i, Vi, pleft, pright, found,
+//              may_see_zombies, is_zombie) ;
+            found = GB_binary_search_zombie (i, Vi, false, &pleft, &pright,
+                may_see_zombies, &is_zombie) ;
         }
 
         // remove the entry if found (unless it is already a zombie)
