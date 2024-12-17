@@ -13,6 +13,8 @@
 
 // TODO: allow bitmap multiply to work in-place as well
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
 (
     GrB_Matrix C,                   // output, static header
@@ -240,13 +242,14 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         { 
             // C<#M> = A*B via dot products, where A is bitmap or full and B is
             // sparse or hypersparse, using the dot2 method with A not
-            // explicitly transposed.
+            // explicitly transposed.  A and B must not be jumbled.
+            GB_MATRIX_WAIT (A) ;
+            GB_MATRIX_WAIT (B) ;
             info = GB_AxB_dot2 (C, C_iso, cscalar, M, Mask_comp, Mask_struct,
                 true, A, B, semiring, flipxy, Werk) ;
         }
         else
         { 
-
             // C<#M> = A*B via bitmap saxpy method
             info = GB_AxB_saxbit (C, C_iso, cscalar, M,
                 Mask_comp, Mask_struct, A, B, semiring, flipxy, Werk) ;

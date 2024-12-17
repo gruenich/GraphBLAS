@@ -90,6 +90,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
     if (op != NULL)
     { 
+        ASSERT_OP_OK (op, "op for GB_apply_op", GB0) ;
         opcode = op->opcode ;
         op_is_unop = GB_IS_UNARYOP_CODE (opcode) ;
         op_is_binop = GB_IS_BINARYOP_CODE (opcode) ;
@@ -131,10 +132,11 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             }
             ASSERT (op1 != NULL) ;
             op = (GB_Operator) op1 ;
+            ASSERT_OP_OK (op, "revised op for GB_apply_op", GB0) ;
             opcode = op->opcode ;
             op_is_unop = true ;
             op_is_binop = false ;
-            ASSERT (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
+            ASSERT (GB_IS_BUILTIN_UNOP_CODE_POSITIONAL (opcode)) ;
         }
 
     }

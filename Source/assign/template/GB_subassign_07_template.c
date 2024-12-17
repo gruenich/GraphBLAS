@@ -28,7 +28,7 @@
 
     GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
-    int64_t zorig = C->nzombies ;
+    const bool may_see_zombies_phase1 = (C->nzombies > 0) ;
     const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     const bool C_is_hyper = (Ch != NULL) ;
@@ -141,7 +141,7 @@
                         int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
+                        GB_iC_BINARY_SEARCH (may_see_zombies_phase1) ;
                         if (cij_found)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
@@ -167,8 +167,11 @@
     // phase 2: insert pending tuples
     //--------------------------------------------------------------------------
 
+    // All zombies might have just been brought back to life, so recheck the
+    // may_see_zombies condition.
+
     GB_PENDING_CUMSUM ;
-    zorig = C->nzombies ;
+    const bool may_see_zombies_phase2 = (C->nzombies > 0) ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(&&:pending_sorted)
@@ -228,7 +231,7 @@
                         int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
+                        GB_iC_BINARY_SEARCH (may_see_zombies_phase2) ;
                         if (!cij_found)
                         { 
                             // ----[. A 1]--------------------------------------

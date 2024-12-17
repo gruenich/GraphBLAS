@@ -338,7 +338,7 @@ static GrB_Info GB_msort_3_method    // sort array A of size 3-by-n
 
     W_0 = GB_MALLOC_WORK (n, GB_A0_t, &W_0_size) ;
     W_1 = GB_MALLOC_WORK (n, GB_A1_t, &W_1_size) ;
-    W_2 = GB_MALLOC_WORK (n, GB_A2_t, &W_1_size) ;
+    W_2 = GB_MALLOC_WORK (n, GB_A2_t, &W_2_size) ;
     W_T = GB_MALLOC_WORK (6*ntasks + 1, int64_t, &W_T_size) ;
 
     if (W_0 == NULL || W_1 == NULL || W_2 == NULL || W_T == NULL)

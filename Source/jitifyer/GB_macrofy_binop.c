@@ -91,8 +91,8 @@ void GB_macrofy_binop
         }
         else if (flipxy)
         { 
-            // flipped multiplicative operator (flip both xy and ij)
-            ASSERT (!is_ewise) ;
+            // flipped multiplicative operator (flip both xy and ij),
+            // for mxm (including rowscale and colscale) only
             fprintf (fp, "#define %s(z,y,x,j%s,i) ", macro_name, karg) ;
         }
         else if (flipij)

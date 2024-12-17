@@ -123,6 +123,10 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     const int64_t vlen = A->vlen ;
     const uint64_t *restrict Ap = A->p ;    // FIXME
     const int64_t *restrict Ai = A->i ;
+    #ifdef GB_DEBUG
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Bh = B->h ;
+    #endif
     const uint64_t *restrict Bp = B->p ;    // FIXME
     const int64_t *restrict Bi = B->i ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
@@ -182,7 +186,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                ASSERT (j == GBH (A->h, kA)) ;
+                ASSERT (j == GBH (Ah, kA)) ;
             }
         }
         else if (Ch_is_Ah)
@@ -190,7 +194,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             // A is hypersparse, but Ch is a shallow copy of A->h
             ASSERT (GB_IS_HYPERSPARSE (A)) ;
             kA = k ;
-            ASSERT (j == A->h [kA]) ;
+            ASSERT (j == Ah [kA]) ;
         }
         else
         { 
@@ -212,7 +216,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                ASSERT (j == GBH (B->h, kB)) ;
+                ASSERT (j == GBH (Bh, kB)) ;
             }
         }
         else if (Ch_is_Bh)
@@ -220,7 +224,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             // B is hypersparse, but Ch is a shallow copy of B->h
             ASSERT (GB_IS_HYPERSPARSE (B)) ;
             kB = k ;
-            ASSERT (j == B->h [kB]) ;
+            ASSERT (j == Bh [kB]) ;
         }
         else
         { 

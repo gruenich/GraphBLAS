@@ -41,7 +41,6 @@ GrB_Info GB_assign_zombie2
     int64_t *restrict Ci = C->i ;
     const int64_t Cnvec = C->nvec ;
     int64_t nzombies = C->nzombies ;
-    const int64_t zorig = nzombies ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -74,8 +73,19 @@ GrB_Info GB_assign_zombie2
             int64_t pC_end = Cp [k+1] ;
             int64_t pright = pC_end - 1 ;
             bool found, is_zombie ;
-            GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, zorig,
+
+int64_t pleft2 = pC, pright2 = pright ;
+bool found2, is_zombie2 ;
+
+            GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, true,
                 is_zombie) ;
+
+found2 = GB_binary_search_zombie (i, Ci, false, &pleft2, &pright2, true,
+&is_zombie2) ;
+ASSERT (pleft2 == pC) ;
+ASSERT (pright2 == pright) ;
+ASSERT (found2 == found) ;
+ASSERT (is_zombie2 == is_zombie) ;
 
             //------------------------------------------------------------------
             // if found and not a zombie, mark it as a zombie

@@ -60,7 +60,6 @@ static inline bool GB_Pending_add   // add a tuple to the list
     //--------------------------------------------------------------------------
 
     ASSERT (C != NULL) ;
-    ASSERT (C->Pending != NULL) ;
 
     //--------------------------------------------------------------------------
     // allocate the Pending tuples, or ensure existing list is large enough

@@ -418,13 +418,13 @@
     // is given a unique range of pC_start:pC_end-1 to search.  Thus, no binary
     // search of any fine tasks conflict with each other.
 
-    #define GB_iC_BINARY_SEARCH                                             \
+    #define GB_iC_BINARY_SEARCH(may_see_zombies)                            \
         int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;                 \
         int64_t pC = pC_start ;                                             \
         int64_t pright = pC_end - 1 ;                                       \
         bool cij_found, is_zombie ;                                         \
-        GB_BINARY_SEARCH_ZOMBIE (iC, Ci, pC, pright, cij_found, zorig,      \
-            is_zombie) ;
+        cij_found = GB_binary_search_zombie (iC, Ci, false, &pC, &pright,   \
+            may_see_zombies, &is_zombie) ;
 
     //--------------------------------------------------------------------------
     // basic operations

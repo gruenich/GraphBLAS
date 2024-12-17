@@ -34,7 +34,10 @@
             // Ch is the same as Mh (a deep copy)
             ASSERT (Ch != NULL) ;
             ASSERT (M_is_hyper) ;
-            ASSERT (Ch [k] == M->h [k]) ;
+            #ifdef GB_DEBUG
+            int64_t *Mh = M->h ;
+            ASSERT (Ch [k] == Mh [k]) ;
+            #endif
             kM = k ;
         }
         else

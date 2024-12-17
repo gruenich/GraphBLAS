@@ -35,7 +35,7 @@
 
     GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
-    int64_t zorig = C->nzombies ;
+    const bool may_see_zombies_phase1 = (C->nzombies > 0) ;
     const int64_t Cnvec = C->nvec ;
     const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
@@ -222,7 +222,7 @@
                         int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
+                        GB_iC_BINARY_SEARCH (may_see_zombies_phase1) ;
 
                         // lookup iA in A(:,j)
                         pA = pA_start + iA ;
@@ -265,7 +265,7 @@
                         int64_t iA = GBI_M (Mi, pM, Mvlen) ;
 
                         // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
+                        GB_iC_BINARY_SEARCH (true) ; // sees its own new zombies
 
                         // find iA in A(:,j)
                         bool aij_found ;
@@ -294,6 +294,8 @@
                             // [C . 1]: action: ( delete ): becomes zombie
                             // [X . 1]: action: ( X ): still zombie
                             GB_DELETE_ENTRY ;
+                            // a new zombie has been inserted into C(:,jC), so
+                            // the next binary search above may see it.
                         }
                     }
                 }
@@ -307,8 +309,11 @@
     // phase 2: insert pending tuples
     //--------------------------------------------------------------------------
 
+    // All zombies might have just been brought back to life, so recheck the
+    // may_see_zombies condition.
+
     GB_PENDING_CUMSUM ;
-    zorig = C->nzombies ;
+    const bool may_see_zombies_phase2 = (C->nzombies > 0) ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(&&:pending_sorted)
@@ -395,7 +400,7 @@
                         }
 
                         // find C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
+                        GB_iC_BINARY_SEARCH (may_see_zombies_phase2) ;
                         if (!cij_found)
                         { 
                             // C (iC,jC) is not present, A (i,j) is present

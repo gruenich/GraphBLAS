@@ -133,7 +133,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         ASSERT (!C_iso) ;
 
         // symbolic subref must handle zombies
-        const int64_t nzombies = A->nzombies ;
+        const bool may_see_zombies = (A->nzombies > 0) ;
 
         // symbolic copy: Cx is int64_t; the values of A ignored
         #define GB_COPY_RANGE(pC,pA,len)            \

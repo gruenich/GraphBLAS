@@ -174,9 +174,6 @@ void GB_slice_vector
             ASSERT (Bi != NULL) ;
             pB = pB_start ;
             int64_t bpright = pB_end - 1 ;
-            #ifdef GB_DEBUG
-            bool bfound =
-            #endif
             GB_split_binary_search (i, Bi, false, &pB, &bpright) ;
             ASSERT (pB_start <= pB && pB <= pB_end) ;
         }
@@ -185,10 +182,10 @@ void GB_slice_vector
         ASSERT (GB_IMPLIES (pB >= pB_start && pB < pB_end,
             (GBI (Bi, pB, vlen) >= i ))) ;
 
-        // Bi has been split.  If bfound is false:
+        // Bi has been split.  If i is not found in Bi [...]:
         //      Bi [pB_start : pB-1] < i
         //      Bi [pB : pB_end-1]   > i
-        // If bfound is true:
+        // If i is found:
         //      Bi [pB_start : pB-1] < i
         //      Bi [pB : pB_end-1]  >= i
         //

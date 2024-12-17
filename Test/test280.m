@@ -15,24 +15,26 @@ load west0479
 GB_mex_grow (west0479) ;
 toc
 
-tic
-n = 10000 ;
-nz = 10e6 ;
-A = sprand (n, n, nz/n^2) ;
-GB_mex_grow (A) ;
-toc
-
-tic
-if (quick)
-    n = 1e6 ;
-    nz = 1e5 ;
-else
-    n = 2e6 ;
+if (quick < 2)
+    tic
+    n = 10000 ;
     nz = 10e6 ;
+    A = sprand (n, n, nz/n^2) ;
+    GB_mex_grow (A) ;
+    toc
+
+    tic
+    if (quick)
+        n = 1e6 ;
+        nz = 1e5 ;
+    else
+        n = 2e6 ;
+        nz = 10e6 ;
+    end
+    A = sprand (n, n, nz/n^2) ;
+    GB_mex_grow (A) ;
+    toc
 end
-A = sprand (n, n, nz/n^2) ;
-GB_mex_grow (A) ;
-toc
 
 fprintf ('test280 all tests passed.\n') ;
 

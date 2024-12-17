@@ -760,7 +760,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                int64_t jA = A->h [kA] ;
+                int64_t jA = Ah [kA] ;
                 ASSERT (j == jA) ;
             }
         }
@@ -780,7 +780,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                int64_t jB = B->h [kB] ;
+                int64_t jB = Bh [kB] ;
                 ASSERT (j == jB) ;
             }
         }
@@ -797,7 +797,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
             ASSERT (M_is_hyper) ;
-            ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
+            ASSERT (Ch != NULL && Mh != NULL && Ch [k] == Mh [k]) ;
             ASSERT (C_to_M == NULL) ;
         }
         else if (C_to_M != NULL)
@@ -809,7 +809,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             ASSERT (kM >= -1 && kM < M->nvec) ;
             if (kM >= 0)
             {
-                int64_t jM = M->h [kM] ;
+                int64_t jM = Mh [kM] ;
                 ASSERT (j == jM) ;
             }
         }

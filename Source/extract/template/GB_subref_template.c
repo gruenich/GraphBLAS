@@ -81,8 +81,6 @@
         int64_t pI_end = nI ;
         int64_t ilen   = nI ;
 
-        ASSERT (0 <= kfirst && kfirst <= klast && klast < Cnvec) ;
-
         //----------------------------------------------------------------------
         // compute all vectors C(:,kfirst:klast) for this task
         //----------------------------------------------------------------------
@@ -270,24 +268,24 @@
                     clen = alen ;
                     #else
                     #if defined ( GB_SYMBOLIC )
-                    if (nzombies == 0)
-                    { 
-                        memcpy (Ci + pC, Ai + pA, alen * sizeof (int64_t)) ;
-                    }
-                    else
+                    if (may_see_zombies)
                     {
-                        // with zombies
+                        // with zombies in A
                         for (int64_t k = 0 ; k < alen ; k++)
                         { 
-                            // symbolic C(:,kC) = A(:,kA) where A has zombies
-                            int64_t i = GB_AI (pA + k) ;
+                            // symbolic C(:,kC) = A(:,kA) where A has zombies;
+                            // zombies in A are not tagged as zombies in C.
+                            int64_t i = GB_AI (pA + k) ;    // i is unzombied
                             ASSERT (i == GB_ijlist (I, i, GB_I_KIND, Icolon)) ;
                             Ci [pC + k] = i ;
                         }
                     }
-                    #else
-                    memcpy (Ci + pC, Ai + pA, alen * sizeof (int64_t)) ;
+                    else
                     #endif
+                    { 
+                        // without zombies in A
+                        memcpy (Ci + pC, Ai + pA, alen * sizeof (int64_t)) ;
+                    }
                     GB_COPY_RANGE (pC, pA, alen) ;
                     #endif
                     break ;
@@ -351,7 +349,9 @@
                         #if defined ( GB_SYMBOLIC )
                         bool is_zombie ;
                         GB_BINARY_SEARCH_ZOMBIE (i, Ai, pleft, pright, found,
-                            nzombies, is_zombie) ;
+                            may_see_zombies, is_zombie) ;
+//                      found = GB_binary_search_zombie (i, Ai, false,
+//                          &pleft, &pright, may_see_zombies, &is_zombie) ;
                         #else
                         found = GB_binary_search (i, Ai, false,
                             &pleft, &pright) ;

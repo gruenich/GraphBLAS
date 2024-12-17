@@ -37,7 +37,7 @@ static inline void GB_find_Ap_start_end
     const int64_t imin,
     const int64_t imax,
     const int64_t kC,
-    const int64_t nzombies,
+    const bool may_see_zombies,
     // output: Ap_start [kC] and Ap_end [kC]:
     uint64_t *restrict Ap_start,    // FIXME
     uint64_t *restrict Ap_end       // FIXME
@@ -90,7 +90,7 @@ static inline void GB_find_Ap_start_end
             bool found, is_zombie ;
             int64_t pright = pA_end - 1 ;
             GB_SPLIT_BINARY_SEARCH_ZOMBIE (imin, Ai,
-                pA, pright, found, nzombies, is_zombie) ;
+                pA, pright, found, may_see_zombies, is_zombie) ;
         }
 
         // trim the trailing part of A (:,kA)
@@ -114,7 +114,7 @@ static inline void GB_find_Ap_start_end
             int64_t pleft = pA ;
             int64_t pright = pA_end - 1 ;
             GB_SPLIT_BINARY_SEARCH_ZOMBIE (imax, Ai,
-                pleft, pright, found, nzombies, is_zombie) ;
+                pleft, pright, found, may_see_zombies, is_zombie) ;
             pA_end = (found) ? (pleft + 1) : pleft ;
         }
 
@@ -228,7 +228,7 @@ GrB_Info GB_subref_phase0
     int64_t anvec = A->nvec ;       // may be trimmed
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
-    int64_t nzombies = A->nzombies ;
+    const bool may_see_zombies = (A->nzombies > 0) ;
 
     //--------------------------------------------------------------------------
     // check the properties of I and J
@@ -574,7 +574,7 @@ GrB_Info GB_subref_phase0
         { 
             int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ;
             GB_find_Ap_start_end (jA, Ap, Ai, avlen, imin, imax,
-                jC, nzombies, Ap_start, Ap_end) ;
+                jC, may_see_zombies, Ap_start, Ap_end) ;
         }
 
     }
@@ -597,7 +597,7 @@ GrB_Info GB_subref_phase0
             int64_t jC = jA - jmin ;
             Ch [kC] = jC ;
             GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                kC, nzombies, Ap_start, Ap_end) ;
+                kC, may_see_zombies, Ap_start, Ap_end) ;
         }
 
     }
@@ -629,7 +629,7 @@ GrB_Info GB_subref_phase0
                         int64_t jC = (jA - jbegin) / jinc ;
                         Ch [kC] = jC ;
                         GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                            kC, nzombies, Ap_start, Ap_end) ;
+                            kC, may_see_zombies, Ap_start, Ap_end) ;
                         kC++ ;
                     }
                 }
@@ -652,7 +652,7 @@ GrB_Info GB_subref_phase0
                         int64_t jC = (jA - jbegin) / jinc ;
                         Ch [kC] = jC ;
                         GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                            kC, nzombies, Ap_start, Ap_end) ;
+                            kC, may_see_zombies, Ap_start, Ap_end) ;
                         kC++ ;
                     }
                 }
@@ -703,7 +703,7 @@ GrB_Info GB_subref_phase0
                     ASSERT (jA == Ah [kA]) ;
                     Ch [kC] = jC ;
                     GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                        kC, nzombies, Ap_start, Ap_end) ;
+                        kC, may_see_zombies, Ap_start, Ap_end) ;
                     kC++ ;
                 }
             }
@@ -752,11 +752,8 @@ GrB_Info GB_subref_phase0
             else if (ajnz > 0)
             {
                 // A(imin:imax,kA) has at least one entry, in Ai [pA:pA_end-1]
-//              printf ("A (imin: %ld, imax: %ld, kA: %ld)\n", imin, imax, kA) ;
                 ASSERT (imin <= GB_AI (pA)) ;
                 ASSERT (GB_AI (pA_end-1) <= imax) ;
-//              printf ("  pA %ld %ld %ld %ld\n",
-//                  pA_start_all, pA, pA_end, pA_end_all) ;
                 ASSERT (pA_start_all <= pA) ;
                 ASSERT (pA < pA_end) ;
                 ASSERT (pA_end <= pA_end_all) ;

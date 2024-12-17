@@ -7,19 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// Determine if the binary operator is built-in, for the multiplicative binary
-// operator for A*B, or the binary operator for ewise operations (A+B, A.*B,
-// and some uses of accum in GrB_assign)
-
-// If so, determine the opcodes and type codes of the semiring.
-
-// This function is not used by the CUDA jitified kernels, since they can
-// typecast the entries in the matrices A and B to the types of x and y of the
-// operator, as needed.
+// Determine if the binary operator is built-in and matches the types of its
+// inputs.  Returns the opcodes and type codes of the op.  If this method
+// returns true, the operator is a candidate for a switch factory.
 
 #include "GB.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 
 bool GB_binop_builtin               // true if binary operator is builtin
 (
@@ -56,7 +49,8 @@ bool GB_binop_builtin               // true if binary operator is builtin
         return (false) ;
     }
 
-    ASSERT (GB_IS_BINARYOP_CODE (*opcode)) ;
+    ASSERT (GB_IS_BINARYOP_CODE (*opcode) ||
+            GB_IS_INDEXBINARYOP_CODE (*opcode)) ;
     if (*opcode == GB_USER_binop_code || *opcode == GB_USER_idxbinop_code)
     { 
         // the binary operator is user-defined

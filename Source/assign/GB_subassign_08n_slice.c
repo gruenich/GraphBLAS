@@ -82,7 +82,7 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     const uint64_t *restrict Cp = C->p ;    // FIXME
     const int64_t *restrict Ch = C->h ;
     int64_t *restrict Ci = C->i ;
-    int64_t nzombies = C->nzombies ;
+    const bool may_see_zombies = (C->nzombies > 0) ;
     const int64_t Cnvec = C->nvec ;
     const int64_t Cvlen = C->vlen ;
     const bool C_is_hyper = (Ch != NULL) ;
@@ -217,13 +217,13 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
                 int64_t pright = pC_end - 1 ;
                 bool found, is_zombie ;
                 GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_start, Ci, pleft, pright,
-                    found, nzombies, is_zombie) ;
+                    found, may_see_zombies, is_zombie) ;
                 TaskList [taskid].pC = pleft ;
 
                 pleft = pC_start ;
                 pright = pC_end - 1 ;
                 GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_end, Ci, pleft, pright,
-                    found, nzombies, is_zombie) ;
+                    found, may_see_zombies, is_zombie) ;
                 TaskList [taskid].pC_end = (found) ? (pleft+1) : pleft ;
             }
 

@@ -592,7 +592,7 @@ void mexFunction
     printf ("\nerror handling tests: JIT is %d\n", save_jit) ;
 
     expected = GrB_INVALID_OBJECT ;
-    void *p = Bop->theta_type = NULL ;
+    void *p = Bop->theta_type ;
     Bop->theta_type = NULL ;
     ERR (GB_BinaryOp_check (Bop, "Bop: bad theta_type", 5, stdout)) ;
     Bop->theta_type = p ;

@@ -61,8 +61,9 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     ASSERT_MATRIX_OK (M, "M for 1_slice", GB0) ;
 
     ASSERT (!GB_IS_BITMAP (C)) ;
+    ASSERT (GB_ZOMBIES_OK (C)) ;    // C may have zombies
+    ASSERT (!GB_JUMBLED (C)) ;      // but it is not jumbled
 
-    ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_JUMBLED (M)) ;
 
     (*p_TaskList  ) = NULL ;
@@ -91,7 +92,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Ci = C->i ;
     const bool C_is_hyper = (Ch != NULL) ;
-    const int64_t nzombies = C->nzombies ;
+    const bool may_see_zombies = (C->nzombies > 0) ;
     const int64_t Cnvec = C->nvec ;
     const int64_t Cvlen = C->vlen ;
 
@@ -312,13 +313,13 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
                         int64_t pright = pC_end - 1 ;
                         bool found, is_zombie ;
                         GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_start, Ci,
-                            pleft, pright, found, nzombies, is_zombie) ;
+                            pleft, pright, found, may_see_zombies, is_zombie) ;
                         TaskList [ntasks].pC = pleft ;
 
                         pleft = pC_start ;
                         pright = pC_end - 1 ;
                         GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_end, Ci,
-                            pleft, pright, found, nzombies, is_zombie) ;
+                            pleft, pright, found, may_see_zombies, is_zombie) ;
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }
 
