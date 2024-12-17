@@ -87,11 +87,8 @@ static inline void GB_find_Ap_start_end
         // trim the leading part of A(:,kA)
         if (GB_AI (pA) < imin)
         { 
-//          bool found ;
             bool is_zombie ;
             int64_t pright = pA_end - 1 ;
-//          GB_SPLIT_BINARY_SEARCH_ZOMBIE (imin, Ai,
-//              pA, pright, found, may_see_zombies, is_zombie) ;
             GB_split_binary_search_zombie (imin, Ai, false,
                 &pA, &pright, may_see_zombies, &is_zombie) ;
         }
@@ -116,8 +113,6 @@ static inline void GB_find_Ap_start_end
             bool found, is_zombie ;
             int64_t pleft = pA ;
             int64_t pright = pA_end - 1 ;
-//          GB_SPLIT_BINARY_SEARCH_ZOMBIE (imax, Ai,
-//              pleft, pright, found, may_see_zombies, is_zombie) ;
             found = GB_split_binary_search_zombie (imax, Ai, false,
                 &pleft, &pright, may_see_zombies, &is_zombie) ;
             pA_end = (found) ? (pleft + 1) : pleft ;

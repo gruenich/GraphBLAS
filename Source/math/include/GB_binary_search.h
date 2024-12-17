@@ -20,31 +20,6 @@
 // The list X [pleft ... pright] is in ascending order.  It may have
 // duplicates.
 
-    // binary search on the CPU
-    #if 0
-    #define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                         \
-    {                                                                       \
-        /* binary search of X [pleft ... pright] for integer i */           \
-        while (pleft < pright)                                              \
-        {                                                                   \
-            int64_t pmiddle = (pleft + pright) / 2 ;                        \
-            if (X [pmiddle] < i)                                            \
-            {                                                               \
-                /* if in the list, it appears in [pmiddle+1..pright] */     \
-                pleft = pmiddle + 1 ;                                       \
-            }                                                               \
-            else                                                            \
-            {                                                               \
-                /* if in the list, it appears in [pleft..pmiddle] */        \
-                pright = pmiddle ;                                          \
-            }                                                               \
-        }                                                                   \
-        /* binary search is narrowed down to a single item */               \
-        /* or it has found the list is empty */                             \
-        /* ASSERT (pleft == pright || pleft == pright + 1) ; */             \
-    }
-    #endif
-
 GB_STATIC_INLINE void GB_trim_binary_search_32
 (
     const uint32_t i,           // item to look for
@@ -145,14 +120,6 @@ GB_STATIC_INLINE void GB_trim_binary_search
 //    X [pleft+1 ... original_pright] > i holds.
 // The value X [pleft] may be either < or > i.
 
-#if 0
-#define GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
-{                                                                           \
-    GB_TRIM_BINARY_SEARCH (i, X, pleft, pright) ;                           \
-    found = (pleft == pright && X [pleft] == i) ;                           \
-}
-#endif
-
 GB_STATIC_INLINE bool GB_binary_search_32
 (
     const uint32_t i,           // item to look for
@@ -208,24 +175,6 @@ GB_STATIC_INLINE bool GB_binary_search
 // If X has no duplicates, then whether or not i is found,
 //    X [original_pleft ... pleft-1] < i and
 //    X [pleft ... original_pright] >= i holds.
-
-#if 0
-#define GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
-{                                                                           \
-    GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \
-    if (!found && (pleft == pright))                                        \
-    {                                                                       \
-        if (i > X [pleft])                                                  \
-        {                                                                   \
-            pleft++ ;                                                       \
-        }                                                                   \
-        else                                                                \
-        {                                                                   \
-            pright++ ;                                                      \
-        }                                                                   \
-    }                                                                       \
-}
-#endif
 
 GB_STATIC_INLINE bool GB_split_binary_search_32
 (
@@ -297,30 +246,6 @@ GB_STATIC_INLINE bool GB_split_binary_search
 //------------------------------------------------------------------------------
 // GB_trim_binary_search_zombie: binary search in the presence of zombies
 //------------------------------------------------------------------------------
-
-#if 0
-#define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
-{                                                                           \
-    /* binary search of X [pleft ... pright] for integer i */               \
-    while (pleft < pright)                                                  \
-    {                                                                       \
-        int64_t pmiddle = (pleft + pright) / 2 ;                            \
-        if (i > GB_UNZOMBIE (X [pmiddle]))                                  \
-        {                                                                   \
-            /* if in the list, it appears in [pmiddle+1..pright] */         \
-            pleft = pmiddle + 1 ;                                           \
-        }                                                                   \
-        else                                                                \
-        {                                                                   \
-            /* if in the list, it appears in [pleft..pmiddle] */            \
-            pright = pmiddle ;                                              \
-        }                                                                   \
-    }                                                                       \
-    /* binary search is narrowed down to a single item */                   \
-    /* or it has found the list is empty */                                 \
-    /* ASSERT (pleft == pright || pleft == pright + 1) ; */                 \
-}
-#endif
 
 GB_STATIC_INLINE void GB_trim_binary_search_zombie_32
 (
@@ -399,33 +324,6 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_64
 //------------------------------------------------------------------------------
 // GB_binary_search_zombie: binary search with zombies; check if found
 //------------------------------------------------------------------------------
-
-#if 0
-#define GB_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,may_see_zombies,is_zombie)  \
-{                                                                           \
-    if (may_see_zombies)                                                    \
-    {                                                                       \
-        GB_TRIM_BINARY_SEARCH_ZOMBIE (i, X, pleft, pright) ;                \
-        found = false ;                                                     \
-        is_zombie = false ;                                                 \
-        if (pleft == pright)                                                \
-        {                                                                   \
-            int64_t i2 = X [pleft] ;                                        \
-            is_zombie = GB_IS_ZOMBIE (i2) ;                                 \
-            if (is_zombie)                                                  \
-            {                                                               \
-                i2 = GB_DEZOMBIE (i2) ;                                     \
-            }                                                               \
-            found = (i == i2) ;                                             \
-        }                                                                   \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        is_zombie = false ;                                                 \
-        GB_BINARY_SEARCH (i, X, pleft, pright, found)                       \
-    }                                                                       \
-}
-#endif
 
 GB_STATIC_INLINE bool GB_binary_search_zombie_32
 (
@@ -517,46 +415,8 @@ GB_STATIC_INLINE bool GB_binary_search_zombie
 }
 
 //------------------------------------------------------------------------------
-// GB_SPLIT_BINARY_SEARCH_ZOMBIE: binary search with zombies; then partition
+// GB_split_binary_search_zombie: binary search with zombies; then partition
 //------------------------------------------------------------------------------
-
-#if 0
-#define GB_SPLIT_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,may_see_zombies,is_zombie) \
-{                                                                           \
-    if (may_see_zombies)                                                    \
-    {                                                                       \
-        GB_TRIM_BINARY_SEARCH_ZOMBIE (i, X, pleft, pright) ;                \
-        found = false ;                                                     \
-        is_zombie = false ;                                                 \
-        if (pleft == pright)                                                \
-        {                                                                   \
-            int64_t i2 = X [pleft] ;                                        \
-            is_zombie = GB_IS_ZOMBIE (i2) ;                                 \
-            if (is_zombie)                                                  \
-            {                                                               \
-                i2 = GB_DEZOMBIE (i2) ;                                     \
-            }                                                               \
-            found = (i == i2) ;                                             \
-            if (!found)                                                     \
-            {                                                               \
-                if (i > i2)                                                 \
-                {                                                           \
-                    pleft++ ;                                               \
-                }                                                           \
-                else                                                        \
-                {                                                           \
-                    pright++ ;                                              \
-                }                                                           \
-            }                                                               \
-        }                                                                   \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        is_zombie = false ;                                                 \
-        GB_SPLIT_BINARY_SEARCH (i, X, pleft, pright, found)                 \
-    }                                                                       \
-}
-#endif
 
 GB_STATIC_INLINE bool GB_split_binary_search_zombie_32
 (

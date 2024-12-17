@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // All content of A is freed (or removed if shallow) and new A->p and A->h
 // content is created.  This puts the matrix A in the same initialized state it
 // had after GrB_Matrix_new (&A, ...), with A->magic == GB_MAGIC to denote a

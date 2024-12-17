@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 #define GB_FREE_WORKSPACE   \
 {                           \
     GB_Matrix_free (&T) ;   \

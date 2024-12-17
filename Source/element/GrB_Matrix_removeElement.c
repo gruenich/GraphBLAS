@@ -123,8 +123,6 @@ static inline bool GB_removeElement     // return true if found
         { 
             // binary search for C(i,k): time is O(log(cknz))
             const bool may_see_zombies = (C->nzombies > 0) ;
-//          GB_BINARY_SEARCH_ZOMBIE (i, Ci, pleft, pright, found,
-//              may_see_zombies, is_zombie) ;
             found = GB_binary_search_zombie (i, Ci, false, &pleft, &pright,
                 may_see_zombies, &is_zombie) ;
         }

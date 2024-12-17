@@ -13,7 +13,7 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
-#define GB_DEBUG
+#define GB_DEBUG    /* HACK FIXME */
 
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \

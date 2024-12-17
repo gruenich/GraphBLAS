@@ -216,16 +216,12 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
                 int64_t pleft = pC_start ;
                 int64_t pright = pC_end - 1 ;
                 bool found, is_zombie ;
-//              GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_start, Ci, pleft, pright,
-//                  found, may_see_zombies, is_zombie) ;
-                found = GB_split_binary_search_zombie (iC_start, Ci, false,
+                GB_split_binary_search_zombie (iC_start, Ci, false,
                     &pleft, &pright, may_see_zombies, &is_zombie) ;
                 TaskList [taskid].pC = pleft ;
 
                 pleft = pC_start ;
                 pright = pC_end - 1 ;
-//              GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_end, Ci, pleft, pright,
-//                  found, may_see_zombies, is_zombie) ;
                 found = GB_split_binary_search_zombie (iC_end, Ci, false,
                     &pleft, &pright, may_see_zombies, &is_zombie) ;
                 TaskList [taskid].pC_end = (found) ? (pleft+1) : pleft ;

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #ifndef GB_CONCAT_H
 #define GB_CONCAT_H
 #include "GB.h"
