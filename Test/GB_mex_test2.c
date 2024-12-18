@@ -93,8 +93,8 @@ void mexFunction
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
     CHECK (scalar->i != NULL) ;
-    int64_t *Si = scalar->i ;
-    Si [0] = GB_ZOMBIE (0) ;
+    int64_t *Si = scalar->i ;   // FIXME
+    Si [0] = GB_ZOMBIE (0) ;    // FIXME
     scalar->nzombies = 1 ;
     OK (GxB_Scalar_fprint (scalar, "scalar with zombie", 3, NULL)) ;
     expected = GrB_NO_VALUE ;

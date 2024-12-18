@@ -805,7 +805,7 @@ void mexFunction
     if (!scalar_is_full)
     {
         int64_t *Ai = a_scalar->i ; // FIXME
-        Ai [0] = GB_ZOMBIE (0) ;
+        Ai [0] = GB_ZOMBIE (0) ;    // FIXME
         a_scalar->nzombies = 1 ;
     }
 
