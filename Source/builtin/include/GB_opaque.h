@@ -569,7 +569,7 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 
     // GB_ISET: set I [k] for a 32/64-bit integer array I
     #define GB_ISET(I,k,i) \
-        { if (I ## 64) { I ## 64 [k] = (i); } else { I ## 32 [k] = (i) ; } }
+        { if (I ## 64) { I ## 64 [k] = (i) ; } else { I ## 32 [k] = (i) ; } }
 
     // GB_IK: &(I [k]) for a 32/64-bit integer array I
     #define GB_IK(I,k) (I ## 32 ?   \

@@ -17,9 +17,6 @@
 #include "extract/GB_subref.h"
 #include "hyper/factory/GB_lookup_debug.h"
 
-#undef  GB_AI
-#define GB_AI(p) ((Ai == NULL) ? ((p) % (avlen)) : GB_UNZOMBIE (Ai [p]))
-
 //------------------------------------------------------------------------------
 // GB_find_Ap_start_end
 //------------------------------------------------------------------------------
@@ -33,17 +30,17 @@
 static inline void GB_find_Ap_start_end
 (
     // input, not modified
-    const int64_t kA,
-    const uint64_t *restrict Ap,    // FIXME
-    const int64_t *restrict Ai,     // FIXME
+    const int64_t kA,               // searching A(:,kA)
+    const uint64_t *restrict Ap,    // column pointers of A FIXME
+    const int64_t *restrict Ai,     // row indices of A (with zombies) FIXME
     const int64_t avlen,
-    const int64_t imin,
-    const int64_t imax,
-    const int64_t kC,
+    const int64_t imin,             // min (I)
+    const int64_t imax,             // max (I)
+    const int64_t kC,               // result will be C(:,kC)
     const bool may_see_zombies,
-    // output: Ap_start [kC] and Ap_end [kC]:
-    uint64_t *restrict Ap_start,    // FIXME
-    uint64_t *restrict Ap_end       // FIXME
+    // Ap_start [kC] and Ap_end [kC], defines A(imin:imax,kA) for C(:,kC):
+    uint64_t *restrict Ap_start,    // location of A(imin,kA) for C(:,kC) FIXME
+    uint64_t *restrict Ap_end       // location of A(imax,kA) for C(:,kC) FIXME
 )
 {
 
@@ -58,12 +55,11 @@ static inline void GB_find_Ap_start_end
     int64_t ifirst = 0, ilast = 0 ;
     if (ajnz > 0)
     {
+        // get the first and last entries in A(:,kA), if any entries appear
         ifirst = GBI (Ai, pA, avlen) ;
         ilast  = GBI (Ai, pA_end-1, avlen) ;
         ifirst = GB_UNZOMBIE (ifirst) ;
         ilast  = GB_UNZOMBIE (ilast ) ;
-        ASSERT (ifirst == GB_AI (pA)) ;
-        ASSERT (ilast  == GB_AI (pA_end-1)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -101,10 +97,12 @@ static inline void GB_find_Ap_start_end
         // trim the leading part of A(:,kA)
         if (ifirst < imin)
         { 
+            // search for A(imin,kA)
             bool is_zombie ;
             int64_t pright = pA_end - 1 ;
             GB_split_binary_search_zombie (imin, Ai, false,
                 &pA, &pright, may_see_zombies, &is_zombie) ;
+            // find the first entry of A(imin:imax,kA)
             ifirst = GBI (Ai, pA, avlen) ;
             ifirst = GB_UNZOMBIE (ifirst) ;
         }
@@ -112,25 +110,28 @@ static inline void GB_find_Ap_start_end
         // trim the trailing part of A (:,kA)
         if (imin == imax)
         {
+            // A(imin:imax,kA) is a single entrie, A(i,kA)
             if (ifirst == imin)
             { 
-                // found the the single entry A (i,kA)
+                // found the the single entry A (i,kA) where i == imin == imax
                 pA_end = pA + 1 ;
             }
             else
             { 
-                // A (i,kA) has not been found
+                // A (i,kA) has not been found; A(imin:imax,kA) is empty
                 pA = -1 ;
                 pA_end = -1 ;
             }
         }
         else if (imax < ilast)
         { 
+            // search for A(imax,kA)
             bool found, is_zombie ;
             int64_t pleft = pA ;
             int64_t pright = pA_end - 1 ;
             found = GB_split_binary_search_zombie (imax, Ai, false,
                 &pleft, &pright, may_see_zombies, &is_zombie) ;
+            // adjust pA_end if A(imax,kA) was found
             pA_end = (found) ? (pleft + 1) : pleft ;
         }
 
@@ -138,30 +139,27 @@ static inline void GB_find_Ap_start_end
         ajnz = pA_end - pA ;
         if (ajnz > 0 && Ap != NULL)
         {
-            // A(imin:imax,kA) is now in Ai [pA:pA_end-1]
+            // A(imin:imax,kA) is now in Ai [pA:pA_end-1], and is non-empty
             if (Ap [kA] < pA)
             {
-//              int64_t iprev = GB_AI (pA-1) ;
+                // check the entry just before A(imin,kA), it must be < imin
                 int64_t iprev = GBI (Ai, pA-1, avlen) ;
                 iprev = GB_UNZOMBIE (iprev) ;
-                ASSERT (iprev == GB_AI (pA-1)) ;
                 ASSERT (iprev < imin) ;
             }
             if (pA_end < Ap [kA+1])
             {
-//              int64_t inext = GB_AI (pA_end) ;
+                // check the entry just after A(imax,kA), it must be > imax
                 int64_t inext = GBI (Ai, pA_end, avlen) ;
                 inext = GB_UNZOMBIE (inext) ;
-                ASSERT (inext == GB_AI (pA_end)) ;
                 ASSERT (imax < inext) ;
             }
-
+            // check the first and last entries of A(imin:imax,kA) to ensure
+            // their row indices are in range imin:imax
             ifirst = GBI (Ai, pA, avlen) ;
             ilast  = GBI (Ai, pA_end-1, avlen) ;
             ifirst = GB_UNZOMBIE (ifirst) ;
             ilast  = GB_UNZOMBIE (ilast ) ;
-            ASSERT (ifirst == GB_AI (pA)) ;
-            ASSERT (ilast  == GB_AI (pA_end-1)) ;
             ASSERT (imin <= ifirst) ;
             ASSERT (ilast <= imax) ;
         }
@@ -173,7 +171,8 @@ static inline void GB_find_Ap_start_end
     //--------------------------------------------------------------------------
 
     // The result [pA:pA_end-1] defines the range of entries that need to be
-    // accessed for constructing C(:,kC).
+    // accessed for constructing C(:,kC), for computing C(:,kC) = A(I,kA) with
+    // the list of row indices I.
 
     Ap_start [kC] = pA ;
     Ap_end   [kC] = pA_end ;
@@ -199,7 +198,7 @@ static inline void GB_find_Ap_start_end
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL standard
+    int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL
     size_t *p_Ch_size,
     uint64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
     size_t *p_Ap_start_size,
@@ -217,7 +216,6 @@ GrB_Info GB_subref_phase0
     const int64_t ni,       // length of I, or special
     const GrB_Index *J,     // index list for C = A(I,J), or GrB_ALL, etc.
     const int64_t nj,       // length of J, or special
-//  const bool must_sort,   // true if C must be returned sorted
     GB_Werk Werk
 )
 {
@@ -756,48 +754,56 @@ GrB_Info GB_subref_phase0
     {
         // jC is the (kC)th vector of C = A(I,J)
         int64_t jC = GBH (Ch, kC) ;
-        int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ;
+        int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ; // jA = J (jC)
         // jA is the corresponding (kA)th vector of A.
         int64_t kA = 0 ;
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
+        // look for A(:,jA)
         int64_t *Ah = A->h ;    // FIXME
         bool found = GB_lookup_debug (false, false, Ah != NULL,   // FIXME
             Ah, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
+        // ensure that A(:,jA) is in Ai,Ax [pA_start_all:pA_end_all-1]:
         if (found && Ah != NULL)
         {
+            // A(:,jA) appears in the hypersparse A, as the (kA)th vector in A
             ASSERT (jA == Ah [kA]) ;
         }
         if (!found)
         {
+            // A(:,jA) is empty
             ASSERT (pA_start_all == -1) ;
             ASSERT (pA_end_all == -1) ;
         }
         else
         {
+            // A(imin:imax,jA) is in Ai,Ax [pA:pA_end-1]
             uint64_t pA      = Ap_start [kC] ;
             uint64_t pA_end  = Ap_end   [kC] ;
             int64_t ajnz = pA_end - pA ;
             if (ajnz == avlen)
             {
-                // A(:,kA) is dense; Ai [pA:pA_end-1] is the entire vector.
-                // C(:,kC) will have exactly nI entries.
+                // A(:,jA) is dense; Ai [pA:pA_end-1] is the entire vector.
+                // C(:,jC) will have exactly nI entries.
                 ASSERT (pA     == pA_start_all) ;
                 ASSERT (pA_end == pA_end_all  ) ;
-                ;
             }
             else if (ajnz > 0)
             {
-                // A(imin:imax,kA) has at least one entry, in Ai [pA:pA_end-1]
-                ASSERT (imin <= GB_AI (pA)) ;
-                ASSERT (GB_AI (pA_end-1) <= imax) ;
+                // A(imin:imax,jA) is non-empty and a subset of A(:,jA)
+                int64_t ifirst = GBI (Ai, pA, avlen) ;
+                int64_t ilast  = GBI (Ai, pA_end-1, avlen) ;
+                ifirst = GB_UNZOMBIE (ifirst) ;
+                ilast  = GB_UNZOMBIE (ilast ) ;
+                ASSERT (imin <= ifirst) ;
+                ASSERT (ilast <= imax) ;
                 ASSERT (pA_start_all <= pA) ;
                 ASSERT (pA < pA_end) ;
                 ASSERT (pA_end <= pA_end_all) ;
             }
             else
             {
-                // A(imin:imax,kA) and C(:,kC) are empty
+                // A(imin:imax,jA) and C(:,jC) are empty
                 ;
             }
         }
