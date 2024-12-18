@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Extract the value of single scalar, x = S, typecasting from the
 // type of S to the type of x, as needed.
 
@@ -52,9 +56,9 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry from S
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
-    const uint64_t *restrict Sp = S->p ; // FIXME
+    GB_Ap_DECLARE (Sp, const) ; GB_Ap_PTR (Sp, S) ;
     if (GB_nnz ((GrB_Matrix) S) == 0            // empty
-        || (Sp != NULL && Sp [1] == 0)          // sparse/hyper with no entry
+        || (Sp != NULL && GB_IGET (Sp, 1) == 0) // sparse/hyper with no entry
         || (S->b != NULL && S->b [0] == 0))     // bitmap with no entry
     { 
         // quick return

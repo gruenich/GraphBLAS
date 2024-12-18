@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Extract the value of single scalar, x = A(row,col), typecasting from the
 // type of A to the type of x, as needed.
 
@@ -25,8 +29,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
     GB_XTYPE *x,                // scalar to extract, not modified if not found
     #endif
     const GrB_Matrix A,         // matrix to extract a scalar from
-    GrB_Index row,              // row index
-    GrB_Index col               // column index
+    uint64_t row,               // row index
+    uint64_t col                // column index
 )
 {
 
@@ -83,7 +87,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
 
     int64_t pleft ;
     bool found ;
-    const uint64_t *restrict Ap = A->p ;    // FIXME
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
 
     if (Ap != NULL)
     {
@@ -93,21 +97,19 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         //----------------------------------------------------------------------
 
         int64_t pA_start, pA_end ;
-        const int64_t *restrict Ah = A->h ; // FIXME
-        if (Ah != NULL)
+        if (A->h != NULL)
         {
 
             //------------------------------------------------------------------
             // A is hypersparse: look for j in hyperlist A->h [0 ... A->nvec-1]
             //------------------------------------------------------------------
 
-            // FIXME
-            const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
-            const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
-            const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
+            void *A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+            void *A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+            void *A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
             const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
-            int64_t k = GB_hyper_hash_lookup (false, false, // FIXME
-                Ah, A->nvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
+            int64_t k = GB_hyper_hash_lookup (A->p_is_32, A->i_is_32,
+                A->h, A->nvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                 j, &pA_start, &pA_end) ;
             found = (k >= 0) ;
             if (!found)
@@ -115,7 +117,10 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
                 // vector j is empty
                 return (GrB_NO_VALUE) ;
             }
-            ASSERT (j == Ah [k]) ;
+            #ifdef GB_DEBUG
+            GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+            ASSERT (j == GB_IGET (Ah, k)) ;
+            #endif
 
         }
         else
@@ -125,8 +130,8 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
             // A is sparse: look in the jth vector
             //------------------------------------------------------------------
 
-            pA_start = Ap [j] ;
-            pA_end   = Ap [j+1] ;
+            pA_start = GB_IGET (Ap, j);
+            pA_end   = GB_IGET (Ap, j+1) ;
         }
 
         // vector j has been found, now look for index i
@@ -134,8 +139,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = A(row,col)
         int64_t pright = pA_end - 1 ;
 
         // Time taken for this step is at most O(log(nnz(A(:,j))).
-        const int64_t *restrict Ai = A->i ; // FIXME
-        found = GB_binary_search (i, Ai, false, &pleft, &pright) ;
+        found = GB_binary_search (i, A->i, A->i_is_32, &pleft, &pright) ;
 
     }
     else

@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Removes a single entry, V (i), from the vector V.
 
 #include "GB.h"
@@ -20,7 +24,7 @@
 static inline bool GB_removeElement     // returns true if found
 (
     GrB_Vector V,
-    GrB_Index i
+    uint64_t i
 )
 {
 
@@ -60,13 +64,14 @@ static inline bool GB_removeElement     // returns true if found
         // V is sparse
         //----------------------------------------------------------------------
 
-        const uint64_t *restrict Vp = V->p ;    // FIXME
-        const int64_t *restrict Vi = V->i ;
+        GB_Cp_DECLARE (Vp, const) ; GB_Cp_PTR (Vp, V) ;
+        GB_Ci_DECLARE (Vi,      ) ; GB_Ci_PTR (Vi, V) ;
+
         bool found ;
 
         // look in V(:)
         int64_t pleft = 0 ;
-        int64_t pright = Vp [1] ;
+        int64_t pright = GB_IGET (Vp, 1) ;
         int64_t vnz = pright ;
 
         bool is_zombie ;
@@ -74,9 +79,10 @@ static inline bool GB_removeElement     // returns true if found
         { 
             // V(:) is as-if-full so no binary search is needed to find V(i)
             pleft = i ;
-            ASSERT (GB_UNZOMBIE (Vi [pleft]) == i) ;    // FIXME
+            int64_t iV = GB_IGET (Vi, pleft) ;
+            ASSERT (i == GB_UNZOMBIE (iV)) ;
             found = true ;
-            is_zombie = GB_IS_ZOMBIE (Vi [pleft]) ; // FIXME
+            is_zombie = GB_IS_ZOMBIE (iV) ;
         }
         else
         { 
@@ -91,8 +97,12 @@ static inline bool GB_removeElement     // returns true if found
         if (found && !is_zombie)
         { 
             // V(i) becomes a zombie
-            int64_t *restrict Vi = V->i ;   // FIXME
-            Vi [pleft] = GB_ZOMBIE (i) ;    // FIXME
+            #ifdef GB_DEBUG
+            int64_t iV = GB_IGET (Vi, pleft) ;
+            ASSERT (i == iV) ;
+            #endif
+            i = GB_ZOMBIE (i) ;
+            GB_ISET (Vi, pleft, i) ;    // Vi [pleft] = i ;
             V->nzombies++ ;
         }
         return (found) ;
@@ -106,7 +116,7 @@ static inline bool GB_removeElement     // returns true if found
 GrB_Info GB_Vector_removeElement
 (
     GrB_Vector V,               // vector to remove entry from
-    GrB_Index i,                // index
+    uint64_t i,                 // index
     GB_Werk Werk
 )
 {
@@ -190,7 +200,7 @@ GrB_Info GB_Vector_removeElement
 GrB_Info GrB_Vector_removeElement
 (
     GrB_Vector V,               // vector to remove entry from
-    GrB_Index i                 // index
+    uint64_t i                  // index
 )
 {
     GB_RETURN_IF_NULL (V) ;

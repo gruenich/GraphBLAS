@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "include/GB_subref_method.h"
 #define GB_A0_t uint64_t /* FIXME: allow C->i to be 32-bit */
 #define GB_A1_t GB_C_TYPE

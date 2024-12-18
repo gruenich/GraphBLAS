@@ -16,8 +16,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     const GrB_BinaryOp accum,       // if NULL: C(row,col) = scalar
                                     // else: C(row,col) += scalar
     const void *scalar,             // scalar to set
-    const GrB_Index row,            // row index
-    const GrB_Index col,            // column index
+    const uint64_t row,             // row index
+    const uint64_t col,             // column index
     const GB_Type_code scalar_code, // type of the scalar
     GB_Werk Werk
 ) ;
@@ -25,15 +25,15 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 GrB_Info GB_Vector_removeElement
 (
     GrB_Vector V,               // vector to remove entry from
-    GrB_Index i,                // index
+    uint64_t i,                 // index
     GB_Werk Werk
 ) ;
 
 GrB_Info GB_Matrix_removeElement
 (
     GrB_Matrix C,               // matrix to remove entry from
-    GrB_Index row,              // row index
-    GrB_Index col,              // column index
+    uint64_t row,               // row index
+    uint64_t col,               // column index
     GB_Werk Werk
 ) ;
 

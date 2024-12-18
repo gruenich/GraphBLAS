@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Sets the value of single scalar, C(row,col) = scalar, or C(row,col)+=scalar,
 // typecasting from the type of scalar to the type of C, as needed.  Not
 // user-callable; does the work for all GrB_*_setElement* functions, and for
@@ -39,8 +43,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     const GrB_BinaryOp accum,       // if NULL: C(row,col) = scalar
                                     // else: C(row,col) += scalar
     const void *scalar,             // scalar to set
-    const GrB_Index row,            // row index
-    const GrB_Index col,            // column index
+    const uint64_t row,             // row index
+    const uint64_t col,             // column index
     const GB_Type_code scalar_code, // type of the scalar
     GB_Werk Werk
 )
@@ -222,33 +226,34 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         //----------------------------------------------------------------------
 
         int64_t pC_start, pC_end ;
-        const uint64_t *restrict Cp = C->p ;    // FIXME
-        const int64_t *restrict Ch = C->h ;
+        GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
         if (C->nvals == 0)
         { 
             // C is empty
             found = false ;
         }
-        else if (Ch != NULL)
+        else if (C->h != NULL)
         {
             // C is hypersparse, with at least one entry
-            // FIXME:
-            const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
-            const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
-            const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
+            void *C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
+            void *C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
+            void *C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
             const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
             const int64_t cnvec = C->nvec ;
-            int64_t k = GB_hyper_hash_lookup (false, false, // FIXME
-                Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+            int64_t k = GB_hyper_hash_lookup (C->p_is_32, C->i_is_32,
+                C->h, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
                 j, &pC_start, &pC_end) ;
             found = (k >= 0) ;
-            ASSERT (GB_IMPLIES (found, j == Ch [k])) ;
+            #ifdef GB_DEBUG
+            GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
+            ASSERT (GB_IMPLIES (found, j == GB_IGET (Ch, k))) ;
+            #endif
         }
         else
         { 
             // C is sparse
-            pC_start = Cp [j] ;
-            pC_end   = Cp [j+1] ;
+            pC_start = GB_IGET (Cp, j) ;
+            pC_end   = GB_IGET (Cp, j+1) ;
             found = true ;
         }
 
@@ -263,10 +268,9 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             int64_t pright = pC_end - 1 ;
 
             // Time taken for this step is at most O(log(nnz(C(:,j))).
-            const int64_t *restrict Ci = C->i ; // FIXME
             const bool may_see_zombies = (C->nzombies > 0) ;
-            found = GB_binary_search_zombie (i, Ci, false, &pleft, &pright,
-                may_see_zombies, &is_zombie) ;
+            found = GB_binary_search_zombie (i, C->i, C->i_is_32,
+                &pleft, &pright, may_see_zombies, &is_zombie) ;
         }
     }
 
@@ -329,8 +333,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         if (is_zombie)
         { 
             // bring the zombie back to life
-            int64_t *restrict Ci = C->i ;   // FIXME
-            Ci [pleft] = i ;
+            GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;
+            GB_ISET (Ci, pleft, i) ;    // Ci [pleft] = i ;
             C->nzombies-- ;
         }
         else if (C_is_bitmap)

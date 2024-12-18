@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Extract a single entry, x = v(i), typecasting from the type of v to the type
 // of x, as needed.
 
@@ -23,7 +27,7 @@ GrB_Info GrB_Vector_extractElement_Scalar   // S = V(i,j)
 (
     GrB_Scalar S,                       // extracted scalar
     const GrB_Vector V,                 // vector to extract a scalar from
-    GrB_Index i                         // index
+    uint64_t i                         // index
 )
 {
 

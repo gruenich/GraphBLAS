@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Removes a single entry, C (row,col), from the matrix C.
 
 #include "GB.h"
@@ -20,8 +24,8 @@
 static inline bool GB_removeElement     // return true if found
 (
     GrB_Matrix C,
-    GrB_Index i,
-    GrB_Index j
+    uint64_t i,
+    uint64_t j
 )
 {
 
@@ -63,27 +67,26 @@ static inline bool GB_removeElement     // return true if found
         // C is sparse or hypersparse
         //----------------------------------------------------------------------
 
-        const uint64_t *restrict Cp = C->p ;    // FIXME
-        const int64_t *restrict Ch = C->h ;
-        const int64_t *restrict Ci = C->i ;
+        GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+        GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
+
         bool found ;
         int64_t pC_start, pC_end ;
 
-        if (Ch != NULL)
+        if (C->h != NULL)
         {
 
             //------------------------------------------------------------------
             // C is hypersparse: look for j in hyperlist C->h [0 ... C->nvec-1]
             //------------------------------------------------------------------
 
-            // FIXME
-            const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
-            const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
-            const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
+            void *C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
+            void *C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
+            void *C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
             const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
             const int64_t cnvec = C->nvec ;
-            int64_t k = GB_hyper_hash_lookup (false, false, // FIXME
-                Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+            int64_t k = GB_hyper_hash_lookup (C->p_is_32, C->i_is_32,
+                C->h, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
                 j, &pC_start, &pC_end) ;
             found = (k >= 0) ;
             if (!found)
@@ -91,7 +94,10 @@ static inline bool GB_removeElement     // return true if found
                 // vector j is empty
                 return (false) ;
             }
-            ASSERT (j == Ch [k]) ;
+            #ifdef GB_DEBUG
+            GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
+            ASSERT (j == GB_IGET (Ch, k)) ;
+            #endif
 
         }
         else
@@ -101,8 +107,8 @@ static inline bool GB_removeElement     // return true if found
             // C is sparse, C(:,j) is the jth vector of C
             //------------------------------------------------------------------
 
-            pC_start = Cp [j] ;
-            pC_end   = Cp [j+1] ;
+            pC_start = GB_IGET (Cp, j) ;
+            pC_end   = GB_IGET (Cp, j+1) ;
         }
 
         // look in C(:,k), the kth vector of C
@@ -115,9 +121,10 @@ static inline bool GB_removeElement     // return true if found
         { 
             // C(:,k) is as-if-full so no binary search needed to find C(i,k)
             pleft = pleft + i ;
-            ASSERT (GB_UNZOMBIE (Ci [pleft]) == i) ;    // FIXME
+            int64_t iC = GB_IGET (Ci, pleft) ;
+            ASSERT (i == GB_UNZOMBIE (iC)) ;
             found = true ;
-            is_zombie = GB_IS_ZOMBIE (Ci [pleft]) ; // FIXME
+            is_zombie = GB_IS_ZOMBIE (iC) ;
         }
         else
         { 
@@ -131,8 +138,12 @@ static inline bool GB_removeElement     // return true if found
         if (found && !is_zombie)
         { 
             // C(i,j) becomes a zombie
-            int64_t *restrict Ci = C->i ;   // FIXME
-            Ci [pleft] = GB_ZOMBIE (i) ;    // FIXME
+            #ifdef GB_DEBUG
+            int64_t iC = GB_IGET (Ci, pleft) ;
+            ASSERT (i == iC) ;
+            #endif
+            i = GB_ZOMBIE (i) ;
+            GB_ISET (Ci, pleft, i) ;    // Ci [pleft] = i ;
             C->nzombies++ ;
         }
         return (found) ;
@@ -146,8 +157,8 @@ static inline bool GB_removeElement     // return true if found
 GrB_Info GB_Matrix_removeElement
 (
     GrB_Matrix C,               // matrix to remove entry from
-    GrB_Index row,              // row index
-    GrB_Index col,              // column index
+    uint64_t row,               // row index
+    uint64_t col,               // column index
     GB_Werk Werk
 )
 {
@@ -253,8 +264,8 @@ GrB_Info GB_Matrix_removeElement
 GrB_Info GrB_Matrix_removeElement
 (
     GrB_Matrix C,               // matrix to remove entry from
-    GrB_Index row,              // row index
-    GrB_Index col               // column index
+    uint64_t row,               // row index
+    uint64_t col                // column index
 )
 { 
     GB_RETURN_IF_NULL (C) ;

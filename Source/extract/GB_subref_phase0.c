@@ -9,8 +9,6 @@
 
 // FIXME: 32/64 bit
 
-#define GB_DEBUG
-
 // Finds the vectors for C=A(I,J) when A and C are sparse or hypersparse, and
 // determines the properties of I and J.
 

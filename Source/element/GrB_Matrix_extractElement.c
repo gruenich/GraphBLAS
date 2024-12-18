@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Extract the value of single scalar, x = A(i,j), typecasting from the
 // type of A to the type of x, as needed.
 
@@ -23,8 +27,8 @@ GrB_Info GrB_Matrix_extractElement_Scalar   // S = A(i,j)
 (
     GrB_Scalar S,                       // extracted scalar
     const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
+    uint64_t i,                         // row index
+    uint64_t j                          // column index
 )
 {
 

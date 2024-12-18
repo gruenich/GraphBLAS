@@ -57,7 +57,7 @@ context             GxB_Context object
 convert             convert between matrix formats (sparse, hypersparse, bitmap,
                     and full), and conform a matrix to its desired format.
 
-cpu                 wrapper for Google's cpu_featuers package
+cpu                 wrapper for Google's cpu_features package
 
 cumsum              cumulative sum
 

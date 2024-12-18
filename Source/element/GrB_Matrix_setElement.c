@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Set a single entry in a matrix, C(row,col) = x,
 // typecasting from the type of x to the type of C, as needed.
 
@@ -16,10 +20,10 @@
 #define GB_SET(prefix,type,T,ampersand)                                     \
 GrB_Info GB_EVAL3 (prefix, _Matrix_setElement_, T) /* C (row,col) = x */    \
 (                                                                           \
-    GrB_Matrix C,                       /* matrix to modify               */\
-    type x,                             /* scalar to assign to C(row,col) */\
-    GrB_Index row,                      /* row index                      */\
-    GrB_Index col                       /* column index                   */\
+    GrB_Matrix C,       /* matrix to modify               */                \
+    type x,             /* scalar to assign to C(row,col) */                \
+    uint64_t row,       /* row index                      */                \
+    uint64_t col        /* column index                   */                \
 )                                                                           \
 {                                                                           \
     GB_RETURN_IF_NULL (C) ;                                                 \
@@ -54,10 +58,10 @@ GB_SET (GrB, void *    , UDT    ,  )
 
 GrB_Info GrB_Matrix_setElement_Scalar
 (
-    GrB_Matrix C,                       // matrix to modify
-    GrB_Scalar scalar,                  // scalar to assign to C(row,col)
-    GrB_Index row,                      // row index
-    GrB_Index col                       // column index
+    GrB_Matrix C,           // matrix to modify
+    GrB_Scalar scalar,      // scalar to assign to C(row,col)
+    uint64_t row,           // row index
+    uint64_t col            // column index
 )
 {
 

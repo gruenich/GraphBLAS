@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Set a single scalar, w(row) = x, typecasting from the type of x to
 // the type of w as needed.
 
@@ -16,9 +20,9 @@
 #define GB_SET(prefix,type,T,ampersand)                                     \
 GrB_Info GB_EVAL3 (prefix, _Vector_setElement_, T)    /* w(row) = x */      \
 (                                                                           \
-    GrB_Vector w,                       /* vector to modify           */    \
-    type x,                             /* scalar to assign to w(row) */    \
-    GrB_Index row                       /* row index                  */    \
+    GrB_Vector w,           /* vector to modify           */                \
+    type x,                 /* scalar to assign to w(row) */                \
+    uint64_t row            /* row index                  */                \
 )                                                                           \
 {                                                                           \
     GB_RETURN_IF_NULL (w) ;                                                 \
@@ -55,7 +59,7 @@ GrB_Info GrB_Vector_setElement_Scalar
 (
     GrB_Vector w,                       // vector to modify
     GrB_Scalar scalar,                  // scalar to assign to w(row)
-    GrB_Index row                       // row index
+    uint64_t row                        // row index
 )
 {
 

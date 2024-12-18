@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 // Extract the value of single scalar, x = V(i), typecasting from the
 // type of V to the type of x, as needed.
 
@@ -25,7 +29,7 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
     GB_XTYPE *x,                // scalar to extract, not modified if not found
     #endif
     const GrB_Vector V,         // vector to extract a scalar from
-    GrB_Index i                 // index
+    uint64_t i                  // index
 )
 {
 
@@ -62,16 +66,15 @@ GrB_Info GB_EXTRACT_ELEMENT     // extract a single entry, x = V(i)
 
     int64_t pleft ;
     bool found ;
-    const uint64_t *restrict Vp = V->p ;     // FIXME
+    GB_Ap_DECLARE (Vp, const) ; GB_Ap_PTR (Vp, V) ;
 
     if (Vp != NULL)
     { 
         // V is sparse
         pleft = 0 ;
-        int64_t pright = Vp [1] - 1 ;
+        int64_t pright = GB_IGET (Vp, 1) - 1 ;
         // Time taken for this step is at most O(log(nnz(V))).
-        const int64_t *restrict Vi = V->i ; // FIXME
-        found = GB_binary_search (i, Vi, false, &pleft, &pright) ;
+        found = GB_binary_search (i, V->i, V->i_is_32, &pleft, &pright) ;
     }
     else
     {
