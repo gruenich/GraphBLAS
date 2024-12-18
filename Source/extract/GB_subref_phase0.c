@@ -9,13 +9,16 @@
 
 // FIXME: 32/64 bit
 
+#define GB_DEBUG
+
 // Finds the vectors for C=A(I,J) when A and C are sparse or hypersparse, and
 // determines the properties of I and J.
 
 #include "extract/GB_subref.h"
 #include "hyper/factory/GB_lookup_debug.h"
 
-#define GB_AI(p) GBI_UNZOMBIE (Ai, p, avlen)
+#undef  GB_AI
+#define GB_AI(p) ((Ai == NULL) ? ((p) % (avlen)) : GB_UNZOMBIE (Ai [p]))
 
 //------------------------------------------------------------------------------
 // GB_find_Ap_start_end
@@ -52,6 +55,17 @@ static inline void GB_find_Ap_start_end
     int64_t pA_end = GBP (Ap, kA+1, avlen) ;
     int64_t ajnz = pA_end - pA ;
 
+    int64_t ifirst = 0, ilast = 0 ;
+    if (ajnz > 0)
+    {
+        ifirst = GBI (Ai, pA, avlen) ;
+        ilast  = GBI (Ai, pA_end-1, avlen) ;
+        ifirst = GB_UNZOMBIE (ifirst) ;
+        ilast  = GB_UNZOMBIE (ilast ) ;
+        ASSERT (ifirst == GB_AI (pA)) ;
+        ASSERT (ilast  == GB_AI (pA_end-1)) ;
+    }
+
     //--------------------------------------------------------------------------
     // trim it to A(imin:imax,kA)
     //--------------------------------------------------------------------------
@@ -66,7 +80,7 @@ static inline void GB_find_Ap_start_end
         ;
 
     }
-    else if (ajnz == 0 || GB_AI (pA) > imax || GB_AI (pA_end-1) < imin)
+    else if (ajnz == 0 || ifirst > imax || ilast < imin)
     { 
 
         //----------------------------------------------------------------------
@@ -85,18 +99,20 @@ static inline void GB_find_Ap_start_end
         //----------------------------------------------------------------------
 
         // trim the leading part of A(:,kA)
-        if (GB_AI (pA) < imin)
+        if (ifirst < imin)
         { 
             bool is_zombie ;
             int64_t pright = pA_end - 1 ;
             GB_split_binary_search_zombie (imin, Ai, false,
                 &pA, &pright, may_see_zombies, &is_zombie) ;
+            ifirst = GBI (Ai, pA, avlen) ;
+            ifirst = GB_UNZOMBIE (ifirst) ;
         }
 
         // trim the trailing part of A (:,kA)
         if (imin == imax)
         {
-            if (GB_AI (pA) == imin)
+            if (ifirst == imin)
             { 
                 // found the the single entry A (i,kA)
                 pA_end = pA + 1 ;
@@ -108,7 +124,7 @@ static inline void GB_find_Ap_start_end
                 pA_end = -1 ;
             }
         }
-        else if (imax < GB_AI (pA_end-1))
+        else if (imax < ilast)
         { 
             bool found, is_zombie ;
             int64_t pleft = pA ;
@@ -123,10 +139,31 @@ static inline void GB_find_Ap_start_end
         if (ajnz > 0 && Ap != NULL)
         {
             // A(imin:imax,kA) is now in Ai [pA:pA_end-1]
-            ASSERT (GB_IMPLIES (Ap [kA] < pA,  GB_AI (pA-1) < imin)) ;
-            ASSERT (GB_IMPLIES (pA_end < Ap [kA+1], imax < GB_AI (pA_end))) ;
-            ASSERT (imin <= GB_AI (pA)) ;
-            ASSERT (GB_AI (pA_end-1) <= imax) ;
+            if (Ap [kA] < pA)
+            {
+//              int64_t iprev = GB_AI (pA-1) ;
+                int64_t iprev = GBI (Ai, pA-1, avlen) ;
+                iprev = GB_UNZOMBIE (iprev) ;
+                ASSERT (iprev == GB_AI (pA-1)) ;
+                ASSERT (iprev < imin) ;
+            }
+            if (pA_end < Ap [kA+1])
+            {
+//              int64_t inext = GB_AI (pA_end) ;
+                int64_t inext = GBI (Ai, pA_end, avlen) ;
+                inext = GB_UNZOMBIE (inext) ;
+                ASSERT (inext == GB_AI (pA_end)) ;
+                ASSERT (imax < inext) ;
+            }
+
+            ifirst = GBI (Ai, pA, avlen) ;
+            ilast  = GBI (Ai, pA_end-1, avlen) ;
+            ifirst = GB_UNZOMBIE (ifirst) ;
+            ilast  = GB_UNZOMBIE (ilast ) ;
+            ASSERT (ifirst == GB_AI (pA)) ;
+            ASSERT (ilast  == GB_AI (pA_end-1)) ;
+            ASSERT (imin <= ifirst) ;
+            ASSERT (ilast <= imax) ;
         }
         #endif
     }
