@@ -142,7 +142,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
             // assigned to C(iC,jC), and p = S(inew,jnew) gives the pointer
             // into C to where the entry (C(iC,jC) appears in C:
             ASSERT (pC_start <= p && p < pC_end) ;
-            ASSERT (iC == GB_UNZOMBIE (GBI_C (Ci, p, C->vlen))) ;
+            ASSERT (iC == GB_UNZOMBIE (GBI_C (Ci, p, C->vlen))) ;   // FIXME
         }
     }
     #endif

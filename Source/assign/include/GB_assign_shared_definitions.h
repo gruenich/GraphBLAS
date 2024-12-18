@@ -403,8 +403,8 @@
     #define GB_iC_DENSE_LOOKUP                                              \
         int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;                 \
         int64_t pC = pC_start + iC ;                                        \
-        bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (Ci [pC]) ;           \
-        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNZOMBIE (Ci [pC]) == iC)) ;
+        bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (Ci [pC]) ; /* FIXME*/\
+        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNZOMBIE (Ci [pC]) == iC)) ;/*FIXME*/
 
     //--------------------------------------------------------------------------
     // get C(iC,jC) via binary search of C(:,jC)
@@ -840,8 +840,8 @@
 
             //      ( X ):
 
-            //          C(I(i),J(j)) was a zombie, and still is a zombie.
-            //          row index is < 0, and actual index is GB_DEZOMBIE (I(i))
+            //          C(I(i),J(j)) was a zombie, and still is a zombie.  row
+            //          index is < 0, and actual index is GB_DEZOMBIE (I(i))
 
             //      ( C ):
 

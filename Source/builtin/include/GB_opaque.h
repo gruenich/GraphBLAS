@@ -558,6 +558,8 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 // A->Y->i can be uint32_t or uint64_t (never has zombies)
 // A->Y->x can be uint32_t or uint64_t
 
+// For examples on how these macros expand, see Source/math/include/GB_zombie.h.
+
 #ifndef GB_JIT_KERNEL
 
     //--------------------------------------------------------------------------

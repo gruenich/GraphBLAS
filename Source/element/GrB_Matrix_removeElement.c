@@ -115,9 +115,9 @@ static inline bool GB_removeElement     // return true if found
         { 
             // C(:,k) is as-if-full so no binary search needed to find C(i,k)
             pleft = pleft + i ;
-            ASSERT (GB_UNZOMBIE (Ci [pleft]) == i) ;
+            ASSERT (GB_UNZOMBIE (Ci [pleft]) == i) ;    // FIXME
             found = true ;
-            is_zombie = GB_IS_ZOMBIE (Ci [pleft]) ;
+            is_zombie = GB_IS_ZOMBIE (Ci [pleft]) ; // FIXME
         }
         else
         { 
@@ -132,7 +132,7 @@ static inline bool GB_removeElement     // return true if found
         { 
             // C(i,j) becomes a zombie
             int64_t *restrict Ci = C->i ;   // FIXME
-            Ci [pleft] = GB_ZOMBIE (i) ;
+            Ci [pleft] = GB_ZOMBIE (i) ;    // FIXME
             C->nzombies++ ;
         }
         return (found) ;

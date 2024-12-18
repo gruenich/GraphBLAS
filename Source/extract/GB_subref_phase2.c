@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // FIXME: 32/64 bit
 
 // GB_subref_phase2 counts the number of entries in each vector of C, for

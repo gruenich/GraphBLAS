@@ -260,13 +260,15 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_32
     {
         #ifdef CUDA_KERNEL
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
-            int64_t ix = GB_UNZOMBIE (X [pmiddle]) ;    // 32-bit
+            int64_t ix = X [pmiddle] ;
+            ix = GB_UNZOMBIE (ix) ;
             bool less = (ix < i) ;
             *pleft  = less ? (pmiddle+1) : *pleft ;
             *pright = less ? *pright : pmiddle ;
         #else
             int64_t pmiddle = (*pleft + *pright) / 2 ;
-            int64_t ix = GB_UNZOMBIE (X [pmiddle]) ;    // 32-bit
+            int64_t ix = X [pmiddle] ;
+            ix = GB_UNZOMBIE (ix) ;
             if (ix < i)
             {
                 // if in the list, it appears in [pmiddle+1..pright]
@@ -297,13 +299,15 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_64
     {
         #ifdef CUDA_KERNEL
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
-            int64_t ix = GB_UNZOMBIE (X [pmiddle]) ;    // 64-bit
+            int64_t ix = X [pmiddle] ;
+            ix = GB_UNZOMBIE (ix) ;
             bool less = (ix < i) ;
             *pleft  = less ? (pmiddle+1) : *pleft ;
             *pright = less ? *pright : pmiddle ;
         #else
             int64_t pmiddle = (*pleft + *pright) / 2 ;
-            int64_t ix = GB_UNZOMBIE (X [pmiddle]) ;    // 64-bit
+            int64_t ix = X [pmiddle] ;
+            ix = GB_UNZOMBIE (ix) ;
             if (ix < i)
             {
                 // if in the list, it appears in [pmiddle+1..pright]
@@ -343,11 +347,8 @@ GB_STATIC_INLINE bool GB_binary_search_zombie_32
         if (*pleft == *pright)
         {
             int64_t i2 = X [*pleft] ;
-            *is_zombie = GB_IS_ZOMBIE (i2) ;        // 32-bit
-            if (*is_zombie)
-            {
-                i2 = GB_DEZOMBIE (i2) ;             // 32-bit
-            }
+            *is_zombie = GB_IS_ZOMBIE (i2) ;
+            if (*is_zombie) i2 = GB_DEZOMBIE (i2) ;
             found = (i == i2) ;
         }
     }
@@ -376,11 +377,8 @@ GB_STATIC_INLINE bool GB_binary_search_zombie_64
         if (*pleft == *pright)
         {
             int64_t i2 = X [*pleft] ;
-            *is_zombie = GB_IS_ZOMBIE (i2) ;        // 64-bit
-            if (*is_zombie)
-            {
-                i2 = GB_DEZOMBIE (i2) ;             // 64-bit
-            }
+            *is_zombie = GB_IS_ZOMBIE (i2) ;
+            if (*is_zombie) i2 = GB_DEZOMBIE (i2) ;
             found = (i == i2) ;
         }
     }
@@ -436,11 +434,8 @@ GB_STATIC_INLINE bool GB_split_binary_search_zombie_32
         if (*pleft == *pright)
         {
             int64_t i2 = X [*pleft] ;
-            *is_zombie = GB_IS_ZOMBIE (i2) ;        // 32-bit
-            if (*is_zombie)
-            {
-                i2 = GB_DEZOMBIE (i2) ;             // 32-bit
-            }
+            *is_zombie = GB_IS_ZOMBIE (i2) ;
+            if (*is_zombie) i2 = GB_DEZOMBIE (i2) ;
             found = (i == i2) ;
             if (!found)
             {
@@ -481,11 +476,8 @@ GB_STATIC_INLINE bool GB_split_binary_search_zombie_64
         if (*pleft == *pright)
         {
             int64_t i2 = X [*pleft] ;
-            *is_zombie = GB_IS_ZOMBIE (i2) ;        // 64-bit
-            if (*is_zombie)
-            {
-                i2 = GB_DEZOMBIE (i2) ;             // 64-bit
-            }
+            *is_zombie = GB_IS_ZOMBIE (i2) ;
+            if (*is_zombie) i2 = GB_DEZOMBIE (i2) ;
             found = (i == i2) ;
             if (!found)
             {
