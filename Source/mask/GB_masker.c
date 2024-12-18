@@ -108,13 +108,14 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     int64_t Rnvec, Rnvec_nonempty ;
     void *Rp        = NULL ; size_t Rp_size = 0 ;
-    int64_t *Rh     = NULL ; size_t Rh_size = 0 ;
+    int64_t *Rh     = NULL ; size_t Rh_size = 0 ;       // FIXME
     int64_t *R_to_M = NULL ; size_t R_to_M_size = 0 ;
     int64_t *R_to_C = NULL ; size_t R_to_C_size = 0 ;
     int64_t *R_to_Z = NULL ; size_t R_to_Z_size = 0 ;
     int R_ntasks = 0, R_nthreads ;
     size_t TaskList_size = 0 ;
     GB_task_struct *TaskList = NULL ;
+    bool Ri_is_32 = false ; // FIXME
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity structure of R and the vectors of R
@@ -162,7 +163,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // computed by phase1a
             &TaskList, &TaskList_size, &R_ntasks, &R_nthreads,
             // computed by phase0:
-            Rnvec, Rh, R_to_M, R_to_C, R_to_Z, false,
+            Rnvec, Rh, Ri_is_32, R_to_M, R_to_C, R_to_Z, false,
             // original input:
             M, C, Z, Werk) ;
         if (info != GrB_SUCCESS)

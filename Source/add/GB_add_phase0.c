@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // The eWise add of two matrices, C=A+B, C<M>=A+B, or C<!M>=A+B starts with
 // this phase, which determines which vectors of C need to be computed.
 // This phase is also used for GB_masker, and for GB_SUBASSIGN_TWO_SLICE.
@@ -198,12 +200,16 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     int64_t Anvec = A->nvec ;
     const uint64_t *restrict Ap = A->p ;        // FIXME
     const int64_t *restrict Ah = A->h ;
-    bool A_is_hyper = (Ah != NULL) ;
+    const bool A_is_hyper = (Ah != NULL) ;
+    const bool Ai_is_32 = A->i_is_32 ;
+    ASSERT (!Ai_is_32) ;                        // FIXME
 
     int64_t Bnvec = B->nvec ;
     const uint64_t *restrict Bp = B->p ;        // FIXME
     const int64_t *restrict Bh = B->h ;
-    bool B_is_hyper = (Bh != NULL) ;
+    const bool B_is_hyper = (Bh != NULL) ;
+    const bool Bi_is_32 = B->i_is_32 ;
+    ASSERT (!Bi_is_32) ;                        // FIXME
 
     int64_t Mnvec = 0 ;
     const uint64_t *restrict Mp = NULL ;        // FIXME
@@ -343,9 +349,9 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             double target_work = ((ntasks-taskid) * work) / ntasks ;
             GB_slice_vector (NULL, NULL,
                 &(kA_start [taskid]), &(kB_start [taskid]),
-                0, 0, NULL,                 // Mi not present
-                0, Anvec, Ah,               // Ah, explicit list
-                0, Bnvec, Bh,               // Bh, explicit list
+                0, 0, NULL, false,          // Mi not present
+                0, Anvec, Ah, Ai_is_32,     // Ah, explicit list
+                0, Bnvec, Bh, Bi_is_32,     // Bh, explicit list
                 n,                          // Ah and Bh have dimension n
                 target_work) ;
         }

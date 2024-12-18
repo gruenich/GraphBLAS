@@ -60,14 +60,14 @@ bool GB_cumsum                  // cumulative sum of an array
     if (count_is_32)
     { 
         uint32_t *restrict count = (uint32_t *) count_arg ;
-        #define GB_CUMSUM GB_cumsum1_32
+        #define GB_CUMSUM1_TYPE GB_cumsum1_32
         #define GB_CHECK_OVERFLOW 1
         #include "cumsum/factory/GB_cumsum_template.c"
     }
     else
     { 
         uint64_t *restrict count = (uint64_t *) count_arg ;
-        #define GB_CUMSUM GB_cumsum1_64
+        #define GB_CUMSUM1_TYPE GB_cumsum1_64
         #define GB_CHECK_OVERFLOW 0
         #include "cumsum/factory/GB_cumsum_template.c"
     }

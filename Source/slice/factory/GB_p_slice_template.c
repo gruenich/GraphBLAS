@@ -123,7 +123,7 @@ static void GB_p_slice_TYPE     // slice Ap, 32-bit or 64-bit
     if (n == 0 || ntasks <= 1 || Ap [n] == 0)
     { 
         // matrix is empty, or a single thread is used
-        memset ((void *) Slice, 0, ntasks * sizeof (GB_Ap_TYPE)) ;
+        memset ((void *) Slice, 0, ntasks * sizeof (int64_t)) ;
         Slice [ntasks] = n ;
     }
     else

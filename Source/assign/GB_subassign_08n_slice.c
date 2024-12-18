@@ -115,9 +115,11 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     // Z is still sparse or hypersparse, not bitmap or full
     ASSERT (Z_sparsity == GxB_SPARSE || Z_sparsity == GxB_HYPERSPARSE) ;
 
+    bool Zi_is_32 = false ; // FIXME
+
     GB_OK (GB_ewise_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
-        Znvec, Zh_shallow, NULL, Z_to_A, Z_to_M, false,
+        Znvec, Zh_shallow, Zi_is_32, NULL, Z_to_A, Z_to_M, false,
         NULL, A, M, Werk)) ;
 
     //--------------------------------------------------------------------------

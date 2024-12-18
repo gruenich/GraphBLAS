@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// Compute the cumulative sum of an array count[0:n], of size n+1:
+// Compute the cumulative sum of an array count[0:n], of size n+1,
+// and of type uint32_t or uint64_t:
 
 //      k = sum (count [0:n-1] != 0) ;
 //      count = cumsum ([0 count[0:n-1]]) ;
@@ -27,7 +28,7 @@
             // cumsum with one thread
             //------------------------------------------------------------------
 
-            return (GB_CUMSUM (count, n)) ;
+            return (GB_CUMSUM1_TYPE (count, n)) ;
 
         }
         else
@@ -38,12 +39,12 @@
             //------------------------------------------------------------------
 
             // allocate workspace
-            GB_WERK_DECLARE (ws, int64_t) ;
-            GB_WERK_PUSH (ws, nthreads, int64_t) ;
+            GB_WERK_DECLARE (ws, uint64_t) ;
+            GB_WERK_PUSH (ws, nthreads, uint64_t) ;
             if (ws == NULL)
             { 
                 // out of memory; use a single thread instead
-                return (GB_CUMSUM (count, n)) ;
+                return (GB_CUMSUM1_TYPE (count, n)) ;
             }
 
             int tid ;
@@ -99,7 +100,7 @@
             }
 
             // free workspace
-            GB_WERK_POP (ws, int64_t) ;
+            GB_WERK_POP (ws, uint64_t) ;
         }
 
     }
@@ -113,7 +114,7 @@
             // cumsum with one thread, also compute k
             //------------------------------------------------------------------
 
-            int64_t k = 0 ;
+            uint64_t k = 0 ;
             uint64_t s = 0 ;
             for (int64_t i = 0 ; i < n ; i++)
             { 
@@ -141,15 +142,15 @@
             //------------------------------------------------------------------
 
             // allocate workspace
-            GB_WERK_DECLARE (ws, int64_t) ;
-            GB_WERK_DECLARE (wk, int64_t) ;
-            GB_WERK_PUSH (ws, nthreads, int64_t) ;
-            GB_WERK_PUSH (wk, nthreads, int64_t) ;
+            GB_WERK_DECLARE (ws, uint64_t) ;
+            GB_WERK_DECLARE (wk, uint64_t) ;
+            GB_WERK_PUSH (ws, nthreads, uint64_t) ;
+            GB_WERK_PUSH (wk, nthreads, uint64_t) ;
             if (ws == NULL || wk == NULL)
             { 
                 // out of memory; use a single thread instead
-                GB_WERK_POP (wk, int64_t) ;
-                GB_WERK_POP (ws, int64_t) ;
+                GB_WERK_POP (wk, uint64_t) ;
+                GB_WERK_POP (ws, uint64_t) ;
                 return (GB_cumsum (count, count_is_32, n, kresult, 1, NULL)) ;
             }
 
@@ -160,11 +161,11 @@
                 // each task sums up its own part
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, n, tid, nthreads) ;
-                int64_t k = 0 ;
-                int64_t s = 0 ;
+                uint64_t k = 0 ;
+                uint64_t s = 0 ;
                 for (int64_t i = istart ; i < iend ; i++)
                 { 
-                    int64_t c = count [i] ;
+                    uint64_t c = count [i] ;
                     if (c != 0) k++ ;
                     s += c ;
                 }
@@ -192,14 +193,14 @@
                 // each task computes the cumsum of its own part
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, n, tid, nthreads) ;
-                int64_t s = 0 ;
+                uint64_t s = 0 ;
                 for (int i = 0 ; i < tid ; i++)
                 { 
                     s += ws [i] ;
                 }
                 for (int64_t i = istart ; i < iend ; i++)
                 { 
-                    int64_t c = count [i] ;
+                    uint64_t c = count [i] ;
                     count [i] = s ;
                     s += c ;
                 }
@@ -209,20 +210,20 @@
                 }
             }
 
-            int64_t k = 0 ;
+            uint64_t k = 0 ;
             for (int tid = 0 ; tid < nthreads ; tid++)
             { 
                 k += wk [tid] ;
             }
-            (*kresult) = k ;
+            (*kresult) = (int64_t) k ;
 
             // free workspace
-            GB_WERK_POP (wk, int64_t) ;
-            GB_WERK_POP (ws, int64_t) ;
+            GB_WERK_POP (wk, uint64_t) ;
+            GB_WERK_POP (ws, uint64_t) ;
         }
     }
 }
 
 #undef GB_CHECK_OVERFLOW
-#undef GB_CUMSUM
+#undef GB_CUMSUM1_TYPE
 

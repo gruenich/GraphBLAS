@@ -174,7 +174,8 @@ GrB_Info GX_ewise_slice                                                     \
     int *p_nthreads,                /* # of threads for eWise operation */  \
     /* input: */                                                            \
     const int64_t Cnvec,            /* # of vectors of C */                 \
-    const int64_t *restrict Ch,     /* vectors of C, if hypersparse */      \
+    const void *Ch,                 /* vectors of C, if hypersparse */      \
+    const bool Ci_is_32,            /* if true, Ch is 32-bit, else 64-bit */\
     const int64_t *restrict C_to_M, /* mapping of C to M */                 \
     const int64_t *restrict C_to_A, /* mapping of C to A */                 \
     const int64_t *restrict C_to_B, /* mapping of C to B */                 \

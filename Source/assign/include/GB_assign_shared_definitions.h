@@ -1260,13 +1260,14 @@
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     int Z_sparsity = GxB_SPARSE ;                                           \
     int64_t Znvec ;                                                         \
+    const bool Zi_is_32 = false ;  /* FIXME */                              \
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_size, NULL, NULL, &Z_to_X, &Z_to_X_size,           \
         &Z_to_S, &Z_to_S_size, NULL, &Z_sparsity,                           \
         NULL, X, S, Werk)) ;                                                \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
-        Znvec, Zh, NULL, Z_to_X, Z_to_S, false,                             \
+        Znvec, Zh, Zi_is_32, NULL, Z_to_X, Z_to_S, false,                   \
         NULL, X, S, Werk)) ;                                                \
     GB_ALLOCATE_NPENDING_WERK ;
 

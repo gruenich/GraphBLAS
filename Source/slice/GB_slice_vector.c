@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 // A(:,kA) and B(:,kB) are two long vectors that will be added with GB_add,
 // GB_emult, or GB_mask, and the work to compute them needs to be split into
@@ -56,23 +58,30 @@ void GB_slice_vector
     // input:
     const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
     const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
-    const int64_t *restrict Mi,  // indices of M (or NULL)  FIXME
+    const void *Mi,                 // indices of M (or NULL)
+    const bool Mi_is_32,            // if true, Mi is 32-bit; else 64 bit
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *restrict Ai,  // indices of A (or NULL)  FIXME
+    const void *Ai,                 // indices of A (or NULL)
+    const bool Ai_is_32,            // if true, Ai is 32-bit; else 64 bit
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *restrict Bi,  // indices of B (or NULL)  FIXME
+    const void *Bi,                 // indices of B (or NULL)
+    const bool Bi_is_32,            // if true, Bi is 32-bit; else 64 bit
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 )
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // get inputs
     //--------------------------------------------------------------------------
 
     ASSERT (p_pA != NULL && p_pB != NULL) ;
+
+    GB_IDECL (Mi, const, u) ; GB_IPTR (Mi, Mi_is_32) ;
+    GB_IDECL (Ai, const, u) ; GB_IPTR (Ai, Ai_is_32) ;
+    GB_IDECL (Bi, const, u) ; GB_IPTR (Bi, Bi_is_32) ;
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task
@@ -118,26 +127,27 @@ void GB_slice_vector
             // A(:,kA) is dense (bitmap, full, or all entries present)
             // no need for a binary search
             pA = pA_start + i ;
-            ASSERT (GBI (Ai, pA, vlen) == i) ;
+            ASSERT (GBi_A (Ai, pA, vlen) == i) ;
         }
         else
         { 
             // Ai is an explicit integer list, Ai [pA_start:pA_end-1]
             ASSERT (aknz > 0) ;
+            ASSERT (Ai != NULL) ;
             pA = pA_start ;
             int64_t apright = pA_end - 1 ;
             #ifdef GB_DEBUG
             bool afound =
             #endif
-            GB_split_binary_search (i, Ai, false, &pA, &apright) ;
-            ASSERT (GB_IMPLIES (afound, GBI (Ai, pA, vlen) == i)) ;
+            GB_split_binary_search (i, Ai, Ai_is_32, &pA, &apright) ;
+            ASSERT (GB_IMPLIES (afound, GBi_A (Ai, pA, vlen) == i)) ;
             ASSERT (pA_start <= pA && pA <= pA_end) ;
         }
 
         ASSERT (GB_IMPLIES (pA >  pA_start && pA < pA_end,
-            (GBI (Ai, pA-1, vlen) < i))) ;
+            (GBi_A (Ai, pA-1, vlen) < i))) ;
         ASSERT (GB_IMPLIES (pA >= pA_start && pA < pA_end,
-            (GBI (Ai, pA, vlen) >= i ))) ;
+            (GBi_A (Ai, pA, vlen) >= i ))) ;
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -165,7 +175,7 @@ void GB_slice_vector
             // B(:,kB) is dense (bitmap, full, or all entries present)
             // no need for a binary search
             pB = pB_start + i ;
-            ASSERT (GBI (Bi, pB, vlen) == i) ;
+            ASSERT (GBi_B (Bi, pB, vlen) == i) ;
         }
         else
         { 
@@ -174,13 +184,13 @@ void GB_slice_vector
             ASSERT (Bi != NULL) ;
             pB = pB_start ;
             int64_t bpright = pB_end - 1 ;
-            GB_split_binary_search (i, Bi, false, &pB, &bpright) ;
+            GB_split_binary_search (i, Bi, Bi_is_32, &pB, &bpright) ;
             ASSERT (pB_start <= pB && pB <= pB_end) ;
         }
         ASSERT (GB_IMPLIES (pB >  pB_start && pB < pB_end,
-            (GBI (Bi, pB-1, vlen) < i))) ;
+            (GBi_B (Bi, pB-1, vlen) < i))) ;
         ASSERT (GB_IMPLIES (pB >= pB_start && pB < pB_end,
-            (GBI (Bi, pB, vlen) >= i ))) ;
+            (GBi_B (Bi, pB, vlen) >= i ))) ;
 
         // Bi has been split.  If i is not found in Bi [...]:
         //      Bi [pB_start : pB-1] < i
@@ -255,7 +265,7 @@ void GB_slice_vector
         // M(:,kM) is dense (bitmap, full, or all entries present)
         // no need for a binary search
         pM = pM_start + i ;
-        ASSERT (GBI (Mi, pM, vlen) == i) ;
+        ASSERT (GBi_M (Mi, pM, vlen) == i) ;
     }
     else
     { 
@@ -264,7 +274,7 @@ void GB_slice_vector
         ASSERT (Mi != NULL) ;
         pM = pM_start ;
         int64_t mpright = pM_end - 1 ;
-        GB_split_binary_search (i, Mi, false, &pM, &mpright) ;
+        GB_split_binary_search (i, Mi, Mi_is_32, &pM, &mpright) ;
     }
 
     //--------------------------------------------------------------------------
@@ -275,17 +285,17 @@ void GB_slice_vector
     // or if any vector is empty, their p* pointer is -1.
 
     ASSERT (GB_IMPLIES ((pM >  pM_start && pM < pM_end),
-        GBI (Mi, pM-1, vlen) <  i)) ;
+        GBi_M (Mi, pM-1, vlen) <  i)) ;
     ASSERT (GB_IMPLIES ((pM >= pM_start && pM < pM_end),
-        GBI (Mi, pM, vlen) >= i)) ;
+        GBi_M (Mi, pM, vlen) >= i)) ;
     ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end),
-        GBI (Ai, pA-1, vlen) <  i)) ;
+        GBi_A (Ai, pA-1, vlen) <  i)) ;
     ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end),
-        GBI (Ai, pA, vlen) >= i)) ;
+        GBi_A (Ai, pA, vlen) >= i)) ;
     ASSERT (GB_IMPLIES ((pB >  pB_start && pB < pB_end),
-        GBI (Bi, pB-1, vlen) <  i)) ;
+        GBi_B (Bi, pB-1, vlen) <  i)) ;
     ASSERT (GB_IMPLIES ((pB >= pB_start && pB < pB_end),
-        GBI (Bi, pB, vlen) >= i)) ;
+        GBi_B (Bi, pB, vlen) >= i)) ;
 
     if (p_i != NULL)
     { 

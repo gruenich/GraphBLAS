@@ -49,7 +49,7 @@ static inline bool GB_cumsum1_64    // cumulative sum of an array
     }
     count [n] = s ;
 
-    return (true) ;
+    return (true) ;     // do not check for integer overflow
 }
 
 //------------------------------------------------------------------------------

@@ -404,6 +404,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     uint64_t *Cp = NULL ; size_t Cp_size = 0 ; // FIXME
     const int64_t *Ch = NULL ; size_t Ch_size = 0 ;
     int C_ntasks = 0, C_nthreads ;
+    bool Ci_is_32 = false ; // FIXME
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
@@ -430,7 +431,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase1a:
         &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
         // computed by phase0:
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
+        Cnvec, Ch, Ci_is_32, C_to_M, C_to_A, C_to_B, false,
         // original input:
         (apply_mask) ? M : NULL, A, B, Werk)) ;
 

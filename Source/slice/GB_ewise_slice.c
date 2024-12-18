@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // JIT: possible: could use variants for sparsity formats.
 
@@ -21,6 +21,8 @@
 
 // M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full).
 // C: constructed as sparse or hypersparse in the caller.
+
+// FIXME: can C_to_[MAB] workspace be made uint32_t, depending on C?
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
@@ -39,6 +41,27 @@
 //------------------------------------------------------------------------------
 // GB_ewise_slice
 //------------------------------------------------------------------------------
+
+//  GrB_Info GB_ewise_slice
+//  (
+//      // output:
+//      GB_task_struct **p_TaskList,    // array of structs
+//      size_t *p_TaskList_size,        // size of TaskList
+//      int *p_ntasks,                  // # of tasks constructed
+//      int *p_nthreads,                // # of threads for eWise operation
+//      // input:
+//      const int64_t Cnvec,            // # of vectors of C
+//      const void *Ch,                 // vectors of C, if hypersparse
+//      const bool Ci_is_32,            // if true, Ch is 32-bit, else 64-bit
+//      const int64_t *restrict C_to_M, // mapping of C to M
+//      const int64_t *restrict C_to_A, // mapping of C to A
+//      const int64_t *restrict C_to_B, // mapping of C to B
+//      bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
+//      const GrB_Matrix M,             // mask matrix to slice (optional)
+//      const GrB_Matrix A,             // matrix to slice
+//      const GrB_Matrix B,             // matrix to slice
+//      GB_Werk Werk
+//  )
 
 GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
 {
@@ -72,7 +95,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 
-    int64_t *restrict Cwork = NULL ; size_t Cwork_size = 0 ;
+    GB_MDECL (Cwork, , u) ; size_t Cwork_size = 0 ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
 
@@ -121,40 +144,52 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     //--------------------------------------------------------------------------
 
     const int64_t vlen = A->vlen ;
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
     #ifdef GB_DEBUG
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Bh = B->h ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
     #endif
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bi = B->i ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
     bool Ch_is_Bh = (Ch != NULL && B->h != NULL && Ch == B->h) ;
+    ASSERT (GB_IMPLIES (Ch_is_Ah, Ci_is_32 == A->i_is_32)) ;
+    ASSERT (GB_IMPLIES (Ch_is_Bh, Ci_is_32 == B->i_is_32)) ;
 
-    const uint64_t *restrict Mp = NULL ;    // FIXME
-    const int64_t *restrict Mi = NULL ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    void *Mi = NULL ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
+    bool Mi_is_32 = false ;
     if (M != NULL)
     { 
-        Mp = M->p ;
-        Mi = M->i ;
         // Ch_is_Mh is true if either true on input (for GB_add, which denotes
         // that Ch is a deep copy of M->h), or if Ch is a shallow copy of M->h.
         Ch_is_Mh = Ch_is_Mh || (Ch != NULL && M_is_hyper && Ch == M->h) ;
+        Mi = M->i ;
+        Mi_is_32 = M->i_is_32 ;
     }
+    ASSERT (GB_IMPLIES (Ch_is_Mh, M != NULL && (Ci_is_32 == M->i_is_32))) ;
+
+    GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Ci_is_32) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Cwork = GB_MALLOC_WORK (Cnvec+1, int64_t, &Cwork_size) ;
+    int64_t anz = GB_nnz (A) ;
+    int64_t bnz = GB_nnz (A) ;
+    int64_t cnzmax = anz + bnz + Cnvec ;
+    bool Cwork_is_32 = (cnzmax < UINT32_MAX) ;
+    size_t cwsize = (Cwork_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    Cwork = GB_malloc_memory (Cnvec+1, cwsize, &Cwork_size) ;
     if (Cwork == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    GB_IPTR (Cwork, Cwork_is_32) ;
 
     //--------------------------------------------------------------------------
     // compute an estimate of the work for each vector of C
@@ -171,7 +206,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
         // get the C(:,j) vector
         //----------------------------------------------------------------------
 
-        int64_t j = GBH (Ch, k) ;
+        int64_t j = GBh_C (Ch, k) ;
 
         //----------------------------------------------------------------------
         // get the corresponding vector of A
@@ -186,7 +221,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                ASSERT (j == GBH (Ah, kA)) ;
+                ASSERT (j == GBh_A (Ah, kA)) ;
             }
         }
         else if (Ch_is_Ah)
@@ -194,7 +229,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             // A is hypersparse, but Ch is a shallow copy of A->h
             ASSERT (GB_IS_HYPERSPARSE (A)) ;
             kA = k ;
-            ASSERT (j == Ah [kA]) ;
+            ASSERT (j == GB_IGET (Ah, kA)) ;
         }
         else
         { 
@@ -216,7 +251,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             ASSERT (kB >= -1 && kB < B->nvec) ;
             if (kB >= 0)
             {
-                ASSERT (j == GBH (Bh, kB)) ;
+                ASSERT (j == GBh_B (Bh, kB)) ;
             }
         }
         else if (Ch_is_Bh)
@@ -224,7 +259,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             // B is hypersparse, but Ch is a shallow copy of B->h
             ASSERT (GB_IS_HYPERSPARSE (B)) ;
             kB = k ;
-            ASSERT (j == Bh [kB]) ;
+            ASSERT (j == GB_IGET (Bh, kB)) ;
         }
         else
         { 
@@ -240,19 +275,21 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
         ASSERT (kA >= -1 && kA < A->nvec) ;
         ASSERT (kB >= -1 && kB < B->nvec) ;
         const int64_t aknz = (kA < 0) ? 0 :
-            ((Ap == NULL) ? vlen : (Ap [kA+1] - Ap [kA])) ;
+            ((Ap == NULL) ? vlen : (GB_IGET (Ap, kA+1) - GB_IGET (Ap, kA))) ;
         const int64_t bknz = (kB < 0) ? 0 :
-            ((Bp == NULL) ? vlen : (Bp [kB+1] - Bp [kB])) ;
+            ((Bp == NULL) ? vlen : (GB_IGET (Bp, kB+1) - GB_IGET (Bp, kB))) ;
 
-        Cwork [k] = aknz + bknz + 1 ;
+        int64_t ckwork = aknz + bknz + 1 ;
+        GB_ISET (Cwork, k, ckwork) ;            // Cwork [k] = ckwork ;
     }
+    GB_ISET (Cwork, Cnvec, 0) ;                 // Cwork [Cnvec] = 0 ;
 
     //--------------------------------------------------------------------------
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, false, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
-    double cwork = (double) Cwork [Cnvec] ;
+    GB_cumsum (Cwork, Cwork_is_32, Cnvec, NULL, nthreads_for_Cwork, Werk) ;
+    double cwork = (double) GB_IGET (Cwork, Cnvec) ;
 
     //--------------------------------------------------------------------------
     // determine # of threads and tasks for the eWise operation
@@ -277,8 +314,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Cwork, false,   // FIXME
-        Cnvec, ntasks1, false) ;
+    GB_p_slice (Coarse, Cwork, Cwork_is_32, Cnvec, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
@@ -294,7 +330,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
         //----------------------------------------------------------------------
 
         int64_t k = Coarse [t] ;
-        int64_t klast  = Coarse [t+1] - 1 ;
+        int64_t klast = Coarse [t+1] - 1 ;
 
         if (k >= Cnvec)
         { 
@@ -352,7 +388,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             // get the vector of C
             //------------------------------------------------------------------
 
-            int64_t j = GBH (Ch, k) ;
+            int64_t j = GBh_C (Ch, k) ;
 
             //------------------------------------------------------------------
             // get the corresponding vector of A
@@ -377,8 +413,8 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
                 ASSERT (!GB_IS_HYPERSPARSE (A)) ;
                 kA = j ;
             }
-            int64_t pA_start = (kA < 0) ? (-1) : GBP (Ap, kA, vlen) ;
-            int64_t pA_end   = (kA < 0) ? (-1) : GBP (Ap, kA+1, vlen) ;
+            int64_t pA_start = (kA < 0) ? (-1) : GBp_A (Ap, kA, vlen) ;
+            int64_t pA_end   = (kA < 0) ? (-1) : GBp_A (Ap, kA+1, vlen) ;
             bool a_empty = (pA_end == pA_start) ;
 
             //------------------------------------------------------------------
@@ -404,8 +440,8 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
                 ASSERT (!GB_IS_HYPERSPARSE (B)) ;
                 kB = j ;
             }
-            int64_t pB_start = (kB < 0) ? (-1) : GBP (Bp, kB, vlen) ;
-            int64_t pB_end   = (kB < 0) ? (-1) : GBP (Bp, kB+1, vlen) ;
+            int64_t pB_start = (kB < 0) ? (-1) : GBp_B (Bp, kB, vlen) ;
+            int64_t pB_end   = (kB < 0) ? (-1) : GBp_B (Bp, kB+1, vlen) ;
             bool b_empty = (pB_end == pB_start) ;
 
             //------------------------------------------------------------------
@@ -438,8 +474,8 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
                     ASSERT (!GB_IS_HYPERSPARSE (M)) ;
                     kM = j ;
                 }
-                pM_start = (kM < 0) ? -1 : GBP (Mp, kM, vlen) ;
-                pM_end   = (kM < 0) ? -1 : GBP (Mp, kM+1, vlen) ;
+                pM_start = (kM < 0) ? -1 : GBp_M (Mp, kM, vlen) ;
+                pM_end   = (kM < 0) ? -1 : GBp_M (Mp, kM+1, vlen) ;
             }
             bool m_empty = (pM_end == pM_start) ;
 
@@ -447,7 +483,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
             // determine the # of fine-grain tasks to create for vector k
             //------------------------------------------------------------------
 
-            double ckwork = Cwork [k+1] - Cwork [k] ;
+            double ckwork = GB_IGET (Cwork, k+1) - GB_IGET (Cwork, k) ;
             int nfine = ckwork / target_task_size ;
             nfine = GB_IMAX (nfine, 1) ;
 
@@ -493,9 +529,9 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
                     double target_work = ((nfine-tfine) * ckwork) / nfine ;
                     int64_t pM, pA, pB ;
                     GB_slice_vector (&i, &pM, &pA, &pB,
-                        pM_start, pM_end, Mi,
-                        pA_start, pA_end, Ai,
-                        pB_start, pB_end, Bi,
+                        pM_start, pM_end, Mi,   Mi_is_32,
+                        pA_start, pA_end, A->i, A->i_is_32,
+                        pB_start, pB_end, B->i, B->i_is_32,
                         vlen, target_work) ;
 
                     // prior task ends at pM-1, pA-1, and pB-1
