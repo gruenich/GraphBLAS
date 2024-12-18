@@ -35,7 +35,7 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     // get C information 
     //--------------------------------------------------------------------------
 
-    // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE(i) if C(i,j) is a
+    // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE (i) if C(i,j) is a
     // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
     // of C (j = Ch [k] if hypersparse or j = k if standard sparse), and
     // where bucket is the bucket assignment for C(i,j).  This phase does not

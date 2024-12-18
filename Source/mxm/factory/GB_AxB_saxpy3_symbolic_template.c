@@ -513,8 +513,8 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 for (int64_t hash = 0 ; hash < hash_size ; hash++)
                 {
                     int64_t hf = Hf [hash] ;
-                    int64_t h = (hf >> 2) ;     // empty (0), or a 1-based 
-                    int64_t f = (hf & 3) ;      // 0 if empty or 1 if occupied
+                    int64_t h = (hf >> 2) ; // empty (0), or a 1-based index
+                    int64_t f = (hf & 3) ;  // 0 if empty or 1 if occupied
                     if (f == 1) ASSERT (h >= 1 && h <= cvlen) ;
                     ASSERT (hf == 0 || f == 1) ;
                     if (f == 1) mjcount2++ ;

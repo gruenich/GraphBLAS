@@ -29,8 +29,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
-    int pr,                 // print level; if negative, ignore nzombie
-                            // conditions and use GB_ZOMBIE(pr) for diagnostics
+    int pr,                 // print level (see GB_check.h)
     FILE *f,                // file for output (or stdout if f is NULL)
     const char *kind        // "matrix" or "vector" (only for printing diag.)
 )
@@ -47,9 +46,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool is_sparse = GB_IS_SPARSE (A) ;
 
     bool ignore_zombies = false ;
-    if (pr < 0)
+    if (pr > 5)
     { 
-        pr = GB_DEZOMBIE (pr) ;
+        pr = pr - 6 ;
         ignore_zombies = true ;
     }
     pr = GB_IMIN (pr, GxB_COMPLETE_VERBOSE) ;

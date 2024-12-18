@@ -543,7 +543,7 @@
         //      pending tuples inserted here, by GxB_subassign.
 
         // (2) zombie entries.  These are entries that are still present in the
-        // pattern but marked for deletion (via GB_ZOMBIE(i) for the row index).
+        // pattern but marked for deletion (via GB_ZOMBIE (i) for row i).
 
         // For the current GxB_subassign, there are 16 cases to handle,
         // all combinations of the following options:
@@ -841,7 +841,7 @@
             //      ( X ):
 
             //          C(I(i),J(j)) was a zombie, and still is a zombie.
-            //          row index is < 0, and actual index is GB_DEZOMBIE(I(i))
+            //          row index is < 0, and actual index is GB_DEZOMBIE (I(i))
 
             //      ( C ):
 
@@ -1572,7 +1572,7 @@
     {                                                                       \
         /* no pending tuples, so skip phase 2 */                            \
         GB_FREE_ALL ;                                                       \
-        ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB_ZOMBIE (GB0)) ;    \
+        ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB0_Z) ;              \
         return (GrB_SUCCESS) ;                                              \
     }                                                                       \
     /* ensure C->Pending is large enough to handle total_new_npending */    \
@@ -1707,7 +1707,7 @@
     Pending->n += total_new_npending ;                                      \
     Pending->sorted = pending_sorted ;                                      \
     GB_FREE_ALL ;                                                           \
-    ASSERT_MATRIX_OK (C, "C with pending tuples", GB_ZOMBIE (GB0)) ;        \
+    ASSERT_MATRIX_OK (C, "C with pending tuples", GB0_Z) ;                  \
     return (GrB_SUCCESS) ;
 
 //==============================================================================

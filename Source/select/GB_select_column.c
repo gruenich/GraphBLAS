@@ -37,7 +37,7 @@ GrB_Info GB_select_column
 
     GrB_Info info ;
     ASSERT_INDEXUNARYOP_OK (op, "idxunop for GB_select_column", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for select column", GB_ZOMBIE (GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for select column", GB0_Z) ;
     GB_Opcode opcode = op->opcode ;
     ASSERT (opcode == GB_COLINDEX_idxunop_code ||
             opcode == GB_COLLE_idxunop_code ||

@@ -368,9 +368,9 @@ GB_Pending Pending ;        // list of pending tuples
 // has been marked for deletion, but has not been deleted yet because it is
 // more efficient to delete all zombies all at once, rather than one (or a few)
 // at a time.  An entry A(i,j) is marked as a zombie by 'zombifying' its index
-// via GB_ZOMBIE(i).  A zombie index is negative, and the actual index can be
-// obtained by GB_UNZOMBIE(i).  GB_ZOMBIE(i) is a function that is its own
-// inverse: GB_ZOMBIE(GB_ZOMBIE(x))=x for all x.
+// via GB_ZOMBIE (i).  A zombie index is negative, and the actual index can be
+// obtained by GB_UNZOMBIE (i).  GB_ZOMBIE (i) is a function that is its own
+// inverse: GB_ZOMBIE (GB_ZOMBIE (x))=x for all x.
 
 // Using zombies allows entries to be marked for deletion.  Their index is
 // still important, for two reasons: (1) the indices in each vector of the

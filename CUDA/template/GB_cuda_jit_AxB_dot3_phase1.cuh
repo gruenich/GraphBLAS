@@ -107,7 +107,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
 
     // FIXME: use (k << 2) not (k << 4)
 
-    // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE(i) if C(i,j) is a
+    // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE (i) if C(i,j) is a
     // zombie, or (k << 4) + bucket otherwise, where C(:,j) is the kth vector
     // of C (j = Ch [k] if hypersparse or j = k if standard sparse), and
     // where bucket is the bucket assignment for C(i,j).
@@ -311,7 +311,7 @@ __global__ void GB_jit_AxB_dot3_phase1_kernel
             //------------------------------------------------------------------
 
             // encode the bucket or zombie status in the row index of C(i,j)
-            Ci [pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_ZOMBIE(i) << 4)
+            Ci [pM] = (bucket == GB_BUCKET_ZOMBIE) * ( GB_ZOMBIE (i) << 4)
                     + (bucket != GB_BUCKET_ZOMBIE) * ((k << 4) + bucket) ;
 
             // each thread counts its own bucket sizes

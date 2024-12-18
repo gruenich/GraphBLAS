@@ -46,7 +46,7 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
 
     int64_t *__restrict__ Ci = (int64_t *) C->i ;   // for zombies, or vector k
 
-    // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE(i) if C(i,j) is a
+    // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE (i) if C(i,j) is a
     // zombie, or k otherwise, where C(:,j) is the kth vector of C (j = Ch [k]
     // if hypersparse or j = k if standard sparse).
 
