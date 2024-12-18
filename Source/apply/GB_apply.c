@@ -9,6 +9,8 @@
 
 // DONE: 32/64 bit
 
+#define GB_DEBUG
+
 // C<M> = accum (C, op(A)) or accum (C, op(A)')
 
 // GB_apply does the work for GrB_*_apply, including the binary op variants.
@@ -334,6 +336,10 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the M
     //--------------------------------------------------------------------------
+
+    ASSERT_MATRIX_OK (T, "T before convert_int, GB_apply", GB0) ;
+    GB_OK (GB_convert_int (T, false, false)) ;  // FIXME
+    ASSERT_MATRIX_OK (T, "T for accum/mask; T=apply(A) output", GB0) ;
 
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
         Mask_struct, Werk)) ;

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 {
     GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_output ;
@@ -17,7 +17,7 @@
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (p = 0 ; p < bnz ; p++)
     { 
-        if (!GBB_B (Bb, p)) continue ;  // FIXME
+        if (!GBb_B (Bb, p)) continue ;
         GB_DECLAREB (bij) ;
         GB_GETB (bij, Bx, p, false) ;
         GB_EWISEOP (Cx, p, x, bij, 0, 0) ;

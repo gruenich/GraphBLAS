@@ -7,19 +7,21 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 #if GB_DEPENDS_ON_I
 
     // cij = op (aij)
     #define GB_APPLY_OP(pC,pA)                      \
     {                                               \
-        int64_t i = GBI_A (Ai, pA, avlen) ; /* FIXME*/  \
+        int64_t i = GBi_A (Ai, pA, avlen) ;         \
         GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y) ;  \
     }
 
 #else
 
     // cij = op (aij)
-    #define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pC, A_iso, i, j, y)
+    #define GB_APPLY_OP(pC,pA) GB_UNOP (Cx, pC, Ax, pA, A_iso, i, j, y)
 
 #endif
 
@@ -29,9 +31,7 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
     GB_GET_CALLBACKS ;
     GB_C_TYPE *Cx = (GB_C_TYPE *) Cx_out ;
     GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;
-    #if GB_A_IS_BITMAP
     int8_t *restrict Ab = A->b ;
-    #endif
     GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
     #if GB_DEPENDS_ON_Y
     GB_Y_TYPE y = (*((GB_Y_TYPE *) ythunk)) ;
@@ -39,17 +39,16 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_APPLY_UNOP_PROTO (GB_jit_kernel)
 
     #if GB_DEPENDS_ON_J
     {
-        const uint64_t *restrict Ap = A->p ;    // FIXME
-        const int64_t *restrict Ah = A->h ;     // FIXME
-        const int64_t *restrict Ai = A->i ;     // FIXME
+        GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+        GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+        GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
         int64_t avlen = A->vlen ;
-        #include "template/GB_apply_unop_ijp.c"
+        #include "template/GB_apply_unop_ijp_template.c"
     }
     #else
     {
-        #include "template/GB_apply_unop_ip.c"
+        #include "template/GB_apply_unop_ip_template.c"
     }
-
     #endif
     return (GrB_SUCCESS) ;
 }

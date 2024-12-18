@@ -15,6 +15,7 @@
     int64_t p ;
     if (Ab == NULL)
     { 
+        // C and A are sparse, hypersparse, or full
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {
@@ -24,7 +25,7 @@
     }
     else
     { 
-        // bitmap case, no transpose; A->b already memcpy'd into C->b
+        // C and A are bitmap
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (p = 0 ; p < anz ; p++)
         {

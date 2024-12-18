@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Extract a single entry, x = v(i), typecasting from the type of v to the type
 // of x, as needed.
 

@@ -704,7 +704,7 @@
                 }
                 break ;
 
-            case GB_FREXPX_unop_code :  // z = frexpx (x), mantissa of C11 frexp
+            case GB_FREXPX_unop_code :  // z = frexpx (x), mantissa of frexp
 
                 switch (code1)
                 {
@@ -714,7 +714,7 @@
                 }
                 break ;
 
-            case GB_FREXPE_unop_code :  // z = frexpe (x), exponent of C11 frexp
+            case GB_FREXPE_unop_code :  // z = frexpe (x), exponent of frexp
 
                 switch (code1)
                 {

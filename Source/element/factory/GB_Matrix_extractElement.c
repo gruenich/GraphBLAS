@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Extract the value of single scalar, x = A(row,col), typecasting from the
 // type of A to the type of x, as needed.
 

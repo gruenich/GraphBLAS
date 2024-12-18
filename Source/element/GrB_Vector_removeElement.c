@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Removes a single entry, V (i), from the vector V.
 
 #include "GB.h"

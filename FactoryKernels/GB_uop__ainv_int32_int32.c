@@ -67,7 +67,7 @@ GrB_Info GB (_uop_apply__ainv_int32_int32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "apply/template/GB_apply_unop_template.c"
+    #include "apply/factory/GB_apply_unop_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

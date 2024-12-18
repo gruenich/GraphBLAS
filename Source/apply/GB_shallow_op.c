@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 // C = op (A), called only by GB_apply.
 
@@ -20,9 +22,8 @@
 // The values are typically not a shallow copy, unless no typecasting is needed
 // and the operator is an identity operator.
 
-// The pattern is always a shallow copy.  No errors are checked except for
-// out-of-memory conditions.  This function is not user-callable.  Shallow
-// matrices are never passed back to the user.
+// The pattern is always a shallow copy; C and A have the same integer sizes.
+// Shallow matrices are never passed back to the user.
 
 // Compare this function with GB_shallow_copy.c.
 
@@ -96,7 +97,7 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     GrB_Info info ;
     info = GB_new (&C, // any sparsity, existing header
         ztype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0, /* FIXME: */ false, false) ;
+        GB_sparsity (A), A->hyper_switch, 0, A->p_is_32, A->i_is_32) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -109,6 +110,8 @@ GrB_Info GB_shallow_op      // create shallow matrix and apply operator
     C->h = A->h ;                       // C->h is of size A->plen
     C->p_size = A->p_size ;
     C->h_size = A->h_size ;
+    C->p_is_32 = A->p_is_32 ;
+    C->i_is_32 = A->i_is_32 ;
     C->plen = A->plen ;                 // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
     C->nvec_nonempty = A->nvec_nonempty ;

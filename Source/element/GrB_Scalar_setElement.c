@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Set a single scalar, s = x, typecasting from the type of x to
 // the type of s as needed.
 

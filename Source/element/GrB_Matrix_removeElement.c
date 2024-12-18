@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Removes a single entry, C (row,col), from the matrix C.
 
 #include "GB.h"
