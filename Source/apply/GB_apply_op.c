@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Cx = op (A)
 
 // Cx and A->x may be aliased.
