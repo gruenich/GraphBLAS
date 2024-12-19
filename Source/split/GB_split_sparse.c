@@ -78,7 +78,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const bool Ap_is_32 = A->p_is_32 ;
     const bool Ai_is_32 = A->i_is_32 ;
 
-    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+    bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
     int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
 
@@ -226,7 +226,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
                 GB_ISET (Cp, kC, cknz) ;            // Cp [kC] = cknz ;
                 if (A_is_hyper)
                 { 
-                    int64_t jC = GB_GET (Ah, k) - avstart ;
+                    int64_t jC = GB_IGET (Ah, k) - avstart ;
                     GB_ISET (Ch, kC, jC) ;          // Ch [kC] = jC ;
                 }
             }

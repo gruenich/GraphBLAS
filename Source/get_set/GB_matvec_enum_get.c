@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: add 32/64 matrix get/set
+
 #include "get_set/GB_get_set.h"
 
 GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)

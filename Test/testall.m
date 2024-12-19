@@ -170,7 +170,8 @@ logstat ('test137'    ,s, J400 , F110 ) ; % GrB_eWiseMult, FIRST and SECOND
 logstat ('test124'    ,t, J4   , F1   ) ; % GrB_extract, case 6
 logstat ('test133'    ,t, J40  , F10  ) ; % mask operations (GB_masker)
 logstat ('test176'    ,t, J40  , F10  ) ; % GrB_assign, method 09, 11
-logstat ('test197'    ,t, J40  , F10  ) ; % large sparse split
+% logstat ('test197'    ,t, J40  , F10  ) ; % large sparse split
+logstat ('test197', t, J4040, F1100) ;
 logstat ('test201'    ,t, J4   , F1   ) ; % iso reduce to vector, scalar
 logstat ('test208'    ,t, J4   , F1   ) ; % iso apply, bind 1st and 2nd
 logstat ('test214'    ,t, J40  , F10  ) ; % C<M>=A'*B (tricount)
@@ -279,7 +280,8 @@ logstat ('test224'    ,t, J4   , F1   ) ; % unpack/pack
 
 % 1 to 10 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
-logstat ('test191'    ,t, J40  , F10  ) ; % split
+% logstat ('test191'    ,t, J40  , F10  ) ; % split
+logstat ('test191', t, J4040, F1100) ;
 logstat ('test150'    ,t, J0   , F0   ) ; % mxm zombies, typecasting
 logstat ('test240'    ,t, J40  , F10  ) ; % dot4, saxpy4, and saxpy5
 logstat ('test237'    ,t, J40  , F10  ) ; % GrB_mxm (saxpy4)

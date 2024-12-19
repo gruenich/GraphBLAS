@@ -133,6 +133,12 @@ GrB_Info GB_split                   // split a matrix
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    for (int64_t k = 0 ; k < m*n ; k++)
+    {
+        GrB_Matrix C = Tiles [k] ;
+        GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
+    }
+
     GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
