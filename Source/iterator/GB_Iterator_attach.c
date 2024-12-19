@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 #define GB_FREE_ALL ;
 
@@ -63,9 +65,12 @@ GrB_Info GB_Iterator_attach
     iterator->avlen = A->vlen ;
     iterator->avdim = A->vdim ;
     iterator->anvec = A->nvec ;
-    iterator->Ap = A->p ;       // FIXME
-    iterator->Ah = A->h ;       // FIXME
-    iterator->Ai = A->i ;       // FIXME
+    iterator->Ap32 = (A->p_is_32) ? A->p : NULL ;
+    iterator->Ap64 = (A->p_is_32) ? NULL : A->p ;
+    iterator->Ah32 = (A->i_is_32) ? A->h : NULL ;
+    iterator->Ah64 = (A->i_is_32) ? NULL : A->h ;
+    iterator->Ai32 = (A->i_is_32) ? A->i : NULL ;
+    iterator->Ai64 = (A->i_is_32) ? NULL : A->i ;
     iterator->Ab = A->b ;
     iterator->Ax = A->x ;
     iterator->type_size = A->type->size ;

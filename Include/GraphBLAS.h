@@ -1613,7 +1613,8 @@ typedef enum
 
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
     GxB_INDEX_INTEGER = 7053,       // integer size control for row/col indices
-    // FIXME: name???  what do we call this??  This setting defines the
+
+    // TODO: what do we call this?  This setting defines the
     // integers used for the A->p array, internally.  It can be 32 bits if
     // the max # entries in a matrix is < 2^32, or 64 bits otherwise.
     // OK, but what do we call this for GrB_set/get?
@@ -7014,8 +7015,6 @@ GrB_Info GxB_Matrix_reshapeDup // reshape a GrB_Matrix into another GrB_Matrix
 // GxB_Iterator: an object that iterates over the entries of a matrix or vector
 //==============================================================================
 
-// FIXME: 32/64 bit: add iterator
-
 /* Example usage:
 
 single thread iteration of a whole matrix, one row at a time (in the
@@ -7115,19 +7114,21 @@ struct GB_Iterator_opaque
     int64_t avlen ;             // length of each vector in the matrix
     int64_t avdim ;             // number of vectors in the matrix dimension
     int64_t anvec ;             // # of vectors present in the matrix
-//  FIXME: for iterator: change Ap, Ah, Ai 
-    const uint64_t *GB_restrict Ap ;     // pointers for sparse and hypersparse
-    const int64_t *GB_restrict Ah ;      // vector names for hypersparse
-    const int8_t  *GB_restrict Ab ;      // bitmap
-    const int64_t *GB_restrict Ai ;      // indices for sparse and hypersparse
-    const void    *GB_restrict Ax ;      // values for all 4 data structures
+
+    // Ap, Ah, Ai: can be 32 bit or 64-bit integers
+    const uint32_t *GB_restrict Ap32 ; // offsets for sparse/hypersparse
+    const uint64_t *GB_restrict Ap64 ;
+    const uint32_t *GB_restrict Ah32 ; // vector names for hypersparse
+    const uint64_t *GB_restrict Ah64 ;
+    const uint32_t *GB_restrict Ai32 ; // indices for sparse/hypersparse
+    const uint64_t *GB_restrict Ai64 ;
+    const int8_t   *GB_restrict Ab ;   // bitmap
+    const void     *GB_restrict Ax ;   // values for all 4 data structures
+
     size_t type_size ;          // size of the type of A
     int A_sparsity ;            // sparse, hyper, bitmap, or full
     bool iso ;                  // true if A is iso-valued, false otherwise
     bool by_col ;               // true if A is held by column, false if by row
-//  FIXME: for iterator:
-//  bool p_is_32 ;              // if true, Ap is 32-bit, else 64-bit
-//  bool i_is_32 ;              // if true, Ah and Ai are 32-bit, else 64-bit
 } ;
 
 // GxB_Iterator_new: create a new iterator, not attached to any matrix/vector
@@ -7191,8 +7192,12 @@ GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
         (iterator->A_sparsity <= GxB_SPARSE) ?                              \
         (                                                                   \
             /* matrix is sparse or hypersparse */                           \
-            iterator->pstart = iterator->Ap [iterator->k],                  \
-            iterator->pend = iterator->Ap [iterator->k+1],                  \
+            iterator->pstart = ((iterator->Ap32 != NULL) ?                  \
+                iterator->Ap32 [iterator->k] :                              \
+                iterator->Ap64 [iterator->k]),                              \
+            iterator->pend =   ((iterator->Ap32 != NULL) ?                  \
+                iterator->Ap32 [iterator->k+1] :                            \
+                iterator->Ap64 [iterator->k+1]),                            \
             iterator->p = iterator->pstart,                                 \
             ((iterator->p >= iterator->pend) ? GrB_NO_VALUE : GrB_SUCCESS)  \
         )                                                                   \
@@ -7241,8 +7246,6 @@ GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
         )                                                                   \
     )                                                                       \
 )
-
-
 //------------------------------------------------------------------------------
 // GB_Iterator_rc_getj: get index of current vector for row/col iterator
 //------------------------------------------------------------------------------
@@ -7259,7 +7262,9 @@ GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
         (iterator->A_sparsity == GxB_HYPERSPARSE) ?                         \
         (                                                                   \
             /* return the name of kth vector: j = Ah [k] if it appears */   \
-            iterator->Ah [iterator->k]                                      \
+            ((iterator->Ah32 != NULL) ?                                     \
+                iterator->Ah32 [iterator->k] :                              \
+                iterator->Ah64 [iterator->k])                               \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -7275,14 +7280,9 @@ GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator) ;
 
 #define GB_Iterator_rc_geti(iterator)                                       \
 (                                                                           \
-    (iterator->Ai != NULL) ?                                                \
-    (                                                                       \
-        iterator->Ai [iterator->p]                                          \
-    )                                                                       \
-    :                                                                       \
-    (                                                                       \
-        (iterator->p - iterator->pstart)                                    \
-    )                                                                       \
+     (iterator->Ai32 != NULL) ? iterator->Ai32 [iterator->p] :              \
+    ((iterator->Ai64 != NULL) ? iterator->Ai64 [iterator->p] :              \
+     (iterator->p - iterator->pstart))                                      \
 )
 
 //==============================================================================
@@ -7792,8 +7792,7 @@ GrB_Index GxB_Vector_Iterator_getpmax (GxB_Iterator iterator) ;
 // Returns GrB_SUCCESS if the iterator is at an entry that exists in the
 // vector, or GxB_EXHAUSTED if the iterator is exhausted.
 
-GrB_Info GB_Vector_Iterator_bitmap_seek (GxB_Iterator iterator,
-    GrB_Index unused) ; // unused parameter to be removed in v8.x
+GrB_Info GB_Vector_Iterator_bitmap_seek (GxB_Iterator iterator) ;
 
 GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
 
@@ -7811,7 +7810,7 @@ GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p) ;
         iterator->p = q,                                                    \
         (iterator->A_sparsity == GxB_BITMAP) ?                              \
         (                                                                   \
-            GB_Vector_Iterator_bitmap_seek (iterator, 0)                    \
+            GB_Vector_Iterator_bitmap_seek (iterator)                       \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -7854,7 +7853,7 @@ GrB_Info GxB_Vector_Iterator_next (GxB_Iterator iterator) ;
         (iterator->A_sparsity == GxB_BITMAP) ?                              \
         (                                                                   \
             /* bitmap: seek to the next entry present in the bitmap */      \
-            GB_Vector_Iterator_bitmap_seek (iterator, 0)                    \
+            GB_Vector_Iterator_bitmap_seek (iterator)                       \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -7900,7 +7899,8 @@ GrB_Index GxB_Vector_Iterator_getIndex (GxB_Iterator iterator) ;
 
 #define GxB_Vector_Iterator_getIndex(iterator)                              \
 (                                                                           \
-    ((iterator->Ai != NULL) ? iterator->Ai [iterator->p] : iterator->p)     \
+     (iterator->Ai32 != NULL) ? iterator->Ai32 [iterator->p] :              \
+    ((iterator->Ai64 != NULL) ? iterator->Ai64 [iterator->p] : iterator->p) \
 )
 
 //==============================================================================

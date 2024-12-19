@@ -5,6 +5,12 @@
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//------------------------------------------------------------------------------
+
+// DONE: 32/64 bit
+
+#define GB_DEBUG
+
 #include "GB.h"
 #include "slice/include/GB_search_for_vector.h"
 
@@ -86,14 +92,28 @@ static inline GrB_Info GB_check_for_end_of_vector (GxB_Iterator iterator)
                 // the kth vector is done; move to the next non-empty vector
                 iterator->pstart = iterator->pend ;
                 iterator->k++ ;
-                while (iterator->Ap [iterator->k+1] == iterator->pend)  // FIXME
-                { 
-                    // iterator->k is an empty vector; move to the next one
-                    iterator->k++ ;
-                    ASSERT (iterator->k < iterator->anvec) ;
+                if (iterator->Ap32 != NULL)
+                {
+                    while (iterator->Ap32 [iterator->k+1] == iterator->pend)
+                    { 
+                        // iterator->k is an empty vector; move to the next one
+                        iterator->k++ ;
+                        ASSERT (iterator->k < iterator->anvec) ;
+                    }
+                    // iterator->k is now the next non-empty vector
+                    iterator->pend = iterator->Ap32 [iterator->k+1] ;
                 }
-                // iterator->k is now the next non-empty vector
-                iterator->pend = iterator->Ap [iterator->k+1] ; // FIXME
+                else
+                {
+                    while (iterator->Ap64 [iterator->k+1] == iterator->pend)
+                    { 
+                        // iterator->k is an empty vector; move to the next one
+                        iterator->k++ ;
+                        ASSERT (iterator->k < iterator->anvec) ;
+                    }
+                    // iterator->k is now the next non-empty vector
+                    iterator->pend = iterator->Ap64 [iterator->k+1] ;
+                }
                 return (GrB_SUCCESS) ;
             }
         }
@@ -175,8 +195,7 @@ GrB_Info GxB_Matrix_Iterator_seek
     { 
         // seek to the first entry of the first vector A(:,0)
         iterator->pstart = 0 ;
-        iterator->pend = (iterator->Ap != NULL) ?   // FIXME
-            iterator->Ap [1] : iterator->avlen ;
+        iterator->pend = GBp (iterator->Ap, 1, iterator->avlen) ;
         iterator->p = 0 ;
         iterator->k = 0 ;
         // move to the next non-empty vector if A(:,0) is empty
@@ -193,10 +212,20 @@ GrB_Info GxB_Matrix_Iterator_seek
             case GxB_HYPERSPARSE : 
             { 
                 // find the vector k that contains position p
-                iterator->k = GB_search_for_vector_64 (iterator->Ap, // FIXME
-                    p, 0, iterator->anvec, iterator->avlen) ;
-                iterator->pstart = iterator->Ap [iterator->k] ; // FIXME
-                iterator->pend = iterator->Ap [iterator->k+1] ; // FIXME
+                if (iterator->Ap32 != NULL)
+                {
+                    iterator->k = GB_search_for_vector_32 (iterator->Ap32,
+                        p, 0, iterator->anvec, iterator->avlen) ;
+                    iterator->pstart = iterator->Ap32 [iterator->k] ;
+                    iterator->pend   = iterator->Ap32 [iterator->k+1] ;
+                }
+                else
+                {
+                    iterator->k = GB_search_for_vector_64 (iterator->Ap64,
+                        p, 0, iterator->anvec, iterator->avlen) ;
+                    iterator->pstart = iterator->Ap64 [iterator->k] ;
+                    iterator->pend   = iterator->Ap64 [iterator->k+1] ;
+                }
             }
             break ;
             case GxB_BITMAP : 
@@ -255,55 +284,38 @@ void GxB_Matrix_Iterator_getIndex
     GrB_Index *col
 )
 {
+    uint64_t i, j ;
+
     // get row and column index of current entry, for matrix iterator
     switch (iterator->A_sparsity)
     {
         default:  
         case GxB_SPARSE : 
-        {
-            if (iterator->by_col)
-            { 
-                (*row) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
-                (*col) = (GrB_Index) (iterator->k) ;
-            }
-            else
-            { 
-                (*row) = (GrB_Index) (iterator->k) ;
-                (*col) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
-            }
-        }
+            i = GB_IGET (iterator->Ai, iterator->p) ;
+            j = iterator->k ;
         break ;
 
         case GxB_HYPERSPARSE : 
-        {
-            if (iterator->by_col)
-            { 
-                (*row) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
-                (*col) = (GrB_Index) (iterator->Ah [iterator->k]) ; // FIXME
-            }
-            else
-            { 
-                (*row) = (GrB_Index) (iterator->Ah [iterator->k]) ; // FIXME
-                (*col) = (GrB_Index) (iterator->Ai [iterator->p]) ; // FIXME
-            }
-        }
+            i = GB_IGET (iterator->Ai, iterator->p) ;
+            j = GB_IGET (iterator->Ah, iterator->k) ;
         break ;
 
         case GxB_BITMAP : 
         case GxB_FULL : 
-        {
-            if (iterator->by_col)
-            { 
-                (*row) = (GrB_Index) (iterator->p - iterator->pstart) ;
-                (*col) = (GrB_Index) (iterator->k) ;
-            }
-            else
-            { 
-                (*row) = (GrB_Index) (iterator->k) ;
-                (*col) = (GrB_Index) (iterator->p - iterator->pstart) ;
-            }
-        }
+            i = iterator->p - iterator->pstart ;
+            j = iterator->k ;
         break ;
+    }
+
+    if (iterator->by_col)
+    { 
+        (*row) = i ;
+        (*col) = j ;
+    }
+    else
+    { 
+        (*row) = j ;
+        (*col) = i ;
     }
 }
 

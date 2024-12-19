@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 
 GrB_Info GxB_Iterator_free (GxB_Iterator *iterator)

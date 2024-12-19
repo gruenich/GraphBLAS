@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 
 #undef GxB_Vector_Iterator_getpmax
@@ -30,8 +32,7 @@ GrB_Info GxB_Vector_Iterator_attach
 
 GrB_Info GB_Vector_Iterator_bitmap_seek
 (
-    GxB_Iterator iterator,
-    GrB_Index unused // note: unused parameter to be removed in v8.x
+    GxB_Iterator iterator
 )
 {
     for ( ; iterator->p < iterator->pmax ; iterator->p++)
@@ -72,6 +73,8 @@ GrB_Index GxB_Vector_Iterator_getp (GxB_Iterator iterator)
 GrB_Index GxB_Vector_Iterator_getIndex (GxB_Iterator iterator)
 { 
     // get the index of a vector entry
-    return ((iterator->Ai != NULL) ? iterator->Ai [iterator->p] : iterator->p) ;
+    return (
+     iterator->Ai32 ? iterator->Ai32 [iterator->p] :
+    (iterator->Ai64 ? iterator->Ai64 [iterator->p] : iterator->p)) ;
 }
 
