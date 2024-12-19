@@ -129,7 +129,7 @@ static inline void GB_ek_slice_ntasks
 //  p0 = GBp (Ap, k, avlen) ;
 //  p1 = GBp (Ap, k+1, avlen) ;
 
-#define GB_pET_PA(pA_start,pA_end,tid,k,kfirst,klast,pstart_slice,p0,p1)    \
+#define GB_GET_PA(pA_start,pA_end,tid,k,kfirst,klast,pstart_slice,p0,p1)    \
     int64_t pA_start, pA_end ;                                              \
     if (k == kfirst)                                                        \
     {                                                                       \

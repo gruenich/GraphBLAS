@@ -159,7 +159,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     // C = reshape (T), keeping the same format (by_col)
     //--------------------------------------------------------------------------
 
-    if (GB_IS_FULL (T) || GB_IS_BITMAP (T))
+    if (vlen_new == T->vlen && vdim_new == T->vdim)
     {
 
         //----------------------------------------------------------------------
@@ -177,6 +177,27 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             // copy T into C
             GB_OK (GB_dup (&C, T, Werk)) ;
         }
+
+    }
+    else if (GB_IS_FULL (T) || GB_IS_BITMAP (T))
+    {
+
+        //----------------------------------------------------------------------
+        // T and C are both full or both bitmap
+        //----------------------------------------------------------------------
+
+        if (in_place)
+        { 
+            // move T into C
+            C = T ;
+            T = NULL ;
+        }
+        else
+        { 
+            // copy T into C
+            GB_OK (GB_dup (&C, T, Werk)) ;
+        }
+
         // change the size of C
         C->vlen = vlen_new ;
         C->vdim = vdim_new ;
