@@ -142,7 +142,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     // C has the same type as z for the multiply operator, z=op(x,y)
 
-    GrB_Index cvlen, cvdim, cnzmax, cnvec ;
+    uint64_t cvlen, cvdim, cnzmax, cnvec ;
 
     bool ok = GB_int64_multiply (&cvlen, avlen, bvlen) ;
     ok = ok & GB_int64_multiply (&cvdim, avdim, bvdim) ;

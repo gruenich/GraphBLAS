@@ -11,7 +11,7 @@
 
 GrB_Info GrB_Vector_size    // get the dimension of a vector
 (
-    GrB_Index *n,           // dimension is n-by-1
+    uint64_t *n,            // dimension is n-by-1
     const GrB_Vector v      // vector to query
 )
 { 

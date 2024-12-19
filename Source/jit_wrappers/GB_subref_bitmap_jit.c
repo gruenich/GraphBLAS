@@ -19,12 +19,12 @@ GrB_Info GB_subref_bitmap_jit
     // input:
     GrB_Matrix A,
     // I:
-    const GrB_Index *I,
+    const uint64_t *I,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const GrB_Index *J,
+    const uint64_t *J,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],

@@ -55,7 +55,7 @@ double GB_helper0 (void)
 void GB_helper1              // convert zero-based indices to one-based
 (
     double *restrict I_double,      // output array
-    const GrB_Index *restrict I,    // input array
+    const uint64_t *restrict I,     // input array
     int64_t nvals                   // size of input and output arrays
 )
 {
@@ -196,30 +196,30 @@ bool GB_helper3i        // return true if OK, false on error
 }
 
 //------------------------------------------------------------------------------
-// GB_helper4: find the max entry in a list of type GrB_Index
+// GB_helper4: find the max entry in a list of type uint64_t
 //------------------------------------------------------------------------------
 
 bool GB_helper4             // return true if OK, false on error
 (
-    const GrB_Index *restrict I,    // array of size len
+    const uint64_t *restrict I,    // array of size len
     const int64_t len,
-    GrB_Index *List_max     // also compute the max entry in the list (1-based,
+    uint64_t *List_max      // also compute the max entry in the list (1-based,
                             // which is max(I)+1)
 )
 {
 
     GB_NTHREADS_HELPER (len) ;
 
-    GrB_Index listmax = 0 ;
+    uint64_t listmax = 0 ;
 
-    GB_ALLOCATE_WORK (GrB_Index) ;
+    GB_ALLOCATE_WORK (uint64_t) ;
 
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (tid = 0 ; tid < nthreads ; tid++)
     {
         int64_t k1, k2 ;
-        GrB_Index my_listmax = 0 ;
+        uint64_t my_listmax = 0 ;
         GB_PARTITION (k1, k2, len, tid, nthreads) ;
         for (int64_t k = k1 ; k < k2 ; k++)
         {
@@ -247,14 +247,14 @@ bool GB_helper4             // return true if OK, false on error
 
 void GB_helper5              // construct pattern of S
 (
-    GrB_Index *restrict Si,         // array of size anz
-    GrB_Index *restrict Sj,         // array of size anz
-    const GrB_Index *restrict Mi,   // array of size mnz, M->i, may be NULL
-    const GrB_Index *restrict Mj,   // array of size mnz,
+    uint64_t *restrict Si,          // array of size anz
+    uint64_t *restrict Sj,          // array of size anz
+    const uint64_t *restrict Mi,    // array of size mnz, M->i, may be NULL
+    const uint64_t *restrict Mj,    // array of size mnz,
     const int64_t mvlen,            // M->vlen
-    GrB_Index *restrict Ai,         // array of size anz, A->i, may be NULL
+    uint64_t *restrict Ai,          // array of size anz, A->i, may be NULL
     const int64_t avlen,            // M->vlen
-    const GrB_Index anz
+    const uint64_t anz
 )
 {
 
@@ -281,8 +281,8 @@ void GB_helper5              // construct pattern of S
 
 void GB_helper7              // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *restrict Kx,          // array of size mnz
-    const GrB_Index mnz
+    uint64_t *restrict Kx,           // array of size mnz
+    const uint64_t mnz
 )
 {
 
@@ -306,7 +306,7 @@ void GB_helper8
 (
     GB_void *C,         // output array of size nvals * s
     GB_void *A,         // input scalar of size s
-    GrB_Index nvals,    // size of C
+    uint64_t nvals,     // size of C
     size_t s            // size of each scalar
 )
 {
@@ -342,7 +342,7 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     bool y_iso,                 // true if x is iso
     GrB_Type type,              // GrB_FP32 or GrB_FP64
     int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
-    GrB_Index n
+    uint64_t n
 )
 {
 

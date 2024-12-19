@@ -79,7 +79,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
     const int64_t avdim = A->vdim ;
     const int64_t avlen = A->vlen ;
     int64_t anzmax ;
-    if (!GB_int64_multiply ((GrB_Index *) (&anzmax), avdim, avlen))
+    if (!GB_int64_multiply ((uint64_t *) (&anzmax), avdim, avlen))
     { 
         // problem too large
         return (GrB_OUT_OF_MEMORY) ;

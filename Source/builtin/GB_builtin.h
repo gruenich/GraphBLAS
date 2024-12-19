@@ -20,7 +20,7 @@
 
 // nonzombie function for generic case
 inline void GB_nonzombie_func (bool *z, const void *x,
-    int64_t i, GrB_Index j, const void *y)
+    int64_t i, uint64_t j, const void *y)
 {
     (*z) = (i >= 0) ;    
 }

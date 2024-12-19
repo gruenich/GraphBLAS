@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Determine the length of I, and process the colon notation I = begin:inc:end.
 // No error checking is done.
 
@@ -17,7 +19,7 @@
 
 void GB_ijlength            // get the length and kind of an index list I
 (
-    const GrB_Index *I,     // list of indices (actual or implicit)
+    const uint64_t *I,      // list of indices (actual or implicit)
     const int64_t ni,       // length I, or special
     const int64_t limit,    // indices must be in the range 0 to limit-1
     int64_t *nI,            // actual length of I

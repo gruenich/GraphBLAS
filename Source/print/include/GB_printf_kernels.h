@@ -15,7 +15,7 @@
 
 #define GB_STRING_MATCH(s,t) (strcmp (s,t) == 0)
 
-// format strings, normally %llu and %lld, for GrB_Index values
+// format strings, normally %llu and %lld, for uint64_t and int64_t values
 #define GBu "%" PRIu64
 #define GBd "%" PRId64
 

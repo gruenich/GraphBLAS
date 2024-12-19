@@ -11,7 +11,7 @@
 
 GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
 (
-    GrB_Index *nvals,       // number of entries
+    uint64_t *nvals,        // number of entries
     const GrB_Vector v      // vector to query
 )
 { 

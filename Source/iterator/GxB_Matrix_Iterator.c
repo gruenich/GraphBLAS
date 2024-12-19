@@ -55,7 +55,7 @@ GrB_Info GxB_Matrix_Iterator_attach
 // to nvals(A).  For an m-by-n bitmap matrix, pmax=m*n, or pmax=0 if the
 // matrix has no entries.
 
-GrB_Index GxB_Matrix_Iterator_getpmax (GxB_Iterator iterator)
+uint64_t GxB_Matrix_Iterator_getpmax (GxB_Iterator iterator)
 { 
     return (iterator->pmax) ;
 }
@@ -179,7 +179,7 @@ GrB_Info GxB_Matrix_Iterator_next (GxB_Iterator iterator)
 GrB_Info GxB_Matrix_Iterator_seek
 (
     GxB_Iterator iterator,
-    GrB_Index p_input
+    uint64_t p_input
 )
 {
     int64_t p = (int64_t) p_input ;
@@ -260,7 +260,7 @@ GrB_Info GxB_Matrix_Iterator_seek
 // GxB_Matrix_Iterator_next.  Results are undefined if these conditions are not
 // met.
 
-GrB_Index GxB_Matrix_Iterator_getp (GxB_Iterator iterator)
+uint64_t GxB_Matrix_Iterator_getp (GxB_Iterator iterator)
 { 
     return (iterator->p) ;
 }
@@ -278,8 +278,8 @@ GrB_Index GxB_Matrix_Iterator_getp (GxB_Iterator iterator)
 void GxB_Matrix_Iterator_getIndex
 (
     GxB_Iterator iterator,
-    GrB_Index *row,
-    GrB_Index *col
+    uint64_t *row,
+    uint64_t *col
 )
 {
     uint64_t i, j ;

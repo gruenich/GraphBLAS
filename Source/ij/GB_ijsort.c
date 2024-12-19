@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Sort an index array and remove duplicates:
 
 /*
@@ -26,12 +28,12 @@
 
 GrB_Info GB_ijsort
 (
-    const GrB_Index *restrict I, // size ni, where ni > 1 always holds
+    const uint64_t *restrict I,  // size ni, where ni > 1 always holds
     int64_t *restrict p_ni,      // : size of I, output: # of indices in I2
-    GrB_Index *restrict *p_I2,   // size ni2, where I2 [0..ni2-1]
+    uint64_t *restrict *p_I2,    // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
     size_t *I2_size_handle,
-    GrB_Index *restrict *p_I2k,  // output array of size ni2
+    uint64_t *restrict *p_I2k,   // output array of size ni2
     size_t *I2k_size_handle
 )
 {
@@ -50,9 +52,9 @@ GrB_Info GB_ijsort
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Index *Work = NULL ; size_t Work_size = 0 ;
-    GrB_Index *restrict I2  = NULL ; size_t I2_size = 0 ;
-    GrB_Index *restrict I2k = NULL ; size_t I2k_size = 0 ;
+    uint64_t *Work = NULL ; size_t Work_size = 0 ;
+    uint64_t *restrict I2  = NULL ; size_t I2_size = 0 ;
+    uint64_t *restrict I2k = NULL ; size_t I2k_size = 0 ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
     int ntasks = 0 ;

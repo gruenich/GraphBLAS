@@ -46,13 +46,13 @@ GrB_Info GB_Vector_Iterator_bitmap_seek
     return (GxB_EXHAUSTED) ;
 }
 
-GrB_Index GxB_Vector_Iterator_getpmax (GxB_Iterator iterator)
+uint64_t GxB_Vector_Iterator_getpmax (GxB_Iterator iterator)
 { 
     // return the range of the vector iterator
     return (iterator->pmax) ;
 }
 
-GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, GrB_Index p)
+GrB_Info GxB_Vector_Iterator_seek (GxB_Iterator iterator, uint64_t p)
 { 
     // seek to a specific entry in the vector
     return (GB_Vector_Iterator_seek (iterator, p)) ;
@@ -64,13 +64,13 @@ GrB_Info GxB_Vector_Iterator_next (GxB_Iterator iterator)
     return (GB_Vector_Iterator_next (iterator)) ;
 }
 
-GrB_Index GxB_Vector_Iterator_getp (GxB_Iterator iterator)
+uint64_t GxB_Vector_Iterator_getp (GxB_Iterator iterator)
 { 
     // get the current position of a vector iterator
     return (iterator->p) ;
 }
 
-GrB_Index GxB_Vector_Iterator_getIndex (GxB_Iterator iterator)
+uint64_t GxB_Vector_Iterator_getIndex (GxB_Iterator iterator)
 { 
     // get the index of a vector entry
     return (

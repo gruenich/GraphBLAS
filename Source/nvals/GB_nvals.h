@@ -16,7 +16,7 @@
 
 GrB_Info GB_nvals           // get the number of entries in a matrix
 (
-    GrB_Index *nvals,       // matrix has nvals entries
+    uint64_t *nvals,        // matrix has nvals entries
     const GrB_Matrix A,     // matrix to query
     GB_Werk Werk
 ) ;

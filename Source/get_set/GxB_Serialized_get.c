@@ -30,7 +30,7 @@ static GrB_Info GB_blob_header_get
 
     // input, not modified:
     const GB_void *blob,        // the blob
-    GrB_Index blob_size         // size of the blob
+    uint64_t blob_size          // size of the blob
 )
 {
 

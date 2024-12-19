@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #ifndef GB_IJ_H
 #define GB_IJ_H
 
@@ -14,7 +16,7 @@
 
 void GB_ijlength            // get the length and kind of an index list I
 (
-    const GrB_Index *I,     // list of indices (actual or implicit)
+    const uint64_t *I,      // list of indices (actual or implicit)
     const int64_t ni,       // length I, or special
     const int64_t limit,    // indices must be in the range 0 to limit-1
     int64_t *nI,            // actual length of I
@@ -25,7 +27,7 @@ void GB_ijlength            // get the length and kind of an index list I
 GrB_Info GB_ijproperties        // check I and determine its properties
 (
     // input:
-    const GrB_Index *I,         // list of indices, or special
+    const uint64_t *I,          // list of indices, or special
     const int64_t ni,           // length I, or special
     const int64_t nI,           // actual length from GB_ijlength
     const int64_t limit,        // I must be in the range 0 to limit-1
@@ -44,19 +46,19 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
 GrB_Info GB_ijsort
 (
-    const GrB_Index *restrict I, // size ni, where ni > 1 always holds
+    const uint64_t *restrict I,  // size ni, where ni > 1 always holds
     int64_t *restrict p_ni,      // : size of I, output: # of indices in I2
-    GrB_Index *restrict *p_I2,   // size ni2, where I2 [0..ni2-1]
+    uint64_t *restrict *p_I2,    // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
     size_t *I2_size_handle,
-    GrB_Index *restrict *p_I2k,  // output array of size ni2
+    uint64_t *restrict *p_I2k,   // output array of size ni2
     size_t *I2k_size_handle
 ) ;
 
 // given i and I, return true there is a k so that i is the kth item in I
 static inline bool GB_ij_is_in_list // determine if i is in the list I
 (
-    const GrB_Index *I,         // list of indices for GB_LIST
+    const uint64_t *I,          // list of indices for GB_LIST
     const int64_t nI,           // length of I if Ikind is GB_LIST
     int64_t i,                  // find i = I [k] in the list
     const int Ikind,            // GB_ALL, GB_RANGE, GB_STRIDE, or GB_LIST
@@ -132,7 +134,7 @@ static inline bool GB_ij_is_in_list // determine if i is in the list I
         int64_t pleft = 0 ;
         int64_t pright = nI-1 ;
         if (i < 0) return (false) ;
-        GrB_Index ui = (GrB_Index) i ;
+        uint64_t ui = (uint64_t) i ;
         found = GB_binary_search (ui, I, false, &pleft, &pright) ;
         return (found) ;
     }

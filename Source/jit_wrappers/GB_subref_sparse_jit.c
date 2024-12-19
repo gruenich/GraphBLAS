@@ -33,7 +33,7 @@ GrB_Info GB_subref_sparse_jit
     const int64_t Icolon [3],
     // original input:
     const GrB_Matrix A,
-    const GrB_Index *I
+    const uint64_t *I
 )
 { 
 

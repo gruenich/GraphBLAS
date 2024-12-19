@@ -67,7 +67,7 @@ GrB_Info GxB_rowIterator_attach
 // kount == m.  If A is hypersparse, kount is the # of vectors held in the data
 // structure for the matrix, some of which may be empty, and kount <= m.
 
-GrB_Index GxB_rowIterator_kount (GxB_Iterator iterator)
+uint64_t GxB_rowIterator_kount (GxB_Iterator iterator)
 { 
     return (iterator->anvec) ;
 }
@@ -99,7 +99,7 @@ GrB_Index GxB_rowIterator_kount (GxB_Iterator iterator)
 //                  the first entry in A(row,:), and GxB_Iterator_get* can
 //                  return its value.
 
-GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, GrB_Index row)
+GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, uint64_t row)
 { 
     return (GB_Iterator_rc_seek (iterator, row, false)) ;
 }
@@ -116,7 +116,7 @@ GrB_Info GxB_rowIterator_seekRow (GxB_Iterator iterator, GrB_Index row)
 // More precisely, k is in the range 0 to kount-1, where kount is the value
 // returned by GxB_rowIterator_kount.
 
-GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, GrB_Index k)
+GrB_Info GxB_rowIterator_kseek (GxB_Iterator iterator, uint64_t k)
 { 
     return (GB_Iterator_rc_seek (iterator, k, true)) ;
 }
@@ -175,7 +175,7 @@ GrB_Info GxB_rowIterator_nextCol (GxB_Iterator iterator)
 // GxB_rowIterator_*seek* has not been called, but this does not mean the
 // iterator is positioned at row zero.
 
-GrB_Index GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
+uint64_t GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
 { 
     return (GB_Iterator_rc_getj (iterator)) ;
 }
@@ -190,7 +190,7 @@ GrB_Index GxB_rowIterator_getRowIndex (GxB_Iterator iterator)
 // GxB_rowIterator_*seek* or GxB_rowIterator_*next*, must have returned
 // GrB_SUCCESS.  Results are undefined if this condition is not met.
 
-GrB_Index GxB_rowIterator_getColIndex (GxB_Iterator iterator)
+uint64_t GxB_rowIterator_getColIndex (GxB_Iterator iterator)
 { 
     return (GB_Iterator_rc_geti (iterator)) ;
 }

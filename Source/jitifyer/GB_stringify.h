@@ -1444,13 +1444,13 @@ GrB_Info GB_subassign_jit
     // input:
     const bool C_replace,
     // I:
-    const GrB_Index *I,
+    const uint64_t *I,
     const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const GrB_Index *J,
+    const uint64_t *J,
     const int64_t nj,
     const int64_t nJ,
     const int Jkind,
@@ -1688,7 +1688,7 @@ GrB_Info GB_subref_sparse_jit
     const int64_t Icolon [3],
     // original input:
     const GrB_Matrix A,
-    const GrB_Index *I
+    const uint64_t *I
 ) ;
 
 GrB_Info GB_subref_bitmap_jit
@@ -1698,12 +1698,12 @@ GrB_Info GB_subref_bitmap_jit
     // input:
     GrB_Matrix A,
     // I:
-    const GrB_Index *I,
+    const uint64_t *I,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const GrB_Index *J,
+    const uint64_t *J,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],

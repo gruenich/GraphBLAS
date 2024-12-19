@@ -19,7 +19,7 @@ GrB_Info GB_build               // build matrix
     const void *I,              // row indices of tuples
     const void *J,              // col indices of tuples (NULL for vector)
     const void *X,              // values, size 1 if iso
-    const GrB_Index nvals,      // number of tuples
+    const uint64_t nvals,       // number of tuples
     const GrB_BinaryOp dup,     // binary op to assemble duplicates (or NULL)
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector

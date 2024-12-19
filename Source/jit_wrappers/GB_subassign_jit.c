@@ -19,13 +19,13 @@ GrB_Info GB_subassign_jit
     // input:
     const bool C_replace,
     // I:
-    const GrB_Index *I,
+    const uint64_t *I,
     const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const GrB_Index *J,
+    const uint64_t *J,
     const int64_t nj,
     const int64_t nJ,
     const int Jkind,

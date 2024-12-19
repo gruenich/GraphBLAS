@@ -20,7 +20,7 @@
 GrB_Info GB_Iterator_rc_seek
 (
     GxB_Iterator iterator,
-    GrB_Index j_input,
+    uint64_t j_input,
     bool jth_vector
 )
 {

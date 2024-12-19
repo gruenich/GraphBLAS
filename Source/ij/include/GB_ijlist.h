@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #ifndef GB_IJLIST_H
 #define GB_IJLIST_H
 
@@ -31,7 +33,7 @@
 // given k, return the kth item i = I [k] in the list
 static inline int64_t GB_ijlist     // get the kth item in a list of indices
 (
-    const GrB_Index *I,         // list of indices
+    const uint64_t *I,          // list of indices
     const int64_t k,            // return i = I [k], the kth item in the list
     const int Ikind,            // GB_ALL, GB_RANGE, GB_STRIDE, or GB_LIST
     const int64_t Icolon [3]    // begin:inc:end for all but GB_LIST

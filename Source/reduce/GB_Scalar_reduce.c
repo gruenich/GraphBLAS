@@ -35,7 +35,7 @@ GrB_Info GB_Scalar_reduce
     // check if A is empty
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals ;
+    uint64_t nvals ;
     GB_OK (GB_nvals (&nvals, A, Werk)) ;
     if (nvals == 0)
     {

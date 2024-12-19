@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // check a list of indices I and determine its properties
 
 #include "ij/GB_ij.h"
@@ -24,7 +26,7 @@
 GrB_Info GB_ijproperties        // check I and determine its properties
 (
     // input:
-    const GrB_Index *I,         // list of indices, or special
+    const uint64_t *I,          // list of indices, or special
     const int64_t ni,           // length I, or special
     const int64_t nI,           // actual length from GB_ijlength
     const int64_t limit,        // I must be in the range 0 to limit-1

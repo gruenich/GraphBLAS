@@ -11,7 +11,7 @@
 
 GrB_Info GrB_Scalar_nvals   // get the number of entries in a GrB_Scalar
 (
-    GrB_Index *nvals,       // number of entries (1 or 0)
+    uint64_t *nvals,        // number of entries (1 or 0)
     const GrB_Scalar s      // GrB_Scalar to query
 )
 { 
@@ -40,7 +40,7 @@ GrB_Info GrB_Scalar_nvals   // get the number of entries in a GrB_Scalar
 
 GrB_Info GxB_Scalar_nvals   // get the number of entries in a GrB_Scalar
 (
-    GrB_Index *nvals,       // number of entries (1 or 0)
+    uint64_t *nvals,        // number of entries (1 or 0)
     const GrB_Scalar s      // GrB_Scalar to query
 )
 {

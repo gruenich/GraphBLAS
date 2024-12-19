@@ -515,12 +515,12 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const bool C_replace,                                               \
-    const GrB_Index *I,                                                 \
+    const uint64_t *I,          /* FIXME */                             \
     const int64_t ni,                                                   \
     const int64_t nI,                                                   \
     const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
-    const GrB_Index *J,                                                 \
+    const uint64_t *J,          /* FIXME */                             \
     const int64_t nj,                                                   \
     const int64_t nJ,                                                   \
     const int Jkind,                                                    \
@@ -669,7 +669,7 @@ GrB_Info GB_jit_kernel_subref_sparse                                    \
     const int64_t nI,                                                   \
     const int64_t Icolon [3],                                           \
     const GrB_Matrix A,                                                 \
-    const GrB_Index *I,                                                 \
+    const uint64_t *I,          /* FIXME */                             \
     const GB_callback_struct *restrict my_callback                      \
 )
 
@@ -678,11 +678,11 @@ GrB_Info GB_jit_kernel_bitmap_subref                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                       \
-    const GrB_Index *I,                                                 \
+    const uint64_t *I,          /* FIXME */                             \
     const int64_t nI,                                                   \
     const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
-    const GrB_Index *J,                                                 \
+    const uint64_t *J,          /* FIXME */                             \
     const int64_t nJ,                                                   \
     const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \

@@ -126,8 +126,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
     bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
     bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
-    GrB_Index *restrict Ah = (GrB_Index *) A_in->h ;    // FIXME
-    GrB_Index *restrict Bh = (GrB_Index *) B_in->h ;    // FIXME
+    uint64_t *restrict Ah = (uint64_t *) A_in->h ;    // FIXME
+    uint64_t *restrict Bh = (uint64_t *) B_in->h ;    // FIXME
 
     if (A_is_hyper)
     { 
@@ -168,7 +168,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     int64_t cvdim = B->vdim ;
 
     int64_t cnz ;
-    bool ok = GB_int64_multiply ((GrB_Index *) (&cnz), cvlen, cvdim) ;
+    bool ok = GB_int64_multiply ((uint64_t *) (&cnz), cvlen, cvdim) ;
 
     //--------------------------------------------------------------------------
     // extract the submask if A or B are hypersparse 

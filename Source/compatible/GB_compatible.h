@@ -32,8 +32,8 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
     const GrB_Matrix M,         // mask to check
     const bool Mask_struct,     // true if M is structural
     const GrB_Matrix C,         // C<M>= ...
-    const GrB_Index nrows,      // size of output if C is NULL (see GB*assign)
-    const GrB_Index ncols,
+    const uint64_t nrows,       // size of output if C is NULL (see GB*assign)
+    const uint64_t ncols,
     GB_Werk Werk
 ) ;
 
