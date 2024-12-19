@@ -50,7 +50,19 @@
             const int64_t j = GBH_C (Ch, k) ;
             #endif
 
-            GB_GET_VECTOR_M (pM, pM_end, pM, pM_end, Mp, k, mvlen) ;
+            int64_t pM, pM_end ;
+            if (fine_task)
+            { 
+                // A fine task operates on a slice of M(:,k)
+                pM     = TaskList [taskid].pM ;
+                pM_end = TaskList [taskid].pM_end ;
+            }
+            else
+            { 
+                // vectors are never sliced for a coarse task
+                pM     = GBP_M (Mp, k, mvlen) ;      // FIXME
+                pM_end = GBP_M (Mp, k+1, mvlen) ;    // FIXME
+            }
 
             //------------------------------------------------------------------
             // get B(:,j)

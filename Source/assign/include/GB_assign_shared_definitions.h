@@ -1331,6 +1331,28 @@
     }
 
 //------------------------------------------------------------------------------
+// GB_GET_VECTOR_M: get the content of a vector of M for a coarse/fine task
+//------------------------------------------------------------------------------
+
+// This method is used for methods 05, 06n, and 07.
+
+// GB_GET_VECTOR_M: optimized for the M matrix
+#define GB_GET_VECTOR_M                                                     \
+    int64_t pM, pM_end ;                                                    \
+    if (fine_task)                                                          \
+    {                                                                       \
+        /* A fine task operates on a slice of M(:,k) */                     \
+        pM     = TaskList [taskid].pA ;                                     \
+        pM_end = TaskList [taskid].pA_end ;                                 \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* vectors are never sliced for a coarse task */                    \
+        pM     = GBP_M (Mp, k, Mvlen) ;      /* FIXME */                    \
+        pM_end = GBP_M (Mp, k+1, Mvlen) ;    /* FIXME */                    \
+    }
+
+//------------------------------------------------------------------------------
 // GB_GET_EVEC: get the content of a vector for Method08n
 //------------------------------------------------------------------------------
 

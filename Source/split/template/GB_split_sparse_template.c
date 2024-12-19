@@ -44,7 +44,7 @@
         int64_t klast  = klast_Cslice  [tid] ;
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
-            // int64_t jA = GBH_A (Ah, k+akstart) ; not needed 
+            // int64_t jA = GBh_A (Ah, k+akstart) ; not needed 
             int64_t p0 = GB_IGET (Cp, k) ;
             GB_GET_PA (pC_start, pC_end, tid, k,
                 kfirst, klast, pstart_Cslice, p0, GB_IGET (Cp, k+1)) ;

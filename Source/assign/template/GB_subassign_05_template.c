@@ -90,7 +90,7 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_M (Mh, k) ;
-            GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
+            GB_GET_VECTOR_M ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 
@@ -209,7 +209,7 @@
             //------------------------------------------------------------------
 
             int64_t j = GBH_M (Mh, k) ;
-            GB_GET_VECTOR_M (pM, pM_end, pA, pA_end, Mp, k, Mvlen) ;
+            GB_GET_VECTOR_M ;
             int64_t mjnz = pM_end - pM ;
             if (mjnz == 0) continue ;
 

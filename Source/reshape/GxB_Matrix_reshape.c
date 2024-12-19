@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GxB_Matrix_reshape changes the dimensions of a matrix, reshaping the entries
 // by row or by column.
 
@@ -39,8 +41,8 @@ GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
     GrB_Matrix C,               // input/output matrix, reshaped in place
     // input:
     bool by_col,                // true if reshape by column, false if by row
-    GrB_Index nrows_new,        // new number of rows of C
-    GrB_Index ncols_new,        // new number of columns of C
+    uint64_t nrows_new,         // new number of rows of C
+    uint64_t ncols_new,         // new number of columns of C
     const GrB_Descriptor desc   // to control # of threads used
 )
 { 
