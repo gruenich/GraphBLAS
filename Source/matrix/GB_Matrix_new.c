@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit (but disabled)
+// DONE: 32/64 bit (but disabled). Notes for get/set
 
 // The new matrix is nrows-by-ncols, with no entries in it.  Default format for
 // an empty matrix is hypersparse CSC: A->p is size 2 and all zero, A->h is
@@ -150,7 +150,7 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
 
     // HACK for now:
     ASSERT_MATRIX_OK (*A, "GrB_Matrix_new before convert", GB0) ;
-    GB_OK (GB_convert_int (*A, false, false)) ; // FIXME
+    GB_OK (GB_convert_int (*A, false, false, true)) ; // FIXME
     ASSERT_MATRIX_OK (*A, "GrB_Matrix_new after convert", GB0) ;
     GB_OK (GB_valid_matrix (*A)) ; 
 

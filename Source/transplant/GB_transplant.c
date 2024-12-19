@@ -452,7 +452,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         }
 
         // convert the integers to match their strict controls
-        GB_OK (GB_convert_int (C, Cp_is_32_new, Ci_is_32_new)) ;
+        GB_OK (GB_convert_int (C, Cp_is_32_new, Ci_is_32_new, true)) ;
 
         // any strict settings are now valid
         GB_assert (GB_valid_strict (C->p_control, C->p_is_32)) ;    // FIXME

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // No typecasting is done.  The type of entries in the Ax array must match
 // the GrB_Type type parameter.
 

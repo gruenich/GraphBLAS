@@ -226,7 +226,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
     ASSERT (C->h == NULL) ;
-    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
+    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C transpose of A converted", GB0) ;
     return (GrB_SUCCESS) ;
 }

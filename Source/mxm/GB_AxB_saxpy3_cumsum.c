@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // phase3: fine tasks finalize their computation nnz(C(:,j))
 // phase4: cumulative sum of C->p
 

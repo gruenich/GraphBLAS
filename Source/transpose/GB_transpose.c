@@ -953,10 +953,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
         i_control, GB_sparsity (C), anz, avdim, avlen, true)) ;
 
-    GB_OK (GB_convert_int (T, Cp_is_32, Cp_is_32)) ;
+    GB_OK (GB_convert_int (T, Cp_is_32, Cp_is_32, true)) ;
 
     // this is a hack since the code below may not yet support 32-bit integers:
-    GB_OK (GB_convert_int (T, false, false)) ;  // FIXME: hack
+    // move it to the end of the function once all methods below are OK for
+    // 32/64 bit matrices.
+    GB_OK (GB_convert_int (T, false, false, true)) ;  // FIXME: hack
 
     //==========================================================================
     // free workspace, apply positional op, and transplant/conform T into C

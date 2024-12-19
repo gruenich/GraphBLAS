@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // A parallel decompression of a serialized blob into a GrB_Matrix.
 
 #include "GB.h"

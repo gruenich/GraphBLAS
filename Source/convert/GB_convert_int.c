@@ -26,7 +26,11 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 (
     GrB_Matrix A,           // matrix to convert
     bool p_is_32_new,       // new integer format for A->p
-    bool i_is_32_new        // new integer format for A->h, A->i, and A->Y
+    bool i_is_32_new,       // new integer format for A->h, A->i, and A->Y
+    bool validate           // if true, validate A->vlen/vdim/nvals for the new
+                            // integer sizes.  Otherwise, ignore the matrix
+                            // properties and always convert to the new integer
+                            // sizes.
 )
 {
 
@@ -40,7 +44,6 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         return (GrB_SUCCESS) ;
     }
 
-    ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
@@ -60,12 +63,13 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     bool p_is_32 = A->p_is_32 ;
     bool i_is_32 = A->i_is_32 ;
     int64_t anz = GB_nnz (A) ;
-    int64_t vlen = A->vlen ;
-    int64_t vdim = A->vdim ;
-    bool zombies = (A->nzombies > 0) ;
 
-    p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;          // OK
-    i_is_32_new = GB_validate_i_is_32 (i_is_32_new, vlen, vdim) ;   // OK
+    if (validate)
+    {
+        ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
+        p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;              //OK
+        i_is_32_new = GB_validate_i_is_32 (i_is_32_new, A->vlen, A->vdim) ; //OK
+    }
 
     if (p_is_32 == p_is_32_new && i_is_32 == i_is_32_new)
     { 
@@ -202,12 +206,13 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     A->p_is_32 = p_is_32_new ;
 
     //--------------------------------------------------------------------------
-    // convert A->h, A->i, Y->p, Y->i, Pending->i, and Pending->j
+    // convert A->h, A->i, Y->p, Y->i, Y->x, Pending->i, and Pending->j
     //--------------------------------------------------------------------------
 
     if (i_is_32 != i_is_32_new)
     { 
 
+        bool zombies = (A->nzombies > 0) ;
         GB_Type_code zombie32  = zombies     ? GB_INT32_code  : GB_UINT32_code ;
         GB_Type_code zombie64  = zombies     ? GB_INT32_code  : GB_UINT64_code ;
         GB_Type_code icode_new = i_is_32_new ? zombie32       : zombie64       ;

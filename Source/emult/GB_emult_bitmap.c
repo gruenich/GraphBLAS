@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GB_EMULT_METHOD5 : 
 
             //      ------------------------------------------
@@ -175,7 +177,7 @@ GrB_Info GB_emult_bitmap    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     GB_OK (GB_new_bix (&C, // bitmap, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GxB_BITMAP, true, A->hyper_switch, -1, cnz, true, C_iso,
-        /* FIXME: */ false, false)) ;
+        /* OK: */ false, false)) ;
 
     C->magic = GB_MAGIC ;
     GB_Type_code ccode = ctype->code ;

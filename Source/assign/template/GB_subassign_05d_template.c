@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
 // M:           present, can be sparse, hypersparse, bitmap, or full

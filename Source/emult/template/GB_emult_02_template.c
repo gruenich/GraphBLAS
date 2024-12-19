@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // C is sparse, with the same sparsity structure as A.  No mask is present, or
 // M is bitmap/full.  A is sparse/hyper, and B is bitmap/full.
 

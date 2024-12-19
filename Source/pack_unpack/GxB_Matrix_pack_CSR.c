@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #include "import_export/GB_export.h"
 
 GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix

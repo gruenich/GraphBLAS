@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This function only computes C<M>=A'*B.  The mask must be present, and not
 // complemented, and can be either valued or structural.  The mask is always
 // applied.  C and M are both sparse or hypersparse, and have the same sparsity

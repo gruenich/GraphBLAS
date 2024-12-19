@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Convert a built-in sparse or full matrix, or a struct to a GraphBLAS sparse
 // matrix.  The mxArray is either a struct containing two terms: a sparse or
 // full matrix or vector, and type (a string, "logical", "double", etc), or it

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
 // M:           present

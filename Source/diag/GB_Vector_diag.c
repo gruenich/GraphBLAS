@@ -200,7 +200,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (V, "V before convert_int for GB_Vector_diag", GB0) ;
-    GB_OK (GB_convert_int (V, false, false)) ;      // FIXME
+    GB_OK (GB_convert_int (V, false, false, true)) ;      // FIXME
     ASSERT_MATRIX_OK (V, "V before conform for GB_Vector_diag", GB0) ;
     GB_OK (GB_conform (V, Werk)) ;
     ASSERT_MATRIX_OK (V, "V output for GB_Vector_diag", GB0) ;

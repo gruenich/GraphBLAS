@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Purely symbolic phase1 for the dot3 method of GrB_mxm.  This does not
 // access any values, except for the mask.
 

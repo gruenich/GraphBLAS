@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // JIT: possible: many variants possible (matrix sparsity formats)
 // matrices: A, B, M; bool Mask_comp
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This template is #include'd in 3 ways to construct:
 //  * a generic method: mxm/factory/GB_AxB_dot_generic.c
 //  * a Factory method: FactoryKernels/GB_AxB_*, the Adot3B method

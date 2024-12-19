@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // Cp is never NULL.  C is created as sparse or hypersparse.
 
 #include "GB.h"

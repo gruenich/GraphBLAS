@@ -307,7 +307,6 @@ logstat ('test53'     ,t, J40  , F10  ) ; % GB_mex_Matrix_extract
 logstat ('test242'    ,t, J4   , F1   ) ; % GxB_Iterator for matrices
 logstat ('test17'     ,t, J4   , F1   ) ; % quick test of GrB_*_extractElement
 logstat ('test246'    ,t, J4   , F1   ) ; % GrB_mxm: fine Hash, parallelism
-logstat ('test206'    ,t, J44  , F10  ) ; % iso select
 logstat ('test251b'   ,t, J4   , F0   ) ; % dot4, dot2, with plus_pair
 logstat ('test251'    ,t, J4   , F1   ) ; % dot4, dot2, with plus_pair
 logstat ('test152'    ,t, J44  , F10  ) ; % binops C=A+B, all dense
@@ -324,12 +323,14 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test206'    ,t, J44  , F10  ) ; % iso select and iso resize
 logstat ('test02'     ,t, J4   , F1   ) ; % matrix copy and dup tests
 logstat ('test11'     ,t, J4   , F1   ) ; % GrB_extractTuples
 logstat ('test187'    ,t, J40  , F10  ) ; % dup/assign for all formats
 logstat ('test189'    ,t, J4   , F1   ) ; % large assign
 logstat ('test169'    ,t, J0   , F1   ) ; % C<M>=A+B with many formats
 logstat ('test76'     ,s, J4   , F1   ) ; % GxB_resize (single threaded)
+logstat ('test76'     ,t, J4   , F1   ) ; % GxB_resize (multi threaded)
 logstat ('test01'     ,t, J40  , F10  ) ; % error handling
 logstat ('test228'    ,t, J4   , F1   ) ; % serialize/deserialize
 logstat ('test104'    ,t, J4   , F1   ) ; % export/import

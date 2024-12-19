@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // C is full.
 // A is bitmap, and not iso-valued and not pattern-only.
 // B is sparse or hypersparse.

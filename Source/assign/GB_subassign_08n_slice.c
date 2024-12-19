@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Constructs a set of tasks to compute C for GB_subassign_08n, based on
 // slicing two input matrices (A and M).  Fine tasks must also find their
 // location in their vector C(:,jC).

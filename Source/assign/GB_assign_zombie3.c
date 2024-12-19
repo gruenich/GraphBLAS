@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // JIT: possible: 48 variants, one for each mask type (6: 1, 2,
 // 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse
 // & hyper), mask comp (2).  No variants needed for C.

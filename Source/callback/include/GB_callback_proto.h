@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Prototypes for kernel callbacks.  The JIT kernels are passed a struct
 // containing pointers to all these functions, so that they do not have to be
 // linked against libgraphblas.so when they are compiled.

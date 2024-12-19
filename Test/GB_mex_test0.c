@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This mexFunction intentionally creates many errors for GraphBLAS, to test
 // error-handling.  Many error messages are printed.  If the test ends with
 // "All tests passed" then all errors were expected.  The test fails if

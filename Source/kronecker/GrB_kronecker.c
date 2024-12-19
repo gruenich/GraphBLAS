@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "kronecker/GB_kron.h"
 #include "mask/GB_get_mask.h"
 

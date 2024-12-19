@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Convert a GraphBLAS sparse or full matrix to a built-in struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.
 
@@ -59,7 +61,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         GxB_print (C, 2) ;
         mexErrMsgTxt ("FIXME") ;
     }
-    GB_convert_int (C, false, false) ;
+    GB_convert_int (C, false, false, true) ;
 
     //--------------------------------------------------------------------------
     // check matrix

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Assigns a single scalar to a submatrix:
 
 // C(Rows,Cols)<M> = accum(C(Rows,Cols),x)

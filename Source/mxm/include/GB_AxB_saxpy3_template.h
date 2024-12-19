@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Definitions for GB_AxB_saxpy3_template.c.  These do not depend on the
 // sparsity of A and B.
 

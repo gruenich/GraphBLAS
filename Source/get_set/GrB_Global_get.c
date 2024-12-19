@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: add 32/64 global get/set
+// FIXME: 32/64 global get/set
 
 #include "get_set/GB_get_set.h"
 #include "jitifyer/GB_jitifyer.h"

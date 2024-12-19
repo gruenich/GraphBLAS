@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64-bit, except for hack32
+// DONE: 32/64 bit
 
 #include "select/GB_select.h"
 #include "mask/GB_get_mask.h"

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This method is only used for built-in semirings with no typecasting in
 // pre-generated kernels, or JIT kernels.  It is not used for generic methods.
 

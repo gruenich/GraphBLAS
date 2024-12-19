@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, but requires GB_selector and GB_add to be 32/64 bit
+// DONE: 32/64 bit
 
 // CALLS:     GB_builder
 
@@ -282,7 +282,7 @@ GrB_Info GB_wait                // finish all pending computations
         // conform A to its desired sparsity structure and return result
         GB_OK (GB_conform (A, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
-        GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
+        GB_OK (GB_convert_int (A, false, false, true)) ;      // FIXME
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -298,7 +298,7 @@ GrB_Info GB_wait                // finish all pending computations
         // conform A to its desired hypersparsity.
         GB_OK (GB_transplant_conform (A, A->type, &T, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
-        GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
+        GB_OK (GB_convert_int (A, false, false, true)) ;      // FIXME
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -328,7 +328,7 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anvec = A->nvec ;
     bool ignore ;
 
-    GB_OK (GB_convert_int (T, false, false)) ;      // FIXME
+    GB_OK (GB_convert_int (T, false, false, true)) ;      // FIXME
 
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
     GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
@@ -336,7 +336,7 @@ GrB_Info GB_wait                // finish all pending computations
     GB_Matrix_free (&T) ;
     ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
 
-    GB_OK (GB_convert_int (S, false, false)) ;      // FIXME
+    GB_OK (GB_convert_int (S, false, false, true)) ;      // FIXME
 
     //--------------------------------------------------------------------------
     // check if the A->Y hyper-hash can be kept
@@ -454,7 +454,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (A, "A for GB_wait", GB0) ;
-    GB_OK (GB_convert_int (A, false, false)) ;      // FIXME
+    GB_OK (GB_convert_int (A, false, false, true)) ;      // FIXME
     ASSERT_MATRIX_OK (A, "A final for GB_wait", GB0) ;
     #pragma omp flush
     return (GrB_SUCCESS) ;

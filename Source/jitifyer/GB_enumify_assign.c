@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
 // handled; this is done first in GB_assign_prep.
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #include "import_export/GB_export.h"
 
 #define GB_FREE_ALL ;

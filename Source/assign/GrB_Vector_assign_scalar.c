@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Assigns a single scalar to a vector, w<M>(Rows) = accum(w(Rows),x)
 // The scalar x is implicitly expanded into a vector u of size nRows-by-1,
 // with each entry in u equal to x.

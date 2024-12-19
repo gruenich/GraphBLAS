@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // GB_AxB_saxpy_sparsity determines the sparsity structure for C<M or !M>=A*B
 // or C=A*B, and this template is used when C is bitmap.
 

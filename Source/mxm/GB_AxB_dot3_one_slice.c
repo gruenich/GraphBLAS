@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Constructs a set of tasks that slice a single input matrix M.  This function
 // is currently only used by GB_AxB_dot3, to slice the mask matrix M, which has
 // the same pattern as the output matrix C.  However, this function is a very

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // GB_add computes C=A+B, C<M>=A+B, or C<!M>=A+B using the given operator
 // element-wise on the matrices A and B.  The result is typecasted as needed.
 // The pattern of C is the union of the pattern of A and B, intersection with

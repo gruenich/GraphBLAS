@@ -7,15 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
+// DONE: 32/64 bit, but decide on error could if integers too small
 
 // Does not modify A->p or A->h.  Frees A->b, A->x, and A->i and reallocates
 // them to the requested size.  Frees any pending tuples and deletes all
 // entries (including zombies, if any).  If numeric is false, then A->x is
 // freed but not reallocated.
 
-// If A->p_is_32 or A->i_is_32 are invalid, GrB_[FIXME] is returned and the
-// allocation fails.  If this method fails, A->b, A->i, and A->x are NULL
+// If A->p_is_32 or A->i_is_32 are invalid, GrB_INVALID_VALUE is returned and
+// the allocation fails.  If this method fails, A->b, A->i, and A->x are NULL
 // (having been freed if already present), but A->p and A->h are not modified.
 
 #include "GB.h"

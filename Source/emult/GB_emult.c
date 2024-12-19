@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // GB_emult, does C=A.*B, C<M>=A.*B, C<!M>=A.*B, using the given operator
 // element-wise on the matrices A and B.  The result is typecasted as needed.
 // The pattern of C is the intersection of the pattern of A and B, intersection

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Symbolic analysis for C=A*B, C<M>=A*B or C<!M>=A*B, via GB_AxB_saxpy3.
 // Coarse tasks compute nnz (C (:,j)) for each of their vectors j.  Fine tasks
 // just scatter the mask M into the hash table.  This phase does not depend on

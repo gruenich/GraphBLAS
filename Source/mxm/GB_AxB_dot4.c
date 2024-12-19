@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // GB_AxB_dot4 does its computation in a single phase, computing its result in
 // the input matrix C, which is already as-if-full (in any format).  The mask M
 // is not handled by this function.  C is not iso on output, but might be iso

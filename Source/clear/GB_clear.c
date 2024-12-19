@@ -157,7 +157,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "clear before convert int", GB0) ;
-    GB_OK (GB_convert_int (A, false, false)) ;  // FIXME
+    GB_OK (GB_convert_int (A, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (A, "clear after convert int", GB0) ;
     return (GB_conform (A, Werk)) ;
 }

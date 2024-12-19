@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B. 
 
 // C is sparse or hypersparse.  M, A, and B can have any sparsity structure.

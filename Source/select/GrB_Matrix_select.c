@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64-bit, except for hack32
+// DONE: 32/64 bit
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 

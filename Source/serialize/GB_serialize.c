@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // A parallel compression method for a GrB_Matrix.  The input matrix may have
 // shallow components; the output is unaffected by this.  The output blob is
 // allocated on output (for GxB_Matrix_serialize) or used pre-allocated on

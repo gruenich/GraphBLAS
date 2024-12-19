@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Test lots of random stuff.  The function otherwise serves no purpose.
 
 #include "GB_mex.h"

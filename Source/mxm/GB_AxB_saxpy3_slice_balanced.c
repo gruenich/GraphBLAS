@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // JIT: possible: some varants (matrix sparsity formats)
 
 // If the mask is present but must be discarded, this function returns

@@ -232,7 +232,7 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C before convert for GB_Matrix_diag", GB0) ;
-    GB_OK (GB_convert_int (C, false, false)) ;      // FIXME
+    GB_OK (GB_convert_int (C, false, false, true)) ;      // FIXME
     ASSERT_MATRIX_OK (C, "C before conform for GB_Matrix_diag", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_Matrix_diag", GB0) ;

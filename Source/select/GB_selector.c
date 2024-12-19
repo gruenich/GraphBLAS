@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except for extra GB_convert_int's
+// DONE: 32/64 bit
 
 // GB_selector does the work for GB_select.  It also deletes zombies for
 // GB_wait using the GxB_NONZOMBIE operator, deletes entries outside a smaller
@@ -173,7 +173,7 @@ GrB_Info GB_selector
         // COLGT:    C = A(:,j+1:n)
         // where j = ithunk.
         GB_OK (GB_select_column (C, op, A, ithunk, Werk)) ;
-        GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
+        GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
         GB_FREE_ALL ;
         return (GrB_SUCCESS) ;
     }
@@ -217,7 +217,7 @@ GrB_Info GB_selector
 
     GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C before convert_int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME
+    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C output of GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }

@@ -69,7 +69,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
             return (GrB_INVALID_VALUE) ;
         }
         // convert A->p to 64-bit; do not change A->i_is_32
-        GrB_Info info = GB_convert_int (A, false, A->i_is_32) ;
+        GrB_Info info = GB_convert_int (A, false, A->i_is_32, true) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory

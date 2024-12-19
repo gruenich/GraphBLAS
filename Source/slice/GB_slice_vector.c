@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // A(:,kA) and B(:,kB) are two long vectors that will be added with GB_add,
 // GB_emult, or GB_mask, and the work to compute them needs to be split into
 // multiple tasks.  They represent the same vector index j, for:
@@ -79,9 +77,11 @@ void GB_slice_vector
 
     ASSERT (p_pA != NULL && p_pB != NULL) ;
 
+    #ifdef GB_DEBUG
     GB_IDECL (Mi, const, u) ; GB_IPTR (Mi, Mi_is_32) ;
     GB_IDECL (Ai, const, u) ; GB_IPTR (Ai, Ai_is_32) ;
     GB_IDECL (Bi, const, u) ; GB_IPTR (Bi, Bi_is_32) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task

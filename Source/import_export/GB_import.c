@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // This method takes O(1) time and memory, unless secure is true (used
 // when the input data is not trusted).
 

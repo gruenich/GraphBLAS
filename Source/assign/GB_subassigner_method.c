@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 #include "assign/GB_subassign.h"
 
 int GB_subassigner_method           // return method to use in GB_subassigner

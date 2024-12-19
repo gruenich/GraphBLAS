@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Constructs a set of tasks that slice the matrix C for C<M>=A'*B.  The matrix
 // C has been allocated, and its pattern will be a copy of M, but with some
 // entries possibly turned into zombies.  However, on input, the pattern C->i

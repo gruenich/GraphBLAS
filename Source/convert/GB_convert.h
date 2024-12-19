@@ -266,7 +266,11 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 (
     GrB_Matrix A,           // matrix to convert
     bool p_is_32_new,       // new integer format for A->p
-    bool i_is_32_new        // new integer format for A->h, A->i, and A->Y
+    bool i_is_32_new,       // new integer format for A->h, A->i, and A->Y
+    bool validate           // if true, validate A->vlen/vdim/nvals for the new
+                            // integer sizes.  Otherwise, ignore the matrix
+                            // properties and always convert to the new integer
+                            // sizes.
 ) ;
 
 #endif

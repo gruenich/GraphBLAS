@@ -368,7 +368,7 @@ GrB_Info GB_build               // build matrix
             I_is_32 ? "32" : "64", tt) ;
     }
 
-    GB_OK (GB_convert_int (C, false, false)) ;  // FIXME: temporary: all 64-bit
+    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
     return (GrB_SUCCESS) ;
 }
 

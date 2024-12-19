@@ -13,8 +13,8 @@
 GrB_Info GrB_Matrix_resize      // change the size of a matrix
 (
     GrB_Matrix C,               // matrix to modify
-    GrB_Index nrows_new,        // new number of rows in matrix
-    GrB_Index ncols_new         // new number of columns in matrix
+    uint64_t nrows_new,         // new number of rows in matrix
+    uint64_t ncols_new          // new number of columns in matrix
 )
 { 
 
@@ -46,8 +46,8 @@ GrB_Info GrB_Matrix_resize      // change the size of a matrix
 GrB_Info GxB_Matrix_resize      // change the size of a matrix
 (
     GrB_Matrix A,               // matrix to modify
-    GrB_Index nrows_new,        // new number of rows in matrix
-    GrB_Index ncols_new         // new number of columns in matrix
+    uint64_t nrows_new,         // new number of rows in matrix
+    uint64_t ncols_new          // new number of columns in matrix
 )
 { 
     return (GrB_Matrix_resize (A, nrows_new, ncols_new)) ;

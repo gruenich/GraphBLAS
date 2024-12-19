@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: add 32/64 matrix get/set
+// FIXME: 32/64 matrix get/set
 
 #include "get_set/GB_get_set.h"
 

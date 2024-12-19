@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // JIT: not needed: factory cases: mask types, M bitmap/full, B bitmap/full,
 // A sparse/hyper
 

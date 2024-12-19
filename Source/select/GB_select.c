@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except GB_new
+// DONE: 32/64 bit
 
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
@@ -401,7 +401,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     T->is_csc = A_csc ;
     ASSERT_MATRIX_OK (T, "T=select(A,Thunk) output", GB0) ;
     ASSERT_MATRIX_OK (C, "C before convert_int", GB0) ;
-    GB_OK (GB_convert_int (T, false, false)) ;  // FIXME
+    GB_OK (GB_convert_int (T, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "T for accum; T=select(A,Thunk) output", GB0) ;
 
     //--------------------------------------------------------------------------

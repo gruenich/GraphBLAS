@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // Exports the contents of a matrix in one of 3 formats: CSR, CSC, or COO
 // (triplet format).  The exported matrix is not modified.  No typecast is
 // performed; the output array Ax must be of the same type as the input matrix

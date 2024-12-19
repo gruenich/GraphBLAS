@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64-bit, except for hack32
+// DONE: 32/64 bit
 
 // DEPRECATED: use GrB_Vector_select instead.
 

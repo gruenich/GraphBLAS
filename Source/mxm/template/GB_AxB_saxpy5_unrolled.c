@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit
+
 // C is full.
 // A is full and not iso-valued nor pattern-only
 // B is sparse or hypersparse.  It may be iso and/or pattern.

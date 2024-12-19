@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
-// FIXME: remove GB[PHIB]_* macros
+// DONE: 32/64 bit, but need remove GB[PHIB]_* macros when done
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -34,7 +32,7 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 "#define GB_%s_IS_SPARSE 0\n"
                 "#define GB_%s_IS_BITMAP 0\n"
                 "#define GB_%s_IS_FULL   0\n"
-                "#define GBP_%s(%sp,k,vlen) %sp [k]\n"
+                "#define GBP_%s(%sp,k,vlen) %sp [k]\n"  // FIXME remove
                 "#define GBH_%s(%sh,k)      %sh [k]\n"
                 "#define GBI_%s(%si,p,vlen) %si [p]\n"
                 "#define GBB_%s(%sb,p)      1\n",
