@@ -221,10 +221,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 
         if (A->i != NULL)
         { 
-// double tt = omp_get_wtime ( ) ;
             GB_cast_int (Ai_new, icode_new, A->i, icode, anz, nthreads_max) ;
-// tt = omp_get_wtime ( ) - tt ; printf ("\ncast Ai (%d,%d) %g sec\n",
-// icode_new, icode, tt) ;
             if (!A->i_shallow)
             { 
                 GB_FREE (&(A->i), A->i_size) ;

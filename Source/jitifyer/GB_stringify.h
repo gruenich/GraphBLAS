@@ -1173,7 +1173,7 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
+GrB_Info GB_split_sparse_jit    // split A into a sparse tile C
 (
     // input/output
     GrB_Matrix C,
@@ -1182,7 +1182,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     const GrB_Matrix A,
     int64_t akstart,
     int64_t aistart,
-    uint64_t *restrict Wp,
+    const void *Wp,             // 32/64 bit, depending on A->p_is_32
     const int64_t *restrict C_ek_slicing,
     const int C_ntasks,
     const int C_nthreads

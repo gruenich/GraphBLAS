@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #define GB_FREE_WORKSPACE                   \
     GB_WERK_POP (Tile_cols, int64_t) ;      \
     GB_WERK_POP (Tile_rows, int64_t) ;
@@ -23,10 +25,10 @@
 GrB_Info GB_split                   // split a matrix
 (
     GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
-    const GrB_Index m,
-    const GrB_Index n,
-    const GrB_Index *Tile_nrows,    // array of size m
-    const GrB_Index *Tile_ncols,    // array of size n
+    const int64_t m,
+    const int64_t n,
+    const int64_t *Tile_nrows,      // array of size m
+    const int64_t *Tile_ncols,      // array of size n
     const GrB_Matrix A,             // input matrix
     GB_Werk Werk
 )
@@ -73,7 +75,7 @@ GrB_Info GB_split                   // split a matrix
     int64_t s = 0 ;
     for (int64_t i = 0 ; i < m ; i++)
     {
-        GrB_Index tile_nrows = Tile_nrows [i] ;     // # of rows in Tile{i,:}
+        int64_t tile_nrows = Tile_nrows [i] ;       // # of rows in Tile{i,:}
         if (tile_nrows < 0 || tile_nrows > nrows)
         { 
             return (GrB_DIMENSION_MISMATCH) ;
@@ -90,7 +92,7 @@ GrB_Info GB_split                   // split a matrix
     s = 0 ;
     for (int64_t j = 0 ; j < n ; j++)
     {
-        GrB_Index tile_ncols = Tile_ncols [j] ;     // # of cols in Tile{:,j}
+        int64_t tile_ncols = Tile_ncols [j] ;       // # of cols in Tile{:,j}
         if (tile_ncols < 0 || tile_ncols > ncols)
         { 
             return (GrB_DIMENSION_MISMATCH) ;

@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit, type of Wp
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
 typedef GB_JIT_KERNEL_SPLIT_SPARSE_PROTO ((*GB_jit_dl_function)) ;
 
-GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
+GrB_Info GB_split_sparse_jit    // split A into a sparse tile C
 (
     // input/output
     GrB_Matrix C,
@@ -23,7 +23,7 @@ GrB_Info GB_split_sparse_jit      // split A into a sparse tile C
     const GrB_Matrix A,
     int64_t akstart,
     int64_t aistart,
-    uint64_t *restrict Wp,           // FIXME what type is Wp?
+    const void *Wp,             // 32/64 bit, depending on A->p_is_32
     const int64_t *restrict C_ek_slicing,
     const int C_ntasks,
     const int C_nthreads

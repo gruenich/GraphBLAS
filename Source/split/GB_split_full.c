@@ -7,6 +7,11 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
+// Each output tile is first created in full form, and then conformed to its
+// desired sparsity format.
+
 #define GB_FREE_ALL         \
     GB_Matrix_free (&C) ;
 
@@ -17,8 +22,8 @@
 GrB_Info GB_split_full              // split a full matrix
 (
     GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
-    const GrB_Index m,
-    const GrB_Index n,
+    const int64_t m,
+    const int64_t n,
     const int64_t *restrict Tile_rows,  // size m+1
     const int64_t *restrict Tile_cols,  // size n+1
     const GrB_Matrix A,             // input matrix
@@ -39,7 +44,6 @@ GrB_Info GB_split_full              // split a full matrix
     bool csc = A->is_csc ;
     GrB_Type atype = A->type ;
     int64_t avlen = A->vlen ;
-//  int64_t avdim = A->vdim ;
     size_t asize = atype->size ;
     const bool A_iso = A->iso ;
 
@@ -190,12 +194,7 @@ GrB_Info GB_split_full              // split a full matrix
                     info = GrB_SUCCESS ;
                 }
 
-                if (info != GrB_SUCCESS)
-                { 
-                    // out of memory, or other error
-                    GB_FREE_ALL ;
-                    return (info) ;
-                }
+                GB_OK (info) ;
             }
 
             //------------------------------------------------------------------

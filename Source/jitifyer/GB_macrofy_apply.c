@@ -202,6 +202,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
         // C or Cx = op(A) for a matrix A
         GB_macrofy_input (fp, "a", "A", "A", true, xtype,
             atype, asparsity, acode, A_iso, A_zombies, Ap_is_32, Ai_is_32) ;
+        fprintf (fp, "#define GB_Ap_TYPE uint%d_t\n", Ap_is_32 ? 32 : 64) ;
     }
     else
     {

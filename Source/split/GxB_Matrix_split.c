@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // The input matrix A is split into a 2D array of size m-by-n.  The Tile{i,j}
 // matrix has dimension Tile_nrows[i]-by-Tile_ncols[j].
 
@@ -15,10 +17,10 @@
 GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
 (
     GrB_Matrix *Tiles,              // 2D row-major array of size m-by-n
-    const GrB_Index m,
-    const GrB_Index n,
-    const GrB_Index *Tile_nrows,    // array of size m
-    const GrB_Index *Tile_ncols,    // array of size n
+    const uint64_t m,
+    const uint64_t n,
+    const uint64_t *Tile_nrows,     // array of size m
+    const uint64_t *Tile_ncols,     // array of size n
     const GrB_Matrix A,             // input matrix to split
     const GrB_Descriptor desc       // unused, except threading control
 )
@@ -48,7 +50,9 @@ GrB_Info GxB_Matrix_split           // split a matrix into 2D array of matrices
     // Tiles = split (A)
     //--------------------------------------------------------------------------
 
-    info = GB_split (Tiles, m, n, Tile_nrows, Tile_ncols, A, Werk) ;
+    info = GB_split (Tiles, (int64_t) m, (int64_t) n,
+        (const int64_t *) Tile_nrows,
+        (const int64_t *) Tile_ncols, A, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

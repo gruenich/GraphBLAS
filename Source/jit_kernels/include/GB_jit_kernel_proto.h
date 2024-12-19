@@ -502,7 +502,7 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
     GrB_Matrix A,                                                       \
     const int64_t akstart,                                              \
     const int64_t aistart,                                              \
-    uint64_t *restrict Wp,                                              \
+    const void *Wp_workspace,                                           \
     const int64_t *C_ek_slicing,                                        \
     const int C_ntasks,                                                 \
     const int C_nthreads,                                               \
