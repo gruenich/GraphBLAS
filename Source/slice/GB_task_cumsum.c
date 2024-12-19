@@ -7,7 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+
+#define GB_DEBUG
 
 // Cp is never NULL.  C is created as sparse or hypersparse.
 
@@ -15,7 +17,8 @@
 
 void GB_task_cumsum
 (
-    uint64_t *Cp,                       // size Cnvec+1     FIXME
+    void *Cp,                           // size Cnvec+1
+    const bool Cp_is_32,                // if true, Cp is 32-bit, else 64-bit
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *restrict TaskList,  // array of structs
@@ -26,7 +29,7 @@ void GB_task_cumsum
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // get inputs
     //--------------------------------------------------------------------------
 
     ASSERT (Cp != NULL) ;
@@ -35,6 +38,8 @@ void GB_task_cumsum
     ASSERT (TaskList != NULL) ;
     ASSERT (ntasks >= 0) ;
     ASSERT (nthreads >= 1) ;
+
+    GB_IDECL (Cp, , u) ; GB_IPTR (Cp, Cp_is_32) ;
 
     //--------------------------------------------------------------------------
     // local cumulative sum of the fine tasks
@@ -54,8 +59,9 @@ void GB_task_cumsum
             // Cp [k] has not been cumsum'd across all of Cp.  It is just the
             // count of the entries in C(:,k).  The final Cp [k] is added to
             // each fine task below, after the GB_cumsum of Cp.
-            int64_t pC = Cp [k] ;
-            Cp [k] += TaskList [taskid].pC ;        // FIXME
+            int64_t pC = GB_IGET (Cp, k) ;
+            int64_t cpk = pC + TaskList [taskid].pC ;
+            GB_ISET (Cp, k, cpk) ;          // Cp [k] = cpk ;
             TaskList [taskid].pC = pC ;
         }
     }
@@ -64,7 +70,7 @@ void GB_task_cumsum
     // replace Cp with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, false, Cnvec, Cnvec_nonempty, nthreads, Werk) ;  // FIXME
+    GB_cumsum (Cp, Cp_is_32, Cnvec, Cnvec_nonempty, nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // shift the cumulative sum of the fine tasks
@@ -81,7 +87,7 @@ void GB_task_cumsum
             // computed by the first task, and so on.  Cp [k] needs to be added
             // to all offsets to get the final starting position for each fine
             // task in C.
-            TaskList [taskid].pC += Cp [k] ;  // FIXME
+            TaskList [taskid].pC += GB_IGET (Cp, k) ;
         }
         else
         { 
@@ -92,21 +98,20 @@ void GB_task_cumsum
             // also given TaskList [taskid].pC = Cp [k], then taskid-1 will
             // always know its pC_end, which is TaskList [taskid].pC,
             // regardless of whether taskid is a fine or coarse task.
-            TaskList [taskid].pC = Cp [k] ;  // FIXME
+            TaskList [taskid].pC = GB_IGET (Cp, k) ;
         }
     }
 
     // The last task is ntasks-1.  It may be a fine task, in which case it
     // computes the entries in C from TaskList [ntasks-1].pC to
     // TaskList [ntasks].pC-1, inclusive.
-    TaskList [ntasks].pC = Cp [Cnvec] ;  // FIXME
+    TaskList [ntasks].pC = GB_IGET (Cp, Cnvec) ;
 
     //--------------------------------------------------------------------------
     // check result
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEBUG
-    // nthreads, ntasks, Cnvec) ;
     for (int t = 0 ; t < ntasks ; t++)
     {
         int64_t k = TaskList [t].kfirst ;
@@ -131,7 +136,9 @@ void GB_task_cumsum
             ASSERT (pM == -1 || (0 <= pM && pM <= pM_end)) ;
             // pC and pC_end can be checked exactly.  This task t computes
             // entries pC:(pC_end-1) of C, inclusive.
-            ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;//FIXME
+            ASSERT (GB_IGET (Cp, k) <= pC) ;
+            ASSERT (pC <= pC_end) ;
+            ASSERT (pC_end <= GB_IGET (Cp, k+1)) ;
         }
         else
         {

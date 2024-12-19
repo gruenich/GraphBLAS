@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #ifndef GB_TASK_METHODS_H
 #define GB_TASK_METHODS_H
@@ -95,7 +95,8 @@ void GB_slice_vector
 
 void GB_task_cumsum
 (
-    uint64_t *Cp,                       // size Cnvec+1 FIXME
+    void *Cp,                           // size Cnvec+1
+    const bool Cp_is_32,                // if true, Cp is 32-bit, else 64-bit
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     GB_task_struct *restrict TaskList,  // array of structs
