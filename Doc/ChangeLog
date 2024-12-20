@@ -1,3 +1,9 @@
+Dec 20, 2024: version 9.4.3
+
+    * (57) bug fix: GraphBLAS.h header: remove duplicate definitions of
+        GxB_MAX_FIRST_* semirings (incompletely moved to 'historical' section
+        in 9.4.2).
+
 Nov 18, 2024: version 9.4.2
 
     * clarified User Guide: regarding when the hyper-hash is built
