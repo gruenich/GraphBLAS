@@ -41,8 +41,8 @@
 // left and right shift
 //------------------------------------------------------------------------------
 
-#define GB_LSHIFT(x,k) (((uint64_t) x) << k)
-#define GB_RSHIFT(x,k,b) ((x >> k) & ((((uint64_t)0x00000001) << b) -1))
+#define GB_LSHIFT(x,k) (((uint64_t) (x)) << k)
+#define GB_RSHIFT(x,k,b) (((x) >> (k)) & ((((uint64_t) 0x1) << (b)) - 1))
 
 #endif
 

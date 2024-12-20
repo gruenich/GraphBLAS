@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // A parallel compression method for a GrB_Matrix.  The input matrix may have
 // shallow components; the output is unaffected by this.  The output blob is
@@ -64,6 +64,9 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GrB_Info info ;
     ASSERT (blob_size_handle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
+
+    int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+    int Ai_is_32 = (A->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // determine what serialization to do
@@ -165,20 +168,27 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     int64_t anz = GB_nnz (A) ;
     int64_t anz_held = GB_nnz_held (A) ;
 
+    //--------------------------------------------------------------------------
     // determine the uncompressed sizes of Ap, Ah, Ab, Ai, and Ax
+    //--------------------------------------------------------------------------
+
+    size_t apsize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t aisize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
     int64_t Ap_len = 0 ;
     int64_t Ah_len = 0 ;
     int64_t Ab_len = 0 ;
     int64_t Ai_len = 0 ;
     int64_t Ax_len = 0 ;
+
     switch (sparsity)
     {
         case GxB_HYPERSPARSE : 
-            Ah_len = sizeof (GrB_Index) * nvec ;
+            Ah_len = aisize * nvec ;
             // fall through to the sparse case
         case GxB_SPARSE :
-            Ap_len = sizeof (GrB_Index) * (nvec+1) ;
-            Ai_len = sizeof (GrB_Index) * anz ;
+            Ap_len = apsize * (nvec+1) ;
+            Ai_len = aisize * anz ;
             Ax_len = typesize * (iso ? 1 : anz) ;
             break ;
         case GxB_BITMAP : 
@@ -315,21 +325,38 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     uint64_t blob_size_required64 = (uint64_t) blob_size_required ;
     GB_BLOB_WRITE (blob_size_required64, uint64_t) ;
 
-    // FIXME: augment typecode with an encoding of the integer sizes of
-    // A->p and A->h/A->i (2 bits).
+    // The typecode in GraphBLAS is in range 0 to 14 and requires just 4 bits.
+    // In GrB v9.4.2 and earlier, an entire int32_t was written to the blob
+    // holding the typecode.  GrB v10.0.0 adds 32/64 bit integers for A->p,
+    // A->h, and A->i, requiring two bits: A->p_is_32 and A->i_is_32.  These
+    // are held as two nibbles (a nibble is 4 bits) to handle future
+    // extensions.
 
-    // typecode is current 4 bytes, but only 1 byte is required.
-    // Use the 2nd byte for A->p and A->i integer sizes.
-    #ifdef todo
-        int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
-        int Ai_is_32 = (A->i_is_32) ? 1 : 0 ;
-        uint32_t encoding =
-            GB_LSHIFT (Ap_is_32, 5) |
-            GB_LSHIFT (Ai_is_32, 4) |
-            (typecode & 0xF) ;
-    #endif
+    // These 2 nibbles are implicitly zero in GrB v9.4.2 and earlier, since
+    // only 64-bit integers are supported in that version.
 
-    GB_BLOB_WRITE (typecode, int32_t) ;
+    // If GrB v10.0.0 writes a 0 to both nibbles, then GrB v9.4.2 and earlier
+    // can safely read the blob, since both versions support all-64-bit integer
+    // matrices.  GrB v10.0.0 can also read any blob written by earlier
+    // versions; they will have zeros in those 2 nibbles, which will be
+    // intepretted correctly that the blob contains 64-bit integers for A->p,
+    // A->h, and A->i.
+
+    // If GrB v10.0.0 writes a nonzero value to either nibble, and then GrB
+    // v9.4.2 attempts to deserialize the blob, it will safely report an
+    // invalid blob, because it will not recognize the typecode as valid (it
+    // will be > GB_UDT_code == 14).
+
+//  was the following in GrB v5.2 to v9.4.2:
+//  GB_BLOB_WRITE (typecode, int32_t) ;
+//  now in GrB v10.0.0:
+    typecode &= 0xF ;
+    uint32_t encoding =
+        GB_LSHIFT (Ap_is_32, 8) |     // bits 8 to 11: Ap_is_32 (3 bits unused)
+        GB_LSHIFT (Ai_is_32, 4) |     // bits 4 to 7:  Ai_is_32 (3 bits unused)
+        GB_LSHIFT (typecode, 0) ;     // bits 0 to 3:  typecode
+    GB_BLOB_WRITE (encoding, uint32_t) ;
+
     GB_BLOB_WRITE (version, int32_t) ;
     GB_BLOB_WRITE (vlen, int64_t) ;
     GB_BLOB_WRITE (vdim, int64_t) ;
@@ -344,7 +371,20 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     GB_BLOB_WRITE (Ax_len, int64_t) ;
     GB_BLOB_WRITE (hyper_switch, float) ;
     GB_BLOB_WRITE (bitmap_switch, float) ;
-    GB_BLOB_WRITE (sparsity_control, int32_t) ;
+
+// was the following in GrB v5.2 to v9.4.2:
+//  GB_BLOB_WRITE (sparsity_control, int32_t) ;
+// now in GrB v10.0.0, with 8 bits reserved for sparsity_control, in case new
+// sparsity formats are added in the future:
+    uint32_t p_control = (A->p_control) & 0xF ;
+    uint32_t i_control = (A->i_control) & 0xF ;
+    sparsity_control &= 0xFF ;
+    uint32_t control_encoding =
+        GB_LSHIFT (p_control       , 12) | // 4 bits
+        GB_LSHIFT (i_control       ,  8) | // 4 bits
+        GB_LSHIFT (sparsity_control,  0) ; // 8 bits (only 4 needed for now)
+    GB_BLOB_WRITE (control_encoding, uint32_t) ;
+
     GB_BLOB_WRITE (sparsity_iso_csc, int32_t);
     GB_BLOB_WRITE (Ap_nblocks, int32_t) ; GB_BLOB_WRITE (Ap_method, int32_t) ;
     GB_BLOB_WRITE (Ah_nblocks, int32_t) ; GB_BLOB_WRITE (Ah_method, int32_t) ;
@@ -391,6 +431,12 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
     // append the GrB_NAME and GrB_EL_TYPE_STRING to the blob
     //--------------------------------------------------------------------------
+
+    // GrB v8.1.0 added two optional uncompressed nul-terminated strings: the
+    // user name and the element-type name.  GrB v8.1.0 and later detects if
+    // the strings are present, and thus it (and the currently GrB version) can
+    // safely read serialized blobs written by GrB v5.2 and later (the first
+    // version that included the serialization methods).
 
     if (user_name != NULL)
     { 
