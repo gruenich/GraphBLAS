@@ -85,7 +85,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     // create C; allocate C->p and do not initialize it.
-    // C has the exact same sparsity structure as A.
+    // C has the exact same sparsity structure and integer sizes as A.
 
     // allocate a new user header for C if (*Chandle) is NULL, or reuse the
     // existing static or dynamic header if (*Chandle) is not NULL.

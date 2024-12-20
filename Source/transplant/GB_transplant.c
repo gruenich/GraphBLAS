@@ -420,49 +420,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->b_shallow = false ;
 
     //--------------------------------------------------------------------------
-    // free A; all content is now in C
+    // free A; all content is now in C, and return result
     //--------------------------------------------------------------------------
 
     GB_Matrix_free (Ahandle) ;
-
-    //--------------------------------------------------------------------------
-    // convert the integers of C if their control is strict
-    //--------------------------------------------------------------------------
-
-    // FIXME: make this a separate function?
-
-    if (!GB_valid_strict (C->p_control, C->p_is_32) ||
-        !GB_valid_strict (C->i_control, C->i_is_32))
-    { 
-        // determine the new integer settings: either strict, or as-is
-        const bool Cp_is_32_new = (C->p_control == GxB_STRICT_32_BITS) ? true :
-                                 ((C->p_control == GxB_STRICT_64_BITS) ? false :
-                                   C->p_is_32) ;
-        const bool Ci_is_32_new = (C->i_control == GxB_STRICT_32_BITS) ? true :
-                                 ((C->i_control == GxB_STRICT_64_BITS) ? false :
-                                   C->i_is_32) ;
-
-        // make sure they are valid for the size of the matrix
-        if (!GB_valid_pi_is_32 (Cp_is_32_new, Ci_is_32_new,
-            anvals, avlen, avdim))
-        { 
-            // matrix is invalid; free C and A and return the error code
-            GB_FREE_ALL ;
-            return (GrB_INVALID_VALUE) ;
-        }
-
-        // convert the integers to match their strict controls
-        GB_OK (GB_convert_int (C, Cp_is_32_new, Ci_is_32_new, true)) ;
-
-        // any strict settings are now valid
-        GB_assert (GB_valid_strict (C->p_control, C->p_is_32)) ;    // FIXME
-        GB_assert (GB_valid_strict (C->i_control, C->i_is_32)) ;    // FIXME
-    }
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
     ASSERT_MATRIX_OK (C, "C after transplant", GB0) ;
     return (GrB_SUCCESS) ;
 }

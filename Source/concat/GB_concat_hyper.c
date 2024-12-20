@@ -54,8 +54,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     GB_void *restrict Wx = NULL ; size_t Wx_size = 0 ;
 
     bool Cp_is_32, Ci_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, Werk->p_control,
-        Werk->i_control, GxB_HYPERSPARSE, cnz, cvlen, cvdim, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, Werk->p_control,
+        Werk->i_control, GxB_HYPERSPARSE, cnz, cvlen, cvdim) ;
 
     float hyper_switch = C->hyper_switch ;
     float bitmap_switch = C->bitmap_switch ;

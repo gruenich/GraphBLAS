@@ -143,7 +143,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // C has the same type as z for the multiply operator, z=op(x,y)
 
     uint64_t cvlen, cvdim, cnzmax, cnvec ;
-
     bool ok = GB_int64_multiply (&cvlen, avlen, bvlen) ;
     ok = ok & GB_int64_multiply (&cvdim, avdim, bvdim) ;
     ok = ok & GB_int64_multiply (&cnzmax, anz, bnz) ;
@@ -164,12 +163,13 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int C_sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
-    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;//FIXME
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;//FIXME
     bool Cp_is_32, Ci_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim) ;
 
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,

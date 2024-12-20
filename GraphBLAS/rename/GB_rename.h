@@ -282,7 +282,6 @@
 #define GB_Descriptor_get GM_Descriptor_get
 #define GB_deserialize_from_blob GM_deserialize_from_blob
 #define GB_deserialize GM_deserialize
-#define GB_determine_pi_is_32 GM_determine_pi_is_32
 #define GB_dup GM_dup
 #define GB_dup_worker GM_dup_worker
 #define GB_ek_slice GM_ek_slice

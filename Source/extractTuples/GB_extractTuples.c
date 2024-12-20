@@ -111,7 +111,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // allocate workspace
         //----------------------------------------------------------------------
 
-        bool Cp_is_32 = GB_validate_p_is_32 (true, anz) ;   // OK
+        bool Cp_is_32 = GB_determine_p_is_32 (true, anz) ;   // OK
         size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         Cp = GB_malloc_memory (A->vdim+1, cpsize, &Cp_size) ;
         if (Cp == NULL)

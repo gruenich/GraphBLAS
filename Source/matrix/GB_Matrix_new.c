@@ -43,22 +43,12 @@
 //
 //  GxB_AUTO_BITS:  default : rely on the global settings
 
-//  GxB_PREFER_32_BITS : use 32 bits if possible, but allow 64 bit if needed
-//                      A hint.
+//  GxB_PREFER_32_BITS : use 32 bits if possible, but allow 64 bit if needed.
 //
-//  GxB_PREFER_64_BITS : use 64 bits, convert now is already 32 bits,
-//                      but 32 bit is not an error in the future.  A hint.
-//
-//  GxB_STRICT_32_BITS  : use 32 bits, but return an error if the matrix is too
-//                      big for 32-bit.  convert now from 64 to 32.  If OK,
-//                      lock the size of the integers and do not change in the
-//                      future.  If the matrix nvals or dimension changes and
-//                      32-bit becomes too small, return an error and do not
-//                      convert the matrix.
-//
-//  GxB_STRICT_64_BITS : use 64, convert now if already 32;
-//                      lock and do not change in the future.
-//                      An error will occur if it 
+//  GxB_PREFER_64_BITS : use 64 bits, convert now is already 32 bits.
+//                      Sometimes the matrix may become 32-bit in the future,
+//                      if data is transplanted from a matrix with 32-bit
+//                      content.
 //
 // Changing the global settings has no impact on the block/non-blocking status
 // of any existing matrix.  If the per-matrix setting is changed, it may cause
@@ -128,20 +118,13 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
-#if 0
-    // get global pi_control
-    int8_t p_control = GB_Global_p_control_get ( ) ;
-    int8_t i_control = GB_Global_i_control_get ( ) ;
-#else
-    // HACK for now:
-    int8_t p_control = GxB_PREFER_32_BITS ;
-    int8_t i_control = GxB_PREFER_32_BITS ;
-#endif
-
     // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool hack32 = true ;    // FIXME
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : GB_Global_p_control_get ();
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : GB_Global_i_control_get ();
     bool Ap_is_32, Ai_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Ap_is_32, &Ai_is_32, p_control, i_control,
-        GxB_AUTO_SPARSITY, 1, vlen, vdim, true)) ;
+    GB_determine_pi_is_32 (&Ap_is_32, &Ai_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, 1, vlen, vdim) ;
 
     // create the matrix
     GB_OK (GB_new (A, // auto sparsity (sparse/hyper), new header

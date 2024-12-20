@@ -96,21 +96,5 @@ void GB_Matrix_free             // free a matrix
     GrB_Matrix *Ahandle         // handle of matrix to free
 ) ;
 
-GrB_Info GB_determine_pi_is_32 // determine p_is_32 and i_is_32 for a new matrix
-(
-    // output
-    bool *p_is_32,      // if true, Ap will be 32 bits; else 64
-    bool *i_is_32,      // if true, Ai etc will be 32 bits; else 64
-    // input
-    int8_t p_control,   // effective p_control for the caller
-    int8_t i_control,   // effective i_control for the caller
-    int sparsity,       // sparse, hyper, bitmap, full, or auto (sparse/hyper)
-    int64_t nvals,      // lower bound on # of entries in the matrix to create
-    int64_t vlen,       // dimensions of the matrix to create
-    int64_t vdim,
-    bool strict         // if true, check strict controls.  Otherwise, this
-                        // matrix is a temporary one that will not be
-) ;
-
 #endif
 

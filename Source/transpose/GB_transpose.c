@@ -261,8 +261,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         // T is created using the requested integers of C.
 
-        GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32,
-            p_control, i_control, GxB_HYPERSPARSE, 0, avdim, avlen, true)) ;
+        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+            GxB_HYPERSPARSE, 0, avdim, avlen) ;
 
         // create a new empty matrix T, with the new type and dimensions.
         GB_OK (GB_new_bix (&T, // hyper, existing header
@@ -779,8 +779,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             //------------------------------------------------------------------
 
             // T is created using the requested integers of C.
-            GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
-                i_control, GxB_HYPERSPARSE, anz, avdim, avlen, true)) ;
+            GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+                GxB_HYPERSPARSE, anz, avdim, avlen) ;
 
             // initialize the header of T, with no content,
             // and initialize the type and dimension of T.
@@ -950,15 +950,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     // the requested integers of C.  This does nothing if T was already created
     // in that form.
 
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
-        i_control, GB_sparsity (C), anz, avdim, avlen, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GB_sparsity (C), anz, avdim, avlen) ;
 
     GB_OK (GB_convert_int (T, Cp_is_32, Cp_is_32, true)) ;
 
     // this is a hack since the code below may not yet support 32-bit integers:
     // move it to the end of the function once all methods below are OK for
     // 32/64 bit matrices.
-    GB_OK (GB_convert_int (T, false, false, true)) ;  // FIXME: hack
+    GB_OK (GB_convert_int (T, false, false, true)) ;  // FIXME
 
     //==========================================================================
     // free workspace, apply positional op, and transplant/conform T into C

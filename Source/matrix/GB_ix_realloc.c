@@ -16,8 +16,12 @@
 
 // If nzmax_new is too large for the current value of A->p_is_32, then A->p
 // is converted to 64-bit integers and A->p_is_32 is set true.  The content of
-// A->p is preserved.  The conversion of A->p to 64-bit fails if the matrix
-// control setting is GxB_STRICT_32_BITS.
+// A->p is preserved.
+
+// Thus, this method typically changes the A->x and A->i pointers, and may
+// change A->p if needed.
+
+// If this method runs out of memory, the matrix is unchanged.
 
 #define GB_FREE_ALL ;
 
@@ -36,6 +40,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
 
     // Full and bitmap matrices never have pending work, so
     // this function is only called for hypersparse and sparse matrices.
+    GrB_Info info ;
     ASSERT (!GB_IS_FULL (A)) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
@@ -63,18 +68,8 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
 
     if (!GB_valid_p_is_32 (A->p_is_32, nzmax_new))
     { 
-        if (A->p_control == GxB_STRICT_32_BITS)
-        { 
-            // matrix has strict 32-bit A->p but too many entries requested
-            return (GrB_INVALID_VALUE) ;
-        }
         // convert A->p to 64-bit; do not change A->i_is_32
-        GrB_Info info = GB_convert_int (A, false, A->i_is_32, true) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            return (info) ;
-        }
+        GB_OK (GB_convert_int (A, false, A->i_is_32, false)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -94,12 +89,12 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     else
     { 
         // reallocate A->x from its current size to nzmax_new1 entries
-        GB_REALLOC (A->x, nzmax_new1*asize, GB_void, &(A->x_size), &ok2) ;
+        GB_REALLOC (A->x, nzmax_new1 * asize, GB_void, &(A->x_size), &ok2) ;
     }
     bool ok = ok1 && ok2 ;
 
     // The matrix is always left in a valid state.  If the reallocation fails
-    // it just won't have the requested size (and ok is false in this case).
+    // it just won't have the requested size.
     if (!ok)
     { 
         return (GrB_OUT_OF_MEMORY) ;

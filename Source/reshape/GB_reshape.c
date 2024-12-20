@@ -228,8 +228,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         GB_SLICE_MATRIX (T, 1) ;
 
         bool Cp_is_32, Ci_is_32 ;
-        GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
-            i_control, GxB_AUTO_SPARSITY, nvals, vlen_new, vdim_new, true)) ;
+        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+            GxB_AUTO_SPARSITY, nvals, vlen_new, vdim_new) ;
 
         //----------------------------------------------------------------------
         // allocate output and workspace

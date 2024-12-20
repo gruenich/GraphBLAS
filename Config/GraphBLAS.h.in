@@ -1613,17 +1613,7 @@ typedef enum
 
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
     GxB_INDEX_INTEGER = 7053,       // integer size control for row/col indices
-
-    // TODO: what do we call this?  This setting defines the
-    // integers used for the A->p array, internally.  It can be 32 bits if
-    // the max # entries in a matrix is < 2^32, or 64 bits otherwise.
-    // OK, but what do we call this for GrB_set/get?
-    // SparseBLAS would call the related integer type the "offset_integer"
-    // type (GraphBLAS does not expose that type to the API, but it does need
-    // to be named for get/set, here):
-//  GxB_MAXNVALS_INTEGER = 7054,      // integer size control for offsets ??
-    GxB_OFFSET_INTEGER = 7054,      // integer size control for offsets ??
-//  GxB_SIZE_INTEGER = 7054,      // integer size control for offsets ??
+    GxB_OFFSET_INTEGER = 7054,      // integer size control for offsets
 }
 GrB_Field ;
 
@@ -1632,14 +1622,10 @@ typedef enum
     // for global and per-matrix settings:
     GxB_AUTO_BITS = 0,      // the default for individual matrices:
                             // use the global default
-
-    GxB_STRICT_32_BITS = 1,
-    GxB_PREFER_32_BITS = 2, // the global default
-
-    GxB_STRICT_64_BITS = 3,
-    GxB_PREFER_64_BITS = 4
+    GxB_PREFER_32_BITS = 1, // the global default
+    GxB_PREFER_64_BITS = 2
 }
-GxB_Integer_Size ;
+GxB_Integer_Control ;
 
 typedef enum
 {

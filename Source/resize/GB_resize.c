@@ -297,6 +297,8 @@ GrB_Info GB_resize              // change the size of a matrix
         // resize the matrix and the integers are valid for the new dimensions
         //----------------------------------------------------------------------
 
+        ASSERT_MATRIX_OK (A, "A just before resize vlen, vdim", GB0) ;
+
         A->vdim = vdim_new ;
         A->vlen = vlen_new ;
 
@@ -308,8 +310,8 @@ GrB_Info GB_resize              // change the size of a matrix
         int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
         int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
         bool Ap_is_32_new, Ai_is_32_new ;
-        GB_OK (GB_determine_pi_is_32 (&Ap_is_32_new, &Ai_is_32_new, p_control,
-            i_control, GB_sparsity (A), A->nvals, A->vlen, A->vdim, true)) ;
+        GB_determine_pi_is_32 (&Ap_is_32_new, &Ai_is_32_new, p_control,
+            i_control, GB_sparsity (A), A->nvals, A->vlen, A->vdim) ;
 
         if (Ap_is_32_new != A->p_is_32 || Ai_is_32_new != A->i_is_32)
         {

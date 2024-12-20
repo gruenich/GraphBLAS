@@ -74,15 +74,13 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // free all content of C and reallocate it
     GB_phybix_free (C) ;
 
-    // HACK for now:
-    bool hack32 = true ;
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool hack32 = true ;    // FIXME
     int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
-
-    // determine the p_is_32 and i_is_32 settings for the new matrix
     bool Cp_is_32, Ci_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        GxB_SPARSE, cnz, cvlen, cvdim, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_SPARSE, cnz, cvlen, cvdim) ;
 
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_ph_malloc, csc, GxB_SPARSE, false,

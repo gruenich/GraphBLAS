@@ -94,13 +94,14 @@ GrB_Info GB_select_sparse
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     int64_t anz = GB_nnz (A) ;
 
-    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
+    // determine the p_is_32 and i_is_32 settings for the new matrix
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME
     hack32 = true ; // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;  //FIXME
+    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;  //FIXME
     bool Cp_is_32, Ci_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        csparsity, anz, A->vlen, A->vdim, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        csparsity, anz, A->vlen, A->vdim) ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
@@ -124,7 +125,6 @@ GrB_Info GB_select_sparse
     if (A_is_hyper)
     { 
         // C->h is a deep copy of A->h
-//      GB_memcpy (C->h, A->h, A->nvec * sizeof (uint64_t), nthreads_max) ;
         GB_cast_int (C->h, cucode, A->h, aucode, A->nvec, nthreads_max) ;
     }
 

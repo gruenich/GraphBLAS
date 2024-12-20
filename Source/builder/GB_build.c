@@ -262,8 +262,8 @@ GrB_Info GB_build               // build matrix
     // C->p_control and C->i_control may be strict; if so, T is created with
     // these integer sizes.
     bool Tp_is_32, Ti_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Tp_is_32, &Ti_is_32, Werk->p_control,
-        Werk->i_control, GxB_HYPERSPARSE, nvals, C->vlen, C->vdim, true)) ;
+    GB_determine_pi_is_32 (&Tp_is_32, &Ti_is_32, Werk->p_control,
+        Werk->i_control, GxB_HYPERSPARSE, nvals, C->vlen, C->vdim) ;
 
     // T is always built as hypersparse.  Its type is the same as the z output
     // of the z=dup(x,y) operator if dup is present, or xtype if dup is NULL.

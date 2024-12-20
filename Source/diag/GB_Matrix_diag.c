@@ -97,15 +97,13 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     const float bitmap_switch = C->bitmap_switch ;
     const int sparsity_control = C->sparsity_control ;
 
-    // HACK for now:
+    // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = true ;    // FIXME
     int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;  // FIXME
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;  // FIXME
-
-    // determine the p_is_32 and i_is_32 settings for the new matrix
     bool Cp_is_32, Ci_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        C_sparsity, vnz, n, n, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        C_sparsity, vnz, n, n) ;
 
     GB_OK (GB_new_bix (&C, // existing header
         ctype, n, n, GB_ph_malloc, csc, C_sparsity, false,

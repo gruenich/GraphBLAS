@@ -83,19 +83,12 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // determine the integer sizes to use
     //--------------------------------------------------------------------------
 
-#if 0
-    // get global pi_control
-    int8_t p_control = GB_Global_p_control_get ( ) ;
-    int8_t i_control = GB_Global_i_control_get ( ) ;
-#else
-    // HACK for now:
-    int8_t p_control = GxB_PREFER_32_BITS ;
-    int8_t i_control = GxB_PREFER_32_BITS ;
-#endif
-
-    // determine the p_is_32 and i_is_32 settings for the new matrix
-    GB_OK (GB_determine_pi_is_32 (&(A->p_is_32), &(A->i_is_32), p_control,
-        i_control, GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim, true)) ;
+    // determine the p_is_32 and i_is_32 settings for the cleared matrix
+    bool hack_32 = true ;   // FIXME
+    int8_t p_control = hack_32 ? GxB_PREFER_32_BITS : Werk->p_control ;
+    int8_t i_control = hack_32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    GB_determine_pi_is_32 (&(A->p_is_32), &(A->i_is_32), p_control,
+        i_control, GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim) ;
 
     size_t apsize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t aisize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;

@@ -81,18 +81,18 @@ GrB_Info GB_select_value_iso
     // construct C: either an empty matrix, or a copy of A
     //--------------------------------------------------------------------------
 
-    // check if C has 0 or 1 entry
     if (C_empty)
     { 
-        // C is an empty matrix
+        // C is an empty: create a new empty matrix (not a shallow copy of A)
+
+        // determine the p_is_32 and i_is_32 settings for the new matrix
         bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
         hack32 = true ; // FIXME
         int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
         int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
         bool Cp_is_32, Ci_is_32 ;
-
-        GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
-            i_control, GxB_AUTO_SPARSITY, 0, A->vlen, A->vdim, true)) ;
+        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+            GxB_AUTO_SPARSITY, 0, A->vlen, A->vdim) ;
 
         return (GB_new (&C, // existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, true,

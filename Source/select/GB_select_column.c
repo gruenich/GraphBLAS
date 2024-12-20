@@ -142,12 +142,13 @@ GrB_Info GB_select_column
         cnvec = anvec - ((A_is_hyper) ? (found ? (k+1) : k) : 0) ;
     }
 
+    // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
     int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
     bool Cp_is_32, Ci_is_32 ;
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        GxB_AUTO_SPARSITY, cnz, avlen, avdim, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, cnz, avlen, avdim) ;
 
     if (cnz == anz)
     { 

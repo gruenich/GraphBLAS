@@ -27,10 +27,9 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     GrB_Matrix A,           // matrix to convert
     bool p_is_32_new,       // new integer format for A->p
     bool i_is_32_new,       // new integer format for A->h, A->i, and A->Y
-    bool validate           // if true, validate A->vlen/vdim/nvals for the new
-                            // integer sizes.  Otherwise, ignore the matrix
-                            // properties and always convert to the new integer
-                            // sizes.
+    bool determine          // if true, revise p_is_32_new and i_is_32_new
+        // based on A->vlen, A->vdim and A->nvals.  Otherwise, ignore the
+        // matrix properties and always convert to the new integer sizes.
 )
 {
 
@@ -60,16 +59,15 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         return (GrB_SUCCESS) ;
     }
 
-    bool p_is_32 = A->p_is_32 ;
-    bool i_is_32 = A->i_is_32 ;
     int64_t anz = GB_nnz (A) ;
-
-    if (validate)
+    if (determine)
     {
         ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
-        p_is_32_new = GB_validate_p_is_32 (p_is_32_new, anz) ;              //OK
-        i_is_32_new = GB_validate_i_is_32 (i_is_32_new, A->vlen, A->vdim) ; //OK
+        p_is_32_new = GB_determine_p_is_32 (p_is_32_new, anz) ;             //OK
+        i_is_32_new = GB_determine_i_is_32 (i_is_32_new, A->vlen, A->vdim) ;//OK
     }
+    bool p_is_32 = A->p_is_32 ;
+    bool i_is_32 = A->i_is_32 ;
 
     if (p_is_32 == p_is_32_new && i_is_32 == i_is_32_new)
     { 

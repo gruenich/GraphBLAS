@@ -126,14 +126,13 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // The bucket transpose only works when C is sparse.
     // A can be sparse or hypersparse.
 
+    // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
     int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
     bool Cp_is_32, Ci_is_32 ;
-
-    // C is created using its requested integers
-    GB_OK (GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
-        i_control, GxB_SPARSE, anz, avdim, avlen, true)) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_SPARSE, anz, avdim, avlen) ;
 
     // C->p is allocated but not initialized.
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
