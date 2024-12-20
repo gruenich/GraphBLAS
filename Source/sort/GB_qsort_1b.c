@@ -12,7 +12,7 @@
 // returns true if A [a] < B [b]
 #define GB_lt(A,a,B,b) GB_lt_1 (A ## _0, a, B ## _0, b)
 
-// each entry has a single key
+// Each entry has a single key: a 32-bit or 64-bit unsigned integer
 #define GB_K 1
 
 //------------------------------------------------------------------------------

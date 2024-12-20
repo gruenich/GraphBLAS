@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // C is sparse or hypersparse, but the algorithm doesn't access C->h, and works
 // identically for both cases.  So the JIT kernel can treat C as if sparse.
@@ -32,6 +32,9 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
 
     GrB_Type ctype = C->type ;
     int ccode = ctype->code ;           // 1 to 14
+
+    int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // get the type of X and the opcode
@@ -63,15 +66,15 @@ void GB_enumify_sort        // enumerate a GxB_sort problem
     // construct the sort method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 14 (4 hex digits)
-
-    // FIXME: 32/64 bits: 4 bits for C, P
+    // total method_code bits: 16 (4 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // binaryop, z = f(x,y) (3 hex digits)
-                GB_LSHIFT (binop_code , 12) |  // 0 to 52      6
-                GB_LSHIFT (xcode      ,  8) |  // 1 to 14      4
+                // binaryop, z = f(x,y), and integers of C (3 hex digits)
+                GB_LSHIFT (cp_is_32   , 15) |  // 0 to 1       1
+                GB_LSHIFT (ci_is_32   , 14) |  // 0 to 1       1
+                GB_LSHIFT (binop_code ,  8) |  // 0 to 52      6
+                GB_LSHIFT (xcode      ,  4) |  // 1 to 14      4
 
                 // type of C (1 hex digit)
                 GB_LSHIFT (ccode      ,  0) ;  // 1 to 14      4

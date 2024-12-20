@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // A parallel mergesort of an array of 2-by-n integers.  Each key
-// consists of two integers.
+// consists of two 32-bit or 64-bit unsigned integers.
 
 #include "sort/GB_sort.h"
 
@@ -113,7 +113,7 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
     }
 
     //--------------------------------------------------------------------------
-    // call the type-specific GB_msort_2 method 
+    // call the type-specific GB_msort_2 method
     //--------------------------------------------------------------------------
 
     if (A0_is_32)
@@ -123,7 +123,7 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
             return (GB_msort_2_32_32 (A_0, A_1, n, nthreads)) ;
         }
         else
-        {
+        { 
             return (GB_msort_2_32_64 (A_0, A_1, n, nthreads)) ;
         }
     }
@@ -134,7 +134,7 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
             return (GB_msort_2_64_32 (A_0, A_1, n, nthreads)) ;
         }
         else
-        {
+        { 
             return (GB_msort_2_64_64 (A_0, A_1, n, nthreads)) ;
         }
     }

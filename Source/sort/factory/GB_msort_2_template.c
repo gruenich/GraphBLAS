@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// A parallel mergesort of an array of 2-by-n integers.
+// A parallel mergesort of an array of 2-by-n 32-bit or 64-bit unsigned
+// integers.
 
 //------------------------------------------------------------------------------
 // GB_msort_2_binary_search: binary search for the pivot
@@ -342,7 +343,7 @@ static GrB_Info GB_msort_2_method    // sort array A of size 2-by-n
     int64_t *restrict R_task = T ; T += ntasks ;
     int64_t *restrict R_len  = T ; T += ntasks ;
     int64_t *restrict S_task = T ; T += ntasks ;
-    int64_t *restrict Slice  = T ; T += (ntasks+1) ;  
+    int64_t *restrict Slice  = T ; T += (ntasks+1) ;
 
     //--------------------------------------------------------------------------
     // partition and sort the leaves
@@ -372,9 +373,6 @@ static GrB_Info GB_msort_2_method    // sort array A of size 2-by-n
         //----------------------------------------------------------------------
         // merge level k into level k-1, from A into W
         //----------------------------------------------------------------------
-
-        // TODO: skip k and k-1 for each group of 4 sublists of A if they are
-        // already sorted with respect to each other.
 
         // this could be done in parallel if ntasks was large
         for (int tid = 0 ; tid < ntasks ; tid += 2*nt)

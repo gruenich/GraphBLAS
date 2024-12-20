@@ -55,7 +55,7 @@ static inline void GB_qsort_1b_kernel
     GB_A1_t *restrict A_1,      // size n array
     const int64_t n
 )
-{
+{ 
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }

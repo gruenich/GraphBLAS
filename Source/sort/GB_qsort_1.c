@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// Each entry is a single 32-bit or 64-bit unsigned integer.
+
 #include "sort/GB_sort.h"
 
 // returns true if A [a] < B [b]

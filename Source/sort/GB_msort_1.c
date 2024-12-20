@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// A parallel mergesort of an array of 1-by-n integers.
+// A parallel mergesort of an array of 1-by-n integers.  Each key
+// is a 32-bit or 64-bit unsigned integer.
 
 #include "sort/GB_sort.h"
 
@@ -67,7 +68,7 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
     }
 
     //--------------------------------------------------------------------------
-    // call the type-specific GB_msort_1 method 
+    // call the type-specific GB_msort_1 method
     //--------------------------------------------------------------------------
 
     if (A0_is_32)
@@ -75,7 +76,7 @@ GrB_Info GB_msort_1     // sort array A of size 1-by-n
         return (GB_msort_1_32 (A_0, n, nthreads)) ;
     }
     else
-    {
+    { 
         return (GB_msort_1_64 (A_0, n, nthreads)) ;
     }
 }

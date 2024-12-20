@@ -10,7 +10,7 @@
 // All of the GB_qsort_* functions are single-threaded, by design.  The
 // GB_msort_* functions are parallel.  None of these sorting methods are
 // guaranteed to be stable, but they are always used in GraphBLAS with unique
-// keys.
+// keys, so they do not have to be stable.
 
 #ifndef GB_SORT_H
 #define GB_SORT_H

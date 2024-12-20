@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // A parallel mergesort of an array of 3-by-n integers.  Each key
-// consists of three integers.
+// consists of three 32-bit or 64-bit unsigned integers.
 
 #include "sort/GB_sort.h"
 
@@ -210,7 +210,7 @@ GrB_Info GB_msort_3     // sort array A of size 3-by-n
     }
 
     //--------------------------------------------------------------------------
-    // call the type-specific GB_msort_3 method 
+    // call the type-specific GB_msort_3 method
     //--------------------------------------------------------------------------
 
     if (A0_is_32)

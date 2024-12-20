@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -27,9 +27,13 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // extract the binaryop method_code
     //--------------------------------------------------------------------------
 
-    // binary operator (14 bits, 3 hex digits)
-//  int binop_code  = GB_RSHIFT (method_code, 12, 6) ;
-    int xcode       = GB_RSHIFT (method_code,  8, 4) ;
+    // integers of C
+    bool Cp_is_32   = GB_RSHIFT (method_code, 15, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 14, 1) ;
+
+    // binary operator
+//  int binop_code  = GB_RSHIFT (method_code,  8, 6) ;
+    int xcode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // type of C (1 hex digit)
     int ccode       = GB_RSHIFT (method_code,  0, 4) ; // 1 to 14, C is not iso
@@ -76,7 +80,8 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     //--------------------------------------------------------------------------
 
     GB_macrofy_input (fp, "c", "C", "C", true, xtype, ctype, 1, ccode, 0, -1,
-    /* FIXME: */ false, false) ;
+        Cp_is_32, Ci_is_32) ;
+    fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

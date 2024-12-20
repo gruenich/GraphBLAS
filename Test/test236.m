@@ -151,6 +151,7 @@ GB_spec_compare (C1, C2) ;
 fprintf (' typecast') ;
 lt.optype = 'single' ;
 gt.optype = 'single' ;
+is_csc = 1 ;
 
     A = GB_spec_random (m, n, 0.3, 100, 'double', is_csc) ;
 
