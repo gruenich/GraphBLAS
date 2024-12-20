@@ -2,7 +2,7 @@
 // GB_macrofy_apply: construct all macros for apply methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // output:
     FILE *fp,                   // target file to write, already open
     // input:
-    uint64_t scode,
+    uint64_t method_code,
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
     GrB_Type ctype,
@@ -24,31 +24,33 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
 {
 
     //--------------------------------------------------------------------------
-    // extract the apply scode
+    // extract the apply method_code
     //--------------------------------------------------------------------------
 
-    int A_zombies   = GB_RSHIFT (scode, 37, 1) ;
-    int A_iso       = GB_RSHIFT (scode, 36, 1) ;
+    // A properties (3 bits, 1 digit)
+    int A_mat       = GB_RSHIFT (method_code, 38, 1) ;
+    int A_zombies   = GB_RSHIFT (method_code, 37, 1) ;
+    int A_iso       = GB_RSHIFT (method_code, 36, 1) ;
 
     // C kind, i/j dependency and flipij (4 bits)
-    int C_mat       = GB_RSHIFT (scode, 35, 1) ;
-    int i_dep       = GB_RSHIFT (scode, 34, 1) ;
-    int j_dep       = GB_RSHIFT (scode, 33, 1) ;
-    bool flipij     = GB_RSHIFT (scode, 32, 1) ;
+    int C_mat       = GB_RSHIFT (method_code, 35, 1) ;
+    int i_dep       = GB_RSHIFT (method_code, 34, 1) ;
+    int j_dep       = GB_RSHIFT (method_code, 33, 1) ;
+    bool flipij     = GB_RSHIFT (method_code, 32, 1) ;
 
     // op, z = f(x,i,j,y) (5 hex digits)
-    int unop_ecode  = GB_RSHIFT (scode, 24, 8) ;
-//  int zcode       = GB_RSHIFT (scode, 20, 4) ;
-    int xcode       = GB_RSHIFT (scode, 16, 4) ;
-    int ycode       = GB_RSHIFT (scode, 12, 4) ;
+    int unop_ecode  = GB_RSHIFT (method_code, 24, 8) ;
+//  int zcode       = GB_RSHIFT (method_code, 20, 4) ;
+    int xcode       = GB_RSHIFT (method_code, 16, 4) ;
+    int ycode       = GB_RSHIFT (method_code, 12, 4) ;
 
     // types of C and A (2 hex digits)
-//  int ccode       = GB_RSHIFT (scode,  8, 4) ;
-    int acode       = GB_RSHIFT (scode,  4, 4) ;
+//  int ccode       = GB_RSHIFT (method_code,  8, 4) ;
+    int acode       = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-    int csparsity   = GB_RSHIFT (scode,  2, 2) ;
-    int asparsity   = GB_RSHIFT (scode,  0, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the operator
@@ -89,6 +91,9 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     GB_macrofy_type (fp, "Z", "_", ztype_name) ;
     GB_macrofy_type (fp, "X", "_", xtype_name) ;
     GB_macrofy_type (fp, "Y", "_", ytype_name) ;
+    fprintf (fp, "#define GB_DECLAREZ(zwork) %s zwork\n", ztype_name) ;
+    fprintf (fp, "#define GB_DECLAREX(xwork) %s xwork\n", xtype_name) ;
+    fprintf (fp, "#define GB_DECLAREY(ywork) %s ywork\n", ytype_name) ;
 
     //--------------------------------------------------------------------------
     // construct macros for the unary operator
@@ -114,8 +119,17 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     if (ctype == ztype && no_typecast_of_A)
     { 
         // no typecasting
-        fprintf (fp, " GB_UNARYOP (Cx [pC], Ax [%s], %s, %s, %s)\n",
-            pA, i, j, y) ;
+        if (op->opcode == GB_IDENTITY_unop_code)
+        { 
+            // identity operator, no typecasting
+            fprintf (fp, " Cx [pC] = Ax [%s]\n", pA) ;
+        }
+        else
+        { 
+            // any operator, no typecsting
+            fprintf (fp, " GB_UNARYOP (Cx [pC], Ax [%s], %s, %s, %s)\n",
+                pA, i, j, y) ;
+        }
     }
     else if (ctype == ztype)
     { 
@@ -156,28 +170,40 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
 
     if (C_mat)
     { 
-        // C = op(A'), for unary op with transpose
+        // C = op(A) where C is a matrix
         GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, false,
             false) ;
     }
     else
     { 
-        // Cx = op(A) for unary or index unary op apply, no transpose
+        // Cx = op(A) where Cx is an array of type ztype
+        ASSERT (ctype == ztype) ;
         fprintf (fp, "\n// C type:\n") ;
         GB_macrofy_type (fp, "C", "_", ctype->name) ;
     }
 
     //--------------------------------------------------------------------------
-    // construct the macros for A
+    // construct the macros for A array or matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-        atype, asparsity, acode, A_iso, A_zombies) ;
+    if (A_mat)
+    {
+        // C or Cx = op(A) for a matrix A
+        GB_macrofy_input (fp, "a", "A", "A", true, xtype,
+            atype, asparsity, acode, A_iso, A_zombies) ;
+    }
+    else
+    {
+        // Cx = op(Ax) for arrays Cx and Ax (no typecast of A to xtype)
+        ASSERT (no_typecast_of_A) ;
+        fprintf (fp, "\n// A type:\n") ;
+        GB_macrofy_type (fp, "A", "_", atype->name) ;
+    }
 
     //--------------------------------------------------------------------------
     // include the final default definitions
     //--------------------------------------------------------------------------
 
-    fprintf (fp, "\n#include \"include/GB_apply_shared_definitions.h\"\n") ;
+    fprintf (fp, "\n#include \"include/GB_kernel_shared_definitions.h\"\n") ;
 }
 

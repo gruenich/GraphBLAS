@@ -42,6 +42,7 @@ fprintf (f, 'm4_divert(-1)\n') ;
 assert (~isequal (binop, 'any')) ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
+codegen_type_enabled (f, fname) ;
 
 name = sprintf ('%s_%s', binop, fname) ;
 
@@ -79,9 +80,9 @@ end
 fprintf (f, 'm4_define(`GB_copy_aij_to_ywork'', `#define GB_COPY_aij_to_ywork(ywork,Ax,pA,A_iso)%s'')\n', gb_copy_aij_to_ywork) ;
 
 % to copy a scalar into C (no typecasting)
-fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork'')\n') ;
+fprintf (f, 'm4_define(`GB_copy_cwork_to_c'', `#define GB_COPY_cwork_to_C(Cx,pC,cwork,C_iso) Cx [pC] = cwork'')\n') ;
 
-% to copy an entry from A to C
+% to copy an entry from A to C (with typecasting)
 if (isequal (ytype, 'GxB_FC32_t') && isequal (ztype, 'bool'))
     a2c = '((GB_crealf (Ax [pA]) != 0) || (GB_cimagf (Ax [pA]) != 0))' ;
 elseif (isequal (ytype, 'GxB_FC64_t') && isequal (ztype, 'bool'))
@@ -96,7 +97,7 @@ else
     % use ANSI C typecasting
     a2c = sprintf ('((%s) Ax [pA])', ytype) ;
 end
-fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : %s'')\n', a2c) ;
+fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork,C_iso) Cx [pC] = (A_iso) ? cwork : %s'')\n', a2c) ;
 a2c = strrep (a2c, 'pA', 'A_iso ? 0 : (pA)') ;
 fprintf (f, 'm4_define(`GB_copy_aij_to_cwork'', `#define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = %s'')\n', a2c) ;
 

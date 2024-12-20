@@ -285,8 +285,8 @@ GrB_Info GB_jit_kernel_concat_sparse                                    \
 #define GB_JIT_KERNEL_CONVERT_S2B_PROTO(GB_jit_kernel_convert_s2b)      \
 GrB_Info GB_jit_kernel_convert_s2b                                      \
 (                                                                       \
-    GB_void *Ax_new,                                                    \
-    int8_t *restrict Ab,                                                \
+    GB_void *restrict Cx_new,                                           \
+    int8_t *restrict Cb,                                                \
     const GrB_Matrix A,                                                 \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
@@ -490,20 +490,29 @@ GrB_Info GB_jit_kernel_split_sparse                                     \
 GrB_Info GB_jit_kernel_subassign_any                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
+    const bool C_replace,                                               \
     const GrB_Index *I,                                                 \
     const int64_t ni,                                                   \
     const int64_t nI,                                                   \
+    const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
     const GrB_Index *J,                                                 \
     const int64_t nj,                                                   \
     const int64_t nJ,                                                   \
+    const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \
     const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_BinaryOp accum,                                           \
     const GrB_Matrix A,                                                 \
     const void *scalar,                                                 \
+    const GrB_Type scalar_type,                                         \
+    const GrB_Matrix S,                                                 \
+    const int assign_kind,                                              \
+    GB_Werk Werk,                                                       \
     const int nthreads_max,                                             \
     double chunk,                                                       \
-    GB_Werk Werk,                                                       \
     const GB_callback_struct *restrict my_callback                      \
 )
 
@@ -570,6 +579,136 @@ GrB_Info GB_jit_kernel_union                                            \
     const bool M_is_A,                                                  \
     const bool M_is_B,                                                  \
     const void *theta                                                   \
+)
+
+#define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
+GrB_Info GB_jit_kernel_masker1                                          \
+(                                                                       \
+    int64_t *Rp,                                                        \
+    int64_t *Rnvec_nonempty,                                            \
+    GB_task_struct *restrict TaskList,                                  \
+    const int R_ntasks,                                                 \
+    const int R_nthreads,                                               \
+    const int64_t Rnvec,                                                \
+    const int64_t *restrict Rh,                                         \
+    const int64_t *restrict R_to_M,                                     \
+    const int64_t *restrict R_to_C,                                     \
+    const int64_t *restrict R_to_Z,                                     \
+    const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_Matrix C,                                                 \
+    const GrB_Matrix Z                                                  \
+)
+
+#define GB_JIT_KERNEL_MASKER_PHASE2_PROTO(GB_jit_kernel_masker2)        \
+GrB_Info GB_jit_kernel_masker2                                          \
+(                                                                       \
+    GrB_Matrix R,                                                       \
+    const GB_task_struct *restrict TaskList,                            \
+    const int R_ntasks,                                                 \
+    const int R_nthreads,                                               \
+    const int64_t *restrict R_to_M,                                     \
+    const int64_t *restrict R_to_C,                                     \
+    const int64_t *restrict R_to_Z,                                     \
+    const GrB_Matrix M,                                                 \
+    const bool Mask_comp,                                               \
+    const bool Mask_struct,                                             \
+    const GrB_Matrix C,                                                 \
+    const GrB_Matrix Z,                                                 \
+    const int64_t *restrict C_ek_slicing,                               \
+    const int C_nthreads,                                               \
+    const int C_ntasks,                                                 \
+    const int64_t *restrict M_ek_slicing,                               \
+    const int M_nthreads,                                               \
+    const int M_ntasks                                                  \
+)
+
+#define GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(GB_jit_kernel_subref_sparse)  \
+GrB_Info GB_jit_kernel_subref_sparse                                    \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GB_task_struct *restrict TaskList,                            \
+    const int ntasks,                                                   \
+    const int nthreads,                                                 \
+    const bool post_sort,                                               \
+    const int64_t *Mark,                                                \
+    const int64_t *Inext,                                               \
+    const int64_t *restrict Ap_start,                                   \
+    const int64_t *restrict Ap_end,                                     \
+    const int64_t nI,                                                   \
+    const int64_t Icolon [3],                                           \
+    const GrB_Matrix A,                                                 \
+    const GrB_Index *I,                                                 \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
+#define GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(GB_jit_kernel_bitmap_subref)  \
+GrB_Info GB_jit_kernel_bitmap_subref                                    \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    GrB_Matrix A,                                                       \
+    const GrB_Index *I,                                                 \
+    const int64_t nI,                                                   \
+    const int Ikind,                                                    \
+    const int64_t Icolon [3],                                           \
+    const GrB_Index *J,                                                 \
+    const int64_t nJ,                                                   \
+    const int Jkind,                                                    \
+    const int64_t Jcolon [3],                                           \
+    GB_Werk Werk,                                                       \
+    const int nthreads_max,                                             \
+    double chunk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
+)
+
+#define GB_JIT_KERNEL_ISO_EXPAND_PROTO(GB_jit_kernel_iso_expand)        \
+GrB_Info GB_jit_kernel_iso_expand                                       \
+(                                                                       \
+    void *restrict X,                                                   \
+    const int64_t n,                                                    \
+    const void *restrict scalar,                                        \
+    const int nthreads                                                  \
+)
+
+#define GB_JIT_KERNEL_UNJUMBLE_PROTO(GB_jit_kernel_unjumble)            \
+GrB_Info GB_jit_kernel_unjumble                                         \
+(                                                                       \
+    const GrB_Matrix A,                                                 \
+    const int64_t *A_slice,                                             \
+    const int ntasks,                                                   \
+    const int nthreads                                                  \
+)
+
+#define GB_JIT_KERNEL_CONVERT_B2S_PROTO(GB_jit_kernel_convert_b2s)      \
+GrB_Info GB_jit_kernel_convert_b2s                                      \
+(                                                                       \
+    const int64_t *restrict Cp,                                         \
+    int64_t *restrict Ci,                                               \
+    int64_t *restrict Cj,                                               \
+    GB_void *restrict Cx_new,                                           \
+    const GrB_Matrix A,                                                 \
+    const int64_t *restrict W,                                          \
+    const int nthreads                                                  \
+)
+
+#define GB_JIT_KERNEL_KRONER_PROTO(GB_jit_kernel_kroner)                \
+GrB_Info GB_jit_kernel_kroner                                           \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    const GrB_Matrix A,                                                 \
+    const GrB_Matrix B,                                                 \
+    const int nthreads,                                                 \
+    const void *theta                                                   \
+)
+
+#define GB_JIT_KERNEL_SORT_PROTO(GB_jit_kernel_sort)                    \
+GrB_Info GB_jit_kernel_sort                                             \
+(                                                                       \
+    GrB_Matrix C,                                                       \
+    int nthreads,                                                       \
+    GB_Werk Werk,                                                       \
+    const GB_callback_struct *restrict my_callback                      \
 )
 
 //------------------------------------------------------------------------------
@@ -654,6 +793,18 @@ GrB_Info GB_jit_kernel_select_bitmap                                        \
     int32_t blocksz                                                         \
 )                                                                           \
 
+#define GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO(GB_jit_kernel_select_sparse) \
+GrB_Info GB_jit_kernel_select_sparse                                        \
+(                                                                           \
+    GrB_Matrix C,                                                           \
+    GrB_Matrix A,                                                           \
+    const GB_void *ythunk,                                                  \
+    cudaStream_t stream,                                                    \
+    int32_t gridsz,                                                         \
+    int32_t blocksz,                                                        \
+    const GB_callback_struct *restrict my_callback                          \
+)
+
 #define GB_JIT_CUDA_KERNEL_DOT3_PROTO(GB_jit_kernel_AxB_dot3)           \
 GrB_Info GB_jit_kernel_AxB_dot3                                         \
 (                                                                       \
@@ -690,6 +841,7 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_CONF(g) GB_JIT_KERNEL_CONCAT_FULL_PROTO(g) ;
 #define JIT_CONS(g) GB_JIT_KERNEL_CONCAT_SPARSE_PROTO(g) ;
 #define JIT_CS2B(g) GB_JIT_KERNEL_CONVERT_S2B_PROTO(g) ;
+#define JIT_CB2S(g) GB_JIT_KERNEL_CONVERT_B2S_PROTO(g) ;
 #define JIT_EM2(g)  GB_JIT_KERNEL_EMULT_02_PROTO(g) ;
 #define JIT_EM3(g)  GB_JIT_KERNEL_EMULT_03_PROTO(g) ;
 #define JIT_EM4(g)  GB_JIT_KERNEL_EMULT_04_PROTO(g) ;
@@ -712,6 +864,14 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 #define JIT_UNI(g)  GB_JIT_KERNEL_UNION_PROTO(g) ;
 #define JIT_UOP(g)  GB_JIT_KERNEL_USER_OP_PROTO(g) ;
 #define JIT_UTYP(g) GB_JIT_KERNEL_USER_TYPE_PROTO(g) ;
+#define JIT_MAS1(g) GB_JIT_KERNEL_MASKER_PHASE1_PROTO(g) ;
+#define JIT_MAS2(g) GB_JIT_KERNEL_MASKER_PHASE2_PROTO(g) ;
+#define JIT_SREF(g) GB_JIT_KERNEL_SUBREF_SPARSE_PROTO(g) ;
+#define JIT_BREF(g) GB_JIT_KERNEL_BITMAP_SUBREF_PROTO(g) ;
+#define JIT_ISOE(g) GB_JIT_KERNEL_ISO_EXPAND_PROTO(g) ;
+#define JIT_UNJU(g) GB_JIT_KERNEL_UNJUMBLE_PROTO(g) ;
+#define JIT_SORT(g) GB_JIT_KERNEL_SORT_PROTO(g) ;
+#define JIT_KRON(g) GB_JIT_KERNEL_KRONER_PROTO(g) ;
 #define JIT_Q(q)    GB_JIT_QUERY_PROTO(q) ;
 
 //------------------------------------------------------------------------------
@@ -720,6 +880,20 @@ GrB_Info GB_jit_kernel_AxB_dot3                                         \
 
 #define JIT_CUDA_RED(g)  GB_JIT_CUDA_KERNEL_REDUCE_PROTO(g) ;
 #define JIT_CUDA_DOT3(g) GB_JIT_CUDA_KERNEL_DOT3_PROTO(g) ;
+
+//------------------------------------------------------------------------------
+// GB_GET_CALLBACK: get function pointer from the callback struct for JIT kernel
+//------------------------------------------------------------------------------
+
+#undef GB_GET_CALLBACK
+#ifdef GB_JIT_RUNTIME
+    // JIT kernels (CPU and CUDA) require the function pointers
+    #define GB_GET_CALLBACK(function) \
+        function ## _f function = my_callback->function ## _func ;
+#else
+    // PreJIT kernels link against -lgraphblas and do not need function pointers
+    #define GB_GET_CALLBACK(function)
+#endif
 
 #endif
 

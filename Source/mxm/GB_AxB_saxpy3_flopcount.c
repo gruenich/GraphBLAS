@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but many variants possible (matrix sparsity formats)
+// JIT: possible: many variants possible (matrix sparsity formats)
+// matrices: A, B, M; bool Mask_comp
 
 // On input, A, B, and M (optional) are matrices for C=A*B, C<M>=A*B, or
 // C<!M>=A*B.  The flop count for each B(:,j) is computed, and returned as a
@@ -248,9 +249,8 @@ GrB_Info GB_AxB_saxpy3_flopcount
             // find the part of B(:,j) to be computed by this task
             //------------------------------------------------------------------
 
-            int64_t pB, pB_end ;
-            GB_get_pA (&pB, &pB_end, taskid, kk,
-                kfirst, klast, pstart_Bslice, Bp, bvlen) ;
+            GB_GET_PA (pB, pB_end, taskid, kk, kfirst, klast, pstart_Bslice,
+                GBP (Bp, kk, bvlen), GBP (Bp, kk+1, bvlen)) ;
             int64_t my_bjnz = pB_end - pB ;
             int64_t j = GBH (Bh, kk) ;
 

@@ -2,7 +2,7 @@
 // GB_enumify_apply: enumerate a GrB_apply problem
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -17,20 +17,25 @@
 void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 (
     // output:
-    uint64_t *scode,        // unique encoding of the entire operation
+    uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     // C matrix:
-    int C_sparsity,         // sparse, hyper, bitmap, or full.  For apply
+    const int C_sparsity,   // sparse, hyper, bitmap, or full.  For apply
                             // without transpose, Cx = op(A) is computed where
                             // Cx is just C->x, so the caller uses 'full' when
                             // C is sparse, hyper, or full.
-    bool C_is_matrix,       // true for C=op(A), false for Cx=op(A)
-    GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    const bool C_is_matrix, // true for C=op(A), false for Cx=op(A)
+    const GrB_Type ctype,   // C=((ctype) T) is the final typecast
     // operator:
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
-        bool flipij,                // if true, flip i,j for user idxunop
+        const bool flipij,          // if true, flip i,j for user idxunop
     // A matrix:
-    const GrB_Matrix A              // input matrix
+//  const GrB_Matrix A              // input matrix
+    const int A_sparsity,
+    const bool A_is_matrix,
+    const GrB_Type atype,
+    const bool A_iso,
+    const int64_t A_nzombies
 )
 { 
 
@@ -73,7 +78,7 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     // enumify the types of C and A
     //--------------------------------------------------------------------------
 
-    int acode = (xcode == 0) ? 0 : (A->type->code) ;        // 0 to 14
+    int acode = (xcode == 0) ? 0 : (atype->code) ;          // 0 to 14
     int ccode = ctype->code ;                               // 0 to 14
 
     //--------------------------------------------------------------------------
@@ -82,19 +87,22 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
 
     int csparsity, asparsity ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
-    GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
+    GB_enumify_sparsity (&asparsity, A_sparsity) ; // was GB_sparsity (A) ;
     int C_mat = (C_is_matrix) ? 1 : 0 ;
-    int A_iso_code = (A->iso) ? 1 : 0 ;
-    int A_zombies = (A->nzombies > 0) ? 1 : 0 ;
+    int A_mat = (A_is_matrix) ? 1 : 0 ;
+    int A_iso_code = (A_iso) ? 1 : 0 ;
+    int A_zombies = (A_nzombies > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the apply scode
+    // construct the apply method_code
     //--------------------------------------------------------------------------
 
-    // total scode bits: 38 bits (10 hex digits)
+    // total method_code bits: 39 bits (10 hex digits)
 
-    (*scode) =
+    (*method_code) =
                                                // range        bits
+                // A properties (1 hex digit)
+                GB_LSHIFT (A_mat      , 38) |  // 0 or 1       1
                 GB_LSHIFT (A_zombies  , 37) |  // 0 or 1       1
                 GB_LSHIFT (A_iso_code , 36) |  // 0 or 1       1
 
@@ -117,6 +125,5 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
                 // sparsity structures of C and A (1 hex digit)
                 GB_LSHIFT (csparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (asparsity  ,  0) ;  // 0 to 3       2
-
 }
 

@@ -2,10 +2,29 @@
 // GB_subassign_06d_template: C<A> = A
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
+
+// M:           present, and aliased to A
+// Mask_comp:   false
+// Mask_struct: true or false
+// C_replace:   false
+// accum:       NULL
+// A:           matrix, and aliased to M
+// S:           none
+
+// C must be bitmap or full.  No entries are deleted and thus no zombies
+// are introduced into C.  C can be hypersparse, sparse, bitmap, or full, and
+// its sparsity structure does not change.  If C is hypersparse, sparse, or
+// full, then the pattern does not change (all entries are present, and this
+// does not change), and these cases can all be treated the same (as if full).
+// If C is bitmap, new entries can be inserted into the bitmap C->b.
+
+// C and A can have any sparsity structure.
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                         \
@@ -19,22 +38,17 @@
     // get the inputs
     //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_KERNEL
-    #define Mask_struct GB_MASK_STRUCT
-    #define C_is_bitmap GB_C_IS_BITMAP
-    #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_is_full   GB_A_IS_FULL
-    #define A_iso       GB_A_ISO
-    #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (((GB_M_TYPE *) Ax), pA, asize)
-    #else
     const bool C_is_bitmap = GB_IS_BITMAP (C) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_full = GB_IS_FULL (A) ;
     const bool A_iso = A->iso ;
     const size_t asize = A->type->size ;
+
+    #ifndef GB_AX_MASK
+    #define GB_AX_MASK(Ax,pA,asize) GB_MCAST (((GB_M_TYPE *) Ax), pA, asize)
     #endif
 
-    ASSERT (C_is_bitmap || GB_IS_FULL (C)) ;
+    ASSERT (GB_C_IS_BITMAP || GB_IS_FULL (C)) ;
 
     //--------------------------------------------------------------------------
     // Parallel: slice A into equal-sized chunks
@@ -45,7 +59,7 @@
     int A_ntasks, A_nthreads ;
     double work = anz + A->nvec ;
     chunk = 32 * chunk ;        // method 06d needs a larger chunk
-    if (A_is_bitmap || A_is_full)
+    if (GB_A_IS_BITMAP || GB_A_IS_FULL)
     { 
         // no need to construct tasks
         A_nthreads = GB_nthreads (work, chunk, nthreads_max) ;
@@ -70,11 +84,14 @@
     const int8_t  *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
 
-    // since A is the mask, if A->iso is true, Mask_struct has been set true
-    ASSERT (GB_IMPLIES (A_iso, Mask_struct)) ;
+    // since A is the mask, if A->iso is true, GB_MASK_STRUCT has been set true
+    ASSERT (GB_IMPLIES (GB_A_ISO, GB_MASK_STRUCT)) ;
 
     int8_t *restrict Cb = C->b ;
-    const int64_t cvlen = C->vlen ;
+    const int64_t Cvlen = C->vlen ;
+    #ifndef GB_JIT_KERNEL
+    bool C_iso = C->iso ;
+    #endif
 
     #ifdef GB_ISO_ASSIGN
     // C is iso, and A is either iso or effectively iso (with a single entry
@@ -82,13 +99,13 @@
     // directly, and it is not needed for any kernel (generic, factor, or JIT).
     ASSERT (C->iso) ;
     GB_A_NVALS (e) ;
-    ASSERT (A_iso || (e == 1 && !A_is_bitmap)) ;
-    ASSERT (Mask_struct) ;
+    ASSERT (GB_A_ISO || (e == 1 && !GB_A_IS_BITMAP)) ;
+    ASSERT (GB_MASK_STRUCT) ;
     #else
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     GB_DECLAREC (cwork) ;
-    if (A_iso)
+    if (GB_A_ISO)
     { 
         // get the iso value of A and typecast to C->type
         // cwork = (ctype) Ax [0]
@@ -102,15 +119,15 @@
 
     int64_t cnvals = C->nvals ;     // for C bitmap
 
-    // future:: divide this template into sub-template (Mask_struct, etc)
-    if (Mask_struct)
+    // future:: divide this template into sub-template (GB_MASK_STRUCT, etc)
+    if (GB_MASK_STRUCT)
     {
 
         //----------------------------------------------------------------------
         // C<A,struct> = A where A can be iso or non-iso; mask is structural
         //----------------------------------------------------------------------
 
-        if (A_is_full)
+        if (GB_A_IS_FULL)
         {
 
             //------------------------------------------------------------------
@@ -125,26 +142,26 @@
                 for (p = 0 ; p < anz ; p++)
                 { 
                     // Cx [p] = Ax [p]
-                    GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
+                    GB_COPY_aij_to_C (Cx, p, Ax, p, GB_A_ISO, cwork, GB_C_ISO) ;
                 }
             }
             #endif
 
-            if (C_is_bitmap)
+            if (GB_C_IS_BITMAP)
             { 
                 GB_memset (Cb, 1, anz, A_nthreads) ;
                 cnvals = anz ;
             }
 
         }
-        else if (A_is_bitmap)
+        else if (GB_A_IS_BITMAP)
         {
 
             //------------------------------------------------------------------
             // A is bitmap
             //------------------------------------------------------------------
 
-            if (C_is_bitmap)
+            if (GB_C_IS_BITMAP)
             {
 
                 //--------------------------------------------------------------
@@ -164,7 +181,8 @@
                         { 
                             // Cx [p] = Ax [p]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p,
+                                GB_A_ISO, cwork, GB_C_ISO) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -193,7 +211,8 @@
                         // Cx [p] = Ax [p]
                         if (Ab [p])
                         { 
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, A_iso, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p,
+                                GB_A_ISO, cwork, GB_C_ISO) ;
                         }
                     }
                 }
@@ -213,7 +232,7 @@
             const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2;
             int taskid ;
 
-            if (C_is_bitmap)
+            if (GB_C_IS_BITMAP)
             {
 
                 //--------------------------------------------------------------
@@ -237,7 +256,7 @@
                             kfirst, klast, pstart_Aslice,
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
-                        int64_t pC = j * cvlen ;
+                        int64_t pC = j * Cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
                         GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -245,7 +264,8 @@
                             int64_t p = pC + Ai [pA] ;
                             // Cx [p] = Ax [pA]
                             #ifndef GB_ISO_ASSIGN
-                            GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, pA,
+                                GB_A_ISO, cwork, GB_C_ISO) ;
                             #endif
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
@@ -280,14 +300,15 @@
                                 kfirst, klast, pstart_Aslice,
                                 GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                             // pC is the start of C(:,j)
-                            int64_t pC = j * cvlen ;
+                            int64_t pC = j * Cvlen ;
                             // C<A(:,j),struct>=A(:,j) with C full, A sparse
                             GB_PRAGMA_SIMD_VECTORIZE
                             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA,
+                                    GB_A_ISO, cwork, GB_C_ISO) ;
                             }
                         }
                     }
@@ -305,14 +326,16 @@
         // C<A> = A where A must be non-iso, and the mask is valued
         //----------------------------------------------------------------------
 
-        if (A_is_full)
+        ASSERT (!GB_A_ISO) ;
+
+        if (GB_A_IS_FULL)
         {
 
             //------------------------------------------------------------------
             // A is full: all entries present
             //------------------------------------------------------------------
 
-            if (C_is_bitmap)
+            if (GB_C_IS_BITMAP)
             {
 
                 //--------------------------------------------------------------
@@ -331,7 +354,8 @@
                         if (GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p,
+                                false, cwork, GB_C_ISO) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -355,20 +379,21 @@
                     if (GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p,
+                            false, cwork, GB_C_ISO) ;
                     }
                 }
             }
 
         }
-        else if (A_is_bitmap)
+        else if (GB_A_IS_BITMAP)
         {
 
             //------------------------------------------------------------------
             // A is bitmap
             //------------------------------------------------------------------
 
-            if (C_is_bitmap)
+            if (GB_C_IS_BITMAP)
             {
 
                 //-------------------------------------------------------------
@@ -387,7 +412,8 @@
                         if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                         { 
                             // Cx [p] = Ax [p]
-                            GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                            GB_COPY_aij_to_C (Cx, p, Ax, p,
+                                false, cwork, GB_C_ISO) ;
                             task_cnvals += (Cb [p] == 0) ;
                             Cb [p] = 1 ;
                         }
@@ -411,7 +437,8 @@
                     if (Ab [p] && GB_AX_MASK (Ax, p, asize))
                     { 
                         // Cx [p] = Ax [p]
-                        GB_COPY_aij_to_C (Cx, p, Ax, p, false, cwork) ;
+                        GB_COPY_aij_to_C (Cx, p, Ax, p,
+                            false, cwork, GB_C_ISO) ;
                     }
                 }
             }
@@ -429,7 +456,7 @@
             const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2;
             int taskid ;
 
-            if (C_is_bitmap)
+            if (GB_C_IS_BITMAP)
             {
 
                 //--------------------------------------------------------------
@@ -453,7 +480,7 @@
                             kfirst, klast, pstart_Aslice,
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
-                        int64_t pC = j * cvlen ;
+                        int64_t pC = j * Cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C bitmap, A sparse
                         GB_PRAGMA_SIMD_REDUCTION (+,task_cnvals)
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -462,7 +489,8 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA,
+                                    GB_A_ISO, cwork, GB_C_ISO) ;
                                 task_cnvals += (Cb [p] == 0) ;
                                 Cb [p] = 1 ;
                             }
@@ -495,7 +523,7 @@
                             kfirst, klast, pstart_Aslice,
                             GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
                         // pC is the start of C(:,j)
-                        int64_t pC = j * cvlen ;
+                        int64_t pC = j * Cvlen ;
                         // C<A(:,j),struct>=A(:,j) with C full, A sparse
                         GB_PRAGMA_SIMD_VECTORIZE
                         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
@@ -504,7 +532,8 @@
                             { 
                                 int64_t p = pC + Ai [pA] ;
                                 // Cx [p] = Ax [pA]
-                                GB_COPY_aij_to_C (Cx, p, Ax, pA, A_iso, cwork) ;
+                                GB_COPY_aij_to_C (Cx, p, Ax, pA,
+                                    GB_A_ISO, cwork, GB_C_ISO) ;
                             }
                         }
                     }
@@ -518,7 +547,7 @@
     // log the number of entries in the C bitmap
     //--------------------------------------------------------------------------
 
-    if (C_is_bitmap)
+    if (GB_C_IS_BITMAP)
     { 
         C->nvals = cnvals ;
     }

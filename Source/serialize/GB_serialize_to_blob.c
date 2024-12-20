@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 #include "GB.h"
 #include "serialize/GB_serialize.h"
 

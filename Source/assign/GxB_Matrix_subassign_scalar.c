@@ -2,7 +2,7 @@
 // GxB_Matrix_subassign_[SCALAR]: assign to submatrix, via scalar expansion
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,6 @@ GB_ASSIGN_SCALAR (void *    , UDT    ,  )
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_Matrix_free (&S) ;
-#include "matrix/GB_static_header.h"
 
 GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
 (

@@ -10,26 +10,25 @@
 #ifndef GB_SUBASSIGN_METHODS_H
 #define GB_SUBASSIGN_METHODS_H
 
-#include "ewise/GB_add.h"
+#include "add/GB_add.h"
 #include "ij/GB_ij.h"
 #include "pending/GB_Pending.h"
-#include "assign/GB_subassign_IxJ_slice.h"
 #include "include/GB_unused.h"
 
 //------------------------------------------------------------------------------
 // GB_subassign_symbolic: S = C(I,J)
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting the pattern not values
+GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
 (
     // output
-    GrB_Matrix S,               // output matrix, static header
+    GrB_Matrix S,           // S = symbolic(C(I,J)), static header
     // inputs, not modified:
-    const GrB_Matrix C,         // matrix to extract the pattern of
-    const GrB_Index *I,         // index list for S = C(I,J), or GrB_ALL, etc.
-    const int64_t ni,           // length of I, or special
-    const GrB_Index *J,         // index list for S = C(I,J), or GrB_ALL, etc.
-    const int64_t nj,           // length of J, or special
+    const GrB_Matrix C,     // matrix to extract the pattern of
+    const GrB_Index *I,     // index list for S = C(I,J), or GrB_ALL, etc
+    const int64_t ni,       // length of I, or special
+    const GrB_Index *J,     // index list for S = C(I,J), or GrB_ALL, etc
+    const int64_t nj,       // length of J, or special
     const bool S_must_not_be_jumbled,   // if true, S cannot be jumbled
     GB_Werk Werk
 ) ;
@@ -156,10 +155,12 @@ GrB_Info GB_subassign_05
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -193,10 +194,12 @@ GrB_Info GB_subassign_06n
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -225,8 +228,8 @@ GrB_Info GB_subassign_06s_and_14
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,         // if true, use the only structure of M
-    const bool Mask_comp,           // if true, !M, else use M
+    const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Werk Werk
 ) ;
@@ -240,10 +243,12 @@ GrB_Info GB_subassign_07
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -264,10 +269,12 @@ GrB_Info GB_subassign_08n
     GrB_Matrix C,
     // input:
     const GrB_Index *I,
+    const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     const GrB_Index *J,
+    const int64_t nj,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -322,8 +329,8 @@ GrB_Info GB_subassign_10_and_18
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,         // if true, use the only structure of M
-    const bool Mask_comp,           // if true, !M, else use M
+    const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Werk Werk
 ) ;
@@ -373,8 +380,8 @@ GrB_Info GB_subassign_12_and_20
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,         // if true, use the only structure of M
-    const bool Mask_comp,           // if true, !M, else use M
+    const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Werk Werk
@@ -451,8 +458,8 @@ GrB_Info GB_subassign_08s_and_16
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const bool Mask_struct,         // if true, use the only structure of M
-    const bool Mask_comp,           // if true, !M, else use M
+    const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Werk Werk
@@ -506,33 +513,6 @@ GrB_Info GB_subassign_19
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type scalar_type,
-    GB_Werk Werk
-) ;
-
-//------------------------------------------------------------------------------
-// GB_subassign_one_slice
-//------------------------------------------------------------------------------
-
-// Slice A or M into fine/coarse tasks, for GB_subassign_05, 06n, and 07
-
-GrB_Info GB_subassign_one_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
-    // input:
-    const GrB_Matrix C,             // output matrix C
-    const GrB_Index *I,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix A,             // matrix to slice (M or A)
     GB_Werk Werk
 ) ;
 

@@ -40,6 +40,8 @@ GrB_Info GB_subassign_jit
     const GrB_Matrix A,         // NULL for scalar assignment
     const void *scalar,
     const GrB_Type scalar_type,
+    // S matrix:
+    const GrB_Matrix S,         // NULL if not constructed
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
@@ -54,9 +56,9 @@ GrB_Info GB_subassign_jit
 
     GB_jit_encoding encoding ;
     char *suffix ;
-    uint64_t hash = GB_encodify_assign (&encoding, &suffix,
-        assign_kernel, C, C_replace, Ikind, Jkind, M, Mask_struct,
-        Mask_comp, accum, A, scalar_type, assign_kind) ;
+    uint64_t hash = GB_encodify_assign (&encoding, &suffix, assign_kernel,
+        C, C_replace, Ikind, Jkind, M, Mask_comp, Mask_struct, accum,
+        A, scalar_type, S, assign_kind) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -71,15 +73,19 @@ GrB_Info GB_subassign_jit
         (GB_Operator) accum, C->type, atype, NULL) ;
     if (info != GrB_SUCCESS) return (info) ;
 
-    double chunk = GB_Context_chunk ( ) ;
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-
     //--------------------------------------------------------------------------
     // call the jit kernel and return result
     //--------------------------------------------------------------------------
 
+    double chunk = GB_Context_chunk ( ) ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, I, ni, nI, Icolon, J, nj, nJ, Jcolon, M, A,
-        scalar, nthreads_max, chunk, Werk, &GB_callback)) ;
+    return (GB_jit_kernel (C, C_replace,
+        I, ni, nI, Ikind, Icolon,
+        J, nj, nJ, Jkind, Jcolon,
+        M, Mask_comp, Mask_struct,
+        accum, A, scalar, scalar_type, S, assign_kind, Werk,
+        nthreads_max, chunk, &GB_callback)) ;
 }
 

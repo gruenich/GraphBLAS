@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // CALLS:     GB_builder
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or
@@ -630,7 +628,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
                     Count [tid] = k ;
                 }
 
-                GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+                GB_cumsum1 (Count, ntasks) ;
                 ASSERT (Count [ntasks] == anz) ;
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)

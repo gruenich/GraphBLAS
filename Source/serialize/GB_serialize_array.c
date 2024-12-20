@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // Parallel compression method for an array.  The array is compressed into
 // a sequence of independently allocated blocks, or returned as-is if not
 // compressed.  Currently, only LZ4, LZ4HC, and ZSTD are supported.
@@ -273,7 +271,7 @@ GrB_Info GB_serialize_array
     // compute cumulative sum of the compressed blocks
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Sblocks, nblocks, NULL, 1, Werk) ;
+    GB_cumsum1 (Sblocks, nblocks) ;
 
     //--------------------------------------------------------------------------
     // free workspace return result

@@ -2,16 +2,15 @@
 // GB_subassign_05d: C(:,:)<M> = scalar where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
-// M:           present
+// C:           full
+// M:           present, any sparsity structure
 // Mask_comp:   false
 // Mask_struct: true or false
 // C_replace:   false
@@ -19,17 +18,17 @@
 // A:           scalar
 // S:           none
 
-// C can have any sparsity structure, but it must be entirely dense with
-// all entries present.
-
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -50,13 +49,9 @@ GrB_Info GB_subassign_05d
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
-
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
     GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
+    ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
     ASSERT_MATRIX_OK (C, "C for subassign method_05d", GB0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -69,15 +64,19 @@ GrB_Info GB_subassign_05d
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!GB_PENDING (M)) ;
 
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     // quick return if work has already been done by GB_assign_prep
     if (C->iso) return (GrB_SUCCESS) ;
 
     const GB_Type_code ccode = C->type->code ;
     const size_t csize = C->type->size ;
     GB_GET_SCALAR ;
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // Method 05d: C(:,:)<M> = scalar ; no S; C is dense
@@ -117,23 +116,7 @@ GrB_Info GB_subassign_05d
         // required.
 
         // C<M> = x
-        switch (ccode)
-        {
-            case GB_BOOL_code   : GB_WORKER (_bool  )
-            case GB_INT8_code   : GB_WORKER (_int8  )
-            case GB_INT16_code  : GB_WORKER (_int16 )
-            case GB_INT32_code  : GB_WORKER (_int32 )
-            case GB_INT64_code  : GB_WORKER (_int64 )
-            case GB_UINT8_code  : GB_WORKER (_uint8 )
-            case GB_UINT16_code : GB_WORKER (_uint16)
-            case GB_UINT32_code : GB_WORKER (_uint32)
-            case GB_UINT64_code : GB_WORKER (_uint64)
-            case GB_FP32_code   : GB_WORKER (_fp32  )
-            case GB_FP64_code   : GB_WORKER (_fp64  )
-            case GB_FC32_code   : GB_WORKER (_fc32  )
-            case GB_FC64_code   : GB_WORKER (_fc64  )
-            default: ;
-        }
+        #include "assign/factory/GB_assign_factory.c"
     }
     #endif
 
@@ -153,6 +136,7 @@ GrB_Info GB_subassign_05d
             /* accum: */ NULL,
             /* A: */ NULL,
             /* scalar, scalar_type: */ cwork, C->type,
+            /* S: */ NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_05d, "subassign_05d",
             Werk) ;
     }
@@ -167,8 +151,8 @@ GrB_Info GB_subassign_05d
         GB_BURBLE_MATRIX (M, "(generic C(:,:)<M>=x assign) ") ;
 
         // Cx [pC] = cwork
-        #undef  GB_COPY_scalar_to_C
-        #define GB_COPY_scalar_to_C(Cx,pC,cwork) \
+        #undef  GB_COPY_cwork_to_C
+        #define GB_COPY_cwork_to_C(Cx, pC, cwork, C_iso) \
             memcpy (Cx + ((pC)*csize), cwork, csize)
 
         #include "assign/template/GB_subassign_05d_template.c"

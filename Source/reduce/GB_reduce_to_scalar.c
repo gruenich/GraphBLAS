@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 // c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
 // Does the work for GrB_*_reduce_TYPE, both matrix and vector.
 
@@ -28,6 +26,7 @@
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_red__include.h"
 #endif
 #include "monoid/include/GB_monoid_shared_definitions.h"

@@ -113,16 +113,7 @@ static void GB_p_slice_worker
 // GB_p_slice: partition Ap for a set of tasks
 //------------------------------------------------------------------------------
 
-void GB_p_slice                      // slice Ap
-(
-    // output:
-    int64_t *restrict Slice,        // size ntasks+1
-    // input:
-    const int64_t *restrict Ap,     // array size n+1 (NULL if full or bitmap)
-    const int64_t n,
-    const int ntasks,               // # of tasks
-    const bool perfectly_balanced
-)
+GB_CALLBACK_P_SLICE_PROTO (GB_p_slice)
 {
 
     //--------------------------------------------------------------------------

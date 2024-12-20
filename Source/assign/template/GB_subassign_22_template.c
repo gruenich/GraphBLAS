@@ -2,7 +2,7 @@
 // GB_subassign_22_template: C += y where C is full and y is a scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@
     for (pC = 0 ; pC < cnz ; pC++)
     { 
         // Cx [pC] += ywork
-        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;
+        GB_ACCUMULATE_scalar (Cx, pC, ywork, false) ;
     }
 }
 

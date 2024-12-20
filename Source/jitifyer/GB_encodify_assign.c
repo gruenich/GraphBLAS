@@ -26,13 +26,15 @@ uint64_t GB_encodify_assign     // encode an assign problem
     int Jkind,              // ditto
     // M matrix:
     GrB_Matrix M,           // may be NULL
-    bool Mask_struct,       // mask is structural
     bool Mask_comp,         // mask is complemented
+    bool Mask_struct,       // mask is structural
     // operator:
     GrB_BinaryOp accum,     // the accum operator (may be NULL)
     // A matrix or scalar
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
+    // S matrix:
+    GrB_Matrix S,           // may be NULL
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 )
 {
@@ -56,7 +58,7 @@ uint64_t GB_encodify_assign     // encode an assign problem
 
     encoding->kcode = kcode ;
     GB_enumify_assign (&encoding->code, C, C_replace, Ikind, Jkind,
-        M, Mask_struct, Mask_comp, accum, A, scalar_type, assign_kind) ;
+        M, Mask_comp, Mask_struct, accum, A, scalar_type, S, assign_kind) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

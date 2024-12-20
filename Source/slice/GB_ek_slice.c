@@ -2,7 +2,7 @@
 // GB_ek_slice: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -23,19 +23,64 @@
 // A may be jumbled.
 
 #include "slice/GB_ek_slice.h"
-#include "slice/factory/GB_ek_slice_search.c"
+#include "slice/include/GB_search_for_vector.h"
 
-#if 0
-#define GB_CALLBACK_EK_SLICE_PROTO(GX_ek_slice)                             \
-void GX_ek_slice            /* slice a matrix */                            \
-(                                                                           \
-    /* output: */                                                           \
-    int64_t *restrict A_ek_slicing, /* size 3*ntasks+1 */                   \
-    /* input: */                                                            \
-    GrB_Matrix A,                   /* matrix to slice */                   \
-    int ntasks                      /* # of tasks */                        \
+//------------------------------------------------------------------------------
+// GB_ek_slice_search: find the first and last vectors in a slice
+//------------------------------------------------------------------------------
+
+static inline void GB_ek_slice_search
+(
+    // input:
+    int taskid,
+    int ntasks,
+    const int64_t *restrict pstart_slice,    // size ntasks+1
+    const int64_t *restrict Ap,              // size anvec
+    int64_t anvec,                           // # of vectors in A
+    int64_t avlen,                           // vector length of A
+    // output:
+    int64_t *restrict kfirst_slice,          // size ntasks
+    int64_t *restrict klast_slice            // size ntasks
 )
-#endif
+{
+    int64_t pfirst = pstart_slice [taskid] ;
+    int64_t plast  = pstart_slice [taskid+1] - 1 ;
+
+    // find the first vector of the slice for task taskid: the
+    // vector that owns the entry Ai [pfirst] and Ax [pfirst].
+    int64_t kfirst ;
+    if (taskid == 0)
+    { 
+        kfirst = 0 ;
+    }
+    else
+    { 
+        kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec, avlen) ;
+    }
+
+    // find the last vector of the slice for task taskid: the
+    // vector that owns the entry Ai [plast] and Ax [plast].
+    int64_t klast ;
+    if (taskid == ntasks-1)
+    { 
+        klast = anvec - 1 ;
+    }
+    else if (pfirst > plast)
+    { 
+        // this task does no work
+        klast = kfirst ;
+    }
+    else
+    { 
+        klast = GB_search_for_vector (plast, Ap, kfirst, anvec, avlen) ;
+    }
+    kfirst_slice [taskid] = kfirst ;
+    klast_slice  [taskid] = klast ;
+}
+
+//------------------------------------------------------------------------------
+// GB_ek_slice: slice the entries and vectors of a matrix
+//------------------------------------------------------------------------------
 
 GB_CALLBACK_EK_SLICE_PROTO (GB_ek_slice)
 {

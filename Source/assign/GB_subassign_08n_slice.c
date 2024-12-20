@@ -2,7 +2,7 @@
 // GB_subassign_08n_slice: slice the entries and vectors for GB_subassign_08n
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -28,49 +28,27 @@
 // does not need to consider the bitmap case for C, M, or A.
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
-#include "ewise/GB_emult.h"
+#include "emult/GB_emult.h"
 // Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
 #include "include/GB_unused.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
-GrB_Info GB_subassign_08n_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
-    int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *restrict *Zh_handle,  // Zh_shallow is A->h, M->h, or NULL
-    int64_t *restrict *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
-    size_t *Z_to_A_size_handle,
-    int64_t *restrict *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
-    size_t *Z_to_M_size_handle,
-    // input:
-    const GrB_Matrix C,             // output matrix C
-    const GrB_Index *I,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const GrB_Index *J,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix A,             // matrix to slice
-    const GrB_Matrix M,             // matrix to slice
-    GB_Werk Werk
-)
+GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
 {
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Matrix S = NULL ;           // not constructed
+    GB_EMPTY_TASKLIST
+
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_BITMAP (M)) ;    // Method 08n is not used for M bitmap
     ASSERT (!GB_IS_BITMAP (A)) ;    // Method 08n is not used for A bitmap
 
-    GB_EMPTY_TASKLIST
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
@@ -189,17 +167,22 @@ GrB_Info GB_subassign_08n_slice
             int64_t ajnz = pA_end - pA ;
             int64_t mjnz = pM_end - pM ;
             if (ajnz == 0 || mjnz == 0) continue ;
-            int64_t iA_first = GBI (Ai, pA, Avlen) ;
-            int64_t iA_last  = GBI (Ai, pA_end-1, Avlen) ;
-            int64_t iM_first = GBI (Mi, pM, Mvlen) ;
-            int64_t iM_last  = GBI (Mi, pM_end-1, Mvlen) ;
+            int64_t iA_first = GBI_A (Ai, pA, Avlen) ;
+            int64_t iA_last  = GBI_A (Ai, pA_end-1, Avlen) ;
+            int64_t iM_first = GBI_M (Mi, pM, Mvlen) ;
+            int64_t iM_last  = GBI_M (Mi, pM_end-1, Mvlen) ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_LOOKUP_VECTOR_jC (false, 0) ;
+            // lookup jC in C
+            // jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            int64_t pC_start, pC_end ;
+            GB_LOOKUP_VECTOR_C (jC, pC_start, pC_end) ;
+
             bool cjdense = (pC_end - pC_start == Cvlen) ;
 
             //------------------------------------------------------------------

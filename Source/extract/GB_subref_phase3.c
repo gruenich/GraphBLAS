@@ -1,13 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_subref_phase3: C=A(I,J)
+// GB_subref_phase3: C=A(I,J) where C and A are sparse/hypersparse
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: needed.
 
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
@@ -15,6 +13,7 @@
 #include "extract/GB_subref.h"
 #include "sort/GB_sort.h"
 #include "include/GB_unused.h"
+#include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_subref_phase3   // C=A(I,J)
 (
@@ -30,7 +29,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const bool post_sort,               // true if post-sort needed
     const int64_t *Mark,                // for I inverse buckets, size A->vlen
     const int64_t *Inext,               // for I inverse buckets, size nI
-    const int64_t nduplicates,          // # of duplicates, if I inverted
+    const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     int64_t **Ch_handle,
     size_t Ch_size,
@@ -65,7 +64,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int64_t *restrict Cp = (*Cp_handle) ;
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
-    ASSERT (!GB_IS_BITMAP (A)) ;    // GB_bitmap_subref is used instead
+    ASSERT (!GB_IS_BITMAP (A)) ;
+    ASSERT (!GB_IS_FULL (A)) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -116,6 +116,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     #define GB_PHASE_2_OF_2
     int64_t *restrict Ci = C->i ;
     int64_t *restrict Cx = (int64_t *) C->x ;
+    #define GB_I_KIND Ikind
+    #define GB_NEED_QSORT need_qsort
+    #define GB_I_HAS_DUPLICATES I_has_duplicates
 
     if (symbolic)
     { 
@@ -136,10 +139,10 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 Cx [(pC) + k] = (pA) + k ;          \
             }
         #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
-        #define GB_CSIZE1 1
-        #define GB_CSIZE2 (sizeof (int64_t))
+        #define GB_QSORT_1B(Ci,Cx,pC,clen) \
+            GB_qsort_1b_size8 (Ci + pC, (uint64_t *) (Cx + pC), clen) ;
         #define GB_SYMBOLIC
-        #include "extract/factory/GB_subref_template.c"
+        #include "extract/template/GB_subref_template.c"
 
     }
     else if (C_iso)
@@ -154,7 +157,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         #define GB_COPY_RANGE(pC,pA,len) ;
         #define GB_COPY_ENTRY(pC,pA) ;
         #define GB_ISO_SUBREF
-        #include "extract/factory/GB_subref_template.c"
+        #define GB_QSORT_1B(Ci,Cx,pC,clen) ;
+        #include "extract/template/GB_subref_template.c"
 
     }
     else
@@ -164,38 +168,51 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         // non-iso numeric subref
         //----------------------------------------------------------------------
 
-        // TODO: create versions for asize = 1, 2, 4, 8, 16, and other
+        // using the JIT kernel
+        info = GB_subref_sparse_jit (C, TaskList, ntasks, nthreads, post_sort,
+            Mark, Inext, I_has_duplicates, Ap_start, Ap_end, need_qsort,
+            Ikind, nI, Icolon, A, I) ;
 
-        ASSERT (C->type = A->type) ;
-        const int64_t asize = A->type->size ;
-        const GB_void *restrict Ax = (GB_void *) A->x ;
-              GB_void *restrict Cx = (GB_void *) C->x ;
+        if (info == GrB_NO_VALUE)
+        { 
+            // using the generic kernel
+            GBURBLE ("(generic subref) ") ;
+            ASSERT (C->type = A->type) ;
+            const int64_t csize = C->type->size ;
+            const GB_void *restrict Ax = (GB_void *) A->x ;
+                  GB_void *restrict Cx = (GB_void *) C->x ;
 
-        // C and A have the same type
-        #define GB_COPY_RANGE(pC,pA,len)                                \
-            memcpy (Cx + (pC)*asize, Ax + (pA)*asize, (len) * asize) ;
-        #define GB_COPY_ENTRY(pC,pA)                                    \
-            memcpy (Cx + (pC)*asize, Ax + (pA)*asize, asize) ;
-        #define GB_CSIZE1 asize
-        #define GB_CSIZE2 asize
-        #include "extract/factory/GB_subref_template.c"
+            // C and A have the same type
+            #define GB_COPY_RANGE(pC,pA,len)                                \
+                memcpy (Cx + (pC)*csize, Ax + (pA)*csize, (len) * csize) ;
+            #define GB_COPY_ENTRY(pC,pA)                                    \
+                memcpy (Cx + (pC)*csize, Ax + (pA)*csize, csize) ;
+            #define GB_QSORT_1B(Ci,Cx,pC,clen) \
+                GB_qsort_1b (Ci+(pC), (GB_void *) (Cx+(pC)*csize), csize, clen);
+            #include "extract/template/GB_subref_template.c"
+            info = GrB_SUCCESS ;
+        }
     }
 
     //--------------------------------------------------------------------------
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    info = GB_hypermatrix_prune (C, Werk) ;
-    if (info != GrB_SUCCESS)
+    if (info == GrB_SUCCESS)
     { 
-        // out of memory
-        GB_phybix_free (C) ;
-        return (info) ;
+        info = GB_hypermatrix_prune (C, Werk) ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory or JIT kernel failed
+        GB_phybix_free (C) ;
+        return (info) ;
+    }
 
     // caller must not free Cp or Ch
     ASSERT_MATRIX_OK (C, "C output for subref phase3", GB0) ;

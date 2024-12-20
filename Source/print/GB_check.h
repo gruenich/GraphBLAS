@@ -68,12 +68,13 @@ GrB_Info GB_IndexUnaryOp_check  // check a GraphBLAS index_unary operator
 
 GrB_Info GB_IndexBinaryOp_check  // check a GraphBLAS index_binary operator
 (
-    const GzB_IndexBinaryOp op,  // GraphBLAS operator to print and check
+    const GxB_IndexBinaryOp op,  // GraphBLAS operator to print and check
     const char *name,       // name of the operator
     int pr,                 // print level
     FILE *f                 // file for output
 ) ;
 
+#ifndef GB_CUDA_FOLDER
 GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
 (
     const GxB_SelectOp op,  // GraphBLAS operator to print and check
@@ -81,6 +82,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     int pr,                 // print level
     FILE *f                 // file for output
 ) ;
+#endif
 
 GrB_Info GB_Operator_check  // check a GraphBLAS operator
 (
@@ -128,7 +130,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     const GrB_Matrix A,     // GraphBLAS matrix to print and check
     const char *name,       // name of the matrix, optional
     int pr,                 // print level; if negative, ignore nzombie
-                            // conditions and use GB_FLIP(pr) for diagnostics
+                            // conditions and use GB_ZOMBIE(pr) for diagnostics
     FILE *f,                // file for output
     const char *kind        // "matrix" or "vector"
 ) ;

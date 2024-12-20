@@ -7,31 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// Method 23: C += A, where C is dense
-
-// M:           NULL
-// Mask_comp:   false
-// Mask_struct: ignored
-// C_replace:   false
-// accum:       present
-// A:           matrix
-// S:           none
-// I:           NULL
-// J:           NULL
-
-// C and A can have any sparsity structure, but C must be as-if-full.
-
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
 {
-    #ifdef GB_JIT_RUNTIME
     // get callback functions
-    GB_free_memory_f GB_free_memory = my_callback->GB_free_memory_func ;
-    GB_malloc_memory_f GB_malloc_memory = my_callback->GB_malloc_memory_func ;
-    GB_ek_slice_f GB_ek_slice = my_callback->GB_ek_slice_func ;
-    GB_werk_pop_f GB_werk_pop = my_callback->GB_werk_pop_func ;
-    GB_werk_push_f GB_werk_push = my_callback->GB_werk_push_func ;
-    #endif
+    GB_GET_CALLBACK (GB_free_memory) ;
+    GB_GET_CALLBACK (GB_malloc_memory) ;
+    GB_GET_CALLBACK (GB_ek_slice) ;
+    GB_GET_CALLBACK (GB_werk_pop) ;
+    GB_GET_CALLBACK (GB_werk_push) ;
 
     #include "template/GB_subassign_23_template.c"
     return (GrB_SUCCESS) ;

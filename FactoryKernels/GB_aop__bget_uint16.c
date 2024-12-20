@@ -9,8 +9,15 @@
 
 // C(I,J)<M> += A
 
-#include "GB.h"
 #include "GB_control.h"
+#if defined (GxB_NO_UINT16)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
 #include "slice/GB_ek_slice.h"
 #include "FactoryKernels/GB_aop__include.h"
 
@@ -27,26 +34,26 @@
 #define GB_C_TYPE uint16_t
 #define GB_DECLAREC(cwork) uint16_t cwork
 #define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = Ax [A_iso ? 0 : (pA)]
-#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]
-#define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork
+#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork,C_iso) Cx [pC] = (A_iso) ? cwork : Ax [pA]
+#define GB_COPY_cwork_to_C(Cx,pC,cwork,C_iso) Cx [pC] = cwork
 #define GB_AX_MASK(Ax,pA,asize) (Ax [pA] != 0)
 
 // C(i,j) += ywork
-#define GB_ACCUMULATE_scalar(Cx,pC,ywork) \
+#define GB_ACCUMULATE_scalar(Cx,pC,ywork,C_iso) \
     GB_ACCUM_OP (Cx [pC], Cx [pC], ywork)
 
 // C(i,j) += (ytype) A(i,j)
-#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)      \
-{                                                       \
-    if (A_iso)                                          \
-    {                                                   \
-        GB_ACCUMULATE_scalar (Cx, pC, ywork) ;          \
-    }                                                   \
-    else                                                \
-    {                                                   \
-        /* A and Y have the same type here */           \
-        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA]) ;        \
-    }                                                   \
+#define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)    \
+{                                                           \
+    if (A_iso)                                              \
+    {                                                       \
+        GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;       \
+    }                                                       \
+    else                                                    \
+    {                                                       \
+        /* A and Y have the same type here */               \
+        GB_ACCUMULATE_scalar (Cx, pC, Ax [pA], C_iso) ;     \
+    }                                                       \
 }
 
 // disable this operator and use the generic case if these conditions hold
@@ -61,6 +68,9 @@
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix
 //------------------------------------------------------------------------------
+
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 0
 
 GrB_Info GB (_subassign_23__bget_uint16)
 (
@@ -83,6 +93,9 @@ GrB_Info GB (_subassign_23__bget_uint16)
 // C += y, accumulate a scalar into a dense matrix
 //------------------------------------------------------------------------------
 
+#undef  GB_SCALAR_ASSIGN
+#define GB_SCALAR_ASSIGN 1
+
 GrB_Info GB (_subassign_22__bget_uint16)
 (
     GrB_Matrix C,
@@ -100,4 +113,6 @@ GrB_Info GB (_subassign_22__bget_uint16)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

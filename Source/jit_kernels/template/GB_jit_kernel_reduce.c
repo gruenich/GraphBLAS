@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 // The GB_jitifyer constructs a *.c file with macro definitions specific to the
-// problem instance, such as the excerpts for the GB_jit__reduce__ac1fbb2
-// kernel, below, which a kernel that computes the scalar reduce of a double
-// matrix in bitmap form, using the GrB_PLUS_FP64_MONOID.  The code ac1fbb2 is
-// computed by GB_enumify_reduce.  The macros are followed by an #include with
-// this file, to define the kernel routine itself.  The kernel is always called
+// problem instance, such as the GB_jit__reduce__14bb2 kernel, below, which a
+// kernel that computes the scalar reduce of a double matrix in bitmap form,
+// using the GrB_PLUS_FP64_MONOID.  The hex code 14bb2 is computed by
+// GB_enumify_reduce.  The macros are followed by an #include with this file,
+// to define the kernel routine itself.  The kernel is always called
 // GB_jit_kernel, regardless of what it computes.  However, if this kernel is
 // copied into GraphBLAS/PreJit, the name GB_jit_kernel is replaced with its
-// full name, GB_jit__reduce__ac1fbb2, which then appears as a compiled
-// function in libgraphblas.so when the GraphBLAS library itself is recompiled.
+// full name, GB_jit__reduce__14bb2, which then appears as a compiled function
+// in libgraphblas.so when the GraphBLAS library itself is recompiled.
 
 // The GB_jit_query function provides a mechanism for GraphBLAS to query the
 // kernels it has already compiled.  When a compiled kernel is loaded, its
@@ -28,12 +28,10 @@
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
-    // example file: GB_jit__reduce__ac1fbb2.c
-
     //--------------------------------------------------------------------------
-    // GB_jit__reduce__ac1fbb2.c
+    // GB_jit__reduce__14bb2.c
     //--------------------------------------------------------------------------
-    // SuiteSparse:GraphBLAS v9.3.0, Timothy A. Davis, (c) 2017-2024,
+    // SuiteSparse:GraphBLAS v9.4.1, Timothy A. Davis, (c) 2017-2024,
     // All Rights Reserved.
     // SPDX-License-Identifier: Apache-2.0
     // The above copyright and license do not apply to any
@@ -75,8 +73,8 @@
     #define GBB_A(Ab,p)      Ab [p]
     #define GB_A_NVALS(e) int64_t e = A->nvals
     #define GB_A_NHELD(e) int64_t e = (A->vlen * A->vdim)
-    #define GB_A_ISO 0
     #define GB_A_HAS_ZOMBIES 0
+    #define GB_A_ISO 0
     #define GB_A_TYPE double
     #define GB_A2TYPE double
     #define GB_DECLAREA(a) double a
@@ -87,15 +85,15 @@
 
     #include "include/GB_monoid_shared_definitions.h"
     #ifndef GB_JIT_RUNTIME
-    #define GB_jit_kernel GB_jit__reduce__ac1fbb2
-    #define GB_jit_query  GB_jit__reduce__ac1fbb2_query
+    #define GB_jit_kernel GB_jit__reduce__14bb2
+    #define GB_jit_query  GB_jit__reduce__14bb2_query
     #endif
     #include "template/GB_jit_kernel_reduce.c"
     GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query) ;
     GB_JIT_GLOBAL GB_JIT_QUERY_PROTO (GB_jit_query)
     {
-        (*hash) = 0x5bb300ab9fd9b50c ;
-        v [0] = 9 ; v [1] = 3 ; v [2] = 0 ;
+        (*hash) = 0x753d2d93e48ef09e ;
+        v [0] = 9 ; v [1] = 4 ; v [2] = 1 ;
         defn [0] = NULL ;
         defn [1] = NULL ;
         defn [2] = NULL ;
@@ -133,10 +131,10 @@
 */
 
 // This macro is used because the identical prototype must appear in many
-// places, but with different function names.  For example, if this kernel
-// is copied into GraphBLAS/PreJIT, then this macro is used to define the
-// GB_jit__reduce__ac1fbb2 function, with the same set of parameters as
-// given by the GB_JIT_KERNEL_REDUCE_PROTO macro above.
+// places, but with different function names.  For example, if this kernel is
+// copied into GraphBLAS/PreJIT, then this macro is used to define the
+// GB_jit__reduce__14bb2 function, with the same set of parameters as given by
+// the GB_JIT_KERNEL_REDUCE_PROTO macro above.
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel) ;
 GB_JIT_GLOBAL GB_JIT_KERNEL_REDUCE_PROTO (GB_jit_kernel)

@@ -2,22 +2,25 @@
 // GB_bitmap_subref: C = A(I,J) where A is bitmap or full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
 // C=A(I,J), where A is bitmap or full, symbolic and numeric.
-// See GB_subref for details.
-
-// JIT: needed.
 
 #include "extract/GB_subref.h"
-#include "assign/GB_subassign_IxJ_slice.h"
+#include "jitifyer/GB_stringify.h"
 
-#define GB_FREE_ALL             \
-{                               \
-    GB_phybix_free (C) ;        \
+#define GB_FREE_WORKSPACE                               \
+{                                                       \
+    GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;   \
+}
+
+#define GB_FREE_ALL                                     \
+{                                                       \
+    GB_FREE_WORKSPACE                                   \
+    GB_phybix_free (C) ;                                \
 }
 
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
@@ -53,13 +56,19 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
+    // workspace for GB_bitmap_assign_IxJ_template.c
+    //--------------------------------------------------------------------------
+
+    GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;
+    int ntasks_IxJ = 0, nthreads_IxJ = 0 ;
+
+    //--------------------------------------------------------------------------
     // get A
     //--------------------------------------------------------------------------
 
     const int8_t *restrict Ab = A->b ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
-    const size_t asize = A->type->size ;
 
     //--------------------------------------------------------------------------
     // check the properties of I and J
@@ -90,6 +99,11 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         return (info) ;
     }
 
+    #define GB_I_KIND Ikind
+    #define GB_J_KIND Jkind
+    #define GB_C_IS_BITMAP (sparsity == GxB_BITMAP)
+    #define GB_C_IS_FULL   (sparsity == GxB_FULL)
+
     //--------------------------------------------------------------------------
     // allocate C
     //--------------------------------------------------------------------------
@@ -113,8 +127,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // In GB_bitmap_assign_IxJ_template, vlen is the vector length of the
     // submatrix C(I,J), but here the template is used to access A(I,J), and so
     // the vector length is A->vlen, not C->vlen.  The pointers pA and pC are
-    // swapped in the macros below, since C=A(I,J) is being computed, instead
-    // of C(I,J)=A for the bitmap assignment.
+    // swapped in GB_IXJ_WORK macro below, since C=A(I,J) is being computed,
+    // instead of C(I,J)=A for the bitmap assignment.
 
     int64_t vlen = avlen ;
 
@@ -122,13 +136,11 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // C = A(I,J)
     //--------------------------------------------------------------------------
 
-    int64_t cnvals = 0 ;
-
-    if (sparsity == GxB_BITMAP)
+    if (symbolic )
     {
 
         //----------------------------------------------------------------------
-        // C = A (I,J) where A and C are both bitmap
+        // symbolic subref, for GB_subassign_symbolic
         //----------------------------------------------------------------------
 
         // symbolic subref is only used by GB_subassign_symbolic, which only
@@ -137,10 +149,11 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         // C are bitmap is not needed.  The code is left here in case it is
         // needed in the future.
 
-        ASSERT (!symbolic) ;
+        ASSERT (GB_C_IS_FULL) ;
 
+        int64_t cnvals = 0 ;
         #if 0
-        if (symbolic)
+        if (GB_C_IS_BITMAP)
         {
             // C=A(I,J) symbolic with A and C bitmap
             ASSERT (GB_DEAD_CODE) ;
@@ -153,18 +166,36 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cx [pC] = pA ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_assign_IxJ_template.c"
         }
         else
         #endif
-
-        if (C_iso)
         { 
+            // C=A(I,J) symbolic with A and C full
+            int64_t *restrict Cx = (int64_t *) C->x ;
+            #undef  GB_IXJ_WORK
+            #define GB_IXJ_WORK(pA,pC)                                      \
+            {                                                               \
+                Cx [pC] = pA ;                                              \
+            }
+            #define GB_NO_CNVALS
+            #include "template/GB_bitmap_assign_IxJ_template.c"
+            #undef  GB_NO_CNVALS
+        }
 
-            //------------------------------------------------------------------
-            // C=A(I,J) iso numeric with A and C bitmap
-            //------------------------------------------------------------------
+    }
+    else if (C_iso)
+    {
 
+        //----------------------------------------------------------------------
+        // C=A(I,J) iso numeric with A and C bitmap/full
+        //----------------------------------------------------------------------
+
+
+        if (GB_C_IS_BITMAP)
+        { 
+            // iso case where C and A are bitmap
+            int64_t cnvals = 0 ;
             memcpy (C->x, cscalar, ctype->size) ;
             #undef  GB_IXJ_WORK
             #define GB_IXJ_WORK(pA,pC)                                      \
@@ -173,87 +204,47 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cb [pC] = ab ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
-
+            #include "template/GB_bitmap_assign_IxJ_template.c"
+            C->nvals = cnvals ;
         }
         else
         { 
-
-            //------------------------------------------------------------------
-            // C=A(I,J) non-iso numeric with A and C bitmap; both non-iso
-            //------------------------------------------------------------------
-
-            const GB_void *restrict Ax = (GB_void *) A->x ;
-                  GB_void *restrict Cx = (GB_void *) C->x ;
-            #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pA,pC)                                      \
-            {                                                               \
-                int8_t ab = Ab [pA] ;                                       \
-                Cb [pC] = ab ;                                              \
-                if (ab)                                                     \
-                {                                                           \
-                    /* Cx [pC] = Ax [pA] */                                 \
-                    memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;    \
-                    task_cnvals++ ;                                         \
-                }                                                           \
-            }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
-
+            // iso case where C and A are full
+            memcpy (C->x, cscalar, ctype->size) ;
         }
-
-        C->nvals = cnvals ;
 
     }
     else
     {
 
         //----------------------------------------------------------------------
-        // C = A (I,J) where A and C are both full
+        // C=A(I,J) non-iso numeric with A and C bitmap/full
         //----------------------------------------------------------------------
 
-        if (symbolic)
+        // via the JIT kernel
+        info = GB_subref_bitmap_jit (C, A,
+            I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Werk) ;
+
+        // via the generic kernel
+        if (info == GrB_NO_VALUE)
         { 
-
-            //------------------------------------------------------------------
-            // C=A(I,J) symbolic with A and C full (from GB_subassign_symbolic)
-            //------------------------------------------------------------------
-
-            int64_t *restrict Cx = (int64_t *) C->x ;
-            #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pA,pC)                                      \
-            {                                                               \
-                Cx [pC] = pA ;                                              \
-            }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
-
-        }
-        else if (C_iso)
-        { 
-
-            //------------------------------------------------------------------
-            // C=A(I,J) iso numeric with A and C full
-            //------------------------------------------------------------------
-
-            memcpy (C->x, cscalar, ctype->size) ;
-
-        }
-        else
-        { 
-
-            //------------------------------------------------------------------
-            // C=A(I,J) non-iso numeric with A and C full, both are non-iso
-            //------------------------------------------------------------------
-
+            // using the generic kernel
+            GBURBLE ("(generic subref) ") ;
+            const size_t csize = C->type->size ; // C and A have the same type
             const GB_void *restrict Ax = (GB_void *) A->x ;
                   GB_void *restrict Cx = (GB_void *) C->x ;
-            #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pA,pC)                                      \
-            {                                                               \
-                /* Cx [pC] = Ax [pA] */                                     \
-                memcpy (Cx +((pC)*asize), Ax +((pA)*asize), asize) ;        \
-            }
-            #include "assign/factory/GB_bitmap_assign_IxJ_template.c"
+            #define GB_COPY_ENTRY(pC,pA)                                    \
+                memcpy (Cx + (pC)*csize, Ax + (pA)*csize, csize) ;
+            #include "extract/template/GB_bitmap_subref_template.c"
+            info = GrB_SUCCESS ;
         }
+    }
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory or JIT kernel failed
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------
@@ -262,6 +253,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
     C->magic = GB_MAGIC ;
     ASSERT_MATRIX_OK (C, "C output for bitmap subref C=A(I,J)", GB0) ;
+    GB_FREE_WORKSPACE ;
     return (GrB_SUCCESS) ;
 }
 

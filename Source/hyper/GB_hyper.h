@@ -42,12 +42,6 @@ GrB_Info GB_hypermatrix_prune
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_hyper_hash_build    // construct A->Y if not already constructed
-(
-    GrB_Matrix A,
-    GB_Werk Werk
-) ;
-
 bool GB_hyper_hash_need         // return true if A needs a hyper hash
 (
     GrB_Matrix A

@@ -2,12 +2,10 @@
 // GB_subassign_22: C += scalar where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: done.
 
 // Method 22: C += scalar, where C is full
 
@@ -22,13 +20,16 @@
 // C += scalar where C is full
 
 #include "assign/GB_subassign_dense.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "binaryop/GB_binop.h"
 #include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_aop__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 1
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -37,7 +38,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 (
     GrB_Matrix C,                   // input/output matrix
     const void *scalar,             // input scalar
-    const GrB_Type scalar_type,           // type of the input scalar
+    const GrB_Type scalar_type,     // type of the input scalar
     const GrB_BinaryOp accum,       // operator to apply
     GB_Werk Werk
 )
@@ -48,6 +49,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT_MATRIX_OK (C, "C for C+=scalar", GB0) ;
     ASSERT (GB_IS_FULL (C)) ;
     ASSERT (!GB_PENDING (C)) ;
@@ -58,6 +60,9 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     ASSERT_TYPE_OK (scalar_type, "scalar_type for C+=scalar", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=scalar", GB0) ;
     ASSERT (!GB_OP_IS_POSITIONAL (accum)) ;
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // get the operator
@@ -94,9 +99,6 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 
@@ -153,6 +155,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
             /* accum: */ accum,
             /* A: */ NULL,
             /* scalar, scalar_type: */ ywork, accum->ytype,
+            /* S: */ NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_22, "subassign_22",
             Werk) ;
     }
@@ -170,7 +173,7 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
 
         // C(i,j) = C(i,j) + y
         #undef  GB_ACCUMULATE_scalar
-        #define GB_ACCUMULATE_scalar(Cx,pC,ywork)           \
+        #define GB_ACCUMULATE_scalar(Cx,pC,ywork,C_iso) \
             faccum (Cx +((pC)*csize), Cx +((pC)*csize), ywork)
 
         #include "assign/template/GB_subassign_22_template.c"

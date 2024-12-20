@@ -16,13 +16,12 @@
 // The monoid must have an atomic implementation, so the TIMES monoid for
 // complex types is not supported.
 
-// JIT: done.
-
 //------------------------------------------------------------------------------
 
 #include "mxm/GB_mxm.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_AxB__include2.h"
 #endif
 

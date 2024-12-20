@@ -22,7 +22,7 @@ GrB_Info GB_op_scalar_get
     // get the field
     //--------------------------------------------------------------------------
 
-    if (field == GzB_THETA)
+    if (field == GxB_THETA)
     {
         // get theta from an index binary op, or a binary op created from one
         if (op->theta == NULL)

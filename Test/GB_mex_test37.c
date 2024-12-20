@@ -313,7 +313,7 @@ GrB_Info ewise
     GrB_Matrix_free (&E0) ;             \
     GrB_Matrix_free (&G0) ;             \
     GrB_BinaryOp_free (&Bop) ;          \
-    GzB_IndexBinaryOp_free (&Iop) ;     \
+    GxB_IndexBinaryOp_free (&Iop) ;     \
 }
 
 void mexFunction
@@ -338,7 +338,7 @@ void mexFunction
 
     GrB_Type Crud_Type = NULL ;
     GrB_Scalar Theta = NULL, Alpha = NULL, Beta = NULL, Crud_Scalar ;
-    GzB_IndexBinaryOp Iop = NULL, Crud_Iop = NULL ;
+    GxB_IndexBinaryOp Iop = NULL, Crud_Iop = NULL ;
     GrB_BinaryOp Bop = NULL, Crud_Bop = NULL ;
     GrB_Matrix A = NULL, C1 = NULL, C2 = NULL, B1 = NULL, B2 = NULL,
         E1 = NULL, E2 = NULL, A2 = NULL, F1 = NULL, F2 = NULL, M = NULL,
@@ -379,67 +379,67 @@ void mexFunction
     OK (GrB_Scalar_new (&Theta, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (Theta, theta)) ;
 
-    OK (GzB_IndexBinaryOp_new (&Iop,
-        (GzB_index_binary_function) test37_idxbinop,
+    OK (GxB_IndexBinaryOp_new (&Iop,
+        (GxB_index_binary_function) test37_idxbinop,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "test37_idxbinop", TEST37_IDXBINOP)) ;
 
-    OK (GzB_IndexBinaryOp_set_String (Iop, "test37 idx binop", GrB_NAME)) ;
+    OK (GxB_IndexBinaryOp_set_String (Iop, "test37 idx binop", GrB_NAME)) ;
     OK (GxB_print (Iop, 5)) ;
 
     size_t theta_type_namelen = 0 ;
-    OK (GzB_IndexBinaryOp_get_SIZE (Iop, &theta_type_namelen,
-        GzB_THETA_TYPE_STRING)) ;
+    OK (GxB_IndexBinaryOp_get_SIZE (Iop, &theta_type_namelen,
+        GxB_THETA_TYPE_STRING)) ;
     printf ("theta name length: %d\n", (int) theta_type_namelen) ;
     CHECK (theta_type_namelen == strlen ("GrB_FP64") + 1) ;
 
     char theta_type_name [256] ;
     theta_type_name [0] = '\0' ;
-    OK (GzB_IndexBinaryOp_get_String (Iop, &theta_type_name,
-        GzB_THETA_TYPE_STRING)) ;
+    OK (GxB_IndexBinaryOp_get_String (Iop, &theta_type_name,
+        GxB_THETA_TYPE_STRING)) ;
     CHECK (strcmp (theta_type_name, "GrB_FP64") == 0)  ;
 
     int32_t theta_type_code = -1 ;
-    OK (GzB_IndexBinaryOp_get_INT32 (Iop, &theta_type_code,
-        GzB_THETA_TYPE_CODE)) ;
+    OK (GxB_IndexBinaryOp_get_INT32 (Iop, &theta_type_code,
+        GxB_THETA_TYPE_CODE)) ;
     CHECK (theta_type_code == GrB_FP64_CODE) ;
 
     OK (GrB_BinaryOp_get_INT32 (GxB_FIRSTI1_INT32, &theta_type_code,
-        GzB_THETA_TYPE_CODE)) ;
+        GxB_THETA_TYPE_CODE)) ;
     CHECK (theta_type_code == GrB_INT32_CODE) ;
 
     OK (GrB_BinaryOp_get_INT32 (GxB_FIRSTI1_INT64, &theta_type_code,
-        GzB_THETA_TYPE_CODE)) ;
+        GxB_THETA_TYPE_CODE)) ;
     CHECK (theta_type_code == GrB_INT64_CODE) ;
 
-    OK (GzB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
+    OK (GxB_BinaryOp_new_IndexOp (&Bop, Iop, Theta)) ;
     OK (GxB_print (Bop, 5)) ;
 
     OK (GrB_Scalar_new (&Alpha, GrB_FP64)) ;
 
     double y = 0 ;
     int expected = GrB_INVALID_VALUE ;
-    ERR (GzB_IndexBinaryOp_get_Scalar (Iop, Alpha, GzB_THETA)) ;
+    ERR (GxB_IndexBinaryOp_get_Scalar (Iop, Alpha, GxB_THETA)) ;
 
     y = 0 ;
     OK (GrB_Scalar_clear (Alpha)) ;
-    OK (GrB_BinaryOp_get_Scalar (Bop, Alpha, GzB_THETA)) ;
+    OK (GrB_BinaryOp_get_Scalar (Bop, Alpha, GxB_THETA)) ;
     OK (GrB_Scalar_extractElement_FP64 (&y, Alpha)) ;
     CHECK (y == theta) ;
 
     theta_type_code = -1 ;
     OK (GrB_BinaryOp_get_INT32 (Bop, &theta_type_code,
-        GzB_THETA_TYPE_CODE)) ;
+        GxB_THETA_TYPE_CODE)) ;
     CHECK (theta_type_code == GrB_FP64_CODE) ;
 
     theta_type_namelen = 0 ;
     OK (GrB_BinaryOp_get_SIZE (Bop, &theta_type_namelen,
-        GzB_THETA_TYPE_STRING)) ;
+        GxB_THETA_TYPE_STRING)) ;
     CHECK (theta_type_namelen == strlen ("GrB_FP64") + 1) ;
 
     theta_type_name [0] = '\0' ;
     OK (GrB_BinaryOp_get_String (Bop, &theta_type_name,
-        GzB_THETA_TYPE_STRING)) ;
+        GxB_THETA_TYPE_STRING)) ;
     CHECK (strcmp (theta_type_name, "GrB_FP64") == 0)  ;
 
     double alpha = 3.14159 ;
@@ -636,14 +636,14 @@ void mexFunction
     ERR (GB_IndexBinaryOp_check (NULL, "Iop: null", 5, stdout)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GzB_IndexBinaryOp_set_Scalar (Iop, Theta, GrB_NAME)) ;
-    ERR (GzB_IndexBinaryOp_set_INT32 (Iop, 2, GrB_SIZE)) ;
-    ERR (GzB_IndexBinaryOp_set_VOID (Iop, NULL, GrB_SIZE, 0)) ;
+    ERR (GxB_IndexBinaryOp_set_Scalar (Iop, Theta, GrB_NAME)) ;
+    ERR (GxB_IndexBinaryOp_set_INT32 (Iop, 2, GrB_SIZE)) ;
+    ERR (GxB_IndexBinaryOp_set_VOID (Iop, NULL, GrB_SIZE, 0)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
     OK (GrB_Type_new (&Crud_Type, 4)) ;
     OK (GrB_Scalar_new (&Crud_Scalar, Crud_Type)) ;
-    ERR (GzB_BinaryOp_new_IndexOp (&Crud_Bop, Iop, Crud_Scalar)) ;
+    ERR (GxB_BinaryOp_new_IndexOp (&Crud_Bop, Iop, Crud_Scalar)) ;
     ERR (GrB_Matrix_apply (A, NULL, NULL, Bop, A, NULL)) ;
 
     //------------------------------------------------------------------------
@@ -671,7 +671,7 @@ void mexFunction
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
 
     expected = GxB_JIT_ERROR ;
-    ERR (GzB_IndexBinaryOp_new (&Crud_Iop, NULL,
+    ERR (GxB_IndexBinaryOp_new (&Crud_Iop, NULL,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
         "crud_idxbinop", CRUD_IDXBINOP)) ;
 

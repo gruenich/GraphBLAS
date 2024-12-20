@@ -2,7 +2,7 @@
 // GB_extractTuples.h: definitions for GB_extractTuples and related methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     GrB_Index *J_out,           // array for returning col indices of tuples
     void *X,                    // array for returning values of tuples
     GrB_Index *p_nvals,         // I,J,X size on input; # tuples on output
-    const GB_Type_code xcode,   // type of array X
+    const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
     GB_Werk Werk
 ) ;

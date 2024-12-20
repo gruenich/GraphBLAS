@@ -128,10 +128,10 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 #undef o
 
 //------------------------------------------------------------------------------
-// GB_OP: construct the name of an operator
+// GB_OP_NAME: construct the name of an operator
 //------------------------------------------------------------------------------
 
-#define GB_OP(op) GB_EVAL3 (op, _, GB_XTYPE)
+#define GB_OP_NAME(op) GB_EVAL3 (op, _, GB_XTYPE)
 
 //------------------------------------------------------------------------------
 // helper macros to define unary operators
@@ -139,7 +139,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 
 #define GB_OP1zx(op,name,z_t,ztype,x_t,xtype)                               \
     extern void GB_FUNC_T (op, xtype) (z_t *z, const x_t *x) ;              \
-    struct GB_UnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                       \
+    struct GB_UnaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =                  \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -155,18 +155,18 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 
 #define GRB_OP1z(op,name,z_t,ztype)                                         \
     GB_OP1zx (op, name, z_t, ztype, GB_TYPE, GB_XTYPE) ;                    \
-    GrB_UnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_UnaryOp GRB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 #define GRB_OP1(op,name) GRB_OP1z (op, name, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP1z(op,name,z_t,ztype)                                         \
     GB_OP1zx (op, name, z_t, ztype, GB_TYPE, GB_XTYPE) ;                    \
-    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_UnaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 #define GXB_OP1(op,name) GXB_OP1z (op, name, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP1_RENAME(op)                                                  \
-    GrB_UnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_UnaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 //------------------------------------------------------------------------------
 // helper macros to define binary operators
@@ -174,7 +174,7 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 
 #define GB_OP2zxy(op,name,z_t,ztype,x_t,xtype,y_t,ytype)                    \
     extern void GB_FUNC_T(op,xtype) (z_t *z, const x_t *x, const y_t *y) ;  \
-    struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP (op)) =                      \
+    struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =                 \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -190,19 +190,19 @@ GB_DESC (RSCT0T1, GrB_REPLACE, GrB_STRUCTURE + GrB_COMP, GrB_TRAN, GrB_TRAN )
 
 #define GRB_OP2z(op,name,z_t,ztype)                                          \
     GB_OP2zxy (op, name, z_t, ztype, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE) ; \
-    GrB_BinaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_BinaryOp GRB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 #define GRB_OP2(op,name) GRB_OP2z (op, name, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP2z(op,name,z_t,ztype)                                          \
     GB_OP2zxy (op, name, z_t, ztype, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE) ; \
-    GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_BinaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 #define GXB_OP2(op,name) GXB_OP2z (op, name, GB_TYPE, GB_XTYPE)
 
 #define GXB_OP2shift(op,name) \
     GB_OP2zxy (op, name, GB_TYPE, GB_XTYPE, GB_TYPE, GB_XTYPE, int8_t, INT8) ; \
-    GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_BinaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 //------------------------------------------------------------------------------
 // positional unary operators
@@ -239,17 +239,24 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT32) ;
 GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 
 //------------------------------------------------------------------------------
-// built-in index binary operators
+// built-in binary operators based on an internal index-binary op
 //------------------------------------------------------------------------------
 
-// helper macros to define index binary operators
-#define GXB_OP2_POS(op,name,theta)                                          \
+// This macro creates the FIRSTI, SECONDI, and related GrB_BinaryOps.  They
+// are built as if they came from a built-in index binary op, but the
+// corresponding GxB_IndexBinaryOp is not actually defined.  Instead, it is
+// entirely encapsulated inside these GrB_BinaryOps.  None of these ops use
+// their theta value; the offset of +1 for FIRSTI1 is built into the operator
+// itself as z=ix+1; it is not computed as z = (ix)+theta with theta = 1.
+
+// helper macros to define binary operators based on an index-binary op
+#define GXB_OP2_POS(op,name)                                                \
     extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z,                         \
         const void *x, GrB_Index ix, GrB_Index jx,                          \
         const void *y, GrB_Index iy, GrB_Index jy,                          \
         const void *theta_parameter) ;                                      \
-    GB_TYPE GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)) = theta ;           \
-    struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP (op)) =                      \
+    GB_TYPE GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)) = 0 ;               \
+    struct GB_BinaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =                 \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -261,11 +268,11 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         GB_ ## op ## _binop_code,   /* opcode */                            \
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         & GB_OPAQUE (GB_XTYPE),     /* theta_type */                        \
-        (GzB_index_binary_function) (& GB_FUNC_T (op, GB_XTYPE)), /* func */\
-        & GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)),     /* theta */      \
+        (GxB_index_binary_function) (& GB_FUNC_T (op, GB_XTYPE)), /* func */\
+        & GB_OPAQUE (GB_EVAL3 (op, GB_XTYPE, _theta)),     /* theta = 0 */  \
         0                           /* theta_size */                        \
     } ;                                                                     \
-    GrB_BinaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_BinaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 //------------------------------------------------------------------------------
 // built-in index_unary operators
@@ -276,7 +283,7 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 #define GRB_IDXOP_POSITIONAL(op,name)                                       \
     extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z, const void *unused,     \
         GrB_Index i, GrB_Index j, const GB_TYPE *y) ;                       \
-    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =             \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -289,14 +296,14 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
-    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_IndexUnaryOp GRB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 // GxB_IndexUnaryOps that depend on i,j,y but not A(i,j), and result has
 // the same type as the scalar y: FLIPDIAGINDEX
 #define GXB_IDXOP_POSITIONAL(op,name)                                       \
     extern void GB_FUNC_T(op,GB_XTYPE) (GB_TYPE *z, const void *unused,     \
         GrB_Index i, GrB_Index j, const GB_TYPE *y) ;                       \
-    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =             \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -309,7 +316,7 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
-    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_IndexUnaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 // IndexUnaryOps that depend on i,j, and y but not A(i,j), and result is
 // bool: TRIL, TRIU, DIAG, OFFDIAG, COLLE, COLGT, ROWLE, ROWGT.
@@ -317,7 +324,7 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
 #define GRB_IDXOP_POSITIONAL_BOOL(op,name)                                  \
     extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const void *unused,        \
         GrB_Index i, GrB_Index j, const GB_TYPE *y) ;                       \
-    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =             \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -330,13 +337,13 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
-    GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP (op))
+    GrB_IndexUnaryOp GRB (op) = & GB_OPAQUE (GB_OP_NAME (op))
 
 // GrB_IndexUnaryOps that depend on A(i,j), and result is bool: VALUE* ops
 #define GRB_IDXOP_VALUE(op,name)                                            \
     extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *y) ;         \
-    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =             \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -349,13 +356,13 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
-    GrB_IndexUnaryOp GRB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_IndexUnaryOp GRB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 // GxB* IndexUnaryOps that depend on A(i,j), result is bool: VALUE* complex ops
 #define GXB_IDXOP_VALUE(op,name)                                            \
     extern void GB_FUNC_T(op,GB_XTYPE) (bool *z, const GB_TYPE *x,          \
         GrB_Index i_unused, GrB_Index j_unused, const GB_TYPE *y) ;         \
-    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP (op)) =                  \
+    struct GB_IndexUnaryOp_opaque GB_OPAQUE (GB_OP_NAME (op)) =             \
     {                                                                       \
         GB_MAGIC, 0,                /* magic and header_size */             \
         NULL, 0,                    /* no user_name for GrB_get/GrB_set */  \
@@ -368,7 +375,7 @@ GXB_OP1_POS (POSITIONJ1, "positionj1", INT64) ;
         NULL, 0, 0,                 /* defn, alloc, hash */                 \
         NULL, NULL, NULL, 0         /* theta_type, etc */                   \
     } ;                                                                     \
-    GrB_IndexUnaryOp GXB (GB_OP (op)) = & GB_OPAQUE (GB_OP (op))
+    GrB_IndexUnaryOp GXB (GB_OP_NAME (op)) = & GB_OPAQUE (GB_OP_NAME (op))
 
 //------------------------------------------------------------------------------
 // built-in select operators (DEPRECATED: do not use in any code)

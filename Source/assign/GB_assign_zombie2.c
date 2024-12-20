@@ -2,12 +2,10 @@
 // GB_assign_zombie2: delete all entries in C(i,:) for GB_assign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: not needed.  Only one variant possible.
 
 // C(i,:)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in C(i,:) to be deleted.
@@ -87,7 +85,7 @@ GrB_Info GB_assign_zombie2
             { 
                 ASSERT (i == Ci [pC]) ;
                 nzombies++ ;
-                Ci [pC] = GB_FLIP (i) ;
+                Ci [pC] = GB_ZOMBIE (i) ;
             }
         }
     }

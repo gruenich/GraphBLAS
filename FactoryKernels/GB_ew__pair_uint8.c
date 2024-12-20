@@ -7,9 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
-#include "ewise/GB_emult.h"
+#if defined (GxB_NO_UINT8)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
+#include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_ew__include.h"
@@ -98,7 +105,7 @@ GrB_Info GB (_AaddB__pair_uint8)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -106,4 +113,6 @@ GrB_Info GB (_AaddB__pair_uint8)
 //------------------------------------------------------------------------------
 // eWiseUnion: C=A+B, C<M>=A+B, C<!M>=A+B
 //------------------------------------------------------------------------------
+
+#endif
 

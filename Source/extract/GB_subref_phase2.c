@@ -2,12 +2,10 @@
 // GB_subref_phase2: find # of entries in C=A(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: not needed, but GB_subref_method has 6 or 7 variants.
 
 // GB_subref_phase2 counts the number of entries in each vector of C, for
 // C=A(I,J) and then does a cumulative sum to find Cp.
@@ -28,7 +26,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int nthreads,                 // # of threads to use
     const int64_t *Mark,                // for I inverse buckets, size A->vlen
     const int64_t *Inext,               // for I inverse buckets, size nI
-    const int64_t nduplicates,          // # of duplicates, if I inverted
+    const bool I_has_duplicates,        // true if I has duplicates
     // analysis from phase0:
     const int64_t *restrict Ap_start,
     const int64_t *restrict Ap_end,
@@ -72,19 +70,23 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     // count the entries in each vector of C
     //--------------------------------------------------------------------------
 
+    #define GB_I_KIND Ikind
+    #define GB_NEED_QSORT need_qsort
+    #define GB_I_HAS_DUPLICATES I_has_duplicates
+
     #define GB_ANALYSIS_PHASE
     if (symbolic)
     { 
         #define GB_SYMBOLIC
         // symbolic extraction must handle zombies
         const int64_t nzombies = A->nzombies ;
-        #include "extract/factory/GB_subref_template.c"
+        #include "extract/template/GB_subref_template.c"
     }
     else
     { 
         // iso and non-iso numeric extraction do not see zombies
         ASSERT (!GB_ZOMBIES (A)) ;
-        #include "extract/factory/GB_subref_template.c"
+        #include "extract/template/GB_subref_template.c"
     }
 
     //--------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // GB_assign_prep: check and prepare inputs for GB_assign and GB_subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -12,7 +12,6 @@
 #include "assign/GB_subassign.h"
 #include "assign/GB_bitmap_assign.h"
 #include "assign/GB_assign_zombie.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_methods.h"
 #include "transpose/GB_transpose.h"
 #include "extract/GB_subref.h"
@@ -30,9 +29,6 @@
     GB_FREE_WORK (&I2k, I2k_size) ; \
     GB_FREE_WORK (&J2k, J2k_size) ; \
 }
-
-// redefine to use the revised GB_FREE_ALL above:
-#include "matrix/GB_static_header.h"
 
 GrB_Info GB_assign_prep
 (
@@ -92,7 +88,7 @@ GrB_Info GB_assign_prep
     const GrB_Index nCols_in,       // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
-    const GB_Type_code scode,       // type code of scalar to expand
+    const GB_Type_code scalar_code, // type code of scalar to expand
     GB_Werk Werk
 )
 {
@@ -114,7 +110,7 @@ GrB_Info GB_assign_prep
     ASSERT (!GB_is_shallow (C)) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign_prep", GB0) ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign_prep", GB0) ;
-    ASSERT (scode <= GB_UDT_code) ;
+    ASSERT (scalar_code <= GB_UDT_code) ;
 
     GrB_Matrix Cwork = NULL ;
     GrB_Matrix Mwork = NULL ;
@@ -163,7 +159,7 @@ GrB_Info GB_assign_prep
         ASSERT (scalar != NULL) ;
         ASSERT (A == NULL) ;
         ASSERT ((*assign_kind) == GB_ASSIGN || (*assign_kind) == GB_SUBASSIGN) ;
-        scalar_type = GB_code_type (scode, ctype) ;
+        scalar_type = GB_code_type (scalar_code, ctype) ;
         atype = scalar_type ;
     }
     else
@@ -204,18 +200,18 @@ GrB_Info GB_assign_prep
         // C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
         GB_OK (GB_BinaryOp_compatible (accum, ctype, ctype,
             (scalar_expansion) ? NULL : atype,
-            (scalar_expansion) ? scode : GB_ignore_code, Werk)) ;
+            (scalar_expansion) ? scalar_code : GB_ignore_code, Werk)) ;
     }
 
     // C<M>(Rows,Cols) = T, so C and T must be compatible.
     // also C<M>(Rows,Cols) = accum(C,T) for entries in T but not C
     if (scalar_expansion)
     {
-        if (!GB_code_compatible (ctype->code, scode))
+        if (!GB_code_compatible (ctype->code, scalar_code))
         { 
             GB_ERROR (GrB_DOMAIN_MISMATCH, "Input scalar of type [%s]\n"
                 "cannot be typecast to output of type [%s]",
-                GB_code_string (scode), ctype->name) ;
+                GB_code_string (scalar_code), ctype->name) ;
         }
     }
     else
@@ -370,13 +366,13 @@ GrB_Info GB_assign_prep
     // GrB_Matrix_assign, GxB_Matrix_subassign:  A and C can be in any format,
     // and A_transpose can be true or false, depending on the descriptor.  If
     // the CSR/CSC formats of A and C are the same, then A_transpose remains
-    // as-is.  If they differ, then A_transpose is flipped.  Then the CSR-CSC
+    // as-is.  If they differ, then A_transpose is negated.  Then the CSR-CSC
     // agnostic assignment proceeds.
 
     bool C_is_csc = C->is_csc ;
     if (!scalar_expansion && C_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // negate the sense of A_transpose
         A_transpose = !A_transpose ;
     }
 
@@ -444,17 +440,17 @@ GrB_Info GB_assign_prep
         // The mask M is empty, and complemented, and thus M(i,j)=0 for all i
         // and j.  The result does not depend on A or accum.  The output C is
         // either untouched (if C_replace is false) or cleared (if C_replace is
-        // true).  However, the GrB_Row_assign and GrB_Col_assign only clear
-        // their specific row or column of C, respectively.  GB_subassign only
-        // clears C(I,J).  GrB_assign clears all of C.
+        // true).  However, GrB_Row_assign and GrB_Col_assign only clear their
+        // specific row or column of C, respectively.  GB_subassign only clears
+        // C(I,J).  GrB_assign clears all of C.
 
-        // M is NULL so C and M cannot be the same, and A is ignored so
-        // it doesn't matter whether or not C == A.  Thus C is not aliased
-        // to the inputs.
+        // M is NULL so C and M cannot be the same, and A is ignored so it
+        // doesn't matter whether or not C == A.  Thus C is not aliased to the
+        // inputs.
 
-        // This condition is like GB_RETURN_IF_QUICK_MASK(...), except that
-        // the action taken by C_replace is different for row/col assign
-        // and subassign.
+        // This condition is like GB_RETURN_IF_QUICK_MASK(...), except that the
+        // action taken by C_replace is different for row/col assign and
+        // subassign.
 
         if (*C_replace)
         {
@@ -485,8 +481,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(i,:)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            I,    1, GB_LIST, NULL, // I
-                            NULL, 0, GB_ALL,  NULL, // J
+                            I,    1, 1, GB_LIST, NULL, // I = [i]
+                            NULL, 0, 0, GB_ALL,  NULL, // J = [:]
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -497,7 +493,7 @@ GrB_Info GB_assign_prep
                     }
                     else
                     { 
-                        GB_MATRIX_WAIT_IF_JUMBLED (C) ;
+                        GB_UNJUMBLE (C) ;
                         GB_ENSURE_SPARSE (C) ;
                         GBURBLE ("C(i,:)=zombie ") ;
                         GB_OK (GB_assign_zombie2 (C, I [0])) ;
@@ -519,8 +515,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(:,j)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            NULL, 0, GB_ALL,  NULL, // I
-                            J,    1, GB_LIST, NULL, // J
+                            NULL, 0, 0, GB_ALL,  NULL, // I = [:]
+                            J,    1, 1, GB_LIST, NULL, // J = [j]
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -570,8 +566,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(I,J)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            I, nI, Ikind, Icolon,
-                            J, nJ, Jkind, Jcolon,
+                            I, ni, nI, Ikind, Icolon,
+                            J, nj, nJ, Jkind, Jcolon,
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,

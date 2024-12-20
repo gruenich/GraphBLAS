@@ -2,12 +2,10 @@
 // GB_subassign_23: C += A where C is full and A is any matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: done.
 
 // Method 23: C += A, where C is full
 
@@ -27,13 +25,16 @@
 // C and A can have any sparsity structure, but C must be as-if-full.
 
 #include "assign/GB_subassign_dense.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "binaryop/GB_binop.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_aop__include.h"
 #endif
 #include "include/GB_unused.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -51,13 +52,10 @@ GrB_Info GB_subassign_23      // C += A; C is full
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix S = NULL ;           // not constructed
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for C+=A", GB0) ;
     ASSERT (!GB_PENDING (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
@@ -78,6 +76,9 @@ GrB_Info GB_subassign_23      // C += A; C is full
     // get the operator
     //--------------------------------------------------------------------------
 
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+
     if (accum->opcode == GB_FIRST_binop_code || C->iso)
     { 
         // nothing to do
@@ -94,9 +95,6 @@ GrB_Info GB_subassign_23      // C += A; C is full
     //--------------------------------------------------------------------------
     // via the factory kernel
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 
@@ -151,6 +149,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
             /* accum: */ accum,
             /* A: */ A,
             /* scalar, scalar_type: */ NULL, NULL,
+            /* S: */ NULL,
             GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_23, "subassign_23",
             Werk) ;
     }
@@ -184,7 +183,7 @@ GrB_Info GB_subassign_23      // C += A; C is full
         #define C_iso false
 
         #undef  GB_ACCUMULATE_aij
-        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork)              \
+        #define GB_ACCUMULATE_aij(Cx,pC,Ax,pA,A_iso,ywork,C_iso)        \
         {                                                               \
             /* Cx [pC] += (ytype) Ax [A_iso ? 0 : pA] */                \
             if (A_iso)                                                  \

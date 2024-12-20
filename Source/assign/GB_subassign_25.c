@@ -2,12 +2,10 @@
 // GB_subassign_25: C(:,:)<M,s> = A; C empty, A full, M structural
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: done.
 
 // Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
@@ -28,12 +26,15 @@
 // C is iso if A is iso
 
 #include "assign/GB_subassign_methods.h"
-#include "assign/include/GB_assign_shared_definitions.h"
 #include "assign/GB_subassign_dense.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
+#include "GB_control.h"
 #include "FactoryKernels/GB_as__include.h"
 #endif
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
+#include "assign/include/GB_assign_shared_definitions.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
@@ -52,15 +53,11 @@ GrB_Info GB_subassign_25
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (!GB_IS_BITMAP (M)) ; ASSERT (!GB_IS_FULL (M)) ;
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
 
-    //--------------------------------------------------------------------------
-    // get inputs
-    //--------------------------------------------------------------------------
-
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for subassign method_25", GB0) ;
     ASSERT (GB_nnz (C) == 0) ;
     ASSERT (!GB_ZOMBIES (C)) ;
@@ -74,6 +71,13 @@ GrB_Info GB_subassign_25
 
     ASSERT_MATRIX_OK (A, "A for subassign method_25", GB0) ;
     ASSERT (GB_IS_FULL (A) || GB_IS_BITMAP (A)) ;
+
+    //--------------------------------------------------------------------------
+    // get inputs
+    //--------------------------------------------------------------------------
+
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     const GB_Type_code ccode = C->type->code ;
     const GB_Type_code acode = A->type->code ;
@@ -104,9 +108,6 @@ GrB_Info GB_subassign_25
     //--------------------------------------------------------------------------
     // C<M> = A for built-in types
     //--------------------------------------------------------------------------
-
-    int nthreads_max = GB_Context_nthreads_max ( ) ;
-    double chunk = GB_Context_chunk ( ) ;
 
     info = GrB_NO_VALUE ;
 
@@ -149,27 +150,10 @@ GrB_Info GB_subassign_25
             // launch the switch factory
             //------------------------------------------------------------------
 
-            //
             if (C->type == A->type && ccode < GB_UDT_code)
-            {
+            { 
                 // C<M> = A
-                switch (ccode)
-                {
-                    case GB_BOOL_code   : GB_WORKER (_bool  )
-                    case GB_INT8_code   : GB_WORKER (_int8  )
-                    case GB_INT16_code  : GB_WORKER (_int16 )
-                    case GB_INT32_code  : GB_WORKER (_int32 )
-                    case GB_INT64_code  : GB_WORKER (_int64 )
-                    case GB_UINT8_code  : GB_WORKER (_uint8 )
-                    case GB_UINT16_code : GB_WORKER (_uint16)
-                    case GB_UINT32_code : GB_WORKER (_uint32)
-                    case GB_UINT64_code : GB_WORKER (_uint64)
-                    case GB_FP32_code   : GB_WORKER (_fp32  )
-                    case GB_FP64_code   : GB_WORKER (_fp64  )
-                    case GB_FC32_code   : GB_WORKER (_fc32  )
-                    case GB_FC64_code   : GB_WORKER (_fc64  )
-                    default: ;
-                }
+                #include "assign/factory/GB_assign_factory.c"
             }
         }
         #endif
@@ -190,6 +174,7 @@ GrB_Info GB_subassign_25
                 /* accum: */ NULL,
                 /* A: */ A,
                 /* scalar, scalar_type: */ NULL, NULL,
+                /* S: */ NULL,
                 GB_SUBASSIGN, GB_JIT_KERNEL_SUBASSIGN_25, "subassign_25",
                 Werk) ;
         }
@@ -207,7 +192,7 @@ GrB_Info GB_subassign_25
             const size_t csize = C->type->size ;
             GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-            #define C_iso false
+            // #define C_iso false
             #include "assign/template/GB_subassign_25_template.c"
             info = GrB_SUCCESS ;
         }

@@ -2,12 +2,12 @@
 // GB_extract_vector_list: extract vector indices for all entries in a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but 3 variants possible (sparse/hyper/full)
+// JIT: not needed; factory possible w/ 3 variants (sparse/hyper/full)
 
 // Constructs a list of vector indices for each entry in a matrix.  Creates
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort
@@ -85,9 +85,8 @@ GrB_Info GB_extract_vector_list     // extract vector list from a matrix
             //------------------------------------------------------------------
 
             int64_t j = GBH (Ah, k) ;
-            int64_t pA_start, pA_end ;
-            GB_get_pA (&pA_start, &pA_end, tid, k, 
-                kfirst, klast, pstart_Aslice, Ap, avlen) ;
+            GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
+                GBP (Ap, k, avlen), GBP (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // extract vector indices of A(:,j)

@@ -117,7 +117,7 @@
     while (pleft < pright)                                                  \
     {                                                                       \
         int64_t pmiddle = (pleft + pright) / 2 ;                            \
-        if (i > GB_UNFLIP (X [pmiddle]))                                    \
+        if (i > GB_UNZOMBIE (X [pmiddle]))                                  \
         {                                                                   \
             /* if in the list, it appears in [pmiddle+1..pright] */         \
             pleft = pmiddle + 1 ;                                           \
@@ -150,7 +150,7 @@
             is_zombie = GB_IS_ZOMBIE (i2) ;                                 \
             if (is_zombie)                                                  \
             {                                                               \
-                i2 = GB_FLIP (i2) ;                                         \
+                i2 = GB_DEZOMBIE (i2) ;                                     \
             }                                                               \
             found = (i == i2) ;                                             \
         }                                                                   \
@@ -179,7 +179,7 @@
             is_zombie = GB_IS_ZOMBIE (i2) ;                                 \
             if (is_zombie)                                                  \
             {                                                               \
-                i2 = GB_FLIP (i2) ;                                         \
+                i2 = GB_DEZOMBIE (i2) ;                                     \
             }                                                               \
             found = (i == i2) ;                                             \
             if (!found)                                                     \

@@ -60,7 +60,7 @@ GrB_Info GB (_sel_phase2__eq_thunk_bool)
 { 
     GB_A_TYPE *restrict Cx = (GB_A_TYPE *) Cx_out ;
     GB_Y_TYPE y = *((GB_Y_TYPE *) ythunk) ;
-    #include "select/template/GB_select_phase2.c"
+    #include "select/template/GB_select_phase2_template.c"
     return (GrB_SUCCESS) ;
 }
 

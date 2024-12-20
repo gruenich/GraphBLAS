@@ -2,12 +2,10 @@
 // GB_assign_zombie1: delete all entries in C(:,j) for GB_assign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// JIT: not needed.  Only one variant possible.
 
 // C(:,j)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in the C(:,j) vector to be deleted.
@@ -43,7 +41,7 @@ GrB_Info GB_assign_zombie1
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     int64_t pC_start, pC_end ;
-    const int64_t cnvec = C->nvec ;
+    const int64_t Cnvec = C->nvec ;
 
     if (Ch != NULL)
     { 
@@ -52,7 +50,7 @@ GrB_Info GB_assign_zombie1
         const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
         const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
         const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
-        GB_hyper_hash_lookup (Ch, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
+        GB_hyper_hash_lookup (Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
             j, &pC_start, &pC_end) ;
     }
     else
@@ -87,7 +85,7 @@ GrB_Info GB_assign_zombie1
         { 
             // delete C(i,j) by marking it as a zombie
             nzombies++ ;
-            Ci [pC] = GB_FLIP (i) ;
+            Ci [pC] = GB_ZOMBIE (i) ;
         }
     }
 

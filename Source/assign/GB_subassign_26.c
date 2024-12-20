@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: needed.
-
 // Method 26: C(:,j1:j2) = A ; append columns, no S
 
 // M:           NULL
@@ -22,7 +20,10 @@
 // A: sparse
 
 #include "assign/GB_subassign_methods.h"
+#define GB_GENERIC
+#define GB_SCALAR_ASSIGN 0
 #include "assign/include/GB_assign_shared_definitions.h"
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL ;
 #define GB_MEM_CHUNK (1024*1024)
@@ -41,6 +42,7 @@ GrB_Info GB_subassign_26
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT (GB_IS_HYPERSPARSE (C)) ;
     ASSERT (GB_IS_SPARSE (A)) ;
     ASSERT (!GB_any_aliased (C, A)) ;   // NO ALIAS of C==A
@@ -54,9 +56,8 @@ GrB_Info GB_subassign_26
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     const size_t csize = C->type->size ;
-    int64_t cnvec = C->nvec ;
+    int64_t Cnvec = C->nvec ;
     int64_t cnz = C->nvals ;
 
     int64_t *restrict Ap = A->p ;
@@ -82,7 +83,7 @@ GrB_Info GB_subassign_26
 
     int64_t cnz_new = cnz + anz ;
 
-    if (cnvec + nJ > C->plen)
+    if (Cnvec + nJ > C->plen)
     { 
         // double the size of C->h and C->p if needed
         int64_t plen_new = GB_IMIN (C->vdim, 2*(C->plen + nJ)) ;
@@ -104,7 +105,7 @@ GrB_Info GB_subassign_26
     // determine any parallelism to use
     //--------------------------------------------------------------------------
 
-    ASSERT (cnvec == 0 || Ch [cnvec-1] == j1-1) ;
+    ASSERT (Cnvec == 0 || Ch [Cnvec-1] == j1-1) ;
 
     bool phase1_parallel = (nJ > GB_CHUNK_DEFAULT) ;
     bool phase2_parallel = (anz * (sizeof (int64_t) + csize) > GB_MEM_CHUNK) ;
@@ -121,15 +122,15 @@ GrB_Info GB_subassign_26
     // phase1: compute Cp, Ch, # of new nonempty vectors, and matrix properties
     //--------------------------------------------------------------------------
 
-    int64_t anvec_nonempty = 0 ;
+    int64_t Anvec_nonempty = 0 ;
     #define COMPUTE_CP_AND_CH                   \
         for (k = 0 ; k < nJ ; k++)              \
         {                                       \
             int64_t apk = Ap [k] ;              \
             int64_t anzk = Ap [k+1] - apk ;     \
-            Ch [cnvec + k] = j1 + k ;           \
-            Cp [cnvec + k] = cnz + apk ;        \
-            anvec_nonempty += (anzk > 0) ;      \
+            Ch [Cnvec + k] = j1 + k ;           \
+            Cp [Cnvec + k] = cnz + apk ;        \
+            Anvec_nonempty += (anzk > 0) ;      \
         }
 
     int nthreads = (phase1_parallel) ?
@@ -139,7 +140,7 @@ GrB_Info GB_subassign_26
     { 
         // compute Cp and Ch in parallel
         #pragma omp parallel for num_threads(nthreads) schedule(static) \
-            reduction(+:anvec_nonempty)
+            reduction(+:Anvec_nonempty)
         COMPUTE_CP_AND_CH ;
     }
     else
@@ -150,7 +151,7 @@ GrB_Info GB_subassign_26
 
     if (C->nvec_nonempty >= 0)
     { 
-        C->nvec_nonempty += anvec_nonempty ;
+        C->nvec_nonempty += Anvec_nonempty ;
     }
     C->nvec += nJ ;
     Cp [C->nvec] = cnz_new ;

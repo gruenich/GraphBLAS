@@ -64,6 +64,7 @@
 %   GB_spec_vdiag                 - a mimic of GxB_Vector_diag
 %   GB_spec_zeros                 - all-zero matrix of a given type.
 %   GB_spec_getmask               - return the mask, typecasted to logical
+%   GB_spec_kron_idx              - C = kron(A,B), using the mykronidx operator
 
 %   GB_user_op                    - apply a complex binary and unary operator
 %   GB_user_opsall                - return list of complex operators
@@ -102,6 +103,7 @@
 %   test74   - test GrB_mxm: all built-in semirings
 %   test75b  - GrB_mxm and GrB_vxm on all semirings (shorter test than test75)
 %   test76   - test GxB_resize
+%   test78   - test subref
 
 %   test80   - rerun test06 with different matrices
 %   test81   - test GrB_Matrix_extract with index range, stride, & backwards
@@ -177,7 +179,6 @@
 %   test189  - test large assignment
 
 %   test191  - test split
-%   test191b - test split
 %   test192  - test GrB_assign C<C,struct>=scalar
 %   test193  - test GxB_Matrix_diag and GrB_Matrix_diag
 %   test194  - test GxB_Vector_diag
@@ -220,7 +221,6 @@
 %   test231  - test GrB_select with idxunp
 %   test232  - test assign with GrB_Scalar
 %   test234  - test GxB_eWiseUnion
-%   test234b - test GxB_eWiseUnion
 %   test235  - test GxB_eWiseUnion and GrB_eWiseAdd
 %   test236  - test GxB_Matrix_sort and GxB_Vector_sort
 %   test237  - test GrB_mxm (saxpy4)
@@ -276,6 +276,8 @@
 %   test282  - test argmax with index binary op
 %   test283  - test index binary op
 %   test284  - test GrB_mxm using indexop-based semirings
+%   test285  - test GrB_assign (bitmap case, C<!M>+=A, whole matrix)
+%   test286  - test kron with idxop
 
 % Helper functions
 

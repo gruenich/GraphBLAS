@@ -227,7 +227,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_vssp_kernel
 	    {
 		zc++; 
 		//printf(" %lld, %lld is zombie %d!\n",i,j,zc);
-		Ci[pair_id] = GB_FLIP( i ) ;
+		Ci[pair_id] = GB_ZOMBIE( i ) ;
             }
 	}
     }

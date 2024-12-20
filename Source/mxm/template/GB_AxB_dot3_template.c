@@ -93,7 +93,7 @@
                     { 
                         // C(i,j) is a zombie
                         int64_t i = Mi [pC] ;
-                        Ci [pC] = GB_FLIP (i) ;
+                        Ci [pC] = GB_ZOMBIE (i) ;
                     }
                     continue ;
                 }
@@ -160,7 +160,7 @@
                 { 
                     // C(i,j) is a zombie
                     task_nzombies++ ;
-                    Ci [pC] = GB_FLIP (i) ;
+                    Ci [pC] = GB_ZOMBIE (i) ;
                 }
             }
         }

@@ -850,7 +850,7 @@ void mexFunction
     bool scalar_is_full = GB_IS_FULL (a_scalar) ;
     if (!scalar_is_full)
     {
-        a_scalar->i [0] = GB_FLIP (0) ;
+        a_scalar->i [0] = GB_ZOMBIE (0) ;
         a_scalar->nzombies = 1 ;
     }
 

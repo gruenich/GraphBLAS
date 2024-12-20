@@ -116,11 +116,6 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
             (*value) = (int32_t) GB_jitifyer_get_use_cmake ( ) ;
             break ;
 
-//      case GxB_JIT_ERROR_FALLBACK :
-//
-//          (*value) = (int32_t) GB_jitifyer_get_error_fallback ( ) ;
-//          break ;
-
         default : 
 
             return (GrB_INVALID_VALUE) ;
@@ -952,17 +947,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 (*use_cmake) = GB_jitifyer_get_use_cmake ( ) ;
             }
             break ;
-
-//      case GxB_JIT_ERROR_FALLBACK :
-//
-//          {
-//              va_start (ap, field) ;
-//              bool *error_fallback = va_arg (ap, bool *) ;
-//              va_end (ap) ;
-//              GB_RETURN_IF_NULL (error_fallback) ;
-//              (*error_fallback) = GB_jitifyer_get_error_fallback ( ) ;
-//          }
-//          break ;
 
         case GxB_JIT_ERROR_LOG : 
 

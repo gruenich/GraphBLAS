@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed, but could use variants for sparsity formats.
+// JIT: possible: could use variants for sparsity formats.
 
 // Constructs a set of tasks to compute C, for an element-wise operation that
 // operates on two input matrices, C=op(A,B).  These include:
@@ -38,25 +38,7 @@
 // GB_ewise_slice
 //------------------------------------------------------------------------------
 
-GrB_Info GB_ewise_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads for eWise operation
-    // input:
-    const int64_t Cnvec,            // # of vectors of C
-    const int64_t *restrict Ch,     // vectors of C, if hypersparse
-    const int64_t *restrict C_to_M, // mapping of C to M
-    const int64_t *restrict C_to_A, // mapping of C to A
-    const int64_t *restrict C_to_B, // mapping of C to B
-    bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
-    const GrB_Matrix M,             // mask matrix to slice (optional)
-    const GrB_Matrix A,             // matrix to slice
-    const GrB_Matrix B,             // matrix to slice
-    GB_Werk Werk
-)
+GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
 {
 
     //--------------------------------------------------------------------------

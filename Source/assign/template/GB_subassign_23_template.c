@@ -2,10 +2,27 @@
 // GB_subassign_23_template: C += A where C is full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// Method 23: C += A, where C is full
+
+// M:           NULL
+// Mask_comp:   false
+// Mask_struct: ignored
+// C_replace:   false
+// accum:       present
+// A:           matrix
+// S:           none
+
+// The type of C must match the type of x and z for the accum function, since
+// C(i,j) = accum (C(i,j), A(i,j)) is handled.  The generic case here can
+// typecast A(i,j) but not C(i,j).  The case for typecasting of C is handled by
+// Method 04.
+
+// C and A can have any sparsity structure, but C must be as-if-full.
 
 #include "include/GB_unused.h"
 
@@ -21,15 +38,9 @@
     // get inputs
     //--------------------------------------------------------------------------
 
-    #ifdef GB_JIT_KERNEL
-    #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_is_full   GB_A_IS_FULL
-    #define A_iso       GB_A_ISO
-    #else
-    bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    bool A_is_full = GB_IS_FULL (A) ;
+    const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool A_is_full = GB_IS_FULL (A) ;
     const bool A_iso = A->iso ;
-    #endif
 
     //--------------------------------------------------------------------------
     // slice the A matrix
@@ -39,9 +50,9 @@
     int A_ntasks, A_nthreads ;
     GB_A_NHELD (anz) ;      // int64_t anz = GB_nnz_held (A) ;
     double work = anz + A->nvec ;
-    if (A_is_bitmap || A_is_full)
+    if (GB_A_IS_BITMAP || GB_A_IS_FULL)
     { 
-        // C is full and A is bitmap or full
+        // C is full and A is bitmap or full: A_ek_slicing is not created.
         A_nthreads = GB_nthreads (work, chunk, nthreads_max) ;
         A_ntasks = 0 ;   // unused
         ASSERT (A_ek_slicing == NULL) ;
@@ -63,14 +74,14 @@
     ASSERT (GB_IS_FULL (C)) ;
     GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
     GB_DECLAREY (ywork) ;
-    if (A_iso)
+    if (GB_A_ISO)
     { 
         // get the iso value of A and typecast it to Y
         // ywork = (ytype) Ax [0]
         GB_COPY_aij_to_ywork (ywork, Ax, 0, true) ;
     }
 
-    if (A_is_bitmap)
+    if (GB_A_IS_BITMAP)
     {
 
         //----------------------------------------------------------------------
@@ -84,11 +95,11 @@
         { 
             if (!Ab [p]) continue ;
             // Cx [p] += (ytype) Ax [p], with typecasting
-            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
+            GB_ACCUMULATE_aij (Cx, p, Ax, p, GB_A_ISO, ywork, false) ;
         }
 
     }
-    else if (A_is_full)
+    else if (GB_A_IS_FULL)
     {
 
         //----------------------------------------------------------------------
@@ -100,7 +111,7 @@
         for (p = 0 ; p < cnz ; p++)
         { 
             // Cx [p] += (ytype) Ax [p], with typecasting
-            GB_ACCUMULATE_aij (Cx, p, Ax, p, A_iso, ywork) ;
+            GB_ACCUMULATE_aij (Cx, p, Ax, p, GB_A_ISO, ywork, false) ;
         }
 
     }
@@ -117,7 +128,7 @@
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ai = A->i ;
         const int64_t avlen = A->vlen ;
-        const int64_t cvlen = C->vlen ;
+        const int64_t Cvlen = C->vlen ;
         bool A_jumbled = A->jumbled ;
 
         const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
@@ -149,10 +160,10 @@
                 int64_t pA_end   = GBP_A (Ap, k+1, avlen) ;
                 GB_GET_PA (my_pA_start, my_pA_end, taskid, k,
                     kfirst, klast, pstart_Aslice, pA_start, pA_end) ;
-                bool ajdense = ((pA_end - pA_start) == cvlen) ;
+                bool ajdense = ((pA_end - pA_start) == Cvlen) ;
 
                 // pC points to the start of C(:,j)
-                int64_t pC = j * cvlen ;
+                int64_t pC = j * Cvlen ;
 
                 //--------------------------------------------------------------
                 // C(:,j) += A(:,j)
@@ -171,7 +182,8 @@
                         int64_t i = pA - pA_start ;
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
-                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
+                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, GB_A_ISO, ywork,
+                            false) ;
                     }
 
                 }
@@ -179,7 +191,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // A(:,j) is sparse 
+                    // A(:,j) is sparse
                     //----------------------------------------------------------
 
                     GB_PRAGMA_SIMD_VECTORIZE
@@ -188,7 +200,8 @@
                         int64_t i = Ai [pA] ;
                         int64_t p = pC + i ;
                         // Cx [p] += (ytype) Ax [pA], with typecasting
-                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, A_iso, ywork) ;
+                        GB_ACCUMULATE_aij (Cx, p, Ax, pA, GB_A_ISO, ywork,
+                            false) ;
                     }
                 }
             }

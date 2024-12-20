@@ -47,7 +47,6 @@
 #include "mxm/GB_AxB_saxpy.h"
 #include "slice/GB_ek_slice.h"
 #include "binaryop/GB_binop.h"
-#include "slice/factory/GB_ek_slice_search.c"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "mxm/include/GB_mxm_shared_definitions.h"
 #include "mxm/GB_AxB_saxpy_generic.h"
@@ -100,7 +99,7 @@ GrB_Info GB_AXB_SAXPY_GENERIC_METHOD
     ASSERT (mult->ztype == C->type) ;
 
     GxB_binary_function fmult = mult->binop_function ;    // NULL if positional
-    GzB_index_binary_function fmult_idx = mult->idxbinop_function ;
+    GxB_index_binary_function fmult_idx = mult->idxbinop_function ;
     GxB_binary_function fadd  = add->op->binop_function ;
     GB_Opcode opcode = mult->opcode ;
 

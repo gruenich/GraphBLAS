@@ -10,6 +10,7 @@ f = fopen ('control.m4', 'w') ;
 fprintf (f, 'm4_divert(-1)\n') ;
 
 [fname, unsigned, bits] = codegen_type (xtype) ;
+codegen_type_enabled (f, fname) ;
 fprintf ('%-11s:  fname: %-7s  unsigned: %d bits: %d\n', xtype, fname, unsigned, bits) ;
 
 % function names
@@ -22,10 +23,10 @@ fprintf (f, 'm4_define(`GB_atype'', `#define GB_A_TYPE %s'')\n', xtype) ;
 fprintf (f, 'm4_define(`GB_declarec'', `#define GB_DECLAREC(cwork) %s cwork'')\n', xtype) ;
 
 % to copy a scalar into C (no typecasting)
-fprintf (f, 'm4_define(`GB_copy_scalar_to_c'', `#define GB_COPY_scalar_to_C(Cx,pC,cwork) Cx [pC] = cwork'')\n') ;
+fprintf (f, 'm4_define(`GB_copy_cwork_to_c'', `#define GB_COPY_cwork_to_C(Cx,pC,cwork,C_iso) Cx [pC] = cwork'')\n') ;
 
 % to copy an entry from A to C (no typecasting)
-fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork) Cx [pC] = (A_iso) ? cwork : Ax [pA]'')\n') ;
+fprintf (f, 'm4_define(`GB_copy_aij_to_c'', `#define GB_COPY_aij_to_C(Cx,pC,Ax,pA,A_iso,cwork,C_iso) Cx [pC] = (A_iso) ? cwork : Ax [pA]'')\n') ;
 
 % to copy an entry from A into a cwork scalar
 fprintf (f, 'm4_define(`GB_copy_aij_to_cwork'', `#define GB_COPY_aij_to_cwork(cwork,Ax,pA,A_iso) cwork = Ax [A_iso ? 0 : (pA)]'')\n') ;

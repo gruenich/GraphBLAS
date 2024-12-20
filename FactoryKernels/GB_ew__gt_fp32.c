@@ -7,9 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
-#include "ewise/GB_emult.h"
+#if defined (GxB_NO_FP32)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
+#include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_ew__include.h"
@@ -143,7 +150,7 @@ GrB_Info GB (_AaddB__gt_fp32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -190,7 +197,7 @@ GrB_Info GB (_AunionB__gt_fp32)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -218,7 +225,7 @@ GrB_Info GB (_AemultB_08__gt_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_08_meta.c"
+    #include "emult/template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -244,7 +251,7 @@ GrB_Info GB (_AemultB_02__gt_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_02_template.c"
+    #include "emult/template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -270,7 +277,7 @@ GrB_Info GB (_AemultB_03__gt_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_03_template.c"
+    #include "emult/template/GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -295,7 +302,7 @@ GrB_Info GB (_AemultB_04__gt_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_04_template.c"
+    #include "emult/template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -321,7 +328,7 @@ GrB_Info GB (_AemultB_bitmap__gt_fp32)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_bitmap_template.c"
+    #include "emult/template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -376,11 +383,11 @@ GrB_Info GB (_bind2nd__gt_fp32)
 
 // cij = op (x, aij)
 #undef  GB_APPLY_OP
-#define GB_APPLY_OP(pC,pA)                      \
-{                                               \
-    GB_DECLAREB (aij) ;                         \
-    GB_GETB (aij, Ax, pA, false) ;              \
-    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ;         \
+#define GB_APPLY_OP(pC,pA)              \
+{                                       \
+    GB_DECLAREB (aij) ;                 \
+    GB_GETB (aij, Ax, pA, false) ;      \
+    GB_EWISEOP (Cx, pC, x, aij, 0, 0) ; \
 }
 
 GrB_Info GB (_bind1st_tran__gt_fp32)
@@ -411,11 +418,11 @@ GrB_Info GB (_bind1st_tran__gt_fp32)
 
 // cij = op (aij, y)
 #undef  GB_APPLY_OP
-#define GB_APPLY_OP(pC,pA)                      \
-{                                               \
-    GB_DECLAREA (aij) ;                         \
-    GB_GETA (aij, Ax, pA, false) ;              \
-    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ;         \
+#define GB_APPLY_OP(pC,pA)              \
+{                                       \
+    GB_DECLAREA (aij) ;                 \
+    GB_GETA (aij, Ax, pA, false) ;      \
+    GB_EWISEOP (Cx, pC, aij, y, 0, 0) ; \
 }
 
 GrB_Info GB (_bind2nd_tran__gt_fp32)
@@ -437,4 +444,6 @@ GrB_Info GB (_bind2nd_tran__gt_fp32)
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

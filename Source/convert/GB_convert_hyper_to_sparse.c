@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 // On input, the matrix may have shallow A->p and A->h content; it is safely
 // removed.  On output, the matrix is always non-hypersparse (even if out of
 // memory).  If the input matrix is hypersparse, it is given a new A->p that is
@@ -238,7 +236,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             }
         }
 
-        // free the old A->p, A->h, and A->H hyperlist content.
+        // free the old A->p, A->h, and A->Y hyperlist content.
         // this clears A->nvec_nonempty so it must be restored below.
         GB_phy_free (A) ;
 

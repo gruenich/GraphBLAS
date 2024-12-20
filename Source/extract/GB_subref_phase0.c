@@ -2,16 +2,14 @@
 // GB_subref_phase0: find vectors of C = A(I,J) and determine I,J properties
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// JIT: not needed.  Only one variant possible.
-
 #include "extract/GB_subref.h"
 
-#define GB_Ai(p) GBI_UNFLIP (Ai, p, avlen)
+#define GB_Ai(p) GBI_UNZOMBIE (Ai, p, avlen)
 
 //------------------------------------------------------------------------------
 // GB_find_Ap_start_end
@@ -404,7 +402,7 @@ GrB_Info GB_subref_phase0
         //----------------------------------------------------------------------
 
         // For the case where J is jbegin:jend, Ah has been trimmed (see above).
-        // Ch is a shifted copy of the trimmed Ah, of length Cnvec = anvec.  
+        // Ch is a shifted copy of the trimmed Ah, of length Cnvec = anvec,
         // so kA = kC, and jC = Ch [kC] = jA - jmin.  Ap has also been trimmed.
 
         Cnvec = anvec ;
@@ -450,7 +448,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (Count, ntasks) ;
         Cnvec = Count [ntasks] ;
 
     }
@@ -504,7 +502,7 @@ GrB_Info GB_subref_phase0
             Count [tid] = my_Cnvec ;
         }
 
-        GB_cumsum (Count, ntasks, NULL, 1, NULL) ;
+        GB_cumsum1 (Count, ntasks) ;
         Cnvec = Count [ntasks] ;
     }
 

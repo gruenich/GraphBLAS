@@ -2,7 +2,7 @@
 // GB_kron: C<M> = accum (C, kron(A,B))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -115,12 +115,12 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     bool T_is_csc = C->is_csc ;
     if (T_is_csc != A->is_csc)
     { 
-        // Flip the sense of A_transpose
+        // Negate A_transpose
         A_transpose = !A_transpose ;
     }
     if (T_is_csc != B->is_csc)
     { 
-        // Flip the sense of B_transpose
+        // Negate B_transpose
         B_transpose = !B_transpose ;
     }
 

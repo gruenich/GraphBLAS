@@ -38,6 +38,7 @@ d_list = [0.3 0.3 0.3] ;
 n_semirings = 0 ;
 
 for k0 = 1:size(m_list,2)
+    jit_reset
 
     m = m_list (k0) ;
     n = n_list (k0) ;
@@ -85,7 +86,7 @@ for k0 = 1:size(m_list,2)
             catch
                 continue ;
             end
-            jit_reset
+            % jit_reset
 
             % skip these monoids; not needed for test coverage
             if (isequal (monoid.optype, 'logical'))

@@ -7,9 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
 #include "GB_control.h"
-#include "ewise/GB_emult.h"
+#if defined (GxB_NO_FC64)
+#define GB_TYPE_ENABLED 0
+#else
+#define GB_TYPE_ENABLED 1
+#endif
+
+#if GB_TYPE_ENABLED
+#include "GB.h"
+#include "emult/GB_emult.h"
 #include "slice/GB_ek_slice.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "FactoryKernels/GB_ew__include.h"
@@ -141,7 +148,7 @@ GrB_Info GB (_AaddB__second_fc64)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -188,7 +195,7 @@ GrB_Info GB (_AunionB__second_fc64)
     // for the "easy mask" condition:
     bool M_is_A = GB_all_aliased (M, A) ;
     bool M_is_B = GB_all_aliased (M, B) ;
-    #include "ewise/template/GB_add_template.c"
+    #include "add/template/GB_add_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -216,7 +223,7 @@ GrB_Info GB (_AemultB_08__second_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_08_meta.c"
+    #include "emult/template/GB_emult_08_meta.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -242,7 +249,7 @@ GrB_Info GB (_AemultB_02__second_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_02_template.c"
+    #include "emult/template/GB_emult_02_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -268,7 +275,7 @@ GrB_Info GB (_AemultB_03__second_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_03_template.c"
+    #include "emult/template/GB_emult_03_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -293,7 +300,7 @@ GrB_Info GB (_AemultB_04__second_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_04_template.c"
+    #include "emult/template/GB_emult_04_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -319,8 +326,10 @@ GrB_Info GB (_AemultB_bitmap__second_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "ewise/template/GB_emult_bitmap_template.c"
+    #include "emult/template/GB_emult_bitmap_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
+
+#endif
 

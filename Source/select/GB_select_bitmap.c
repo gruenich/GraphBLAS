@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// JIT: done.
-
 #include "select/GB_select.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
@@ -161,6 +159,7 @@ GrB_Info GB_select_bitmap
 
             if (info == GrB_NO_VALUE)
             { 
+                GBURBLE ("(generic select) ") ;
                 info = GB_select_generic_bitmap (C->b, &cnvals, A, flipij,
                     ythunk, op, nthreads) ;
             }
