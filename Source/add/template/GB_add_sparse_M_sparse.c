@@ -98,7 +98,6 @@
         // copy the pattern into C (:,j)
         int64_t pC_start = pC ;
         int64_t pM_start = pM ;
-//      memcpy (Ci + pC, Mi + pM, mjnz * sizeof (int64_t)) ;
         int64_t pA_offset = pA_start - iA_first ;
         int64_t pB_offset = pB_start - iB_first ;
 

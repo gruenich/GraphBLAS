@@ -196,7 +196,6 @@
         cjnz = bjnz ;
         #else
         ASSERT (cjnz == bjnz) ;
-//      memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < bjnz ; p++)
         { 
@@ -231,7 +230,6 @@
         cjnz = ajnz ;
         #else
         ASSERT (cjnz == ajnz) ;
-//      memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < ajnz ; p++)
         { 
@@ -266,7 +264,6 @@
         cjnz = ajnz + bjnz ;
         #else
         ASSERT (cjnz == ajnz + bjnz) ;
-//      memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < ajnz ; p++)
         { 
@@ -288,7 +285,6 @@
             #endif
         }
         pC += ajnz ;
-//      memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < bjnz ; p++)
         { 
@@ -323,7 +319,6 @@
         cjnz = ajnz + bjnz ;
         #else
         ASSERT (cjnz == ajnz + bjnz) ;
-//      memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < bjnz ; p++)
         { 
@@ -345,7 +340,6 @@
             #endif
         }
         pC += bjnz ;
-//      memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < ajnz ; p++)
         { 
@@ -499,7 +493,6 @@
         #if ( GB_ADD_PHASE == 1 )
         cjnz += ajnz + bjnz ;
         #else
-//      memcpy (Ci + pC, Ai + pA, ajnz * sizeof (int64_t)) ;
         for (int64_t p = 0 ; p < ajnz ; p++)
         { 
             int64_t i = GB_IGET (Ai, pA+p) ;    // i = Ai [pA+p]
@@ -519,7 +512,6 @@
             #endif
             #endif
         }
-//      memcpy (Ci + pC, Bi + pB, bjnz * sizeof (int64_t)) ;
         for (int64_t p = 0 ; p < bjnz ; p++)
         { 
             int64_t i = GB_IGET (Bi, pB+p) ;    // i = Bi [pB+p]
