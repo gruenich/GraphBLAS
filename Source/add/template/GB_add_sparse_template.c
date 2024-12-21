@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is sparse or hypersparse:
 
         //      ------------------------------------------
@@ -92,7 +94,7 @@
             // get j, the kth vector of C
             //------------------------------------------------------------------
 
-            int64_t j = GBH_C (Ch, k) ;
+            int64_t j = GBh_C (Ch, k) ;
 
             #if ( GB_ADD_PHASE == 1 )
             int64_t cjnz = 0 ;
@@ -103,13 +105,15 @@
                 // A fine task computes a slice of C(:,j)
                 pC     = TaskList [taskid  ].pC ;
                 pC_end = TaskList [taskid+1].pC ;
-                ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;
+                ASSERT (GB_IGET (Cp, k) <= pC) ;
+                ASSERT (pC <= pC_end) ;
+                ASSERT (pC_end <= GB_IGET (Cp, k+1)) ;
             }
             else
             { 
                 // The vectors of C are never sliced for a coarse task.
-                pC     = Cp [k  ] ;
-                pC_end = Cp [k+1] ;
+                pC     = GB_IGET (Cp, k  ) ;
+                pC_end = GB_IGET (Cp, k+1) ;
             }
             int64_t cjnz = pC_end - pC ;
             if (cjnz == 0) continue ;
@@ -133,8 +137,8 @@
                 int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
                 if (kA >= 0)
                 { 
-                    pA     = GBP_A (Ap, kA, vlen) ;
-                    pA_end = GBP_A (Ap, kA+1, vlen) ;
+                    pA     = GBp_A (Ap, kA, vlen) ;
+                    pA_end = GBp_A (Ap, kA+1, vlen) ;
                 }
             }
 
@@ -146,8 +150,8 @@
             int64_t iA_first = -1, iA_last = -1 ;
             if (ajnz > 0)
             { 
-                iA_first = GBI_A (Ai, pA, vlen) ;
-                iA_last  = GBI_A (Ai, pA_end-1, vlen) ;
+                iA_first = GBi_A (Ai, pA, vlen) ;
+                iA_last  = GBi_A (Ai, pA_end-1, vlen) ;
             }
 
             //------------------------------------------------------------------
@@ -168,8 +172,8 @@
                 int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
                 if (kB >= 0)
                 { 
-                    pB     = GBP_B (Bp, kB, vlen) ;
-                    pB_end = GBP_B (Bp, kB+1, vlen) ;
+                    pB     = GBp_B (Bp, kB, vlen) ;
+                    pB_end = GBp_B (Bp, kB+1, vlen) ;
                 }
             }
 
@@ -181,8 +185,8 @@
             int64_t iB_first = -1, iB_last = -1 ;
             if (bjnz > 0)
             { 
-                iB_first = GBI_B (Bi, pB, vlen) ;
-                iB_last  = GBI_B (Bi, pB_end-1, vlen) ;
+                iB_first = GBi_B (Bi, pB, vlen) ;
+                iB_last  = GBi_B (Bi, pB_end-1, vlen) ;
             }
 
             //------------------------------------------------------------------
@@ -233,7 +237,7 @@
             }
             else
             { 
-                Cp [k] = cjnz ;
+                GB_ISET (Cp, k, cjnz) ; // Cp [k] = cjnz ;
             }
             #endif
         }

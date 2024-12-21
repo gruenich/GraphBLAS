@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is bitmap.
 // M is sparse/hyper and complemented.
 // A and B can have any format, except at least one is bitmap/full.
@@ -54,9 +56,9 @@
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             // find the part of M(:,k) for this task
-            int64_t j = GBH_M (Mh, k) ;
+            int64_t j = GBh_M (Mh, k) ;
             GB_GET_PA (pM_start, pM_end, taskid, k, kfirst, klast,
-                pstart_Mslice, GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
+                pstart_Mslice, GB_IGET (Mp, k), GB_IGET (Mp, k+1)) ;
             int64_t pC_start = j * vlen ;
             // traverse over M(:,j), the kth vector of M
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -65,7 +67,7 @@
                 bool mij = GB_MCAST (Mx, pM, msize) ;
                 if (mij)
                 { 
-                    int64_t i = Mi [pM] ;
+                    int64_t i = GB_IGET (Mi, pM) ;
                     int64_t p = pC_start + i ;
                     Cb [p] = 2 ;
                 }
@@ -144,9 +146,9 @@
             for (int64_t k = kfirst ; k <= klast ; k++)
             {
                 // find the part of M(:,k) for this task
-                int64_t j = GBH_M (Mh, k) ;
+                int64_t j = GBh_M (Mh, k) ;
                 GB_GET_PA (pM_start, pM_end, taskid, k, kfirst, klast,
-                    pstart_Mslice, GBP_M (Mp, k, vlen), GBP_M (Mp, k+1, vlen)) ;
+                    pstart_Mslice, GB_IGET (Mp, k), GB_IGET (Mp, k+1)) ;
                 int64_t pC_start = j * vlen ;
                 // traverse over M(:,j), the kth vector of M
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -155,7 +157,7 @@
                     bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     { 
-                        int64_t i = Mi [pM] ;
+                        int64_t i = GB_IGET (Mi, pM) ;
                         int64_t p = pC_start + i ;
                         Cb [p] = 0 ;
                     }

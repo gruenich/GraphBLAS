@@ -163,11 +163,11 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     { 
         // Ch_is_Mh is true if either true on input (for GB_add, which denotes
         // that Ch is a deep copy of M->h), or if Ch is a shallow copy of M->h.
+        // If Ch is a deep copy, the integer sizes of Ch and Mh can differ.
         Ch_is_Mh = Ch_is_Mh || (Ch != NULL && M_is_hyper && Ch == M->h) ;
         Mi = M->i ;
         Mi_is_32 = M->i_is_32 ;
     }
-    ASSERT (GB_IMPLIES (Ch_is_Mh, M != NULL && (Ci_is_32 == M->i_is_32))) ;
 
     GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Ci_is_32) ;
 

@@ -30,8 +30,8 @@
             if (mij)
             {
                 // M(i,j) is true, so C(i,j) can be computed
-                int8_t a = GBB_A (Ab, p) ;
-                int8_t b = GBB_B (Bb, p) ;
+                int8_t a = GBb_A (Ab, p) ;
+                int8_t b = GBb_B (Bb, p) ;
                 #ifdef GB_ISO_ADD
                 int8_t c = a || b ;
                 #else

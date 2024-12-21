@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_add_phase2 computes C=A+B, C<M>=A+B, or C<!M>A+B.  It is preceded first
 // by GB_add_phase0, which computes the list of vectors of C to compute (Ch)
@@ -62,7 +62,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool flipij,      // if true, i,j must be flipped
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // from phase1:
-    uint64_t **Cp_handle,   // vector pointers for C    FIXME
+    void **Cp_handle,       // vector pointers for C
     size_t Cp_size,
     const int64_t Cnvec_nonempty,   // # of non-empty vectors in C
     // tasks from phase1a:
@@ -71,12 +71,14 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int C_nthreads,       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    int64_t **Ch_handle,        // FIXME
+    void **Ch_handle,
     size_t Ch_size,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
+    const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit
+    const bool Ci_is_32,        // if true, Ci is 32-bit; else 64-bit
     const int C_sparsity,
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
@@ -112,8 +114,13 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    uint64_t *restrict Cp = (*Cp_handle) ;      // FIXME
-    int64_t *restrict Ch = (*Ch_handle) ;       // FIXME
+
+    GB_MDECL (Cp, , u) ;
+    GB_MDECL (Ch, , u) ;
+    Cp = (*Cp_handle) ;
+    Ch = (*Ch_handle) ;
+    GB_IPTR (Cp, Cp_is_32) ;
+    GB_IPTR (Ch, Ci_is_32) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -254,13 +261,14 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // or if M is present, not complemented, and hypersparse.
     // C acquires the same hyperatio as A.
 
-    int64_t cnz = (C_is_sparse_or_hyper) ? (Cp [Cnvec]) : GB_nnz_full (A) ;
+    int64_t cnz = (C_is_sparse_or_hyper) ?
+        (GB_IGET (Cp, Cnvec)) : GB_nnz_full (A) ;
 
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        /* FIXME: */ false, false) ;
+        Cp_is_32, Ci_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -274,7 +282,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (C_is_sparse_or_hyper)
     { 
         C->nvec_nonempty = Cnvec_nonempty ;
-        C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
+        C->p = Cp ; C->p_size = Cp_size ;
         (*Cp_handle) = NULL ;
         C->nvals = cnz ;
     }
@@ -282,7 +290,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // add Ch as the hypersparse list for C, from GB_add_phase0
     if (C_is_hyper)
     { 
-        C->h = (int64_t *) Ch ; C->h_size = Ch_size ;
+        C->h = Ch ; C->h_size = Ch_size ;
         C->nvec = Cnvec ;
         (*Ch_handle) = NULL ;
     }
@@ -604,12 +612,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         info = GrB_SUCCESS ;
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // remove empty vectors from C, if hypersparse

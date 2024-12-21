@@ -134,11 +134,11 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
     int *p_nthreads,                /* # of threads to use */               \
     /* input: */                                                            \
     const GrB_Matrix C,             /* output matrix C */                   \
-    const uint64_t *I,              /* FIXME */                             \
+    const uint64_t *I,              /* FIXME : subassign_one_slice */       \
     const int64_t nI,                                                       \
     const int Ikind,                                                        \
     const int64_t Icolon [3],                                               \
-    const uint64_t *J,              /* FIXME */                             \
+    const uint64_t *J,              /* FIXME : subassign_one_slice */       \
     const int64_t nJ,                                                       \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \
@@ -150,7 +150,7 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
 GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
 (                                                                           \
     int64_t *p_Cnvec,           /* # of vectors to compute in C */          \
-    int64_t *restrict *Ch_handle,        /* Ch: size Cnvec, or NULL */      \
+    void **Ch_handle,           /* Ch: size Cnvec, or NULL */               \
     size_t *Ch_size_handle,              /* size of Ch in bytes */          \
     int64_t *restrict *C_to_M_handle,    /* C_to_M: size Cnvec, or NULL */  \
     size_t *C_to_M_size_handle,          /* size of C_to_M in bytes */      \
@@ -159,6 +159,8 @@ GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
     int64_t *restrict *C_to_B_handle,    /* C_to_B: size Cnvec, or NULL */  \
     size_t *C_to_B_size_handle,          /* size of C_to_A in bytes */      \
     bool *p_Ch_is_Mh,           /* if true, then Ch == Mh */                \
+    bool *p_Cp_is_32,           /* if true, Cp is 32-bit; else 64-bit */    \
+    bool *p_Ci_is_32,           /* if true, Ci is 32-bit; else 64-bit */    \
     int *C_sparsity,            /* sparsity structure of C */               \
     const GrB_Matrix M,         /* optional mask, may be NULL; not compl */ \
     const GrB_Matrix A,         /* first input matrix */                    \
@@ -229,11 +231,11 @@ GrB_Info GX_subassign_08n_slice                                             \
     size_t *Z_to_M_size_handle,                                             \
     /* input: */                                                            \
     const GrB_Matrix C,             /* output matrix C */                   \
-    const uint64_t *I,              /* FIXME */                             \
+    const uint64_t *I,              /* FIXME : subassign_08n_slice */       \
     const int64_t nI,                                                       \
     const int Ikind,                                                        \
     const int64_t Icolon [3],                                               \
-    const uint64_t *J,              /* FIXME */                             \
+    const uint64_t *J,              /* FIXME : subassign_08n_slice */       \
     const int64_t nJ,                                                       \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \

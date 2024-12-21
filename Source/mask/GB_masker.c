@@ -117,6 +117,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     int R_ntasks = 0, R_nthreads ;
     size_t TaskList_size = 0 ;
     GB_task_struct *TaskList = NULL ;
+//  bool Rp_is_32 = false ; // FIXME
     bool Ri_is_32 = false ; // FIXME
 
     //--------------------------------------------------------------------------
@@ -127,11 +128,14 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     // deep or shallow copy of Mh.  R_sparsity may change to hypersparse.
 
     info = GB_add_phase0 (
-        // computed by by phase0:
+        // computed by phase0:
         &Rnvec, &Rh, &Rh_size,
         &R_to_M, &R_to_M_size,
         &R_to_C, &R_to_C_size,
-        &R_to_Z, &R_to_Z_size, NULL, &R_sparsity,
+        &R_to_Z, &R_to_Z_size, NULL,
+        /* FIXME: */ NULL, NULL,
+        // input/output to phase0:
+        &R_sparsity,
         // original input:
         M, C, Z, Werk) ;
     if (info != GrB_SUCCESS)

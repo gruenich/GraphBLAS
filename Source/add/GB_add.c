@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_add computes C=A+B, C<M>=A+B, or C<!M>=A+B using the given operator
 // element-wise on the matrices A and B.  The result is typecasted as needed.
@@ -95,7 +95,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
-    // TODO: some cases can allow M, A, and/or B to be jumbled
+    // FUTURE: some cases can allow M, A, and/or B to be jumbled
     GB_MATRIX_WAIT (M) ;        // cannot be jumbled
     GB_MATRIX_WAIT (A) ;        // cannot be jumbled
     GB_MATRIX_WAIT (B) ;        // cannot be jumbled
@@ -112,34 +112,32 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // initializations
     //--------------------------------------------------------------------------
 
-    int64_t Cnvec = 0 , Cnvec_nonempty = 0  ;
-    void *Cp        = NULL ; size_t Cp_size = 0 ;
-    int64_t *Ch     = NULL ; size_t Ch_size = 0 ;       // FIXME
+    int64_t Cnvec = 0, Cnvec_nonempty = 0  ;
+    void *Cp = NULL ; size_t Cp_size = 0 ;
+    void *Ch = NULL ; size_t Ch_size = 0 ;
+
     int64_t *C_to_M = NULL ; size_t C_to_M_size = 0 ;
     int64_t *C_to_A = NULL ; size_t C_to_A_size = 0 ;
     int64_t *C_to_B = NULL ; size_t C_to_B_size = 0 ;
+
     bool Ch_is_Mh ;
     int C_ntasks = 0, C_nthreads ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    bool Ci_is_32 = false ; // FIXME
+
+    bool Cp_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
     //--------------------------------------------------------------------------
 
-    info = GB_add_phase0 (
-        // computed by by phase0:
+    GB_OK (GB_add_phase0 (
+        // computed by phase0:
         &Cnvec, &Ch, &Ch_size, &C_to_M, &C_to_M_size, &C_to_A, &C_to_A_size,
-        &C_to_B, &C_to_B_size, &Ch_is_Mh,
+        &C_to_B, &C_to_B_size, &Ch_is_Mh, &Cp_is_32, &Ci_is_32,
         // input/output to phase0:
         &C_sparsity,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Werk) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+        (apply_mask) ? M : NULL, A, B, Werk)) ;
 
     GBURBLE ("add:(%s<%s%s>=%s+%s) ",
         GB_sparsity_char (C_sparsity),
@@ -180,11 +178,11 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // count the number of entries in each vector of C
         info = GB_add_phase1 (
             // computed or used by phase1:
-            (uint64_t **) &Cp, &Cp_size, &Cnvec_nonempty, A_and_B_are_disjoint,
+            &Cp, &Cp_size, &Cnvec_nonempty, A_and_B_are_disjoint,
             // from phase1a:
             TaskList, C_ntasks, C_nthreads,
             // from phase0:
-            Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
+            Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh, Cp_is_32, Ci_is_32,
             // original input:
             (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk) ;
         if (info != GrB_SUCCESS)
@@ -222,11 +220,12 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // computed or used by phase2:
         C, ctype, C_is_csc, op, flipij, A_and_B_are_disjoint,
         // from phase1
-        (uint64_t **) &Cp, Cp_size, Cnvec_nonempty,
+        &Cp, Cp_size, Cnvec_nonempty,
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, &Ch, Ch_size, C_to_M, C_to_A, C_to_B, Ch_is_Mh, C_sparsity,
+        Cnvec, &Ch, Ch_size, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
+        Cp_is_32, Ci_is_32, C_sparsity,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B,
         is_eWiseUnion, alpha, beta, Werk) ;
@@ -240,16 +239,14 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_FREE_WORK (&C_to_A, C_to_A_size) ;
     GB_FREE_WORK (&C_to_B, C_to_B_size) ;
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "C before convert int", GB0) ;
+    GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;

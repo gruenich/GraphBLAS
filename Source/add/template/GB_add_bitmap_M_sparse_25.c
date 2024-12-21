@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is bitmap.
 // M is sparse/hyper and complemented.
 // A is bitmap/full, B is sparse/hyper.
@@ -28,7 +30,7 @@
         {
             if (Cb [p] == 0)
             { 
-                int8_t a = GBB_A (Ab, p) ;
+                int8_t a = GBb_A (Ab, p) ;
                 #ifndef GB_ISO_ADD
                 if (a)
                 {
@@ -68,14 +70,14 @@
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             // find the part of B(:,k) for this task
-            int64_t j = GBH_B (Bh, k) ;
+            int64_t j = GBh_B (Bh, k) ;
             GB_GET_PA (pB_start, pB_end, taskid, k, kfirst, klast,
-                pstart_Bslice, GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen)) ;
+                pstart_Bslice, GB_IGET (Bp, k), GB_IGET (Bp, k+1)) ;
             int64_t pC_start = j * vlen ;
             // traverse over B(:,j), the kth vector of B
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
             {
-                int64_t i = Bi [pB] ;
+                int64_t i = GB_IGET (Bi, pB) ;
                 int64_t p = pC_start + i ;
                 int8_t c = Cb [p] ;
                 if (c == 1)

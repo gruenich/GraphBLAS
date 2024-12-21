@@ -73,7 +73,7 @@
 
     #undef  GB_GET_MIJ     
     #define GB_GET_MIJ(p)                                       \
-        bool mij = GBB_M (Mb, p) && GB_MCAST (Mx, p, msize) ;   \
+        bool mij = GBb_M (Mb, p) && GB_MCAST (Mx, p, msize) ;   \
         if (Mask_comp) mij = !mij ;
 
     #ifdef GB_JIT_KERNEL

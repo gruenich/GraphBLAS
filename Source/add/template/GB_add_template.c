@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Computes C=A+B, C<M>=A+B, or C<!M>=A+B, for eWiseAdd or eWiseUnion.
 
@@ -34,10 +34,10 @@
 
     int taskid ;
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const int8_t  *restrict Ab = A->b ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+    const int8_t *restrict Ab = A->b ;
     const int64_t vlen = A->vlen ;
 
     #ifdef GB_JIT_KERNEL
@@ -46,6 +46,7 @@
     #define A_is_bitmap GB_A_IS_BITMAP
     #define A_is_full   GB_A_IS_FULL
     #define A_iso       GB_A_ISO
+    #define Ai_is_32    (GB_Ai_BITS == 32)
     #else
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
@@ -53,12 +54,13 @@
     const bool A_is_full = GB_IS_FULL (A) ;
     // unlike GB_emult, both A and B may be iso
     const bool A_iso = A->iso ;
+    const bool Ai_is_32 = A->i_is_32 ;
     #endif
 
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const int8_t  *restrict Bb = B->b ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    const int8_t *restrict Bb = B->b ;
 
     #ifdef GB_JIT_KERNEL
     #define B_is_hyper  GB_B_IS_HYPER
@@ -66,18 +68,20 @@
     #define B_is_bitmap GB_B_IS_BITMAP
     #define B_is_full   GB_B_IS_FULL
     #define B_iso       GB_B_ISO
+    #define Bi_is_32    (GB_Bi_BITS == 32)
     #else
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_full = GB_IS_FULL (B) ;
     const bool B_iso = B->iso ;
+    const bool Bi_is_32 = B->i_is_32 ;
     #endif
 
-    const uint64_t *restrict Mp = NULL ;    // FIXME
-    const int64_t *restrict Mh = NULL ;
-    const int64_t *restrict Mi = NULL ;
-    const int8_t  *restrict Mb = NULL ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
+    const int8_t *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
     size_t msize = 0 ;
 
@@ -99,9 +103,6 @@
 
     if (M != NULL)
     { 
-        Mp = M->p ;
-        Mh = M->h ;
-        Mi = M->i ;
         Mb = M->b ;
         Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
         msize = M->type->size ;
@@ -135,13 +136,14 @@
         ASSERT (!C->iso) ;
         #endif
 
-        const uint64_t *restrict Cp = C->p ;    // FIXME
-        const int64_t  *restrict Ch = C->h ;
-              int64_t  *restrict Ci = C->i ;
-              int8_t   *restrict Cb = C->b ;
+        GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+        GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
+        GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
+        int8_t *restrict Cb = C->b ;
         GB_C_NHELD (cnz) ;      // const int64_t cnz = GB_nnz_held (C) ;
 
     #endif
+
 
     //--------------------------------------------------------------------------
     // C=A+B, C<M>=A+B, or C<!M>=A+B: 3 cases for the sparsity of C
@@ -214,5 +216,4 @@
 #undef GB_LOAD_A
 #undef GB_LOAD_B
 #undef GB_IS_EWISEUNION
-
 

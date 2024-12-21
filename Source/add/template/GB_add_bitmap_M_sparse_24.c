@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is bitmap.
 // M is sparse/hyper and complemented.
 // A and B are both bitmap/full.
@@ -30,8 +32,8 @@
             if (c == 0)
             {
                 // M(i,j) is zero, so C(i,j) can be computed
-                int8_t a = GBB_A (Ab, p) ;
-                int8_t b = GBB_B (Bb, p) ;
+                int8_t a = GBb_A (Ab, p) ;
+                int8_t b = GBb_B (Bb, p) ;
                 #ifdef GB_ISO_ADD
                 c = a || b ;
                 #else
