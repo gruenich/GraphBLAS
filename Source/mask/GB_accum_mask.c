@@ -339,7 +339,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassign
         //----------------------------------------------------------------------
 
-        // FIXME: 32/64 bit; subassign not yet handled
+        // FIXME subassign does not yet handle 32/64 bit
         GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
         GB_OK (GB_convert_int (M, false, false, true)) ;    // FIXME
         GB_OK (GB_convert_int (T, false, false, true)) ;    // FIXME

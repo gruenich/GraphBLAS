@@ -84,9 +84,9 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     // determine the p_is_32 and i_is_32 settings for the cleared matrix
-    bool hack_32 = true ;   // FIXME
-    int8_t p_control = hack_32 ? 32 : Werk->p_control ;
-    int8_t i_control = hack_32 ? 32 : Werk->i_control ;
+    bool hack32 = true ;   // FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;
     GB_determine_pi_is_32 (&(A->p_is_32), &(A->i_is_32), p_control,
         i_control, GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim) ;
 
