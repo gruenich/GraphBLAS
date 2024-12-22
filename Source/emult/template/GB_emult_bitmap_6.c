@@ -58,7 +58,7 @@
             if (Cb [p] == 0)
             {
                 // M(i,j) is zero, so C(i,j) can be computed
-                if (GBB_A (Ab, p) && GBB_B (Bb, p))
+                if (GBb_A (Ab, p) && GBb_B (Bb, p))
                 { 
                     // C (i,j) = A (i,j) + B (i,j)
                     #ifndef GB_ISO_EMULT

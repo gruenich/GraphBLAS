@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #ifndef GB_EMULT_H
 #define GB_EMULT_H
@@ -65,9 +65,12 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     size_t *C_to_A_size_handle,
     int64_t *restrict *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
     size_t *C_to_B_size_handle,
+    bool *p_Cp_is_32,           // if true, Cp is 32-bit; else 64-bit
+    bool *p_Ci_is_32,           // if true, Ci is 32-bit; else 64-bit
     int *C_sparsity,            // sparsity structure of C
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Werk Werk
@@ -76,19 +79,21 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
 (
     // computed by phase1:
-    uint64_t **Cp_handle,                   // output of size Cnvec+1 FIXME
+    void **Cp_handle,               // output of size Cnvec+1
     size_t *Cp_size_handle,
-    int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
+    int64_t *Cnvec_nonempty,        // # of non-empty vectors in C
     // tasks from phase1a:
     GB_task_struct *restrict TaskList,   // array of structs
-    const int C_ntasks,                     // # of tasks
-    const int C_nthreads,                   // # of threads to use
+    const int C_ntasks,             // # of tasks
+    const int C_nthreads,           // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *restrict Ch,          // Ch is NULL, or shallow pointer
+    const void *Ch,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
+    const bool Cp_is_32,            // if true, Cp is 32-bit; else 64-bit
+    const bool Ci_is_32,            // if true, Ci is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -106,7 +111,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     const bool flipij,      // if true, i,j must be flipped
     // from phase1:
-    uint64_t **Cp_handle,   // vector pointers for C     FIXME
+    void **Cp_handle,       // vector pointers for C
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
@@ -115,11 +120,13 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const int C_nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *restrict Ch,
+    void *Ch,
     size_t Ch_size,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
+    const bool Cp_is_32,
+    const bool Ci_is_32,
     const int C_sparsity,
     // from GB_emult_sparsity:
     const int ewise_method,

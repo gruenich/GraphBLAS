@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // JIT: not needed: factory cases: mask types, M bitmap/full, B bitmap/full,
 // A sparse/hyper
@@ -45,8 +45,6 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 )
 {
 
-    // FIXME: if C->p_is_32, make sure cnz doesn't overflow
-
     //--------------------------------------------------------------------------
     // get C, M, A, and B
     //--------------------------------------------------------------------------
@@ -61,9 +59,10 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+
     const int64_t vlen = A->vlen ;
     const int64_t nvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
@@ -71,7 +70,12 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     const int8_t *restrict Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+    const bool Cp_is_32 = C->p_is_32 ;
+    const bool Ci_is_32 = C->i_is_32 ;
+
+    ASSERT (C->p_is_32 == A->p_is_32) ;
+    ASSERT (C->i_is_32 == A->i_is_32) ;
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
@@ -110,14 +114,14 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // count the entries in C(:,j)
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBh_A (Ah, k) ;
                     int64_t pB_start = j * vlen ;
                     GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                        Ap [k], Ap [k+1]) ;
+                        GB_IGET (Ap, k), GB_IGET (Ap, k+1)) ;
                     int64_t cjnz = 0 ;
                     for ( ; pA < pA_end ; pA++)
                     { 
-                        cjnz += Bb [pB_start + Ai [pA]] ;
+                        cjnz += Bb [pB_start + GB_IGET (Ai, pA)] ;
                     }
                     if (k == kfirst)
                     { 
@@ -129,7 +133,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                     }
                     else
                     { 
-                        Cp [k] = cjnz ; 
+                        GB_ISET (Cp, k, cjnz) ;     // Cp [k] = cjnz ;
                     }
                 }
             }
@@ -157,18 +161,18 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                 for (int64_t k = kfirst ; k <= klast ; k++)
                 {
                     // count the entries in C(:,j)
-                    int64_t j = GBH (Ah, k) ;
+                    int64_t j = GBh_A (Ah, k) ;
                     int64_t pB_start = j * vlen ;
                     GB_GET_PA (pA, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                        Ap [k], Ap [k+1]) ;
+                        GB_IGET (Ap, k), GB_IGET (Ap, k+1)) ;
                     int64_t cjnz = 0 ;
                     for ( ; pA < pA_end ; pA++)
                     { 
-                        int64_t i = Ai [pA] ;
+                        int64_t i = GB_IGET (Ai, pA) ;
                         int64_t pB = pB_start + i ;
-                        bool mij = GBB (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
+                        bool mij = GBb_M (Mb, pB) && GB_MCAST (Mx, pB, msize) ;
                         mij = mij ^ Mask_comp ;
-                        cjnz += (mij && GBB (Bb, pB)) ;
+                        cjnz += (mij && GBb_M (Bb, pB)) ;
                     }
                     if (k == kfirst)
                     { 
@@ -180,7 +184,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
                     }
                     else
                     { 
-                        Cp [k] = cjnz ; 
+                        GB_ISET (Cp, k, cjnz) ;     // Cp [k] = cjnz ;
                     }
                 }
             }
@@ -190,16 +194,12 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         // finalize Cp, cumulative sum of Cp and compute Cp_kfirst
         //----------------------------------------------------------------------
 
-        // FIXME: make sure Cp is OK for cumsum
-
-        GB_ek_slice_merge1 (Cp, /* FIXME: */ false,
+        GB_ek_slice_merge1 (Cp, Cp_is_32,
             Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
 
-        GB_cumsum (Cp, /* FIXME: */ false,
-            nvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+        GB_cumsum (Cp, Cp_is_32, nvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
 
-        GB_ek_slice_merge2 (Cp_kfirst,
-            Cp, /* FIXME: */ false,
+        GB_ek_slice_merge2 (Cp_kfirst, Cp, Cp_is_32,
             Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
     }
 
@@ -207,29 +207,30 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // allocate C->i and C->x
     //--------------------------------------------------------------------------
 
-    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
-
-    int64_t cnz = (C_has_pattern_of_A) ? anz : Cp [nvec] ;
+    int64_t cnz = (C_has_pattern_of_A) ? anz : GB_IGET (Cp, nvec) ;
     GB_OK (GB_bix_alloc (C, cnz, GxB_SPARSE, false, true, C_iso)) ;
 
     //--------------------------------------------------------------------------
     // copy pattern into C
     //--------------------------------------------------------------------------
 
-    // TODO: could make these components of C shallow instead of memcpy
+    // FIXME: could make these components of C shallow instead of memcpy
+
+    size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t cisize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (GB_IS_HYPERSPARSE (A))
     { 
         // copy A->h into C->h
-        GB_memcpy (C->h, Ah, nvec * sizeof (int64_t), A_nthreads) ;
+        GB_memcpy (C->h, Ah, nvec * cisize, A_nthreads) ;
     }
 
     if (C_has_pattern_of_A)
     { 
         // Method2/3(b): B is full and no mask present, so the pattern of C is
         // the same as the pattern of A
-        GB_memcpy (Cp, Ap, (nvec+1) * sizeof (int64_t), A_nthreads) ;
-        GB_memcpy (C->i, Ai, cnz * sizeof (int64_t), A_nthreads) ;
+        GB_memcpy (Cp, Ap, (nvec+1) * cpsize, A_nthreads) ;
+        GB_memcpy (C->i, Ai, cnz * cisize, A_nthreads) ;
     }
 
     C->nvals = cnz ;

@@ -92,7 +92,6 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_IPTR (Cp, Cp_is_32) ;
-
     GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Ci_is_32) ;
 
     //--------------------------------------------------------------------------

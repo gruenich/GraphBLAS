@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_emult_08_phase1 counts the number of entries in each vector of C, for
 // C=A.*B, C<M>=A.*B, or C<!M>=A.*B and then does a cumulative sum to find Cp.
@@ -26,19 +26,21 @@
 GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
 (
     // computed by phase1:
-    uint64_t **Cp_handle,                   // output of size Cnvec+1 FIXME
+    void **Cp_handle,               // output of size Cnvec+1
     size_t *Cp_size_handle,
-    int64_t *Cnvec_nonempty,                // # of non-empty vectors in C
+    int64_t *Cnvec_nonempty,        // # of non-empty vectors in C
     // tasks from phase1a:
     GB_task_struct *restrict TaskList,   // array of structs
-    const int C_ntasks,                     // # of tasks
-    const int C_nthreads,                   // # of threads to use
+    const int C_ntasks,             // # of tasks
+    const int C_nthreads,           // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *restrict Ch,          // Ch is NULL, or shallow pointer
+    const void *Ch,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
+    const bool Cp_is_32,            // if true, Cp is 32-bit; else 64-bit
+    const bool Ci_is_32,            // if true, Ci is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -85,26 +87,29 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     (*Cp_handle) = NULL ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ;     // FIXME
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), uint64_t, &Cp_size) ;      // FIXME
+    GB_MDECL (Cp, , u) ; size_t Cp_size = 0 ;
+    size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    Cp = GB_calloc_memory (GB_IMAX (2, Cnvec+1), cpsize, &Cp_size) ;
     if (Cp == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
+    GB_IPTR (Cp, Cp_is_32) ;
+    GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Ci_is_32) ;
 
     //--------------------------------------------------------------------------
     // count the entries in each vector of C
     //--------------------------------------------------------------------------
 
     #define GB_EMULT_08_PHASE 1
-    #include "emult/template/GB_emult_08_meta.c"
+    #include "emult/template/GB_emult_08_template.c"
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_task_cumsum (Cp, false, Cnvec, Cnvec_nonempty, TaskList,
+    GB_task_cumsum (Cp, Cp_is_32, Cnvec, Cnvec_nonempty, TaskList,
         C_ntasks, C_nthreads, Werk) ;
 
     //--------------------------------------------------------------------------

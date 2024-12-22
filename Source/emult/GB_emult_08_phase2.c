@@ -7,12 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_emult_08_phase2 computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B.  It is
-// preceded first by GB_emult_08_phase0, which computes the list of vectors of
-// C to compute (Ch) and their location in M, A, and B (C_to_[MAB]).  Next,
-// GB_emult_08_phase1 counts the entries in each vector C(:,j) and computes Cp.
+// preceded first by GB_emult_08_phase0, which finds the list of vectors of
+// C to compute (Ch, either NULL, or a shallow copy of A->h, B->h, or M->h) and
+// their location in M, A, and B (C_to_[MAB]).  Next, GB_emult_08_phase1 counts
+// the entries in each vector C(:,j) and computes Cp.
 
 // GB_emult_08_phase2 computes the pattern and values of each vector of C(:,j),
 // entirely in parallel.
@@ -48,7 +49,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     const bool flipij,      // if true, i,j must be flipped
     // from phase1:
-    uint64_t **Cp_handle,   // vector pointers for C     FIXME
+    void **Cp_handle,       // vector pointers for C
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase1a:
@@ -57,11 +58,13 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const int C_nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *restrict Ch,
+    void *Ch,
     size_t Ch_size,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
+    const bool Cp_is_32,
+    const bool Ci_is_32,
     const int C_sparsity,
     // from GB_emult_sparsity:
     const int ewise_method,
@@ -82,17 +85,17 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for emult 08 phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_JUMBLED (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
-    ASSERT_MATRIX_OK (B, "B for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for emult 08 phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (!GB_JUMBLED (B)) ;
     ASSERT (!GB_PENDING (B)) ;
 
-    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for 08 emult phase2", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_JUMBLED (M)) ;
     ASSERT (!GB_PENDING (M)) ;
@@ -100,7 +103,10 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (A->vdim == B->vdim) ;
 
     ASSERT (Cp_handle != NULL) ;
-    uint64_t *restrict Cp = (*Cp_handle) ;  // FIXME
+
+    GB_MDECL (Cp, , u) ;
+    Cp = (*Cp_handle) ;
+    GB_IPTR (Cp, Cp_is_32) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -140,13 +146,13 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [Cnvec] ;
+    int64_t cnz = GB_IGET (Cp, Cnvec) ;
 
     // allocate the result C (but do not allocate C->p or C->h)
     GrB_Info info = GB_new_bix (&C, // sparse/hyper, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        /* FIXME: */ false, false) ;
+        Cp_is_32, Ci_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -155,17 +161,22 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
         return (info) ;
     }
 
+    ASSERT (C->p_is_32 == Cp_is_32) ;
+    ASSERT (C->i_is_32 == Ci_is_32) ;
+
     // transplant Cp into C as the vector pointers, from GB_emult_08_phase1
     C->nvec_nonempty = Cnvec_nonempty ;
-    C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
+    C->p = Cp ; C->p_size = Cp_size ;
     C->nvals = cnz ;
     (*Cp_handle) = NULL ;
 
     // add Ch as the hypersparse list for C, from GB_emult_08_phase0
+    printf ("C->h is %p\n", (void *) C->h) ;
     if (C_is_hyper)
     { 
         // C->h is currently shallow; a copy is made at the end
-        C->h = (int64_t *) Ch ; C->h_size = Ch_size ;
+        printf ("Ch is %p\n", (void *) Ch) ;
+        C->h = Ch ; C->h_size = Ch_size ;
         C->h_shallow = true ;
         C->nvec = Cnvec ;
     }
@@ -208,7 +219,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
 
         // pattern of C = set intersection of pattern of A and B
         #define GB_ISO_EMULT
-        #include "emult/template/GB_emult_08_meta.c"
+        #include "emult/template/GB_emult_08_template.c"
         info = GrB_SUCCESS ;
 
     }
@@ -288,13 +299,14 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
         return (info) ;
     }
 
+    ASSERT_MATRIX_OK (C, "C before hyper prune for emult 08 phase2", GB0) ;
     GB_OK (GB_hyper_prune (C, Werk)) ;
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C output for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (C, "C output for emult 08 phase2", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

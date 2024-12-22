@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GB_emult_generic handles the generic case for eWiseMult, when no built-in
 // worker in the switch factory can handle this case.  This occurs for
 // user-defined operators, when typecasting occurs, or for FIRST[IJ]* and
@@ -103,12 +105,12 @@ GrB_Info GB_emult_generic       // generic emult
     const GB_cast_function cast_A_to_X =
         (A_is_pattern) ? NULL : GB_cast_factory (xtype->code, A->type->code) ;
 
-    const GB_cast_function cast_B_to_Y = 
+    const GB_cast_function cast_B_to_Y =
         (B_is_pattern) ? NULL : GB_cast_factory (ytype->code, B->type->code) ;
 
     const GB_cast_function cast_Z_to_C =
         GB_cast_factory (ccode, op->ztype->code) ;
-    
+
     // declare aij as xtype
     #define GB_DECLAREA(aij)                                            \
         GB_void aij [GB_VLA(xsize)] ;
@@ -194,7 +196,7 @@ GrB_Info GB_emult_generic       // generic emult
             else
             { 
                 // C is sparse: emult method 8 (abcdefgh)
-                #include "emult/template/GB_emult_08_meta.c"
+                #include "emult/template/GB_emult_08_template.c"
             }
         }
         else
@@ -231,7 +233,7 @@ GrB_Info GB_emult_generic       // generic emult
             else
             { 
                 // C is sparse: emult method 8 (abcdefgh)
-                #include "emult/template/GB_emult_08_meta.c"
+                #include "emult/template/GB_emult_08_template.c"
             }
         }
 
@@ -278,7 +280,7 @@ GrB_Info GB_emult_generic       // generic emult
         else
         { 
             // C is sparse: emult method 8 (abcdefgh)
-            #include "emult/template/GB_emult_08_meta.c"
+            #include "emult/template/GB_emult_08_template.c"
         }
     }
 

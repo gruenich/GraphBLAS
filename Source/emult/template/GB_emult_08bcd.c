@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 {
 
     //--------------------------------------------------------------
@@ -32,11 +34,11 @@
 
         for ( ; pB < pB_end ; pB++)
         {
-            int64_t i = Bi [pB] ;
+            int64_t i = GB_IGET (Bi, pB) ;
             // find i in A(:,j)
             int64_t pright = pA_end - 1 ;
             bool found ;
-            found = GB_binary_search (i, Ai, false, &pA, &pright) ;
+            found = GB_binary_search (i, Ai, Ai_is_32, &pA, &pright) ;
             if (found)
             { 
                 // C (i,j) = A (i,j) .* B (i,j)
@@ -44,7 +46,7 @@
                 cjnz++ ;
                 #else
                 ASSERT (pC < pC_end) ;
-                Ci [pC] = i ;
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
                 #ifndef GB_ISO_EMULT
                 GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, pA, A_iso) ;
@@ -70,11 +72,11 @@
 
         for ( ; pA < pA_end ; pA++)
         {
-            int64_t i = Ai [pA] ;
+            int64_t i = GB_IGET (Ai, pA) ;
             // find i in B(:,j)
             int64_t pright = pB_end - 1 ;
             bool found ;
-            found = GB_binary_search (i, Bi, false, &pB, &pright) ;
+            found = GB_binary_search (i, Bi, Bi_is_32, &pB, &pright) ;
             if (found)
             { 
                 // C (i,j) = A (i,j) .* B (i,j)
@@ -82,7 +84,7 @@
                 cjnz++ ;
                 #else
                 ASSERT (pC < pC_end) ;
-                Ci [pC] = i ;
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
                 #ifndef GB_ISO_EMULT
                 GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, pA, A_iso) ;
@@ -110,8 +112,8 @@
 
         while (pA < pA_end && pB < pB_end)
         {
-            int64_t iA = Ai [pA] ;
-            int64_t iB = Bi [pB] ;
+            int64_t iA = GB_IGET (Ai, pA) ;
+            int64_t iB = GB_IGET (Bi, pB) ;
             if (iA < iB)
             { 
                 // A(i,j) exists but not B(i,j)
@@ -130,7 +132,7 @@
                 cjnz++ ;
                 #else
                 ASSERT (pC < pC_end) ;
-                Ci [pC] = iB ;
+                GB_ISET (Ci, pC, iB) ;  // Ci [pC] = iB ;
                 #ifndef GB_ISO_EMULT
                 GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, pA, A_iso) ;

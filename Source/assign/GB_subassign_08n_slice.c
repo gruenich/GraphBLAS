@@ -108,16 +108,22 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;
-    const int64_t *restrict Zh_shallow = NULL ;
+    const int64_t *restrict Zh_shallow = NULL ; // FIXME
+    bool Zp_is_32 = false, Zi_is_32 = false ;
+
     int Z_sparsity = GxB_SPARSE ;
     GB_OK (GB_emult_08_phase0 (&Znvec, &Zh_shallow, &Zh_size, NULL, NULL,
-        &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size, &Z_sparsity, NULL, A, M,
-        Werk)) ;
+        &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
+        /* FIXME: &Zp_is_32, &Zi_is_32, */ NULL, NULL,
+        &Z_sparsity, NULL, false, A, M, Werk)) ;
+
+    GB_assert (!Zp_is_32) ;
+    GB_assert (!Zi_is_32) ;
+    ASSERT (Zp_is_32 == Z->p_is_32) ;
+    ASSERT (Zi_is_32 == Z->i_is_32) ;
 
     // Z is still sparse or hypersparse, not bitmap or full
     ASSERT (Z_sparsity == GxB_SPARSE || Z_sparsity == GxB_HYPERSPARSE) ;
-
-    bool Zi_is_32 = false ; // FIXME
 
     GB_OK (GB_ewise_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // C = A.*B where B is sparse/hyper and A is bitmap/full constructs C with
 // the same sparsity structure as B.
@@ -144,14 +144,11 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int8_t  *restrict Mb = (M == NULL) ? NULL : M->b ;
+    const int8_t *restrict Mb = (M == NULL) ? NULL : M->b ;
     const GB_M_TYPE *restrict Mx = (M == NULL || Mask_struct) ? NULL :
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
 
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
     const int64_t vlen = B->vlen ;
     const int64_t vdim = B->vdim ;
     const int64_t nvec = B->nvec ;
@@ -174,8 +171,10 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 
     GB_OK (GB_new (&C, // sparse or hyper (same as B), existing header
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, B->hyper_switch, nvec, /* FIXME: */ false, false)) ;
-    uint64_t *restrict Cp = C->p ;  // FIXME
+        C_sparsity, B->hyper_switch, nvec, B->p_is_32, B->i_is_32)) ;
+
+    ASSERT (C->p_is_32 == B->p_is_32) ;
+    ASSERT (C->i_is_32 == B->i_is_32) ;
 
     //--------------------------------------------------------------------------
     // slice the input matrix B

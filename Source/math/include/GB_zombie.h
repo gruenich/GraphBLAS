@@ -91,7 +91,7 @@
 //      Ai = (A) ? A->i : NULL ;
 //      ...
 //      int64_t i = Ai [p] ;
-//      i = (i < 0) ? (-i-1) : i ;
+//      i = (i < 0) ? (~i) : i ;
 //
 // when Ai is 32-bit, the JIT kernel code becomes:
 //
@@ -99,7 +99,7 @@
 //      Ai = (A) ? A->i : NULL ;
 //      ...
 //      int64_t i = Ai [p] ;            // note the typecast
-//      i = (i < 0) ? (-i-1) : i ;
+//      i = (i < 0) ? (~i) : i ;
 
 // Outside of a JIT kernel, the code is a little more complex, becoming:
 //
@@ -111,7 +111,7 @@
 //      Ai64 = (A) ? (A->i_is_32 ? NULL : Ai) : NULL ;
 //      ...
 //      int64_t i = (Ai32 ? Ai32 [k] : Ai64 [k]) ;
-//      i = (i < 0) ? (-i-1) : i ;
+//      i = (i < 0) ? (~i) : i ;
 
 // In the above examples, the "..." denotes separates the pointer
 // initialization, which happens just once, and the access of each entry, which
@@ -125,7 +125,7 @@
 // should be applied only to temporary scalars, as i = GB_UNZOMBIE (i) or
 // GB_IS_ZOMBIE (i), not i = GB_UNZOMBIE (Ai [p]) or GB_IS_ZOMBIE (Ai [p]).
 
-#define GB_ZOMBIE(i)        (-(i)-1)
+#define GB_ZOMBIE(i)        (~(i))
 #define GB_DEZOMBIE(i)      GB_ZOMBIE (i)
 #define GB_IS_ZOMBIE(i)     ((i) < 0)
 #define GB_UNZOMBIE(i)      (GB_IS_ZOMBIE (i) ? GB_DEZOMBIE (i) : (i))

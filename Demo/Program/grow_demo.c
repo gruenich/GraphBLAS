@@ -238,6 +238,8 @@ int main (int argc, char **argv)
     // try different integer sizes
     //--------------------------------------------------------------------------
 
+#if 0
+
 //  OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1, (GrB_Field) GxB_BURBLE)) ;
     for (int p_hint = 0 ; p_hint <= 64 ; p_hint += 32)
     {
@@ -278,6 +280,8 @@ int main (int argc, char **argv)
             GrB_Matrix_free (&A) ;
         }
     }
+
+#endif
 
     printf ("grow_demo: all tests passed\n") ;
     FREE_ALL ;

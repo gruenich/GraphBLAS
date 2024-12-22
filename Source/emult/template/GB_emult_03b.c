@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is sparse, with the same sparsity structure as B.  No mask is present.
 // A is full, and B is sparse/hyper.
 
@@ -24,14 +26,14 @@
         int64_t klast  = klast_Bslice  [tid] ;
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
-            int64_t j = GBH_B (Bh, k) ;
+            int64_t j = GBh_B (Bh, k) ;
             int64_t pA_start = j * vlen ;
             GB_GET_PA (pB, pB_end, tid, k, kfirst, klast, pstart_Bslice,
-                GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen)) ;
+                GB_IGET (Bp, k), GB_IGET (Bp, k+1)) ;
             for ( ; pB < pB_end ; pB++)
             { 
                 // C (i,j) = A (i,j) .* B (i,j)
-                int64_t i = Bi [pB] ;
+                int64_t i = GB_IGET (Bi, pB) ;
                 int64_t pA = pA_start + i ;
                 // Ci [pB] = i ; already defined
                 #ifndef GB_ISO_EMULT

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is sparse, with the same sparsity structure as B.
 // M is bitmap/full.  A is bitmap/full, and B is sparse/hyper.
 
@@ -16,7 +18,7 @@
     // Method3(c): C<#M>=A.*B; M and A are bitmap/full; B is sparse/hyper
     //--------------------------------------------------------------------------
 
-    const int8_t  *restrict Mb = M->b ;
+    const int8_t *restrict Mb = M->b ;
     const GB_M_TYPE *restrict Mx = (Mask_struct) ? NULL : ((GB_M_TYPE *) M->x) ;
     const size_t msize = M->type->size ;
 
@@ -28,22 +30,21 @@
         int64_t klast  = klast_Bslice  [tid] ;
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
-            int64_t j = GBH_B (Bh, k) ;
+            int64_t j = GBh_B (Bh, k) ;
             int64_t pA_start = j * vlen ;
             GB_GET_PA_AND_PC (pB, pB_end, pC, tid, k, kfirst, klast,
                 pstart_Bslice, Cp_kfirst,
-                GBP_B (Bp, k, vlen), GBP_B (Bp, k+1, vlen),
-                GBP_C (Cp, k, vlen)) ;
+                GB_IGET (Bp, k), GB_IGET (Bp, k+1), GB_IGET (Cp, k)) ;
             for ( ; pB < pB_end ; pB++)
             { 
-                int64_t i = Bi [pB] ;
+                int64_t i = GB_IGET (Bi, pB) ;
                 int64_t pA = pA_start + i ;
-                if (!GBB_A (Ab, pA)) continue ;
-                bool mij = GBB_M (Mb, pA) && GB_MCAST (Mx, pA, msize) ;
+                if (!GBb_A (Ab, pA)) continue ;
+                bool mij = GBb_M (Mb, pA) && GB_MCAST (Mx, pA, msize) ;
                 mij = mij ^ Mask_comp ;
                 if (!mij) continue ;
                 // C (i,j) = A (i,j) .* B (i,j)
-                Ci [pC] = i ;
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
                 #ifndef GB_ISO_EMULT
                 GB_DECLAREA (aij) ;
                 GB_GETA (aij, Ax, pA, A_iso) ;     

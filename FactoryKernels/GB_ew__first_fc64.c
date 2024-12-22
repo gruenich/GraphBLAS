@@ -223,7 +223,7 @@ GrB_Info GB (_AemultB_08__first_fc64)
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "emult/template/GB_emult_08_meta.c"
+    #include "emult/template/GB_emult_08_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

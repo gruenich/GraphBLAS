@@ -128,7 +128,7 @@ GrB_Info GB_hyper_prune
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_IPTR (Ap_new, A->p_is_32) ;
-    GB_IPTR (Ah_new, A->p_is_32) ;
+    GB_IPTR (Ah_new, A->i_is_32) ;
 
     //--------------------------------------------------------------------------
     // create the Ap_new and Ah_new result

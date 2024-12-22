@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_emult, does C=A.*B, C<M>=A.*B, C<!M>=A.*B, using the given operator
 // element-wise on the matrices A and B.  The result is typecasted as needed.
@@ -28,7 +28,7 @@
 // The pattern of C is the intersection of A and B, and also intersection with
 // M if present and not complemented.
 
-// TODO: if C is bitmap on input and C_sparsity is GxB_BITMAP, then C=A.*B,
+// FUTURE: if C is bitmap on input and C_sparsity is GxB_BITMAP, then C=A.*B,
 // C<M>=A.*B and C<M>+=A.*B can all be done in-place.  Also, if C is bitmap
 // but T<M>=A.*B is sparse (M sparse, with A and B bitmap), then it too can
 // be done in place.
@@ -403,10 +403,12 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, Cnvec_nonempty ;
-    uint64_t *Cp = NULL ; size_t Cp_size = 0 ; // FIXME
-    const int64_t *Ch = NULL ; size_t Ch_size = 0 ;
+    void *Cp = NULL ; size_t Cp_size = 0 ;
+    void *Ch = NULL ; size_t Ch_size = 0 ;
+
     int C_ntasks = 0, C_nthreads ;
-    bool Ci_is_32 = false ; // FIXME
+
+    bool Cp_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
@@ -414,12 +416,15 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_OK (GB_emult_08_phase0 (
         // computed by phase0:
-        &Cnvec, &Ch, &Ch_size, &C_to_M, &C_to_M_size, &C_to_A, &C_to_A_size,
+        &Cnvec, &Ch, &Ch_size,
+        &C_to_M, &C_to_M_size,
+        &C_to_A, &C_to_A_size,
         &C_to_B, &C_to_B_size,
+        &Cp_is_32, &Ci_is_32,
         // input/output to phase0:
         &C_sparsity,
         // original input:
-        (apply_mask) ? M : NULL, A, B, Werk)) ;
+        (apply_mask) ? M : NULL, Mask_comp, A, B, Werk)) ;
 
     // C is still sparse or hypersparse, not bitmap or full
     ASSERT (C_sparsity == GxB_SPARSE || C_sparsity == GxB_HYPERSPARSE) ;
@@ -433,7 +438,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase1a:
         &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
         // computed by phase0:
-        Cnvec, Ch, Ci_is_32, C_to_M, C_to_A, C_to_B, false,
+        Cnvec, Ch, Ci_is_32, C_to_M, C_to_A, C_to_B, /* Ch_is_Mh: */ false,
         // original input:
         (apply_mask) ? M : NULL, A, B, Werk)) ;
 
@@ -444,7 +449,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B,
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Cp_is_32, Ci_is_32,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk)) ;
 
@@ -463,7 +468,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, Ch, Ch_size, C_to_M, C_to_A, C_to_B, C_sparsity,
+        Cnvec, Ch, Ch_size, C_to_M, C_to_A, C_to_B,
+        Cp_is_32, Ci_is_32, C_sparsity,
         // from GB_emult_sparsity:
         ewise_method,
         // original input:
@@ -474,6 +480,8 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
+    ASSERT_MATRIX_OK (C, "C output for emult before convert", GB0) ;
+    GB_OK (GB_convert_int (C, false, false, true)) ;        // FIXME
     ASSERT_MATRIX_OK (C, "C output for emult", GB0) ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;

@@ -31,7 +31,7 @@
         GB_PARTITION (pstart, pend, cnz, tid, C_nthreads) ;
         for (int64_t p = pstart ; p < pend ; p++)
         {
-            if (GBB_A (Ab, p) && GBB_B (Bb,p))
+            if (GBb_A (Ab, p) && GBb_B (Bb,p))
             { 
                 // C (i,j) = A (i,j) + B (i,j)
                 #ifndef GB_ISO_EMULT

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C and M are both sparse/hyper.  M is not complemented.
 // A and B can have any format, except at least one is sparse/hyper.
 
@@ -48,7 +50,7 @@
     else
     {
         int64_t kM = -1 ;
-        if (Ch == Mh)
+        if ((void *) Ch == (void *) Mh)
         { 
             // Ch is the same as Mh (a shallow copy), or both NULL
             kM = k ;
@@ -59,8 +61,8 @@
         }
         if (kM >= 0)
         { 
-            pM     = GBP_M (Mp, kM, vlen) ;
-            pM_end = GBP_M (Mp, kM+1, vlen) ;
+            pM     = GBp_M (Mp, kM, vlen) ;
+            pM_end = GBp_M (Mp, kM+1, vlen) ;
         }
     }
 
@@ -75,7 +77,7 @@
         // get M(i,j) for A(i,j) .* B (i,j)
         //----------------------------------------------------------------------
 
-        int64_t i = GBI_M (Mi, pM, vlen) ;
+        int64_t i = GBi_M (Mi, pM, vlen) ;
         bool mij = GB_MCAST (Mx, pM, msize) ;
         if (!mij) continue ;
 
@@ -88,16 +90,16 @@
         { 
             // A(:,j) is dense, bitmap, or full; use quick lookup
             pA = pA_start + i - iA_first ;
-            afound = GBB_A (Ab, pA) ;
+            afound = GBb_A (Ab, pA) ;
         }
         else
         { 
             // A(:,j) is sparse; use binary search for A(i,j)
             int64_t apright = pA_end - 1 ;
-            afound = GB_binary_search (i, Ai, false, &pA, &apright) ;
+            afound = GB_binary_search (i, Ai, Ai_is_32, &pA, &apright) ;
         }
         if (!afound) continue ;
-        ASSERT (GBI_A (Ai, pA, vlen) == i) ;
+        ASSERT (GBi_A (Ai, pA, vlen) == i) ;
 
         //----------------------------------------------------------------------
         // get B(i,j)
@@ -108,16 +110,16 @@
         { 
             // B(:,j) is dense; use direct lookup for B(i,j)
             pB = pB_start + i - iB_first ;
-            bfound = GBB_B (Bb, pB) ;
+            bfound = GBb_B (Bb, pB) ;
         }
         else
         { 
             // B(:,j) is sparse; use binary search for B(i,j)
             int64_t bpright = pB_end - 1 ;
-            bfound = GB_binary_search (i, Bi, false, &pB, &bpright) ;
+            bfound = GB_binary_search (i, Bi, Bi_is_32, &pB, &bpright) ;
         }
         if (!bfound) continue ;
-        ASSERT (GBI_B (Bi, pB, vlen) == i) ;
+        ASSERT (GBi_B (Bi, pB, vlen) == i) ;
 
         //----------------------------------------------------------------------
         // C(i,j) = A(i,j) .* B(i,j)
@@ -127,7 +129,7 @@
         #if ( GB_EMULT_08_PHASE == 1 )
         cjnz++ ;
         #else
-        Ci [pC] = i ;
+        GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
         #ifndef GB_ISO_EMULT
         GB_DECLAREA (aij) ;
         GB_GETA (aij, Ax, pA, A_iso) ;

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // C is sparse, with the same sparsity structure as A.  No mask is present, or
 // M is bitmap/full.  A is sparse/hyper, and B is bitmap/full.
@@ -18,12 +18,12 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Ap = A->p ;     // FIXME
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
     const int64_t vlen = A->vlen ;
 
-    const int8_t  *restrict Bb = B->b ;
+    const int8_t *restrict Bb = B->b ;
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
@@ -47,8 +47,8 @@
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
 
-    const uint64_t  *restrict Cp = C->p ;   // FIXME
-          int64_t  *restrict Ci = C->i ;
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
 
     #ifdef GB_JIT_KERNEL
     #define Mask_comp   GB_MASK_COMP

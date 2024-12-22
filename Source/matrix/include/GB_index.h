@@ -251,8 +251,8 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     }
 
     // HACK for now: assume all inputs/outputs to GrB* methods are 64-bit
-//  GB_assert (!A->p_is_32) ;   // FIXME
-//  GB_assert (!A->i_is_32) ;   // FIXME
+    GB_assert (!A->p_is_32) ;   // FIXME
+    GB_assert (!A->i_is_32) ;   // FIXME
 
     return (GrB_SUCCESS) ;
 }
