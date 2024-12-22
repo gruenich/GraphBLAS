@@ -50,8 +50,8 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
 
     // determine the p_is_32 and i_is_32 settings for the new vector
     bool hack32 = true ;    // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : GB_Global_p_control_get ();
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : GB_Global_i_control_get ();
+    int8_t p_control = hack32 ? 32 : GB_Global_p_control_get ();
+    int8_t i_control = hack32 ? 32 : GB_Global_i_control_get ();
     bool Vp_is_32, Vi_is_32 ;
     GB_determine_pi_is_32 (&Vp_is_32, &Vi_is_32, p_control, i_control,
         GxB_SPARSE, 1, vlen, 1) ;

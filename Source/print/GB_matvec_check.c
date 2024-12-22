@@ -18,8 +18,8 @@
 #define GB_DEVELOPER 0
 #endif
 
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1   /* HACK FIXME */
+// #undef  GB_DEVELOPER
+// #define GB_DEVELOPER 1   /* HACK FIXME */
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
@@ -285,7 +285,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (is_hyper || is_sparse)
     {
         #if GB_DEVELOPER
-        GBPR0 ("  p_control: %d, i_control %d\n", A->p_control, A->i_control) ;
+        GBPR0 ("  p_hint: %d, i_hint: %d\n", A->p_control, A->i_control) ;
         #endif
         if (!GB_valid_pi_is_32 (A->p_is_32, A->i_is_32,
             A->nvals, A->vlen, A->vdim))

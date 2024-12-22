@@ -1615,21 +1615,15 @@ typedef enum
     // GrB_BinaryOp or GrB_Semiring:
     GxB_THETA = 7052,               // to get the value of theta
 
-    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
-    GxB_INDEX_INTEGER = 7053,       // integer size control for row/col indices
-    GxB_OFFSET_INTEGER = 7054,      // integer size control for offsets
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
+    GxB_INDEX_INTEGER_HINT  = 7053, // hint for row/col indices
+    GxB_OFFSET_INTEGER_HINT = 7054, // hint for offsets
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
+    GxB_INDEX_INTEGER_BITS  = 7055, // # integer bits for row/col indices
+    GxB_OFFSET_INTEGER_BITS = 7056, // # integer bits for offsets
 }
 GrB_Field ;
-
-typedef enum
-{
-    // for global and per-matrix settings:
-    GxB_AUTO_BITS = 0,      // the default for individual matrices:
-                            // use the global default
-    GxB_PREFER_32_BITS = 1, // the global default
-    GxB_PREFER_64_BITS = 2
-}
-GxB_Integer_Control ;
 
 typedef enum
 {

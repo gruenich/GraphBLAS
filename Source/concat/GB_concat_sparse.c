@@ -76,8 +76,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 
     // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = true ;    // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;
     bool Cp_is_32, Ci_is_32 ;
     GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
         GxB_SPARSE, cnz, cvlen, cvdim) ;

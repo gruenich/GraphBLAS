@@ -184,8 +184,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->iso = false ;
     A->p_is_32 = p_is_32 ;
     A->i_is_32 = i_is_32 ;
-    A->p_control = GxB_AUTO_BITS ;
-    A->i_control = GxB_AUTO_BITS ;
+    A->p_control = 0 ;
+    A->i_control = 0 ;
 
     //--------------------------------------------------------------------------
     // Allocate A->p and A->h if requested

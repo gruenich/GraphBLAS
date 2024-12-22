@@ -76,7 +76,7 @@ static inline int8_t GB_pi_control
     int8_t global_pi_control
 )
 {
-    if (matrix_pi_control == GxB_AUTO_BITS)
+    if (matrix_pi_control == 0)
     {
         // default: matrix control defers to the global control
         return (global_pi_control) ;
@@ -106,8 +106,8 @@ static inline int8_t GB_pi_control
 // If the global or per-matrix controls are not relevant, simply use the
 // following to use the smallest valid integer sizes:
 //
-//      p_control = GxB_PREFER_32 ;
-//      i_control = GxB_PREFER_32 ;
+//      p_control = 32 ;
+//      i_control = 32 ;
 //
 // This method then determines the final p_is_32 and i_is_32 for a new matrix
 // of the requested size.
@@ -157,8 +157,8 @@ static inline void GB_determine_pi_is_32
         //----------------------------------------------------------------------
 
         // determine ideal 32/64 sizes for any matrix created by the caller
-        bool p_prefer_32 = (p_control <= GxB_PREFER_32_BITS) ;
-        bool i_prefer_32 = (i_control <= GxB_PREFER_32_BITS) ;
+        bool p_prefer_32 = (p_control <= 32) ;
+        bool i_prefer_32 = (i_control <= 32) ;
 
         // revise them accordering to the matrix content
         (*p_is_32) = GB_determine_p_is_32 (p_prefer_32, nvals) ;         // OK
@@ -251,8 +251,8 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     }
 
     // HACK for now: assume all inputs/outputs to GrB* methods are 64-bit
-    GB_assert (!A->p_is_32) ;   // FIXME
-    GB_assert (!A->i_is_32) ;   // FIXME
+//  GB_assert (!A->p_is_32) ;   // FIXME
+//  GB_assert (!A->i_is_32) ;   // FIXME
 
     return (GrB_SUCCESS) ;
 }

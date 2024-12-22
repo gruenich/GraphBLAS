@@ -234,6 +234,51 @@ int main (int argc, char **argv)
             (GrB_Field) GxB_GLOBAL_NTHREADS) ;
     }
 
+    //--------------------------------------------------------------------------
+    // try different integer sizes
+    //--------------------------------------------------------------------------
+
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1, (GrB_Field) GxB_BURBLE)) ;
+    for (int p_hint = 0 ; p_hint <= 64 ; p_hint += 32)
+    {
+        for (int i_hint = 0 ; i_hint <= 64 ; i_hint += 32)
+        {
+            int p_size, i_size, p_hint2, i_hint2 ;
+            printf ("\np_hint: %d i_hint: %d\n", p_hint, i_hint) ;
+            OK (GrB_Matrix_set_INT32 (A, p_hint, GxB_OFFSET_INTEGER_HINT)) ;
+            OK (GrB_Matrix_set_INT32 (A, i_hint, GxB_INDEX_INTEGER_HINT)) ;
+            OK (GrB_Matrix_get_INT32 (A, &p_size, GxB_OFFSET_INTEGER_BITS)) ;
+            OK (GrB_Matrix_get_INT32 (A, &i_size, GxB_INDEX_INTEGER_BITS)) ;
+            OK (GrB_Matrix_get_INT32 (A, &p_hint2, GxB_OFFSET_INTEGER_HINT)) ;
+            OK (GrB_Matrix_get_INT32 (A, &i_hint2, GxB_INDEX_INTEGER_HINT)) ;
+            printf ("p_size %d i_size %d\n", p_size, i_size) ;
+            CHECK (p_hint == p_hint2, GrB_PANIC) ;
+            CHECK (i_hint == i_hint2, GrB_PANIC) ;
+            OK (GxB_print (A, GxB_SUMMARY)) ;
+        }
+    }
+
+    GrB_Matrix_free (&A) ;
+
+    for (int p_hint = 32 ; p_hint <= 64 ; p_hint += 32)
+    {
+        for (int i_hint = 32 ; i_hint <= 64 ; i_hint += 32)
+        {
+            int p_size, i_size ;
+            printf ("\nglobal p_hint: %d i_hint: %d\n", p_hint, i_hint) ;
+            OK (GrB_Global_set_INT32 (GrB_GLOBAL, p_hint,
+                GxB_OFFSET_INTEGER_HINT)) ;
+            OK (GrB_Global_set_INT32 (GrB_GLOBAL, i_hint,
+                GxB_INDEX_INTEGER_HINT)) ;
+            OK (GrB_Matrix_new (&A, GrB_FP32, 10, 10)) ;
+            OK (GrB_Matrix_get_INT32 (A, &p_size, GxB_OFFSET_INTEGER_BITS)) ;
+            OK (GrB_Matrix_get_INT32 (A, &i_size, GxB_INDEX_INTEGER_BITS)) ;
+            printf ("p_size %d i_size %d\n", p_size, i_size) ;
+            OK (GxB_print (A, GxB_SUMMARY)) ;
+            GrB_Matrix_free (&A) ;
+        }
+    }
+
     printf ("grow_demo: all tests passed\n") ;
     FREE_ALL ;
     GrB_finalize ( ) ;

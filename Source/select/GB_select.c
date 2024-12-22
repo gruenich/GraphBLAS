@@ -380,8 +380,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     { 
         // get the integer sizes for the new empty matrix T
         bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
-        int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-        int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+        int8_t p_control = hack32 ? 32 : Werk->p_control ;
+        int8_t i_control = hack32 ? 32 : Werk->i_control ;
         bool Cp_is_32, Ci_is_32 ;
         GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
             GxB_SPARSE, 0, A->vlen, A->vdim) ;

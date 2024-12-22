@@ -165,8 +165,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = GB_Global_hack_get (4) ; // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;//FIXME
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;//FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
     bool Cp_is_32, Ci_is_32 ;
     GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
         C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim) ;

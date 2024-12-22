@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 global get/set
+// DONE: 32/64 global get/set
 
 #include "get_set/GB_get_set.h"
 #include "jitifyer/GB_jitifyer.h"
@@ -41,6 +41,24 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
                 return (GrB_INVALID_VALUE) ;
             }
             GB_Global_is_csc_set (value != (int) GxB_BY_ROW) ; 
+            break ;
+
+        case GxB_OFFSET_INTEGER_HINT : 
+
+            if (!(value == 32 || value == 64))
+            { 
+                return (GrB_INVALID_VALUE) ;
+            }
+            GB_Global_p_control_set (value) ;
+            break ;
+
+        case GxB_INDEX_INTEGER_HINT : 
+
+            if (!(value == 32 || value == 64))
+            { 
+                return (GrB_INVALID_VALUE) ;
+            }
+            GB_Global_i_control_set (value) ;
             break ;
 
         case GxB_GLOBAL_NTHREADS :          // same as GxB_NTHREADS

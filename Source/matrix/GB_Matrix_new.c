@@ -13,39 +13,32 @@
 // an empty matrix is hypersparse CSC: A->p is size 2 and all zero, A->h is
 // size 1, A->plen is 1, and contents A->x and A->i are NULL.  If this method
 // fails, *A is set to NULL.
-
-//      A->p        32-bit: UINT32_MAX entries, 64-bit: "inf"
-//                  'column pointers', Ap [0] = 0, Ap [n] = nvals(A)
-//                  size n+1, matrix is m-by-n
 //
-//                  [Ap [k] ... Ap [k+1]-1], kth nonempty col
-//                  j = Ah [k], gives A(:,j)
-
-//  let N = max(m,n)
-
-//      A->i, A->h  : 32-bit: N < 2^31 (INT32_MAX), 64-bit: 2^60 (2^62)
-
-// FIXME: create global and per-matrix setting:
+// A->p: row/column 'pointers' (offsets).  If 32 bit, the nvals(A) < UINT32_MAX
+//  is required.  If 64 bit, nvals(A) < UINT64_MAX.
+//
+// A->i, A->h, and A->Y:  indices. Let N = max(m,n).  If 32-bit, then
+//  N < INT32_MAX is required.  Otherwise N < 2^60.
 //
 // For Ap and Ai, independently:
 //
 //  Global settings: no matrix is converted if this is changed
 //  ----------------
 //
-//  GxB_PREFER_32_BITS : use 32 (or 64 if required) for new or recomputed
+//  32 : use 32 (or 64 if required) for new or recomputed
 //                      matrices; any prior 64 ok (will be the default; but use
 //                      64-bit for now)
 //
-//  GxB_PREFER_64_BITS : use 64 by default (this is the default for now)
+//  64 : use 64 by default (this is the default for now)
 //
 //  per-matrix settings:
 //  -------------------
 //
-//  GxB_AUTO_BITS:  default : rely on the global settings
-
-//  GxB_PREFER_32_BITS : use 32 bits if possible, but allow 64 bit if needed.
+//  0:  default : rely on the global settings
 //
-//  GxB_PREFER_64_BITS : use 64 bits, convert now is already 32 bits.
+//  32 : use 32 bits if possible, but allow 64 bit if needed.
+//
+//  64 : use 64 bits, convert now is already 32 bits.
 //                      Sometimes the matrix may become 32-bit in the future,
 //                      if data is transplanted from a matrix with 32-bit
 //                      content.
@@ -120,8 +113,8 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
 
     // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = true ;    // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : GB_Global_p_control_get ();
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : GB_Global_i_control_get ();
+    int8_t p_control = hack32 ? 32 : GB_Global_p_control_get ();
+    int8_t i_control = hack32 ? 32 : GB_Global_i_control_get ();
     bool Ap_is_32, Ai_is_32 ;
     GB_determine_pi_is_32 (&Ap_is_32, &Ai_is_32, p_control, i_control,
         GxB_AUTO_SPARSITY, 1, vlen, vdim) ;

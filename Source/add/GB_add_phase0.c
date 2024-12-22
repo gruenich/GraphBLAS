@@ -248,8 +248,8 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
 
     // determine the p_is_32 and i_is_32 settings for the new matrix
     bool hack32 = true ; // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;//FIXME
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;//FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
     bool Cp_is_32 = false ;
     bool Ci_is_32 = false ;
     if (p_Cp_is_32 != NULL && p_Ci_is_32 != NULL)   // FIXME

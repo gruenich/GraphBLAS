@@ -79,8 +79,8 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const bool Ai_is_32 = A->i_is_32 ;
 
     bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;
 
     //--------------------------------------------------------------------------
     // allocate workspace

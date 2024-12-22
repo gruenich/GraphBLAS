@@ -97,8 +97,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     }
 
     bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
-    int8_t p_control = hack32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-    int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;
 
     //--------------------------------------------------------------------------
     // finish any pending work, and transpose the input matrix if needed

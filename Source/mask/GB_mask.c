@@ -173,8 +173,8 @@ GrB_Info GB_mask                // C<M> = Z
     struct GB_Matrix_opaque C0_header, R_header ;
 
     bool hack_32 = true ;   // FIXME
-    int8_t p_control = hack_32 ? GxB_PREFER_32_BITS : Werk->p_control ;
-    int8_t i_control = hack_32 ? GxB_PREFER_32_BITS : Werk->i_control ;
+    int8_t p_control = hack_32 ? 32 : Werk->p_control ;
+    int8_t i_control = hack_32 ? 32 : Werk->i_control ;
 
     //--------------------------------------------------------------------------
     // apply the mask
