@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Computes C<M>=Z or C<!M>=Z, returning the result in R, which is sparse or
 // hypersparse.  The input matrix C is not modified.  Effectively, this
 // computes R=C and then R<M>=Z or R<!M>=Z.  If the C_replace descriptor is
@@ -54,14 +56,13 @@
 #elif defined ( GB_ISO_MASKER )
     #define GB_COPY_Z                                           \
     {                                                           \
-        Ri [pR] = i ;                                           \
+        GB_ISET (Ri, pR, i) ;                                   \
         pR++ ;                                                  \
     }
 #else
     #define GB_COPY_Z                                           \
     {                                                           \
-        Ri [pR] = i ;                                           \
-     /* memcpy (Rx +(pR)*rsize, Zx +(Z_iso ? 0:(pZ)*rsize), rsize) ; */     \
+        GB_ISET (Ri, pR, i) ;                                   \
         GB_COPY_Z_TO_R (Rx, pR, Zx, pZ, Z_iso, rsize) ;         \
         pR++ ;                                                  \
     }
@@ -75,15 +76,15 @@
 #if defined ( GB_PHASE_1_OF_2 )
     #define GB_COPY_Z_BITMAP_OR_FULL                            \
     {                                                           \
-        rjnz += GBB_Z (Zb, pZ_start + i - iZ_first) ;             \
+        rjnz += GBb_Z (Zb, pZ_start + i - iZ_first) ;           \
     }
 #elif defined ( GB_ISO_MASKER )
     #define GB_COPY_Z_BITMAP_OR_FULL                            \
     {                                                           \
         int64_t pZ = pZ_start + i - iZ_first ;                  \
-        if (GBB_Z (Zb, pZ))                                       \
+        if (GBb_Z (Zb, pZ))                                     \
         {                                                       \
-            Ri [pR] = i ;                                       \
+            GB_ISET (Ri, pR, i) ;                               \
             pR++ ;                                              \
         }                                                       \
     }
@@ -91,11 +92,10 @@
     #define GB_COPY_Z_BITMAP_OR_FULL                            \
     {                                                           \
         int64_t pZ = pZ_start + i - iZ_first ;                  \
-        if (GBB_Z (Zb, pZ))                                       \
+        if (GBb_Z (Zb, pZ))                                     \
         {                                                       \
-            Ri [pR] = i ;                                       \
-        /*  memcpy (Rx +(pR)*rsize, Zx +(Z_iso ? 0:(pZ)*rsize), rsize) ; */ \
-            GB_COPY_Z_TO_R (Rx, pR, Zx, pZ, Z_iso, rsize) ;         \
+            GB_ISET (Ri, pR, i) ;                               \
+            GB_COPY_Z_TO_R (Rx, pR, Zx, pZ, Z_iso, rsize) ;     \
             pR++ ;                                              \
         }                                                       \
     }
@@ -114,14 +114,13 @@
 #elif defined ( GB_ISO_MASKER )
     #define GB_COPY_C                                           \
     {                                                           \
-        Ri [pR] = i ;                                           \
+        GB_ISET (Ri, pR, i) ;                                   \
         pR++ ;                                                  \
     }
 #else
     #define GB_COPY_C                                           \
     {                                                           \
-        Ri [pR] = i ;                                           \
-     /* memcpy (Rx +(pR)*rsize, Cx +(C_iso ? 0:(pC)*rsize), rsize) ; */     \
+        GB_ISET (Ri, pR, i) ;                                   \
         GB_COPY_C_TO_R (Rx, pR, Cx, pC, C_iso, rsize) ;         \
         pR++ ;                                                  \
     }
@@ -175,7 +174,7 @@
             // get j, the kth vector of R
             //------------------------------------------------------------------
 
-            int64_t j = GBH_R (Rh, k) ;
+            int64_t j = GBh_R (Rh, k) ;
 
             #if defined ( GB_PHASE_1_OF_2 )
             int64_t rjnz = 0 ;
@@ -186,13 +185,15 @@
                 // A fine task computes a slice of R(:,j)
                 pR     = TaskList [taskid  ].pC ;
                 pR_end = TaskList [taskid+1].pC ;
-                ASSERT (Rp [k] <= pR && pR <= pR_end && pR_end <= Rp [k+1]) ;
+                ASSERT (GB_IGET (Rp, k) <= pR) ;
+                ASSERT (pR <= pR_end) ;
+                ASSERT (pR_end <= GB_IGET (Rp, k+1)) ;
             }
             else
             { 
                 // The vectors of R are never sliced for a coarse task.
-                pR     = Rp [k] ;
-                pR_end = Rp [k+1] ;
+                pR     = GB_IGET (Rp, k) ;
+                pR_end = GB_IGET (Rp, k+1) ;
             }
             int64_t rjnz = pR_end - pR ;
             if (rjnz == 0)
@@ -219,8 +220,8 @@
                 int64_t kC = (R_to_C == NULL) ? j : R_to_C [k] ;
                 if (kC >= 0)
                 { 
-                    pC     = Cp [kC] ;
-                    pC_end = Cp [kC+1] ;
+                    pC     = GB_IGET (Cp, kC) ;
+                    pC_end = GB_IGET (Cp, kC+1) ;
                 }
             }
 
@@ -230,12 +231,12 @@
             #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DEBUG )
             // get the first index in C(:,j) for this vector
             int64_t iC_first = -1 ;
-            if (cjnz > 0) iC_first = Ci [pC] ;
+            if (cjnz > 0) iC_first = GB_IGET (Ci, pC) ;
             #endif
 
             #ifdef GB_DEBUG
             int64_t iC_last = -1 ;
-            if (cjnz > 0) iC_last  = Ci [pC_end-1] ;
+            if (cjnz > 0) iC_last  = GB_IGET (Ci, pC_end-1) ;
             #endif
 
             //------------------------------------------------------------------
@@ -256,8 +257,8 @@
                 int64_t kZ = (R_to_Z == NULL) ? j : R_to_Z [k] ;
                 if (kZ >= 0)
                 { 
-                    pZ     = GBP_Z (Zp, kZ, vlen) ;
-                    pZ_end = GBP_Z (Zp, kZ+1, vlen) ;
+                    pZ     = GBp_Z (Zp, kZ, vlen) ;
+                    pZ_end = GBp_Z (Zp, kZ+1, vlen) ;
                 }
             }
 
@@ -268,8 +269,8 @@
             int64_t iZ_first = -1, iZ_last = -1 ;
             if (zjnz > 0)
             {
-                iZ_first = GBI_Z (Zi, pZ, vlen) ;
-                iZ_last  = GBI_Z (Zi, pZ_end-1, vlen) ;
+                iZ_first = GBi_Z (Zi, pZ, vlen) ;
+                iZ_last  = GBi_Z (Zi, pZ_end-1, vlen) ;
             }
 
             //------------------------------------------------------------------
@@ -290,8 +291,8 @@
                 int64_t kM = (R_to_M == NULL) ? j : R_to_M [k] ;
                 if (kM >= 0)
                 { 
-                    pM     = GBP_M (Mp, kM, vlen) ;
-                    pM_end = GBP_M (Mp, kM+1, vlen) ;
+                    pM     = GBp_M (Mp, kM, vlen) ;
+                    pM_end = GBp_M (Mp, kM+1, vlen) ;
                 }
             }
 
@@ -301,7 +302,7 @@
             // get the first index in M(:,j) for this vector
             int64_t iM_first = -1 ;
             int64_t pM_first = pM ;
-            if (mjnz > 0) iM_first = GBI_M (Mi, pM_first, vlen) ;
+            if (mjnz > 0) iM_first = GBi_M (Mi, pM_first, vlen) ;
 
             //------------------------------------------------------------------
             // R(:,j) = masker (C (:,j), M (:,j), Z (:,j))
@@ -333,8 +334,8 @@
                 while (pC < pC_end && pM < pM_end)
                 {
                     
-                    int64_t iC = Ci [pC] ;
-                    int64_t iM = Mi [pM] ;
+                    int64_t iC = GB_IGET (Ci, pC) ;
+                    int64_t iM = GB_IGET (Mi, pM) ;
 
                     if (iC < iM)
                     { 
@@ -383,7 +384,7 @@
                 for ( ; pC < pC_end ; pC++)
                 { 
                     // C(i,j) is present but M(i,j) is not
-                    int64_t i = Ci [pC] ;
+                    int64_t i = GB_IGET (Ci, pC) ;
                     GB_COPY_C ;
                 }
                 #endif
@@ -392,7 +393,7 @@
                 for ( ; pM < pM_end ; pM++)
                 {
                     // M(i,j) is present but C(i,j) is not
-                    int64_t i = Mi [pM] ;
+                    int64_t i = GB_IGET (Mi, pM) ;
                     bool mij = GB_MCAST (Mx, pM, msize) ;
                     if (mij)
                     { 
@@ -436,20 +437,13 @@
                     rjnz = cjnz ;
                     #else
                     ASSERT (rjnz == cjnz) ;
-                    memcpy (Ri +(pR), Ci +(pC), cjnz * sizeof (int64_t)) ;
+                    for (int64_t k = 0 ; k < cjnz ; k++)
+                    { 
+                        int64_t i = GB_IGET (Ci, pC + k) ;
+                        GB_ISET (Ri, pR + k, i) ;
+                    }
                     #ifndef GB_ISO_MASKER
                     GB_COPY_C_TO_R_RANGE (Rx, pR, Cx, pC, C_iso, rsize, cjnz) ;
-//                  if (C_iso)
-//                  {
-//                      for (int64_t k = 0 ; k < cjnz ; k++)
-//                      {
-//                          memcpy (Rx +(pR+k)*rsize, Cx, rsize) ;
-//                      }
-//                  }
-//                  else
-//                  {
-//                      memcpy (Rx +(pR)*rsize, Cx +(pC)*rsize, cjnz*rsize) ;
-//                  }
                     #endif
                     #endif
 
@@ -466,21 +460,13 @@
                     rjnz = zjnz ;
                     #else
                     ASSERT (rjnz == zjnz) ;
-                    memcpy (Ri +(pR), Zi +(pZ), zjnz * sizeof (int64_t)) ;
+                    for (int64_t k = 0 ; k < zjnz ; k++)
+                    { 
+                        int64_t i = GB_IGET (Zi, pZ + k) ;
+                        GB_ISET (Ri, pR + k, i) ;
+                    }
                     #ifndef GB_ISO_MASKER
                     GB_COPY_Z_TO_R_RANGE (Rx, pR, Zx, pZ, Z_iso, rsize, zjnz) ;
-//                  if (Z_iso)
-//                  {
-//                      for (int64_t k = 0 ; k < zjnz ; k++)
-//                      {
-//                          memcpy (Rx +(pR+k)*rsize, Zx, rsize) ;
-//                      }
-//                  }
-//                  else
-//                  {
-//                      memcpy (Rx +(pR)*rsize, Zx +(pZ)*rsize, zjnz*rsize) ;
-//                  }
-
                     #endif
                     #endif
                 }
@@ -525,12 +511,12 @@
                 for (int64_t p = 0 ; p < cjnz ; p++)
                 {
                     int64_t i = p + iC_first ;
-                    Ri [pR + p] = i ;
-                    int64_t iM = (pM < pM_end) ? GBI_M (Mi,pM,vlen) : INT64_MAX;
+                    GB_ISET (Ri, pR + p, i) ;   // Ri [pR + p] = i ;
+                    int64_t iM = (pM < pM_end) ? GBi_M (Mi,pM,vlen) : INT64_MAX;
                     bool mij = false ;
                     if (i == iM)
                     { 
-                        mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                        mij = GBb_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                         pM++ ;
                     }
                     if (GB_MASK_COMP) mij = !mij ;
@@ -538,15 +524,11 @@
                     if (mij)
                     { 
                         // R(i,j) = Z (i,j)
-//                      memcpy (Rx +(pR+p)*rsize, Zx +(Z_iso? 0:(pZ+p)*rsize),
-//                          rsize) ;
                         GB_COPY_Z_TO_R (Rx, pR+p, Zx, pZ+p, Z_iso, rsize) ;
                     }
                     else
                     { 
                         // R(i,j) = C (i,j)
-//                      memcpy (Rx +(pR+p)*rsize, Cx +(C_iso? 0:(pC+p)*rsize),
-//                          rsize) ;
                         GB_COPY_C_TO_R (Rx, pR+p, Cx, pC+p, C_iso, rsize) ;
                     }
                     #endif
@@ -591,8 +573,8 @@
                     // get the next i for R(:,j)
                     //----------------------------------------------------------
 
-                    int64_t iC = Ci [pC] ;
-                    int64_t iZ = Zi [pZ] ;
+                    int64_t iC = GB_IGET (Ci, pC) ;
+                    int64_t iZ = GB_IGET (Zi, pZ) ;
                     int64_t i = GB_IMIN (iC, iZ) ;
 
                     //----------------------------------------------------------
@@ -615,8 +597,8 @@
                         // let pM = pM_first + delta
                         // then delta = i - iM_first
                         pM = pM_first + (i - iM_first) ;
-                        ASSERT (i == GBI_M (Mi, pM, vlen)) ;
-                        mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                        ASSERT (i == GBi_M (Mi, pM, vlen)) ;
+                        mij = GBb_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                         // increment pM for the wrapup phase below
                         pM++ ;
 
@@ -633,11 +615,11 @@
                         ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                         int64_t pright = pM_end - 1 ;
                         bool found ;
-                        found = GB_split_binary_search (i, Mi, false,
+                        found = GB_split_binary_search (i, Mi, Mi_is_32,
                             &pM, &pright) ;
                         if (found)
                         { 
-                            ASSERT (i == Mi [pM]) ;
+                            ASSERT (i == GB_IGET (Mi, pM)) ;
                             mij = GB_MCAST (Mx, pM, msize) ;
                             // increment pM for the wrapup phase below
                             pM++ ;
@@ -710,11 +692,11 @@
 
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;
+                                int64_t i = GB_IGET (Zi, pZ) ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
-                                bool mij = GBB_M (Mb, pM) &&
+                                ASSERT (i == GBi_M (Mi, pM, vlen)) ;
+                                bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_Z ;
                             }
@@ -735,10 +717,10 @@
                             {
                                 if (GB_MCAST (Mx, pM, msize))
                                 { 
-                                    int64_t i = Mi [pM] ;
+                                    int64_t i = GB_IGET (Mi, pM) ;
                                     int64_t pright = pZ_end - 1 ;
                                     bool found ;
-                                    found = GB_binary_search (i, Zi, false,
+                                    found = GB_binary_search (i, Zi, Zi_is_32,
                                         &pZ, &pright) ;
                                     if (found) GB_COPY_Z ;
                                 }
@@ -757,11 +739,11 @@
                             { 
                                 // wrapup, C now empty, M(:,j) much denser than
                                 // Z(:,j); C, M and Z all sparse
-                                int64_t i = Zi [pZ] ;
+                                int64_t i = GB_IGET (Zi, pZ) ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, false,
+                                found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_Z ;
@@ -778,8 +760,8 @@
                             ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             while (pM < pM_end && pZ < pZ_end)
                             {
-                                int64_t iM = Mi [pM] ;
-                                int64_t i = Zi [pZ] ;
+                                int64_t iM = GB_IGET (Mi, pM) ;
+                                int64_t i = GB_IGET (Zi, pZ) ;
                                 if (iM < i)
                                 { 
                                     // M(i,j) exists but not Z(i,j)
@@ -817,11 +799,11 @@
 
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;
+                                int64_t i = GB_IGET (Zi, pZ) ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
-                                bool mij = GBB_M (Mb, pM) &&
+                                ASSERT (i == GBi_M (Mi, pM, vlen)) ;
+                                bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_Z ;   // mask is complemented
                             }
@@ -836,11 +818,11 @@
                             ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
-                                int64_t i = Zi [pZ] ;
+                                int64_t i = GB_IGET (Zi, pZ) ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, false,
+                                found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_Z ;   // mask is complemented
@@ -872,11 +854,11 @@
 
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;
+                                int64_t i = GB_IGET (Ci, pC) ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
-                                bool mij = GBB_M (Mb, pM) &&
+                                ASSERT (i == GBi_M (Mi, pM, vlen)) ;
+                                bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_C ;
                             }
@@ -894,10 +876,10 @@
                             {
                                 if (GB_MCAST (Mx, pM, msize))
                                 { 
-                                    int64_t i = Mi [pM] ;
+                                    int64_t i = GB_IGET (Mi, pM) ;
                                     int64_t pright = pC_end - 1 ;
                                     bool found ;
-                                    found = GB_binary_search (i, Ci, false,
+                                    found = GB_binary_search (i, Ci, Ci_is_32,
                                         &pC, &pright) ;
                                     if (found) GB_COPY_C ;
                                 }
@@ -914,11 +896,11 @@
                             ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;
+                                int64_t i = GB_IGET (Ci, pC) ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, false,
+                                found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_C ;
@@ -935,8 +917,8 @@
                             ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             while (pM < pM_end && pC < pC_end)
                             {
-                                int64_t iM = Mi [pM] ;
-                                int64_t i = Ci [pC] ;
+                                int64_t iM = GB_IGET (Mi, pM) ;
+                                int64_t i = GB_IGET (Ci, pC) ;
                                 if (iM < i)
                                 { 
                                     // M(i,j) exists but not C(i,j)
@@ -974,11 +956,11 @@
 
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;
+                                int64_t i = GB_IGET (Ci, pC) ;
                                 // mask is dense, lookup M(i,j)
                                 pM = pM_first + (i - iM_first) ;
-                                ASSERT (i == GBI_M (Mi, pM, vlen)) ;
-                                bool mij = GBB_M (Mb, pM) &&
+                                ASSERT (i == GBi_M (Mi, pM, vlen)) ;
+                                bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_C ;
                             }
@@ -993,12 +975,12 @@
                             ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
-                                int64_t i = Ci [pC] ;
+                                int64_t i = GB_IGET (Ci, pC) ;
                                 // M(i,j) false if not present
                                 bool mij = false ; 
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, false,
+                                found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_C ;
@@ -1023,7 +1005,7 @@
             }
             else
             { 
-                Rp [k] = rjnz ;
+                GB_ISET (Rp, k, rjnz) ; // Rp [k] = rjnz ;
             }
             #endif
         }

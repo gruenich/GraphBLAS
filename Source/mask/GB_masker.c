@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_masker (R, C, M, Z), does R=C ; R<M>=Z.  No typecasting is performed.
 // The operation is similar to both R=C+Z via GB_add and R=C.*Z via GB_emult,
@@ -109,16 +109,16 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     //--------------------------------------------------------------------------
 
     int64_t Rnvec, Rnvec_nonempty ;
-    void *Rp        = NULL ; size_t Rp_size = 0 ;
-    int64_t *Rh     = NULL ; size_t Rh_size = 0 ;       // FIXME
+    void *Rp = NULL ; size_t Rp_size = 0 ;
+    void *Rh = NULL ; size_t Rh_size = 0 ;
+
     int64_t *R_to_M = NULL ; size_t R_to_M_size = 0 ;
     int64_t *R_to_C = NULL ; size_t R_to_C_size = 0 ;
     int64_t *R_to_Z = NULL ; size_t R_to_Z_size = 0 ;
+
     int R_ntasks = 0, R_nthreads ;
-    size_t TaskList_size = 0 ;
-    GB_task_struct *TaskList = NULL ;
-//  bool Rp_is_32 = false ; // FIXME
-    bool Ri_is_32 = false ; // FIXME
+    size_t TaskList_size = 0 ; GB_task_struct *TaskList = NULL ;
+    bool Rp_is_32, Ri_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity structure of R and the vectors of R
@@ -127,22 +127,17 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     // This phase is identical to phase0 of GB_add, except that Ch is never a
     // deep or shallow copy of Mh.  R_sparsity may change to hypersparse.
 
-    info = GB_add_phase0 (
+    GB_OK (GB_add_phase0 (
         // computed by phase0:
         &Rnvec, &Rh, &Rh_size,
         &R_to_M, &R_to_M_size,
         &R_to_C, &R_to_C_size,
-        &R_to_Z, &R_to_Z_size, NULL,
-        /* FIXME: */ NULL, NULL,
+        &R_to_Z, &R_to_Z_size, /* Rh_is_Mh is false: */ NULL,
+        &Rp_is_32, &Ri_is_32,
         // input/output to phase0:
         &R_sparsity,
         // original input:
-        M, C, Z, Werk) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
-    }
+        M, C, Z, Werk)) ;
 
     GBURBLE ("masker:(%s:%s%s%s%s%s=%s) ",
         GB_sparsity_char (R_sparsity),
@@ -169,7 +164,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // computed by phase1a
             &TaskList, &TaskList_size, &R_ntasks, &R_nthreads,
             // computed by phase0:
-            Rnvec, Rh, Ri_is_32, R_to_M, R_to_C, R_to_Z, false,
+            Rnvec, Rh, Ri_is_32, R_to_M, R_to_C, R_to_Z, /* Rh_is_Mh: */ false,
             // original input:
             M, C, Z, Werk) ;
         if (info != GrB_SUCCESS)
@@ -185,11 +180,11 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // count the number of entries in each vector of R
         info = GB_masker_phase1 (
             // computed or used by phase1:
-            (uint64_t **) &Rp, &Rp_size, &Rnvec_nonempty,
+            &Rp, &Rp_size, &Rnvec_nonempty,
             // from phase1a:
             TaskList, R_ntasks, R_nthreads,
             // from phase0:
-            Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
+            Rnvec, Rh, R_to_M, R_to_C, R_to_Z, Rp_is_32, Ri_is_32,
             // original input:
             M, Mask_comp, Mask_struct, C, Z, Werk) ;
         if (info != GrB_SUCCESS)
@@ -227,11 +222,12 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         // computed or used by phase2:
         R, R_is_csc,
         // from phase1:
-        (uint64_t **) &Rp, Rp_size, Rnvec_nonempty,
+        &Rp, Rp_size, Rnvec_nonempty,
         // from phase1a:
         TaskList, R_ntasks, R_nthreads,
         // from phase0:
-        Rnvec, &Rh, Rh_size, R_to_M, R_to_C, R_to_Z, R_sparsity,
+        Rnvec, &Rh, Rh_size, R_to_M, R_to_C, R_to_Z,
+        Rp_is_32, Ri_is_32, R_sparsity,
         // original input:
         M, Mask_comp, Mask_struct, C, Z, Werk) ;
 

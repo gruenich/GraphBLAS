@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #ifndef GB_GET_MASK_H
 #define GB_GET_MASK_H
 #include "iso/GB_is_nonzero.h"

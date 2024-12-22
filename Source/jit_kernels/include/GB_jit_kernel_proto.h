@@ -612,13 +612,13 @@ GrB_Info GB_jit_kernel_union                                            \
 #define GB_JIT_KERNEL_MASKER_PHASE1_PROTO(GB_jit_kernel_masker1)        \
 GrB_Info GB_jit_kernel_masker1                                          \
 (                                                                       \
-    uint64_t *Rp,                                                       \
+    void *Rp_parameter,                                                 \
     int64_t *Rnvec_nonempty,                                            \
     GB_task_struct *restrict TaskList,                                  \
     const int R_ntasks,                                                 \
     const int R_nthreads,                                               \
     const int64_t Rnvec,                                                \
-    const int64_t *restrict Rh,                                         \
+    const void *Rh_parameter,                                           \
     const int64_t *restrict R_to_M,                                     \
     const int64_t *restrict R_to_C,                                     \
     const int64_t *restrict R_to_Z,                                     \

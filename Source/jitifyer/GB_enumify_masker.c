@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -18,6 +18,8 @@ void GB_enumify_masker      // enumify a masker problem
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
     const GrB_Matrix R,     // NULL for phase 1
+    const bool Rp_is_32,    // if true, R->p is 32-bit; else 64-bit
+    const bool Ri_is_32,    // if true, R->i is 32-bit; else 64-bit
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -51,31 +53,50 @@ void GB_enumify_masker      // enumify a masker problem
     GB_enumify_mask (&mask_ecode, mtype_code, Mask_struct, Mask_comp) ;
 
     //--------------------------------------------------------------------------
-    // enumify the sparsity structures of R, M, C, and Z
+    // enumify the sparsity structures of R, C, M, and Z
     //--------------------------------------------------------------------------
 
     int R_sparsity = GB_sparsity (R) ;
-    int M_sparsity = GB_sparsity (M) ;
     int C_sparsity = GB_sparsity (C) ;
+    int M_sparsity = GB_sparsity (M) ;
     int Z_sparsity = GB_sparsity (Z) ;
 
-    int rsparsity, msparsity, csparsity, zsparsity ;
+    int rsparsity, csparsity, msparsity, zsparsity ;
     GB_enumify_sparsity (&rsparsity, R_sparsity) ;
-    GB_enumify_sparsity (&msparsity, M_sparsity) ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
+    GB_enumify_sparsity (&msparsity, M_sparsity) ;
     GB_enumify_sparsity (&zsparsity, Z_sparsity) ;
+
+    int rp_is_32 = (Rp_is_32  ) ? 1 : 0 ;
+    int ri_is_32 = (Ri_is_32  ) ? 1 : 0 ;
+    int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
+    int mp_is_32 = (M->p_is_32) ? 1 : 0 ;
+    int mi_is_32 = (M->i_is_32) ? 1 : 0 ;
+    int zp_is_32 = (Z->p_is_32) ? 1 : 0 ;
+    int zi_is_32 = (Z->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the masker method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 18 (5 hex digits)
-
-    // FIXME: 32/64 bits: 8 bits for R, M, C, Z
+    // total method_code bits: 26 (7 hex digits)
 
     (*method_code) =
                                                // range        bits
+
+                // R, C, M, Z: 32/64 bits (8 bits, 2 hex digits)
+                GB_LSHIFT (rp_is_32   , 27) |  // 0 or 1       1
+                GB_LSHIFT (ri_is_32   , 26) |  // 0 or 1       1
+                GB_LSHIFT (cp_is_32   , 25) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 24) |  // 0 or 1       1
+                GB_LSHIFT (mp_is_32   , 23) |  // 0 or 1       1
+                GB_LSHIFT (mi_is_32   , 22) |  // 0 or 1       1
+                GB_LSHIFT (zp_is_32   , 21) |  // 0 or 1       1
+                GB_LSHIFT (zi_is_32   , 20) |  // 0 or 1       1
+
                 // C and Z iso properites (1 hex digit)
+                // unused: 2 bits
                 GB_LSHIFT (C_iso_code , 17) |  // 0 or 1       1
                 GB_LSHIFT (Z_iso_code , 16) |  // 0 or 1       1
 
@@ -87,9 +108,8 @@ void GB_enumify_masker      // enumify a masker problem
 
                 // sparsity structures of R, M, C, and Z (2 hex digits)
                 GB_LSHIFT (rsparsity  ,  6) |  // 0 to 3       2
-                GB_LSHIFT (msparsity  ,  4) |  // 0 to 3       2
-                GB_LSHIFT (csparsity  ,  2) |  // 0 to 3       2
+                GB_LSHIFT (csparsity  ,  4) |  // 0 to 3       2
+                GB_LSHIFT (msparsity  ,  2) |  // 0 to 3       2
                 GB_LSHIFT (zsparsity  ,  0) ;  // 0 to 3       2
-
 }
 

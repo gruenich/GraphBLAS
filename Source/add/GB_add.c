@@ -132,8 +132,11 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     GB_OK (GB_add_phase0 (
         // computed by phase0:
-        &Cnvec, &Ch, &Ch_size, &C_to_M, &C_to_M_size, &C_to_A, &C_to_A_size,
-        &C_to_B, &C_to_B_size, &Ch_is_Mh, &Cp_is_32, &Ci_is_32,
+        &Cnvec, &Ch, &Ch_size,
+        &C_to_M, &C_to_M_size,
+        &C_to_A, &C_to_A_size,
+        &C_to_B, &C_to_B_size, &Ch_is_Mh,
+        &Cp_is_32, &Ci_is_32,
         // input/output to phase0:
         &C_sparsity,
         // original input:

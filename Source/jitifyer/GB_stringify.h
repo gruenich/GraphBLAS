@@ -1537,7 +1537,7 @@ GrB_Info GB_user_type_jit       // construct a user type in a JIT kernel
 GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
 (
     // computed by phase1:
-    uint64_t *Rp,                   // output of size Rnvec+1 FIXME
+    void *Rp,                       // output of size Rnvec+1; 32/64 bit
     int64_t *Rnvec_nonempty,        // # of non-empty vectors in R
     // tasks from phase1a:
     GB_task_struct *restrict TaskList,       // array of structs
@@ -1545,10 +1545,12 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     const int R_nthreads,             // # of threads to use
     // analysis from phase0:
     const int64_t Rnvec,
-    const int64_t *restrict Rh,
+    const void *Rh,                 // size Rnvec, 32/64 bit
     const int64_t *restrict R_to_M,
     const int64_t *restrict R_to_C,
     const int64_t *restrict R_to_Z,
+    const bool Rp_is_32,            // if true, Rp is 32-bit; else 64-bit
+    const bool Ri_is_32,            // if true, Rh is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // required mask
     const bool Mask_comp,           // if true, then M is complemented
@@ -1590,7 +1592,9 @@ uint64_t GB_encodify_masker     // encode a masker problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
-    const GrB_Matrix R,
+    const GrB_Matrix R,         // may be NULL, for phase1
+    const bool Rp_is_32,        // if true, R->p is 32 bit; else 64 bit
+    const bool Ri_is_32,        // if true, R->i is 32 bit; else 64 bit
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
@@ -1598,12 +1602,14 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const GrB_Matrix Z
 ) ;
 
-void GB_enumify_masker  // enumify a masker problem
+void GB_enumify_masker      // enumify a masker problem
 (
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
     // input:
-    const GrB_Matrix R,
+    const GrB_Matrix R,     // NULL for phase 1
+    const bool Rp_is_32,    // if true, R->p is 32-bit; else 64-bit
+    const bool Ri_is_32,    // if true, R->i is 32-bit; else 64-bit
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,

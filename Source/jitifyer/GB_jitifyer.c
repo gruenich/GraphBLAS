@@ -1861,7 +1861,7 @@ GrB_Info GB_jitifyer_load2_worker
             break ;
 
         case GB_jit_masker_family  : 
-            method_code_digits = 5 ;
+            method_code_digits = 7 ;
             break ;
 
         case GB_jit_subref_family  : 

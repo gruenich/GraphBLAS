@@ -252,7 +252,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     int8_t i_control = hack32 ? GxB_PREFER_32_BITS : Werk->i_control ;//FIXME
     bool Cp_is_32 = false ;
     bool Ci_is_32 = false ;
-    if (p_Cp_is_32 != NULL && p_Ci_is_32 != NULL)
+    if (p_Cp_is_32 != NULL && p_Ci_is_32 != NULL)   // FIXME
     {
         GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
             GxB_AUTO_SPARSITY, anz + bnz, A->vlen, A->vdim) ;

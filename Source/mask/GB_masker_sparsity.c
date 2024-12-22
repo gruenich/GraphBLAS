@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Determines the sparsity structure for R for computing R = masker (C,M,Z).
 // If R should be hypersparse or sparse, on output, this function simply
 // returns GxB_SPARSE.  The final determination is made by GB_add_phase0,

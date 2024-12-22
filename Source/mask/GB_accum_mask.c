@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit: but need subassign 32/64
 
 // C<M> = accum (C,T)
 
@@ -174,18 +174,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (GB_JUMBLED_OK (T)) ;
     ASSERT_MATRIX_OK (T, "[T = results of computation]", GB0) ;
 
-    GB_assert (!(C->p_is_32)) ;    // FIXME: not yet handled
-    GB_assert (!(C->i_is_32)) ;    // FIXME: not yet handled
-
-    GB_assert (!(T->p_is_32)) ;    // FIXME: not yet handled
-    GB_assert (!(T->i_is_32)) ;    // FIXME: not yet handled
-
-    if (M != NULL)
-    {
-        GB_assert (!(M->p_is_32)) ;    // FIXME: not yet handled
-        GB_assert (!(M->i_is_32)) ;    // FIXME: not yet handled
-    }
-
     //--------------------------------------------------------------------------
     // remove zombies and pending tuples from T, but leave it jumbled
     //--------------------------------------------------------------------------
@@ -351,6 +339,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassign
         //----------------------------------------------------------------------
 
+        // FIXME: 32/64 bit; subassign not yet handled
+        GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
+        GB_OK (GB_convert_int (M, false, false, true)) ;    // FIXME
+        GB_OK (GB_convert_int (T, false, false, true)) ;    // FIXME
         GB_OK (GB_subassign (C, C_replace, M, Mask_comp, Mask_struct,
             false, accum, T, false, GrB_ALL, 0, GrB_ALL, 0,
             false, NULL, GB_ignore_code, Werk)) ;
@@ -379,11 +371,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // allocated by the transplant if needed.  Z has the same
             // hypersparsity as T.
 
-            info = GB_new (&Z, // sparse or hyper, existing header
+            GB_OK (GB_new (&Z, // sparse or hyper, existing header
                 C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc,
                 GB_sparsity (T), T->hyper_switch, T->plen,
-                /* FIXME: */ false, false) ;
-            GB_OK (info) ;
+                T->p_is_32, T->i_is_32)) ;
 
             // Transplant T into Z, typecasting if needed, and free T.  This
             // may need to do a deep copy if T is shallow.  T is always freed
@@ -440,9 +431,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C<M>=accum(C,T) before", GB0) ;
-    GB_assert (!(C->p_is_32)) ;    // FIXME: not yet handled
-    GB_assert (!(C->i_is_32)) ;    // FIXME: not yet handled
+    ASSERT_MATRIX_OK (C, "C<M>=accum(C,T) before convert_int", GB0) ;
     GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
     return (GB_block (C, Werk)) ;

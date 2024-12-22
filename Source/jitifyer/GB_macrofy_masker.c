@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -26,7 +26,18 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     // extract the masker method_code
     //--------------------------------------------------------------------------
 
+    // R, C, M, Z: 32/64 bits (2 hex digits)
+    bool Rp_is_32   = GB_RSHIFT (method_code, 27, 1) ;
+    bool Ri_is_32   = GB_RSHIFT (method_code, 26, 1) ;
+    bool Cp_is_32   = GB_RSHIFT (method_code, 25, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 24, 1) ;
+    bool Mp_is_32   = GB_RSHIFT (method_code, 23, 1) ;
+    bool Mi_is_32   = GB_RSHIFT (method_code, 22, 1) ;
+    bool Zp_is_32   = GB_RSHIFT (method_code, 21, 1) ;
+    bool Zi_is_32   = GB_RSHIFT (method_code, 20, 1) ;
+
     // C and Z iso properties (1 hex digit)
+    // unused: 2 bits
     int C_iso       = GB_RSHIFT (method_code, 17, 1) ;
     int Z_iso       = GB_RSHIFT (method_code, 16, 1) ;
 
@@ -38,8 +49,8 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
 
     // formats of R, M, C, and Z (2 hex digits)
     int rsparsity   = GB_RSHIFT (method_code,  6, 2) ;
-    int msparsity   = GB_RSHIFT (method_code,  4, 2) ;
-    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
+    int csparsity   = GB_RSHIFT (method_code,  4, 2) ;
+    int msparsity   = GB_RSHIFT (method_code,  2, 2) ;
     int zsparsity   = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
@@ -113,7 +124,9 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "R", rsparsity) ;
     GB_macrofy_nvals (fp, "R", rsparsity, false) ;
     fprintf (fp, "#define GB_R_ISO 0\n") ;
-    GB_macrofy_bits (fp, "R", false, false) ;       // FIXME
+    fprintf (fp, "#define GB_Rp_TYPE uint%d_t\n", Rp_is_32 ? 32 : 64) ;
+    fprintf (fp, "#define GB_Ri_TYPE uint%d_t\n", Ri_is_32 ? 32 : 64) ;
+    GB_macrofy_bits (fp, "R", Rp_is_32, Ri_is_32) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for C, M, and Z
@@ -122,15 +135,14 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_nvals (fp, "C", csparsity, C_iso) ;
     fprintf (fp, "#define GB_C_ISO %d\n", C_iso) ;
-    GB_macrofy_bits (fp, "C", false, false) ;       // FIXME
+    GB_macrofy_bits (fp, "C", Cp_is_32, Ci_is_32) ;
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
-        /* FIXME: */ false, false) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity, Mp_is_32, Mi_is_32) ;
 
     GB_macrofy_sparsity (fp, "Z", zsparsity) ;
     GB_macrofy_nvals (fp, "Z", zsparsity, Z_iso) ;
     fprintf (fp, "#define GB_Z_ISO %d\n", Z_iso) ;
-    GB_macrofy_bits (fp, "Z", false, false) ;       // FIXME
+    GB_macrofy_bits (fp, "Z", Zp_is_32, Zi_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions
