@@ -14,6 +14,7 @@
 // JIT: not need: use factory; 3 variants (A sparse, hyper, or full for DIAG)
 
 #include "select/GB_select.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_select_positional_phase2
 (

@@ -12,7 +12,6 @@
 #if GB_TYPE_ENABLED
 #include "GB.h"
 #include "mxm/GB_AxB_saxpy.h"
-#include "include/GB_unused.h"
 #include "assign/GB_bitmap_assign_methods.h"
 #include "mxm/GB_AxB__include1.h"
 

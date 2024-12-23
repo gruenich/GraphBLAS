@@ -25,7 +25,6 @@
 }
 
 #include "mxm/GB_mxm.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #include "mxm/GB_AxB_saxpy.h"
 #include "binaryop/GB_binop.h"
@@ -141,7 +140,7 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
 
     if (M != NULL)
     { 
-        GB_SLICE_MATRIX (M, 8) ;
+        GB_SLICE_MATRIX2 (M, 8) ;
     }
 
     //--------------------------------------------------------------------------

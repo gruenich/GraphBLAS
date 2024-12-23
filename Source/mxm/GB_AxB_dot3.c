@@ -22,7 +22,6 @@
 #include "GB_control.h"
 #include "FactoryKernels/GB_AxB__include2.h"
 #endif
-#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \

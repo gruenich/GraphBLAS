@@ -24,7 +24,6 @@
 
 #include "mxm/GB_mxm.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
@@ -88,9 +87,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     GrB_BinaryOp mult = semiring->multiply ;
-    GrB_Monoid add = semiring->add ;
-    ASSERT (mult->ztype == add->op->ztype) ;
-    ASSERT (C->type     == add->op->ztype) ;
+    ASSERT (mult->ztype == semiring->add->op->ztype) ;
+    ASSERT (C->type     == semiring->add->op->ztype) ;
 
     bool op_is_first  = mult->opcode == GB_FIRST_binop_code ;
     bool op_is_second = mult->opcode == GB_SECOND_binop_code ;
@@ -156,7 +154,6 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     // C is always as-if-full.
 
     int64_t anvec = A->nvec ;
-    int64_t vlen  = A->vlen ;
     int64_t bnvec = B->nvec ;
     int naslice, nbslice ;
 
@@ -251,7 +248,10 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
         // disabled the ANY monoid
         #define GB_NO_ANY_MONOID
-        #include "mxm/factory/GB_AxB_factory.c"
+        if (builtin_semiring)
+        {
+            #include "mxm/factory/GB_AxB_factory.c"
+        }
     }
     #endif
 

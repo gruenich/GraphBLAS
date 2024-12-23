@@ -97,7 +97,6 @@
 #include "GB_control.h"
 #include "FactoryKernels/GB_AxB__include2.h"
 #endif
-#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                           \
 {                                                   \
@@ -211,34 +210,14 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         &xcode, &ycode, &zcode) ;
 
     //--------------------------------------------------------------------------
-    // get A, and B
-    //--------------------------------------------------------------------------
-
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
-    const int64_t avlen = A->vlen ;
-    const int64_t anvec = A->nvec ;
-    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const int8_t  *restrict Bb = B->b ;
-    const int64_t bvdim = B->vdim ;
-    const int64_t bnz = GB_nnz_held (B) ;
-    const int64_t bnvec = B->nvec ;
-    const int64_t bvlen = B->vlen ;
-    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
-
-    //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)
     //--------------------------------------------------------------------------
 
     GrB_Type ctype = add->op->ztype ;
     size_t csize = ctype->size ;
-    int64_t cvlen = avlen ;
-    int64_t cvdim = bvdim ;
-    int64_t cnvec = bnvec ;
+    int64_t cvlen = A->vlen ;
+    int64_t cvdim = B->vdim ;
+    int64_t cnvec = B->nvec ;
 
     info = GB_new (&C, // sparse or hyper, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
@@ -252,15 +231,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     C->iso = C_iso ;    // OK
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
-    int64_t *restrict Ch = C->h ;
-    if (B_is_hyper)
+    if (GB_IS_HYPERSPARSE (B))
     { 
         // B and C are both hypersparse
         ASSERT (C_sparsity == GxB_HYPERSPARSE) ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
-        GB_memcpy (Ch, Bh, cnvec * sizeof (int64_t), nth) ;
-        C->nvec = bnvec ;
+        GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nth) ;
+        C->nvec = B->nvec ;
     }
     else
     { 
@@ -392,7 +369,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
-    int ncoarse_1hash = 0 ;
     int ncoarse_gus = 0 ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)

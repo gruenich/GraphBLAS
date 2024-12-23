@@ -15,7 +15,6 @@
 #include "GB_control.h"
 #include "FactoryKernels/GB_ew__include.h"
 #endif
-#include "include/GB_unused.h"
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -230,7 +229,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
 
         int A_nthreads, A_ntasks ;
-        GB_SLICE_MATRIX (A, 32) ;
+        GB_SLICE_MATRIX2 (A, 32) ;
 
         //----------------------------------------------------------------------
         // via the factory kernel

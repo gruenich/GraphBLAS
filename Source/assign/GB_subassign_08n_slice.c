@@ -119,8 +119,6 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
 
     GB_assert (!Zp_is_32) ;
     GB_assert (!Zi_is_32) ;
-    ASSERT (Zp_is_32 == Z->p_is_32) ;
-    ASSERT (Zi_is_32 == Z->i_is_32) ;
 
     // Z is still sparse or hypersparse, not bitmap or full
     ASSERT (Z_sparsity == GxB_SPARSE || Z_sparsity == GxB_HYPERSPARSE) ;

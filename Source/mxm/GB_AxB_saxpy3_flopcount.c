@@ -72,7 +72,6 @@
 
 #include "mxm/GB_mxm.h"
 #include "mxm/GB_AxB_saxpy3.h"
-#include "include/GB_unused.h"
 
 #define GB_FREE_ALL                         \
 {                                           \
@@ -178,9 +177,6 @@ GrB_Info GB_AxB_saxpy3_flopcount
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int8_t  *restrict Bb = B->b ;
-    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
-    const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    const bool B_is_sparse_or_hyper = B_is_hyper || GB_IS_SPARSE (B) ;
     const int64_t bvlen = B->vlen ;
 
     //--------------------------------------------------------------------------

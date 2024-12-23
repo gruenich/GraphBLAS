@@ -13,7 +13,6 @@
 // phase4: cumulative sum of C->p
 
 #include "GB.h"
-#include "include/GB_unused.h"
 
 GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
 {
@@ -143,6 +142,7 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
         {
             cjnz_sum = 0 ;
             // also find the max (C (:,j)) for any fine hash tasks
+            #if 0
             int64_t hash_size = SaxpyTasks [taskid].hsize ;
             bool use_Gustavson = (hash_size == cvlen) ;
             if (!use_Gustavson)
@@ -150,6 +150,7 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
                 int64_t kk = SaxpyTasks [taskid].vector ;
                 int64_t cjnz = Cp [kk+1] - Cp [kk] ;
             }
+            #endif
         }
         int64_t my_cjnz = SaxpyTasks [taskid].my_cjnz ;
         SaxpyTasks [taskid].my_cjnz = cjnz_sum ;

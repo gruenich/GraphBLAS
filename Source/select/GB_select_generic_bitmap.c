@@ -10,6 +10,7 @@
 // A is bitmap or full, C is bitmap
 
 #include "select/GB_select.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_select_generic_bitmap
 (
@@ -28,14 +29,13 @@ GrB_Info GB_select_generic_bitmap
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_Opcode opcode = op->opcode ;
     ASSERT (GB_IS_BITMAP (A) || GB_IS_FULL (A)) ;
-    ASSERT (GB_IS_INDEXUNARYOP_CODE (opcode)) ;
-    ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode)) ;
-    ASSERT (!(A->iso) || (opcode == GB_USER_idxunop_code)) ;
-    ASSERT ((opcode >= GB_VALUENE_idxunop_code &&
-             opcode <= GB_VALUELE_idxunop_code) ||
-             (opcode == GB_USER_idxunop_code)) ;
+    ASSERT (GB_IS_INDEXUNARYOP_CODE (op->opcode)) ;
+    ASSERT (!GB_IS_INDEXUNARYOP_CODE_POSITIONAL (op->opcode)) ;
+    ASSERT (!(A->iso) || (op->opcode == GB_USER_idxunop_code)) ;
+    ASSERT ((op->opcode >= GB_VALUENE_idxunop_code &&
+             op->opcode <= GB_VALUELE_idxunop_code) ||
+            (op->opcode == GB_USER_idxunop_code)) ;
     ASSERT (GB_IS_BITMAP (C)) ;
 
     //--------------------------------------------------------------------------

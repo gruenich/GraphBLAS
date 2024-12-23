@@ -12,6 +12,7 @@
 // A and C are sparse or hypersparse
 
 #include "select/GB_select.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_select_generic_phase1
 (

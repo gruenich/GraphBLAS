@@ -25,8 +25,6 @@
 #ifndef GBCOMPACT
 #include "GB_control.h"
 #include "FactoryKernels/GB_AxB__include2.h"
-#else
-#include "include/GB_unused.h"
 #endif
 
 #define GB_FREE_WORKSPACE                   \
@@ -101,9 +99,8 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
 
     GB_Opcode mult_binop_code, add_binop_code ;
     GB_Type_code xcode, ycode, zcode ;
-    bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
-        B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
-        &xcode, &ycode, &zcode) ;
+    GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
+        flipxy, &mult_binop_code, &add_binop_code, &xcode, &ycode, &zcode) ;
 
     if (add_binop_code == GB_ANY_binop_code)
     { 
@@ -262,10 +259,7 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
 
         // disabled the ANY monoid
         #define GB_NO_ANY_MONOID
-        if (builtin_semiring)
-        {
-            #include "mxm/factory/GB_AxB_factory.c"
-        }
+        #include "mxm/factory/GB_AxB_factory.c"
 
     }
     #endif

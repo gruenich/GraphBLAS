@@ -13,6 +13,7 @@
 
 #include "include/GB_kernel_shared_definitions.h"
 #include "include/GB_cumsum1.h"
+#include "include/GB_unused.h"
 
 //==============================================================================
 // definitions redefined as needed

@@ -10,6 +10,7 @@
 // A is bitmap or as-if-full.  C is bitmap
 
 #include "select/GB_select.h"
+#include "include/GB_unused.h"
 
 GrB_Info GB_select_positional_bitmap
 (

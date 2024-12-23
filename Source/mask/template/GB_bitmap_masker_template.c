@@ -50,7 +50,7 @@
     int64_t p, rnvals = 0 ;
 
     ASSERT (GB_R_IS_BITMAP) ;
-    ASSERT (GB_C_IS_SPARSE || GB_C_IS_HYPER) ;
+    ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
     ASSERT (GB_Z_IS_BITMAP || GB_Z_IS_FULL) ;
 
     GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;

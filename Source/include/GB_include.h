@@ -19,7 +19,7 @@
 #include "include/GB_warnings.h"
 #include "include/GB_coverage.h"
 
-#ifdef GB_JIT_KERNEL
+#if defined ( GB_JIT_KERNEL ) || defined ( GBCOMPACT )
 // Because of the JIT code generation, the kernels often have unused variables,
 // parameters, and functions.  These warnings are disabled here.  They may also
 // generate warnings with -Wpedantic, so those are disabled as well.

@@ -137,7 +137,7 @@
     // phase2: compute C
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_C_IS_SPARSE || GB_C_IS_HYPER) ;
+    ASSERT (GB_IS_SPARSE (C) || GB_IS_HYPERSPARSE (C)) ;
 
     #pragma omp parallel for num_threads(R_nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < R_ntasks ; taskid++)
@@ -427,7 +427,7 @@
                 //      sparse  sparse      sparse          sparse
 
                 // Z must be sparse or hypersparse
-                ASSERT (GB_Z_IS_SPARSE || GB_Z_IS_HYPER) ;
+                ASSERT (GB_IS_SPARSE (Z) || GB_IS_HYPERSPARSE (Z)) ;
 
                 if (!GB_MASK_COMP)
                 { 
@@ -503,7 +503,7 @@
                 // present), but both C and Z are stored in a sparse or
                 // hypersparse sparsity structure.  M has any sparsity.
 
-                ASSERT (GB_Z_IS_SPARSE || GB_Z_IS_HYPER) ;
+                ASSERT (GB_IS_SPARSE (Z) || GB_IS_HYPERSPARSE (Z)) ;
 
                 ASSERT (cjnz == zjnz) ;
                 ASSERT (iC_first == iZ_first) ;
@@ -548,7 +548,7 @@
                 //--------------------------------------------------------------
 
                 // Z is sparse or hypersparse; M has any sparsity structure
-                ASSERT (GB_Z_IS_SPARSE || GB_Z_IS_HYPER) ;
+                ASSERT (GB_IS_SPARSE (Z) || GB_IS_HYPERSPARSE (Z)) ;
 
                 //--------------------------------------------------------------
                 // Z is sparse or hypersparse, M has any sparsity

@@ -15,7 +15,6 @@
 // GrB_NO_VALUE, to indicate that the analysis was terminated early.
 
 #include "mxm/GB_AxB_saxpy3.h"
-#include "include/GB_unused.h"
 
 // control parameters for generating parallel tasks
 #define GB_NTASKS_PER_THREAD 2
@@ -280,14 +279,12 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
     const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bi = B->i ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_nnz_held (B) ;
     const int64_t bnvec = B->nvec ;
     const int64_t bvlen = B->vlen ;
-    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
 
     int64_t cvlen = avlen ;
     int64_t cvdim = bvdim ;
@@ -716,7 +713,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                         { 
                             int64_t pstart = Fine_slice [fid] ;
                             int64_t pend   = Fine_slice [fid+1] ;
-                            int64_t fl = Fine_fl [pend] - Fine_fl [pstart] ;
+//                          int64_t fl = Fine_fl [pend] - Fine_fl [pstart] ;
                             SaxpyTasks [nf].start  = pB_start + pstart ;
                             SaxpyTasks [nf].end    = pB_start + pend - 1 ;
                             SaxpyTasks [nf].vector = kk ;

@@ -113,8 +113,6 @@ static void check_table (void)
             GB_jit_entry *e = &(GB_jit_table [k]) ;
             if (e->dl_function != NULL)
             {
-                uint64_t hash = e->hash ;
-                uint64_t k2 = (hash & GB_jit_table_bits) ;
                 populated++ ;
             }
         }

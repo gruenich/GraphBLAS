@@ -69,7 +69,7 @@
     }
     else
     { 
-        GB_SLICE_MATRIX_WORK (A, 8, work, anz) ;
+        GB_SLICE_MATRIX_WORK2 (A, 8, work, anz) ;
     }
 
     //--------------------------------------------------------------------------

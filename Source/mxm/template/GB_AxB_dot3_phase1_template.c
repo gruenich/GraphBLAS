@@ -117,9 +117,9 @@
                     if (GB_MCAST (Mx, pM, msize))
                     #endif
                     { 
-                        const int64_t i = Mi [pM] ;
                         #if GB_A_IS_HYPER
                         // A is hyper: find A(:,i) using the A->Y hyper hash
+                        const int64_t i = Mi [pM] ;
                         int64_t pA, pA_end ;
                         GB_hyper_hash_lookup (false, false, // FIXME
                             Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
@@ -128,6 +128,7 @@
                         work += GB_IMIN (ainz, bjnz) ;
                         #elif GB_A_IS_SPARSE
                         // A is sparse
+                        const int64_t i = Mi [pM] ;
                         const int64_t pA = Ap [i] ;
                         const int64_t pA_end = Ap [i+1] ;
                         const int64_t ainz = pA_end - pA ;
