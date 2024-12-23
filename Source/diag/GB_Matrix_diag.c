@@ -21,7 +21,6 @@
 }
 
 #include "diag/GB_diag.h"
-#include "include/GB_unused.h"
 
 GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
 (
@@ -47,12 +46,11 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     GrB_Matrix T = NULL ;
 
     GrB_Type ctype = C->type ;
-    GrB_Type vtype = V_in->type ;
     int64_t n = V_in->vlen + GB_IABS (k) ;     // C must be n-by-n
 
     ASSERT (GB_NROWS (C) == GB_NCOLS (C))
     ASSERT (GB_NROWS (C) == n)
-    ASSERT (GB_Type_compatible (ctype, vtype)) ;
+    ASSERT (GB_Type_compatible (ctype, V_in->type)) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work in V_in and clear the output matrix C

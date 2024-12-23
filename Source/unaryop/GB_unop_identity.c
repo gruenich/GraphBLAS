@@ -11,7 +11,6 @@
 
 #include "GB.h"
 #include "unaryop/GB_unop.h"
-#include "include/GB_unused.h"
 
 GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
 (
@@ -45,7 +44,10 @@ GB_Operator GB_unop_identity    // return IDENTITY operator, or NULL on error
             if (op == NULL) return (NULL) ;
             // op = &op_header has been provided by the caller
             op->header_size = 0 ;
-            GrB_Info info = GB_unop_new (op,
+            #ifdef GB_DEBUG
+            GrB_Info info =
+            #endif
+            GB_unop_new (op,
                 NULL,           // op->unop_function is NULL for IDENTITY_UDT
                 type, type,     // type is user-defined
                 type->name,     // name is same as the type

@@ -217,7 +217,9 @@
                     { 
                         // C(inew,kC) =  A(i,kA), and it always exists.
                         int64_t inew = k + pI ;
+                        #if defined ( GB_DEBUG ) || !defined ( GB_ISO_SUBREF )
                         int64_t i = GB_ijlist (I, inew, GB_I_KIND, Icolon) ;
+                        #endif
                         #ifdef GB_DEBUG
                         int64_t iA = GBI (Ai, pA + i, avlen) ;
                         iA = GB_UNZOMBIE (iA) ;

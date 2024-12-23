@@ -24,7 +24,6 @@
 // Compare this function with GB_shallow_op.c.
 
 #include "transpose/GB_transpose.h"
-#include "include/GB_unused.h"
 
 #define GB_FREE_ALL ;
 
@@ -54,8 +53,10 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
 
     // allocate the struct for C, but do not allocate C->[p,h,b,i,x].
     // C has the exact same sparsity structure as A.
-    GrB_Info info ;
-    info = GB_new (&C, // sparse or hyper, existing header
+    #ifdef GB_DEBUG
+    GrB_Info info =
+    #endif
+    GB_new (&C, // sparse or hyper, existing header
         A->type, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         GB_sparsity (A), A->hyper_switch, 0, A->p_is_32, A->i_is_32) ;
     ASSERT (info == GrB_SUCCESS) ;

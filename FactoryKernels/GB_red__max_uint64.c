@@ -36,7 +36,6 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == UINT64_MAX)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == UINT64_MAX) { break ; }
-#define GB_DECLARE_TERMINAL_CONST(zterminal) const uint64_t zterminal = UINT64_MAX
 
 // panel size
 #define GB_PANEL 16

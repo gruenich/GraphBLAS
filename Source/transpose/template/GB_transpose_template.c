@@ -11,9 +11,6 @@
 
 {
 
-    // Ax unused for some uses of this template
-    #include "include/GB_unused.h"
-
     //--------------------------------------------------------------------------
     // get A and C
     //--------------------------------------------------------------------------
@@ -32,7 +29,7 @@
 
     #ifndef GB_ISO_TRANSPOSE
     const GB_AB_TYPE *restrict Ax = (GB_AB_TYPE *) A->x ;
-          GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+          GB_C_TYPE  *restrict Cx = (GB_C_TYPE  *) C->x ;
     #endif
 
     //--------------------------------------------------------------------------

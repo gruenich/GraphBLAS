@@ -55,7 +55,7 @@ GrB_Info GB_select_column
     GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
 
-    const GB_void *restrict Ax = (GB_void *) A->x ; size_t Ax_size = A->x_size ;
+    const GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anvec = A->nvec ;
     bool A_jumbled = A->jumbled ;
     bool A_is_hyper = (Ah != NULL) ;

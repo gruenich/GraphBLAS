@@ -31,36 +31,26 @@
     int taskid ;
 
     GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
-    GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
     GB_Ci_DECLARE (Ci, const) ; GB_Ci_PTR (Ci, C) ;
-    const int8_t *restrict Cb = C->b ;
     const int64_t vlen = C->vlen ;
     #ifdef GB_JIT_KERNEL
     #define Ci_is_32    (GB_Ci_BITS == 32)
     #else
     const bool Ci_is_32 = C->i_is_32 ;
-    const bool C_is_hyper = GB_IS_HYPERSPARSE (C) ;
-    const bool C_is_sparse = GB_IS_SPARSE (C) ;
-    const bool C_is_bitmap = GB_IS_BITMAP (C) ;
-    const bool C_is_full = GB_IS_FULL (C) ;
     #endif
 
     GB_Zp_DECLARE (Zp, const) ; GB_Zp_PTR (Zp, Z) ;
-    GB_Zh_DECLARE (Zh, const) ; GB_Zh_PTR (Zh, Z) ;
     GB_Zi_DECLARE (Zi, const) ; GB_Zi_PTR (Zi, Z) ;
     const int8_t *restrict Zb = Z->b ;
     #ifdef GB_JIT_KERNEL
     #define Zi_is_32    (GB_Zi_BITS == 32)
     #else
     const bool Zi_is_32 = Z->i_is_32 ;
-    const bool Z_is_hyper = GB_IS_HYPERSPARSE (Z) ;
-    const bool Z_is_sparse = GB_IS_SPARSE (Z) ;
     const bool Z_is_bitmap = GB_IS_BITMAP (Z) ;
     const bool Z_is_full = GB_IS_FULL (Z) ;
     #endif
 
     GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
-    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
     GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
     const int8_t *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
@@ -68,10 +58,6 @@
     #define Mi_is_32    (GB_Mi_BITS == 32)
     #else
     const bool Mi_is_32 = M->i_is_32 ;
-    const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
-    const bool M_is_sparse = GB_IS_SPARSE (M) ;
-    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
-    const bool M_is_full = GB_IS_FULL (M) ;
     #endif
     size_t msize = 0 ;
     if (M != NULL)
@@ -84,20 +70,20 @@
     #if defined ( GB_PHASE_2_OF_2 )
 
         // phase 2
+        #ifndef GB_ISO_MASKER
         #ifndef GB_JIT_KERNEL
         const bool Z_iso = Z->iso ;
         const bool C_iso = C->iso ;
         #endif
-        #ifndef GB_ISO_MASKER
         const GB_R_TYPE *restrict Cx = (GB_R_TYPE *) C->x ;
         const GB_R_TYPE *restrict Zx = (GB_R_TYPE *) Z->x ;
               GB_R_TYPE *restrict Rx = (GB_R_TYPE *) R->x ;
+        size_t rsize = R->type->size ;
         #endif
         GB_Rp_DECLARE (Rp, const) ; GB_Rp_PTR (Rp, R) ;
         GB_Rh_DECLARE (Rh, const) ; GB_Rh_PTR (Rh, R) ;
         GB_Ri_DECLARE (Ri,      ) ; GB_Ri_PTR (Ri, R) ;
         int8_t *restrict Rb = R->b ;
-        size_t rsize = R->type->size ;
 
     #else
 

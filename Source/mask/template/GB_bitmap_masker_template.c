@@ -53,6 +53,8 @@
     ASSERT (GB_C_IS_SPARSE || GB_C_IS_HYPER) ;
     ASSERT (GB_Z_IS_BITMAP || GB_Z_IS_FULL) ;
 
+    GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;
+
     //--------------------------------------------------------------------------
     // scatter C into the R bitmap
     //--------------------------------------------------------------------------
@@ -95,6 +97,11 @@
     // R<M>=Z or R<!M>=Z
     //--------------------------------------------------------------------------
 
+    #ifndef GB_JIT_KERNEL
+    #define GB_M_IS_SPARSE GB_IS_SPARSE (M)
+    #define GB_M_IS_HYPER  GB_IS_HYPERSPARSE (M)
+    #endif
+
     if (GB_M_IS_SPARSE || GB_M_IS_HYPER)
     {
 
@@ -110,6 +117,7 @@
         //      sparse  sparse      full            bitmap
 
         ASSERT (GB_MASK_COMP) ;
+        GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
 
         //----------------------------------------------------------------------
         // scatter M into the R bitmap

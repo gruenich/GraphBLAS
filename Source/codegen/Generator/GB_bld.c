@@ -15,6 +15,7 @@ GB_type_enabled
 
 // dup operator: Tx [k] += Sx [i], no typecast here
 GB_bld_dup
+GB_dup_is_first
 #define GB_BLD_COPY(Tx,k,Sx,i) Tx [k] = Sx [i]
 
 // array types for S and T

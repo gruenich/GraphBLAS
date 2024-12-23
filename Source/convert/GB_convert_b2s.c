@@ -14,7 +14,6 @@
 // extracted.  The iso case is handled by the caller.
 
 #include "GB.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #include "unaryop/GB_unop.h"
 #define GB_FREE_ALL GB_FREE_WORK (&W, W_size) ;

@@ -20,6 +20,7 @@
 
 // dup operator: Tx [k] += Sx [i], no typecast here
 #define GB_BLD_DUP(Tx,k,Sx,i)  Tx [k] = GB_FC64_mul (Tx [k], Sx [i])
+
 #define GB_BLD_COPY(Tx,k,Sx,i) Tx [k] = Sx [i]
 
 // array types for S and T

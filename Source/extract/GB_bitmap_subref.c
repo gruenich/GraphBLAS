@@ -152,7 +152,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
         ASSERT (GB_C_IS_FULL) ;
 
+        // cnvals must be declared for the omp #pragma, but it is not used
         int64_t cnvals = 0 ;
+
         #if 0
         if (GB_C_IS_BITMAP)
         {

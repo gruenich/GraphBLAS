@@ -55,7 +55,6 @@
 {
 
     // iB_first is unused if the operator is FIRST or PAIR
-    #include "include/GB_unused.h"
 
     //--------------------------------------------------------------------------
     // get A, B, M, and C

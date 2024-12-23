@@ -65,7 +65,7 @@ GrB_Info GB_select_sparse
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_MDECL (Zp, , u) ; size_t Zp_size = 0 ;
+    void *Zp = NULL ; size_t Zp_size = 0 ;
     GB_WERK_DECLARE (Work, uint64_t) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
 
@@ -114,7 +114,6 @@ GrB_Info GB_select_sparse
     Cp_is_32 = C->p_is_32 ;
     Ci_is_32 = C->i_is_32 ;
 
-    bool Ap_is_32 = A->p_is_32 ;
     bool Ai_is_32 = A->i_is_32 ;
 
     GB_Type_code aucode = Ai_is_32 ? GB_UINT32_code : GB_UINT64_code ;
@@ -146,7 +145,7 @@ GrB_Info GB_select_sparse
 
     int A_ntasks, A_nthreads ;
     double work = 8*anvec + ((opcode == GB_DIAG_idxunop_code) ? 0 : anz) ;
-    GB_SLICE_MATRIX_WORK (A, 8, work, anz) ;
+    GB_SLICE_MATRIX_WORK2 (A, 8, work, anz) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace for each task

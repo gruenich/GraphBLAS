@@ -36,7 +36,6 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == 0)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == 0) { break ; }
-#define GB_DECLARE_TERMINAL_CONST(zterminal) const uint16_t zterminal = 0
 
 // panel size
 #define GB_PANEL 16

@@ -185,13 +185,5 @@ GrB_Info GB_select_generic_bitmap
     const int nthreads
 ) ;
 
-//------------------------------------------------------------------------------
-// compiler diagnostics
-//------------------------------------------------------------------------------
-
-// Some parameters are unused for some uses of the FactoryKernels/GB_sel_*
-// functions
-#include "include/GB_unused.h"
-
 #endif
 

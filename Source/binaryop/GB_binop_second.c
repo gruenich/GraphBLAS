@@ -9,7 +9,6 @@
 
 #include "GB.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 
 GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
 (
@@ -50,7 +49,10 @@ GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
             if (op == NULL) return (NULL) ;
             // op = &op_header has been provided by the caller
             op->header_size = 0 ;
-            GrB_Info info = GB_binop_new (op,
+            #ifdef GB_DEBUG
+            GrB_Info info =
+            #endif
+            GB_binop_new (op,
                 NULL,               // op->binop_function is NULL for SECOND_UDT
                 type, type, type,   // type is user-defined
                 type->name,         // same name as type

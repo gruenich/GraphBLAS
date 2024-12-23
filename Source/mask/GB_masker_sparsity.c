@@ -15,7 +15,7 @@
 // as called by GB_masker.
 
 // C is sparse or hypersparse on input.  It is never bitmap or full; that case
-// is handled by GB_subassign and GB_bitmap_assing instead.  R can be
+// is handled by GB_subassign and GB_bitmap_assign instead.  R can be
 // constructed as sparse, hypersparse, or bitmap (not full).  M and Z can have
 // any sparsity pattern.
 

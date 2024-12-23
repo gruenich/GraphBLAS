@@ -252,19 +252,14 @@
         switch (opcode)
         {
 
-            case GB_AINV_unop_code :      // z = -x, all 13 types
+            case GB_AINV_unop_code :      // z = -x, all signed types
 
                 switch (code1)
                 {
-                    GB_CASE_BOOL   (_ainv, _bool  , bool      )
                     GB_CASE_INT8   (_ainv, _int8  , int8_t    )
                     GB_CASE_INT16  (_ainv, _int16 , int16_t   )
                     GB_CASE_INT32  (_ainv, _int32 , int32_t   )
                     GB_CASE_INT64  (_ainv, _int64 , int64_t   )
-                    GB_CASE_UINT8  (_ainv, _uint8 , uint8_t   )
-                    GB_CASE_UINT16 (_ainv, _uint16, uint16_t  )
-                    GB_CASE_UINT32 (_ainv, _uint32, uint32_t  )
-                    GB_CASE_UINT64 (_ainv, _uint64, uint64_t  )
                     GB_CASE_FP32   (_ainv, _fp32  , float     )
                     GB_CASE_FP64   (_ainv, _fp64  , double    )
                     GB_CASE_FC32   (_ainv, _fc32  , GxB_FC32_t)
@@ -273,19 +268,10 @@
                 }
                 break ;
 
-            case GB_MINV_unop_code :      // z = 1/x, all 13 types
+            case GB_MINV_unop_code :      // z = 1/x, just floating-point types
 
                 switch (code1)
                 {
-                    GB_CASE_BOOL   (_minv, _bool  , bool      )
-                    GB_CASE_INT8   (_minv, _int8  , int8_t    )
-                    GB_CASE_INT16  (_minv, _int16 , int16_t   )
-                    GB_CASE_INT32  (_minv, _int32 , int32_t   )
-                    GB_CASE_INT64  (_minv, _int64 , int64_t   )
-                    GB_CASE_UINT8  (_minv, _uint8 , uint8_t   )
-                    GB_CASE_UINT16 (_minv, _uint16, uint16_t  )
-                    GB_CASE_UINT32 (_minv, _uint32, uint32_t  )
-                    GB_CASE_UINT64 (_minv, _uint64, uint64_t  )
                     GB_CASE_FP32   (_minv, _fp32  , float     )
                     GB_CASE_FP64   (_minv, _fp64  , double    )
                     GB_CASE_FC32   (_minv, _fc32  , GxB_FC32_t)
@@ -294,40 +280,25 @@
                 }
                 break ;
 
-            case GB_ABS_unop_code :       // z = abs (x), for all but complex
+            case GB_ABS_unop_code :       // z = abs (x), signed, not cmplx
 
                 switch (code1)
                 {
-                    GB_CASE_BOOL   (_abs, _bool  , bool    )
                     GB_CASE_INT8   (_abs, _int8  , int8_t  )
                     GB_CASE_INT16  (_abs, _int16 , int16_t )
                     GB_CASE_INT32  (_abs, _int32 , int32_t )
                     GB_CASE_INT64  (_abs, _int64 , int64_t )
-                    GB_CASE_UINT8  (_abs, _uint8 , uint8_t )
-                    GB_CASE_UINT16 (_abs, _uint16, uint16_t)
-                    GB_CASE_UINT32 (_abs, _uint32, uint32_t)
-                    GB_CASE_UINT64 (_abs, _uint64, uint64_t)
                     GB_CASE_FP32   (_abs, _fp32  , float   )
                     GB_CASE_FP64   (_abs, _fp64  , double  )
                     default: ;
                 }
                 break ;
 
-            case GB_LNOT_unop_code :      // z = ! (x != 0), no complex case
+            case GB_LNOT_unop_code :      // z = !x, boolean only
 
                 switch (code1)
                 {
                     GB_CASE_BOOL   (_lnot, _bool  , bool    )
-                    GB_CASE_INT8   (_lnot, _int8  , int8_t  )
-                    GB_CASE_INT16  (_lnot, _int16 , int16_t )
-                    GB_CASE_INT32  (_lnot, _int32 , int32_t )
-                    GB_CASE_INT64  (_lnot, _int64 , int64_t )
-                    GB_CASE_UINT8  (_lnot, _uint8 , uint8_t )
-                    GB_CASE_UINT16 (_lnot, _uint16, uint16_t)
-                    GB_CASE_UINT32 (_lnot, _uint32, uint32_t)
-                    GB_CASE_UINT64 (_lnot, _uint64, uint64_t)
-                    GB_CASE_FP32   (_lnot, _fp32  , float   )
-                    GB_CASE_FP64   (_lnot, _fp64  , double  )
                     default: ;
                 }
                 break ;
@@ -336,10 +307,6 @@
 
                 switch (code1)
                 {
-                    GB_CASE_INT8   (_bnot, _int8  , int8_t  )
-                    GB_CASE_INT16  (_bnot, _int16 , int16_t )
-                    GB_CASE_INT32  (_bnot, _int32 , int32_t )
-                    GB_CASE_INT64  (_bnot, _int64 , int64_t )
                     GB_CASE_UINT8  (_bnot, _uint8 , uint8_t )
                     GB_CASE_UINT16 (_bnot, _uint16, uint16_t)
                     GB_CASE_UINT32 (_bnot, _uint32, uint32_t)

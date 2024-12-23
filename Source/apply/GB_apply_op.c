@@ -19,7 +19,6 @@
 
 #include "apply/GB_apply.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
@@ -155,7 +154,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     // determine number of threads to use and slice the A matrix if needed
     //--------------------------------------------------------------------------
 
-    int64_t anvec = A->nvec ;
+    // int64_t anvec = A->nvec ;
     int A_ntasks = 0 ;
     int A_nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
@@ -166,12 +165,6 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
     if (GB_OPCODE_IS_POSITIONAL (opcode))
     { 
         thunk = GB_positional_offset (opcode, scalar, &depends_on_j) ;
-    }
-
-    if (depends_on_j)
-    { 
-        // slice the entries for each task
-        GB_SLICE_MATRIX (A, 32) ;
     }
 
     //--------------------------------------------------------------------------
@@ -211,6 +204,12 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
             GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
             GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
             int64_t avlen = A->vlen ;
+
+            if (depends_on_j)
+            { 
+                // slice the entries for each task
+                GB_SLICE_MATRIX2 (A, 32) ;
+            }
 
             //------------------------------------------------------------------
             // Cx = positional_op (A)
@@ -776,12 +775,19 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         if (info == GrB_NO_VALUE)
         { 
+
+            if (depends_on_j)
+            { 
+                // slice the entries for each task
+                GB_SLICE_MATRIX2 (A, 32) ;
+            }
+
             info = GB_apply_unop_jit (Cx, ctype, op, flipij, A,
                 ythunk, A_ek_slicing, A_ntasks, A_nthreads) ;
         }
 
         //----------------------------------------------------------------------
-        // user-defined -nary op via the generic kernel
+        // user-defined index-unary op via the generic kernel
         //----------------------------------------------------------------------
 
         if (info == GrB_NO_VALUE)

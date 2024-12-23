@@ -45,8 +45,8 @@
     // A and B are sparse or hypersparse, not bitmap or full, but individual
     // vectors of A and B might have all entries present (adense and/or
     // bdense).
-    ASSERT (A_is_sparse || A_is_hyper) ;
-    ASSERT (B_is_sparse || B_is_hyper) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
 
     int64_t pM_start = j * vlen ;
 

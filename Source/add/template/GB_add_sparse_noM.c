@@ -32,9 +32,8 @@
     // A and B are both sparse or hypersparse, not bitmap or full, but
     // individual vectors of A and B might have all entries present (adense
     // and/or bdense).
-
-    ASSERT (A_is_sparse || A_is_hyper) ;
-    ASSERT (B_is_sparse || B_is_hyper) ;
+    ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
+    ASSERT (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B)) ;
 
     #if ( GB_ADD_PHASE == 1 )
 
@@ -115,6 +114,7 @@
             #endif
             #endif
         }
+        #ifndef GB_ISO_ADD
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < bjnz ; p++)
         { 
@@ -122,12 +122,11 @@
             int64_t i = GB_IGET (Bi, pB + p) ;
             int64_t ii = i - iA_first ;
             ASSERT (GB_IGET (Ai, pA + ii) == i) ;
-            #ifndef GB_ISO_ADD
             GB_LOAD_A (aij, Ax, pA + ii, A_iso) ;
             GB_LOAD_B (bij, Bx, pB + p, B_iso) ;
             GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
-            #endif
         }
+        #endif
         #endif
 
     }
@@ -169,6 +168,7 @@
             #endif
             #endif
         }
+        #ifndef GB_ISO_ADD
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = 0 ; p < ajnz ; p++)
         { 
@@ -176,12 +176,11 @@
             int64_t i = GB_IGET (Ai, pA + p) ;
             int64_t ii = i - iB_first ;
             ASSERT (GB_IGET (Bi, pB + ii) == i) ;
-            #ifndef GB_ISO_ADD
             GB_LOAD_A (aij, Ax, pA + p, A_iso) ;
             GB_LOAD_B (bij, Bx, pB + ii, B_iso) ;
             GB_EWISEOP (Cx, pC + ii, aij, bij, i, j) ;
-            #endif
         }
+        #endif
         #endif
 
     }

@@ -14,7 +14,6 @@
 
 #include "extract/GB_subref.h"
 #include "sort/GB_sort.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 
 GrB_Info GB_subref_phase3   // C=A(I,J)

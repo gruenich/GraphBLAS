@@ -29,7 +29,6 @@
 #include "ewise/GB_ewise.h"
 #include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
@@ -171,11 +170,9 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     (*Cp_handle) = NULL ;
 
     // add Ch as the hypersparse list for C, from GB_emult_08_phase0
-    printf ("C->h is %p\n", (void *) C->h) ;
     if (C_is_hyper)
     { 
         // C->h is currently shallow; a copy is made at the end
-        printf ("Ch is %p\n", (void *) Ch) ;
         C->h = Ch ; C->h_size = Ch_size ;
         C->h_shallow = true ;
         C->nvec = Cnvec ;

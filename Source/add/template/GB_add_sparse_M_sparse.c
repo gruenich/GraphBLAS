@@ -98,8 +98,10 @@
         // copy the pattern into C (:,j)
         int64_t pC_start = pC ;
         int64_t pM_start = pM ;
+        #if defined ( GB_DEBUG ) || !defined ( GB_ISO_ADD )
         int64_t pA_offset = pA_start - iA_first ;
         int64_t pB_offset = pB_start - iB_first ;
+        #endif
 
         if (adense && M_is_B)
         { 

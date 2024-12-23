@@ -22,7 +22,6 @@
 // Rp is either freed by phase2, or transplanted into R.
 
 #include "mask/GB_mask.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #include "include/GB_masker_shared_definitions.h"
 

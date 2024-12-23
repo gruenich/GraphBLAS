@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add.h: definitiions for GB_add and related functions
+// GB_add.h: definitions for GB_add and related functions
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

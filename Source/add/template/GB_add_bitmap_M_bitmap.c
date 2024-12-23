@@ -68,7 +68,7 @@
     //      bitmap  full        full            full  
 
 
-    ASSERT (M_is_bitmap || M_is_full) ;
+    ASSERT (GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
     ASSERT (A_is_bitmap || A_is_full || B_is_bitmap || B_is_full) ;
 
     #undef  GB_GET_MIJ     

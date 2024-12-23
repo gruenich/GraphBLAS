@@ -19,7 +19,6 @@
 #include "ewise/GB_ewise.h"
 #include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 #include "generic/GB_generic.h"
 
 GrB_Info GB_emult_generic       // generic emult

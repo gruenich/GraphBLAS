@@ -15,7 +15,6 @@
 // A->p_is_32 and A->i_is_32 are unchanged.
 
 #include "GB.h"
-#include "include/GB_unused.h"
 
 GrB_Info GB_hyper_realloc
 (
@@ -43,9 +42,10 @@ GrB_Info GB_hyper_realloc
         ASSERT (!A->p_shallow) ;
         ASSERT (!A->h_shallow) ;
 
-        // old size of A->p and A->h
-        int64_t plen_old = A->plen ;
-        plen_new = GB_IMAX (1, plen_new) ;
+        #ifdef GB_DEBUG
+        int64_t plen_old = A->plen ;            // old size of A->p and A->h
+        #endif
+        plen_new = GB_IMAX (1, plen_new) ;      // new size of A->p and A->h
         size_t psize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 

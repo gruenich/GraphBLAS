@@ -36,7 +36,6 @@
 #define GB_MONOID_IS_TERMINAL 1
 #define GB_TERMINAL_CONDITION(z,zterminal) (z == false)
 #define GB_IF_TERMINAL_BREAK(z,zterminal) if (z == false) { break ; }
-#define GB_DECLARE_TERMINAL_CONST(zterminal) const bool zterminal = false
 
 // panel size
 #define GB_PANEL 8

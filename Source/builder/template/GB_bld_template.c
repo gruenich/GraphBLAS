@@ -20,9 +20,6 @@
 
 {
 
-    // k unused for some uses of this template
-    #include "include/GB_unused.h"
-
     #ifndef GB_NO_DUPLICATES
     #define GB_NO_DUPLICATES (ndupl == 0)
     #endif
@@ -131,7 +128,7 @@
                     GB_IGET (I_work, t+1) == duplicate_entry ; t++)
                 { 
                     // assemble the duplicate tuple
-                    #ifndef GB_ISO_BUILD
+                    #if !(defined (GB_ISO_BUILD) || defined (GB_DUP_IS_FIRST))
                     int64_t k = GB_K_WORK (t+1) ;
                     // Tx [my_tnz] += Sx [k], typecasting as needed
                     GB_BLD_DUP (Tx, my_tnz, Sx, k) ;

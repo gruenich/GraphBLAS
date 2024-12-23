@@ -31,7 +31,6 @@
 
 #include "add/GB_add.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
@@ -116,11 +115,10 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (Ch_handle != NULL) ;
 
     GB_MDECL (Cp, , u) ;
-    GB_MDECL (Ch, , u) ;
     Cp = (*Cp_handle) ;
-    Ch = (*Ch_handle) ;
     GB_IPTR (Cp, Cp_is_32) ;
-    GB_IPTR (Ch, Ci_is_32) ;
+
+    void * Ch = (*Ch_handle) ;
 
     //--------------------------------------------------------------------------
     // get the opcode
@@ -316,15 +314,15 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         double chunk = GB_Context_chunk ( ) ;
         if (M != NULL && (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)))
         { 
-            GB_SLICE_MATRIX (M, 8) ;
+            GB_SLICE_MATRIX2 (M, 8) ;
         }
         if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
         { 
-            GB_SLICE_MATRIX (A, 8) ;
+            GB_SLICE_MATRIX2 (A, 8) ;
         }
         if (GB_IS_SPARSE (B) || GB_IS_HYPERSPARSE (B))
         { 
-            GB_SLICE_MATRIX (B, 8) ;
+            GB_SLICE_MATRIX2 (B, 8) ;
         }
     }
 

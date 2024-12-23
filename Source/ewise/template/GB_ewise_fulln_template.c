@@ -9,8 +9,6 @@
 
 //  This template is not used for any generic kernels.
 
-#include "include/GB_unused.h"
-
 {
 
     //--------------------------------------------------------------------------

@@ -28,7 +28,6 @@
 // R is iso if both C and Z are iso and zij == cij.
 
 #include "mask/GB_mask.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #include "include/GB_masker_shared_definitions.h"
 
@@ -199,11 +198,11 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
         int nthreads_max = GB_Context_nthreads_max ( ) ;
         double chunk = GB_Context_chunk ( ) ;
         int64_t C_nnz_held = GB_nnz_held (C) ;
-        GB_SLICE_MATRIX_WORK (C, 8, C_nnz_held + C->nvec, C_nnz_held) ;
+        GB_SLICE_MATRIX_WORK2 (C, 8, C_nnz_held + C->nvec, C_nnz_held) ;
         if (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M))
         {
             int64_t M_nnz_held = GB_nnz_held (M) ;
-            GB_SLICE_MATRIX_WORK (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
+            GB_SLICE_MATRIX_WORK2 (M, 8, M_nnz_held + M->nvec, M_nnz_held) ;
         }
     }
 

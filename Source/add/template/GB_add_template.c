@@ -35,51 +35,32 @@
     int taskid ;
 
     GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
-    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
     const int8_t *restrict Ab = A->b ;
     const int64_t vlen = A->vlen ;
 
     #ifdef GB_JIT_KERNEL
-    #define A_is_hyper  GB_A_IS_HYPER
-    #define A_is_sparse GB_A_IS_SPARSE
     #define A_is_bitmap GB_A_IS_BITMAP
-    #define A_is_full   GB_A_IS_FULL
-    #define A_iso       GB_A_ISO
     #define Ai_is_32    (GB_Ai_BITS == 32)
     #else
-    const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
-    const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    const bool A_is_full = GB_IS_FULL (A) ;
     // unlike GB_emult, both A and B may be iso
-    const bool A_iso = A->iso ;
     const bool Ai_is_32 = A->i_is_32 ;
     #endif
 
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
-    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
     GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     const int8_t *restrict Bb = B->b ;
 
     #ifdef GB_JIT_KERNEL
-    #define B_is_hyper  GB_B_IS_HYPER
-    #define B_is_sparse GB_B_IS_SPARSE
     #define B_is_bitmap GB_B_IS_BITMAP
-    #define B_is_full   GB_B_IS_FULL
-    #define B_iso       GB_B_ISO
     #define Bi_is_32    (GB_Bi_BITS == 32)
     #else
-    const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
-    const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    const bool B_is_full = GB_IS_FULL (B) ;
-    const bool B_iso = B->iso ;
     const bool Bi_is_32 = B->i_is_32 ;
     #endif
 
     GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
-    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
     GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
     const int8_t *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
@@ -88,16 +69,12 @@
     #ifdef GB_JIT_KERNEL
     #define M_is_hyper  GB_M_IS_HYPER
     #define M_is_sparse GB_M_IS_SPARSE
-    #define M_is_bitmap GB_M_IS_BITMAP
-    #define M_is_full   GB_M_IS_FULL
     #define M_is_sparse_or_hyper (GB_M_IS_SPARSE || GB_M_IS_HYPER)
     #define Mask_comp   GB_MASK_COMP
     #define Mask_struct GB_MASK_STRUCT
     #else
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
-    const bool M_is_bitmap = GB_IS_BITMAP (M) ;
-    const bool M_is_full = GB_IS_FULL (M) ;
     const bool M_is_sparse_or_hyper = M_is_sparse || M_is_hyper ;
     #endif
 
@@ -125,6 +102,11 @@
 
         #ifdef GB_JIT_KERNEL
         ASSERT (!C->iso) ;
+        #define A_is_full   GB_A_IS_FULL
+        #define B_is_full   GB_B_IS_FULL
+        #else
+        const bool A_is_full = GB_IS_FULL (A) ;
+        const bool B_is_full = GB_IS_FULL (B) ;
         #endif
 
         #ifdef GB_ISO_ADD
@@ -134,7 +116,18 @@
         const GB_B_TYPE *restrict Bx = (GB_B_TYPE *) B->x ;
               GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
         ASSERT (!C->iso) ;
+        #ifdef GB_JIT_KERNEL
+        #define A_iso GB_A_ISO
+        #define B_iso GB_B_ISO
+        #else
+        const bool A_iso = A->iso ;
+        const bool B_iso = B->iso ;
         #endif
+        #endif
+
+        GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+        GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+        GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
 
         GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
         GB_Ch_DECLARE (Ch, const) ; GB_Ch_PTR (Ch, C) ;

@@ -49,18 +49,18 @@
 
 #undef GB_COPY_Z
 #if defined ( GB_PHASE_1_OF_2 )
-    #define GB_COPY_Z                                           \
+    #define GB_COPY_Z(i)                                        \
     {                                                           \
         rjnz++ ;                                                \
     }
 #elif defined ( GB_ISO_MASKER )
-    #define GB_COPY_Z                                           \
+    #define GB_COPY_Z(i)                                        \
     {                                                           \
         GB_ISET (Ri, pR, i) ;                                   \
         pR++ ;                                                  \
     }
 #else
-    #define GB_COPY_Z                                           \
+    #define GB_COPY_Z(i)                                        \
     {                                                           \
         GB_ISET (Ri, pR, i) ;                                   \
         GB_COPY_Z_TO_R (Rx, pR, Zx, pZ, Z_iso, rsize) ;         \
@@ -107,18 +107,18 @@
 
 #undef GB_COPY_C
 #if defined ( GB_PHASE_1_OF_2 )
-    #define GB_COPY_C                                           \
+    #define GB_COPY_C(i)                                        \
     {                                                           \
         rjnz++ ;                                                \
     }
 #elif defined ( GB_ISO_MASKER )
-    #define GB_COPY_C                                           \
+    #define GB_COPY_C(i)                                        \
     {                                                           \
         GB_ISET (Ri, pR, i) ;                                   \
         pR++ ;                                                  \
     }
 #else
-    #define GB_COPY_C                                           \
+    #define GB_COPY_C(i)                                        \
     {                                                           \
         GB_ISET (Ri, pR, i) ;                                   \
         GB_COPY_C_TO_R (Rx, pR, Cx, pC, C_iso, rsize) ;         \
@@ -266,11 +266,16 @@
             int64_t pZ_start = pZ ;
             bool zdense = (zjnz == len) && (zjnz > 0) ;
 
-            int64_t iZ_first = -1, iZ_last = -1 ;
+            int64_t iZ_first = -1 ;
+            #ifdef GB_DEBUG
+            int64_t iZ_last = -1 ;
+            #endif
             if (zjnz > 0)
             {
                 iZ_first = GBi_Z (Zi, pZ, vlen) ;
+                #ifdef GB_DEBUG
                 iZ_last  = GBi_Z (Zi, pZ_end-1, vlen) ;
+                #endif
             }
 
             //------------------------------------------------------------------
@@ -326,7 +331,7 @@
                 // Otherwise, R is bitmap and not computed here, but in
                 // GB_bitmap_masker_template instead.
 
-                ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                 ASSERT (!GB_MASK_COMP) ;
 
                 // 2-way merge of C(:,j) and M(:,j) and direct lookup of Z
@@ -341,8 +346,7 @@
                     { 
                         // C(i,j) is present but M(i,j) is not
                         // R(i,j) = C(i,j)
-                        int64_t i = iC ;
-                        GB_COPY_C ;
+                        GB_COPY_C (iC) ;
                         pC++ ;
                     }
                     else if (iC > iM)
@@ -370,7 +374,7 @@
                         else
                         { 
                             // R(i,j) = C(i,j)
-                            GB_COPY_C ;
+                            GB_COPY_C (i) ;
                         }
                         pC++ ;
                         pM++ ;
@@ -385,7 +389,7 @@
                 { 
                     // C(i,j) is present but M(i,j) is not
                     int64_t i = GB_IGET (Ci, pC) ;
-                    GB_COPY_C ;
+                    GB_COPY_C (i) ;
                 }
                 #endif
 
@@ -612,7 +616,7 @@
 
                         // Use GB_split_binary_search so that pM can be used in
                         // the for loop with index pM in the wrapup phase.
-                        ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                        ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                         int64_t pright = pM_end - 1 ;
                         bool found ;
                         found = GB_split_binary_search (i, Mi, Mi_is_32,
@@ -635,26 +639,25 @@
                     if (iC < iZ)
                     { 
                         // C(i,j) is present but Z(i,j) is not
-                        if (!mij) GB_COPY_C ;
+                        if (!mij) GB_COPY_C (i) ;
                         pC++ ;
                     }
                     else if (iC > iZ)
                     { 
                         // Z(i,j) is present but C(i,j) is not
-                        if (mij) GB_COPY_Z ;
+                        if (mij) GB_COPY_Z (i) ;
                         pZ++ ;
                     }
                     else
                     {
                         // both C(i,j) and Z(i,j) are present
-                        int64_t i = iC ;
                         if (mij)
                         { 
-                            GB_COPY_Z ;
+                            GB_COPY_Z (iC) ;
                         }
                         else
                         { 
-                            GB_COPY_C ;
+                            GB_COPY_C (iC) ;
                         }
                         pC++ ;
                         pZ++ ;
@@ -698,7 +701,7 @@
                                 ASSERT (i == GBi_M (Mi, pM, vlen)) ;
                                 bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
-                                if (mij) GB_COPY_Z ;
+                                if (mij) GB_COPY_Z (i) ;
                             }
 
                         }
@@ -712,7 +715,7 @@
                             // This loop requires pM to start at the first
                             // entry in M(:,j) that has not yet been handled.
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             for ( ; pM < pM_end ; pM++)
                             {
                                 if (GB_MCAST (Mx, pM, msize))
@@ -722,7 +725,7 @@
                                     bool found ;
                                     found = GB_binary_search (i, Zi, Zi_is_32,
                                         &pZ, &pright) ;
-                                    if (found) GB_COPY_Z ;
+                                    if (found) GB_COPY_Z (i) ;
                                 }
                             }
 
@@ -734,7 +737,7 @@
                             // Method04e: M(:,j) is much denser than Z(:,j)
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
                                 // wrapup, C now empty, M(:,j) much denser than
@@ -746,7 +749,7 @@
                                 found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
-                                if (mij) GB_COPY_Z ;
+                                if (mij) GB_COPY_Z (i) ;
                             }
 
                         }
@@ -757,7 +760,7 @@
                             // Method04f: M(:,j) and Z(:,j) about same # entries
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             while (pM < pM_end && pZ < pZ_end)
                             {
                                 int64_t iM = GB_IGET (Mi, pM) ;
@@ -775,7 +778,7 @@
                                 else
                                 { 
                                     // both M(i,j) and Z(i,j) exist
-                                    if (GB_MCAST (Mx, pM, msize)) GB_COPY_Z ;
+                                    if (GB_MCAST (Mx, pM, msize)) GB_COPY_Z (i);
                                     pM++ ;
                                     pZ++ ;
                                 }
@@ -805,7 +808,7 @@
                                 ASSERT (i == GBi_M (Mi, pM, vlen)) ;
                                 bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
-                                if (!mij) GB_COPY_Z ;   // mask is complemented
+                                if (!mij) GB_COPY_Z (i) ; // mask complemented
                             }
                         }
                         else
@@ -815,7 +818,7 @@
                             // Method04h: M(:,j) is sparse
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
                                 int64_t i = GB_IGET (Zi, pZ) ;
@@ -825,7 +828,7 @@
                                 found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
-                                if (!mij) GB_COPY_Z ;   // mask is complemented
+                                if (!mij) GB_COPY_Z (i) ; // mask complemented
                             }
                         }
                     }
@@ -860,7 +863,7 @@
                                 ASSERT (i == GBi_M (Mi, pM, vlen)) ;
                                 bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
-                                if (mij) GB_COPY_C ;
+                                if (mij) GB_COPY_C (i) ;
                             }
 
                         }
@@ -871,7 +874,7 @@
                             // Method04j: C(:,j) is much denser than M(:,j)
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             for ( ; pM < pM_end ; pM++)
                             {
                                 if (GB_MCAST (Mx, pM, msize))
@@ -881,7 +884,7 @@
                                     bool found ;
                                     found = GB_binary_search (i, Ci, Ci_is_32,
                                         &pC, &pright) ;
-                                    if (found) GB_COPY_C ;
+                                    if (found) GB_COPY_C (i) ;
                                 }
                             }
 
@@ -893,7 +896,7 @@
                             // Method04k: M(:,j) is much denser than C(:,j)
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = GB_IGET (Ci, pC) ;
@@ -903,7 +906,7 @@
                                 found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
-                                if (mij) GB_COPY_C ;
+                                if (mij) GB_COPY_C (i) ;
                             }
 
                         }
@@ -914,7 +917,7 @@
                             // Method04l: M(:,j) and C(:,j) about same # entries
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             while (pM < pM_end && pC < pC_end)
                             {
                                 int64_t iM = GB_IGET (Mi, pM) ;
@@ -932,7 +935,7 @@
                                 else
                                 { 
                                     // both M(i,j) and C(i,j) exist
-                                    if (GB_MCAST (Mx, pM, msize)) GB_COPY_C ;
+                                    if (GB_MCAST (Mx, pM, msize)) GB_COPY_C (i);
                                     pM++ ;
                                     pC++ ;
                                 }
@@ -962,7 +965,7 @@
                                 ASSERT (i == GBi_M (Mi, pM, vlen)) ;
                                 bool mij = GBb_M (Mb, pM) &&
                                            GB_MCAST (Mx, pM, msize) ;
-                                if (!mij) GB_COPY_C ;
+                                if (!mij) GB_COPY_C (i) ;
                             }
                         }
                         else
@@ -972,7 +975,7 @@
                             // Method04n: M(:,j) is sparse
                             //--------------------------------------------------
 
-                            ASSERT (GB_M_IS_SPARSE || GB_M_IS_HYPER) ;
+                            ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = GB_IGET (Ci, pC) ;
@@ -983,7 +986,7 @@
                                 found = GB_binary_search (i, Mi, Mi_is_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
-                                if (!mij) GB_COPY_C ;
+                                if (!mij) GB_COPY_C (i) ;
                             }
                         }
                     }

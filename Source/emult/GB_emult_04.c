@@ -27,7 +27,6 @@
 #include "ewise/GB_ewise.h"
 #include "emult/GB_emult.h"
 #include "binaryop/GB_binop.h"
-#include "include/GB_unused.h"
 #include "jitifyer/GB_stringify.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"

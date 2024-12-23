@@ -13,8 +13,6 @@
 // No panel is used.  The workspace W always has the same type as the ztype
 // of the monoid, GB_Z_TYPE.
 
-#include "include/GB_unused.h"
-
 // z += W [i], no typecast
 #ifndef GB_ADD_ARRAY_TO_SCALAR
 #define GB_ADD_ARRAY_TO_SCALAR(z,W,i) GB_UPDATE (z, W [i])
@@ -43,7 +41,9 @@
     const bool A_has_zombies = (A->nzombies > 0) ;
     #endif
     ASSERT (!A->iso) ;
+    #if GB_MONOID_IS_TERMINAL
     GB_DECLARE_TERMINAL_CONST (zterminal) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // reduce A to a scalar

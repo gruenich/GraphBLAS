@@ -16,8 +16,6 @@
 
 // The Panel and W arrays always have the same type as z, GB_Z_TYPE.
 
-#include "include/GB_unused.h"
-
 // default panel size
 #ifndef GB_PANEL
 #define GB_PANEL 16
@@ -35,7 +33,9 @@
     ASSERT (anz > 0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
     ASSERT (A->nzombies == 0) ;
+    #if GB_MONOID_IS_TERMINAL
     GB_DECLARE_TERMINAL_CONST (zterminal) ;
+    #endif
 
     #if GB_IS_ANY_MONOID
     // the ANY monoid can take any entry, and terminate immediately

@@ -30,7 +30,6 @@
 #include "concat/GB_concat.h"
 #include "jitifyer/GB_stringify.h"
 #include "apply/GB_apply.h"
-#include "include/GB_unused.h"
 
 GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
 (
@@ -293,13 +292,18 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             // The tile A appears in vectors cvstart:cvend-1 of C, and indices
             // cistart:ciend-1.
 
-            int64_t cvstart, cvend, cistart, ciend ;
+            #ifdef GB_DEBUG
+            int64_t cvend ;
+            #endif
+            int64_t cvstart, cistart, ciend ;
             if (csc)
             { 
                 // C and A are held by column
                 // Tiles is row-major and accessed in column order
                 cvstart = Tile_cols [outer] ;
+                #ifdef GB_DEBUG
                 cvend   = Tile_cols [outer+1] ;
+                #endif
                 cistart = Tile_rows [inner] ;
                 ciend   = Tile_rows [inner+1] ;
             }
@@ -308,7 +312,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // C and A are held by row
                 // Tiles is row-major and accessed in row order
                 cvstart = Tile_rows [outer] ;
+                #ifdef GB_DEBUG
                 cvend   = Tile_rows [outer+1] ;
+                #endif
                 cistart = Tile_cols [inner] ;
                 ciend   = Tile_cols [inner+1] ;
             }
@@ -320,7 +326,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             // slice the tile
             //------------------------------------------------------------------
 
+            #ifdef GB_DEBUG
             int64_t avdim = cvend - cvstart ;
+            #endif
             int64_t avlen = ciend - cistart ;
             ASSERT (avdim == A->vdim) ;
             ASSERT (avlen == A->vlen) ;

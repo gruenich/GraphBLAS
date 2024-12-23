@@ -13,7 +13,6 @@
 #include "zstd_wrapper/GB_zstd.h"
 #include "JITpackage/GB_JITpackage.h"
 #include "jitifyer/GB_file.h"
-#include "include/GB_unused.h"
 
 typedef GB_JIT_KERNEL_USER_OP_PROTO ((*GB_user_op_f)) ;
 typedef GB_JIT_KERNEL_USER_TYPE_PROTO ((*GB_user_type_f)) ;
@@ -2423,6 +2422,9 @@ void GB_jitifyer_table_free (bool freeall)
 // will be slow, however.  This option does not disable any PreJIT kernels, so
 // if fast user-defined kernels are required, they can be used with the PreJIT
 // mechanism; see the GraphBLAS User Guide for details.
+
+// The return result is unused.
+#include "include/GB_unused.h"
 
 static void GB_jitifyer_command (char *command)
 { 

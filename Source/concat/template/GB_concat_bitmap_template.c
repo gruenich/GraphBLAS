@@ -18,18 +18,20 @@
     ASSERT (GB_IS_BITMAP (C)) ;
 
     #ifdef GB_JIT_KERNEL
-    #define A_iso GB_A_ISO
     const int64_t avdim = A->vdim ;
     const int64_t avlen = A->vlen ;
     const int64_t cvlen = C->vlen ;
     const int64_t anz = avlen * avdim ;
-    #else
-    const bool A_iso = A->iso ;
     #endif
 
     #ifndef GB_ISO_CONCAT
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
+    #ifdef GB_JIT_KERNEL
+    #define A_iso GB_A_ISO
+    #else
+    const bool A_iso = A->iso ;
+    #endif
     #endif
 
     int8_t *restrict Cb = C->b ;

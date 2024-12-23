@@ -64,7 +64,7 @@ static inline void GB_ek_slice_ntasks
 
 // chunk and nthreads_max must already be defined.
 
-#define GB_SLICE_MATRIX_WORK(X,ntasks_per_thread,work,xnz_held)               \
+#define GB_SLICE_MATRIX_WORK2(X,ntasks_per_thread,work,xnz_held)              \
     GB_ek_slice_ntasks (&(X ## _nthreads), &(X ## _ntasks), xnz_held,         \
         ntasks_per_thread, work, chunk, nthreads_max) ;                       \
     GB_WERK_PUSH (X ## _ek_slicing, 3*(X ## _ntasks)+1, int64_t) ;            \
@@ -74,7 +74,10 @@ static inline void GB_ek_slice_ntasks
         GB_FREE_ALL ;                                                         \
         return (GrB_OUT_OF_MEMORY) ;                                          \
     }                                                                         \
-    GB_ek_slice (X ## _ek_slicing, X, X ## _ntasks) ;                         \
+    GB_ek_slice (X ## _ek_slicing, X, X ## _ntasks) ;
+
+#define GB_SLICE_MATRIX_WORK(X,ntasks_per_thread,work,xnz_held)               \
+    GB_SLICE_MATRIX_WORK2 (X,ntasks_per_thread,work,xnz_held)                 \
     const int64_t *kfirst_ ## X ## slice = X ## _ek_slicing ;                 \
     const int64_t *klast_  ## X ## slice = X ## _ek_slicing + X ## _ntasks ;  \
     const int64_t *pstart_ ## X ## slice = X ## _ek_slicing + X ## _ntasks*2 ;
@@ -83,6 +86,11 @@ static inline void GB_ek_slice_ntasks
     const int64_t X ## _held = GB_nnz_held (X) ;                              \
     const double  X ## _wrk = X ## _held + X->nvec ;                          \
     GB_SLICE_MATRIX_WORK (X, ntasks_per_thread, X ## _wrk, X ## _held)
+
+#define GB_SLICE_MATRIX2(X,ntasks_per_thread)                                 \
+    const int64_t X ## _held = GB_nnz_held (X) ;                              \
+    const double  X ## _wrk = X ## _held + X->nvec ;                          \
+    GB_SLICE_MATRIX_WORK2 (X, ntasks_per_thread, X ## _wrk, X ## _held)
 
 //------------------------------------------------------------------------------
 // GB_GET_PA_AND_PC: find the part of A(:,k) and C(:,k) for this task
