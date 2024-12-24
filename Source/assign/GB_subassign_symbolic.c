@@ -103,10 +103,13 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     // this body of code explains what S contains.
     // S is nI-by-nJ where nI = length (I) and nJ = length (J)
 
+    const bool I_is_32 = false ;    // FIXME
+    const bool J_is_32 = false ;    // FIXME
+
     int64_t nI, Icolon [3], nJ, Jcolon [3] ;
     int Ikind, Jkind ;
-    GB_ijlength (I, ni, C->vlen, &nI, &Ikind, Icolon) ;
-    GB_ijlength (J, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
+    GB_ijlength (I, I_is_32, ni, C->vlen, &nI, &Ikind, Icolon) ;
+    GB_ijlength (J, J_is_32, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
 
     // get S
     const uint64_t *restrict Sp = S->p ;    // FIXME

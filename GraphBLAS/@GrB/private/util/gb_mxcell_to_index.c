@@ -202,7 +202,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
                 if (iinc != 0 && ibegin <= iend)
                 { 
                     // the list is non-empty, for example, 4:2:9 = [4 6 8]
-                    // nI = length of the expanded list (see GB_ijproperties),
+                    // nI = length of the expanded list,
                     // which is 3 for the list 4:2:9.
                     int64_t nI = ((iend - ibegin) / iinc) + 1 ;
                     // I_max = GB_ijlist (NULL, nI-1, GB_STRIDE, I),

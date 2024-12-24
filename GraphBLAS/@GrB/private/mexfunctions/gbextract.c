@@ -152,6 +152,9 @@ void mexFunction
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
+    const bool I_is_32 = false ;    // FIXME
+    const bool J_is_32 = false ;    // FIXME
+
     if (C == NULL)
     { 
         // Cin is not present: determine its size, same type as A.
@@ -160,8 +163,10 @@ void mexFunction
         int I_kind, J_kind ;
         int64_t I_colon [3], J_colon [3] ;
         GrB_Index cnrows, cncols ;
-        GB_ijlength (I, ni, anrows, (int64_t *) &cnrows, &I_kind, I_colon) ;
-        GB_ijlength (J, nj, ancols, (int64_t *) &cncols, &J_kind, J_colon) ;
+        GB_ijlength (I, I_is_32, ni, anrows, (int64_t *) &cnrows, &I_kind,
+            I_colon) ;
+        GB_ijlength (J, J_is_32, nj, ancols, (int64_t *) &cncols, &J_kind,
+            J_colon) ;
         ctype = atype ;
 
         // create the matrix C and set its format and sparsity

@@ -173,10 +173,12 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
         // the opaque GrB_Scalar has no entry
         //----------------------------------------------------------------------
 
+        const bool I_is_32 = false ;    // FIXME
+
         // determine the properites of the I index list
         int64_t nRows, RowColon [3] ;
         int RowsKind ;
-        GB_ijlength (I, ni, GB_NROWS (w), &nRows, &RowsKind, RowColon);
+        GB_ijlength (I, I_is_32, ni, GB_NROWS (w), &nRows, &RowsKind, RowColon);
 
         // create an empty matrix S of the right size, and use matrix assign
         struct GB_Matrix_opaque S_header ;

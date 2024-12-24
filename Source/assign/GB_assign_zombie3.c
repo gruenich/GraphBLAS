@@ -62,6 +62,8 @@ GrB_Info GB_assign_zombie3
     ASSERT (!GB_PENDING (M)) ; 
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
+    const bool I_is_32 = false ;  // FIXME
+
     //--------------------------------------------------------------------------
     // get C (:,j)
     //--------------------------------------------------------------------------
@@ -144,7 +146,8 @@ GrB_Info GB_assign_zombie3
                 // C(i,j) is outside C(I,j) if i is not in the list I
                 //--------------------------------------------------------------
 
-                bool i_outside = !GB_ij_is_in_list (I, nI, i, Ikind, Icolon) ;
+                bool i_outside = !GB_ij_is_in_list (I, I_is_32, nI, i, Ikind,
+                    Icolon) ;
                 if (i_outside)
                 {
 

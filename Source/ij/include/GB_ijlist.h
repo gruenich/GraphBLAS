@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #ifndef GB_IJLIST_H
 #define GB_IJLIST_H
@@ -27,11 +27,10 @@
 #define GB_COL_ASSIGN 3
 
 //------------------------------------------------------------------------------
-// GB_ijlist
+// GB_ijlist: given k, return the kth item i = I [k] in the list
 //------------------------------------------------------------------------------
 
-// given k, return the kth item i = I [k] in the list
-static inline int64_t GB_ijlist     // get the kth item in a list of indices
+static inline int64_t GB_ijlist // get the kth item in a list of indices
 (
     const uint64_t *I,          // list of indices
     const int64_t k,            // return i = I [k], the kth item in the list
@@ -62,6 +61,18 @@ static inline int64_t GB_ijlist     // get the kth item in a list of indices
         return (I [k]) ;
     }
 }
+
+//------------------------------------------------------------------------------
+// GB_IJLIST: given k, return the kth item i = I [k] in the list (32/64 bit)
+//------------------------------------------------------------------------------
+
+#define GB_IJLIST(I,k,Ikind,Icolon)                                         \
+(                                                                           \
+    (Ikind == GB_ALL) ?     (k) :                                           \
+    ((Ikind == GB_RANGE) ?  (Icolon [GxB_BEGIN] + (k)) :                    \
+    ((Ikind == GB_STRIDE) ? (Icolon [GxB_BEGIN] + (k) * Icolon [GxB_INC]) : \
+    /* else GB_LIST */      (GB_IGET (I, k))))                              \
+)
 
 #endif
 

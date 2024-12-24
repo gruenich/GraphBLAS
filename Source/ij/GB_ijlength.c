@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Determine the length of I, and process the colon notation I = begin:inc:end.
 // No error checking is done.
@@ -19,7 +19,8 @@
 
 void GB_ijlength            // get the length and kind of an index list I
 (
-    const uint64_t *I,      // list of indices (actual or implicit)
+    const void *I,          // list of indices (actual or implicit)
+    const bool I_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t ni,       // length I, or special
     const int64_t limit,    // indices must be in the range 0 to limit-1
     int64_t *nI,            // actual length of I
@@ -35,6 +36,8 @@ void GB_ijlength            // get the length and kind of an index list I
     ASSERT (I != NULL) ;
     ASSERT (limit >= 0) ;
     ASSERT (limit <= GB_NMAX) ;
+
+    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
 
     //--------------------------------------------------------------------------
     // determine the length of I
@@ -67,8 +70,10 @@ void GB_ijlength            // get the length and kind of an index list I
 
         // the array I must have size at least 2
 
-        int64_t ibegin = GB_LIMIT (I [GxB_BEGIN]) ;
-        int64_t iend   = GB_LIMIT (I [GxB_END  ]) ;
+        int64_t ibegin = GB_IGET (I, GxB_BEGIN) ;
+        int64_t iend   = GB_IGET (I, GxB_END  ) ;
+        ibegin = GB_LIMIT (ibegin) ;
+        iend   = GB_LIMIT (iend) ;
 
         ASSERT (ibegin >= 0) ;
 
@@ -106,9 +111,12 @@ void GB_ijlength            // get the length and kind of an index list I
         // The array I must have size at least 3.  It is an unsigned uint64_t
         // array, so integers must be positive.
 
-        int64_t ibegin = GB_LIMIT (I [GxB_BEGIN]) ;
-        int64_t iinc   = GB_LIMIT (I [GxB_INC  ]) ;
-        int64_t iend   = GB_LIMIT (I [GxB_END  ]) ;
+        int64_t ibegin = GB_IGET (I, GxB_BEGIN) ;
+        int64_t iinc   = GB_IGET (I, GxB_INC  ) ;
+        int64_t iend   = GB_IGET (I, GxB_END  ) ;
+        ibegin = GB_LIMIT (ibegin) ;
+        iinc   = GB_LIMIT (iinc  ) ;
+        iend   = GB_LIMIT (iend  ) ;
 
         ASSERT (ibegin >= 0) ;
         ASSERT (iinc   >= 0) ;
@@ -164,9 +172,12 @@ void GB_ijlength            // get the length and kind of an index list I
         // The array I must have size at least 3.  It is an unsigned uint64_t
         // array, so integers must be positive.
 
-        int64_t ibegin = GB_LIMIT (I [GxB_BEGIN]) ;
-        int64_t iinc   = GB_LIMIT (I [GxB_INC  ]) ;
-        int64_t iend   = GB_LIMIT (I [GxB_END  ]) ;
+        int64_t ibegin = GB_IGET (I, GxB_BEGIN) ;
+        int64_t iinc   = GB_IGET (I, GxB_INC  ) ;
+        int64_t iend   = GB_IGET (I, GxB_END  ) ;
+        ibegin = GB_LIMIT (ibegin) ;
+        iinc   = GB_LIMIT (iinc  ) ;
+        iend   = GB_LIMIT (iend  ) ;
 
         ASSERT (iinc   >= 0) ;
 

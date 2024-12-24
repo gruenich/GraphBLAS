@@ -69,6 +69,9 @@ GrB_Info GB_assign_zombie5
     ASSERT (!GB_PENDING (M)) ; 
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
+    const bool I_is_32 = false ;  // FIXME
+    const bool J_is_32 = false ;  // FIXME
+
     //--------------------------------------------------------------------------
     // get C
     //--------------------------------------------------------------------------
@@ -145,7 +148,8 @@ GrB_Info GB_assign_zombie5
 
             int64_t j = GBH_C (Ch, k) ;
             // j_outside is true if column j is outside the C(I,J) submatrix
-            bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
+            bool j_outside = !GB_ij_is_in_list (J, J_is_32, nJ, j, Jkind,
+                Jcolon) ;
             GB_GET_PA (pC_start, pC_end, tid, k, kfirst, klast, pstart_Cslice,
                 Cp [k], Cp [k+1]) ;
 
@@ -172,8 +176,8 @@ GrB_Info GB_assign_zombie5
                 // C(i,j) is outside the C(I,J) submatrix if either i is
                 // not in the list I, or j is not in J, or both.
                 int64_t i = Ci [pC] ;
-                if (!GB_IS_ZOMBIE (i) &&
-                    (j_outside || !GB_ij_is_in_list (I, nI, i, Ikind, Icolon)))
+                if (!GB_IS_ZOMBIE (i) && (j_outside ||
+                    !GB_ij_is_in_list (I, I_is_32, nI, i, Ikind, Icolon)))
                 {
 
                     //----------------------------------------------------------

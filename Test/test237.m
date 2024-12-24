@@ -44,9 +44,9 @@ for kind = 1:2
 
     % typecasting (to trigger the JIT)
     A.class = 'single' ;
-    C1 = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
-    C2 = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
-    GB_spec_compare (C2, C1, 0, tol) ;
+    C1s = GB_mex_mxm  (F, [ ], accum, semiring, A, B, [ ]) ;
+    C2s = GB_spec_mxm (F, [ ], accum, semiring, A, B, [ ]) ;
+    GB_spec_compare (C2s, C1s, 0, tol) ;
 
 end
 

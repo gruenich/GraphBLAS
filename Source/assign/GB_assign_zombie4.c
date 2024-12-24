@@ -56,6 +56,8 @@ GrB_Info GB_assign_zombie4
     ASSERT (!GB_PENDING (M)) ; 
     ASSERT (!GB_any_aliased (C, M)) ;   // NO ALIAS of C==M
 
+    const bool J_is_32 = false ;  // FIXME
+
     //--------------------------------------------------------------------------
     // get C
     //--------------------------------------------------------------------------
@@ -116,7 +118,8 @@ GrB_Info GB_assign_zombie4
             //------------------------------------------------------------------
 
             int64_t j = GBH_C (Ch, k) ;
-            bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
+            bool j_outside = !GB_ij_is_in_list (J, J_is_32, nJ, j, Jkind,
+                Jcolon) ;
             if (j_outside)
             {
 

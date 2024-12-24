@@ -267,16 +267,19 @@ GrB_Info GB_subref_phase0
     // check the properties of I and J
     //--------------------------------------------------------------------------
 
+    const bool I_is_32 = false ;    // FIXME
+    const bool J_is_32 = false ;    // FIXME
+
     // C = A(I,J) so I is in range 0:avlen-1 and J is in range 0:avdim-1
     int64_t nI, nJ, Jcolon [3] ;
     int Ikind, Jkind ;
-    GB_ijlength (I, ni, avlen, &nI, &Ikind, Icolon) ;
-    GB_ijlength (J, nj, avdim, &nJ, &Jkind, Jcolon) ;
+    GB_ijlength (I, I_is_32, ni, avlen, &nI, &Ikind, Icolon) ;
+    GB_ijlength (J, J_is_32, nj, avdim, &nJ, &Jkind, Jcolon) ;
 
     bool I_unsorted, I_has_dupl, I_contig, J_unsorted, J_has_dupl, J_contig ;
     int64_t imin, imax, jmin, jmax ;
 
-    info = GB_ijproperties (I, ni, nI, avlen, &Ikind, Icolon,
+    info = GB_ijproperties (I, I_is_32, ni, nI, avlen, &Ikind, Icolon,
         &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Werk) ;
     if (info != GrB_SUCCESS)
     { 
@@ -284,7 +287,7 @@ GrB_Info GB_subref_phase0
         return (info) ;
     }
 
-    info = GB_ijproperties (J, nj, nJ, avdim, &Jkind, Jcolon,
+    info = GB_ijproperties (J, J_is_32, nj, nJ, avdim, &Jkind, Jcolon,
         &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Werk) ;
     if (info != GrB_SUCCESS)
     { 
@@ -478,7 +481,7 @@ GrB_Info GB_subref_phase0
             for (int64_t kA = kA_start ; kA < kA_end ; kA++)
             {
                 int64_t jA = Ah [kA] ;
-                if (GB_ij_is_in_list (J, nJ, jA, GB_STRIDE, Jcolon))
+                if (GB_ij_is_in_list (J, J_is_32, nJ, jA, GB_STRIDE, Jcolon))
                 { 
                     my_Cnvec++ ;
                 }
@@ -657,7 +660,8 @@ GrB_Info GB_subref_phase0
                 for (int64_t kA = kA_start ; kA < kA_end ; kA++)
                 {
                     int64_t jA = Ah [kA] ;
-                    if (GB_ij_is_in_list (J, nJ, jA, GB_STRIDE, Jcolon))
+                    if (GB_ij_is_in_list (J, J_is_32, nJ, jA, GB_STRIDE,
+                        Jcolon))
                     { 
                         int64_t jC = (jA - jbegin) / jinc ;
                         Ch [kC] = jC ;
@@ -680,7 +684,8 @@ GrB_Info GB_subref_phase0
                 for (int64_t kA = kA_end-1 ; kA >= kA_start ; kA--)
                 {
                     int64_t jA = Ah [kA] ;
-                    if (GB_ij_is_in_list (J, nJ, jA, GB_STRIDE, Jcolon))
+                    if (GB_ij_is_in_list (J, J_is_32, nJ, jA, GB_STRIDE,
+                        Jcolon))
                     { 
                         int64_t jC = (jA - jbegin) / jinc ;
                         Ch [kC] = jC ;

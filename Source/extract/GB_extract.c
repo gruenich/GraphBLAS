@@ -70,17 +70,24 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     int64_t nRows, nCols, RowColon [3], ColColon [3] ;
     int rkind, ckind ;
 
+    const bool Rows_is_32 = false ;    // FIXME
+    const bool Cols_is_32 = false ;    // FIXME
+
     if (!A_transpose)
     { 
         // T = A(Rows,Cols)
-        GB_ijlength (Rows, nRows_in, GB_NROWS (A), &nRows, &rkind, RowColon) ;
-        GB_ijlength (Cols, nCols_in, GB_NCOLS (A), &nCols, &ckind, ColColon) ;
+        GB_ijlength (Rows, Rows_is_32, nRows_in, GB_NROWS (A), &nRows, &rkind,
+            RowColon) ;
+        GB_ijlength (Cols, Cols_is_32, nCols_in, GB_NCOLS (A), &nCols, &ckind,
+            ColColon) ;
     }
     else
     { 
         // T = A(Cols,Rows)
-        GB_ijlength (Rows, nRows_in, GB_NCOLS (A), &nRows, &rkind, RowColon) ;
-        GB_ijlength (Cols, nCols_in, GB_NROWS (A), &nCols, &ckind, ColColon) ;
+        GB_ijlength (Rows, Rows_is_32, nRows_in, GB_NCOLS (A), &nRows, &rkind,
+            RowColon) ;
+        GB_ijlength (Cols, Cols_is_32, nCols_in, GB_NROWS (A), &nCols, &ckind,
+            ColColon) ;
     }
 
     if (cnrows != nRows || cncols != nCols)

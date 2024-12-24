@@ -2,7 +2,7 @@
 // GB_AxB_saxpy4: compute C+=A*B: C full, A sparse/hyper, B bitmap/full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -99,8 +99,9 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
 
     GB_Opcode mult_binop_code, add_binop_code ;
     GB_Type_code xcode, ycode, zcode ;
-    GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
-        flipxy, &mult_binop_code, &add_binop_code, &xcode, &ycode, &zcode) ;
+    bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
+        B_is_pattern, semiring, flipxy, &mult_binop_code, &add_binop_code,
+        &xcode, &ycode, &zcode) ;
 
     if (add_binop_code == GB_ANY_binop_code)
     { 
@@ -259,7 +260,10 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
 
         // disabled the ANY monoid
         #define GB_NO_ANY_MONOID
-        #include "mxm/factory/GB_AxB_factory.c"
+        if (builtin_semiring)
+        {
+            #include "mxm/factory/GB_AxB_factory.c"
+        }
 
     }
     #endif

@@ -566,8 +566,12 @@ if (jit_enabled)
     int Ikind = GB_LIST ;
     int64_t Icolon [3] = {0,0,0}, imin_result, imax_result ;
     bool I_is_unsorted, I_has_dupl, I_is_contig ;
-    OK (GB_ijproperties (I, 0, 0, 5,
+    OK (GB_ijproperties (
+        // input:
+        I, false, 0, 0, 5,
+        // input/output:
         &Ikind, Icolon,
+        // output:
         &I_is_unsorted, &I_has_dupl, &I_is_contig,
         &imin_result, &imax_result, Werk)) ;
     printf ("ijproperties: imin %ld imax %ld\n", imin_result, imax_result) ;
