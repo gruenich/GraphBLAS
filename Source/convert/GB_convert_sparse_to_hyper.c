@@ -111,8 +111,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         int64_t plen_new = (n == 1) ? 1 : nvec_nonempty ;
         size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-        Ap_new = GB_malloc_memory (plen_new+1, psize, &Ap_new_size) ;
-        Ah_new = GB_malloc_memory (plen_new  , isize, &Ah_new_size) ;
+        Ap_new = GB_MALLOC_MEMORY (plen_new+1, psize, &Ap_new_size) ;
+        Ah_new = GB_MALLOC_MEMORY (plen_new  , isize, &Ah_new_size) ;
         if (Ap_new == NULL || Ah_new == NULL)
         { 
             // out of memory

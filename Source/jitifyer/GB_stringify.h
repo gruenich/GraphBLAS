@@ -1641,6 +1641,8 @@ uint64_t GB_encodify_subref     // encode an subref problem
     // C matrix:
     GrB_Matrix C,
     // index types:
+    bool I_is_32,           // if true, I is 32-bits; else 64
+    bool J_is_32,           // if true, J is 32-bits; else 64 (0 if not used)
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
@@ -1656,6 +1658,8 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     // C matrix:
     GrB_Matrix C,
     // index types:
+    bool I_is_32,           // if true, I is 32-bit; else 64-bit
+    bool J_is_32,           // if true, J is 32-bit; else 64-bit (bitmap only)
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
@@ -1686,15 +1690,16 @@ GrB_Info GB_subref_sparse_jit
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
-    const uint64_t *restrict Ap_start,
-    const uint64_t *restrict Ap_end,
+    const void *Ap_start,
+    const void *Ap_end,
     const bool need_qsort,
     const int Ikind,
     const int64_t nI,
     const int64_t Icolon [3],
     // original input:
     const GrB_Matrix A,
-    const uint64_t *I
+    const void *I,
+    const bool I_is_32
 ) ;
 
 GrB_Info GB_subref_bitmap_jit
@@ -1704,12 +1709,14 @@ GrB_Info GB_subref_bitmap_jit
     // input:
     GrB_Matrix A,
     // I:
-    const uint64_t *I,
+    const void *I,
+    const bool I_is_32,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const uint64_t *J,
+    const void *J,
+    const bool J_is_32,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],

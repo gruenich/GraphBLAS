@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Col_extract: w<M> = accum (w, A(I,j)) or A(j,I)'
+// GxB_Col_extract_32: w<M> = accum (w, A(I,j)) or A(j,I)', with 32-bit I
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -17,13 +17,13 @@
 #include "extract/GB_extract.h"
 #include "mask/GB_get_mask.h"
 
-GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
+GrB_Info GxB_Col_extract_32         // w<mask> = accum (w, A(I,j))
 (
     GrB_Vector w,                   // input/output matrix for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Matrix A,             // first input:  matrix A
-    const uint64_t *I,              // row indices (64-bit)
+    const uint32_t *I,              // row indices (32-bit)
     uint64_t ni,                    // number of row indices
     uint64_t j,                     // column index
     const GrB_Descriptor desc       // descriptor for w, mask, and A
@@ -35,7 +35,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
     //--------------------------------------------------------------------------
 
     GB_WHERE3 (w, mask, A,
-        "GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
+        "GxB_Col_extract_32 (w, M, accum, A, I, ni, j, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GrB_extract") ;
@@ -75,7 +75,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
         M, Mask_comp, Mask_struct,      // mask and its descriptor
         accum,                          // optional accum for z=accum(w,t)
         A,                 A_transpose, // A and its descriptor
-        I, false, ni,                   // row indices I and length ni (64-bit)
+        I, true, ni,                    // row indices I and length ni (32-bit)
         J, false, 1,                    // one column index, nj = 1 (64-bit)
         Werk) ;
 

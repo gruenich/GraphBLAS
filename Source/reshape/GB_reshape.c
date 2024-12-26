@@ -272,7 +272,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
                 Cp_is_32, Ci_is_32)) ;
 
             // allocate new space for the future C->i
-            I_work = GB_malloc_memory (nvals, iwsize, &I_work_size) ;
+            I_work = GB_MALLOC_MEMORY (nvals, iwsize, &I_work_size) ;
             if (I_work == NULL)
             { 
                 // out of memory
@@ -287,7 +287,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         if (vdim_new > 1)
         {
             // J_work is not needed if vdim_new == 1
-            J_work = GB_malloc_memory (nvals, iwsize, &J_work_size) ;
+            J_work = GB_MALLOC_MEMORY (nvals, iwsize, &J_work_size) ;
             if (J_work == NULL)
             { 
                 // out of memory

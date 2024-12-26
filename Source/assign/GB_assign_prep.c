@@ -874,8 +874,10 @@ GrB_Info GB_assign_prep
         { 
             // Awork = A (Iinv, Jinv)
             GB_CLEAR_STATIC_HEADER (Awork, Awork_header_handle) ;
-            GB_OK (GB_subref (Awork, false,
-                A->is_csc, A, Iinv, ni, Jinv, nj, false, Werk)) ;
+            GB_OK (GB_subref (Awork, false, A->is_csc, A,
+                Iinv, /* FIXME: */ false, ni,
+                Jinv, /* FIXME: */ false, nj,
+                false, Werk)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (Awork)) ;
             if (A == AT)
@@ -891,8 +893,10 @@ GrB_Info GB_assign_prep
             // Mwork = M (Iinv, Jinv)
             // if Mask_struct then Mwork is extracted as iso
             GB_CLEAR_STATIC_HEADER (Mwork, Mwork_header_handle) ;
-            GB_OK (GB_subref (Mwork, Mask_struct,
-                M->is_csc, M, Iinv, ni, Jinv, nj, false, Werk)) ;
+            GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
+                Iinv, /* FIXME: */ false, ni,
+                Jinv, /* FIXME: */ false, nj,
+                false, Werk)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (Mwork)) ;
             if (M == MT)

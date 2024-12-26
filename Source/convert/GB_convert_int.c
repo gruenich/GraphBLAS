@@ -123,7 +123,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     if (p_is_32 != p_is_32_new && A->p != NULL)
     { 
         // allocate new space for A->p
-        Ap_new = GB_malloc_memory (plen+1, psize_new, &Ap_new_size) ;
+        Ap_new = GB_MALLOC_MEMORY (plen+1, psize_new, &Ap_new_size) ;
         ok = ok && (Ap_new != NULL) ;
     }
 
@@ -132,34 +132,34 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         // allocate new space for A->i
         if (A->i != NULL)
         {
-            Ai_new = GB_malloc_memory (anz, isize_new, &Ai_new_size) ;
+            Ai_new = GB_MALLOC_MEMORY (anz, isize_new, &Ai_new_size) ;
             ok = ok && (Ai_new != NULL) ;
         }
         if (A_is_hyper)
         { 
             // allocate new space for A->h
-            Ah_new = GB_malloc_memory (plen, isize_new, &Ah_new_size) ;
+            Ah_new = GB_MALLOC_MEMORY (plen, isize_new, &Ah_new_size) ;
             ok = ok && (Ah_new != NULL) ;
         }
         if (Y != NULL)
         { 
             // allocate new space for Y->[phi]; matches A->i_is_32
-            Yp_new = GB_malloc_memory (yplen+1, isize_new, &Yp_new_size) ;
-            Yi_new = GB_malloc_memory (ynz,     isize_new, &Yi_new_size) ;
-            Yx_new = GB_malloc_memory (ynz,     isize_new, &Yx_new_size) ;
+            Yp_new = GB_MALLOC_MEMORY (yplen+1, isize_new, &Yp_new_size) ;
+            Yi_new = GB_MALLOC_MEMORY (ynz,     isize_new, &Yi_new_size) ;
+            Yx_new = GB_MALLOC_MEMORY (ynz,     isize_new, &Yx_new_size) ;
             ok = ok && (Yp_new != NULL && Yi_new != NULL && Yx_new != NULL) ;
         }
         if (has_Pending_i)
         {
             // allocate new space for Pending->i; matches A->i_is_32
-            Pending_i_new = GB_malloc_memory (nmax_pending, isize_new,
+            Pending_i_new = GB_MALLOC_MEMORY (nmax_pending, isize_new,
                 &Pending_i_new_size) ;
             ok = ok && (Pending_i_new != NULL) ;
         }
         if (has_Pending_j)
         {
             // allocate new space for Pending->j; matches A->i_is_32
-            Pending_j_new = GB_malloc_memory (nmax_pending, isize_new,
+            Pending_j_new = GB_MALLOC_MEMORY (nmax_pending, isize_new,
                 &Pending_j_new_size) ;
             ok = ok && (Pending_j_new != NULL) ;
         }

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C=A(I,J), where A is bitmap or full, symbolic and numeric.
 
 #include "extract/GB_subref.h"
@@ -33,9 +35,11 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     const GB_void *cscalar,     // scalar value of C, if iso
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
-    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *I,              // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const int64_t ni,           // length of I, or special
-    const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *J,              // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool J_is_32,         // if true, J is 32-bit; else 64-bit
     const int64_t nj,           // length of J, or special
     const bool symbolic,        // if true, construct C as symbolic
     GB_Werk Werk
@@ -57,7 +61,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
-    // workspace for GB_bitmap_assign_IxJ_template.c
+    // workspace for GB_bitmap_extract_IxJ_template.c
     //--------------------------------------------------------------------------
 
     GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;
@@ -74,9 +78,6 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
     // check the properties of I and J
     //--------------------------------------------------------------------------
-
-    const bool I_is_32 = false ;    // FIXME
-    const bool J_is_32 = false ;    // FIXME
 
     // C = A(I,J) so I is in range 0:avlen-1 and J is in range 0:avdim-1
     int64_t nI, nJ, Icolon [3], Jcolon [3] ;
@@ -103,6 +104,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         return (info) ;
     }
 
+    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
+    GB_IDECL (J, const, u) ; GB_IPTR (J, J_is_32) ;
+
     #define GB_I_KIND Ikind
     #define GB_J_KIND Jkind
     #define GB_C_IS_BITMAP (sparsity == GxB_BITMAP)
@@ -112,10 +116,12 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // allocate C
     //--------------------------------------------------------------------------
 
+    // FIXME: for symbolic extraction, allow the type to be uint32 or uint64
+
     int64_t cnzmax ;
-    bool ok = GB_int64_multiply ((GrB_Index *) (&cnzmax), nI, nJ) ;
+    bool ok = GB_int64_multiply ((uint64_t *) (&cnzmax), nI, nJ) ;
     if (!ok) cnzmax = INT64_MAX ;
-    GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;
+    GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;   // FIXME
     int sparsity = GB_IS_BITMAP (A) ? GxB_BITMAP : GxB_FULL ;
     GB_OK (GB_new_bix (&C, // bitmap or full, existing header
         ctype, nI, nJ, GB_ph_null, C_is_csc,
@@ -128,11 +134,13 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
     int8_t *restrict Cb = C->b ;
 
-    // In GB_bitmap_assign_IxJ_template, vlen is the vector length of the
+    // In GB_bitmap_extract_IxJ_template, vlen is the vector length of the
     // submatrix C(I,J), but here the template is used to access A(I,J), and so
     // the vector length is A->vlen, not C->vlen.  The pointers pA and pC are
     // swapped in GB_IXJ_WORK macro below, since C=A(I,J) is being computed,
     // instead of C(I,J)=A for the bitmap assignment.
+
+    // FIXME: when done, revert to GB_bitmap_assign_IxJ_template.c
 
     int64_t vlen = avlen ;
 
@@ -185,7 +193,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cx [pC] = pA ;                                              \
             }
             #define GB_NO_CNVALS
-            #include "template/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_extract_IxJ_template.c"
             #undef  GB_NO_CNVALS
         }
 
@@ -196,7 +204,6 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         //----------------------------------------------------------------------
         // C=A(I,J) iso numeric with A and C bitmap/full
         //----------------------------------------------------------------------
-
 
         if (GB_C_IS_BITMAP)
         { 
@@ -210,7 +217,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cb [pC] = ab ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "template/GB_bitmap_assign_IxJ_template.c"
+            #include "template/GB_bitmap_extract_IxJ_template.c"
             C->nvals = cnvals ;
         }
         else
@@ -229,7 +236,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
         // via the JIT kernel
         info = GB_subref_bitmap_jit (C, A,
-            I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Werk) ;
+            I, I_is_32, nI, Ikind, Icolon,
+            J, J_is_32, nJ, Jkind, Jcolon, Werk) ;
 
         // via the generic kernel
         if (info == GrB_NO_VALUE)
@@ -246,12 +254,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         }
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory or JIT kernel failed
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // return result

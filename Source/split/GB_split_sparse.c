@@ -91,7 +91,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
 
     GB_MDECL (Wp, , u) ; size_t Wp_size = 0 ;
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    Wp = GB_malloc_memory (anvec, apsize, &Wp_size) ;
+    Wp = GB_MALLOC_MEMORY (anvec, apsize, &Wp_size) ;
     if (Wp == NULL)
     { 
         // out of memory

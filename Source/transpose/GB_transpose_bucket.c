@@ -160,7 +160,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     for (int tid = 0 ; tid < nworkspaces ; tid++)
     { 
         // each workspace has the same size integer as Cp
-        Workspaces [tid] = GB_malloc_memory (avlen + 1, cpsize,
+        Workspaces [tid] = GB_MALLOC_MEMORY (avlen + 1, cpsize,
             &Workspaces_size [tid]) ;
         ok = ok && (Workspaces [tid] != NULL) ;
     }

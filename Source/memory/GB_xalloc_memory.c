@@ -22,18 +22,21 @@ void *GB_xalloc_memory      // return the newly-allocated space
 {
     void *p ;
     n = GB_IMAX (n, 1) ;
+    #ifdef GB_MEMDUMP
+    printf ("xalloc : ") ;
+    #endif
     if (iso)
     { 
         // always calloc the iso entry
-        p = GB_CALLOC (type_size, GB_void, size) ;
+        p = GB_calloc_memory (1, type_size, size) ;
     }
     else if (use_calloc)
     { 
-        p = GB_CALLOC (n * type_size, GB_void, size) ;
+        p = GB_calloc_memory (n, type_size, size) ;
     }
     else
     { 
-        p = GB_MALLOC (n * type_size, GB_void, size) ;
+        p = GB_malloc_memory (n, type_size, size) ;
     }
     return (p) ;
 }

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Finds the vectors for C=A(I,J) when A and C are sparse or hypersparse, and
 // determines the properties of I and J.
@@ -29,16 +29,18 @@ static inline void GB_find_Ap_start_end
 (
     // input, not modified
     const int64_t kA,               // searching A(:,kA)
-    const uint64_t *restrict Ap,    // column pointers of A FIXME
-    const int64_t *restrict Ai,     // row indices of A (with zombies) FIXME
+    const void *Ap,                 // column pointers of A
+    const bool Ap_is_32,
+    const void *Ai,                 // row indices of A (with zombies)
+    const bool Ai_is_32,
     const int64_t avlen,
     const int64_t imin,             // min (I)
     const int64_t imax,             // max (I)
     const int64_t kC,               // result will be C(:,kC)
     const bool may_see_zombies,
     // Ap_start [kC] and Ap_end [kC], defines A(imin:imax,kA) for C(:,kC):
-    uint64_t *restrict Ap_start,    // location of A(imin,kA) for C(:,kC) FIXME
-    uint64_t *restrict Ap_end       // location of A(imax,kA) for C(:,kC) FIXME
+    void *Ap_start,                 // location of A(imin,kA) for C(:,kC)
+    void *Ap_end                    // location of A(imax,kA) for C(:,kC)
 )
 {
 
@@ -46,16 +48,21 @@ static inline void GB_find_Ap_start_end
     // get A(:,kA)
     //--------------------------------------------------------------------------
 
-    int64_t pA     = GBP (Ap, kA, avlen) ;
-    int64_t pA_end = GBP (Ap, kA+1, avlen) ;
+    GB_IDECL (Ap, const,  u) ; GB_IPTR (Ap      , Ap_is_32) ;
+    GB_IDECL (Ap_start, , u) ; GB_IPTR (Ap_start, Ap_is_32) ;
+    GB_IDECL (Ap_end  , , u) ; GB_IPTR (Ap_end  , Ap_is_32) ;
+    GB_IDECL (Ai, const,   ) ; GB_IPTR (Ai      , Ai_is_32) ;
+
+    int64_t pA     = GB_IGET (Ap, kA) ;
+    int64_t pA_end = GB_IGET (Ap, kA+1) ;
     int64_t ajnz = pA_end - pA ;
 
     int64_t ifirst = 0, ilast = 0 ;
     if (ajnz > 0)
     {
         // get the first and last entries in A(:,kA), if any entries appear
-        ifirst = GBI (Ai, pA, avlen) ;
-        ilast  = GBI (Ai, pA_end-1, avlen) ;
+        ifirst = GB_IGET (Ai, pA) ;
+        ilast  = GB_IGET (Ai, pA_end-1) ;
         ifirst = GB_UNZOMBIE (ifirst) ;
         ilast  = GB_UNZOMBIE (ilast ) ;
     }
@@ -98,10 +105,10 @@ static inline void GB_find_Ap_start_end
             // search for A(imin,kA)
             bool is_zombie ;
             int64_t pright = pA_end - 1 ;
-            GB_split_binary_search_zombie (imin, Ai, false,
+            GB_split_binary_search_zombie (imin, Ai, Ai_is_32,
                 &pA, &pright, may_see_zombies, &is_zombie) ;
             // find the first entry of A(imin:imax,kA)
-            ifirst = GBI (Ai, pA, avlen) ;
+            ifirst = GB_IGET (Ai, pA) ;
             ifirst = GB_UNZOMBIE (ifirst) ;
         }
 
@@ -127,7 +134,7 @@ static inline void GB_find_Ap_start_end
             bool found, is_zombie ;
             int64_t pleft = pA ;
             int64_t pright = pA_end - 1 ;
-            found = GB_split_binary_search_zombie (imax, Ai, false,
+            found = GB_split_binary_search_zombie (imax, Ai, Ai_is_32,
                 &pleft, &pright, may_see_zombies, &is_zombie) ;
             // adjust pA_end if A(imax,kA) was found
             pA_end = (found) ? (pleft + 1) : pleft ;
@@ -138,24 +145,24 @@ static inline void GB_find_Ap_start_end
         if (ajnz > 0 && Ap != NULL)
         {
             // A(imin:imax,kA) is now in Ai [pA:pA_end-1], and is non-empty
-            if (Ap [kA] < pA)
+            if (GB_IGET (Ap, kA) < pA)
             {
                 // check the entry just before A(imin,kA), it must be < imin
-                int64_t iprev = GBI (Ai, pA-1, avlen) ;
+                int64_t iprev = GB_IGET (Ai, pA-1) ;
                 iprev = GB_UNZOMBIE (iprev) ;
                 ASSERT (iprev < imin) ;
             }
-            if (pA_end < Ap [kA+1])
+            if (pA_end < GB_IGET (Ap, kA+1))
             {
                 // check the entry just after A(imax,kA), it must be > imax
-                int64_t inext = GBI (Ai, pA_end, avlen) ;
+                int64_t inext = GB_IGET (Ai, pA_end) ;
                 inext = GB_UNZOMBIE (inext) ;
                 ASSERT (imax < inext) ;
             }
             // check the first and last entries of A(imin:imax,kA) to ensure
             // their row indices are in range imin:imax
-            ifirst = GBI (Ai, pA, avlen) ;
-            ilast  = GBI (Ai, pA_end-1, avlen) ;
+            ifirst = GB_IGET (Ai, pA) ;
+            ilast  = GB_IGET (Ai, pA_end-1) ;
             ifirst = GB_UNZOMBIE (ifirst) ;
             ilast  = GB_UNZOMBIE (ilast ) ;
             ASSERT (imin <= ifirst) ;
@@ -172,8 +179,8 @@ static inline void GB_find_Ap_start_end
     // accessed for constructing C(:,kC), for computing C(:,kC) = A(I,kA) with
     // the list of row indices I.
 
-    Ap_start [kC] = pA ;
-    Ap_end   [kC] = pA_end ;
+    GB_ISET (Ap_start, kC, pA) ;        // Ap_start [kC] = pA
+    GB_ISET (Ap_end  , kC, pA_end) ;    // Ap_end   [kC] = pA_end
 }
 
 //------------------------------------------------------------------------------
@@ -196,11 +203,12 @@ static inline void GB_find_Ap_start_end
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL
+    void **p_Ch,            // Ch = C->h hyperlist, or NULL
+    bool *p_Ci_is_32,       // if true, C->i is 32-bit; else 64-bit
     size_t *p_Ch_size,
-    uint64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    void **p_Ap_start,      // A(:,kA) starts at Ap_start [kC]
     size_t *p_Ap_start_size,
-    uint64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    void **p_Ap_end,        // ... and ends at Ap_end [kC] - 1
     size_t *p_Ap_end_size,
     int64_t *p_Cnvec,       // # of vectors in C
     bool *p_need_qsort,     // true if C must be sorted
@@ -210,9 +218,11 @@ GrB_Info GB_subref_phase0
     int64_t *p_nJ,          // length of J
     // input, not modified
     const GrB_Matrix A,
-    const GrB_Index *I,     // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *I,          // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool I_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t ni,       // length of I, or special
-    const GrB_Index *J,     // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *J,          // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool J_is_32,     // if true, I is 32-bit; else 64-bit
     const int64_t nj,       // length of J, or special
     GB_Werk Werk
 )
@@ -238,9 +248,10 @@ GrB_Info GB_subref_phase0
 
     GrB_Info info ;
     GB_WERK_DECLARE (Count, uint64_t) ;
-    int64_t *restrict Ch       = NULL ; size_t Ch_size = 0 ;
-    uint64_t *restrict Ap_start = NULL ; size_t Ap_start_size = 0 ;
-    uint64_t *restrict Ap_end   = NULL ; size_t Ap_end_size = 0 ;
+    GB_MDECL (Ch, , u) ; size_t Ch_size = 0 ;
+
+    void *Ap_start = NULL ; size_t Ap_start_size = 0 ;
+    void *Ap_end   = NULL ; size_t Ap_end_size   = 0 ;
 
     (*p_Ch        ) = NULL ;
     (*p_Ap_start  ) = NULL ;
@@ -255,20 +266,21 @@ GrB_Info GB_subref_phase0
     // get A
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Ap = A->p ;   // Ap (but not A->p) may be trimmed FIXME
-    int64_t *restrict Ah = A->h ;   // Ah (but not A->h) may be trimmed FIXME
-    int64_t *restrict Ai = A->i ;   // FIXME
+    void *Ap = A->p ;
+    void *Ai = A->i ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ; // Ah may be trimmed
     int64_t anvec = A->nvec ;       // may be trimmed
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
     const bool may_see_zombies = (A->nzombies > 0) ;
+    bool Ap_is_32 = A->p_is_32 ;
+    bool Ai_is_32 = A->i_is_32 ;
+    size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // check the properties of I and J
     //--------------------------------------------------------------------------
-
-    const bool I_is_32 = false ;    // FIXME
-    const bool J_is_32 = false ;    // FIXME
 
     // C = A(I,J) so I is in range 0:avlen-1 and J is in range 0:avdim-1
     int64_t nI, nJ, Jcolon [3] ;
@@ -297,12 +309,32 @@ GrB_Info GB_subref_phase0
 
     bool need_qsort = I_unsorted ;
 
+    GB_IDECL (J, const, u) ; GB_IPTR (J, J_is_32) ;
+
     //--------------------------------------------------------------------------
     // determine if C is empty
     //--------------------------------------------------------------------------
 
     bool C_empty = (nI == 0 || nJ == 0) ;
     bool A_is_hyper = (Ah != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // determine the integer sizes of C
+    //--------------------------------------------------------------------------
+
+    // determine the i_is_32 setting for the new matrix; p_is_32 is found later
+    bool hack32 = true ; // FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
+    bool Cp_is_32 = false ;
+    bool Ci_is_32 = false ;
+    if (p_Ci_is_32 != NULL)   // FIXME
+    {
+        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+            GxB_AUTO_SPARSITY, 0, nI, nJ) ;
+    }
+
+    size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // trim the hyperlist of A for (J = jbegin:jend case only)
@@ -325,10 +357,11 @@ GrB_Info GB_subref_phase0
         { 
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            GB_split_binary_search (jmin, Ah, false, &kleft, &kright) ;
-            Ah += kleft ;
-            Ap += kleft ;
+            GB_split_binary_search (jmin, Ah, Ai_is_32, &kleft, &kright) ;
+            Ap = (void *) ((GB_void *) Ap + kleft * apsize) ;   // Ap += kleft
+            Ah = (void *) ((GB_void *) Ah + kleft * aisize) ;   // Ah += kleft
             anvec -= kleft ;
+            GB_IPTR (Ah, Ai_is_32) ;
         }
 
         //----------------------------------------------------------------------
@@ -340,12 +373,14 @@ GrB_Info GB_subref_phase0
             bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            found = GB_split_binary_search (jmax, Ah, false, &kleft, &kright) ;
+            found = GB_split_binary_search (jmax, Ah, Ai_is_32,
+                &kleft, &kright) ;
             anvec = (found) ? (kleft + 1) : kleft ;
         }
 
         // Ah has been trimmed
-        ASSERT (GB_IMPLIES (anvec > 0, jmin <= Ah [0] && Ah [anvec-1] <= jmax));
+        ASSERT (GB_IMPLIES (anvec > 0,
+            jmin <= GB_IGET (Ah, 0) && GB_IGET (Ah, anvec-1) <= jmax)) ;
     }
 
     // Ah may now be empty, after being trimmed
@@ -366,9 +401,9 @@ GrB_Info GB_subref_phase0
         GB_OK (GB_hyper_hash_build (A, Werk)) ;
     }
 
-    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
-    const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
-    const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
+    const void *A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const void *A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const void *A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
     //--------------------------------------------------------------------------
@@ -480,7 +515,7 @@ GrB_Info GB_subref_phase0
                 (jinc > 0) ? tid : (ntasks-tid-1), ntasks) ;
             for (int64_t kA = kA_start ; kA < kA_end ; kA++)
             {
-                int64_t jA = Ah [kA] ;
+                int64_t jA = GB_IGET (Ah, kA) ;
                 if (GB_ij_is_in_list (J, J_is_32, nJ, jA, GB_STRIDE, Jcolon))
                 { 
                     my_Cnvec++ ;
@@ -518,14 +553,14 @@ GrB_Info GB_subref_phase0
             int64_t my_Cnvec = 0 ;
             for (int64_t jC = jC_start ; jC < jC_end ; jC++)
             {
-                int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ;
+                int64_t jA = GB_IJLIST (J, jC, Jkind, Jcolon) ;
                 bool found ;
                 int64_t kA = 0 ;
                 if (use_hyper_hash)
                 { 
                     // find jA using the hyper_hash
                     int64_t ignore1, ignore2 ;
-                    kA = GB_hyper_hash_lookup (false, false, // FIXME
+                    kA = GB_hyper_hash_lookup (Ap_is_32, Ai_is_32,
                         Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, jA,
                         &ignore1, &ignore2) ;
                     found = (kA >= 0) ;
@@ -559,18 +594,19 @@ GrB_Info GB_subref_phase0
 
     if (C_is_hyper)
     {
-        Ch = GB_MALLOC (Cnvec, int64_t, &Ch_size) ;
+        Ch = GB_MALLOC_MEMORY (Cnvec, cisize, &Ch_size) ;
         if (Ch == NULL)
         { 
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+        GB_IPTR (Ch, Ci_is_32) ;
     }
 
     if (Cnvec > 0)
     {
-        Ap_start = GB_MALLOC_WORK (Cnvec, uint64_t, &Ap_start_size) ;
-        Ap_end   = GB_MALLOC_WORK (Cnvec, uint64_t, &Ap_end_size) ;
+        Ap_start = GB_MALLOC_MEMORY (Cnvec, apsize, &Ap_start_size) ;
+        Ap_end   = GB_MALLOC_MEMORY (Cnvec, apsize, &Ap_end_size) ;
         if (Ap_start == NULL || Ap_end == NULL)
         { 
             // out of memory
@@ -608,9 +644,9 @@ GrB_Info GB_subref_phase0
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (jC = 0 ; jC < nJ ; jC++)
         { 
-            int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ;
-            GB_find_Ap_start_end (jA, Ap, Ai, avlen, imin, imax,
-                jC, may_see_zombies, Ap_start, Ap_end) ;
+            int64_t jA = GB_IJLIST (J, jC, Jkind, Jcolon) ;
+            GB_find_Ap_start_end (jA, Ap, Ap_is_32, Ai, Ai_is_32, avlen,
+                imin, imax, jC, may_see_zombies, Ap_start, Ap_end) ;
         }
 
     }
@@ -629,11 +665,11 @@ GrB_Info GB_subref_phase0
         for (kC = 0 ; kC < Cnvec ; kC++)
         { 
             int64_t kA = kC ;
-            int64_t jA = Ah [kA] ;
+            int64_t jA = GB_IGET (Ah, kA) ;
             int64_t jC = jA - jmin ;
-            Ch [kC] = jC ;
-            GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                kC, may_see_zombies, Ap_start, Ap_end) ;
+            GB_ISET (Ch, kC, jC) ;      // Ch [kC] = jC ;
+            GB_find_Ap_start_end (kA, Ap, Ap_is_32, Ai, Ai_is_32, avlen,
+                imin, imax, kC, may_see_zombies, Ap_start, Ap_end) ;
         }
 
     }
@@ -659,14 +695,15 @@ GrB_Info GB_subref_phase0
                 int64_t kC = Count [tid] ;
                 for (int64_t kA = kA_start ; kA < kA_end ; kA++)
                 {
-                    int64_t jA = Ah [kA] ;
+                    int64_t jA = GB_IGET (Ah, kA) ;
                     if (GB_ij_is_in_list (J, J_is_32, nJ, jA, GB_STRIDE,
                         Jcolon))
                     { 
                         int64_t jC = (jA - jbegin) / jinc ;
-                        Ch [kC] = jC ;
-                        GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                            kC, may_see_zombies, Ap_start, Ap_end) ;
+                        GB_ISET (Ch, kC, jC) ;  // Ch [kC] = jC
+                        GB_find_Ap_start_end (kA, Ap, Ap_is_32, Ai, Ai_is_32,
+                            avlen, imin, imax, kC, may_see_zombies,
+                            Ap_start, Ap_end) ;
                         kC++ ;
                     }
                 }
@@ -683,14 +720,15 @@ GrB_Info GB_subref_phase0
                 int64_t kC = Count [tid] ;
                 for (int64_t kA = kA_end-1 ; kA >= kA_start ; kA--)
                 {
-                    int64_t jA = Ah [kA] ;
+                    int64_t jA = GB_IGET (Ah, kA) ;
                     if (GB_ij_is_in_list (J, J_is_32, nJ, jA, GB_STRIDE,
                         Jcolon))
                     { 
                         int64_t jC = (jA - jbegin) / jinc ;
-                        Ch [kC] = jC ;
-                        GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                            kC, may_see_zombies, Ap_start, Ap_end) ;
+                        GB_ISET (Ch, kC, jC) ;      // Ch [kC] = jC
+                        GB_find_Ap_start_end (kA, Ap, Ap_is_32, Ai, Ai_is_32,
+                            avlen, imin, imax, kC, may_see_zombies,
+                            Ap_start, Ap_end) ;
                         kC++ ;
                     }
                 }
@@ -718,14 +756,14 @@ GrB_Info GB_subref_phase0
             int64_t kC = Count [tid] ;
             for (int64_t jC = jC_start ; jC < jC_end ; jC++)
             {
-                int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ;
+                int64_t jA = GB_IJLIST (J, jC, Jkind, Jcolon) ;
                 bool found ;
                 int64_t kA = 0 ;
                 if (use_hyper_hash)
                 { 
                     // find jA using the hyper_hash
                     int64_t ignore1, ignore2 ;
-                    kA = GB_hyper_hash_lookup (false, false, // FIXME
+                    kA = GB_hyper_hash_lookup (Ap_is_32, Ai_is_32,
                         Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, jA,
                         &ignore1, &ignore2) ;
                     found = (kA >= 0) ;
@@ -734,14 +772,15 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using binary search
                     int64_t kright = anvec-1 ;
-                    found = GB_binary_search (jA, Ah, false, &kA, &kright) ;
+                    found = GB_binary_search (jA, Ah, Ai_is_32, &kA, &kright) ;
                 }
                 if (found)
                 { 
-                    ASSERT (jA == Ah [kA]) ;
-                    Ch [kC] = jC ;
-                    GB_find_Ap_start_end (kA, Ap, Ai, avlen, imin, imax,
-                        kC, may_see_zombies, Ap_start, Ap_end) ;
+                    ASSERT (jA == GB_IGET (Ah, kA)) ;
+                    GB_ISET (Ch, kC, jC) ;      // Ch [kC] = jC
+                    GB_find_Ap_start_end (kA, Ap, Ap_is_32, Ai, Ai_is_32,
+                        avlen, imin, imax, kC, may_see_zombies,
+                        Ap_start, Ap_end) ;
                     kC++ ;
                 }
             }
@@ -756,21 +795,22 @@ GrB_Info GB_subref_phase0
     for (int64_t kC = 0 ; kC < Cnvec ; kC++)
     {
         // jC is the (kC)th vector of C = A(I,J)
-        int64_t jC = GBH (Ch, kC) ;
-        int64_t jA = GB_ijlist (J, jC, Jkind, Jcolon) ; // jA = J (jC)
+        int64_t jC = GBh_C (Ch, kC) ;
+        int64_t jA = GB_IJLIST (J, jC, Jkind, Jcolon) ; // jA = J (jC)
         // jA is the corresponding (kA)th vector of A.
         int64_t kA = 0 ;
         int64_t pright = A->nvec - 1 ;
         int64_t pA_start_all, pA_end_all ;
         // look for A(:,jA)
-        int64_t *Ah = A->h ;    // FIXME
-        bool found = GB_lookup_debug (false, false, Ah != NULL,   // FIXME
+        GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+        GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+        bool found = GB_lookup_debug (Ap_is_32, Ai_is_32, A_is_hyper,
             Ah, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
         // ensure that A(:,jA) is in Ai,Ax [pA_start_all:pA_end_all-1]:
         if (found && Ah != NULL)
         {
             // A(:,jA) appears in the hypersparse A, as the (kA)th vector in A
-            ASSERT (jA == Ah [kA]) ;
+            ASSERT (jA == GB_IGET (Ah, kA)) ;
         }
         if (!found)
         {
@@ -781,8 +821,10 @@ GrB_Info GB_subref_phase0
         else
         {
             // A(imin:imax,jA) is in Ai,Ax [pA:pA_end-1]
-            uint64_t pA      = Ap_start [kC] ;
-            uint64_t pA_end  = Ap_end   [kC] ;
+            GB_IPTR (Ap_start, Ap_is_32) ;
+            GB_IPTR (Ap_end  , Ap_is_32) ;
+            uint64_t pA      = GB_IGET (Ap_start, kC) ;
+            uint64_t pA_end  = GB_IGET (Ap_end  , kC) ;
             int64_t ajnz = pA_end - pA ;
             if (ajnz == avlen)
             {
@@ -794,8 +836,8 @@ GrB_Info GB_subref_phase0
             else if (ajnz > 0)
             {
                 // A(imin:imax,jA) is non-empty and a subset of A(:,jA)
-                int64_t ifirst = GBI (Ai, pA, avlen) ;
-                int64_t ilast  = GBI (Ai, pA_end-1, avlen) ;
+                int64_t ifirst = GB_IGET (Ai, pA) ;
+                int64_t ilast  = GB_IGET (Ai, pA_end-1) ;
                 ifirst = GB_UNZOMBIE (ifirst) ;
                 ilast  = GB_UNZOMBIE (ilast ) ;
                 ASSERT (imin <= ifirst) ;
@@ -818,14 +860,21 @@ GrB_Info GB_subref_phase0
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    (*p_Ch        ) = Ch ;          (*p_Ch_size) = Ch_size ;
-    (*p_Ap_start  ) = Ap_start ;    (*p_Ap_start_size) = Ap_start_size ;
-    (*p_Ap_end    ) = Ap_end ;      (*p_Ap_end_size) = Ap_end_size ;
-    (*p_Cnvec     ) = Cnvec ;
-    (*p_need_qsort) = need_qsort ;
-    (*p_Ikind     ) = Ikind ;
-    (*p_nI        ) = nI ;
-    (*p_nJ        ) = nJ ;
+    (*p_Ch           ) = Ch ;
+    (*p_Ch_size      ) = Ch_size ;
+    if (p_Ci_is_32 != NULL)   // FIXME
+    {
+        (*p_Ci_is_32) = Ci_is_32 ;
+    }
+    (*p_Ap_start     ) = Ap_start ;
+    (*p_Ap_start_size) = Ap_start_size ;
+    (*p_Ap_end       ) = Ap_end ;
+    (*p_Ap_end_size  ) = Ap_end_size ;
+    (*p_Cnvec        ) = Cnvec ;
+    (*p_need_qsort   ) = need_qsort ;
+    (*p_Ikind        ) = Ikind ;
+    (*p_nI           ) = nI ;
+    (*p_nJ           ) = nJ ;
     return (GrB_SUCCESS) ;
 }
 

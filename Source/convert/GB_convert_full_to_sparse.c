@@ -49,8 +49,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     size_t psize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-    Ap = GB_malloc_memory (avdim+1, psize, &Ap_size) ;
-    Ai = GB_malloc_memory (anz, isize, &Ai_size) ;
+    Ap = GB_MALLOC_MEMORY (avdim+1, psize, &Ap_size) ;
+    Ai = GB_MALLOC_MEMORY (anz, isize, &Ai_size) ;
     if (Ap == NULL || Ai == NULL)
     { 
         // out of memory

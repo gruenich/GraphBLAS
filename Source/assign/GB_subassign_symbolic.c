@@ -70,7 +70,10 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     // it is always returned as hypersparse). This also checks I and J.
     // S is not iso, even if C is iso.  S can be sparse, hypersparse, or full
     // (not bitmap).
-    GB_OK (GB_subref (S, false, C->is_csc, C, I, ni, J, nj, true, Werk)) ;
+    GB_OK (GB_subref (S, false, C->is_csc, C,
+        I, /* FIXME: */ false, ni,
+        J, /* FIXME: */ false, nj,
+        true, Werk)) ;
     ASSERT (GB_JUMBLED_OK (S)) ;    // GB_subref can return S as jumbled
     ASSERT (!GB_ZOMBIES (S)) ;
     ASSERT (!GB_PENDING (S)) ;

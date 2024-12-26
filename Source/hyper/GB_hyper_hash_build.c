@@ -75,9 +75,9 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     //--------------------------------------------------------------------------
 
     size_t isize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    I_work = GB_malloc_memory (anvec, isize, &I_work_size) ;
-    J_work = GB_malloc_memory (anvec, isize, &J_work_size) ;
-    X_work = GB_malloc_memory (anvec, isize, &X_work_size) ;
+    I_work = GB_MALLOC_MEMORY (anvec, isize, &I_work_size) ;
+    J_work = GB_MALLOC_MEMORY (anvec, isize, &J_work_size) ;
+    X_work = GB_MALLOC_MEMORY (anvec, isize, &X_work_size) ;
     if (I_work == NULL || J_work == NULL || X_work == NULL)
     { 
         // out of memory

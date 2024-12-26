@@ -79,7 +79,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     size_t nzmax_new1 = GB_IMAX (nzmax_new, 1) ;
     bool ok1 = true, ok2 = true ;
     size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
-    A->i = GB_realloc_memory (nzmax_new1, isize, A->i, &(A->i_size), &ok1) ;
+    GB_REALLOC_MEMORY (A->i, nzmax_new1, isize, &(A->i_size), &ok1) ;
     size_t asize = A->type->size ;
     if (A->iso)
     { 

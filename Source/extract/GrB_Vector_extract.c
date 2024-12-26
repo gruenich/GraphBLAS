@@ -7,18 +7,20 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "extract/GB_extract.h"
 #include "mask/GB_get_mask.h"
 
-GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
+GrB_Info GrB_Vector_extract         // w<mask> = accum (w, u(I))
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector M_in,          // optional mask for w, unused if NULL
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Index *I,             // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and M
+    const uint64_t *I,              // row indices (64-bit)
+    uint64_t ni,                    // number of row indices
+    const GrB_Descriptor desc       // descriptor for w and mask
 )
 { 
 
@@ -26,14 +28,14 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, M_in, u,
+    GB_WHERE3 (w, mask, u,
         "GrB_Vector_extract (w, M, accum, u, I, ni, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
     GB_BURBLE_START ("GrB_extract") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
-    ASSERT (M_in == NULL || GB_VECTOR_OK (M_in)) ;
+    ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
@@ -41,7 +43,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
         xx1, xx2, xx3, xx7) ;
 
     // get the mask
-    GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
+    GrB_Matrix M = GB_get_mask ((GrB_Matrix) mask, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // extract entries
@@ -63,8 +65,8 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
         M, Mask_comp, Mask_struct,      // mask and its descriptor
         accum,                          // optional accum for z=accum(w,t)
         (GrB_Matrix) u,     false,      // u as matrix; never transposed
-        I, ni,                          // row indices I and length ni
-        GrB_ALL, 1,                     // all columns
+        I, false, ni,                   // row indices I and length ni (64-bit)
+        GrB_ALL, false, 1,              // all columns (64-bit)
         Werk) ;
 
     GB_BURBLE_END ;

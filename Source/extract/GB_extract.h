@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #ifndef GB_EXTRACT_H
 #define GB_EXTRACT_H
 #include "GB.h"
@@ -21,10 +23,12 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Matrix A,             // input matrix
     const bool A_transpose,         // A matrix descriptor
-    const GrB_Index *Rows,          // row indices
-    const GrB_Index nRows_in,       // number of row indices
-    const GrB_Index *Cols,          // column indices
-    const GrB_Index nCols_in,       // number of column indices
+    const void *Rows,               // row indices
+    const bool Rows_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nRows_in,        // number of row indices
+    const void *Cols,               // column indices
+    const bool Cols_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nCols_in,        // number of column indices
     GB_Werk Werk
 ) ;
 

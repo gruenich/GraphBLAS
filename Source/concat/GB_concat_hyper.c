@@ -65,8 +65,8 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
 
     size_t cisize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-    Wi = GB_malloc_memory (cnz, cisize, &Wi_size) ;     // becomes C->i
-    Wj = GB_malloc_memory (cnz, cisize, &Wj_size) ;     // freed below
+    Wi = GB_MALLOC_MEMORY (cnz, cisize, &Wi_size) ;     // becomes C->i
+    Wj = GB_MALLOC_MEMORY (cnz, cisize, &Wj_size) ;     // freed below
     if (!C_iso)
     { 
         Wx = GB_MALLOC_WORK (cnz * csize, GB_void, &Wx_size) ;  // freed below

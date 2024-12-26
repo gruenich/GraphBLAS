@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -19,12 +21,14 @@ GrB_Info GB_subref_bitmap_jit
     // input:
     GrB_Matrix A,
     // I:
-    const uint64_t *I,
+    const void *I,
+    const bool I_is_32,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const uint64_t *J,
+    const void *J,
+    const bool J_is_32,
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
@@ -39,7 +43,8 @@ GrB_Info GB_subref_bitmap_jit
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_subref (&encoding, &suffix,
-        GB_JIT_KERNEL_BITMAP_SUBREF, C, Ikind, Jkind, false, false, A) ;
+        GB_JIT_KERNEL_BITMAP_SUBREF, C, I_is_32, J_is_32,
+        Ikind, Jkind, false, false, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed
@@ -61,7 +66,7 @@ GrB_Info GB_subref_bitmap_jit
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, A, I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+    return (GB_jit_kernel (C, A, I, nI, Icolon, J, nJ, Jcolon,
         Werk, nthreads_max, chunk, &GB_callback)) ;
 }
 

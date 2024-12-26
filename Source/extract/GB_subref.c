@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C=A(I,J), either symbolic or numeric.  In a symbolic extraction, Cx [p] is
 // not the value of A(i,j), but its position in Ai,Ax.  That is, pA = Cx [p]
 // means that the entry at position p in C is the same as the entry in A at
@@ -77,12 +79,14 @@
     GB_FREE_WORK (&Ap_end, Ap_end_size) ;       \
     GB_FREE_WORK (&Mark, Mark_size) ;           \
     GB_FREE_WORK (&Inext, Inext_size) ;         \
+    GB_FREE_WORK (&Cwork, Cwork_size) ;         \
 }
 
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE (&Cp, Cp_size) ;    \
     GB_FREE (&Ch, Ch_size) ;    \
+    GB_phybix_free (C) ;        \
     GB_FREE_WORKSPACE ;         \
 }
 
@@ -96,9 +100,11 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     bool C_iso,                 // if true, return C as iso, regardless of A
     const bool C_is_csc,        // requested format of C
     const GrB_Matrix A,
-    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *I,              // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const int64_t ni,           // length of I, or special
-    const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *J,              // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool J_is_32,         // if true, I is 32-bit; else 64-bit
     const int64_t nj,           // length of J, or special
     const bool symbolic,        // if true, construct C as symbolic
     GB_Werk Werk
@@ -153,25 +159,28 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
     { 
         // C is constructed with same sparsity as A (bitmap or full)
-        return (GB_bitmap_subref (C, C_iso, cscalar, C_is_csc, A, I, ni, J, nj,
-            symbolic, Werk)) ;
+        return (GB_bitmap_subref (C, C_iso, cscalar, C_is_csc, A,
+            I, I_is_32, ni, J, J_is_32, nj, symbolic, Werk)) ;
     }
 
     //--------------------------------------------------------------------------
-    // initializations
+    // C = A(I,J) where C and A are both sparse or hypersparse
     //--------------------------------------------------------------------------
 
-    uint64_t *Cp       = NULL ; size_t Cp_size = 0 ;
-    int64_t *Ch        = NULL ; size_t Ch_size = 0 ;
+    void *Cp = NULL ; size_t Cp_size = 0 ;
+    void *Ch = NULL ; size_t Ch_size = 0 ;
     uint64_t *Ap_start = NULL ; size_t Ap_start_size = 0 ;
     uint64_t *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
     int64_t *Mark      = NULL ; size_t Mark_size = 0 ;
     int64_t *Inext     = NULL ; size_t Inext_size = 0 ;
-    GB_task_struct *TaskList      = NULL ; size_t TaskList_size = 0 ;
+    uint64_t *Cwork    = NULL ; size_t Cwork_size = 0 ;
+    GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
     bool post_sort, need_qsort ;
     int Ikind, ntasks, nthreads ;
+
+    bool Cp_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // ensure A is unjumbled
@@ -189,25 +198,26 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     GB_OK (GB_subref_phase0 (
         // computed by phase0:
-        &Ch, &Ch_size, &Ap_start, &Ap_start_size, &Ap_end, &Ap_end_size,
-        &Cnvec, &need_qsort, &Ikind, &nI, Icolon, &nJ,
+        &Ch, &Ci_is_32, &Ch_size, &Ap_start, &Ap_start_size,
+        &Ap_end, &Ap_end_size, &Cnvec, &need_qsort, &Ikind, &nI, Icolon, &nJ,
         // original input:
-        A, I, ni, J, nj, Werk)) ;
+        A, I, I_is_32, ni, J, J_is_32, nj, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase1: split C=A(I,J) into tasks for phase2 and phase3
     //--------------------------------------------------------------------------
 
+    // Cwork is allocated; it either becomes Cp, or it is freed by phase2
     // This phase also inverts I if needed.
 
     GB_OK (GB_subref_slice (
         // computed by phase1:
         &TaskList, &TaskList_size, &ntasks, &nthreads, &post_sort,
-        &Mark, &Mark_size, &Inext, &Inext_size, &ndupl,
+        &Mark, &Mark_size, &Inext, &Inext_size, &ndupl, &Cwork, &Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
         // original input:
-        A->vlen, GB_nnz (A), I, Werk)) ;
+        A->vlen, GB_nnz (A), A->p_is_32, I, I_is_32, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase2: count the number of entries in each vector of C
@@ -215,13 +225,13 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     GB_OK (GB_subref_phase2 (
         // computed by phase2:
-        &Cp, &Cp_size, &Cnvec_nonempty,
+        &Cp, &Cp_is_32, &Cp_size, &Cnvec_nonempty,
         // computed by phase1:
-        TaskList, ntasks, nthreads, Mark, Inext, ndupl,
+        TaskList, ntasks, nthreads, Mark, Inext, ndupl > 0, &Cwork, Cwork_size,
         // computed by phase0:
-        Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
+        Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon, nJ,
         // original input:
-        A, I, symbolic, Werk)) ;
+        A, I, I_is_32, symbolic, Werk)) ;
 
     //--------------------------------------------------------------------------
     // phase3: compute the entries (indices and values) in each vector of C
@@ -231,16 +241,20 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase3:
         C,
         // from phase2:
-        &Cp, Cp_size, Cnvec_nonempty,
+        &Cp, Cp_is_32, Cp_size, Cnvec_nonempty,
         // from phase1:
         TaskList, ntasks, nthreads, post_sort, Mark, Inext, ndupl,
         // from phase0:
-        &Ch, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
+        &Ch, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,
         // from the iso test above:
         C_iso, cscalar,
         // original input:
-        C_is_csc, A, I, symbolic, Werk)) ;
+        C_is_csc, A, I, I_is_32, symbolic, Werk)) ;
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
 
     // Cp and Ch have been imported into C->p and C->h, or freed if phase3
     // fails.  Either way, Cp and Ch are set to NULL so that they cannot be
@@ -249,11 +263,9 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // free workspace
     GB_FREE_WORKSPACE ;
 
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
     // C can be returned jumbled, even if A is not jumbled
+    ASSERT_MATRIX_OK (C, "C output for C=A(I,J) before convert", GB0) ;
+    GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;

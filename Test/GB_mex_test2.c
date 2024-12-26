@@ -254,7 +254,7 @@ void mexFunction
     OK (GxB_Global_Option_set_(GxB_BURBLE, false)) ;
 
     int64_t Icolon [3] = { 1, 1, 0 } ;
-    CHECK (!GB_ij_is_in_list (NULL, 0, 0, GB_STRIDE, Icolon)) ;
+    CHECK (!GB_ij_is_in_list (NULL, false, 0, 0, GB_STRIDE, Icolon)) ;
 
     //--------------------------------------------------------------------------
     // GB_any_aliased

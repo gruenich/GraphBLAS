@@ -111,7 +111,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         //----------------------------------------------------------------------
 
         void *Ap_new = NULL ; size_t Ap_new_size = 0 ;
-        Ap_new = GB_malloc_memory (n+1, psize, &Ap_new_size) ;
+        Ap_new = GB_MALLOC_MEMORY (n+1, psize, &Ap_new_size) ;
         if (Ap_new == NULL)
         { 
             // out of memory

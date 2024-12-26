@@ -13,6 +13,16 @@
 
 #define GB_MEM_CHUNK (1024*1024)
 
+#if 0
+    void GB_memset                  // parallel memset
+    (
+        void *dest,                 // destination
+        const int c,                // value to to set
+        size_t n,                   // # of bytes to set
+        int nthreads                // max # of threads to use
+    )
+#endif
+
 GB_CALLBACK_MEMSET_PROTO (GB_memset)
 {
     if (nthreads <= 1 || n <= GB_MEM_CHUNK)

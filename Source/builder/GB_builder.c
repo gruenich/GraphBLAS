@@ -358,7 +358,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // (4) Do nothing, letting I_is_32 be determined by the integer size
         // of the I_input array.
 
-        I_work = GB_malloc_memory (nvals,
+        I_work = GB_MALLOC_MEMORY (nvals,
             I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),
             I_work_size_handle) ;
 
@@ -492,7 +492,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // This does not need to use GB_determine_i_is_32, since J_work
                 // is not transplanted into the output matrix T.
                 bool J_is_32_new = (vdim < UINT32_MAX) ;
-                J_work = GB_malloc_memory (nvals,
+                J_work = GB_MALLOC_MEMORY (nvals,
                     J_is_32_new ? sizeof (uint32_t) : sizeof (uint64_t),
                     J_work_size_handle) ;
                 (*J_work_handle) = J_work ;
@@ -634,7 +634,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (!S_iso)
         {
             // create the k part of each tuple
-            K_work = GB_malloc_memory (nvals,
+            K_work = GB_MALLOC_MEMORY (nvals,
                 K_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),
                 &K_work_size) ;
             if (K_work == NULL)
@@ -1093,9 +1093,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
                 // this cannot fail since the size is shrinking.
                 bool ok ;
-                I_work = GB_realloc_memory (tnz,
+                GB_REALLOC_MEMORY (I_work, tnz,
                     I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t),
-                    I_work, I_work_size_handle, &ok) ;
+                    I_work_size_handle, &ok) ;
                 ASSERT (ok) ;
             }
             // transplant I_work into T->i
@@ -1104,7 +1104,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         else
         { 
             // T->i and I_work have different sizes, so they must be typecast
-            T->i = GB_malloc_memory (tnz,
+            T->i = GB_MALLOC_MEMORY (tnz,
                 Ti_is_32 ? sizeof (int32_t) : sizeof (int64_t), &(T->i_size)) ;
             if (T->i != NULL)
             { 
@@ -1138,7 +1138,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         //----------------------------------------------------------------------
 
         // duplicates exist, so allocate a new T->i.  I_work must be freed later
-        T->i = GB_malloc_memory (tnz,
+        T->i = GB_MALLOC_MEMORY (tnz,
             Ti_is_32 ? sizeof (int32_t) : sizeof (int64_t), &(T->i_size)) ;
     }
 

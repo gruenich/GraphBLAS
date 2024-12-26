@@ -664,12 +664,12 @@ GrB_Info GB_jit_kernel_subref_sparse                                    \
     const bool post_sort,                                               \
     const int64_t *Mark,                                                \
     const int64_t *Inext,                                               \
-    const uint64_t *restrict Ap_start,                                  \
-    const uint64_t *restrict Ap_end,                                    \
+    const void *Ap_start_input,                                         \
+    const void *Ap_end_input,                                           \
     const int64_t nI,                                                   \
     const int64_t Icolon [3],                                           \
     const GrB_Matrix A,                                                 \
-    const uint64_t *I,          /* FIXME */                             \
+    const void *I_input,                                                \
     const GB_callback_struct *restrict my_callback                      \
 )
 
@@ -678,13 +678,11 @@ GrB_Info GB_jit_kernel_bitmap_subref                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
     GrB_Matrix A,                                                       \
-    const uint64_t *I,          /* FIXME */                             \
+    const void *I_input,                                                \
     const int64_t nI,                                                   \
-    const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
-    const uint64_t *J,          /* FIXME */                             \
+    const void *J_input,                                                \
     const int64_t nJ,                                                   \
-    const int Jkind,                                                    \
     const int64_t Jcolon [3],                                           \
     GB_Werk Werk,                                                       \
     const int nthreads_max,                                             \

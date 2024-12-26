@@ -67,8 +67,12 @@ void mexFunction
         mexErrMsgTxt ("J failed") ;
     }
 
+    bool I_is_32 = false ;
+    bool J_is_32 = false ;
+
     // C = A(I,J), numeric not symbolic
-    METHOD (GB_subref (C, C->iso, true, A, I, ni, J, nj, false, Werk)) ;
+    METHOD (GB_subref (C, C->iso, true, A, I, I_is_32, ni, J, J_is_32, nj,
+        false, Werk)) ;
 
     // return C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C subref result", false) ;

@@ -78,7 +78,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
             return (GrB_INVALID_VALUE) ;
         }
         size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
-        A->i = GB_malloc_memory (nzmax, isize, &(A->i_size)) ;
+        A->i = GB_MALLOC_MEMORY (nzmax, isize, &(A->i_size)) ;
         ok = (A->i != NULL) ;
         if (ok)
         { 

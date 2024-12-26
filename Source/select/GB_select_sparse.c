@@ -175,7 +175,7 @@ GrB_Info GB_select_sparse
     if (op_is_positional)
     {
         // allocate Zp
-        Zp = GB_malloc_memory (C->plen + 1, cpsize, &Zp_size) ;
+        Zp = GB_MALLOC_MEMORY (C->plen + 1, cpsize, &Zp_size) ;
         if (Zp == NULL)
         { 
             // out of memory

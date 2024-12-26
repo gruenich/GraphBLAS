@@ -391,8 +391,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
         // allocate T->p, T->i, and optionally T->x, but not T->h
         int64_t tplen = GB_IMAX (1, anz) ;
-        T->p = GB_malloc_memory (tplen+1, apsize, &(T->p_size)) ;
-        T->i = GB_malloc_memory (anz    , aisize, &(T->i_size)) ;
+        T->p = GB_MALLOC_MEMORY (tplen+1, apsize, &(T->p_size)) ;
+        T->i = GB_MALLOC_MEMORY (anz    , aisize, &(T->i_size)) ;
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
         { 
@@ -537,11 +537,11 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         T->iso = C_iso ;    // OK
 
         // allocate new space for the values and pattern
-        T->p = GB_calloc_memory (2, apsize, &(T->p_size)) ;
+        T->p = GB_CALLOC_MEMORY (2, apsize, &(T->p_size)) ;
         if (!A_is_hyper)
         { 
             // A is sparse, so new space is needed for T->i
-            T->i = GB_malloc_memory (anz, aisize, &(T->i_size)) ;
+            T->i = GB_MALLOC_MEMORY (anz, aisize, &(T->i_size)) ;
         }
         bool allocate_Tx = (op != NULL || C_iso) || (ctype != atype) ;
         if (allocate_Tx)
@@ -762,7 +762,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             //------------------------------------------------------------------
 
             // allocate iwork of size anz
-            iwork = GB_malloc_memory (anz, aisize, &iwork_size) ;
+            iwork = GB_MALLOC_MEMORY (anz, aisize, &iwork_size) ;
             if (iwork == NULL)
             { 
                 // out of memory
@@ -807,7 +807,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (!recycle_Ai)
             { 
                 // allocate jwork of size anz
-                jwork = GB_malloc_memory (anz, aisize, &jwork_size) ;
+                jwork = GB_MALLOC_MEMORY (anz, aisize, &jwork_size) ;
                 ok = ok && (jwork != NULL) ;
             }
 

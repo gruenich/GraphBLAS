@@ -440,10 +440,10 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             break ;
 
         //----------------------------------------------------------------------
-        // memory pool control
+        // memory pool control: no longer used
         //----------------------------------------------------------------------
 
-        case GxB_MEMORY_POOL : 
+        case GxB_MEMORY_POOL :              // no longer used
 
             // nothing to do: no longer used
             break ;

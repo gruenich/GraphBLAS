@@ -87,7 +87,7 @@ GrB_Info GB_hyper_prune
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    W = GB_malloc_memory (nvec_old+1, isize, &W_size) ;
+    W = GB_MALLOC_MEMORY (nvec_old+1, isize, &W_size) ;
     if (W == NULL)
     { 
         // out of memory
@@ -117,8 +117,8 @@ GrB_Info GB_hyper_prune
     //--------------------------------------------------------------------------
 
     int64_t plen_new = GB_IMAX (1, nvec_new) ;
-    Ap_new = GB_malloc_memory (plen_new+1, psize, &Ap_new_size) ;
-    Ah_new = GB_malloc_memory (plen_new  , isize, &Ah_new_size) ;
+    Ap_new = GB_MALLOC_MEMORY (plen_new+1, psize, &Ap_new_size) ;
+    Ah_new = GB_MALLOC_MEMORY (plen_new  , isize, &Ah_new_size) ;
     if (Ap_new == NULL || Ah_new == NULL)
     { 
         // out of memory

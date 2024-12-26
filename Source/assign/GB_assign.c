@@ -234,8 +234,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             }
 
             // if Mask_struct is true then SubMask is extracted as iso
-            GB_OK (GB_subref (SubMask, Mask_struct,
-                true, M, I_SubMask, ni_SubMask, J_SubMask, nj_SubMask,
+            GB_OK (GB_subref (SubMask, Mask_struct, true, M,
+                I_SubMask, /* FIXME: */ false, ni_SubMask,
+                J_SubMask, /* FIXME: */ false, nj_SubMask,
                 false, Werk)) ;
 
             // GB_subref can return a jumbled result

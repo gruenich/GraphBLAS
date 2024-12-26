@@ -107,12 +107,12 @@ GrB_Info GB_ijsort
 
     bool I1_is_32 = false ; // FIXME: (imax < UINT32_MAX) ;
     size_t i1size = (I1_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    I1 = GB_malloc_memory (ni, i1size, &I1_size) ;
+    I1 = GB_MALLOC_MEMORY (ni, i1size, &I1_size) ;
     GB_IPTR (I1, I1_is_32) ;
 
     bool I1k_is_32 = false ; // FIXME: (ni < UINT32_MAX) ;
     size_t i1ksize = (I1k_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    I1k = GB_malloc_memory (ni, i1ksize, &I1k_size) ;
+    I1k = GB_MALLOC_MEMORY (ni, i1ksize, &I1k_size) ;
     GB_IPTR (I1k, I1k_is_32) ;
 
     if (W == NULL || I1 == NULL || I1k == NULL)
@@ -181,8 +181,8 @@ GrB_Info GB_ijsort
     const bool I2_is_32  = I1_is_32 ;
     const bool I2k_is_32 = I1k_is_32 ;
 
-    I2  = GB_malloc_memory (ni2, i1size, &I2_size) ;
-    I2k = GB_malloc_memory (ni2, i1ksize, &I2k_size) ;
+    I2  = GB_MALLOC_MEMORY (ni2, i1size, &I2_size) ;
+    I2k = GB_MALLOC_MEMORY (ni2, i1ksize, &I2k_size) ;
     if (I2 == NULL || I2k == NULL)
     { 
         // out of memory

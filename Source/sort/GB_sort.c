@@ -723,7 +723,7 @@ GrB_Info GB_sort
     {
         // allocate P->i and use it to construct the new indices
         size_t pisize = P->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-        P->i = GB_malloc_memory (cnz, pisize, &(P->i_size)) ;
+        P->i = GB_MALLOC_MEMORY (cnz, pisize, &(P->i_size)) ;
         if (P->i == NULL)
         { 
             // out of memory
@@ -802,8 +802,8 @@ GrB_Info GB_sort
             // copied to Pp, and Ch (if present) is copied to Ph.
             int64_t pplen = GB_IMAX (1, cnvec) ;
             P->plen = pplen ;
-            P->x = GB_malloc_memory (cnz, pxsize, &(P->x_size)) ;
-            P->p = GB_malloc_memory (pplen+1, ppsize, &(P->p_size)) ;
+            P->x = GB_MALLOC_MEMORY (cnz, pxsize, &(P->x_size)) ;
+            P->p = GB_MALLOC_MEMORY (pplen+1, ppsize, &(P->p_size)) ;
             P->h = NULL ;
             if (C_is_hyper)
             { 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // I is a large list relative to the vector length, avlen, and it is not
 // contiguous.  Scatter I into the I inverse buckets (Mark and Inext) for quick
 // lookup.
@@ -21,7 +23,8 @@
 
 GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 (
-    const GrB_Index *I,         // list of indices, duplicates OK
+    const void *I,              // list of indices, duplicates OK
+    const bool I_is_32,         // if true, I is 32-bit; else 64 bit
     int64_t nI,                 // length of I
     int64_t avlen,              // length of the vectors of A
     // outputs:
@@ -45,6 +48,8 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     (*p_Mark ) = NULL ; (*p_Mark_size ) = 0 ;
     (*p_Inext) = NULL ; (*p_Inext_size) = 0 ;
     (*p_nduplicates) = 0 ;
+
+    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -70,7 +75,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // O(nI) time; not parallel
     for (int64_t inew = nI-1 ; inew >= 0 ; inew--)
     {
-        int64_t i = I [inew] ;
+        int64_t i = GB_IGET (I, inew) ;
         ASSERT (i >= 0 && i < avlen) ;
         int64_t ihead = (Mark [i] - 1) ;
         if (ihead < 0)
@@ -108,7 +113,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
         GB_for_each_index_in_bucket (inew, i)
         {
             ASSERT (inew >= 0 && inew < nI) ;
-            ASSERT (i == I [inew]) ;
+            ASSERT (i == GB_IGET (I, inew)) ;
         }
     }
     #endif

@@ -7,15 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C=A(I,J), where C and A are bitmap/full, numeric and non-iso
 
 {
 
-    int64_t cnvals = 0 ;
 
     //--------------------------------------------------------------------------
     // C = A(I,J)
     //--------------------------------------------------------------------------
+
+    int64_t cnvals = 0 ;
 
     if (GB_C_IS_BITMAP)
     { 
@@ -36,7 +39,7 @@
                 task_cnvals++ ;                                     \
             }                                                       \
         }
-        #include "template/GB_bitmap_assign_IxJ_template.c"
+        #include "template/GB_bitmap_extract_IxJ_template.c"
         C->nvals = cnvals ;
     }
     else
@@ -53,7 +56,7 @@
             GB_COPY_ENTRY (pC, pA)                                  \
         }
         #define GB_NO_CNVALS
-        #include "template/GB_bitmap_assign_IxJ_template.c"
+        #include "template/GB_bitmap_extract_IxJ_template.c"
         #undef  GB_NO_CNVALS
     }
 }

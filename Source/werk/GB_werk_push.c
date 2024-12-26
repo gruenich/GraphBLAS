@@ -75,7 +75,8 @@ GB_CALLBACK_WERK_PUSH_PROTO (GB_werk_push)
     else
     { 
         // allocate the werkspace from malloc
-        return (GB_malloc_memory (nitems, size_of_item, size_allocated)) ;
+        void *p = GB_MALLOC_MEMORY (nitems, size_of_item, size_allocated) ;
+        return (p) ;
     }
 }
 

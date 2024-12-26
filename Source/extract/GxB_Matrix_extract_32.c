@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Matrix_extract: C<M> = accum (C, A(I,J)) or A(J,I)'
+// GxB_Matrix_extract_32: C<M> = accum (C, A(I,J)) or A(J,I)' with 32-bit I,J
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -12,15 +12,15 @@
 #include "extract/GB_extract.h"
 #include "mask/GB_get_mask.h"
 
-GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
+GrB_Info GxB_Matrix_extract_32      // C<M> = accum (C, A(I,J))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Matrix A,             // first input:  matrix A
-    const uint64_t *I,              // row indices (64-bit)
+    const uint32_t *I,              // row indices (32-bit)
     uint64_t ni,                    // number of row indices
-    const uint64_t *J,              // column indices (64-bit)
+    const uint32_t *J,              // column indices (32-bit)
     uint64_t nj,                    // number of column indices
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
@@ -31,7 +31,7 @@ GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
     //--------------------------------------------------------------------------
 
     GB_WHERE3 (C, Mask, A,
-        "GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)") ;
+        "GxB_Matrix_extract_32 (C, M, accum, A, I, ni, J, nj, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GrB_extract") ;
@@ -52,8 +52,8 @@ GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
         M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
         A,      A_transpose,        // A and its descriptor
-        I, false, ni,               // row indices (64-bit)
-        J, false, nj,               // column indices (64-bit)
+        I, true, ni,                // row indices (32-bit)
+        J, true, nj,                // column indices (32-bit)
         Werk) ;
 
     GB_BURBLE_END ;

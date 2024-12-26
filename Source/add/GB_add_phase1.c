@@ -84,7 +84,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     (*Cp_handle) = NULL ;
     GB_MDECL (Cp, , u) ; size_t Cp_size = 0 ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    Cp = GB_calloc_memory (GB_IMAX (2, Cnvec+1), cpsize, &Cp_size) ;
+    Cp = GB_CALLOC_MEMORY (GB_IMAX (2, Cnvec+1), cpsize, &Cp_size) ;
     if (Cp == NULL)
     { 
         // out of memory

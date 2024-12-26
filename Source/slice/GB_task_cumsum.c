@@ -113,6 +113,7 @@ void GB_task_cumsum
     for (int t = 0 ; t < ntasks ; t++)
     {
         int64_t k = TaskList [t].kfirst ;
+        ASSERT (k >= 0 && k < Cnvec) ;
         int64_t klast = TaskList [t].klast ;
         if (klast < 0)
         {
@@ -125,7 +126,6 @@ void GB_task_cumsum
             int64_t pC_end = TaskList [t+1].pC ;
             int64_t pM     = TaskList [t].pM ;
             int64_t pM_end = TaskList [t].pM_end ;
-            ASSERT (k >= 0 && k < Cnvec) ;
             // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1) must
             // reside inside B(:,j), but these cannot be checked here since A
             // and B are not available.  These basic checks can be done:
@@ -141,7 +141,6 @@ void GB_task_cumsum
         else
         {
             // this is a coarse task for vectors k:klast, inclusive
-            ASSERT (k >= 0 && k < Cnvec) ;
             ASSERT (klast >= 0 && klast <= Cnvec) ;
             ASSERT (k <= klast) ;
         }

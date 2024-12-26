@@ -207,12 +207,12 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
-        A->p = GB_calloc_memory (A->plen+1, psize, &(A->p_size)) ;
+        A->p = GB_CALLOC_MEMORY (A->plen+1, psize, &(A->p_size)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
-            A->h = GB_malloc_memory (A->plen, isize, &(A->h_size)) ;
+            A->h = GB_MALLOC_MEMORY (A->plen, isize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
@@ -223,11 +223,11 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // caller must set A->p [0..plen] and then set A->magic to GB_MAGIC,
         // before returning the matrix to the user application.
         A->magic = GB_MAGIC2 ;
-        A->p = GB_malloc_memory (A->plen+1, psize, &(A->p_size)) ;
+        A->p = GB_MALLOC_MEMORY (A->plen+1, psize, &(A->p_size)) ;
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
-            A->h = GB_malloc_memory (A->plen, isize, &(A->h_size)) ;
+            A->h = GB_MALLOC_MEMORY (A->plen, isize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }

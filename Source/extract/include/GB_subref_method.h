@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #ifndef GB_SUBREF_METHOD_H
 #define GB_SUBREF_METHOD_H
 

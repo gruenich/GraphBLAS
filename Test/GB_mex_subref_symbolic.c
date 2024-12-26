@@ -75,8 +75,12 @@ void mexFunction
         mexErrMsgTxt ("A failed: cannot be bitmap") ;
     }
 
+    bool I_is_32 = false ;
+    bool J_is_32 = false ;
+
     // C = A(I,J) or A(J,I)', no need to check dimensions of C; symbolic
-    METHOD (GB_subref (C, false, true, A, I, ni, J, nj, true, Werk)) ;
+    METHOD (GB_subref (C, false, true, A, I, I_is_32, ni, J, J_is_32, nj,
+        true, Werk)) ;
 
     // return C as a struct
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C subref symbolic", true) ;

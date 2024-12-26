@@ -57,8 +57,8 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     size_t psize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-    Cp = GB_malloc_memory (avdim+1, psize, &Cp_size) ;
-    Ci = GB_malloc_memory (anzmax,  isize, &Ci_size) ;
+    Cp = GB_MALLOC_MEMORY (avdim+1, psize, &Cp_size) ;
+    Ci = GB_MALLOC_MEMORY (anzmax,  isize, &Ci_size) ;
     if (Cp == NULL || Ci == NULL)
     { 
         // out of memory

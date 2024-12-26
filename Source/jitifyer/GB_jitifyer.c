@@ -150,7 +150,7 @@ static void check_table (void)
     {                                                       \
         X = GB_Global_persistent_malloc (siz) ;             \
         printf ("persistent malloc (%4d): %p size %g\n",   /* MEMDUMP */ \
-            __LINE__, X, (double) siz) ;                    \
+            __LINE__, (void *) X, (double) siz) ;                    \
     }
 
     #define GB_FREE_PERSISTENT(X)                           \
@@ -158,7 +158,7 @@ static void check_table (void)
         if (X != NULL)                                      \
         {                                                   \
             printf ("persistent free   (%4d): %p\n",        /* MEMDUMP */ \
-            __LINE__, X) ;                                  \
+            __LINE__, (void *) X) ;                                  \
         }                                                   \
         GB_Global_persistent_free ((void **) &(X)) ;        \
     }
@@ -1862,7 +1862,7 @@ GrB_Info GB_jitifyer_load2_worker
             break ;
 
         case GB_jit_subref_family  : 
-            method_code_digits = 4 ;
+            method_code_digits = 5 ;
             break ;
 
         case GB_jit_sort_family  : 

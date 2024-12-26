@@ -64,7 +64,7 @@ int main (int argc, char **argv)
     GrB_Info info ;
 
     OK (GrB_init (GrB_NONBLOCKING)) ;
-//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, (GrB_Field) GxB_BURBLE)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, (GrB_Field) GxB_BURBLE)) ;
     int32_t nthreads ;
     OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads,
         (GrB_Field) GxB_NTHREADS)) ;

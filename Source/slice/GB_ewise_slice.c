@@ -181,7 +181,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     bool Cwork_is_32 = (cnzmax < UINT32_MAX) ;
     size_t cwsize = (Cwork_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-    Cwork = GB_malloc_memory (Cnvec+1, cwsize, &Cwork_size) ;
+    Cwork = GB_MALLOC_MEMORY (Cnvec+1, cwsize, &Cwork_size) ;
     if (Cwork == NULL)
     { 
         // out of memory

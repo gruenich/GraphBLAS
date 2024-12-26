@@ -181,7 +181,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Ci)
     { 
         // allocate new C->i component
-        C->i = GB_malloc_memory (anz, isize, &(C->i_size)) ;
+        C->i = GB_MALLOC_MEMORY (anz, isize, &(C->i_size)) ;
         ok = ok && (C->i != NULL) ;
     }
 
@@ -270,8 +270,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             // A is hypersparse, create new C->p and C->h
             C->plen = GB_IMAX (1, anvec) ;
             C->nvec = anvec ;
-            C->p = GB_malloc_memory (C->plen+1, psize, &(C->p_size)) ;
-            C->h = GB_malloc_memory (C->plen  , isize, &(C->h_size)) ;
+            C->p = GB_MALLOC_MEMORY (C->plen+1, psize, &(C->p_size)) ;
+            C->h = GB_MALLOC_MEMORY (C->plen  , isize, &(C->h_size)) ;
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
@@ -288,7 +288,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             // A is sparse, create new C->p
             C->plen = avdim ;
             C->nvec = avdim ;
-            C->p = GB_malloc_memory (C->plen+1, psize, &(C->p_size)) ;
+            C->p = GB_MALLOC_MEMORY (C->plen+1, psize, &(C->p_size)) ;
             if (C->p == NULL)
             { 
                 // out of memory

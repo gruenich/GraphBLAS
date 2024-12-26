@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
@@ -25,15 +27,16 @@ GrB_Info GB_subref_sparse_jit
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
-    const uint64_t *restrict Ap_start,
-    const uint64_t *restrict Ap_end,
+    const void *Ap_start,
+    const void *Ap_end,
     const bool need_qsort,
     const int Ikind,
     const int64_t nI,
     const int64_t Icolon [3],
     // original input:
     const GrB_Matrix A,
-    const uint64_t *I
+    const void *I,
+    const bool I_is_32
 )
 { 
 
@@ -44,7 +47,7 @@ GrB_Info GB_subref_sparse_jit
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_subref (&encoding, &suffix,
-        GB_JIT_KERNEL_SUBREF_SPARSE, C, Ikind, 0,
+        GB_JIT_KERNEL_SUBREF_SPARSE, C, I_is_32, false, Ikind, 0,
         need_qsort, I_has_duplicates, A) ;
 
     //--------------------------------------------------------------------------

@@ -90,7 +90,7 @@ static inline bool GB_allocate_result
     bool ok = true ;
     if (Ch_handle != NULL)
     { 
-        (*Ch_handle) = GB_malloc_memory (Cnvec, cisize, Ch_size_handle) ;
+        (*Ch_handle) = GB_MALLOC_MEMORY (Cnvec, cisize, Ch_size_handle) ;
         ok = (*Ch_handle != NULL) ;
     }
     if (C_to_M_handle != NULL)

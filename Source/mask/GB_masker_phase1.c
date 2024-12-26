@@ -90,7 +90,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     (*Rp_handle) = NULL ;
     void *Rp = NULL ; size_t Rp_size = 0 ;
     size_t rpsize = (Rp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    Rp = GB_calloc_memory (GB_IMAX (2, Rnvec+1), rpsize, &Rp_size) ;
+    Rp = GB_CALLOC_MEMORY (GB_IMAX (2, Rnvec+1), rpsize, &Rp_size) ;
     if (Rp == NULL)
     { 
         // out of memory

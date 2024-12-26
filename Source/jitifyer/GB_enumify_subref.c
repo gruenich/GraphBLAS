@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Enumify a subref operation: C = A(I,J)
 
@@ -21,6 +21,8 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     // C matrix:
     GrB_Matrix C,
     // index types:
+    bool I_is_32,           // if true, I is 32-bit; else 64-bit
+    bool J_is_32,           // if true, J is 32-bit; else 64-bit (bitmap only)
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
@@ -51,17 +53,32 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int needqsort = (need_qsort) ? 1 : 0 ;
     int ihasdupl = (I_has_duplicates) ? 1 : 0 ;
 
+    int i_is_32 = (I_is_32) ? 1 : 0 ;
+    int j_is_32 = (J_is_32) ? 1 : 0 ;
+
+    int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
+
+    int ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+    int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
+
     //--------------------------------------------------------------------------
     // construct the subref method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 14 (4 hex digits)
-
-    // FIXME: 32/64 bits: 4 bits for C, A
+    // total method_code bits: 20 (4 hex digits)
 
     (*method_code) =
                                                // range        bits
-                /// need_qsort, I_has_duplicates (1 hex digit)
+                // C, A integer sizes (1 hex digit)
+                GB_LSHIFT (cp_is_32   , 19) |  // 0 to 1       1
+                GB_LSHIFT (ci_is_32   , 18) |  // 0 to 1       1
+                GB_LSHIFT (ap_is_32   , 17) |  // 0 to 1       1
+                GB_LSHIFT (ai_is_32   , 16) |  // 0 to 1       1
+
+                // need_qsort, I_has_duplicates, I and J bits (1 hex digit)
+                GB_LSHIFT (i_is_32    , 15) |  // 0 to 1       1
+                GB_LSHIFT (j_is_32    , 14) |  // 0 to 1       1
                 GB_LSHIFT (ihasdupl   , 13) |  // 0 to 1       1
                 GB_LSHIFT (needqsort  , 12) |  // 0 to 1       1
 

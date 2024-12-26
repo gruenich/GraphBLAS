@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
@@ -20,7 +20,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 (
     GrB_Matrix C,               // output matrix, static header
     // from phase2:
-    uint64_t **Cp_handle,       // vector pointers for C FIXME
+    void **Cp_handle,           // vector pointers for C
+    const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit
     size_t Cp_size,
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase1:
@@ -32,10 +33,11 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
-    int64_t **Ch_handle,
+    void **Ch_handle,
+    const bool Ci_is_32,        // if true, C->i is 32-bit; else 64-bit
     size_t Ch_size,
-    const uint64_t *restrict Ap_start,
-    const uint64_t *restrict Ap_end,
+    const void *Ap_start,
+    const void *Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -48,7 +50,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // original input:
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,
-    const GrB_Index *I,
+    const void *I,
+    const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const bool symbolic,
     GB_Werk Werk
 )
@@ -61,8 +64,20 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    const uint64_t *restrict Cp = (*Cp_handle) ;    // FIXME
-    const int64_t *restrict Ch = (*Ch_handle) ;
+
+    GB_IDECL (I,  const, u) ; GB_IPTR (I, I_is_32) ;
+
+    GB_MDECL (Cp, const, u) ;
+    Cp = (*Cp_handle) ;
+    GB_IPTR (Cp, Cp_is_32) ;
+
+    void *Ch = (*Ch_handle) ;
+
+    bool Ap_is_32 = A->p_is_32 ;
+    bool Ai_is_32 = A->i_is_32 ;
+    GB_IDECL (Ap_start, const, u) ; GB_IPTR (Ap_start, Ap_is_32) ;
+    GB_IDECL (Ap_end  , const, u) ; GB_IPTR (Ap_end  , Ap_is_32) ;
+
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;
@@ -73,7 +88,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // allocate the output matrix C
     //--------------------------------------------------------------------------
 
-    int64_t cnz = Cp [Cnvec] ;
+    int64_t cnz = GB_IGET (Cp, Cnvec) ;
     bool C_is_hyper = (Ch != NULL) ;
     GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
 
@@ -82,7 +97,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, existing header
         ctype, nI, nJ, GB_ph_null, C_is_csc,
         sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        /* FIXME: */ false, false) ;
+        Cp_is_32, Ci_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -92,14 +107,14 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     }
 
     // add Cp as the vector pointers for C, from GB_subref_phase2
-    C->p = (int64_t *) Cp ; C->p_size = Cp_size ;
+    C->p = (*Cp_handle) ; C->p_size = Cp_size ;
     (*Cp_handle) = NULL ;
 
     // add Ch as the hypersparse list for C, from GB_subref_phase0
     if (C_is_hyper)
     { 
         // transplant Ch into C
-        C->h = (int64_t *) Ch ; C->h_size = Ch_size ;
+        C->h = Ch ; C->h_size = Ch_size ;
         (*Ch_handle) = NULL ;
         C->nvec = Cnvec ;
     }
@@ -110,14 +125,16 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     C->nvec_nonempty = Cnvec_nonempty ;
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
+    C->p_is_32 = Cp_is_32 ;
+    C->i_is_32 = Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase3: C = A(I,J)
     //--------------------------------------------------------------------------
 
+    GB_Ci_DECLARE_U (Ci, ) ; GB_Ci_PTR (Ci, C) ;
+
     #define GB_PHASE_2_OF_2
-    int64_t *restrict Ci = C->i ;   // FIXME
-    int64_t *restrict Cx = (int64_t *) C->x ;
     #define GB_I_KIND Ikind
     #define GB_NEED_QSORT need_qsort
     #define GB_I_HAS_DUPLICATES I_has_duplicates
@@ -130,6 +147,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         //----------------------------------------------------------------------
 
         ASSERT (!C_iso) ;
+        uint64_t *restrict Cx = (uint64_t *) C->x ;
 
         // symbolic subref must handle zombies
         const bool may_see_zombies = (A->nzombies > 0) ;
@@ -141,9 +159,22 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 Cx [(pC) + k] = (pA) + k ;          \
             }
         #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
-        #define GB_QSORT_1B(Ci,Cx,pC,clen)                  \
-            GB_qsort_1b_64_size8 ((uint64_t *) (Ci + pC),   \
-                (uint64_t *) (Cx + pC), clen) ;
+        #define GB_QSORT_1B(Ci,Cx,pC,clen)                          \
+        {                                                           \
+            if (Ci_is_32)                                           \
+            {                                                       \
+                GB_qsort_1b_32_size8 (Ci32 + pC, Cx + pC, clen) ;   \
+            }                                                       \
+            else                                                    \
+            {                                                       \
+                GB_qsort_1b_64_size8 (Ci64 + pC, Cx + pC, clen) ;   \
+            }                                                       \
+        }
+
+        // possible variants:
+        //  Cp,Ci:  4
+        //  Ai      2
+
         #define GB_SYMBOLIC
         #include "extract/template/GB_subref_template.c"
 
@@ -156,11 +187,22 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         //----------------------------------------------------------------------
 
         // C is iso; no numeric values to extract; just set the iso value
-        memcpy (Cx, cscalar, A->type->size) ;
+        memcpy (C->x, cscalar, A->type->size) ;
         #define GB_COPY_RANGE(pC,pA,len) ;
         #define GB_COPY_ENTRY(pC,pA) ;
         #define GB_ISO_SUBREF
-        #define GB_QSORT_1B(Ci,Cx,pC,clen) ;
+        #define GB_QSORT_1B(Ci,Cx,pC,clen)                          \
+        {                                                           \
+            if (Ci_is_32)                                           \
+            {                                                       \
+                GB_qsort_1_32 (Ci32 + pC, clen) ;                   \
+            }                                                       \
+            else                                                    \
+            {                                                       \
+                GB_qsort_1_64 (Ci64 + pC, clen) ;                   \
+            }                                                       \
+        }
+
         #include "extract/template/GB_subref_template.c"
 
     }
@@ -174,7 +216,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         // using the JIT kernel
         info = GB_subref_sparse_jit (C, TaskList, ntasks, nthreads, post_sort,
             Mark, Inext, I_has_duplicates, Ap_start, Ap_end, need_qsort,
-            Ikind, nI, Icolon, A, I) ;
+            Ikind, nI, Icolon, A, I, I_is_32) ;
 
         if (info == GrB_NO_VALUE)
         { 
@@ -190,9 +232,19 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, (len) * csize) ;
             #define GB_COPY_ENTRY(pC,pA)                                    \
                 memcpy (Cx + (pC)*csize, Ax + (pA)*csize, csize) ;
-            #define GB_QSORT_1B(Ci,Cx,pC,clen)                  \
-                GB_qsort_1b_64_generic ((uint64_t *) (Ci+(pC)), \
-                    (GB_void *) (Cx+(pC)*csize), csize, clen) ;
+            #define GB_QSORT_1B(Ci,Cx,pC,clen)                          \
+            {                                                           \
+                if (Ci_is_32)                                           \
+                {                                                       \
+                    GB_qsort_1b_32_generic (Ci32 + pC,                  \
+                        (GB_void *) (Cx+(pC)*csize), csize, clen) ;     \
+                }                                                       \
+                else                                                    \
+                {                                                       \
+                    GB_qsort_1b_64_generic (Ci64 + pC,                  \
+                        (GB_void *) (Cx+(pC)*csize), csize, clen) ;     \
+                }                                                       \
+            }
             #include "extract/template/GB_subref_template.c"
             info = GrB_SUCCESS ;
         }

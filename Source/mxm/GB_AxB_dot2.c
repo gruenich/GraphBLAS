@@ -180,8 +180,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         // if Mask_struct then Mwork is extracted as iso
         GB_CLEAR_STATIC_HEADER (Mwork, &Mwork_header) ;
         GB_OK (GB_subref (Mwork, Mask_struct, M_in->is_csc, M_in,
-            (A_is_hyper) ? Ah : GrB_ALL, cvlen,
-            (B_is_hyper) ? Bh : GrB_ALL, cvdim, false, Werk)) ;
+            (A_is_hyper) ? Ah : GrB_ALL, /* FIXME: */ false, cvlen,
+            (B_is_hyper) ? Bh : GrB_ALL, /* FIXME: */ false, cvdim,
+            false, Werk)) ;
         M = Mwork ;
         ASSERT_MATRIX_OK_OR_NULL (M, "M submask dot A'*B", GB0) ;
     }

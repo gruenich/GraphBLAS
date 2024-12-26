@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_subref_phase2 counts the number of entries in each vector of C, for
 // C=A(I,J) and then does a cumulative sum to find Cp.  A is sparse or
@@ -20,7 +20,8 @@
 GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 (
     // computed by phase2:
-    uint64_t **Cp_handle,               // output of size Cnvec+1 FIXME
+    void **Cp_handle,                   // output of size Cnvec+1
+    bool *p_Cp_is_32,                   // if true, Cp is 32-bit; else 64 bit
     size_t *Cp_size_handle,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase1:
@@ -30,17 +31,21 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     const int64_t *Mark,                // for I inverse buckets, size A->vlen
     const int64_t *Inext,               // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
+    uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
+    size_t Cwork_size,
     // analysis from phase0:
-    const uint64_t *restrict Ap_start,
-    const uint64_t *restrict Ap_end,
+    const void *Ap_start,
+    const void *Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
     const int64_t nI,
     const int64_t Icolon [3],
+    const int64_t nJ,
     // original input:
     const GrB_Matrix A,
-    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const void *I,              // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool I_is_32,         // if true, I is 32-bit; else 64-bit
     const bool symbolic,
     GB_Werk Werk
 )
@@ -55,18 +60,35 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
-    //--------------------------------------------------------------------------
-    // allocate the result
-    //--------------------------------------------------------------------------
+    GB_IDECL (Ap_start, const, u) ; GB_IPTR (Ap_start, A->p_is_32) ;
+    GB_IDECL (Ap_end  , const, u) ; GB_IPTR (Ap_end  , A->p_is_32) ;
+
+    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
 
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
-    Cp = GB_CALLOC (GB_IMAX (2, Cnvec+1), uint64_t, &Cp_size) ;  // FIXME
-    if (Cp == NULL)
-    { 
-        // out of memory
-        return (GrB_OUT_OF_MEMORY) ;
+    uint64_t *restrict Cwork = (*p_Cwork) ;
+    const bool Ai_is_32 = A->i_is_32 ;
+    ASSERT (Cwork != NULL) ;
+
+    // clear Cwork [k] for fine tasks that compute vector k
+    #ifdef GB_DEBUG
+    GB_memset (Cwork, 0xFF, (Cnvec+1) * sizeof (uint64_t), nthreads) ;
+    #endif
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+        int64_t kfirst = TaskList [taskid].kfirst ;
+        int64_t klast  = TaskList [taskid].klast ;
+        bool fine_task = (klast < 0) ;
+        if (fine_task)
+        {
+            // The set of fine tasks that compute C(:,kC) do not compute Cwork
+            // [kC] directly.  Instead, they compute their partial results in
+            // TaskList [taskid].pC, which is then summed by GB_task_cumsum.
+            // That method sums up the work of each fine task and adds it to
+            // Cwork [kC], which must be initialized here to zero.
+            Cwork [kfirst] = 0 ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -93,11 +115,54 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     }
 
     //--------------------------------------------------------------------------
-    // cumulative sum of Cp and fine tasks in TaskList
+    // cumulative sum of Cwork and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_task_cumsum (Cp, false, Cnvec, Cnvec_nonempty, TaskList, ntasks,
+    Cwork [Cnvec] = 0 ;
+    GB_task_cumsum (Cwork, false, Cnvec, Cnvec_nonempty, TaskList, ntasks,
         nthreads, Werk) ;
+    int64_t cnz = Cwork [Cnvec] ;
+//  printf ("cnz %ld\n", cnz) ;
+
+    //--------------------------------------------------------------------------
+    // allocate the final result Cp
+    //--------------------------------------------------------------------------
+
+    // determine the final p_is_32 setting for the new matrix
+    bool hack32 = true ; // FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
+    bool Cp_is_32 = false ;
+    bool Ci_is_32 = false ;
+    if (p_Cp_is_32 != NULL)   // FIXME
+    { 
+        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+            GxB_AUTO_SPARSITY, cnz, nI, nJ) ;
+    }
+
+    void *Cp = NULL ; size_t Cp_size = 0 ;
+
+    if (Cp_is_32)
+    { 
+        // Cp is 32-bit; allocate and typecast from Cwork
+        Cp = GB_MALLOC_MEMORY (GB_IMAX (2, Cnvec+1), sizeof (uint32_t),
+            &Cp_size) ;
+        if (Cp == NULL)
+        { 
+            // out of memory
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        int nthreads_max = GB_Context_nthreads_max ( ) ;
+        GB_cast_int (Cp, GB_UINT32_code, Cwork, GB_UINT64_code, Cnvec+1,
+            nthreads_max) ;
+    }
+    else
+    { 
+        // Cp is 64-bit; transplant Cwork as Cp
+        Cp = Cwork ;
+        Cp_size = Cwork_size ;
+        (*p_Cwork) = NULL ;
+    }
 
     //--------------------------------------------------------------------------
     // return the result
@@ -105,6 +170,10 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
 
     (*Cp_handle) = Cp ;
     (*Cp_size_handle) = Cp_size ;
+    if (p_Cp_is_32 != NULL)   // FIXME
+    {
+        (*p_Cp_is_32) = Cp_is_32 ;
+    }
     return (GrB_SUCCESS) ;
 }
 

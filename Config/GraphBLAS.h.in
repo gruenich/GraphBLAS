@@ -1674,6 +1674,7 @@ typedef enum
 //==============================================================================
 
 GB_GLOBAL const uint64_t *GrB_ALL ;
+GB_GLOBAL const uint32_t *GxB_ALL32 ;
 
 // These special values of ni and nj can be used for GrB_assign,
 // GrB_extract, and GxB_subassign.
@@ -4438,30 +4439,52 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
 // GrB_extract: extract a submatrix or subvector
 //==============================================================================
 
-// FIXME: 32/64 bit: add extract
-
 GrB_Info GrB_Vector_extract         // w<mask> = accum (w, u(I))
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Index *I_,            // row indices
-    GrB_Index ni,                   // number of row indices
+    const uint64_t *I_,             // row indices (64-bit)
+    uint64_t ni,                    // number of row indices
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
-GrB_Info GrB_Matrix_extract         // C<Mask> = accum (C, A(I,J))
+GrB_Info GxB_Vector_extract_32      // w<mask> = accum (w, u(I))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Vector u,             // first input:  vector u
+    const uint32_t *I_,             // row indices (32-bit)
+    uint64_t ni,                    // number of row indices
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
 (
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Index *I_,            // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C, Mask, and A
+    const uint64_t *I_,             // row indices (64-bit)
+    uint64_t ni,                    // number of row indices
+    const uint64_t *J,              // column indices (64-bit)
+    uint64_t nj,                    // number of column indices
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+) ;
+
+GrB_Info GxB_Matrix_extract_32      // C<M> = accum (C, A(I,J))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_Matrix A,             // first input:  matrix A
+    const uint32_t *I_,             // row indices
+    uint64_t ni,                    // number of row indices
+    const uint32_t *J,              // column indices
+    uint64_t nj,                    // number of column indices
+    const GrB_Descriptor desc       // descriptor for C, M, and A
 ) ;
 
 GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
@@ -4470,28 +4493,57 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Index *I_,            // row indices
-    GrB_Index ni,                   // number of row indices
-    GrB_Index j,                    // column index
+    const uint64_t *I_,             // row indices (64-bit)
+    uint64_t ni,                    // number of row indices
+    uint64_t j,                     // column index
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+
+GrB_Info GxB_Col_extract_32         // w<mask> = accum (w, A(I,j))
+(
+    GrB_Vector w,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Matrix A,             // first input:  matrix A
+    const uint32_t *I_,             // row indices (32-bit)
+    uint64_t ni,                    // number of row indices
+    uint64_t j,                     // column index
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
 // GrB_extract is a generic interface to the following functions:
 //
-// GrB_Vector_extract (w,mask,acc,u,I,ni,d)      // w<m>    = acc (w, u(I))
-// GrB_Col_extract    (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
-// GrB_Matrix_extract (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
+// GrB_Vector_extract    (w,mask,acc,u,I,ni,d)      // w<m>    = acc (w, u(I))
+// GxB_Vector_extract_32 (w,mask,acc,u,I,ni,d)      // w<m>    = acc (w, u(I))
+// GrB_Col_extract       (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
+// GxB_Col_extract_32    (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
+// GrB_Matrix_extract    (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
+// GxB_Matrix_extract_32 (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_extract(C,Mask,accum,A,...)             \
-    _Generic ((C),                                  \
-        GrB_Vector :                                \
-            _Generic ((A),                          \
-                GrB_Vector : GrB_Vector_extract ,   \
-                GrB_Matrix : GrB_Col_extract        \
-            ),                                      \
-        GrB_Matrix : GrB_Matrix_extract)            \
-    (C, Mask, accum, A, __VA_ARGS__)
+#define GrB_extract(C,Mask,accum,A,I,...)                           \
+    _Generic ((C),                                                  \
+        GrB_Vector :                                                \
+            _Generic ((A),                                          \
+                GrB_Vector :                                        \
+                    _Generic ((I),                                  \
+                        const uint64_t * : GrB_Vector_extract,      \
+                              uint64_t * : GrB_Vector_extract,      \
+                        const uint32_t * : GxB_Vector_extract_32,   \
+                              uint32_t * : GxB_Vector_extract_32),  \
+                GrB_Matrix :                                        \
+                    _Generic ((I),                                  \
+                        const uint64_t * : GrB_Col_extract,         \
+                              uint64_t * : GrB_Col_extract,         \
+                        const uint32_t * : GxB_Col_extract_32,      \
+                              uint32_t * : GxB_Col_extract_32)),    \
+        GrB_Matrix :                                                \
+            _Generic ((I),                                          \
+                const uint64_t * : GrB_Matrix_extract,              \
+                      uint64_t * : GrB_Matrix_extract,              \
+                const uint32_t * : GxB_Matrix_extract_32,           \
+                      uint32_t * : GxB_Matrix_extract_32))          \
+    (C, Mask, accum, A, I, __VA_ARGS__)
 #endif
 
 //==============================================================================

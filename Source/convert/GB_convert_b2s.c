@@ -106,7 +106,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
         //----------------------------------------------------------------------
 
         // allocate one row of W per thread, each row of length avdim
-        W = GB_malloc_memory (nthreads * avdim, psize, &W_size) ;
+        W = GB_MALLOC_MEMORY (nthreads * avdim, psize, &W_size) ;
         if (W == NULL)
         {
             // out of memory

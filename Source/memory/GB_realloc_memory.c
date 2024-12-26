@@ -59,7 +59,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
     if (p == NULL)
     { 
-        p = GB_malloc_memory (nitems_new, size_of_item, size_allocated) ;
+        p = GB_MALLOC_MEMORY (nitems_new, size_of_item, size_allocated) ;
         (*ok) = (p != NULL) ;
         return (p) ;
     }
@@ -119,7 +119,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         //----------------------------------------------------------------------
 
         // allocate the new space
-        pnew = GB_malloc_memory (nitems_new, size_of_item, &newsize_allocated) ;
+        pnew = GB_MALLOC_MEMORY (nitems_new, size_of_item, &newsize_allocated) ;
         // copy over the data from the old block to the new block
         if (pnew != NULL)
         { 
@@ -145,7 +145,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         if (!pretend_to_fail)
         { 
             #ifdef GB_MEMDUMP
-            printf ("hard realloc %p oldsize %ld newsize %ld\n",    // MEMDUMP
+            printf ("realloc %p oldsize %8ld newsize %8ld: ",    // MEMDUMP
                 p, oldsize_allocated, newsize_allocated) ;
             #endif
             pnew = GB_Global_realloc_function (p, newsize_allocated) ;

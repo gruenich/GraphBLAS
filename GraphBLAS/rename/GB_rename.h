@@ -861,6 +861,7 @@
 #define GB_JITpackage_352 GM_JITpackage_352
 #define GB_JITpackage_353 GM_JITpackage_353
 #define GB_JITpackage_354 GM_JITpackage_354
+#define GB_JITpackage_355 GM_JITpackage_355
 #define GB_JITpackage_35 GM_JITpackage_35
 #define GB_JITpackage_36 GM_JITpackage_36
 #define GB_JITpackage_37 GM_JITpackage_37
@@ -2672,6 +2673,7 @@
 #define GxB_ACOSH_FP64 GxM_ACOSH_FP64
 #define GxB_AINV_FC32 GxM_AINV_FC32
 #define GxB_AINV_FC64 GxM_AINV_FC64
+#define GxB_ALL32 GxM_ALL32
 #define GxB_ALWAYS_HYPER GxM_ALWAYS_HYPER
 #define GxB_ANY_BOOL GxM_ANY_BOOL
 #define GxB_ANY_BOOL_MONOID GxM_ANY_BOOL_MONOID
@@ -3155,6 +3157,7 @@
 #define GxB_CIMAG_FC64 GxM_CIMAG_FC64
 #define GxB_CMPLX_FP32 GxM_CMPLX_FP32
 #define GxB_CMPLX_FP64 GxM_CMPLX_FP64
+#define GxB_Col_extract_32 GxM_Col_extract_32
 #define GxB_Col_subassign GxM_Col_subassign
 #define GxB_CONJ_FC32 GxM_CONJ_FC32
 #define GxB_CONJ_FC64 GxM_CONJ_FC64
@@ -3775,6 +3778,7 @@
 #define GxB_Matrix_export_FullR GxM_Matrix_export_FullR
 #define GxB_Matrix_export_HyperCSC GxM_Matrix_export_HyperCSC
 #define GxB_Matrix_export_HyperCSR GxM_Matrix_export_HyperCSR
+#define GxB_Matrix_extract_32 GxM_Matrix_extract_32
 #define GxB_Matrix_extractElement_FC32 GxM_Matrix_extractElement_FC32
 #define GxB_Matrix_extractElement_FC64 GxM_Matrix_extractElement_FC64
 #define GxB_Matrix_extractTuples_32_BOOL GxM_Matrix_extractTuples_32_BOOL
@@ -5064,6 +5068,7 @@
 #define GxB_Vector_export_Bitmap GxM_Vector_export_Bitmap
 #define GxB_Vector_export_CSC GxM_Vector_export_CSC
 #define GxB_Vector_export_Full GxM_Vector_export_Full
+#define GxB_Vector_extract_32 GxM_Vector_extract_32
 #define GxB_Vector_extractElement_FC32 GxM_Vector_extractElement_FC32
 #define GxB_Vector_extractElement_FC64 GxM_Vector_extractElement_FC64
 #define GxB_Vector_extractTuples_32_BOOL GxM_Vector_extractTuples_32_BOOL
