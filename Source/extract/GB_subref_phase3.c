@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
@@ -31,8 +29,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int ntasks,                           // # of tasks
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
-    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
-    const uint64_t *Inext,              // for I inverse buckets, size nI
+    const void *Ihead,                  // for I inverse buckets, size A->vlen
+    const void *Inext,                  // for I inverse buckets, size nI
+    const bool Ihead_is_32,             // if true, Ihead,Inext 32-bit; else 64
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
@@ -67,8 +66,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
 
-    GB_IDECL (I,  const, u) ; GB_IPTR (I, I_is_32) ;
-
     GB_MDECL (Cp, const, u) ;
     Cp = (*Cp_handle) ;
     GB_IPTR (Cp, Cp_is_32) ;
@@ -77,8 +74,12 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
     bool Ap_is_32 = A->p_is_32 ;
     bool Ai_is_32 = A->i_is_32 ;
+
+    GB_IDECL (I       , const, u) ; GB_IPTR (I       , I_is_32) ;
     GB_IDECL (Ap_start, const, u) ; GB_IPTR (Ap_start, Ap_is_32) ;
     GB_IDECL (Ap_end  , const, u) ; GB_IPTR (Ap_end  , Ap_is_32) ;
+    GB_IDECL (Ihead   , const, u) ; GB_IPTR (Ihead   , Ihead_is_32) ;
+    GB_IDECL (Inext   , const, u) ; GB_IPTR (Inext   , Ihead_is_32) ;
 
     ASSERT (Cp != NULL) ;
     ASSERT_MATRIX_OK (A, "A for subref phase3", GB0) ;
@@ -223,8 +224,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
         // using the JIT kernel
         info = GB_subref_sparse_jit (C, TaskList, ntasks, nthreads, post_sort,
-            Ihead, Inext, I_has_duplicates, Ap_start, Ap_end, need_qsort,
-            Ikind, nI, Icolon, A, I, I_is_32) ;
+            Ihead, Inext, Ihead_is_32, I_has_duplicates, Ap_start, Ap_end,
+            need_qsort, Ikind, nI, Icolon, A, I, I_is_32) ;
 
         if (info == GrB_NO_VALUE)
         { 

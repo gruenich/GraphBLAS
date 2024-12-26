@@ -38,6 +38,10 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel)
     // get I
     const GB_I_TYPE *restrict I = I_input ;
 
+    // get I inverse lists
+    const GB_IHEAD_TYPE *restrict Ihead = Ihead_input ;
+    const GB_IHEAD_TYPE *restrict Inext = Inext_input ;
+
     #define Ai_is_32 (GB_Ai_BITS == 32)
 
     #define GB_PHASE_2_OF_2

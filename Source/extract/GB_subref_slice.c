@@ -59,6 +59,7 @@
     (*p_Ihead_size   ) = Ihead_size ;       \
     (*p_Inext        ) = Inext ;            \
     (*p_Inext_size   ) = Inext_size ;       \
+    (*p_Ihead_is_32  ) = Ihead_is_32 ;      \
     (*p_nduplicates  ) = nduplicates ;      \
     (*p_Cwork        ) = Cwork ;            \
     (*p_Cwork_size   ) = Cwork_size ;       \
@@ -71,30 +72,31 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // output:
     GB_task_struct **p_TaskList,    // array of structs
     size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads for subref operation
-    bool *p_post_sort,              // true if a final post-sort is needed
-    uint64_t **p_Ihead,             // for I inverse, if needed; size avlen
+    int *p_ntasks,              // # of tasks constructed
+    int *p_nthreads,            // # of threads for subref operation
+    bool *p_post_sort,          // true if a final post-sort is needed
+    void **p_Ihead,             // for I inverse, if needed; size avlen
     size_t *p_Ihead_size,
-    uint64_t **p_Inext,             // for I inverse, if needed; size nI
+    void **p_Inext,             // for I inverse, if needed; size nI
     size_t *p_Inext_size,
-    int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
-    uint64_t **p_Cwork,             // workspace of size max(2,C->nvec+1)
+    bool *p_Ihead_is_32,        // if true, Ihead and Inext are 32-bit; else 64
+    int64_t *p_nduplicates,     // # of duplicates, if I inverse computed
+    uint64_t **p_Cwork,         // workspace of size max(2,C->nvec+1)
     size_t *p_Cwork_size,
     // from phase0:
-    const void *Ap_start,           // location of A(imin:imax,kA)
+    const void *Ap_start,       // location of A(imin:imax,kA)
     const void *Ap_end,
-    const int64_t Cnvec,            // # of vectors of C
-    const bool need_qsort,          // true if C must be sorted
-    const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
-    const int64_t nI,               // length of I
-    const int64_t Icolon [3],       // for GB_RANGE and GB_STRIDE
+    const int64_t Cnvec,        // # of vectors of C
+    const bool need_qsort,      // true if C must be sorted
+    const int Ikind,            // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
+    const int64_t nI,           // length of I
+    const int64_t Icolon [3],   // for GB_RANGE and GB_STRIDE
     // original input:
-    const int64_t avlen,            // A->vlen
-    const int64_t anz,              // nnz (A)
-    const bool Ap_is_32,            // if true, Ap_start/end are 32-bit; else 64
+    const int64_t avlen,        // A->vlen
+    const int64_t anz,          // nnz (A)
+    const bool Ap_is_32,        // if true, Ap_start/end are 32-bit; else 64
     const void *I,
-    const bool I_is_32,             // if true, I is 32-bit; else 64 bit
+    const bool I_is_32,         // if true, I is 32-bit; else 64 bit
     GB_Werk Werk
 )
 {
@@ -123,13 +125,16 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     (*p_TaskList_size) = 0 ;
     (*p_Ihead) = NULL ;
     (*p_Inext) = NULL ;
+    (*p_Ihead_is_32) = false ;
     (*p_Cwork) = NULL ;
     (*p_Ihead_size) = 0 ;
     (*p_Inext_size) = 0 ;
     (*p_Cwork_size) = 0 ;
+    (*p_nduplicates) = 0 ;
 
-    uint64_t *restrict Ihead = NULL ; size_t Ihead_size = 0 ;
-    uint64_t *restrict Inext = NULL ; size_t Inext_size = 0 ;
+    void *Ihead = NULL ; size_t Ihead_size = 0 ;
+    void *Inext = NULL ; size_t Inext_size = 0 ;
+    bool Ihead_is_32 = false ;
     uint64_t *restrict Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
@@ -251,7 +256,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     if (need_I_inverse)
     { 
         GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &Ihead, &Ihead_size,
-            &Inext, &Inext_size, &nduplicates, Werk)) ;
+            &Inext, &Inext_size, &Ihead_is_32, &nduplicates, Werk)) ;
         ASSERT (Ihead != NULL) ;
         ASSERT (Inext != NULL) ;
     }

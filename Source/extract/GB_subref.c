@@ -167,20 +167,17 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     // C = A(I,J) where C and A are both sparse or hypersparse
     //--------------------------------------------------------------------------
 
-    void *Cp = NULL ; size_t Cp_size = 0 ;
-    void *Ch = NULL ; size_t Ch_size = 0 ;
-    uint64_t *Ap_start = NULL ; size_t Ap_start_size = 0 ;
-    uint64_t *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
-    uint64_t *Ihead    = NULL ; size_t Ihead_size = 0 ;
-    uint64_t *Inext    = NULL ; size_t Inext_size = 0 ;
-    uint64_t *Cwork    = NULL ; size_t Cwork_size = 0 ;
+    void *Cp       = NULL ; size_t Cp_size = 0 ;
+    void *Ch       = NULL ; size_t Ch_size = 0 ;
+    void *Ap_start = NULL ; size_t Ap_start_size = 0 ;
+    void *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
+    void *Ihead    = NULL ; size_t Ihead_size = 0 ;
+    void *Inext    = NULL ; size_t Inext_size = 0 ;
+    void *Cwork    = NULL ; size_t Cwork_size = 0 ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
-    bool post_sort, need_qsort ;
+    bool post_sort, need_qsort, Cp_is_32, Ci_is_32, Ihead_is_32 ;
     int Ikind, ntasks, nthreads ;
-
-    bool Cp_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // ensure A is unjumbled
@@ -213,7 +210,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GB_OK (GB_subref_slice (
         // computed by phase1:
         &TaskList, &TaskList_size, &ntasks, &nthreads, &post_sort,
-        &Ihead, &Ihead_size, &Inext, &Inext_size, &ndupl, &Cwork, &Cwork_size,
+        &Ihead, &Ihead_size, &Inext, &Inext_size, &Ihead_is_32,
+        &ndupl, &Cwork, &Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
         // original input:
@@ -227,7 +225,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase2:
         &Cp, &Cp_is_32, &Cp_size, &Cnvec_nonempty,
         // computed by phase1:
-        TaskList, ntasks, nthreads, Ihead, Inext, ndupl > 0, &Cwork, Cwork_size,
+        TaskList, ntasks, nthreads, Ihead, Inext, Ihead_is_32,
+        ndupl > 0, &Cwork, Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon, nJ,
         // original input:
@@ -243,7 +242,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // from phase2:
         &Cp, Cp_is_32, Cp_size, Cnvec_nonempty,
         // from phase1:
-        TaskList, ntasks, nthreads, post_sort, Ihead, Inext, ndupl,
+        TaskList, ntasks, nthreads, post_sort, Ihead, Inext, Ihead_is_32, ndupl,
         // from phase0:
         &Ch, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,

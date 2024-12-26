@@ -821,8 +821,8 @@ GrB_Info GB_subref_phase0
         else
         {
             // A(imin:imax,jA) is in Ai,Ax [pA:pA_end-1]
-            GB_IPTR (Ap_start, Ap_is_32) ;
-            GB_IPTR (Ap_end  , Ap_is_32) ;
+            GB_IDECL (Ap_start, const, u) ; GB_IPTR (Ap_start, Ap_is_32) ;
+            GB_IDECL (Ap_end  , const, u) ; GB_IPTR (Ap_end  , Ap_is_32) ;
             uint64_t pA      = GB_IGET (Ap_start, kC) ;
             uint64_t pA_end  = GB_IGET (Ap_end  , kC) ;
             int64_t ajnz = pA_end - pA ;

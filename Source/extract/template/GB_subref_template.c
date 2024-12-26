@@ -20,8 +20,10 @@
 //      numeric:   C = A(I,J), extracting the pattern and values
 
 // to iterate across all entries in a bucket:
-#define GB_for_each_index_in_bucket(inew,i,nI,Ihead,Inext)              \
-    for (uint64_t inew = Ihead [i] ; inew < nI ; inew = Inext [inew])
+#define GB_for_each_index_in_bucket(inew,i,nI,Ihead,Inext)  \
+    for (uint64_t inew = GB_IGET (Ihead, i) ;               \
+                  inew < nI ;                               \
+                  inew = GB_IGET (Inext, inew))
 
 //------------------------------------------------------------------------------
 
@@ -615,7 +617,7 @@
                         #endif
                         // bucket i has at most one index inew such that
                         // i == I [inew]
-                        uint64_t inew = Ihead [i] ;
+                        uint64_t inew = GB_IGET (Ihead, i) ;
                         if (inew < nI)
                         { 
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));

@@ -26,6 +26,7 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto, or 0 if not used
     bool need_qsort,        // true if qsort needs to be called
+    bool Ihead_is_32,       // if true, Ihead/Inext 32-bit; else 64
     bool I_has_duplicates,  // true if I has duplicate entries
     // A matrix:
     GrB_Matrix A
@@ -62,15 +63,18 @@ void GB_enumify_subref      // enumerate a GrB_extract problem
     int ap_is_32 = (A->p_is_32) ? 1 : 0 ;
     int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
 
+    int ihead_is_32 = (Ihead_is_32) ? 1 : 0 ;
+
     //--------------------------------------------------------------------------
     // construct the subref method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 20 (4 hex digits)
+    // total method_code bits: 21 (6 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // C, A integer sizes (1 hex digit)
+                // C, A integer sizes (2 hex digits)
+                GB_LSHIFT (ihead_is_32, 20) |  // 0 to 1       1
                 GB_LSHIFT (cp_is_32   , 19) |  // 0 to 1       1
                 GB_LSHIFT (ci_is_32   , 18) |  // 0 to 1       1
                 GB_LSHIFT (ap_is_32   , 17) |  // 0 to 1       1

@@ -9,8 +9,6 @@
 
 // DONE: 32/64 bit
 
-#define GB_DEBUG
-
 // GB_subref_phase2 counts the number of entries in each vector of C, for
 // C=A(I,J) and then does a cumulative sum to find Cp.  A is sparse or
 // hypersparse.
@@ -30,8 +28,9 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
-    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
-    const uint64_t *Inext,              // for I inverse buckets, size nI
+    const void *Ihead,                  // for I inverse buckets, size A->vlen
+    const void *Inext,                  // for I inverse buckets, size nI
+    const bool Ihead_is_32,             // if true, Ihead,Inext 32-bit; else 64
     const bool I_has_duplicates,        // true if I has duplicates
     uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
     size_t Cwork_size,
@@ -62,10 +61,11 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
 
+    GB_IDECL (I       , const, u) ; GB_IPTR (I       , I_is_32) ;
     GB_IDECL (Ap_start, const, u) ; GB_IPTR (Ap_start, A->p_is_32) ;
     GB_IDECL (Ap_end  , const, u) ; GB_IPTR (Ap_end  , A->p_is_32) ;
-
-    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
+    GB_IDECL (Ihead   , const, u) ; GB_IPTR (Ihead   , Ihead_is_32) ;
+    GB_IDECL (Inext   , const, u) ; GB_IPTR (Inext   , Ihead_is_32) ;
 
     (*Cp_handle) = NULL ;
     (*Cp_size_handle) = 0 ;
@@ -124,7 +124,6 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     GB_task_cumsum (Cwork, false, Cnvec, Cnvec_nonempty, TaskList, ntasks,
         nthreads, Werk) ;
     int64_t cnz = Cwork [Cnvec] ;
-//  printf ("cnz %ld\n", cnz) ;
 
     //--------------------------------------------------------------------------
     // allocate the final result Cp

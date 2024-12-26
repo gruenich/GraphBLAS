@@ -23,8 +23,9 @@ GrB_Info GB_subref_sparse_jit
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const bool post_sort,               // true if post-sort needed
-    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
-    const uint64_t *Inext,              // for I inverse buckets, size nI
+    const void *Ihead,                  // for I inverse buckets, size A->vlen
+    const void *Inext,                  // for I inverse buckets, size nI
+    const bool Ihead_is_32,             // if true, Ihead/Inext 32-bit; else 64
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     const void *Ap_start,
@@ -48,7 +49,7 @@ GrB_Info GB_subref_sparse_jit
     char *suffix ;
     uint64_t hash = GB_encodify_subref (&encoding, &suffix,
         GB_JIT_KERNEL_SUBREF_SPARSE, C, I_is_32, false, Ikind, 0,
-        need_qsort, I_has_duplicates, A) ;
+        need_qsort, Ihead_is_32, I_has_duplicates, A) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

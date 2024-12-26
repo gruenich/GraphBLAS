@@ -26,28 +26,29 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     // extract the subref method_code
     //--------------------------------------------------------------------------
 
-    // C, A integer sizes (1 hex digit)
-    bool Cp_is_32   = GB_RSHIFT (method_code, 19, 1) ;
-    bool Ci_is_32   = GB_RSHIFT (method_code, 18, 1) ;
-    bool Ap_is_32   = GB_RSHIFT (method_code, 17, 1) ;
-    bool Ai_is_32   = GB_RSHIFT (method_code, 16, 1) ;
+    // C, A integer sizes (2 hex digits)
+    bool Ihead_is_32 = GB_RSHIFT (method_code, 20, 1) ;
+    bool Cp_is_32    = GB_RSHIFT (method_code, 19, 1) ;
+    bool Ci_is_32    = GB_RSHIFT (method_code, 18, 1) ;
+    bool Ap_is_32    = GB_RSHIFT (method_code, 17, 1) ;
+    bool Ai_is_32    = GB_RSHIFT (method_code, 16, 1) ;
 
     // need_qsort, I_has_duplicates, I and J bits (1 hex digit)
-    bool I_is_32    = GB_RSHIFT (method_code, 15, 1) ;
-    bool J_is_32    = GB_RSHIFT (method_code, 14, 1) ;
-    int ihasdupl    = GB_RSHIFT (method_code, 13, 1) ;
-    int needqsort   = GB_RSHIFT (method_code, 12, 1) ;
+    bool I_is_32     = GB_RSHIFT (method_code, 15, 1) ;
+    bool J_is_32     = GB_RSHIFT (method_code, 14, 1) ;
+    int ihasdupl     = GB_RSHIFT (method_code, 13, 1) ;
+    int needqsort    = GB_RSHIFT (method_code, 12, 1) ;
 
     // Ikind, Jkind (1 hex digit)
-    int Ikind       = GB_RSHIFT (method_code, 10, 2) ;
-    int Jkind       = GB_RSHIFT (method_code,  8, 2) ;
+    int Ikind        = GB_RSHIFT (method_code, 10, 2) ;
+    int Jkind        = GB_RSHIFT (method_code,  8, 2) ;
 
     // type of C and A (1 hex digit)
-//  int ccode       = GB_RSHIFT (method_code,  4, 4) ;
+//  int ccode        = GB_RSHIFT (method_code,  4, 4) ;
 
     // sparsity structures of C and A (1 hex digit)
-    int csparsity   = GB_RSHIFT (method_code,  2, 2) ;
-    int asparsity   = GB_RSHIFT (method_code,  0, 2) ;
+    int csparsity    = GB_RSHIFT (method_code,  2, 2) ;
+    int asparsity    = GB_RSHIFT (method_code,  0, 2) ;
 
     //--------------------------------------------------------------------------
     // describe the subref
@@ -88,6 +89,8 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
         }
         fprintf (fp, "#define GB_J_TYPE uint%d_t\n", J_is_32 ? 32 : 64) ;
     }
+
+    fprintf (fp, "#define GB_IHEAD_TYPE uint%d_t\n", Ihead_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------
     // construct the typedefs
