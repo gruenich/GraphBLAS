@@ -9,6 +9,8 @@
 
 // DONE: 32/64 bit
 
+#define GB_DEBUG
+
 // GB_subref_phase2 counts the number of entries in each vector of C, for
 // C=A(I,J) and then does a cumulative sum to find Cp.  A is sparse or
 // hypersparse.
@@ -28,8 +30,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
+    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
+    const uint64_t *Inext,              // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
     size_t Cwork_size,

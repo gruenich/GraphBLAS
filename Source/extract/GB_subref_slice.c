@@ -44,7 +44,7 @@
     GB_FREE_WORKSPACE ;                         \
     GB_FREE_WORK (&Cwork, Cwork_size) ;         \
     GB_FREE_WORK (&TaskList, TaskList_size) ;   \
-    GB_FREE_WORK (&Mark, Mark_size) ;           \
+    GB_FREE_WORK (&Ihead, Ihead_size) ;         \
     GB_FREE_WORK (&Inext, Inext_size) ;         \
 }
 
@@ -55,8 +55,8 @@
     (*p_ntasks       ) = ntasks ;           \
     (*p_nthreads     ) = nthreads ;         \
     (*p_post_sort    ) = post_sort ;        \
-    (*p_Mark         ) = Mark ;             \
-    (*p_Mark_size    ) = Mark_size ;        \
+    (*p_Ihead        ) = Ihead ;            \
+    (*p_Ihead_size   ) = Ihead_size ;       \
     (*p_Inext        ) = Inext ;            \
     (*p_Inext_size   ) = Inext_size ;       \
     (*p_nduplicates  ) = nduplicates ;      \
@@ -74,9 +74,9 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for subref operation
     bool *p_post_sort,              // true if a final post-sort is needed
-    int64_t **p_Mark,               // for I inverse, if needed; size avlen
-    size_t *p_Mark_size,
-    int64_t **p_Inext,              // for I inverse, if needed; size nI
+    uint64_t **p_Ihead,             // for I inverse, if needed; size avlen
+    size_t *p_Ihead_size,
+    uint64_t **p_Inext,             // for I inverse, if needed; size nI
     size_t *p_Inext_size,
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     uint64_t **p_Cwork,             // workspace of size max(2,C->nvec+1)
@@ -108,8 +108,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
     ASSERT (p_post_sort != NULL) ;
-    ASSERT (p_Mark != NULL) ;
-    ASSERT (p_Mark_size != NULL) ;
+    ASSERT (p_Ihead != NULL) ;
+    ASSERT (p_Ihead_size != NULL) ;
     ASSERT (p_Inext != NULL) ;
     ASSERT (p_Inext_size != NULL) ;
     ASSERT (p_nduplicates != NULL) ;
@@ -121,15 +121,15 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
 
     (*p_TaskList) = NULL ;
     (*p_TaskList_size) = 0 ;
-    (*p_Mark    ) = NULL ;
-    (*p_Inext   ) = NULL ;
-    (*p_Cwork   ) = NULL ;
-    (*p_Mark_size ) = 0 ;
+    (*p_Ihead) = NULL ;
+    (*p_Inext) = NULL ;
+    (*p_Cwork) = NULL ;
+    (*p_Ihead_size) = 0 ;
     (*p_Inext_size) = 0 ;
     (*p_Cwork_size) = 0 ;
 
-    int64_t  *restrict Mark  = NULL ; size_t Mark_size = 0 ;
-    int64_t  *restrict Inext = NULL ; size_t Inext_size = 0 ;
+    uint64_t *restrict Ihead = NULL ; size_t Ihead_size = 0 ;
+    uint64_t *restrict Inext = NULL ; size_t Inext_size = 0 ;
     uint64_t *restrict Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_WERK_DECLARE (Coarse, int64_t) ;     // size ntasks1+1
     int ntasks1 = 0 ;
@@ -208,7 +208,7 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     for (kC = 0 ; kC < Cnvec ; kC++)
     { 
         // jC is the (kC)th vector of C = A(I,J)
-        // int64_t jC = GBH (Ch, kC) ;
+        // int64_t jC = GBh_C (Ch, kC) ; // but this is not needed
         // C(:,kC) = A(I,kA) will be constructed
         int64_t pA      = GB_IGET (Ap_start, kC) ;
         int64_t pA_end  = GB_IGET (Ap_end  , kC) ;
@@ -250,9 +250,9 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     int64_t nduplicates = 0 ;
     if (need_I_inverse)
     { 
-        GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &Mark, &Mark_size,
+        GB_OK (GB_I_inverse (I, I_is_32, nI, avlen, &Ihead, &Ihead_size,
             &Inext, &Inext_size, &nduplicates, Werk)) ;
-        ASSERT (Mark != NULL) ;
+        ASSERT (Ihead != NULL) ;
         ASSERT (Inext != NULL) ;
     }
 

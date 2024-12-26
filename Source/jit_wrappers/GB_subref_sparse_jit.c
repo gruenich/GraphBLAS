@@ -23,8 +23,8 @@ GrB_Info GB_subref_sparse_jit
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
     const bool post_sort,               // true if post-sort needed
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
+    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
+    const uint64_t *Inext,              // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     const void *Ap_start,
@@ -67,7 +67,7 @@ GrB_Info GB_subref_sparse_jit
 
     #include "include/GB_pedantic_disable.h"
     GB_jit_dl_function GB_jit_kernel = (GB_jit_dl_function) dl_function ;
-    return (GB_jit_kernel (C, TaskList, ntasks, nthreads, post_sort, Mark,
+    return (GB_jit_kernel (C, TaskList, ntasks, nthreads, post_sort, Ihead,
         Inext, Ap_start, Ap_end, nI, Icolon, A, I, &GB_callback)) ;
 }
 

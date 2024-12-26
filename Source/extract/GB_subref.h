@@ -67,9 +67,9 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for subref operation
     bool *p_post_sort,              // true if a final post-sort is needed
-    int64_t **p_Mark,               // for I inverse, if needed; size avlen
-    size_t *p_Mark_size,
-    int64_t **p_Inext,              // for I inverse, if needed; size nI
+    uint64_t **p_Ihead,             // for I inverse, if needed; size avlen
+    size_t *p_Ihead_size,
+    uint64_t **p_Inext,             // for I inverse, if needed; size nI
     size_t *p_Inext_size,
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     uint64_t **p_Cwork,             // workspace of size max(2,C->nvec+1)
@@ -102,8 +102,8 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads,                 // # of threads to use
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
+    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
+    const uint64_t *Inext,              // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     uint64_t **p_Cwork,                 // workspace of size max(2,C->nvec+1)
     size_t Cwork_size,
@@ -137,8 +137,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int ntasks,                           // # of tasks
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
+    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
+    const uint64_t *Inext,              // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
@@ -171,9 +171,9 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t nI,                 // length of I
     int64_t avlen,              // length of the vectors of A
     // outputs:
-    int64_t *restrict *p_Mark,  // head pointers for buckets, size avlen
-    size_t *p_Mark_size,
-    int64_t *restrict *p_Inext, // next pointers for buckets, size nI
+    uint64_t *restrict *p_Ihead,    // head pointers for buckets, size avlen
+    size_t *p_Ihead_size,
+    uint64_t *restrict *p_Inext,    // next pointers for buckets, size nI
     size_t *p_Inext_size,
     int64_t *p_nduplicates,     // number of duplicate entries in I
     GB_Werk Werk

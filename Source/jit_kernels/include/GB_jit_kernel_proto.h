@@ -515,12 +515,12 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const bool C_replace,                                               \
-    const uint64_t *I,          /* FIXME */                             \
+    const uint64_t *I,          /* FIXME subassign JIT kernel */        \
     const int64_t ni,                                                   \
     const int64_t nI,                                                   \
     const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
-    const uint64_t *J,          /* FIXME */                             \
+    const uint64_t *J,          /* FIXME subassign JIT kernel */        \
     const int64_t nj,                                                   \
     const int64_t nJ,                                                   \
     const int Jkind,                                                    \
@@ -662,8 +662,8 @@ GrB_Info GB_jit_kernel_subref_sparse                                    \
     const int ntasks,                                                   \
     const int nthreads,                                                 \
     const bool post_sort,                                               \
-    const int64_t *Mark,                                                \
-    const int64_t *Inext,                                               \
+    const uint64_t *Ihead,                                              \
+    const uint64_t *Inext,                                              \
     const void *Ap_start_input,                                         \
     const void *Ap_end_input,                                           \
     const int64_t nI,                                                   \

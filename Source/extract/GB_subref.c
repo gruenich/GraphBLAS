@@ -77,7 +77,7 @@
     GB_FREE_WORK (&TaskList, TaskList_size) ;   \
     GB_FREE_WORK (&Ap_start, Ap_start_size) ;   \
     GB_FREE_WORK (&Ap_end, Ap_end_size) ;       \
-    GB_FREE_WORK (&Mark, Mark_size) ;           \
+    GB_FREE_WORK (&Ihead, Ihead_size) ;         \
     GB_FREE_WORK (&Inext, Inext_size) ;         \
     GB_FREE_WORK (&Cwork, Cwork_size) ;         \
 }
@@ -171,8 +171,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     void *Ch = NULL ; size_t Ch_size = 0 ;
     uint64_t *Ap_start = NULL ; size_t Ap_start_size = 0 ;
     uint64_t *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
-    int64_t *Mark      = NULL ; size_t Mark_size = 0 ;
-    int64_t *Inext     = NULL ; size_t Inext_size = 0 ;
+    uint64_t *Ihead    = NULL ; size_t Ihead_size = 0 ;
+    uint64_t *Inext    = NULL ; size_t Inext_size = 0 ;
     uint64_t *Cwork    = NULL ; size_t Cwork_size = 0 ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
@@ -213,7 +213,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GB_OK (GB_subref_slice (
         // computed by phase1:
         &TaskList, &TaskList_size, &ntasks, &nthreads, &post_sort,
-        &Mark, &Mark_size, &Inext, &Inext_size, &ndupl, &Cwork, &Cwork_size,
+        &Ihead, &Ihead_size, &Inext, &Inext_size, &ndupl, &Cwork, &Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon,
         // original input:
@@ -227,7 +227,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // computed by phase2:
         &Cp, &Cp_is_32, &Cp_size, &Cnvec_nonempty,
         // computed by phase1:
-        TaskList, ntasks, nthreads, Mark, Inext, ndupl > 0, &Cwork, Cwork_size,
+        TaskList, ntasks, nthreads, Ihead, Inext, ndupl > 0, &Cwork, Cwork_size,
         // computed by phase0:
         Ap_start, Ap_end, Cnvec, need_qsort, Ikind, nI, Icolon, nJ,
         // original input:
@@ -243,7 +243,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // from phase2:
         &Cp, Cp_is_32, Cp_size, Cnvec_nonempty,
         // from phase1:
-        TaskList, ntasks, nthreads, post_sort, Mark, Inext, ndupl,
+        TaskList, ntasks, nthreads, post_sort, Ihead, Inext, ndupl,
         // from phase0:
         &Ch, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,

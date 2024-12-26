@@ -20,8 +20,8 @@
 //      numeric:   C = A(I,J), extracting the pattern and values
 
 // to iterate across all entries in a bucket:
-#define GB_for_each_index_in_bucket(inew,i)     \
-    for (int64_t inew = Mark [i] - 1 ; inew >= 0 ; inew = Inext [inew])
+#define GB_for_each_index_in_bucket(inew,i,nI,Ihead,Inext)              \
+    for (uint64_t inew = Ihead [i] ; inew < nI ; inew = Inext [inew])
 
 //------------------------------------------------------------------------------
 
@@ -181,7 +181,7 @@
             { 
                 // determine the method based on A(*,kA) and I
                 method = GB_subref_method (alen, avlen, GB_I_KIND, nI,
-                    (Mark != NULL), GB_NEED_QSORT, iinc, GB_I_HAS_DUPLICATES) ;
+                    (Ihead != NULL), GB_NEED_QSORT, iinc, GB_I_HAS_DUPLICATES) ;
             }
 
             //------------------------------------------------------------------
@@ -527,7 +527,7 @@
                         #endif
                         // traverse bucket i for all indices inew where
                         // i == I [inew] or where i is from a colon expression
-                        GB_for_each_index_in_bucket (inew, i)
+                        GB_for_each_index_in_bucket (inew, i, nI, Ihead, Inext)
                         { 
                             ASSERT (inew >= 0 && inew < nI) ;
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
@@ -578,7 +578,7 @@
                         #endif
                         // traverse bucket i for all indices inew where
                         // i == I [inew] or where i is from a colon expression
-                        GB_for_each_index_in_bucket (inew, i)
+                        GB_for_each_index_in_bucket (inew, i, nI, Ihead, Inext)
                         { 
                             ASSERT (inew >= 0 && inew < nI) ;
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
@@ -615,10 +615,9 @@
                         #endif
                         // bucket i has at most one index inew such that
                         // i == I [inew]
-                        int64_t inew = Mark [i] - 1 ;
-                        if (inew >= 0)
+                        uint64_t inew = Ihead [i] ;
+                        if (inew < nI)
                         { 
-                            ASSERT (inew >= 0 && inew < nI) ;
                             ASSERT (i == GB_IJLIST (I, inew, GB_I_KIND,Icolon));
                             #if defined ( GB_ANALYSIS_PHASE )
                             clen++ ;

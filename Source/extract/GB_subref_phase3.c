@@ -9,6 +9,8 @@
 
 // DONE: 32/64 bit
 
+#define GB_DEBUG
+
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
@@ -29,8 +31,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int ntasks,                           // # of tasks
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
+    const uint64_t *Ihead,              // for I inverse buckets, size A->vlen
+    const uint64_t *Inext,              // for I inverse buckets, size nI
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
@@ -171,9 +173,10 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
             }                                                       \
         }
 
-        // possible variants:
-        //  Cp,Ci:  4
-        //  Ai      2
+        // 16 possible variants: could use a JIT kerel here
+        //  Cp,Ci:      4
+        //  Ap,Ai:      4
+        //  I inverse:  2
 
         #define GB_SYMBOLIC
         #include "extract/template/GB_subref_template.c"
@@ -203,6 +206,11 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
             }                                                       \
         }
 
+        // 16 possible variants: could use a JIT kerel here
+        //  Cp,Ci:      4
+        //  Ap,Ai:      4
+        //  I inverse:  2
+
         #include "extract/template/GB_subref_template.c"
 
     }
@@ -215,7 +223,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
         // using the JIT kernel
         info = GB_subref_sparse_jit (C, TaskList, ntasks, nthreads, post_sort,
-            Mark, Inext, I_has_duplicates, Ap_start, Ap_end, need_qsort,
+            Ihead, Inext, I_has_duplicates, Ap_start, Ap_end, need_qsort,
             Ikind, nI, Icolon, A, I, I_is_32) ;
 
         if (info == GrB_NO_VALUE)
