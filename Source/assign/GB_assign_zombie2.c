@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // C(i,:)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in C(i,:) to be deleted.
@@ -39,10 +40,11 @@ GrB_Info GB_assign_zombie2
     // get C
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Cp = C->p ;    // FIXME
-    int64_t *restrict Ci = C->i ;
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
     const int64_t Cnvec = C->nvec ;
     int64_t nzombies = C->nzombies ;
+    const bool Ci_is_32 = C->i_is_32 ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -71,11 +73,11 @@ GrB_Info GB_assign_zombie2
             // find C(i,j)
             //------------------------------------------------------------------
 
-            int64_t pC = Cp [k] ;
-            int64_t pC_end = Cp [k+1] ;
+            int64_t pC = GB_IGET (Cp, k) ;
+            int64_t pC_end = GB_IGET (Cp, k+1) ;
             int64_t pright = pC_end - 1 ;
             bool is_zombie ;
-            bool found = GB_binary_search_zombie (i, Ci, false, &pC, &pright,
+            bool found = GB_binary_search_zombie (i, Ci, Ci_is_32, &pC, &pright,
                 true, &is_zombie) ;
 
             //------------------------------------------------------------------
@@ -84,9 +86,10 @@ GrB_Info GB_assign_zombie2
 
             if (found && !is_zombie)
             { 
-                ASSERT (i == Ci [pC]) ;
+                ASSERT (i == GB_IGET (Ci, pC)) ;
                 nzombies++ ;
-                Ci [pC] = GB_ZOMBIE (i) ;
+                int64_t iC = GB_ZOMBIE (i) ;
+                GB_ISET (Ci, pC, iC) ;      // Ci [pC] = iC ;
             }
         }
     }

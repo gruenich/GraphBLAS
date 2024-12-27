@@ -267,8 +267,8 @@ void GB_helper5              // construct pattern of S
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (k = 0 ; k < anz ; k++)
     {
-        int64_t i = GBI (Ai, k, avlen) ;
-        Si [k] = GBI (Mi, i, mvlen) ;
+        int64_t i = GBI (Ai, k, avlen) ;    // FIXME
+        Si [k] = GBI (Mi, i, mvlen) ;       // FIXME
         Sj [k] = Mj [i] ;
     }
 }

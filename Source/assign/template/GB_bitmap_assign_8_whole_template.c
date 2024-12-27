@@ -13,6 +13,8 @@
 // C<!M,repl> = A       subassign
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C:           bitmap
 // M:           present, hypersparse or sparse (not bitmap or full)
 // Mask_comp:   true
@@ -162,7 +164,7 @@
                     switch (Cb [pC])                                          \
                     {                                                         \
                         case 0: /* C(i,j) not present, !M(i,j) = 1 */         \
-                            if (GBB_A (Ab, pC))                               \
+                            if (GBb_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -172,7 +174,7 @@
                             }                                                 \
                             break ;                                           \
                         case 1: /* C(i,j) present, !M(i,j) = 1 */             \
-                            if (GBB_A (Ab, pC))                               \
+                            if (GBb_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -213,7 +215,7 @@
                     switch (Cb [pC])                                          \
                     {                                                         \
                         case 0: /* C(i,j) not present, !M(i,j) = 1 */         \
-                            if (GBB_A (Ab, pC))                               \
+                            if (GBb_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -223,7 +225,7 @@
                             }                                                 \
                             break ;                                           \
                         case 1: /* C(i,j) present, !M(i,j) = 1 */             \
-                            if (GBB_A (Ab, pC))                               \
+                            if (GBb_A (Ab, pC))                               \
                             {                                                 \
                                 /* Cx [pC] = Ax [pC] */                       \
                                 GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,    \
@@ -260,16 +262,16 @@
 
             // assign entries from A into C
             #undef  GB_AIJ_WORK
-            #define GB_AIJ_WORK(pC,pA)                                  \
-            {                                                           \
-                int8_t cb = Cb [pC] ;                                   \
-                if (cb <= 1)                                            \
-                {                                                       \
-                    /* Cx [pC] = Ax [pA] */                             \
+            #define GB_AIJ_WORK(pC,pA)                                       \
+            {                                                                \
+                int8_t cb = Cb [pC] ;                                        \
+                if (cb <= 1)                                                 \
+                {                                                            \
+                    /* Cx [pC] = Ax [pA] */                                  \
                     GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ; \
-                    Cb [pC] = 4 ;                                       \
-                    task_cnvals += (cb == 0) ;                          \
-                }                                                       \
+                    Cb [pC] = 4 ;                                            \
+                    task_cnvals += (cb == 0) ;                               \
+                }                                                            \
             }
             #include "template/GB_bitmap_assign_A_whole_template.c"
 

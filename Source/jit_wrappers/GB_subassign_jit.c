@@ -19,13 +19,15 @@ GrB_Info GB_subassign_jit
     // input:
     const bool C_replace,
     // I:
-    const uint64_t *I,
+    const void *I,
+    const bool I_is_32,
     const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const uint64_t *J,
+    const void *J,
+    const bool J_is_32,
     const int64_t nj,
     const int64_t nJ,
     const int Jkind,
@@ -45,7 +47,7 @@ GrB_Info GB_subassign_jit
     // kind and kernel:
     const int assign_kind,      // row assign, col assign, assign, or subassign
     const int assign_kernel,    // GB_JIT_KERNEL_SUBASSIGN_01, ... etc
-    const char *kname,          // kernel base name
+    const char *kname,          // kernel name
     GB_Werk Werk
 )
 { 
@@ -57,8 +59,8 @@ GrB_Info GB_subassign_jit
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_assign (&encoding, &suffix, assign_kernel,
-        C, C_replace, Ikind, Jkind, M, Mask_comp, Mask_struct, accum,
-        A, scalar_type, S, assign_kind) ;
+        C, C_replace, I_is_32, J_is_32, Ikind, Jkind, M, Mask_comp,
+        Mask_struct, accum, A, scalar_type, S, assign_kind) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

@@ -619,7 +619,7 @@
                         ASSERT (GB_IS_SPARSE (M) || GB_IS_HYPERSPARSE (M)) ;
                         int64_t pright = pM_end - 1 ;
                         bool found ;
-                        found = GB_split_binary_search (i, Mi, Mi_is_32,
+                        found = GB_split_binary_search (i, Mi, GB_Mi_IS_32,
                             &pM, &pright) ;
                         if (found)
                         { 
@@ -723,7 +723,7 @@
                                     int64_t i = GB_IGET (Mi, pM) ;
                                     int64_t pright = pZ_end - 1 ;
                                     bool found ;
-                                    found = GB_binary_search (i, Zi, Zi_is_32,
+                                    found = GB_binary_search (i, Zi,GB_Zi_IS_32,
                                         &pZ, &pright) ;
                                     if (found) GB_COPY_Z (i) ;
                                 }
@@ -746,7 +746,7 @@
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, Mi_is_32,
+                                found = GB_binary_search (i, Mi, GB_Mi_IS_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_Z (i) ;
@@ -825,7 +825,7 @@
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, Mi_is_32,
+                                found = GB_binary_search (i, Mi, GB_Mi_IS_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_Z (i) ; // mask complemented
@@ -882,7 +882,7 @@
                                     int64_t i = GB_IGET (Mi, pM) ;
                                     int64_t pright = pC_end - 1 ;
                                     bool found ;
-                                    found = GB_binary_search (i, Ci, Ci_is_32,
+                                    found = GB_binary_search (i, Ci,GB_Ci_IS_32,
                                         &pC, &pright) ;
                                     if (found) GB_COPY_C (i) ;
                                 }
@@ -903,7 +903,7 @@
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, Mi_is_32,
+                                found = GB_binary_search (i, Mi, GB_Mi_IS_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (mij) GB_COPY_C (i) ;
@@ -983,7 +983,7 @@
                                 bool mij = false ; 
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
-                                found = GB_binary_search (i, Mi, Mi_is_32,
+                                found = GB_binary_search (i, Mi, GB_Mi_IS_32,
                                     &pM, &pright) ;
                                 if (found) mij = GB_MCAST (Mx, pM, msize) ;
                                 if (!mij) GB_COPY_C (i) ;

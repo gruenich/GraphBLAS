@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Constructs a set of tasks to compute C for a subassign method, based on
 // slicing a single input matrix (M or A).  Fine tasks must also find their
@@ -48,6 +49,31 @@
 // GB_subassign_one_slice
 //------------------------------------------------------------------------------
 
+#if 0
+GrB_Info GB_subassign_one_slice     // slice M for subassign_05, 06n, 07
+(
+    // output:
+    GB_task_struct **p_TaskList,    // array of structs
+    size_t *p_TaskList_size,        // size of TaskList
+    int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads to use
+    // input:
+    const GrB_Matrix C,             // output matrix C
+    const void *I,
+    const bool I_is_32,
+    const int64_t nI,
+    const int Ikind,
+    const int64_t Icolon [3],
+    const void *J,
+    const bool J_is_32,
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    const GrB_Matrix M,             // matrix to slice
+    GB_Werk Werk
+)
+#endif
+
 GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
 {
 
@@ -72,6 +98,9 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 
+    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
+    GB_IDECL (J, const, u) ; GB_IPTR (J, J_is_32) ;
+
     //--------------------------------------------------------------------------
     // determine # of threads to use
     //--------------------------------------------------------------------------
@@ -83,20 +112,23 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     // get M and C
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Mp = M->p ;    // FIXME
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
     const int64_t mnz = GB_nnz_held (M) ;
     const int64_t Mnvec = M->nvec ;
     const int64_t Mvlen = M->vlen ;
+    const bool Mp_is_32 = M->p_is_32 ;
 
-    const uint64_t *restrict Cp = C->p ;    // FIXME
-    const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Ci = C->i ;
-    const bool C_is_hyper = (Ch != NULL) ;
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+    void *Ch = C->h ;
+    void *Ci = C->i ;
+    const bool C_is_hyper = (C->h != NULL) ;
     const bool may_see_zombies = (C->nzombies > 0) ;
     const int64_t Cnvec = C->nvec ;
     const int64_t Cvlen = C->vlen ;
+    const bool Cp_is_32 = C->p_is_32 ;
+    const bool Ci_is_32 = C->i_is_32 ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -151,7 +183,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Mp, false, Mnvec, ntasks1, false) ; // FIXME
+    GB_p_slice (Coarse, Mp, Mp_is_32, Mnvec, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
@@ -224,12 +256,12 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
             //------------------------------------------------------------------
 
             ASSERT (k >= 0 && k < Mnvec) ;
-            int64_t j = GBH_M (Mh, k) ;
+            int64_t j = GBh_M (Mh, k) ;
             ASSERT (j >= 0 && j < nJ) ;
 
             // lookup jC in C
             // jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend
-            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            int64_t jC = GB_IJLIST (J, j, Jkind, Jcolon) ;
             int64_t pC_start, pC_end ;
             GB_LOOKUP_VECTOR_C (jC, pC_start, pC_end) ;
 
@@ -239,7 +271,8 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
             // determine the # of fine-grain tasks to create for vector k
             //------------------------------------------------------------------
 
-            int64_t mknz = (Mp == NULL) ? Mvlen : (Mp [k+1] - Mp [k]) ;
+            int64_t mknz = (Mp == NULL) ?
+                Mvlen : (GB_IGET (Mp, k+1) - GB_IGET (Mp, k)) ;
             int nfine = ((double) mknz) / target_task_size ;
             nfine = GB_IMAX (nfine, 1) ;
 
@@ -281,7 +314,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
                     // slice M(:,k) for this task
                     int64_t p1, p2 ;
                     GB_PARTITION (p1, p2, mknz, tfine, nfine) ;
-                    int64_t pM_start = GBP_M (Mp, k, Mvlen) ;
+                    int64_t pM_start = GBp_M (Mp, k, Mvlen) ;
                     int64_t pM     = pM_start + p1 ;
                     int64_t pM_end = pM_start + p2 ;
                     TaskList [ntasks].pA     = pM ;
@@ -296,10 +329,10 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
                     else
                     { 
                         // find where this task starts and ends in C(:,jC)
-                        int64_t iM_start = GBI_M (Mi, pM, Mvlen) ;
-                        int64_t iC1 = GB_ijlist (I, iM_start, Ikind, Icolon) ;
-                        int64_t iM_end = GBI_M (Mi, pM_end-1, Mvlen) ;
-                        int64_t iC2 = GB_ijlist (I, iM_end, Ikind, Icolon) ;
+                        int64_t iM_start = GBi_M (Mi, pM, Mvlen) ;
+                        int64_t iC1 = GB_IJLIST (I, iM_start, Ikind, Icolon) ;
+                        int64_t iM_end = GBi_M (Mi, pM_end-1, Mvlen) ;
+                        int64_t iC2 = GB_IJLIST (I, iM_end, Ikind, Icolon) ;
 
                         // If I is an explicit list, it must be already sorted
                         // in ascending order, and thus iC1 <= iC2.  If I is
@@ -314,15 +347,14 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
                         int64_t pleft = pC_start ;
                         int64_t pright = pC_end - 1 ;
                         bool found, is_zombie ;
-                        GB_split_binary_search_zombie (iC_start, Ci,
-                            false, &pleft, &pright, may_see_zombies,
-                            &is_zombie) ;
+                        GB_split_binary_search_zombie (iC_start, Ci, Ci_is_32,
+                            &pleft, &pright, may_see_zombies, &is_zombie) ;
                         TaskList [ntasks].pC = pleft ;
 
                         pleft = pC_start ;
                         pright = pC_end - 1 ;
                         found = GB_split_binary_search_zombie (iC_end, Ci,
-                            false, &pleft, &pright, may_see_zombies,
+                            Ci_is_32, &pleft, &pright, may_see_zombies,
                             &is_zombie) ;
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }

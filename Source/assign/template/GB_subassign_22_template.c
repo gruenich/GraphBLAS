@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Method 22: C += scalar, where C is dense
 
 // M:           NULL
@@ -25,7 +27,7 @@
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_C_NVALS (cnz) ;      // int64_t cnz = GB_nnz (C) ;
+    GB_C_NVALS (cnz) ;
     const int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------

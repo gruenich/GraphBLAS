@@ -28,10 +28,12 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const void *scalar,             // scalar to assign to C(Rows,Cols)
     const GB_Type_code scalar_code, // type code of scalar to assign
-    const GrB_Index *Rows,          // row indices
-    const GrB_Index nRows,          // number of row indices
-    const GrB_Index *Cols,          // column indices
-    const GrB_Index nCols,          // number of column indices
+    const void *Rows,               // row indices
+    const bool Rows_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nRows,           // number of row indices
+    const void *Cols,               // column indices
+    const bool Cols_is_32,          // if true, Cols is 32-bit; else 64-bit
+    const uint64_t nCols,           // number of column indices
     const GrB_Descriptor desc,      // descriptor for C and M
     GB_Werk Werk
 )
@@ -61,8 +63,10 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     if (M == NULL && !Mask_comp && nRows == 1 && nCols == 1 && !C_replace)
     { 
         // C(i,j) = scalar or C(i,j) += scalar
-        return (GB_setElement (C, accum, scalar, Rows [0], Cols [0],
-            scalar_code, Werk)) ;
+        GB_IDECL (Rows, const, u) ; GB_IPTR (Rows, Rows_is_32) ;
+        GB_IDECL (Cols, const, u) ; GB_IPTR (Cols, Cols_is_32) ;
+        return (GB_setElement (C, accum, scalar,
+            GB_IGET (Rows, 0), GB_IGET (Cols, 0), scalar_code, Werk)) ;
     }
     else
     { 
@@ -72,8 +76,8 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
             false,                      // do not transpose the mask
             accum,                      // for accum (C(Rows,Cols),scalar)
             NULL, false,                // no explicit matrix A
-            Rows, nRows,                // row indices
-            Cols, nCols,                // column indices
+            Rows, Rows_is_32, nRows,    // row indices
+            Cols, Cols_is_32, nCols,    // column indices
             true,                       // do scalar expansion
             scalar,                     // scalar to assign, expands to become A
             scalar_code,                // type code of scalar to expand

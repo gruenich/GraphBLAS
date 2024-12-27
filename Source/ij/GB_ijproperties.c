@@ -148,13 +148,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             // stride is positive, get the first and last indices
             imin = GB_IJLIST (I, 0,    GB_STRIDE, Icolon) ;
             imax = GB_IJLIST (I, nI-1, GB_STRIDE, Icolon) ;
-            #ifdef GB_DEBUG
-            if (!I_is_32)
-            {
-                ASSERT (imin == GB_ijlist((uint64_t *)I, 0,  GB_STRIDE,Icolon));
-                ASSERT (imax == GB_ijlist((uint64_t *)I,nI-1,GB_STRIDE,Icolon));
-            }
-            #endif
         }
         else
         { 

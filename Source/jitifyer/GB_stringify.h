@@ -1373,6 +1373,36 @@ GrB_Info GB_select_phase2_jit      // select phase2
 // assign/subassign kernel
 //------------------------------------------------------------------------------
 
+uint64_t GB_encodify_assign     // encode an assign problem
+(
+    // output:
+    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
+                                // except for the suffix
+    char **suffix,              // suffix for user-defined kernel
+    // input:
+    const GB_jit_kcode kcode,   // kernel to encode
+    // C matrix:
+    GrB_Matrix C,
+    bool C_replace,
+    // index types:
+    bool I_is_32,           // if true, I is 32-bits; else 64
+    bool J_is_32,           // if true, J is 32-bits; else 64
+    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
+    int Jkind,              // ditto
+    // M matrix:
+    GrB_Matrix M,           // may be NULL
+    bool Mask_comp,         // mask is complemented
+    bool Mask_struct,       // mask is structural
+    // operator:
+    GrB_BinaryOp accum,     // the accum operator (may be NULL)
+    // A matrix or scalar
+    GrB_Matrix A,           // NULL for scalar assignment
+    GrB_Type scalar_type,
+    // S matrix:
+    GrB_Matrix S,           // may be NULL
+    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
+) ;
+
 void GB_enumify_assign      // enumerate a GrB_assign problem
 (
     // output:
@@ -1382,6 +1412,8 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_Matrix C,
     bool C_replace,
     // index types:
+    bool I_is_32,           // if true, I is 32-bits; else 64
+    bool J_is_32,           // if true, J is 32-bits; else 64
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto
     // M matrix:
@@ -1409,34 +1441,6 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     GrB_Type atype              // matrix or scalar type
 ) ;
 
-uint64_t GB_encodify_assign     // encode an assign problem
-(
-    // output:
-    GB_jit_encoding *encoding,  // unique encoding of the entire problem,
-                                // except for the suffix
-    char **suffix,              // suffix for user-defined kernel
-    // input:
-    const GB_jit_kcode kcode,   // kernel to encode
-    // C matrix:
-    GrB_Matrix C,
-    bool C_replace,
-    // index types:
-    int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
-    int Jkind,              // ditto
-    // M matrix:
-    GrB_Matrix M,           // may be NULL
-    bool Mask_comp,         // mask is complemented
-    bool Mask_struct,       // mask is structural
-    // operator:
-    GrB_BinaryOp accum,     // the accum operator (may be NULL)
-    // A matrix or scalar
-    GrB_Matrix A,           // NULL for scalar assignment
-    GrB_Type scalar_type,
-    // S matrix:
-    GrB_Matrix S,           // may be NULL
-    int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
-) ;
-
 GrB_Info GB_subassign_jit
 (
     // input/output:
@@ -1444,13 +1448,15 @@ GrB_Info GB_subassign_jit
     // input:
     const bool C_replace,
     // I:
-    const uint64_t *I,
+    const void *I,
+    const bool I_is_32,
     const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
     // J:
-    const uint64_t *J,
+    const void *J,
+    const bool J_is_32,
     const int64_t nj,
     const int64_t nJ,
     const int Jkind,

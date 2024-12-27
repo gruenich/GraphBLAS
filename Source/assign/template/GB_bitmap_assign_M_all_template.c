@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // M is sparse or hypersparse, not bitmap or full.  C<M>(I,J) = ... is being
 // computed (or !M), and all entries in M are traversed.  For a given entry
 // M (iM,jM) in the mask, the entry C(iM,jM) is accessed at location pC.
@@ -42,9 +44,9 @@
             // find the part of M(:,k) for this task
             //------------------------------------------------------------------
 
-            int64_t jM = GBH_M (Mh, k) ;
+            int64_t jM = GBh_M (Mh, k) ;
             GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast, pstart_Mslice,
-                Mp [k], Mp [k+1]) ;
+                GB_IGET (Mp, k), GB_IGET (Mp, k+1)) ;
 
             //------------------------------------------------------------------
             // traverse over M(:,jM), the kth vector of M
@@ -58,7 +60,7 @@
                 bool mij = GB_MCAST (Mx, pM, msize) ;
                 if (mij)
                 { 
-                    int64_t iC = Mi [pM] ;
+                    int64_t iC = GB_IGET (Mi, pM) ;
                     int64_t pC = iC + jC * Cvlen ;
                     GB_MASK_WORK (pC) ;
                 }

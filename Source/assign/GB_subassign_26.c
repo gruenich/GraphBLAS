@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Method 26: C(:,j1:j2) = A ; append columns, no S
 
@@ -62,10 +63,13 @@ GrB_Info GB_subassign_26
     int64_t Cnvec = C->nvec ;
     int64_t cnz = C->nvals ;
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    void *Ai = A->i ;
     GB_void *restrict Ax = (GB_void *) A->x ;
     int64_t anz = A->nvals ;
+    bool Ai_is_32 = A->i_is_32 ;
+    size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    GB_Type_code aicode = (Ai_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
     int64_t j1 = Jcolon [GxB_BEGIN] ;
     int64_t j2 = Jcolon [GxB_END  ] ;
@@ -83,9 +87,6 @@ GrB_Info GB_subassign_26
     // resize C if necessary
     //--------------------------------------------------------------------------
 
-    // FIXME: change C->p_is_32 if problem grows too large.
-    // C->i_is_32 does not change since the matrix dimensions are constant.
-
     int64_t cnz_new = cnz + anz ;
 
     if (Cnvec + nJ > C->plen)
@@ -101,19 +102,21 @@ GrB_Info GB_subassign_26
         GB_OK (GB_ix_realloc (C, 2*cnz_new + 1)) ;
     }
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Ci = C->i ;
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
+    GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;
     GB_void *restrict Cx = (GB_void *) C->x ;
+    bool Ci_is_32 = C->i_is_32 ;
+    GB_Type_code cicode = (Ci_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
     //--------------------------------------------------------------------------
     // determine any parallelism to use
     //--------------------------------------------------------------------------
 
-    ASSERT (Cnvec == 0 || Ch [Cnvec-1] == j1-1) ;
+    ASSERT (Cnvec == 0 || GB_IGET (Ch, Cnvec-1) == j1-1) ;
 
     bool phase1_parallel = (nJ > GB_CHUNK_DEFAULT) ;
-    bool phase2_parallel = (anz * (sizeof (int64_t) + csize) > GB_MEM_CHUNK) ;
+    bool phase2_parallel = (anz * (aisize + csize) > GB_MEM_CHUNK) ;
     int nthreads_max ;
     double chunk ;
 
@@ -128,14 +131,14 @@ GrB_Info GB_subassign_26
     //--------------------------------------------------------------------------
 
     int64_t Anvec_nonempty = 0 ;
-    #define COMPUTE_CP_AND_CH                   \
-        for (k = 0 ; k < nJ ; k++)              \
-        {                                       \
-            int64_t apk = Ap [k] ;              \
-            int64_t anzk = Ap [k+1] - apk ;     \
-            Ch [Cnvec + k] = j1 + k ;           \
-            Cp [Cnvec + k] = cnz + apk ;        \
-            Anvec_nonempty += (anzk > 0) ;      \
+    #define COMPUTE_CP_AND_CH                           \
+        for (k = 0 ; k < nJ ; k++)                      \
+        {                                               \
+            int64_t apk = GB_IGET (Ap, k) ;             \
+            int64_t anzk = GB_IGET (Ap, k+1) - apk ;    \
+            GB_ISET (Ch, Cnvec + k, j1 + k) ;           \
+            GB_ISET (Cp, Cnvec + k, cnz + apk) ;        \
+            Anvec_nonempty += (anzk > 0) ;              \
         }
 
     int nthreads = (phase1_parallel) ?
@@ -159,7 +162,7 @@ GrB_Info GB_subassign_26
         C->nvec_nonempty += Anvec_nonempty ;
     }
     C->nvec += nJ ;
-    Cp [C->nvec] = cnz_new ;
+    GB_ISET (Cp, C->nvec, cnz_new) ;
     C->nvals = cnz_new ;
     C->jumbled = C->jumbled || A->jumbled ;
 
@@ -168,18 +171,11 @@ GrB_Info GB_subassign_26
     //--------------------------------------------------------------------------
 
     nthreads = (phase2_parallel) ? GB_nthreads (anz, chunk, nthreads_max) : 1 ;
-    if (nthreads > 1)
-    { 
-        // copy Ci and Cx with parallel memcpy's
-        GB_memcpy (Ci + cnz, Ai, anz * sizeof (int64_t), nthreads) ;
-        GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
-    }
-    else
-    { 
-        // copy Ci and Cx with single-threaded memcpy's
-        memcpy (Ci + cnz, Ai, anz * sizeof (int64_t)) ;
-        memcpy (Cx + cnz * csize, Ax, anz * csize) ;
-    }
+
+    // copy Ci and Cx
+//  GB_memcpy (Ci + cnz, Ai, anz * sizeof (int64_t), nthreads) ;
+    GB_cast_int (GB_IK (Ci, cnz), cicode, Ai, aicode, anz, nthreads) ;
+    GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
 
     //--------------------------------------------------------------------------
     // return result

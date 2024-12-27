@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // M is a 1-by-(C->vdim) hypersparse or sparse matrix, not a vector, for
 // GrB_Row_assign (if C is CSC) or GrB_Col_assign (if C is CSR).
 
@@ -22,7 +24,7 @@
     const int64_t *restrict pstart_Mslice = M_ek_slicing + M_ntasks * 2 ;
 
     ASSERT (Mvlen == 1) ;
-    int64_t iC = I [0] ;
+    int64_t iC = GB_IGET (I, 0) ;
     int tid ;
     #pragma omp parallel for num_threads(M_nthreads) schedule(dynamic,1) \
         reduction(+:cnvals)
@@ -43,9 +45,9 @@
             // find the part of M(0,k) for this task
             //------------------------------------------------------------------
 
-            int64_t jM = GBH_M (Mh, k) ;
+            int64_t jM = GBh_M (Mh, k) ;
             GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast, pstart_Mslice,
-                Mp [k], Mp [k+1]) ;
+                GB_IGET (Mp, k), GB_IGET (Mp, k+1)) ;
 
             //------------------------------------------------------------------
             // traverse over M(0,jM), the kth vector of M

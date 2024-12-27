@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // This method only handles the full assign case, where there are no I and J
 // index lists.  The C and M matrices must have the same size.
 
@@ -44,3 +46,4 @@
 }
 
 #undef GB_NO_CNVALS
+

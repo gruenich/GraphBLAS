@@ -38,7 +38,7 @@
             // find i in A(:,j)
             int64_t pright = pA_end - 1 ;
             bool found ;
-            found = GB_binary_search (i, Ai, Ai_is_32, &pA, &pright) ;
+            found = GB_binary_search (i, Ai, GB_Ai_IS_32, &pA, &pright) ;
             if (found)
             { 
                 // C (i,j) = A (i,j) .* B (i,j)
@@ -76,7 +76,7 @@
             // find i in B(:,j)
             int64_t pright = pB_end - 1 ;
             bool found ;
-            found = GB_binary_search (i, Bi, Bi_is_32, &pB, &pright) ;
+            found = GB_binary_search (i, Bi, GB_Bi_IS_32, &pB, &pright) ;
             if (found)
             { 
                 // C (i,j) = A (i,j) .* B (i,j)

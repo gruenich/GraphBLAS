@@ -9,6 +9,9 @@
 
 // Compare with GxB_Vector_subassign, which uses M and C_replace differently
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 #include "assign/GB_assign.h"
 #include "assign/GB_bitmap_assign.h"
 #include "mask/GB_get_mask.h"
@@ -19,8 +22,8 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
     const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(Rows),t)
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Index *Rows,          // row indices
-    GrB_Index nRows,                // number of row indices
+    const uint64_t *Rows,           // row indices
+    uint64_t nRows,                 // number of row indices
     const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
@@ -56,8 +59,8 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
         false,                          // do not transpose the mask
         accum,                          // for accum (C(Rows,:),A)
         (GrB_Matrix) u, false,          // u as a matrix; never transposed
-        Rows, nRows,                    // row indices
-        GrB_ALL, 1,                     // all column indices
+        Rows, false, nRows,             // row indices
+        GrB_ALL, false, 1,              // all column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ASSIGN,
         Werk) ;

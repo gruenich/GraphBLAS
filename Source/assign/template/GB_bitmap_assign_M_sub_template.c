@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // M is sparse or hypersparse, not bitmap or full.  C(I,J)<M>= ... is being
 // computed (or !M), and all entries in M are traversed.  For a given entry
 // M(iM,jM) in the mask, at location pM.  The entry C(iC,jC) is at location pC,
@@ -43,16 +45,16 @@
             // find the part of M(:,k) for this task
             //------------------------------------------------------------------
 
-            int64_t jM = GBH_M (Mh, k) ;
+            int64_t jM = GBh_M (Mh, k) ;
             GB_GET_PA (pM_start, pM_end, tid, k, kfirst, klast, pstart_Mslice,
-                Mp [k], Mp [k+1]) ;
+                GB_IGET (Mp, k), GB_IGET (Mp, k+1)) ;
 
             //------------------------------------------------------------------
             // traverse over M(:,jM), the kth vector of M
             //------------------------------------------------------------------
 
             // for subassign, M has same size as C(I,J) and A.
-            int64_t jC = GB_ijlist (J, jM, Jkind, Jcolon) ;
+            int64_t jC = GB_IJLIST (J, jM, Jkind, Jcolon) ;
             int64_t pC0 = jC * Cvlen ;
 
             for (int64_t pM = pM_start ; pM < pM_end ; pM++)
@@ -60,8 +62,8 @@
                 bool mij = GB_MCAST (Mx, pM, msize) ;
                 if (mij)
                 { 
-                    int64_t iM = Mi [pM] ;
-                    int64_t iC = GB_ijlist (I, iM, GB_I_KIND, Icolon) ;
+                    int64_t iM = GB_IGET (Mi, pM) ;
+                    int64_t iC = GB_IJLIST (I, iM, GB_I_KIND, Icolon) ;
                     int64_t pC = iC + pC0 ;
                     GB_MASK_WORK (pC) ;
                 }

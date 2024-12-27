@@ -33,31 +33,28 @@
     GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
     GB_Ci_DECLARE (Ci, const) ; GB_Ci_PTR (Ci, C) ;
     const int64_t vlen = C->vlen ;
-    #ifdef GB_JIT_KERNEL
-    #define Ci_is_32    (GB_Ci_BITS == 32)
-    #else
+    #ifndef GB_JIT_KERNEL
     const bool Ci_is_32 = C->i_is_32 ;
+    #define GB_Ci_IS_32 Ci_is_32
     #endif
 
     GB_Zp_DECLARE (Zp, const) ; GB_Zp_PTR (Zp, Z) ;
     GB_Zi_DECLARE (Zi, const) ; GB_Zi_PTR (Zi, Z) ;
     const int8_t *restrict Zb = Z->b ;
-    #ifdef GB_JIT_KERNEL
-    #define Zi_is_32    (GB_Zi_BITS == 32)
-    #else
-    const bool Zi_is_32 = Z->i_is_32 ;
+    #ifndef GB_JIT_KERNEL
     const bool Z_is_bitmap = GB_IS_BITMAP (Z) ;
     const bool Z_is_full = GB_IS_FULL (Z) ;
+    const bool Zi_is_32 = Z->i_is_32 ;
+    #define GB_Zi_IS_32 Zi_is_32
     #endif
 
     GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
     GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
     const int8_t *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
-    #ifdef GB_JIT_KERNEL
-    #define Mi_is_32    (GB_Mi_BITS == 32)
-    #else
+    #ifndef GB_JIT_KERNEL
     const bool Mi_is_32 = M->i_is_32 ;
+    #define GB_Mi_IS_32 Mi_is_32
     #endif
     size_t msize = 0 ;
     if (M != NULL)
@@ -92,8 +89,8 @@
               GB_Rp_TYPE *Rp = (      GB_Rp_TYPE *) Rp_parameter ;
         const GB_Ri_TYPE *Rh = (const GB_Ri_TYPE *) Rh_parameter ;
         #else
-        GB_IDECL (Rp,      , u) ; GB_IPTR (Rp, Rp_is_32) ;
-        GB_IDECL (Rh, const, u) ; GB_IPTR (Rh, Ri_is_32) ;
+        GB_IDECL (Rp,      , u) ; GB_IPTR (Rp, Rp_is_32) ;  // OK
+        GB_IDECL (Rh, const, u) ; GB_IPTR (Rh, Ri_is_32) ;  // OK
         #endif
 
     #endif

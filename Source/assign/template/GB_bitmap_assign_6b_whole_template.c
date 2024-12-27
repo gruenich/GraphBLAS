@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL GB_FREE_ALL_FOR_BITMAP
 

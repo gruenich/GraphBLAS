@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 
 // M:           present, and aliased to A
@@ -153,8 +156,8 @@ GrB_Info GB_subassign_06d
         { 
             info = GB_subassign_jit (C,
                 /* C_replace: */ false,
-                /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
-                /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* I, ni, nI, Ikind, Icolon: */ NULL, false, 0, 0, GB_ALL, NULL,
+                /* J, nj, nJ, Jkind, Jcolon: */ NULL, false, 0, 0, GB_ALL, NULL,
                 /* M and A are aliased: */ A,
                 /* Mask_comp: */ false,
                 Mask_struct,

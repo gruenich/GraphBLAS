@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // Method 08n: C(I,J)<M> += A ; no S
 
 // M:           present
@@ -30,12 +33,14 @@ GrB_Info GB_subassign_08n
     GrB_Matrix C,
     // input:
     #define C_replace false
-    const GrB_Index *I,
+    const void *I,              // I index list
+    const bool I_is_32,
     const int64_t ni,
     const int64_t nI,
     const int Ikind,
     const int64_t Icolon [3],
-    const GrB_Index *J,
+    const void *J,              // J index list
+    const bool J_is_32,
     const int64_t nj,
     const int64_t nJ,
     const int Jkind,
@@ -73,8 +78,8 @@ GrB_Info GB_subassign_08n
 
     info = GB_subassign_jit (C,
         /* C_replace: */ false,
-        I, ni, nI, Ikind, Icolon,
-        J, nj, nJ, Jkind, Jcolon,
+        I, I_is_32, ni, nI, Ikind, Icolon,
+        J, J_is_32, nj, nJ, Jkind, Jcolon,
         M,
         /* Mask_comp: */ false,
         Mask_struct,
@@ -92,6 +97,9 @@ GrB_Info GB_subassign_08n
     //--------------------------------------------------------------------------
     // via the generic kernel
     //--------------------------------------------------------------------------
+
+    GB_IDECL (I, const, u) ; GB_IPTR (I, I_is_32) ;
+    GB_IDECL (J, const, u) ; GB_IPTR (J, J_is_32) ;
 
     GBURBLE ("(generic assign) ") ;
     #define GB_GENERIC

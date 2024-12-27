@@ -61,7 +61,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------
-    // workspace for GB_bitmap_extract_IxJ_template.c
+    // workspace for assign/template/GB_bitmap_assign_IxJ_template.c
     //--------------------------------------------------------------------------
 
     GB_task_struct *TaskList_IxJ = NULL ; size_t TaskList_IxJ_size = 0 ;
@@ -134,13 +134,11 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 
     int8_t *restrict Cb = C->b ;
 
-    // In GB_bitmap_extract_IxJ_template, vlen is the vector length of the
-    // submatrix C(I,J), but here the template is used to access A(I,J), and so
-    // the vector length is A->vlen, not C->vlen.  The pointers pA and pC are
-    // swapped in GB_IXJ_WORK macro below, since C=A(I,J) is being computed,
-    // instead of C(I,J)=A for the bitmap assignment.
-
-    // FIXME: when done, revert to GB_bitmap_assign_IxJ_template.c
+    // In assign/template/GB_bitmap_assign_IxJ_template, vlen is the vector
+    // length of the submatrix C(I,J), but here the template is used to access
+    // A(I,J), and so the vector length is A->vlen, not C->vlen.  The pointers
+    // pA and pC are swapped in GB_IXJ_WORK macro below, since C=A(I,J) is
+    // being computed, instead of C(I,J)=A for the bitmap assignment.
 
     int64_t vlen = avlen ;
 
@@ -180,7 +178,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cx [pC] = pA ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "template/GB_bitmap_assign_IxJ_template.c"
+            #include "assign/template/GB_bitmap_assign_IxJ_template.c"
         }
         else
         #endif
@@ -193,7 +191,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cx [pC] = pA ;                                              \
             }
             #define GB_NO_CNVALS
-            #include "template/GB_bitmap_extract_IxJ_template.c"
+            #include "assign/template/GB_bitmap_assign_IxJ_template.c"
             #undef  GB_NO_CNVALS
         }
 
@@ -217,7 +215,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
                 Cb [pC] = ab ;                                              \
                 task_cnvals += ab ;                                         \
             }
-            #include "template/GB_bitmap_extract_IxJ_template.c"
+            #include "assign/template/GB_bitmap_assign_IxJ_template.c"
             C->nvals = cnvals ;
         }
         else

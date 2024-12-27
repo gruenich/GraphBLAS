@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // C(:,j)<!> = anything: GrB_Row_assign or GrB_Col_assign with an empty
 // complemented mask requires all entries in the C(:,j) vector to be deleted.
@@ -39,29 +40,30 @@ GrB_Info GB_assign_zombie1
     // get C(:,j)
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Cp = C->p ;    // FIXME
-    const int64_t *restrict Ch = C->h ;
-    int64_t *restrict Ci = C->i ;
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+    GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
+    const void *Ch = C->h ;
     int64_t pC_start, pC_end ;
     const int64_t Cnvec = C->nvec ;
+    const bool Cp_is_32 = C->p_is_32 ;
+    const bool Ci_is_32 = C->i_is_32 ;
 
     if (Ch != NULL)
     { 
         // C is hypersparse
-        // FIXME
-        const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
-        const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
-        const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
+        const void *C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;
+        const void *C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
+        const void *C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
         const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
-        GB_hyper_hash_lookup (false, false, // FIXME
+        GB_hyper_hash_lookup (Cp_is_32, Ci_is_32,
             Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
             j, &pC_start, &pC_end) ;
     }
     else
     { 
         // C is sparse
-        pC_start = Cp [j] ;
-        pC_end   = Cp [j+1] ;
+        pC_start = GB_IGET (Cp, j) ;
+        pC_end   = GB_IGET (Cp, j+1) ;
     }
 
     int64_t cjnz = pC_end - pC_start ;
@@ -84,12 +86,13 @@ GrB_Info GB_assign_zombie1
         reduction(+:nzombies)
     for (pC = pC_start ; pC < pC_end ; pC++)
     {
-        int64_t i = Ci [pC] ;
+        int64_t i = GB_IGET (Ci, pC) ;
         if (!GB_IS_ZOMBIE (i))
         { 
             // delete C(i,j) by marking it as a zombie
             nzombies++ ;
-            Ci [pC] = GB_ZOMBIE (i) ;
+            i = GB_ZOMBIE (i) ;
+            GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
         }
     }
 

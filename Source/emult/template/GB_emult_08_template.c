@@ -66,18 +66,18 @@
     const int8_t *restrict Ab = A->b ;
     const int64_t vlen = A->vlen ;
 
-    #ifdef GB_JIT_KENEL
+    #ifdef GB_JIT_KERNEL
     #define A_is_hyper  GB_A_IS_HYPER
     #define A_is_sparse GB_A_IS_SPARSE
     #define A_is_bitmap GB_A_IS_BITMAP
     #define A_is_full   GB_A_IS_FULL
-    #define Ai_is_32    (GB_AI_BITS == 32)
     #else
     const bool Ai_is_32 = A->i_is_32 ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_full = GB_IS_FULL (A) ;
+    #define GB_Ai_IS_32 Ai_is_32
     #endif
 
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
@@ -85,18 +85,18 @@
     GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     const int8_t *restrict Bb = B->b ;
 
-    #ifdef GB_JIT_KENEL
+    #ifdef GB_JIT_KERNEL
     #define B_is_hyper  GB_B_IS_HYPER
     #define B_is_sparse GB_B_IS_SPARSE
     #define B_is_bitmap GB_B_IS_BITMAP
     #define B_is_full   GB_B_IS_FULL
-    #define Bi_is_32    (GB_BI_BITS == 32)
     #else
     const bool Bi_is_32 = B->i_is_32 ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_full = GB_IS_FULL (B) ;
+    #define GB_Bi_IS_32 Bi_is_32
     #endif
 
     GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
@@ -105,7 +105,7 @@
     const int8_t *restrict Mb = NULL ;
     const GB_M_TYPE *restrict Mx = NULL ;
 
-    #ifdef GB_JIT_KENEL
+    #ifdef GB_JIT_KERNEL
     #define M_is_hyper  GB_M_IS_HYPER
     #define M_is_sparse GB_M_IS_SPARSE
     #define M_is_bitmap GB_M_IS_BITMAP

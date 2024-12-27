@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // The eWise add of two matrices, C=A+B, C<M>=A+B, or C<!M>=A+B starts with
 // this phase, which determines which vectors of C need to be computed.
@@ -136,8 +137,6 @@ static inline bool GB_allocate_result
 //      GB_Werk Werk
 //  )
 
-// if p_Cp_is_32 or p_Ci_is_32 are NULL, then C is assumed to be all-64-bit
-
 GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
 {
 
@@ -152,6 +151,8 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT (Ch_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
+    ASSERT (p_Cp_is_32 != NULL) ;
+    ASSERT (p_Ci_is_32 != NULL) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase0", GB0) ;
     ASSERT (!GB_ZOMBIES (M)) ;
@@ -194,8 +195,8 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     { 
         // nothing to do in phase0 for C bitmap or full
         (*p_Cnvec) = A->vdim ;  // not needed; to be consistent with GB_emult
-        if (p_Cp_is_32 != NULL) (*p_Cp_is_32) = false ;
-        if (p_Ci_is_32 != NULL) (*p_Ci_is_32) = false ;
+        (*p_Cp_is_32) = false ;
+        (*p_Ci_is_32) = false ;
         return (GrB_SUCCESS) ;
     }
 
@@ -252,13 +253,10 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
     bool Cp_is_32 = false ;
     bool Ci_is_32 = false ;
-    if (p_Cp_is_32 != NULL && p_Ci_is_32 != NULL)   // FIXME
-    {
-        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-            GxB_AUTO_SPARSITY, anz + bnz, A->vlen, A->vdim) ;
-        (*p_Cp_is_32) = Cp_is_32 ;
-        (*p_Ci_is_32) = Ci_is_32 ;
-    }
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, anz + bnz, A->vlen, A->vdim) ;
+    (*p_Cp_is_32) = Cp_is_32 ;
+    (*p_Ci_is_32) = Ci_is_32 ;
     size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     GB_Type_code cicode = (Ci_is_32) ? GB_UINT32_code : GB_UINT64_code ;
     GB_Type_code micode = (Mi_is_32) ? GB_UINT32_code : GB_UINT64_code ;

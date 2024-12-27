@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // GB_assign_prep checks the inputs for GB_assign and GB_subassign.
 
@@ -54,16 +55,18 @@ GrB_Info GB_assign_prep
     GrB_Matrix AT_header_handle,
 
     // modified versions of the Rows/Cols lists, and their analysis:
-    uint64_t **I_handle,           // Rows, Cols, or a modified copy I2
-    uint64_t **I2_handle,          // NULL, or sorted/pruned Rows or Cols
+    const void **I_handle,      // Rows, Cols, or a modified copy I2
+    bool *I_is_32_handle,
+    void **I2_handle,           // NULL, or sorted/pruned Rows or Cols
     size_t *I2_size_handle,
     int64_t *ni_handle,
     int64_t *nI_handle,
     int *Ikind_handle,
     int64_t Icolon [3],
 
-    uint64_t **J_handle,           // Rows, Cols, or a modified copy J2
-    uint64_t **J2_handle,          // NULL, or sorted/pruned Rows or Cols
+    const void **J_handle,      // Rows, Cols, or a modified copy J2
+    bool *J_is_32_handle,
+    uint64_t **J2_handle,       // NULL, or sorted/pruned Rows or Cols
     size_t *J2_size_handle,
     int64_t *nj_handle,
     int64_t *nJ_handle,
@@ -85,10 +88,12 @@ GrB_Info GB_assign_prep
     const GrB_BinaryOp accum,       // optional accum for accum(C,T)
     const GrB_Matrix A_in,          // input matrix
     bool A_transpose,               // true if A is transposed
-    const uint64_t *Rows,          // row indices
-    const uint64_t nRows_in,       // number of row indices
-    const uint64_t *Cols,          // column indices
-    const uint64_t nCols_in,       // number of column indices
+    const void *Rows,               // row indices
+    const bool Rows_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nRows_in,        // number of row indices
+    const void *Cols,               // column indices
+    const bool Cols_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nCols_in,        // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GB_Type_code scalar_code, // type code of scalar to expand
@@ -121,14 +126,10 @@ GrB_Info GB_assign_prep
     GrB_Matrix MT = NULL ;
     GrB_Matrix AT = NULL ;
 
-//  GB_MDECL (I2 , u) ; size_t I2_size = 0 ;
-//  GB_MDECL (J2 , u) ; size_t J2_size = 0 ;
-//  GB_MDECL (I2k, u) ; size_t I2k_size = 0 ;
-//  GB_MDECL (J2k, u) ; size_t J2k_size = 0 ;
-    uint64_t *I2  = NULL ; size_t I2_size = 0 ;
-    uint64_t *J2  = NULL ; size_t J2_size = 0 ;
-    uint64_t *I2k = NULL ; size_t I2k_size = 0 ;
-    uint64_t *J2k = NULL ; size_t J2k_size = 0 ;
+    void *I2  = NULL ; size_t I2_size = 0 ;
+    void *J2  = NULL ; size_t J2_size = 0 ;
+    void *I2k = NULL ; size_t I2k_size = 0 ;
+    void *J2k = NULL ; size_t J2k_size = 0 ;
 
     bool I2_is_32  = false ;
     bool I2k_is_32 = false ;
@@ -249,9 +250,6 @@ GrB_Info GB_assign_prep
     //--------------------------------------------------------------------------
     // determine the properites of the Rows and Cols index lists
     //--------------------------------------------------------------------------
-
-    const bool Rows_is_32 = false ;    // FIXME
-    const bool Cols_is_32 = false ;    // FIXME
 
     int64_t nRows, nCols, RowColon [3], ColColon [3] ;
     int RowsKind, ColsKind ;
@@ -395,7 +393,8 @@ GrB_Info GB_assign_prep
 
     // get the I and J index lists
     int Ikind, Jkind ;
-    const uint64_t *I, *J ;
+    GB_MDECL (I, const, u) ;
+    GB_MDECL (J, const, u) ;
     int64_t ni, nj, nI, nJ ;
 
     if (C_is_csc)
@@ -432,6 +431,8 @@ GrB_Info GB_assign_prep
 
     bool I_is_32 = (C_is_csc) ? Rows_is_32 : Cols_is_32 ;
     bool J_is_32 = (C_is_csc) ? Cols_is_32 : Rows_is_32 ;
+    GB_IPTR (I, I_is_32) ;
+    GB_IPTR (J, J_is_32) ;
 
     // J is now a list of vectors in the range 0:C->vdim-1
     // I is now a list of indices in the range 0:C->vlen-1
@@ -501,8 +502,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(i,:)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            I,    1, 1, GB_LIST, NULL, // I = [i]
-                            NULL, 0, 0, GB_ALL,  NULL, // J = [:]
+                            I,    I_is_32, 1, 1, GB_LIST, NULL, // I = [i]
+                            NULL, false  , 0, 0, GB_ALL,  NULL, // J = [:]
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -519,7 +520,7 @@ GrB_Info GB_assign_prep
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GBURBLE ("C(i,:)=zombie ") ;
-                        GB_OK (GB_assign_zombie2 (C, I [0])) ;
+                        GB_OK (GB_assign_zombie2 (C, GB_IGET (I, 0))) ;
                     }
                 }
                 break ;
@@ -538,8 +539,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(:,j)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            NULL, 0, 0, GB_ALL,  NULL, // I = [:]
-                            J,    1, 1, GB_LIST, NULL, // J = [j]
+                            NULL, false  , 0, 0, GB_ALL,  NULL, // I = [:]
+                            J,    J_is_32, 1, 1, GB_LIST, NULL, // J = [j]
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -556,7 +557,7 @@ GrB_Info GB_assign_prep
                         }
                         GBURBLE ("C(:,j)=zombie ") ;
                         GB_OK (GB_hyper_hash_build (C, Werk)) ;
-                        GB_OK (GB_assign_zombie1 (C, J [0])) ;
+                        GB_OK (GB_assign_zombie1 (C, GB_IGET (J, 0))) ;
                     }
                 }
                 break ;
@@ -592,8 +593,8 @@ GrB_Info GB_assign_prep
                         GBURBLE ("bitmap C(I,J)=zombie ") ;
                         int scalar_unused = 0 ;
                         GB_OK (GB_bitmap_assign (C, /* C_replace: */ true,
-                            I, ni, nI, Ikind, Icolon,
-                            J, nj, nJ, Jkind, Jcolon,
+                            I, I_is_32, ni, nI, Ikind, Icolon,
+                            J, J_is_32, nj, nJ, Jkind, Jcolon,
                             /* no M: */ NULL,
                             /* Mask_comp: */ true,
                             /* Mask_struct: ignored */ false,
@@ -611,8 +612,8 @@ GrB_Info GB_assign_prep
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GB_OK (GB_subassign_zombie (C,
-                            I, ni, nI, Ikind, Icolon,
-                            J, nj, nJ, Jkind, Jcolon, Werk)) ;
+                            I, I_is_32, ni, nI, Ikind, Icolon,
+                            J, J_is_32, nj, nJ, Jkind, Jcolon, Werk)) ;
                     }
                 }
                 break ;
@@ -842,7 +843,7 @@ GrB_Info GB_assign_prep
                 Icolon, &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax,
                 Werk)) ;
             ASSERT (! (I_unsorted || I_has_dupl)) ;
-            I = (uint64_t *) I2 ;
+            I = I2 ;
             I_is_32 = I2_is_32 ;
         }
 
@@ -860,23 +861,21 @@ GrB_Info GB_assign_prep
                 Jcolon, &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax,
                 Werk)) ;
             ASSERT (! (J_unsorted || J_has_dupl)) ;
-            J = (uint64_t *) J2 ;
+            J = J2 ;
             J_is_32 = J2_is_32 ;
         }
 
         // inverse index lists to create the Awork and Mwork submatrices:
-        const uint64_t *Iinv =
-            I_unsorted_or_has_dupl ? (uint64_t *) I2k : GrB_ALL ;
-        const uint64_t *Jinv =
-            J_unsorted_or_has_dupl ? (uint64_t *) J2k : GrB_ALL ;
+        const void *Iinv = I_unsorted_or_has_dupl ? I2k : GrB_ALL ;
+        const void *Jinv = J_unsorted_or_has_dupl ? J2k : GrB_ALL ;
 
         if (!scalar_expansion)
         { 
             // Awork = A (Iinv, Jinv)
             GB_CLEAR_STATIC_HEADER (Awork, Awork_header_handle) ;
             GB_OK (GB_subref (Awork, false, A->is_csc, A,
-                Iinv, /* FIXME: */ false, ni,
-                Jinv, /* FIXME: */ false, nj,
+                Iinv, I_is_32, ni,
+                Jinv, J_is_32, nj,
                 false, Werk)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (Awork)) ;
@@ -894,8 +893,8 @@ GrB_Info GB_assign_prep
             // if Mask_struct then Mwork is extracted as iso
             GB_CLEAR_STATIC_HEADER (Mwork, Mwork_header_handle) ;
             GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
-                Iinv, /* FIXME: */ false, ni,
-                Jinv, /* FIXME: */ false, nj,
+                Iinv, I_is_32, ni,
+                Jinv, J_is_32, nj,
                 false, Werk)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (Mwork)) ;
@@ -1031,7 +1030,7 @@ GrB_Info GB_assign_prep
             int sparsity = (C->h != NULL) ? GxB_HYPERSPARSE : GxB_SPARSE ;
             GB_OK (GB_new (&Cwork, // sparse or hyper, existing header
                 ctype, C->vlen, C->vdim, GB_ph_calloc, C_is_csc,
-                sparsity, C->hyper_switch, 1, /* FIXME: */ false, false)) ;
+                sparsity, C->hyper_switch, 1, C->p_is_32, C->i_is_32)) ;
             GBURBLE ("(C alias cleared; C_replace early) ") ;
             (*C_replace) = false ;
         }
@@ -1298,19 +1297,21 @@ GrB_Info GB_assign_prep
     (*scalar_type_handle) = scalar_type ;   // may be NULL
 
     // modified versions of the Rows/Cols lists, and their analysis:
-    (*I_handle) = (uint64_t *) I ;     // either Rows, Cols, or I2
-    (*I2_handle) = I2 ;         // temporary sorted copy of Rows or Cols list
+    (*I_handle      ) = I ;         // either Rows, Cols, or I2
+    (*I_is_32_handle) = I_is_32 ;
+    (*I2_handle     ) = I2 ;        // temporary sorted copy of Rows/Cols list
     (*I2_size_handle) = I2_size ;
-    (*ni_handle) = ni ;
-    (*nI_handle) = nI ;
-    (*Ikind_handle) = Ikind ;
+    (*ni_handle     ) = ni ;
+    (*nI_handle     ) = nI ;
+    (*Ikind_handle  ) = Ikind ;
 
-    (*J_handle) = (uint64_t *) J ;     // either Rows, Cols, or J2
-    (*J2_handle) = J2 ;         // temporary sorted copy of Rows or Cols list
+    (*J_handle      ) = J ;         // either Rows, Cols, or J2
+    (*J_is_32_handle) = J_is_32 ;
+    (*J2_handle     ) = J2 ;        // temporary sorted copy of Rows/Cols list
     (*J2_size_handle) = J2_size ;
-    (*nj_handle) = nj ;
-    (*nJ_handle) = nJ ;
-    (*Jkind_handle) = Jkind ;
+    (*nj_handle     ) = nj ;
+    (*nJ_handle     ) = nJ ;
+    (*Jkind_handle  ) = Jkind ;
 
     return (GrB_SUCCESS) ;
 }

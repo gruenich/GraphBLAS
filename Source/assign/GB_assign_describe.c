@@ -18,13 +18,11 @@ void GB_assign_describe
     const bool C_replace,       // descriptor for C
     const int Ikind,
     const int Jkind,
-//  const GrB_Matrix M,
     const bool M_is_null,
     const int M_sparsity,
     const bool Mask_comp,       // true for !M, false for M
     const bool Mask_struct,     // true if M is structural, false if valued
     const GrB_BinaryOp accum,   // present here
-//  const GrB_Matrix A,         // input matrix, not transposed
     const bool A_is_null,
     const int assign_kind       // row assign, col assign, assign, or subassign
 )

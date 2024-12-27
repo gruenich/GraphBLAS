@@ -48,11 +48,13 @@ GrB_Info GB_bitmap_assign_6_whole   // C bitmap, no M, no accum
     // inputs:
     #define C_replace false
     #define I NULL              /* I index list */
+    #define I_is_32 false
     #define ni 0
     #define nI 0
     #define Ikind GB_ALL
     #define Icolon NULL
     #define J NULL              /* J index list */
+    #define J_is_32 false
     #define nj 0
     #define nJ 0
     #define Jkind GB_ALL

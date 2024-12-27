@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // The #include'ing file defines a GB_CIJ_WORK macro for the body of the loop,
 // which operates on the entry C(iC,jC) at position Cx [pC] and Cb [pC].  The C
 // matrix held in bitmap form.  If the mask matrix is also a bitmap matrix or
@@ -30,7 +32,7 @@
         case GB_ROW_ASSIGN : 
         {
             // iterate over all of C(iC,:)
-            const int64_t iC = I [0] ;
+            const int64_t iC = GB_IGET (I, 0) ;
             const int nthreads = GB_nthreads (Cvdim, chunk, nthreads_max) ;
             int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
@@ -59,7 +61,7 @@
         case GB_COL_ASSIGN : 
         {
             // iterate over all of C(:,jC)
-            const int64_t jC = J [0] ;
+            const int64_t jC = GB_IGET (J, 0) ;
             const int64_t pC0 = jC * Cvlen ;
             const int nthreads = GB_nthreads (Cvlen, chunk, nthreads_max) ;
             int tid ;

@@ -19,6 +19,8 @@
 // C(I,J)<!,repl> = A       subassign
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C:           bitmap
 // M:           none
 // Mask_comp:   true or false
@@ -130,12 +132,12 @@
             //      Cx(p) = aij     // C(iC,jC) inserted or updated
             //      Cb(p) = 1
 
-            #define GB_AIJ_WORK(pC,pA)                              \
-            {                                                       \
-                int8_t cb = Cb [pC] ;                               \
-                /* Cx [pC] = Ax [pA] */                             \
-                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;   \
-                Cb [pC] = 1 ;                                       \
+            #define GB_AIJ_WORK(pC,pA)                                      \
+            {                                                               \
+                int8_t cb = Cb [pC] ;                                       \
+                /* Cx [pC] = Ax [pA] */                                     \
+                GB_COPY_aij_to_C (Cx, pC, Ax, pA, A_iso, cwork, C_iso) ;    \
+                Cb [pC] = 1 ;                                               \
             }
             #include "template/GB_bitmap_assign_A_template.c"
 

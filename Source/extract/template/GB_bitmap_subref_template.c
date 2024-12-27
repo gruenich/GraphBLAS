@@ -39,7 +39,7 @@
                 task_cnvals++ ;                                     \
             }                                                       \
         }
-        #include "template/GB_bitmap_extract_IxJ_template.c"
+        #include "template/GB_bitmap_assign_IxJ_template.c"
         C->nvals = cnvals ;
     }
     else
@@ -56,7 +56,7 @@
             GB_COPY_ENTRY (pC, pA)                                  \
         }
         #define GB_NO_CNVALS
-        #include "template/GB_bitmap_extract_IxJ_template.c"
+        #include "template/GB_bitmap_assign_IxJ_template.c"
         #undef  GB_NO_CNVALS
     }
 }

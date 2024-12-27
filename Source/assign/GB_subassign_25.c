@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // Method 25: C(:,:)<M,s> = A ; C is empty, M structural, A bitmap/as-if-full
 
 // M:           present
@@ -165,8 +168,8 @@ GrB_Info GB_subassign_25
         { 
             info = GB_subassign_jit (C,
                 /* C_replace: */ false,
-                /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
-                /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+                /* I, ni, nI, Ikind, Icolon: */ NULL, false, 0, 0, GB_ALL, NULL,
+                /* J, nj, nJ, Jkind, Jcolon: */ NULL, false, 0, 0, GB_ALL, NULL,
                 M,
                 /* Mask_comp: */ false,
                 /* Mask_struct: */ true,

@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // Method 22: C += scalar, where C is full
 
 // M:           NULL
@@ -147,8 +150,8 @@ GrB_Info GB_subassign_22      // C += scalar where C is full
     { 
         info = GB_subassign_jit (C,
             /* C_replace: */ false,
-            /* I, ni, nI, Ikind, Icolon: */ NULL, 0, 0, GB_ALL, NULL,
-            /* J, nj, nJ, Jkind, Jcolon: */ NULL, 0, 0, GB_ALL, NULL,
+            /* I, I_is_32, ni, nI, Ikind, Icolon: */ NULL, false, 0, 0, GB_ALL, NULL,
+            /* J, I_is_32, nj, nJ, Jkind, Jcolon: */ NULL, false, 0, 0, GB_ALL, NULL,
             /* M: */ NULL,
             /* Mask_comp: */ false,
             /* Mask_struct: */ true,

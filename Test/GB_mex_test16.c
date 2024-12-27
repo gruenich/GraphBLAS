@@ -122,7 +122,8 @@ void mexFunction
     CHECK (code == UINT64_MAX) ;
 
     code = GB_encodify_assign (&e, &suffix, /* kcode: */ 0, C,
-        /* C_replace: */ false, /* Ikind: */ 0, /* Jkind: */ 0, /* M: */ NULL,
+        /* C_replace: */ false, /* I_is_32: */ false, /* J_is_32: */ false,
+        /* Ikind: */ 0, /* Jkind: */ 0, /* M: */ NULL,
         /* Mask_comp: */ false, /* Mask_struct: */ false,
         /* accum: */ mult, A, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ 0) ;

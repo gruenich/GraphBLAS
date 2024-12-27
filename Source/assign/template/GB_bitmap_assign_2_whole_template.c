@@ -19,6 +19,8 @@
 // C<!M,repl> = A       subassign
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C:           bitmap
 // M:           present, bitmap or full (not hypersparse or sparse)
 // Mask_comp:   true or false
@@ -48,7 +50,7 @@
     //--------------------------------------------------------------------------
 
     #define GB_GET_MIJ(mij,pM)                                  \
-        bool mij = (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ GB_MASK_COMP ;
+        bool mij = (GBb_M (Mb, pM) && GB_MCAST (Mx, pM, msize)) ^ GB_MASK_COMP ;
 
     //--------------------------------------------------------------------------
     // assignment phase
@@ -69,22 +71,22 @@
             //------------------------------------------------------------------
 
             #undef  GB_CIJ_WORK
-            #define GB_CIJ_WORK(pC)                         \
-            {                                               \
-                int8_t cb = Cb [pC] ;                       \
-                if (mij)                                    \
-                {                                           \
-                    /* Cx [pC] = scalar */                  \
-                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
-                    Cb [pC] = 1 ;                           \
-                    task_cnvals += (cb == 0) ;              \
-                }                                           \
-                else                                        \
-                {                                           \
-                    /* delete C(i,j) if present */          \
-                    Cb [pC] = 0 ;                           \
-                    task_cnvals -= (cb == 1) ;              \
-                }                                           \
+            #define GB_CIJ_WORK(pC)                                 \
+            {                                                       \
+                int8_t cb = Cb [pC] ;                               \
+                if (mij)                                            \
+                {                                                   \
+                    /* Cx [pC] = scalar */                          \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;     \
+                    Cb [pC] = 1 ;                                   \
+                    task_cnvals += (cb == 0) ;                      \
+                }                                                   \
+                else                                                \
+                {                                                   \
+                    /* delete C(i,j) if present */                  \
+                    Cb [pC] = 0 ;                                   \
+                    task_cnvals -= (cb == 1) ;                      \
+                }                                                   \
             }
             #include "template/GB_bitmap_assign_C_whole_template.c"
 
@@ -97,16 +99,16 @@
             //------------------------------------------------------------------
 
             #undef  GB_CIJ_WORK
-            #define GB_CIJ_WORK(pC)                         \
-            {                                               \
-                if (mij)                                    \
-                {                                           \
-                    /* Cx [pC] = scalar */                  \
-                    int8_t cb = Cb [pC] ;                   \
-                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
-                    Cb [pC] = 1 ;                           \
-                    task_cnvals += (cb == 0) ;              \
-                }                                           \
+            #define GB_CIJ_WORK(pC)                                 \
+            {                                                       \
+                if (mij)                                            \
+                {                                                   \
+                    /* Cx [pC] = scalar */                          \
+                    int8_t cb = Cb [pC] ;                           \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;     \
+                    Cb [pC] = 1 ;                                   \
+                    task_cnvals += (cb == 0) ;                      \
+                }                                                   \
             }
             #include "template/GB_bitmap_assign_C_whole_template.c"
         }
@@ -137,7 +139,7 @@
                 #define GB_CIJ_WORK(pC)                                     \
                 {                                                           \
                     int8_t cb = Cb [pC] ;                                   \
-                    if (mij && GBB_A (Ab, pC))                              \
+                    if (mij && GBb_A (Ab, pC))                              \
                     {                                                       \
                         /* Cx [pC] = Ax [pC] */                             \
                         GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;  \
@@ -167,7 +169,7 @@
                     if (mij)                                                  \
                     {                                                         \
                         int8_t cb = Cb [pC] ;                                 \
-                        if (GBB_A (Ab, pC))                                   \
+                        if (GBb_A (Ab, pC))                                   \
                         {                                                     \
                             /* Cx [pC] = Ax [pC] */                           \
                             GB_COPY_aij_to_C (Cx,pC,Ax,pC,A_iso,cwork,C_iso) ;\

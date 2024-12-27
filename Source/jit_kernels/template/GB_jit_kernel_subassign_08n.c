@@ -18,6 +18,9 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBASSIGN_PROTO (GB_jit_kernel)
     GB_GET_CALLBACK (GB_Pending_ensure) ;
     GB_GET_CALLBACK (GB_subassign_08n_slice) ;
 
+    const GB_I_TYPE *I = I_input ;
+    const GB_J_TYPE *J = J_input ;
+
     #include "template/GB_subassign_08n_template.c"
 }
 

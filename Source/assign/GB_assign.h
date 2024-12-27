@@ -23,10 +23,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     const GrB_BinaryOp accum,       // optional accum for accum(C,T)
     const GrB_Matrix A_in,          // input matrix
     const bool A_transpose,         // true if A is transposed
-    const GrB_Index *Rows,          // row indices
-    const GrB_Index nRows_in,       // number of row indices
-    const GrB_Index *Cols,          // column indices
-    const GrB_Index nCols_in,       // number of column indices
+    const void *Rows,               // row indices
+    const bool Rows_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nRows_in,        // number of row indices
+    const void *Cols,               // column indices
+    const bool Cols_is_32,          // if true, Cols is 32-bit; else 64-bit
+    const uint64_t nCols_in,        // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GB_Type_code scalar_code, // type code of scalar to expand
@@ -41,12 +43,15 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const void *scalar,             // scalar to assign to C(Rows,Cols)
     const GB_Type_code scalar_code, // type code of scalar to assign
-    const GrB_Index *Rows,          // row indices
-    const GrB_Index nRows,          // number of row indices
-    const GrB_Index *Cols,          // column indices
-    const GrB_Index nCols,          // number of column indices
+    const void *Rows,               // row indices
+    const bool Rows_is_32,          // if true, Rows is 32-bit; else 64-bit
+    const uint64_t nRows,           // number of row indices
+    const void *Cols,               // column indices
+    const bool Cols_is_32,          // if true, Cols is 32-bit; else 64-bit
+    const uint64_t nCols,           // number of column indices
     const GrB_Descriptor desc,      // descriptor for C and M
     GB_Werk Werk
 ) ;
 
 #endif
+

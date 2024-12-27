@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // macros for the construction of the GB_subassign kernels
 
@@ -119,6 +119,12 @@
 #ifndef GB_C_ISO
 #define GB_C_ISO C_iso
 #endif
+#ifndef GB_Cp_IS_32
+#define GB_Cp_IS_32 Cp_is_32
+#endif
+#ifndef GB_Ci_IS_32
+#define GB_Ci_IS_32 Ci_is_32
+#endif
 
 #ifndef GB_M_IS_BITMAP
 #define GB_M_IS_BITMAP M_is_bitmap
@@ -131,6 +137,12 @@
 #endif
 #ifndef GB_M_IS_HYPER
 #define GB_M_IS_HYPER M_is_hyper
+#endif
+#ifndef GB_Mp_IS_32
+#define GB_Mp_IS_32 Mp_is_32
+#endif
+#ifndef GB_Mi_IS_32
+#define GB_Mi_IS_32 Mi_is_32
 #endif
 
 #ifndef GB_A_IS_BITMAP
@@ -148,6 +160,12 @@
 #ifndef GB_A_ISO
 #define GB_A_ISO A_iso
 #endif
+#ifndef GB_Ap_IS_32
+#define GB_Ap_IS_32 Ap_is_32
+#endif
+#ifndef GB_Ai_IS_32
+#define GB_Ai_IS_32 Ai_is_32
+#endif
 
 #ifndef GB_S_IS_BITMAP
 #define GB_S_IS_BITMAP S_is_bitmap
@@ -161,6 +179,19 @@
 #ifndef GB_S_IS_HYPER
 #define GB_S_IS_HYPER S_is_hyper
 #endif
+#ifndef GB_Sp_IS_32
+#define GB_Sp_IS_32 Sp_is_32
+#endif
+#ifndef GB_Si_IS_32
+#define GB_Si_IS_32 Si_is_32
+#endif
+
+#ifndef GB_I_IS_32
+#define GB_I_IS_32 I_is_32
+#endif
+#ifndef GB_J_IS_32
+#define GB_J_IS_32 J_is_32
+#endif
 
 //------------------------------------------------------------------------------
 // GB_EMPTY_TASKLIST: declare an empty TaskList
@@ -171,7 +202,7 @@
     int taskid, ntasks = 0, nthreads = 0 ;                                  \
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;            \
     GB_WERK_DECLARE (Npending, int64_t) ;                                   \
-    int64_t *restrict Zh     = NULL ; size_t Zh_size = 0 ;                  \
+    GB_MDECL (Zh, , u) ; size_t Zh_size = 0 ;                               \
     int64_t *restrict Z_to_X = NULL ; size_t Z_to_X_size = 0 ;              \
     int64_t *restrict Z_to_S = NULL ; size_t Z_to_S_size = 0 ;              \
     int64_t *restrict Z_to_A = NULL ; size_t Z_to_A_size = 0 ;              \
@@ -187,7 +218,13 @@
     ASSERT_MATRIX_OK (C, "C for subassign kernel", GB0) ;                   \
     ASSERT (!GB_IS_BITMAP (C)) ;                                            \
     const bool C_iso = C->iso ;                                             \
-    int64_t *restrict Ci = C->i ; /* FIXME */                               \
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;                         \
+    GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;                         \
+    void *Ch = C->h ;                                                       \
+    const int64_t Cnvec = C->nvec ;                                         \
+    const bool Cp_is_32 = C->p_is_32 ;                                      \
+    const bool Ci_is_32 = C->i_is_32 ;                                      \
+    const bool C_is_hyper = (Ch != NULL) ;                                  \
     GB_C_TYPE *restrict Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;       \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
@@ -201,10 +238,9 @@
 
 #define GB_GET_C_HYPER_HASH                                                 \
     GB_OK (GB_hyper_hash_build (C, Werk)) ;                                 \
-    /* FIXME */ \
-    const uint64_t *restrict C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;       \
-    const int64_t *restrict C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;        \
-    const int64_t *restrict C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;        \
+    const void *C_Yp = (C->Y == NULL) ? NULL : C->Y->p ;                    \
+    const void *C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;                    \
+    const void *C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;                    \
     const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
 
 //------------------------------------------------------------------------------
@@ -215,10 +251,12 @@
 
 #define GB_GET_MASK                                                         \
     ASSERT_MATRIX_OK (M, "mask M", GB0) ;                                   \
-    const uint64_t *Mp = M->p ;      /* FIXME*/                             \
-    const int64_t *Mh = M->h ;                                              \
-    const int64_t *Mi = M->i ;                                              \
-    const int8_t  *Mb = M->b ;                                              \
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;                         \
+    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;                         \
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;                         \
+    const bool Mp_is_32 = M->p_is_32 ;                                      \
+    const bool Mi_is_32 = M->i_is_32 ;                                      \
+    const int8_t *Mb = M->b ;                                               \
     const GB_M_TYPE *Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;  \
     const size_t msize = M->type->size ;                                    \
     const size_t Mvlen = M->vlen ;                                          \
@@ -228,10 +266,9 @@
 
 #define GB_GET_MASK_HYPER_HASH                                              \
     GB_OK (GB_hyper_hash_build (M, Werk)) ;                                 \
-    /* FIXME */ \
-    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;       \
-    const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;        \
-    const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;        \
+    const void *M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;                    \
+    const void *M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;                    \
+    const void *M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;                    \
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
 
 //------------------------------------------------------------------------------
@@ -278,13 +315,18 @@
     ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
     const GrB_Type atype = A->type ;                                        \
     const size_t asize = atype->size ;                                      \
-    const uint64_t *Ap = A->p ;   /* FIXME*/                                \
-    const int64_t *Ai = A->i ;                                              \
-    const int8_t  *Ab = A->b ;                                              \
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;                         \
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;                         \
+    const void *Ah = A->h ;                                                 \
+    const bool Ap_is_32 = A->p_is_32 ;                                      \
+    const bool Ai_is_32 = A->i_is_32 ;                                      \
+    const int8_t *Ab = A->b ;                                               \
     const int64_t Avlen = A->vlen ;                                         \
     const GB_A_TYPE *Ax = (GB_A_TYPE *) A->x ;                              \
     const bool A_iso = A->iso ;                                             \
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;                             \
+    const bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;                        \
+    const int64_t Anvec = A->nvec ;                                         \
     const GB_Type_code acode = atype->code ;                                \
     GB_DECLAREC (cwork) ;                                                   \
     GB_CAST_FUNCTION (cast_A_to_C, ccode, acode) ;                          \
@@ -355,17 +397,18 @@
 
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
-    const uint64_t *restrict Sp = S->p ; /* FIXME*/                         \
-    const int64_t *restrict Sh = S->h ;                                     \
-    const int64_t *restrict Si = S->i ;                                     \
-    const int64_t *restrict Sx = (int64_t *) S->x ;                         \
+    GB_Sp_DECLARE (Sp, const) ; GB_Sp_PTR (Sp, S) ;                         \
+    GB_Sh_DECLARE (Sh, const) ; GB_Sh_PTR (Sh, S) ;                         \
+    GB_Si_DECLARE (Si, const) ; GB_Si_PTR (Si, S) ;                         \
+    const bool Sp_is_32 = S->p_is_32 ;                                      \
+    const bool Si_is_32 = S->i_is_32 ;                                      \
+    const int64_t *restrict Sx = (int64_t *) S->x ;   /* FIXME */           \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
     const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;                         \
-    /* FIXME */ \
-    const uint64_t *restrict S_Yp = (S->Y == NULL) ? NULL : S->Y->p ;       \
-    const int64_t *restrict S_Yi = (S->Y == NULL) ? NULL : S->Y->i ;        \
-    const int64_t *restrict S_Yx = (S->Y == NULL) ? NULL : S->Y->x ;        \
+    const void *S_Yp = (S->Y == NULL) ? NULL : S->Y->p ;                    \
+    const void *S_Yi = (S->Y == NULL) ? NULL : S->Y->i ;                    \
+    const void *S_Yx = (S->Y == NULL) ? NULL : S->Y->x ;                    \
     const int64_t S_hash_bits = (S->Y == NULL) ? 0 : (S->Y->vdim - 1) ;
 
 //------------------------------------------------------------------------------
@@ -388,8 +431,8 @@
     // Used for Methods 00 to 04, 06s, and 09 to 20, all of which use S.
 
     #define GB_C_S_LOOKUP                                                   \
-        int64_t pC = Sx [pS] ;                                              \
-        int64_t iC = GBI_C (Ci, pC, Cvlen) ;                                \
+        int64_t pC = Sx [pS] ;  /* FIXME */                                 \
+        int64_t iC = GBi_C (Ci, pC, Cvlen) ;                                \
         bool is_zombie = GB_IS_ZOMBIE (iC) ;                                \
         if (is_zombie) iC = GB_DEZOMBIE (iC) ;
 
@@ -404,10 +447,10 @@
     // This used for Methods 05, 06n, 07, and 08n, which do not use S.
 
     #define GB_iC_DENSE_LOOKUP                                              \
-        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;                 \
+        int64_t iC = GB_IJLIST (I, iA, GB_I_KIND, Icolon) ;                 \
         int64_t pC = pC_start + iC ;                                        \
-        bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (Ci [pC]) ; /* FIXME*/\
-        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNZOMBIE (Ci [pC]) == iC)) ;/*FIXME*/
+        bool is_zombie = (Ci != NULL) && GB_IS_ZOMBIE (GB_IGET (Ci, pC)) ;  \
+        ASSERT (GB_IMPLIES (Ci != NULL, GB_UNZOMBIE (GB_IGET (Ci, pC)) == iC)) ;
 
     //--------------------------------------------------------------------------
     // get C(iC,jC) via binary search of C(:,jC)
@@ -422,12 +465,12 @@
     // search of any fine tasks conflict with each other.
 
     #define GB_iC_BINARY_SEARCH(may_see_zombies)                            \
-        int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;                 \
+        int64_t iC = GB_IJLIST (I, iA, GB_I_KIND, Icolon) ;                 \
         int64_t pC = pC_start ;                                             \
         int64_t pright = pC_end - 1 ;                                       \
         bool cij_found, is_zombie ;                                         \
-        cij_found = GB_binary_search_zombie (iC, Ci, false, &pC, &pright,   \
-            may_see_zombies, &is_zombie) ;
+        cij_found = GB_binary_search_zombie (iC, Ci, GB_Ci_IS_32,           \
+            &pC, &pright, may_see_zombies, &is_zombie) ;
 
     //--------------------------------------------------------------------------
     // basic operations
@@ -512,7 +555,7 @@
         /* turn C(iC,jC) into a zombie */                                   \
         ASSERT (!GB_IS_FULL (C)) ;                                          \
         task_nzombies++ ;                                                   \
-        Ci [pC] = GB_ZOMBIE (iC) ;                                          \
+        GB_ISET (Ci, pC, GB_ZOMBIE (iC)) ; /* Ci [pC] = GB_ZOMBIE (iC) */   \
     }
 
     #define GB_UNDELETE                                                     \
@@ -520,7 +563,7 @@
         /* bring a zombie C(iC,jC) back to life;                 */         \
         /* the value of C(iC,jC) must also be assigned.          */         \
         ASSERT (!GB_IS_FULL (C)) ;                                          \
-        Ci [pC] = iC ;                                                      \
+        GB_ISET (Ci, pC, iC) ;   /* Ci [pC] = iC */                         \
         task_nzombies-- ;                                                   \
     }
 
@@ -1242,8 +1285,9 @@
 
 #define GB_SUBASSIGN_ONE_SLICE(M)                                           \
     GB_OK (GB_subassign_one_slice (                                         \
-        &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
-        C, I, nI, GB_I_KIND, Icolon, J, nJ, GB_J_KIND, Jcolon,              \
+        &TaskList, &TaskList_size, &ntasks, &nthreads, C,                   \
+        I, GB_I_IS_32, nI, GB_I_KIND, Icolon,                               \
+        J, GB_J_IS_32, nJ, GB_J_KIND, Jcolon,                               \
         M, Werk)) ;                                                         \
     GB_ALLOCATE_NPENDING_WERK ;
 
@@ -1263,12 +1307,12 @@
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     int Z_sparsity = GxB_SPARSE ;                                           \
     int64_t Znvec ;                                                         \
-    const bool Zp_is_32 = false ;  /* FIXME */                              \
-    const bool Zi_is_32 = false ;  /* FIXME */                              \
+    bool Zp_is_32, Zi_is_32 ;                                               \
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_size, NULL, NULL, &Z_to_X, &Z_to_X_size,           \
-        &Z_to_S, &Z_to_S_size, NULL, NULL, NULL, &Z_sparsity,               \
+        &Z_to_S, &Z_to_S_size, NULL, &Zp_is_32, &Zi_is_32, &Z_sparsity,     \
         NULL, X, S, Werk)) ;                                                \
+    GB_IPTR (Zh, Zi_is_32) ;                                                \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
         Znvec, Zh, Zi_is_32, NULL, Z_to_X, Z_to_S, false,                   \
@@ -1307,32 +1351,6 @@
     int64_t task_pending = 0 ;
 
 //------------------------------------------------------------------------------
-// GB_GET_MAPPED: get the content of a vector for a coarse/fine task
-//------------------------------------------------------------------------------
-
-// Used for the M, S, and A matrices.  Note that the generic GBP macro is used,
-// so this is not fully optimized for the JIT.
-
-#define GB_GET_MAPPED(pX_start, pX_fini, pX, pX_end, Xp, j, k, Z_to_X, Xvlen) \
-    int64_t pX_start = -1, pX_fini = -1 ;                                   \
-    if (fine_task)                                                          \
-    {                                                                       \
-        /* A fine task operates on a slice of X(:,k) */                     \
-        pX_start = TaskList [taskid].pX ;                                   \
-        pX_fini  = TaskList [taskid].pX_end ;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* vectors are never sliced for a coarse task */                    \
-        int64_t kX = (Z_to_X == NULL) ? j : Z_to_X [k] ;                    \
-        if (kX >= 0)                                                        \
-        {                                                                   \
-            pX_start = GBP (Xp, kX, Xvlen) ;                                \
-            pX_fini  = GBP (Xp, kX+1, Xvlen) ;                              \
-        }                                                                   \
-    }
-
-//------------------------------------------------------------------------------
 // GB_GET_VECTOR_M: get the content of a vector of M for a coarse/fine task
 //------------------------------------------------------------------------------
 
@@ -1350,35 +1368,8 @@
     else                                                                    \
     {                                                                       \
         /* vectors are never sliced for a coarse task */                    \
-        pM     = GBP_M (Mp, k, Mvlen) ;      /* FIXME */                    \
-        pM_end = GBP_M (Mp, k+1, Mvlen) ;    /* FIXME */                    \
-    }
-
-//------------------------------------------------------------------------------
-// GB_GET_EVEC: get the content of a vector for Method08n
-//------------------------------------------------------------------------------
-
-// Used for the M and A matrices.  Note that the generic GBP macro is used,
-// so this is not fully optimized for the JIT.
-
-#define GB_GET_EVEC(pX_start, pX_fini, pX, pX_end, Xp, Xh, j,k,Z_to_X,Xvlen)\
-    int64_t pX_start = -1, pX_fini = -1 ;                                   \
-    if (fine_task)                                                          \
-    {                                                                       \
-        /* A fine task operates on a slice of X(:,k) */                     \
-        pX_start = TaskList [taskid].pX ;                                   \
-        pX_fini  = TaskList [taskid].pX_end ;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* vectors are never sliced for a coarse task */                    \
-        int64_t kX = (Zh_shallow == Xh) ? k :                               \
-            ((Z_to_X == NULL) ? j : Z_to_X [k]) ;                           \
-        if (kX >= 0)                                                        \
-        {                                                                   \
-            pX_start = GBP (Xp, kX, Xvlen) ;                                \
-            pX_fini  = GBP (Xp, kX+1, Xvlen) ;                              \
-        }                                                                   \
+        pM     = GBp_M (Mp, k, Mvlen) ;                                     \
+        pM_end = GBp_M (Mp, k+1, Mvlen) ;                                   \
     }
 
 //------------------------------------------------------------------------------
@@ -1414,14 +1405,14 @@
     {                                                               \
         if (GB_C_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+            GB_hyper_hash_lookup (GB_Cp_IS_32, GB_Ci_IS_32,         \
                 Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,       \
                 j, &pC_start, &pC_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
-            pC_start = GBP_C (Cp, j  , Cvlen) ;                     \
-            pC_end   = GBP_C (Cp, j+1, Cvlen) ;                     \
+            pC_start = GBp_C (Cp, j  , Cvlen) ;                     \
+            pC_end   = GBp_C (Cp, j+1, Cvlen) ;                     \
         }                                                           \
     }
 
@@ -1430,14 +1421,14 @@
     {                                                               \
         if (GB_M_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+            GB_hyper_hash_lookup (GB_Mp_IS_32, GB_Mi_IS_32,         \
                 Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,       \
                 j, &pM_start, &pM_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
-            pM_start = GBP_M (Mp, j  , Mvlen) ;                     \
-            pM_end   = GBP_M (Mp, j+1, Mvlen) ;                     \
+            pM_start = GBp_M (Mp, j  , Mvlen) ;                     \
+            pM_end   = GBp_M (Mp, j+1, Mvlen) ;                     \
         }                                                           \
     }
 
@@ -1446,14 +1437,14 @@
     {                                                               \
         if (GB_A_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+            GB_hyper_hash_lookup (GB_Ap_IS_32, GB_Ai_IS_32,         \
                 Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,       \
                 j, &pA_start, &pA_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
-            pA_start = GBP_A (Ap, j  , Avlen) ;                     \
-            pA_end   = GBP_A (Ap, j+1, Avlen) ;                     \
+            pA_start = GBp_A (Ap, j  , Avlen) ;                     \
+            pA_end   = GBp_A (Ap, j+1, Avlen) ;                     \
         }                                                           \
     }
 
@@ -1462,14 +1453,14 @@
     {                                                               \
         if (GB_S_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (false, false, /* FIXME */         \
+            GB_hyper_hash_lookup (GB_Sp_IS_32, GB_Si_IS_32,         \
                 Sh, Snvec, Sp, S_Yp, S_Yi, S_Yx, S_hash_bits,       \
                 j, &pS_start, &pS_end) ;                            \
         }                                                           \
         else                                                        \
         {                                                           \
-            pS_start = GBP_S (Sp, j  , Svlen) ;                     \
-            pS_end   = GBP_S (Sp, j+1, Svlen) ;                     \
+            pS_start = GBp_S (Sp, j  , Svlen) ;                     \
+            pS_end   = GBp_S (Sp, j+1, Svlen) ;                     \
         }                                                           \
     }
 
@@ -1480,7 +1471,7 @@
 #define GB_LOOKUP_VECTOR_jC                                                 \
     /* lookup jC in C */                                                    \
     /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */       \
-    int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;                      \
+    int64_t jC = GB_IJLIST (J, j, GB_J_KIND, Jcolon) ;                      \
     int64_t pC_start, pC_end ;                                              \
     if (fine_task)                                                          \
     {                                                                       \
@@ -1516,7 +1507,8 @@
             {                                                               \
                 /* S is sparse or hypersparse */                            \
                 int64_t pright = pS_end - 1 ;                               \
-                GB_split_binary_search (iQ_start, Si, false, &pS, &pright) ;\
+                GB_split_binary_search (iQ_start, Si, GB_Si_IS_32,          \
+                    &pS, &pright) ;                                         \
             }                                                               \
         }
 
@@ -1535,7 +1527,8 @@
             {                                                               \
                 /* M is sparse or hypersparse */                            \
                 int64_t pright = pM_end - 1 ;                               \
-                GB_split_binary_search (iQ_start, Mi, false, &pM, &pright) ;\
+                GB_split_binary_search (iQ_start, Mi, GB_Mi_IS_32,          \
+                    &pM, &pright) ;                                         \
             }                                                               \
         }
 
@@ -1565,7 +1558,7 @@
         int64_t pM     = pM_start ;                                         \
         int64_t pright = pM_end - 1 ;                                       \
         bool found ;                                                        \
-        found = GB_binary_search (i, Mi, false, &pM, &pright) ;             \
+        found = GB_binary_search (i, Mi, GB_Mi_IS_32, &pM, &pright) ;       \
         if (found)                                                          \
         {                                                                   \
             mij = GB_MCAST (Mx, pM, msize) ;                                \
@@ -1765,7 +1758,7 @@
     /* C matrix: */                                                         \
     ASSERT_MATRIX_OK (C, "C for bitmap assign", GB0) ;                      \
     ASSERT (GB_IS_BITMAP (C)) ;                                             \
-    int8_t  *Cb = C->b ;                                                    \
+    int8_t *Cb = C->b ;                                                     \
     const bool C_iso = C->iso ;                                             \
     GB_C_TYPE *Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;                \
     const size_t csize = C->type->size ;                                    \
@@ -1776,10 +1769,10 @@
     const int64_t cnzmax = Cvlen * Cvdim ;                                  \
     int64_t cnvals = C->nvals ;                                             \
     /* A matrix and scalar: */                                              \
-    const uint64_t *Ap = NULL ;  /* FIXME */                                \
-    const int64_t *Ah = NULL ;                                              \
-    const int64_t *Ai = NULL ;                                              \
-    const int8_t  *Ab = NULL ;                                              \
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;                         \
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;                         \
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;                         \
+    const int8_t *Ab = NULL ;                                               \
     const GB_A_TYPE *Ax = NULL ;                                            \
     const bool A_iso = (GB_SCALAR_ASSIGN) ? false : A->iso ;                \
     const GrB_Type atype = (GB_SCALAR_ASSIGN) ? scalar_type : A->type ;     \
@@ -1789,9 +1782,6 @@
     if (!(GB_SCALAR_ASSIGN))                                                \
     {                                                                       \
         ASSERT_MATRIX_OK (A, "A for bitmap assign/subassign", GB0) ;        \
-        Ap = A->p ;                                                         \
-        Ah = A->h ;                                                         \
-        Ai = A->i ;                                                         \
         Ab = A->b ;                                                         \
         Ax = (GB_C_ISO) ? NULL : (GB_A_TYPE *) A->x ;                       \
         Avlen = A->vlen ;                                                   \

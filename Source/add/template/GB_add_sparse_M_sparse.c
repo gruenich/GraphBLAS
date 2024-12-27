@@ -250,7 +250,7 @@
                 // A is sparse; use binary search.  This is slow unless
                 // M is very sparse compared with A.
                 int64_t apright = pA_end - 1 ;
-                afound = GB_binary_search (i, Ai, Ai_is_32, &pA, &apright) ;
+                afound = GB_binary_search (i, Ai, GB_Ai_IS_32, &pA, &apright) ;
             }
 
             ASSERT (GB_IMPLIES (afound, GBi_A (Ai, pA, vlen) == i)) ;
@@ -271,7 +271,7 @@
                 // B is sparse; use binary search.  This is slow unless
                 // M is very sparse compared with B.
                 int64_t bpright = pB_end - 1 ;
-                bfound = GB_binary_search (i, Bi, Bi_is_32, &pB, &bpright) ;
+                bfound = GB_binary_search (i, Bi, GB_Bi_IS_32, &pB, &bpright) ;
             }
 
             ASSERT (GB_IMPLIES (bfound, GBi_B (Bi, pB, vlen) == i)) ;

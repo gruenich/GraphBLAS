@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 #include "assign/GB_assign.h"
 #include "assign/GB_bitmap_assign.h"
 #include "mask/GB_get_mask.h"
@@ -17,10 +20,10 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     const GrB_Matrix M_in,          // mask for C, unused if NULL
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Index *Rows,          // row indices
-    GrB_Index nRows,                // number of row indices
-    const GrB_Index *Cols,          // column indices
-    GrB_Index nCols,                // number of column indices
+    const uint64_t *Rows,           // row indices
+    uint64_t nRows,                 // number of row indices
+    const uint64_t *Cols,           // column indices
+    uint64_t nCols,                 // number of column indices
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
@@ -52,8 +55,8 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
         false,                          // do not transpose the mask
         accum,                          // for accum (C(Rows,Cols),A)
         A, A_transpose,                 // A and its descriptor (T=A or A')
-        Rows, nRows,                    // row indices
-        Cols, nCols,                    // column indices
+        Rows, false, nRows,             // row indices
+        Cols, false, nCols,             // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ASSIGN,
         Werk) ;

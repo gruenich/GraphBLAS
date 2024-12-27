@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // The eWise multiply of two matrices, C=A.*B, C<M>=A.*B, or C<!M>=A.*B starts
 // with this phase, which determines which vectors of C need to be computed.
@@ -81,8 +82,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;
     ASSERT (Ch_size_handle != NULL) ;
-//  ASSERT (p_Cp_is_32 != NULL) ;
-//  ASSERT (p_Ci_is_32 != NULL) ;
+    ASSERT (p_Cp_is_32 != NULL) ;
+    ASSERT (p_Ci_is_32 != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
 
@@ -170,11 +171,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         int64_t mnz = GB_nnz (M) ;
         cnz = GB_IMIN (cnz, mnz) ;
     }
-    if (p_Cp_is_32 != NULL && p_Ci_is_32 != NULL)   // FIXME
-    {
-        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-            GxB_AUTO_SPARSITY, cnz, A->vlen, A->vdim) ;
-    }
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, cnz, A->vlen, A->vdim) ;
 
     //--------------------------------------------------------------------------
     // determine if C is sparse or hypersparse, and find its hyperlist
@@ -572,14 +570,8 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     (*p_Cnvec) = Cnvec ;
     (*Ch_handle) = Ch ;
     (*Ch_size_handle) = Ch_size ;
-    if (p_Cp_is_32 != NULL)         // FIXME
-    {
-        (*p_Cp_is_32) = Cp_is_32 ;
-    }
-    if (p_Ci_is_32 != NULL)         // FIXME
-    {
-        (*p_Ci_is_32) = Ci_is_32 ;
-    }
+    (*p_Cp_is_32) = Cp_is_32 ;
+    (*p_Ci_is_32) = Ci_is_32 ;
     if (C_to_M_handle != NULL)
     {
         (*C_to_M_handle) = C_to_M ;

@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -27,6 +28,21 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     //--------------------------------------------------------------------------
     // extract the assign method_code
     //--------------------------------------------------------------------------
+
+    // S integer types (1 hex digit)
+    bool Sp_is_32   = GB_RSHIFT (method_code, 58, 1) ;
+    bool Si_is_32   = GB_RSHIFT (method_code, 57, 1) ;
+    bool Sx_is_32   = GB_RSHIFT (method_code, 56, 1) ;
+
+    // C, M, A, I, J integer types (2 hex digits)
+    bool Cp_is_32   = GB_RSHIFT (method_code, 55, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 54, 1) ;
+    bool Mp_is_32   = GB_RSHIFT (method_code, 53, 1) ;
+    bool Mi_is_32   = GB_RSHIFT (method_code, 52, 1) ;
+    bool Ap_is_32   = GB_RSHIFT (method_code, 51, 1) ;
+    bool Ai_is_32   = GB_RSHIFT (method_code, 50, 1) ;
+    bool I_is_32    = GB_RSHIFT (method_code, 49, 1) ;
+    bool J_is_32    = GB_RSHIFT (method_code, 48, 1) ;
 
     // C_replace, S present, scalar assign, A iso (1 hex digit)
     int C_replace   = GB_RSHIFT (method_code, 47, 1) ;
@@ -123,6 +139,11 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         case GB_LIST   : fprintf (fp, "GB_LIST\n"   ) ; break ;
         default:;
     }
+
+    fprintf (fp, "#define GB_I_TYPE uint%d_t\n", I_is_32 ? 32 : 64) ;
+    fprintf (fp, "#define GB_J_TYPE uint%d_t\n", J_is_32 ? 32 : 64) ;
+    fprintf (fp, "#define GB_I_IS_32 %d\n", I_is_32 ? 1 : 0) ;
+    fprintf (fp, "#define GB_J_IS_32 %d\n", J_is_32 ? 1 : 0) ;
 
     fprintf (fp, "#define GB_C_REPLACE %d\n", C_replace) ;
 
@@ -325,15 +346,13 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     { 
         // C(i,j) = (ctype) cwork, no typecasting
         GB_macrofy_output (fp, "cwork", "C", "C", ctype, ctype, csparsity,
-            C_iso, C_iso,
-            /* FIXME: */ false, false) ;
+            C_iso, C_iso, Cp_is_32, Ci_is_32) ;
     }
     else
     { 
         // C(i,j) = (ctype) zwork, with possible typecasting
         GB_macrofy_output (fp, "zwork", "C", "C", ctype, ztype, csparsity,
-            C_iso, C_iso,
-            /* FIXME: */ false, false) ;
+            C_iso, C_iso, Cp_is_32, Ci_is_32) ;
     }
 
     fprintf (fp, "#define GB_DECLAREC(cwork) %s cwork\n", ctype->name) ;
@@ -398,8 +417,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
-        /* FIXME: */ false, false) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity, Mp_is_32, Mi_is_32) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A or the scalar, including typecast to Y type
@@ -424,12 +442,13 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         GB_macrofy_sparsity (fp, "A", -1) ; // unused macros
         fprintf (fp, "#define GB_A_NVALS(e) int64_t e = 1 ; /* unused */\n") ;
         fprintf (fp, "#define GB_A_NHELD(e) int64_t e = 1 ; /* unused */\n") ;
+        GB_macrofy_bits (fp, "A", false, false) ;
     }
     else
     {
         // matrix assignment
         GB_macrofy_input (fp, "a", "A", "A", true, ytype, atype, asparsity,
-            acode, A_iso, -1, /* FIXME: */ false, false) ;
+            acode, A_iso, -1, Ap_is_32, Ai_is_32) ;
         if (accum != NULL)
         { 
             // accum is present
@@ -460,6 +479,8 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     {
         GB_macrofy_sparsity (fp, "S", ssparsity) ;
         fprintf (fp, "#define GB_S_CONSTRUCTED 1\n") ;
+        GB_macrofy_bits (fp, "S", Sp_is_32, Si_is_32) ;
+        fprintf (fp, "#define GB_Sx_BITS %d\n", Sx_is_32 ? 32 : 64) ;
     }
     else
     {

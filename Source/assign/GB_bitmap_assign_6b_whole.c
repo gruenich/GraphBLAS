@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // C = A, C is bitmap, A is sparse/hyper
 
 #include "assign/GB_bitmap_assign_methods.h"
@@ -20,11 +23,13 @@ GrB_Info GB_bitmap_assign_6b_whole  // C bitmap, no M, no accum
     // inputs:
     #define C_replace false
     #define I NULL              /* I index list */
+    #define I_is_32 false
     #define ni 0
     #define nI 0
     #define Ikind GB_ALL
     #define Icolon NULL
     #define J NULL              /* J index list */
+    #define J_is_32 false
     #define nj 0
     #define nJ 0
     #define Jkind GB_ALL
@@ -55,7 +60,7 @@ GrB_Info GB_bitmap_assign_6b_whole  // C bitmap, no M, no accum
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_subassign_jit (C, C_replace,
-        I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+        I, I_is_32, ni, nI, Ikind, Icolon, J, J_is_32, nj, nJ, Jkind, Jcolon,
         M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
         /* S: */ NULL, assign_kind,
         GB_JIT_KERNEL_BITMAP_ASSIGN_6b_WHOLE, "bitmap_assign_6b_whole",

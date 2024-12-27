@@ -274,7 +274,9 @@ void mexFunction
         "C(lo:hi,lo:hi)=A (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(lo:hi,lo:hi)=A (assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_RANGE, GB_RANGE,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         A, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -287,7 +289,9 @@ void mexFunction
         "C(lo:s:hi,lo:s:hi)=A (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(lo:s:hi,lo:s:hi)=A (assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_STRIDE, GB_STRIDE,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_STRIDE, GB_STRIDE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         A, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -300,8 +304,10 @@ void mexFunction
         "C(i,J)=s (row assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(i,J)=s (row assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_ALL, GB_LIST, /* M: */ NULL,
-        /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_ALL, GB_LIST,
+        /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ NULL, /* scalar_type: */ GxB_FC32, /* S: */ NULL,
         /* assign_kind: */ GB_ROW_ASSIGN) ;
     GB_macrofy_assign (fp, method_code, accum,
@@ -313,8 +319,10 @@ void mexFunction
         "C(I,j)=s (col assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(I,j)=s (col assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_LIST, GB_ALL, /* M: */ NULL,
-        /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_LIST, GB_ALL,
+        /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ NULL, /* scalar_type: */ GxB_FC32, /* S: */ NULL,
         /* assign_kind: */ GB_COL_ASSIGN) ;
     GB_macrofy_assign (fp, method_code, accum,
@@ -326,21 +334,9 @@ void mexFunction
         "C_iso(lo:hi,lo:hi)=A (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C_iso(lo:hi,lo:hi)=A (assign) \n") ;
-    GB_enumify_assign (&method_code, C_iso, false, GB_RANGE, GB_RANGE,
-        /* M: */ NULL,
-        /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
-        /* A: */ NULL, /* scalar_type: */ GrB_FP32, /* S: */ NULL,
-        /* assign_kind: */ GB_ASSIGN) ;
-    GB_macrofy_assign (fp, method_code, accum,
-        /* ctype: */ GrB_BOOL, /* atype: */ GrB_BOOL) ;
-
-    HEADER ;
-    accum = GrB_PLUS_FP32 ;
-    fprintf (fp, "GB_enumify_assign / GB_macrofy_assign: "
-        "C_iso(lo:hi,lo:hi)+=s (assign) \n") ;
-    printf ("GB_enumify_assign / GB_macrofy_assign: "
-        "C_iso(lo:hi,lo:hi)+=s (assign) \n") ;
-    GB_enumify_assign (&method_code, C_iso, false, GB_RANGE, GB_RANGE,
+    GB_enumify_assign (&method_code, C_iso, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ NULL, /* scalar_type: */ GrB_FP32, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -353,7 +349,24 @@ void mexFunction
         "C_iso(lo:hi,lo:hi)+=s (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C_iso(lo:hi,lo:hi)+=s (assign) \n") ;
-    GB_enumify_assign (&method_code, C_iso, false, GB_RANGE, GB_RANGE,  
+    GB_enumify_assign (&method_code, C_iso, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
+        /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
+        /* A: */ NULL, /* scalar_type: */ GrB_FP32, /* S: */ NULL,
+        /* assign_kind: */ GB_ASSIGN) ;
+    GB_macrofy_assign (fp, method_code, accum,
+        /* ctype: */ GrB_BOOL, /* atype: */ GrB_BOOL) ;
+
+    HEADER ;
+    accum = GrB_PLUS_FP32 ;
+    fprintf (fp, "GB_enumify_assign / GB_macrofy_assign: "
+        "C_iso(lo:hi,lo:hi)+=s (assign) \n") ;
+    printf ("GB_enumify_assign / GB_macrofy_assign: "
+        "C_iso(lo:hi,lo:hi)+=s (assign) \n") ;
+    GB_enumify_assign (&method_code, C_iso, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,  
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ NULL, /* scalar_type: */ GrB_INT32, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -366,7 +379,9 @@ void mexFunction
         "C(lo:hi,lo:hi)+=A (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(lo:hi,lo:hi)+=A (assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_RANGE, GB_RANGE,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ H, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -379,7 +394,9 @@ void mexFunction
         "C(lo:hi,lo:hi)&=A (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(lo:hi,lo:hi)&=A (assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_RANGE, GB_RANGE,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ A, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -395,7 +412,9 @@ void mexFunction
         "C(lo:hi,lo:hi)<=A (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C(lo:hi,lo:hi)<=A (assign) \n") ;
-    GB_enumify_assign (&method_code, C, false, GB_RANGE, GB_RANGE,
+    GB_enumify_assign (&method_code, C, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ A, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;
@@ -408,7 +427,9 @@ void mexFunction
         "C_iso(lo:hi,lo:hi)<=H (assign) \n") ;
     printf ("GB_enumify_assign / GB_macrofy_assign: "
         "C_iso(lo:hi,lo:hi)<=H (assign) \n") ;
-    GB_enumify_assign (&method_code, C_iso, false, GB_RANGE, GB_RANGE,
+    GB_enumify_assign (&method_code, C_iso, /* C_replace: */ false,
+        /* I_is_32: */ false, /* J_is_32: */ false,
+        GB_RANGE, GB_RANGE,
         /* M: */ NULL, /* Mask_comp: */ false, /* Mask_struct: */ false, accum,
         /* A: */ H, /* scalar_type: */ NULL, /* S: */ NULL,
         /* assign_kind: */ GB_ASSIGN) ;

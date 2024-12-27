@@ -44,6 +44,10 @@
     int64_t iend   = Icolon [GxB_END  ] ;
     #endif
 
+    #ifndef GB_JIT_KERNEL
+    #define GB_Ai_IS_32 Ai_is_32
+    #endif
+
     //--------------------------------------------------------------------------
     // phase1: count entries in each C(:,kC); phase2: compute C
     //--------------------------------------------------------------------------
@@ -379,10 +383,10 @@
                         int64_t pright = pA_end - 1 ;
                         #if defined ( GB_SYMBOLIC )
                         bool is_zombie ;
-                        found = GB_binary_search_zombie (i, Ai, Ai_is_32,
+                        found = GB_binary_search_zombie (i, Ai, GB_Ai_IS_32,
                             &pleft, &pright, may_see_zombies, &is_zombie) ;
                         #else
-                        found = GB_binary_search (i, Ai, Ai_is_32,
+                        found = GB_binary_search (i, Ai, GB_Ai_IS_32,
                             &pleft, &pright) ;
                         #endif
                         if (found)

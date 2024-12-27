@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Method 05d: C(:,:)<M> = scalar ; no S, C is dense
 
@@ -46,11 +46,10 @@
 
     ASSERT (GB_JUMBLED_OK (M)) ;
     ASSERT (!C->iso) ;
-
-    const uint64_t *restrict Mp = M->p ;    // FIXME
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
-    const int8_t  *restrict Mb = M->b ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
+    const int8_t *restrict Mb = M->b ;
     const GB_M_TYPE *restrict
         Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
     const size_t Mvlen = M->vlen ;
@@ -83,10 +82,10 @@
             // find the part of M(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH_M (Mh, k) ;
+            int64_t j = GBh_M (Mh, k) ;
             GB_GET_PA (pM_start, pM_end, taskid, k,
                 kfirst, klast, pstart_Mslice,
-                GBP_M (Mp, k, Mvlen), GBP_M (Mp, k+1, Mvlen)) ;
+                GBp_M (Mp, k, Mvlen), GBp_M (Mp, k+1, Mvlen)) ;
 
             // pC_start points to the start of C(:,j)
             int64_t pC_start = j * Cvlen ;
@@ -95,14 +94,14 @@
             // C<M(:,j)> = x
             //------------------------------------------------------------------
 
-            if (Mx == NULL && Mb == NULL)   // FIXME
 //          if (GB_MASK_STRUCT && !GB_M_IS_BITMAP)  <--- use this instead
+            if (Mx == NULL && Mb == NULL)   // FIXME
             {
                 // mask is structural and not bitmap
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 { 
-                    int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
+                    int64_t pC = pC_start + GBi_M (Mi, pM, Mvlen) ;
                     // Cx [pC] = cwork
                     GB_COPY_cwork_to_C (Cx, pC, cwork, false) ;
                 }
@@ -112,9 +111,9 @@
                 GB_PRAGMA_SIMD_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
-                    if (GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
+                    if (GBb_M (Mb, pM) && GB_MCAST (Mx, pM, msize))
                     { 
-                        int64_t pC = pC_start + GBI_M (Mi, pM, Mvlen) ;
+                        int64_t pC = pC_start + GBi_M (Mi, pM, Mvlen) ;
                         // Cx [pC] = cwork
                         GB_COPY_cwork_to_C (Cx, pC, cwork, false) ;
                     }

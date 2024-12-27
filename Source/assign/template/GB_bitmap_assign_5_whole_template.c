@@ -19,6 +19,8 @@
 // C<!,repl> += A      subassign: just clear C of all entries, not done here
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C:           bitmap
 // M:           none
 // Mask_comp:   true or false
@@ -65,19 +67,19 @@
             //------------------------------------------------------------------
 
             #undef  GB_CIJ_WORK
-            #define GB_CIJ_WORK(pC)                         \
-            {                                               \
-                int8_t cb = Cb [pC] ;                       \
-                if (cb == 0)                                \
-                {                                           \
-                    /* Cx [pC] = scalar */                  \
-                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ; \
-                }                                           \
-                else                                        \
-                {                                           \
-                    /* Cx [pC] += scalar */                 \
-                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;  \
-                }                                           \
+            #define GB_CIJ_WORK(pC)                                 \
+            {                                                       \
+                int8_t cb = Cb [pC] ;                               \
+                if (cb == 0)                                        \
+                {                                                   \
+                    /* Cx [pC] = scalar */                          \
+                    GB_COPY_cwork_to_C (Cx, pC, cwork, C_iso) ;     \
+                }                                                   \
+                else                                                \
+                {                                                   \
+                    /* Cx [pC] += scalar */                         \
+                    GB_ACCUMULATE_scalar (Cx, pC, ywork, C_iso) ;   \
+                }                                                   \
             }
             if (!C_iso)
             {

@@ -343,7 +343,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         GB_OK (GB_convert_int (M, false, false, true)) ;    // FIXME
         GB_OK (GB_convert_int (T, false, false, true)) ;    // FIXME
         GB_OK (GB_subassign (C, C_replace, M, Mask_comp, Mask_struct,
-            false, accum, T, false, GrB_ALL, 0, GrB_ALL, 0,
+            false, accum, T, false, GrB_ALL, false, 0, GrB_ALL, false, 0,
             false, NULL, GB_ignore_code, Werk)) ;
 
     }

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Prototypes for kernel callbacks.  The JIT kernels are passed a struct
 // containing pointers to all these functions, so that they do not have to be
@@ -134,11 +134,13 @@ GrB_Info GX_subassign_one_slice     /* slice M for subassign_05, 06n, 07 */ \
     int *p_nthreads,                /* # of threads to use */               \
     /* input: */                                                            \
     const GrB_Matrix C,             /* output matrix C */                   \
-    const uint64_t *I,              /* FIXME : subassign_one_slice */       \
+    const void *I,                                                          \
+    const bool I_is_32,                                                     \
     const int64_t nI,                                                       \
     const int Ikind,                                                        \
     const int64_t Icolon [3],                                               \
-    const uint64_t *J,              /* FIXME : subassign_one_slice */       \
+    const void *J,                                                          \
+    const bool J_is_32,                                                     \
     const int64_t nJ,                                                       \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \
@@ -224,23 +226,26 @@ GrB_Info GX_subassign_08n_slice                                             \
     int *p_ntasks,                  /* # of tasks constructed */            \
     int *p_nthreads,                /* # of threads to use */               \
     int64_t *p_Znvec,               /* # of vectors to compute in Z */      \
-    const int64_t *restrict *Zh_handle,  /* Zh is A->h, M->h, or NULL */    \
+    const void **Zh_handle,         /* Zh is A->h, M->h, or NULL */         \
     int64_t *restrict *Z_to_A_handle,    /* Z_to_A: size Znvec, or NULL */  \
     size_t *Z_to_A_size_handle,                                             \
     int64_t *restrict *Z_to_M_handle,    /* Z_to_M: size Znvec, or NULL */  \
     size_t *Z_to_M_size_handle,                                             \
+    bool *Zi_is_32_handle,                                                  \
     /* input: */                                                            \
-    const GrB_Matrix C,             /* output matrix C */                   \
-    const uint64_t *I,              /* FIXME : subassign_08n_slice */       \
+    const GrB_Matrix C,         /* output matrix C */                       \
+    const void *I,              /* I index list */                          \
+    const bool I_is_32,                                                     \
     const int64_t nI,                                                       \
     const int Ikind,                                                        \
     const int64_t Icolon [3],                                               \
-    const uint64_t *J,              /* FIXME : subassign_08n_slice */       \
+    const void *J,              /* J index list */                          \
+    const bool J_is_32,                                                     \
     const int64_t nJ,                                                       \
     const int Jkind,                                                        \
     const int64_t Jcolon [3],                                               \
-    const GrB_Matrix A,             /* matrix to slice */                   \
-    const GrB_Matrix M,             /* matrix to slice */                   \
+    const GrB_Matrix A,         /* matrix to slice */                       \
+    const GrB_Matrix M,         /* matrix to slice */                       \
     GB_Werk Werk                                                            \
 )
 

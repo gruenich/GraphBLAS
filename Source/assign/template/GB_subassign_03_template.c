@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Method 03: C(I,J) += scalar ; using S
 
@@ -28,10 +28,6 @@
 
     GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
-    const uint64_t *restrict Cp = C->p ;    // FIXME
-    const int64_t *restrict Ch = C->h ;
-    const bool C_is_hyper = (Ch != NULL) ;
-    const int64_t Cnvec = C->nvec ;
     GB_GET_S ;
     GB_GET_ACCUM_SCALAR ;
 
@@ -78,7 +74,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
+            int64_t jC = GB_IJLIST (J, j, GB_J_KIND, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j)
@@ -92,7 +88,7 @@
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
-                bool found = (pS < pS_end) && (GBI_S (Si,pS,Svlen) == iA) ;
+                bool found = (pS < pS_end) && (GBi_S (Si, pS, Svlen) == iA) ;
                 if (!found)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -144,7 +140,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
+            int64_t jC = GB_IJLIST (J, j, GB_J_KIND, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j)
@@ -158,13 +154,13 @@
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
             {
-                bool found = (pS < pS_end) && (GBI_S (Si, pS, Svlen) == iA) ;
+                bool found = (pS < pS_end) && (GBi_S (Si, pS, Svlen) == iA) ;
                 if (!found)
                 { 
                     // ----[. A 1]----------------------------------------------
                     // S (i,j) is not present, the scalar is present
                     // [. A 1]: action: ( insert )
-                    int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
+                    int64_t iC = GB_IJLIST (I, iA, GB_I_KIND, Icolon) ;
                     GB_PENDING_INSERT_scalar ;
                 }
                 else

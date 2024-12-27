@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // This template traverses over all the entries of the matrix A and operates on
 // the corresponding entry in C(i,j), using the GB_AIJ_WORK macro.  A can be
 // hypersparse or sparse (not bitmap or full).  It is not a scalar.  The matrix
@@ -64,9 +66,9 @@
             // find the part of A(:,k) for this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH_A (Ah, k) ;
+            int64_t j = GBh_A (Ah, k) ;
             GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                GBP_A (Ap, k, Avlen), GBP_A (Ap, k+1, Avlen)) ;
+                GBp_A (Ap, k, Avlen), GBp_A (Ap, k+1, Avlen)) ;
 
             //------------------------------------------------------------------
             // traverse over A(:,j), the kth vector of A
@@ -76,7 +78,7 @@
 
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             { 
-                int64_t i = Ai [pA] ;
+                int64_t i = GB_IGET (Ai, pA) ;
                 int64_t pC = i + pC0 ;
                 // operate on C(i,j) at pC, and A(i,j) at pA.  The mask
                 // can be accessed at pC if M is bitmap or full.  A has any

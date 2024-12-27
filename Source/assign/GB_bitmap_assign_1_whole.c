@@ -19,6 +19,9 @@
 // C<!M,repl> += A     subassign
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // C:           bitmap
 // M:           present, bitmap or full (not hypersparse or sparse)
 // Mask_comp:   true or false
@@ -40,11 +43,13 @@ GrB_Info GB_bitmap_assign_1_whole   // C bitmap, M bitmap/full, with accum
     // inputs:
     const bool C_replace,       // descriptor for C
     #define I NULL              /* I index list */
+    #define I_is_32 false
     #define ni 0
     #define nI 0
     #define Ikind GB_ALL
     #define Icolon NULL
     #define J NULL              /* J index list */
+    #define J_is_32 false
     #define nj 0
     #define nJ 0
     #define Jkind GB_ALL
@@ -79,7 +84,7 @@ GrB_Info GB_bitmap_assign_1_whole   // C bitmap, M bitmap/full, with accum
     //--------------------------------------------------------------------------
 
     GrB_Info info = GB_subassign_jit (C, C_replace,
-        I, ni, nI, Ikind, Icolon, J, nj, nJ, Jkind, Jcolon,
+        I, I_is_32, ni, nI, Ikind, Icolon, J, J_is_32, nj, nJ, Jkind, Jcolon,
         M, Mask_comp, Mask_struct, accum, A, scalar, scalar_type,
         /* S: */ NULL, assign_kind,
         GB_JIT_KERNEL_BITMAP_ASSIGN_1_WHOLE, "bitmap_assign_1_whole",

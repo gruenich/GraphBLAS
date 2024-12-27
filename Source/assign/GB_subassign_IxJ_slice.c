@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // Slice IxJ for a scalar assignment method and for bitmap assignments.
 
 // Construct a set of tasks to compute C(I,J)<...> = x or += x, for a subassign
@@ -53,6 +56,21 @@
 //------------------------------------------------------------------------------
 // GB_subassign_IxJ_slice
 //------------------------------------------------------------------------------
+
+#if 0
+GrB_Info GB_subassign_IxJ_slice
+(
+    // output:
+    GB_task_struct **p_TaskList,    // array of structs
+    size_t *p_TaskList_size,        // size of TaskList
+    int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads to use
+    // input:
+    const int64_t nI,
+    const int64_t nJ,
+    GB_Werk Werk
+)
+#endif
 
 GB_CALLBACK_SUBASSIGN_IXJ_SLICE_PROTO (GB_subassign_IxJ_slice)
 {

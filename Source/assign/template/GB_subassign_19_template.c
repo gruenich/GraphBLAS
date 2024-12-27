@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Method 19: C(I,J)<!M,repl> += scalar ; using S
 
@@ -30,10 +30,6 @@
 
     GB_EMPTY_TASKLIST ;
     GB_GET_C ;      // C must not be bitmap
-    const uint64_t *restrict Cp = C->p ;    // FIXME
-    const int64_t *restrict Ch = C->h ;
-    const bool C_is_hyper = (Ch != NULL) ;
-    const int64_t Cnvec = C->nvec ;
     GB_GET_MASK ;
     GB_GET_MASK_HYPER_HASH ;
     GB_GET_S ;
@@ -80,7 +76,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
+            int64_t jC = GB_IJLIST (J, j, GB_J_KIND, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j) and M(iA_start:end,j)
@@ -100,8 +96,8 @@
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? GBI_S (Si, pS, Svlen) : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? GBI_M (Mi, pM, Mvlen) : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBi_S (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBi_M (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)
@@ -117,7 +113,7 @@
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    mij = GBb_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     pM++ ;  // go to the next entry in M(:,j)
                 }
                 else
@@ -204,7 +200,7 @@
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t jC = GB_ijlist (J, j, GB_J_KIND, Jcolon) ;
+            int64_t jC = GB_IJLIST (J, j, GB_J_KIND, Jcolon) ;
 
             //------------------------------------------------------------------
             // get S(iA_start:end,j) and M(iA_start:end,j)
@@ -224,8 +220,8 @@
                 // Get the indices at the top of each list.
                 //--------------------------------------------------------------
 
-                int64_t iS = (pS < pS_end) ? GBI_S (Si, pS, Svlen) : INT64_MAX ;
-                int64_t iM = (pM < pM_end) ? GBI_M (Mi, pM, Mvlen) : INT64_MAX ;
+                int64_t iS = (pS < pS_end) ? GBi_S (Si, pS, Svlen) : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? GBi_M (Mi, pM, Mvlen) : INT64_MAX ;
 
                 //--------------------------------------------------------------
                 // find the smallest index of [iS iA iM] (always iA)
@@ -241,7 +237,7 @@
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    mij = GBB_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
+                    mij = GBb_M (Mb, pM) && GB_MCAST (Mx, pM, msize) ;
                     pM++ ;  // go to the next entry in M(:,j)
                 }
                 else
@@ -274,7 +270,7 @@
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            int64_t iC = GB_ijlist (I, iA, GB_I_KIND, Icolon) ;
+                            int64_t iC = GB_IJLIST (I, iA, GB_I_KIND, Icolon) ;
                             GB_PENDING_INSERT_scalar ;
                         }
                     }

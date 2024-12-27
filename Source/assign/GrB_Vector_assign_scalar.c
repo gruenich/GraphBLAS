@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Assigns a single scalar to a vector, w<M>(Rows) = accum(w(Rows),x)
 // The scalar x is implicitly expanded into a vector u of size nRows-by-1,
@@ -18,28 +19,29 @@
 #include "ij/GB_ij.h"
 #include "mask/GB_get_mask.h"
 
-#define GB_ASSIGN_SCALAR(prefix,type,T,ampersand)                              \
+#define GB_ASSIGN_SCALAR(prefix,type,T,ampersand)                           \
 GrB_Info GB_EVAL3 (prefix, _Vector_assign_, T) /* w<M>(Rows)=accum(w(Rows),x)*/\
-(                                                                              \
-    GrB_Vector w,                   /* input/output vector for results      */ \
-    const GrB_Vector M,             /* optional mask for w                  */ \
-    const GrB_BinaryOp accum,       /* optional accum for Z=accum(w(Rows),x)*/ \
-    type x,                         /* scalar to assign to w(Rows)          */ \
-    const GrB_Index *Rows,          /* row indices                          */ \
-    GrB_Index nRows,                /* number of row indices                */ \
-    const GrB_Descriptor desc       /* descriptor for w and mask            */ \
-)                                                                              \
-{                                                                              \
-    GB_WHERE2 (w, M, "GrB_Vector_assign_" GB_STR(T)                            \
-        " (w, M, accum, x, Rows, nRows, desc)") ;                              \
-    GB_RETURN_IF_NULL (w) ;                                                    \
-    GB_BURBLE_START ("GrB_assign") ;                                           \
-    ASSERT (GB_VECTOR_OK (w)) ;                                                \
-    ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                        \
-    info = GB_assign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,            \
-        ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc, Werk) ;  \
-    GB_BURBLE_END ;                                                            \
-    return (info) ;                                                            \
+(                                                                           \
+    GrB_Vector w,                   /* input/output vector for results   */ \
+    const GrB_Vector M,             /* optional mask for w               */ \
+    const GrB_BinaryOp accum,       /* opt. accum for Z=accum(w(Rows),x) */ \
+    type x,                         /* scalar to assign to w(Rows)       */ \
+    const uint64_t *Rows,           /* row indices                       */ \
+    uint64_t nRows,                 /* number of row indices             */ \
+    const GrB_Descriptor desc       /* descriptor for w and mask         */ \
+)                                                                           \
+{                                                                           \
+    GB_WHERE2 (w, M, "GrB_Vector_assign_" GB_STR(T)                         \
+        " (w, M, accum, x, Rows, nRows, desc)") ;                           \
+    GB_RETURN_IF_NULL (w) ;                                                 \
+    GB_BURBLE_START ("GrB_assign") ;                                        \
+    ASSERT (GB_VECTOR_OK (w)) ;                                             \
+    ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                     \
+    info = GB_assign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,         \
+        ampersand x, GB_## T ## _code,                                      \
+        Rows, false, nRows, GrB_ALL, false, 1, desc, Werk) ;                \
+    GB_BURBLE_END ;                                                         \
+    return (info) ;                                                         \
 }
 
 GB_ASSIGN_SCALAR (GrB, bool      , BOOL   , &)
@@ -65,12 +67,12 @@ GB_ASSIGN_SCALAR (GrB, void *    , UDT    ,  )
 // scalar subassignment above.
 
 // If the GrB_Scalar s is empty of type stype, then this is identical to:
-//  GrB_Vector_new (&S, stype, nRows) ;
-//  GrB_Vector_assign (w, M, accum, S, Rows, nRows, desc) ;
-//  GrB_Vector_free (&S) ;
+//  GrB_Vector_new (&A, stype, nRows) ;
+//  GrB_Vector_assign (w, M, accum, A, Rows, nRows, desc) ;
+//  GrB_Vector_free (&A) ;
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_Matrix_free (&S) ;
+#define GB_FREE_ALL GB_Matrix_free (&A) ;
 
 GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
 (
@@ -78,8 +80,8 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     const GrB_Vector M_in,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
     GrB_Scalar scalar,              // scalar to assign to w(I)
-    const GrB_Index *I,             // row indices
-    GrB_Index ni,                   // number of row indices
+    const uint64_t *I,              // row indices
+    uint64_t ni,                    // number of row indices
     const GrB_Descriptor desc       // descriptor for w and Mask
 )
 {
@@ -88,7 +90,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Matrix S = NULL ;
+    GrB_Matrix A = NULL ;
     GB_WHERE3 (w, M_in, scalar,
         "GrB_Vector_assign_Scalar (w, M, accum, s, Rows, nRows, desc)") ;
     GB_RETURN_IF_NULL (w) ;
@@ -118,7 +120,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     // w<M>(Rows) = accum (w(Rows), scalar)
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals ;
+    uint64_t nvals ;
     GB_OK (GB_nvals (&nvals, (GrB_Matrix) scalar, Werk)) ;
 
     if (M == NULL && !Mask_comp && ni == 1 && !C_replace)
@@ -128,7 +130,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
         // scalar assignment
         //----------------------------------------------------------------------
 
-        const GrB_Index row = I [0] ;
+        const uint64_t row = I [0] ;
         if (nvals == 1)
         { 
             // set the element: w(row) += scalar or w(row) = scalar
@@ -157,8 +159,8 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
             false,                      // do not transpose the mask
             accum,                      // for accum (w(Rows),scalar)
             NULL, false,                // no explicit vector u
-            I, ni,                      // row indices
-            GrB_ALL, 1,                 // column indices
+            I, false, ni,               // row indices
+            GrB_ALL, false, 1,          // column indices
             true,                       // do scalar expansion
             scalar->x,                  // scalar to assign, expands to become u
             scalar->type->code,         // type code of scalar to expand
@@ -173,27 +175,25 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
         // the opaque GrB_Scalar has no entry
         //----------------------------------------------------------------------
 
-        const bool I_is_32 = false ;    // FIXME
-
         // determine the properites of the I index list
         int64_t nRows, RowColon [3] ;
         int RowsKind ;
-        GB_ijlength (I, I_is_32, ni, GB_NROWS (w), &nRows, &RowsKind, RowColon);
+        GB_ijlength (I, false, ni, GB_NROWS (w), &nRows, &RowsKind, RowColon);
 
-        // create an empty matrix S of the right size, and use matrix assign
-        struct GB_Matrix_opaque S_header ;
-        GB_CLEAR_STATIC_HEADER (S, &S_header) ;
-        GB_OK (GB_new (&S,  // existing header
+        // create an empty matrix A of the right size, and use matrix assign
+        struct GB_Matrix_opaque A_header ;
+        GB_CLEAR_STATIC_HEADER (A, &A_header) ;
+        GB_OK (GB_new (&A,  // existing header
             scalar->type, nRows, 1, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1, /* FIXME: */ false, false)) ;
+            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false)) ;
         info = GB_assign (
             (GrB_Matrix) w, C_replace,      // w vector and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor
             false,                          // do not transpose the mask
             accum,                          // for accum (w(Rows),scalar)
-            S, false,                       // S matrix and its descriptor
-            I, ni,                          // row indices
-            GrB_ALL, 1,                     // column indices
+            A, false,                       // A matrix and its descriptor
+            I, false, ni,                   // row indices
+            GrB_ALL, false, 1,              // column indices
             false, NULL, GB_ignore_code,    // no scalar expansion
             GB_ASSIGN,
             Werk) ;

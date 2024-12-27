@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
 // handled; this is done first in GB_assign_prep.
@@ -33,6 +34,8 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_Matrix C,
     bool C_replace,
     // index types:
+    bool I_is_32,           // if true, I is 32-bits; else 64
+    bool J_is_32,           // if true, J is 32-bits; else 64
     int Ikind,              // 0: all (no I), 1: range, 2: stride, 3: list
     int Jkind,              // ditto
     // M matrix:
@@ -120,7 +123,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     int M_sparsity = (M == NULL) ? 0 : GB_sparsity (M) ;
     int A_sparsity = (A == NULL) ? 0 : GB_sparsity (A) ;
     int S_sparsity = (S == NULL) ? 0 : GB_sparsity (S) ;
-    int S_present = (S != NULL) ;
+    int S_present  = (S != NULL) ? 1 : 0 ;
 
     int csparsity, msparsity, asparsity, ssparsity ;
     GB_enumify_sparsity (&csparsity, C_sparsity) ;
@@ -130,16 +133,45 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
 
     int C_repl = (C_replace) ? 1 : 0 ;
 
+    int i_is_32 = (I_is_32) ? 1 : 0 ;
+    int j_is_32 = (J_is_32) ? 1 : 0 ;
+
+    int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
+
+    int mp_is_32 = (M != NULL && M->p_is_32) ? 1 : 0 ;
+    int mi_is_32 = (M != NULL && M->i_is_32) ? 1 : 0 ;
+
+    int ap_is_32 = (A != NULL && A->p_is_32) ? 1 : 0 ;
+    int ai_is_32 = (A != NULL && A->i_is_32) ? 1 : 0 ;
+
+    int sp_is_32 = (S != NULL && S->p_is_32) ? 1 : 0 ;
+    int si_is_32 = (S != NULL && S->i_is_32) ? 1 : 0 ;
+    int sx_is_32 = 0 ;  // FIXME: enumify S->x (uint32 or uint64)
+
     //--------------------------------------------------------------------------
     // construct the assign method_code,
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 48 (12 hex digits): 16 bits to sparse
-
-    // FIXME: 32/64: 8 bits for C, M, A, S
+    // total method_code bits: 59 (15 hex digits): 5 bits to sparse
 
     (*method_code) =
                                                // range        bits
+
+                // S integer types (1 hex digit)
+                GB_LSHIFT (sp_is_32   , 58) |  // 0 to 1       1
+                GB_LSHIFT (si_is_32   , 57) |  // 0 to 1       1
+                GB_LSHIFT (sx_is_32   , 56) |  // 0 to 1       1
+
+                // C, M, A, I, J integer types (2 hex digits)
+                GB_LSHIFT (cp_is_32   , 55) |  // 0 to 1       1
+                GB_LSHIFT (ci_is_32   , 54) |  // 0 to 1       1
+                GB_LSHIFT (mp_is_32   , 53) |  // 0 to 1       1
+                GB_LSHIFT (mi_is_32   , 52) |  // 0 to 1       1
+                GB_LSHIFT (ap_is_32   , 51) |  // 0 to 1       1
+                GB_LSHIFT (ai_is_32   , 50) |  // 0 to 1       1
+                GB_LSHIFT (i_is_32    , 49) |  // 0 to 1       1
+                GB_LSHIFT (j_is_32    , 48) |  // 0 to 1       1
 
                 // C_replace, S present, scalar assign, A iso (1 hex digit)
                 GB_LSHIFT (C_repl     , 47) |  // 0 to 1       1

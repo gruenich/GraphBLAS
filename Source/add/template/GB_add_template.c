@@ -41,11 +41,11 @@
 
     #ifdef GB_JIT_KERNEL
     #define A_is_bitmap GB_A_IS_BITMAP
-    #define Ai_is_32    (GB_Ai_BITS == 32)
     #else
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     // unlike GB_emult, both A and B may be iso
     const bool Ai_is_32 = A->i_is_32 ;
+    #define GB_Ai_IS_32 Ai_is_32
     #endif
 
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
@@ -54,10 +54,10 @@
 
     #ifdef GB_JIT_KERNEL
     #define B_is_bitmap GB_B_IS_BITMAP
-    #define Bi_is_32    (GB_Bi_BITS == 32)
     #else
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool Bi_is_32 = B->i_is_32 ;
+    #define GB_Bi_IS_32 Bi_is_32
     #endif
 
     GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;

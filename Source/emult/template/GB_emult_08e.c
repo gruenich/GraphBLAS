@@ -96,7 +96,7 @@
         { 
             // A(:,j) is sparse; use binary search for A(i,j)
             int64_t apright = pA_end - 1 ;
-            afound = GB_binary_search (i, Ai, Ai_is_32, &pA, &apright) ;
+            afound = GB_binary_search (i, Ai, GB_Ai_IS_32, &pA, &apright) ;
         }
         if (!afound) continue ;
         ASSERT (GBi_A (Ai, pA, vlen) == i) ;
@@ -116,7 +116,7 @@
         { 
             // B(:,j) is sparse; use binary search for B(i,j)
             int64_t bpright = pB_end - 1 ;
-            bfound = GB_binary_search (i, Bi, Bi_is_32, &pB, &bpright) ;
+            bfound = GB_binary_search (i, Bi, GB_Bi_IS_32, &pB, &bpright) ;
         }
         if (!bfound) continue ;
         ASSERT (GBi_B (Bi, pB, vlen) == i) ;

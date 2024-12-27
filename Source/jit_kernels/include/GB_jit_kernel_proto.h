@@ -515,12 +515,12 @@ GrB_Info GB_jit_kernel_subassign_any                                    \
 (                                                                       \
     GrB_Matrix C,                                                       \
     const bool C_replace,                                               \
-    const uint64_t *I,          /* FIXME subassign JIT kernel */        \
+    const void *I_input,                                                \
     const int64_t ni,                                                   \
     const int64_t nI,                                                   \
     const int Ikind,                                                    \
     const int64_t Icolon [3],                                           \
-    const uint64_t *J,          /* FIXME subassign JIT kernel */        \
+    const void *J_input,                                                \
     const int64_t nj,                                                   \
     const int64_t nJ,                                                   \
     const int Jkind,                                                    \

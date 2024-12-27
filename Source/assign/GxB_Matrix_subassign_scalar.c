@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Assigns a single scalar to a submatrix:
 
@@ -24,28 +25,28 @@
 #include "ij/GB_ij.h"
 #include "mask/GB_get_mask.h"
 
-#define GB_ASSIGN_SCALAR(type,T,ampersand)                                     \
-GrB_Info GB_EVAL2 (GXB (Matrix_subassign_), T) /* C(Rows,Cols)<M> += x      */ \
-(                                                                              \
-    GrB_Matrix C,                   /* input/output matrix for results      */ \
-    const GrB_Matrix M,             /* optional mask for C(Rows,Cols)       */ \
-    const GrB_BinaryOp accum,       /* accum for Z=accum(C(Rows,Cols),x)    */ \
-    type x,                         /* scalar to assign to C(Rows,Cols)     */ \
-    const GrB_Index *Rows,          /* row indices                          */ \
-    GrB_Index nRows,                /* number of row indices                */ \
-    const GrB_Index *Cols,          /* column indices                       */ \
-    GrB_Index nCols,                /* number of column indices             */ \
-    const GrB_Descriptor desc       /* descriptor for C(Rows,Cols) and M */    \
-)                                                                              \
-{                                                                              \
-    GB_WHERE2 (C, M, "GxB_Matrix_subassign_" GB_STR(T)                         \
-        " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
-    GB_RETURN_IF_NULL (C) ;                                                    \
-    GB_BURBLE_START ("GxB_Matrix_subassign " GB_STR(T)) ;                      \
-    info = GB_subassign_scalar (C, M, accum, ampersand x, GB_## T ## _code,    \
-        Rows, nRows, Cols, nCols, desc, Werk) ;                                \
-    GB_BURBLE_END ;                                                            \
-    return (info) ;                                                            \
+#define GB_ASSIGN_SCALAR(type,T,ampersand)                                  \
+GrB_Info GB_EVAL2 (GXB (Matrix_subassign_), T) /* C(Rows,Cols)<M> += x   */ \
+(                                                                           \
+    GrB_Matrix C,                   /* input/output matrix for results   */ \
+    const GrB_Matrix M,             /* optional mask for C(Rows,Cols)    */ \
+    const GrB_BinaryOp accum,       /* accum for Z=accum(C(Rows,Cols),x) */ \
+    type x,                         /* scalar to assign to C(Rows,Cols)  */ \
+    const uint64_t *Rows,           /* row indices                       */ \
+    uint64_t nRows,                 /* number of row indices             */ \
+    const uint64_t *Cols,           /* column indices                    */ \
+    uint64_t nCols,                 /* number of column indices          */ \
+    const GrB_Descriptor desc       /* descriptor for C and M */            \
+)                                                                           \
+{                                                                           \
+    GB_WHERE2 (C, M, "GxB_Matrix_subassign_" GB_STR(T)                      \
+        " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;              \
+    GB_RETURN_IF_NULL (C) ;                                                 \
+    GB_BURBLE_START ("GxB_Matrix_subassign " GB_STR(T)) ;                   \
+    info = GB_subassign_scalar (C, M, accum, ampersand x, GB_## T ## _code, \
+        Rows, false, nRows, Cols, false, nCols, desc, Werk) ;               \
+    GB_BURBLE_END ;                                                         \
+    return (info) ;                                                         \
 }
 
 GB_ASSIGN_SCALAR (bool      , BOOL   , &)
@@ -71,12 +72,12 @@ GB_ASSIGN_SCALAR (void *    , UDT    ,  )
 // scalar subassignment above.
 
 // If the GrB_Scalar s is empty of type stype, then this is identical to:
-//  GrB_Matrix_new (&S, stype, nRows, nCols) ;
-//  GxB_Matrix_subassign (C, M, accum, S, Rows, nRows, Cols, nCols, desc) ;
-//  GrB_Matrix_free (&S) ;
+//  GrB_Matrix_new (&A, stype, nRows, nCols) ;
+//  GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc) ;
+//  GrB_Matrix_free (&A) ;
 
 #undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_Matrix_free (&S) ;
+#define GB_FREE_ALL GB_Matrix_free (&A) ;
 
 GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
 (
@@ -84,10 +85,10 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
     const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
     GrB_Scalar scalar,              // scalar to assign to C(I,J)
-    const GrB_Index *I,             // row indices
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices
-    GrB_Index nj,                   // number of column indices
+    const uint64_t *I,              // row indices
+    uint64_t ni,                    // number of row indices
+    const uint64_t *J,              // column indices
+    uint64_t nj,                    // number of column indices
     const GrB_Descriptor desc       // descriptor for C and Mask
 )
 {
@@ -105,7 +106,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
     GB_RETURN_IF_NULL (J) ;
     GB_BURBLE_START ("GxB_subassign") ;
 
-    GrB_Matrix S = NULL ;
+    GrB_Matrix A = NULL ;
 
     // if C has a user-defined type, its type must match the scalar type
     if (C->type->code == GB_UDT_code && C->type != scalar->type)
@@ -126,7 +127,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
     // C(Rows,Cols)<M> = accum (C(Rows,Cols), scalar)
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals ;
+    uint64_t nvals ;
     GB_OK (GB_nvals (&nvals, (GrB_Matrix) scalar, Werk)) ;
 
     if (M == NULL && !Mask_comp && ni == 1 && nj == 1 && !C_replace)
@@ -136,8 +137,8 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
         // scalar assignment
         //----------------------------------------------------------------------
 
-        const GrB_Index row = I [0] ;
-        const GrB_Index col = J [0] ;
+        const uint64_t row = I [0] ;
+        const uint64_t col = J [0] ;
         if (nvals == 1)
         { 
             // set the element: C(row,col) += scalar or C(row,col) = scalar
@@ -166,8 +167,8 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
             false,                      // do not transpose the mask
             accum,                      // for accum (C(Rows,Cols),scalar)
             NULL, false,                // no explicit matrix A
-            I, ni,                      // row indices
-            J, nj,                      // column indices
+            I, false, ni,               // row indices
+            J, false, nj,               // column indices
             true,                       // do scalar expansion
             scalar->x,                  // scalar to assign, expands to become A
             scalar->type->code,         // type code of scalar to expand
@@ -181,32 +182,29 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
         // the opaque GrB_Scalar has no entry
         //----------------------------------------------------------------------
 
-        const bool I_is_32 = false ;    // FIXME
-        const bool J_is_32 = false ;    // FIXME
-
         // determine the properites of the I and J index lists
         int64_t nRows, nCols, RowColon [3], ColColon [3] ;
         int RowsKind, ColsKind ;
-        GB_ijlength (I, I_is_32, ni, GB_NROWS (C), &nRows, &RowsKind, RowColon);
-        GB_ijlength (J, J_is_32, nj, GB_NCOLS (C), &nCols, &ColsKind, ColColon);
+        GB_ijlength (I, false, ni, GB_NROWS (C), &nRows, &RowsKind, RowColon) ;
+        GB_ijlength (J, false, nj, GB_NCOLS (C), &nCols, &ColsKind, ColColon) ;
 
-        // create an empty matrix S of the right size, and use matrix assign
-        struct GB_Matrix_opaque S_header ;
-        GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+        // create an empty matrix A of the right size, and use matrix assign
+        struct GB_Matrix_opaque A_header ;
+        GB_CLEAR_STATIC_HEADER (A, &A_header) ;
         bool is_csc = C->is_csc ;
         int64_t vlen = is_csc ? nRows : nCols ;
         int64_t vdim = is_csc ? nCols : nRows ;
-        GB_OK (GB_new (&S, // existing header
+        GB_OK (GB_new (&A, // existing header
             scalar->type, vlen, vdim, GB_ph_calloc, is_csc, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1, /* FIXME: */ false, false)) ;
+            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false)) ;
         info = GB_subassign (
             C, C_replace,                   // C matrix and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor
             false,                          // do not transpose the mask
             accum,                          // for accum (C(Rows,Cols),A)
-            S, false,                       // S matrix and its descriptor
-            I, ni,                          // row indices
-            J, nj,                          // column indices
+            A, false,                       // A matrix and its descriptor
+            I, false, ni,                   // row indices
+            J, false, nj,                   // column indices
             false, NULL, GB_ignore_code,    // no scalar expansion
             Werk) ;
         GB_FREE_ALL ;

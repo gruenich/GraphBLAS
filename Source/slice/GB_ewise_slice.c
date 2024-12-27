@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // JIT: possible: could use variants for sparsity formats.
 

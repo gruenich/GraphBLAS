@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+#define GB_DEBUG
+
 // C = A, making a deep copy into an existing non-shallow matrix C, but
 // possibly reusing parts of C if C is dense.  See also GB_dup.
 // C can have any sparsity structure on input.  C takes on the same sparsity
