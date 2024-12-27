@@ -288,7 +288,7 @@ GrB_Info GB_jit_kernel_concat_sparse                                    \
     GrB_Matrix C,                                                       \
     const int64_t cistart,                                              \
     const GrB_Matrix A,                                                 \
-    int64_t *restrict W,                                                \
+    const void *W_parameter,                                            \
     const int64_t *A_ek_slicing,                                        \
     const int A_ntasks,                                                 \
     const int A_nthreads,                                               \

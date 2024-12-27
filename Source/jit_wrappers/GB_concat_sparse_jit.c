@@ -22,7 +22,7 @@ GrB_Info GB_concat_sparse_jit      // concatenate A into a sparse matrix C
     int64_t cistart,
     const GB_Operator op,
     const GrB_Matrix A,
-    int64_t *restrict W,            // FIXME: ok for now; can match C->p_is_32
+    void *W,                        // integer type matches C->p
     const int64_t *restrict A_ek_slicing,
     const int A_ntasks,
     const int A_nthreads

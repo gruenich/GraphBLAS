@@ -32,6 +32,11 @@
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
     const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
     const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+    #if GB_Cp_IS_32
+    const uint32_t *restrict W = W_parameter ;
+    #else
+    const uint64_t *restrict W = W_parameter ;
+    #endif
     #endif
 
     //--------------------------------------------------------------------------
@@ -47,7 +52,7 @@
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
             int64_t j = GBh_A (Ah, k) ;
-            const int64_t pC_start = W [j] ;
+            const int64_t pC_start = GB_IGET (W, j) ;
 
             //------------------------------------------------------------------
             // find the part of the kth vector A(:,j) for this task

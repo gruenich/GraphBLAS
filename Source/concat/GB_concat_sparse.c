@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except Work can follow C->p_is_32 instead of int64_t
+// DONE: 32/64 bit
 
 #define GB_FREE_WORKSPACE                       \
     if (S != NULL)                              \
@@ -54,8 +54,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     GrB_Matrix A = NULL ;
     ASSERT_MATRIX_OK (C, "C input to concat sparse", GB0) ;
     GB_WERK_DECLARE (A_ek_slicing, int64_t) ;
-    int64_t *Work = NULL ;
-    size_t Work_size = 0 ;
+    GB_MDECL (Work, , u) ; size_t Work_size = 0 ;
     GrB_Matrix *S = NULL ;
     size_t S_size = 0 ;
 
@@ -104,10 +103,10 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    // FIXME: Work can be uint32_t, following C->p_is_32
     int64_t nouter = csc ? n : m ;
     int64_t ninner = csc ? m : n ;
-    Work = GB_CALLOC_WORK (ninner * cvdim, int64_t, &Work_size) ;
+    size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    Work = GB_CALLOC_MEMORY (ninner * cvdim, cpsize, &Work_size) ;
     S = GB_CALLOC_WORK (m * n, GrB_Matrix, &S_size) ;
     if (S == NULL || Work == NULL)
     { 
@@ -115,6 +114,9 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    GB_IPTR (Work, Cp_is_32) ;
+    GB_MDECL (W, , u) ;
 
     //--------------------------------------------------------------------------
     // count entries in each vector of each tile
@@ -192,7 +194,11 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             const int64_t anvec = A->nvec ;
             const int64_t avlen = A->vlen ;
             int64_t cvstart = csc ? Tile_cols [outer] : Tile_rows [outer] ;
-            int64_t *restrict W = Work + inner * cvdim + cvstart ;
+
+            // get the workspace pointer array W for this tile
+            W = ((GB_void *) Work) + (inner * cvdim + cvstart) * cpsize ;
+            GB_IPTR (W, Cp_is_32) ;
+
             int nth = GB_nthreads (anvec, chunk, nthreads_max) ;
             if (GB_IS_FULL (A))
             { 
@@ -202,7 +208,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 for (j = 0 ; j < anvec ; j++)
                 {
                     // W [j] = # of entries in A(:,j), which is just avlen
-                    W [j] = avlen ;
+                    GB_ISET (W, j, avlen) ;     // W [j] = avlen
                 }
             }
             else
@@ -216,7 +222,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 {
                     // W [j] = # of entries in A(:,j), the kth column of A
                     int64_t j = GBh_A (Ah, k) ;
-                    W [j] = GB_IGET (Ap, k+1) - GB_IGET (Ap, k) ; 
+                    int64_t ajnz = GB_IGET (Ap, k+1) - GB_IGET (Ap, k) ; 
+                    GB_ISET (W, j, ajnz) ;  // W [j] = ajnz ;
                 }
             }
         }
@@ -235,8 +242,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         for (int64_t inner = 0 ; inner < ninner ; inner++)
         { 
             int64_t p = inner * cvdim + k ;
-            int64_t c = Work [p] ;
-            Work [p] = s ;
+            int64_t c = GB_IGET (Work, p) ;
+            GB_ISET (Work, p, s) ;  // Work [p] = s ;
             s += c ;
         }
         // total number of entries in C(:,k)
@@ -254,7 +261,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         for (int64_t inner = 0 ; inner < ninner ; inner++)
         { 
             int64_t p = inner * cvdim + k ;
-            Work [p] += pC ;
+            GB_IINC (Work, p, pC) ; // Work [p] += pC ;
         }
     }
 
@@ -320,7 +327,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
             }
 
             // get the workspace pointer array W for this tile
-            int64_t *restrict W = Work + inner * cvdim + cvstart ;
+            W = ((GB_void *) Work) + (inner * cvdim + cvstart) * cpsize ;
+            GB_IPTR (W, Cp_is_32) ;
 
             //------------------------------------------------------------------
             // slice the tile
