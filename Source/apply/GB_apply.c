@@ -335,10 +335,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // C<M> = accum (C,T): accumulate the results into C via the M
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (T, "T before convert_int, GB_apply", GB0) ;
-    GB_OK (GB_convert_int (T, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (T, "T for accum/mask; T=apply(A) output", GB0) ;
-
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
         Mask_struct, Werk)) ;
 }

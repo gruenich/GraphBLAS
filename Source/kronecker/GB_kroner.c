@@ -344,14 +344,12 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     GB_FREE_WORKSPACE ;
     tt = GB_OPENMP_GET_WTIME - tt ;
     GBURBLE ("(kron %d/%d nthreads: %d time: %g) ",
         Cp_is_32 ? 32 : 64,
         Ci_is_32 ? 32 : 64, nthreads, tt) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
-    ASSERT_MATRIX_OK (C, "C=kron(A,B) converted", GB0) ;
+    ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     return (info) ;
 }
 
