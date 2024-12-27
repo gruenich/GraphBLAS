@@ -328,15 +328,11 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anvec = A->nvec ;
     bool ignore ;
 
-    GB_OK (GB_convert_int (T, false, false, true)) ;      // FIXME
-
     GB_CLEAR_STATIC_HEADER (S, &S_header) ;
     GB_OK (GB_add (S, A->type, A->is_csc, NULL, 0, 0, &ignore, A, T,
         false, NULL, NULL, op_2nd, false, true, Werk)) ;
     GB_Matrix_free (&T) ;
     ASSERT_MATRIX_OK (S, "S after GB_wait:add", GB0) ;
-
-    GB_OK (GB_convert_int (S, false, false, true)) ;      // FIXME
 
     //--------------------------------------------------------------------------
     // check if the A->Y hyper-hash can be kept
@@ -368,6 +364,7 @@ GrB_Info GB_wait                // finish all pending computations
         if (nthreads == 1)
         { 
             // compare Ah and Sh with a single thread
+            // FIXME: make this an inline function like GB_binary_search
             if (Ai_is_32)
             { 
                 hsame = (memcmp (Ah32, Sh32, anvec * sizeof (uint32_t)) == 0) ;

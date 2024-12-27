@@ -328,11 +328,9 @@ GrB_Info GB_subref_phase0
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
     bool Cp_is_32 = false ;
     bool Ci_is_32 = false ;
-    if (p_Ci_is_32 != NULL)   // FIXME
-    {
-        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-            GxB_AUTO_SPARSITY, 0, nI, nJ) ;
-    }
+    ASSERT (p_Ci_is_32 != NULL) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, 0, nI, nJ) ;
 
     size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
@@ -862,10 +860,7 @@ GrB_Info GB_subref_phase0
     GB_FREE_WORKSPACE ;
     (*p_Ch           ) = Ch ;
     (*p_Ch_size      ) = Ch_size ;
-    if (p_Ci_is_32 != NULL)   // FIXME
-    {
-        (*p_Ci_is_32) = Ci_is_32 ;
-    }
+    (*p_Ci_is_32     ) = Ci_is_32 ;
     (*p_Ap_start     ) = Ap_start ;
     (*p_Ap_start_size) = Ap_start_size ;
     (*p_Ap_end       ) = Ap_end ;

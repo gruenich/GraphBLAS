@@ -135,11 +135,9 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
     bool Cp_is_32 = false ;
     bool Ci_is_32 = false ;
-    if (p_Cp_is_32 != NULL)   // FIXME
-    { 
-        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-            GxB_AUTO_SPARSITY, cnz, nI, nJ) ;
-    }
+    ASSERT (p_Cp_is_32 != NULL) ;
+    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        GxB_AUTO_SPARSITY, cnz, nI, nJ) ;
 
     void *Cp = NULL ; size_t Cp_size = 0 ;
 
@@ -169,12 +167,9 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     // return the result
     //--------------------------------------------------------------------------
 
-    (*Cp_handle) = Cp ;
+    (*Cp_handle     ) = Cp ;
     (*Cp_size_handle) = Cp_size ;
-    if (p_Cp_is_32 != NULL)   // FIXME
-    {
-        (*p_Cp_is_32) = Cp_is_32 ;
-    }
+    (*p_Cp_is_32    ) = Cp_is_32 ;
     return (GrB_SUCCESS) ;
 }
 
