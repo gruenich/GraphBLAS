@@ -130,10 +130,6 @@ GrB_Info GB_assign_prep
     void *I2k = NULL ; size_t I2k_size = 0 ;
     void *J2k = NULL ; size_t J2k_size = 0 ;
 
-    bool I2_is_32  = false ;
-    bool I2k_is_32 = false ;
-    bool J2_is_32  = false ;
-    bool J2k_is_32 = false ;
     (*scalar_type_handle) = NULL ;
 
     (*Chandle) = NULL ;
@@ -827,10 +823,13 @@ GrB_Info GB_assign_prep
 
         ASSERT (Ikind == GB_LIST || Jkind == GB_LIST) ;
         ASSERT (!whole_C_matrix) ;
+        bool I2k_is_32 = false ;
+        bool J2k_is_32 = false ;
 
         if (I_unsorted_or_has_dupl)
         { 
             // I2 = sort I and remove duplicates
+            bool I2_is_32 ;
             ASSERT (Ikind == GB_LIST) ;
             GB_OK (GB_ijsort (I, I_is_32, imax, &ni,
                 &I2 , &I2_is_32 , &I2_size,
@@ -849,6 +848,7 @@ GrB_Info GB_assign_prep
         if (J_unsorted_or_has_dupl)
         { 
             // J2 = sort J and remove duplicates
+            bool J2_is_32 ;
             ASSERT (Jkind == GB_LIST) ;
             GB_OK (GB_ijsort (J, J_is_32, jmax, &nj,
                 &J2 , &J2_is_32 , &J2_size,
@@ -873,8 +873,8 @@ GrB_Info GB_assign_prep
             // Awork = A (Iinv, Jinv)
             GB_CLEAR_STATIC_HEADER (Awork, Awork_header_handle) ;
             GB_OK (GB_subref (Awork, false, A->is_csc, A,
-                Iinv, I_is_32, ni,
-                Jinv, J_is_32, nj,
+                Iinv, I2k_is_32, ni,
+                Jinv, J2k_is_32, nj,
                 false, Werk)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (Awork)) ;
@@ -892,8 +892,8 @@ GrB_Info GB_assign_prep
             // if Mask_struct then Mwork is extracted as iso
             GB_CLEAR_STATIC_HEADER (Mwork, Mwork_header_handle) ;
             GB_OK (GB_subref (Mwork, Mask_struct, M->is_csc, M,
-                Iinv, I_is_32, ni,
-                Jinv, J_is_32, nj,
+                Iinv, I2k_is_32, ni,
+                Jinv, J2k_is_32, nj,
                 false, Werk)) ;
             // GB_subref can return a jumbled result
             ASSERT (GB_JUMBLED_OK (Mwork)) ;
