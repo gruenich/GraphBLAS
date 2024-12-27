@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
 // handled; this is done first in GB_assign_prep.
@@ -47,7 +48,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_Matrix A,           // NULL for scalar assignment
     GrB_Type scalar_type,
     // S matrix:
-    GrB_Matrix S,           // may be MULL
+    GrB_Matrix S,           // may be NULL, or of type GrB_UINT32 or GrB_UINT64
     int assign_kind         // 0: assign, 1: subassign, 2: row, 3: col
 )
 {
@@ -59,7 +60,9 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     GrB_Type ctype = C->type ;
     GrB_Type mtype = (M == NULL) ? NULL : M->type ;
     GrB_Type atype = (A == NULL) ? scalar_type : A->type ;
+    GrB_Type stype = (S == NULL) ? GrB_UINT64 : S->type ;
     ASSERT (atype != NULL) ;
+    ASSERT (stype == GrB_UINT32 || stype == GrB_UINT64) ;
 
     //--------------------------------------------------------------------------
     // enumify the accum operator, if present, and get the types of x,y,z
@@ -146,7 +149,7 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
 
     int sp_is_32 = (S != NULL && S->p_is_32) ? 1 : 0 ;
     int si_is_32 = (S != NULL && S->i_is_32) ? 1 : 0 ;
-    int sx_is_32 = 0 ;  // FIXME: enumify S->x (uint32 or uint64)
+    int sx_is_32 = (stype == GrB_UINT32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the assign method_code,

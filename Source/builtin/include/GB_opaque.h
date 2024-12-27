@@ -684,7 +684,6 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_Sp_DECLARE(Sp,const)    GB_MDECL (Sp,   const, u)
         #define GB_Sh_DECLARE(Sh,const)    GB_MDECL (Sh,   const, u)
         #define GB_Si_DECLARE(Si,const)    GB_MDECL (Si,   const,  )
-        #define GB_Sx_DECLARE(Sx,const)    GB_MDECL (Sx,   const, u)
         #define GB_Si_DECLARE_U(Si,const)  GB_MDECL (Si,   const, u)
         #define GB_SYp_DECLARE(S_Yp,const) GB_MDECL (S_Yp, const, u)
         #define GB_SYi_DECLARE(S_Yi,const) GB_MDECL (S_Yi, const, u)
@@ -742,7 +741,6 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_Sp_PTR(Sp,S)    GB_GET_MATRIX_PTR (Sp,   S, p_is_32, p)
         #define GB_Sh_PTR(Sh,S)    GB_GET_MATRIX_PTR (Sh,   S, i_is_32, h)
         #define GB_Si_PTR(Si,S)    GB_GET_MATRIX_PTR (Si,   S, i_is_32, i)
-//      #define GB_Sx_PTR(Sx,S)    GB_GET_MATRIX_PTR (Sx,   S, x_is_32, x) FIXME
         #define GB_SYp_PTR(S_Yp,S) GB_GET_HYPER_PTR  (S_Yp, S, p)
         #define GB_SYi_PTR(S_Yi,S) GB_GET_HYPER_PTR  (S_Yi, S, i)
         #define GB_SYx_PTR(S_Yx,S) GB_GET_HYPER_PTR  (S_Yx, S, x)
@@ -969,7 +967,6 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
         #define GB_Sp_PTR(Sp,S)    GB_GET_MATRIX_PTR (Sp,   S, p)
         #define GB_Sh_PTR(Sh,S)    GB_GET_MATRIX_PTR (Sh,   S, h)
         #define GB_Si_PTR(Si,S)    GB_GET_MATRIX_PTR (Si,   S, i)
-        #define GB_Sx_PTR(Sx,S)    GB_GET_MATRIX_PTR (Sx,   S, x)   /* OK */
         #define GB_SYp_PTR(S_Yp,S) GB_GET_HYPER_PTR  (S_Yp, S, p)
         #define GB_SYi_PTR(S_Yi,S) GB_GET_HYPER_PTR  (S_Yi, S, i)
         #define GB_SYx_PTR(S_Yx,S) GB_GET_HYPER_PTR  (S_Yx, S, x)

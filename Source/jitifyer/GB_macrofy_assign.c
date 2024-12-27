@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -480,6 +481,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
         fprintf (fp, "#define GB_S_CONSTRUCTED 1\n") ;
         GB_macrofy_bits (fp, "S", Sp_is_32, Si_is_32) ;
         fprintf (fp, "#define GB_Sx_BITS %d\n", Sx_is_32 ? 32 : 64) ;
+        fprintf (fp, "#define GB_Sx_TYPE uint%d_t\n", Sx_is_32 ? 32 : 64) ;
     }
     else
     {

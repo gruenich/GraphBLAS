@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // Method 00: C(I,J)<!,repl> = empty ; using S
 
@@ -73,7 +74,12 @@ GrB_Info GB_subassign_zombie
     // get inputs
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Sx = (int64_t *) S->x ; // FIXME
+    ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;
+    const bool Sx_is_32 = (S->type == GrB_UINT32) ;
+    GB_MDECL (Sx, const, u) ;
+    Sx = S->x ;
+    GB_IPTR (Sx, Sx_is_32) ;
+
     GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;
 
     //--------------------------------------------------------------------------
@@ -103,7 +109,7 @@ GrB_Info GB_subassign_zombie
     for (pS = 0 ; pS < snz ; pS++)
     {
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
-        int64_t pC = Sx [pS] ;      // FIXME
+        int64_t pC = GB_IGET (Sx, pS) ;
         int64_t i = GB_IGET (Ci, pC) ;
         // ----[X A 0] or [X . 0]-----------------------------------------------
         // action: ( X ): still a zombie

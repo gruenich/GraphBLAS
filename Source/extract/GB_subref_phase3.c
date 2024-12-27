@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
@@ -46,6 +47,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int64_t Icolon [3],
     const int64_t nJ,
     // from GB_subref:
+    const GrB_Type ctype,       // type of C to create
     const bool C_iso,           // if true, C is iso
     const GB_void *cscalar,     // iso value of C
     // original input:
@@ -93,7 +95,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
     int64_t cnz = GB_IGET (Cp, Cnvec) ;
     bool C_is_hyper = (Ch != NULL) ;
-    GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
 
     // allocate the result C (but do not allocate C->p or C->h)
     int sparsity = C_is_hyper ? GxB_HYPERSPARSE : GxB_SPARSE ;
@@ -146,41 +147,64 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     { 
 
         //----------------------------------------------------------------------
-        // symbolic subref
+        // symbolic subref: Cx is uint32_t or uint64_t; the values of A ignored
         //----------------------------------------------------------------------
 
         ASSERT (!C_iso) ;
-        uint64_t *restrict Cx = (uint64_t *) C->x ;
+        ASSERT (ctype == GrB_UINT32 || ctype == GrB_UINT64) ;
 
         // symbolic subref must handle zombies
         const bool may_see_zombies = (A->nzombies > 0) ;
 
-        // symbolic copy: Cx is int64_t; the values of A ignored
-        #define GB_COPY_RANGE(pC,pA,len)            \
-            for (int64_t k = 0 ; k < (len) ; k++)   \
-            {                                       \
-                Cx [(pC) + k] = (pA) + k ;          \
+        if (ctype == GrB_UINT32)
+        {
+            uint32_t *restrict Cx = (uint32_t *) C->x ;
+
+            #define GB_COPY_RANGE(pC,pA,len)            \
+                for (int64_t k = 0 ; k < (len) ; k++)   \
+                {                                       \
+                    Cx [(pC) + k] = (pA) + k ;          \
+                }
+            #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
+            #define GB_QSORT_1B(Ci,Cx,pC,clen)                          \
+            {                                                           \
+                if (Ci_is_32)                                           \
+                {                                                       \
+                    GB_qsort_1b_32_size4 (Ci32 + pC, Cx + pC, clen) ;   \
+                }                                                       \
+                else                                                    \
+                {                                                       \
+                    GB_qsort_1b_64_size4 (Ci64 + pC, Cx + pC, clen) ;   \
+                }                                                       \
             }
-        #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
-        #define GB_QSORT_1B(Ci,Cx,pC,clen)                          \
-        {                                                           \
-            if (Ci_is_32)                                           \
-            {                                                       \
-                GB_qsort_1b_32_size8 (Ci32 + pC, Cx + pC, clen) ;   \
-            }                                                       \
-            else                                                    \
-            {                                                       \
-                GB_qsort_1b_64_size8 (Ci64 + pC, Cx + pC, clen) ;   \
-            }                                                       \
+            #define GB_SYMBOLIC
+            #include "extract/template/GB_subref_template.c"
+
         }
+        else
+        {
+            uint64_t *restrict Cx = (uint64_t *) C->x ;
 
-        // 16 possible variants: could use a JIT kerel here
-        //  Cp,Ci:      4
-        //  Ap,Ai:      4
-        //  I inverse:  2
-
-        #define GB_SYMBOLIC
-        #include "extract/template/GB_subref_template.c"
+            #define GB_COPY_RANGE(pC,pA,len)            \
+                for (int64_t k = 0 ; k < (len) ; k++)   \
+                {                                       \
+                    Cx [(pC) + k] = (pA) + k ;          \
+                }
+            #define GB_COPY_ENTRY(pC,pA) Cx [pC] = (pA) ;
+            #define GB_QSORT_1B(Ci,Cx,pC,clen)                          \
+            {                                                           \
+                if (Ci_is_32)                                           \
+                {                                                       \
+                    GB_qsort_1b_32_size8 (Ci32 + pC, Cx + pC, clen) ;   \
+                }                                                       \
+                else                                                    \
+                {                                                       \
+                    GB_qsort_1b_64_size8 (Ci64 + pC, Cx + pC, clen) ;   \
+                }                                                       \
+            }
+            #define GB_SYMBOLIC
+            #include "extract/template/GB_subref_template.c"
+        }
 
     }
     else if (C_iso)
@@ -206,12 +230,6 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
                 GB_qsort_1_64 (Ci64 + pC, clen) ;                   \
             }                                                       \
         }
-
-        // 16 possible variants: could use a JIT kerel here
-        //  Cp,Ci:      4
-        //  Ap,Ai:      4
-        //  I inverse:  2
-
         #include "extract/template/GB_subref_template.c"
 
     }
@@ -221,6 +239,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
         //----------------------------------------------------------------------
         // non-iso numeric subref
         //----------------------------------------------------------------------
+
+        ASSERT (ctype == A->type) ;
 
         // using the JIT kernel
         info = GB_subref_sparse_jit (C, TaskList, ntasks, nthreads, post_sort,

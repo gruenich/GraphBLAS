@@ -172,6 +172,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const int64_t Icolon [3],
     const int64_t nJ,
     // from GB_subref:
+    const GrB_Type ctype,       // type of C to create
     const bool C_iso,           // if true, C is iso
     const GB_void *cscalar,     // iso value of C
     // original input:
@@ -185,9 +186,10 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
 
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
-    // output
+    // output:
     GrB_Matrix C,               // output matrix, static header
-    // input, not modified
+    // inputs, not modified:
+    const GrB_Type ctype,       // type of C to create
     const bool C_iso,           // if true, C is iso
     const GB_void *cscalar,     // scalar value of C, if iso
     const bool C_is_csc,        // requested format of C

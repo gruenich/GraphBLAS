@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // C=A(I,J), where A is bitmap or full, symbolic and numeric.
 
@@ -28,9 +29,10 @@
 
 GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
 (
-    // output
+    // output:
     GrB_Matrix C,               // output matrix, static header
-    // input, not modified
+    // inputs, not modified:
+    const GrB_Type ctype,       // type of C to create
     const bool C_iso,           // if true, C is iso
     const GB_void *cscalar,     // scalar value of C, if iso
     const bool C_is_csc,        // requested format of C
@@ -116,12 +118,9 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
     // allocate C
     //--------------------------------------------------------------------------
 
-    // FIXME: for symbolic extraction, allow the type to be uint32 or uint64
-
     int64_t cnzmax ;
     bool ok = GB_int64_multiply ((uint64_t *) (&cnzmax), nI, nJ) ;
     if (!ok) cnzmax = INT64_MAX ;
-    GrB_Type ctype = symbolic ? GrB_INT64 : A->type ;   // FIXME
     int sparsity = GB_IS_BITMAP (A) ? GxB_BITMAP : GxB_FULL ;
     GB_OK (GB_new_bix (&C, // bitmap or full, existing header
         ctype, nI, nJ, GB_ph_null, C_is_csc,
@@ -156,40 +155,32 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         // symbolic subref is only used by GB_subassign_symbolic, which only
         // operates on a matrix that is hypersparse, sparse, or full, but not
         // bitmap.  As a result, the symbolic subref C=A(I,J) where both A and
-        // C are bitmap is not needed.  The code is left here in case it is
-        // needed in the future.
+        // C are bitmap is not needed.
 
         ASSERT (GB_C_IS_FULL) ;
+        ASSERT (ctype == GrB_UINT32 || ctype == GrB_UINT64) ;
 
         // cnvals must be declared for the omp #pragma, but it is not used
         int64_t cnvals = 0 ;
 
-        #if 0
-        if (GB_C_IS_BITMAP)
-        {
-            // C=A(I,J) symbolic with A and C bitmap
-            ASSERT (GB_DEAD_CODE) ;
-            int64_t *restrict Cx = (int64_t *) C->x ;
-            #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pA,pC)                                      \
-            {                                                               \
-                int8_t ab = Ab [pA] ;                                       \
-                Cb [pC] = ab ;                                              \
-                Cx [pC] = pA ;                                              \
-                task_cnvals += ab ;                                         \
-            }
+        #undef  GB_IXJ_WORK
+        #define GB_IXJ_WORK(pA,pC)  \
+        {                           \
+            Cx [pC] = pA ;          \
+        }
+
+        if (ctype == GrB_UINT32)
+        { 
+            // C=A(I,J) symbolic (32-bit) with A and C full
+            uint32_t *restrict Cx = (uint32_t *) C->x ;
+            #define GB_NO_CNVALS
             #include "assign/template/GB_bitmap_assign_IxJ_template.c"
+            #undef  GB_NO_CNVALS
         }
         else
-        #endif
         { 
-            // C=A(I,J) symbolic with A and C full
-            int64_t *restrict Cx = (int64_t *) C->x ;
-            #undef  GB_IXJ_WORK
-            #define GB_IXJ_WORK(pA,pC)                                      \
-            {                                                               \
-                Cx [pC] = pA ;                                              \
-            }
+            // C=A(I,J) symbolic (64-bit) with A and C full
+            uint64_t *restrict Cx = (uint64_t *) C->x ;
             #define GB_NO_CNVALS
             #include "assign/template/GB_bitmap_assign_IxJ_template.c"
             #undef  GB_NO_CNVALS
@@ -231,6 +222,8 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         //----------------------------------------------------------------------
         // C=A(I,J) non-iso numeric with A and C bitmap/full
         //----------------------------------------------------------------------
+
+        ASSERT (ctype == A->type) ;
 
         // via the JIT kernel
         info = GB_subref_bitmap_jit (C, A,

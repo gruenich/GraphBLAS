@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // C=A(I,J), either symbolic or numeric.  In a symbolic extraction, Cx [p] is
 // not the value of A(i,j), but its position in Ai,Ax.  That is, pA = Cx [p]
@@ -123,10 +124,26 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     ASSERT (GB_PENDING_OK (A)) ;
 
     //--------------------------------------------------------------------------
+    // determine the type of C
+    //--------------------------------------------------------------------------
+
+    GrB_Type ctype ;
+    if (symbolic)
+    {
+        // select the integer type for symbolic subref, based on nnz (A)
+        int64_t anz = GB_nnz_held (A) ;
+        ctype = (anz <= UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
+    }
+    else
+    {
+        // for all other cases, C is given the same type as A.
+        ctype = A->type ;
+    }
+
+    //--------------------------------------------------------------------------
     // check if C is iso and get its iso value
     //--------------------------------------------------------------------------
 
-    GrB_Type ctype = (symbolic) ? GrB_INT64 : A->type ;
     size_t csize = ctype->size ;
     GB_void cscalar [GB_VLA(csize)] ;
     memset (cscalar, 0, csize) ;
@@ -159,7 +176,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     if (GB_IS_BITMAP (A) || GB_IS_FULL (A))
     { 
         // C is constructed with same sparsity as A (bitmap or full)
-        return (GB_bitmap_subref (C, C_iso, cscalar, C_is_csc, A,
+        return (GB_bitmap_subref (C, ctype, C_iso, cscalar, C_is_csc, A,
             I, I_is_32, ni, J, J_is_32, nj, symbolic, Werk)) ;
     }
 
@@ -246,8 +263,8 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // from phase0:
         &Ch, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,
-        // from the iso test above:
-        C_iso, cscalar,
+        // from GB_subref, above:
+        ctype, C_iso, cscalar,
         // original input:
         C_is_csc, A, I, I_is_32, symbolic, Werk)) ;
 

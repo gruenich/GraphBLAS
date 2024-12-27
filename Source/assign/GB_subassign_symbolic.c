@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 #include "assign/GB_subassign_methods.h"
 #include "extract/GB_subref.h"
@@ -106,6 +107,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     // this body of code explains what S contains.
     // S is nI-by-nJ where nI = length (I) and nJ = length (J)
 
+    // get I and J
     int64_t nI, Icolon [3], nJ, Jcolon [3] ;
     int Ikind, Jkind ;
     GB_ijlength (I, I_is_32, ni, C->vlen, &nI, &Ikind, Icolon) ;
@@ -114,11 +116,18 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     GB_IDECL (J, const, u) ; GB_IPTR (J, J_is_32) ;
 
     // get S
+    ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;
     GB_Sp_DECLARE (Sp, const) ; GB_Sp_PTR (Sp, S) ;
     GB_Sh_DECLARE (Sh, const) ; GB_Sh_PTR (Sh, S) ;
     GB_Si_DECLARE (Si, const) ; GB_Si_PTR (Si, S) ;
-    const int64_t *restrict Sx = (int64_t *) S->x ; // FIXME
+    const bool Sx_is_32 = (S->type == GrB_UINT32) ;
+    GB_MDECL (Sx, const, u) ;
+    Sx = S->x ;
+    GB_IPTR (Sx, Sx_is_32) ;
+
+    // get C
     GB_Ci_DECLARE (Ci, const) ; GB_Ci_PTR (Ci, C) ;
+
     // for each vector of S
     for (int64_t k = 0 ; k < S->nvec ; k++)
     {
@@ -136,7 +145,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
             ASSERT (inew >= 0 && inew < nI) ;
             // iC = I [iA] ; or I is a colon expression
             int64_t iC = GB_IJLIST (I, inew, Ikind, Icolon) ;
-            int64_t p = Sx [pS] ;   // FIXME
+            int64_t p = GB_IGET (Sx, pS) ;
             ASSERT (p >= 0 && p < GB_nnz (C)) ;
             int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
             bool found = GB_lookup_debug (C->p_is_32, C->i_is_32, C->h != NULL,

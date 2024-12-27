@@ -393,7 +393,17 @@
 //------------------------------------------------------------------------------
 
 // S is never aliased with any other matrix.
-// FUTURE: S->p could be C->p and S->x NULL if I and J are (:,:)
+
+#ifdef GB_JIT_KERNEL
+    #define GB_GET_SX                                                       \
+        const GB_Sx_TYPE *restrict Sx = S->x ;
+#else
+    #define GB_GET_SX                                                       \
+        const bool Sx_is_32 = (S->type == GrB_UINT32) ;                     \
+        GB_MDECL (Sx, const, u) ;                                           \
+        Sx = S->x ;                                                         \
+        GB_IPTR (Sx, Sx_is_32) ;
+#endif
 
 #define GB_GET_S                                                            \
     ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                             \
@@ -402,7 +412,8 @@
     GB_Si_DECLARE (Si, const) ; GB_Si_PTR (Si, S) ;                         \
     const bool Sp_is_32 = S->p_is_32 ;                                      \
     const bool Si_is_32 = S->i_is_32 ;                                      \
-    const int64_t *restrict Sx = (int64_t *) S->x ;   /* FIXME */           \
+    ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;               \
+    GB_GET_SX ;                                                             \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
     const bool S_is_hyper = GB_IS_HYPERSPARSE (S) ;                         \
@@ -431,7 +442,7 @@
     // Used for Methods 00 to 04, 06s, and 09 to 20, all of which use S.
 
     #define GB_C_S_LOOKUP                                                   \
-        int64_t pC = Sx [pS] ;  /* FIXME */                                 \
+        int64_t pC = GB_IGET (Sx, pS) ;                                     \
         int64_t iC = GBi_C (Ci, pC, Cvlen) ;                                \
         bool is_zombie = GB_IS_ZOMBIE (iC) ;                                \
         if (is_zombie) iC = GB_DEZOMBIE (iC) ;
