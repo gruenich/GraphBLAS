@@ -318,6 +318,15 @@
 "Mathematics by Jeremy Kepner.  See also 'Graph Algorithms in the Language\n" \
 "of Linear Algebra,' edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
+//------------------------------------------------------------------------------
+// simplify the use of GraphBLAS.h in C++ programs
+//------------------------------------------------------------------------------
+
+#if defined ( __cplusplus )
+extern "C"
+{
+#endif
+
 //==============================================================================
 // GrB_Index: the GraphBLAS integer
 //==============================================================================
@@ -2634,11 +2643,6 @@ GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 // GraphBLAS/CUDA, since they do not need access these definitions.  User
 // applications have access to these methods.
 
-#if defined ( __cplusplus )
-extern "C"  // FIXME: move this up higher and test with CUDA and C++
-{
-#endif
-
 #ifndef GB_CUDA_FOLDER
 
 //==============================================================================
@@ -3114,6 +3118,8 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 // GrB_Vector_build
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64 bit: add build with GrB_Vector I, J, and X
+
 // GrB_Vector_build:  w = sparse (I,1,X) in MATLAB notation, but using any
 // associative operator to assemble duplicate entries.  The dup operator cannot
 // be based on a GxB_IndexBinaryOp.
@@ -3284,6 +3290,8 @@ GrB_Info GrB_Vector_removeElement
 //------------------------------------------------------------------------------
 // GrB_Vector_extractTuples
 //------------------------------------------------------------------------------
+
+// FIXME: 32/64 bit: extractTuples add GrB_Vector I,J and X
 
 // Extracts all tuples from a vector, like [I,~,X] = find (v) in MATLAB.  If
 // any parameter I and/or X is NULL, then that component is not extracted.  For
@@ -4594,6 +4602,7 @@ GrB_Info GxB_Col_extract_32         // w<mask> = accum (w, A(I,j))
 //                                              u is |I|-by-1, j is a scalar.
 
 // FIXME: 32/64 bit: add subassign
+// FIXME: 32/64 bit: add extract, assign, subassign with GrB_Vector I and J
 
 GrB_Info GxB_Vector_subassign       // w(I)<mask> = accum (w(I),u)
 (
@@ -8335,9 +8344,6 @@ GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
 #endif
 
 #endif  // GB_CUDA_FOLDER
-#if defined ( __cplusplus )
-}
-#endif
 
 #ifndef NHISTORICAL
 
@@ -8420,6 +8426,10 @@ GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
     GxB_NE_THUNK, GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK,
     GxB_LE_THUNK ;
 
+#endif
+
+#if defined ( __cplusplus )
+}
 #endif
 
 #undef  GB_DECLARE
