@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Enumify an assign/subassign operation: C(I,J)<M> += A.  No transpose is
 // handled; this is done first in GB_assign_prep.

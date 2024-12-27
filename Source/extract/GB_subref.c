@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // C=A(I,J), either symbolic or numeric.  In a symbolic extraction, Cx [p] is
 // not the value of A(i,j), but its position in Ai,Ax.  That is, pA = Cx [p]

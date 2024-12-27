@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // C=A(I,J), where A is bitmap or full, symbolic and numeric.
 
