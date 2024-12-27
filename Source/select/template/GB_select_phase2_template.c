@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except for memcpy / cast_int
+// DONE: 32/64 bit
 
 // C is sparse or hypersparse.  Cp is not modifed but Ci and Cx are.  A is
 // never bitmap.  It is sparse or hypersparse in most cases.  It can also be
@@ -43,7 +43,11 @@
     GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
     GB_Ci_DECLARE (Ci,      ) ; GB_Ci_PTR (Ci, C) ;
 
-    GB_A_TYPE *restrict Cx = (GB_A_TYPE *) C->x ; // FIXME: use GB_C_TYPE
+    #ifndef GB_C_TYPE
+    #define GB_C_TYPE GB_A_TYPE
+    #endif
+
+    GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
 
     //--------------------------------------------------------------------------
     // C = select (A)
@@ -110,8 +114,6 @@
                     ASSERT (pC >= GB_IGET (Cp, k)) ;
                     ASSERT (pC + mynz <= GB_IGET (Cp, k+1)) ;
                     ASSERT (Ai != NULL) ;
-                    // FIXME: use memcpy if the types match
-//                  memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
                     for (int64_t kk = 0 ; kk < mynz ; kk++)
                     {
                         int64_t i = GB_IGET (Ai, p+kk) ;    // i = Ai [p+kk]
@@ -135,7 +137,6 @@
                     ASSERT (pC >= GB_IGET (Cp, k)) ;
                     ASSERT (pC + mynz <= GB_IGET (Cp, k+1)) ;
                     ASSERT (Ai != NULL) ;
-//                  memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
                     for (int64_t kk = 0 ; kk < mynz ; kk++)
                     {
                         int64_t i = GB_IGET (Ai, pA_start+kk) ;
@@ -176,7 +177,6 @@
                     ASSERT (pC >= GB_IGET (Cp, k)) ;
                     ASSERT (pC + mynz <= GB_IGET (Cp, k+1)) ;
                     ASSERT (Ai != NULL) ;
-//                  memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
                     for (int64_t kk = 0 ; kk < mynz ; kk++)
                     {
                         int64_t i = GB_IGET (Ai, pA_start+kk) ;
@@ -199,7 +199,6 @@
                     ASSERT (pC >= GB_IGET (Cp, k)) ;
                     ASSERT (pC + mynz <= GB_IGET (Cp, k+1)) ;
                     ASSERT (Ai != NULL) ;
-//                  memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
                     for (int64_t kk = 0 ; kk < mynz ; kk++)
                     {
                         int64_t i = GB_IGET (Ai, p+kk) ;    // i = Ai [p+kk]

@@ -35,7 +35,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     bool Ai_is_32   = GB_RSHIFT (method_code, 39, 1) ;
     int A_mat       = GB_RSHIFT (method_code, 38, 1) ;
     int A_zombies   = GB_RSHIFT (method_code, 37, 1) ;
-    int A_iso       = GB_RSHIFT (method_code, 36, 1) ;
+    bool A_iso      = GB_RSHIFT (method_code, 36, 1) ;
 
     // C kind, i/j dependency and flipij (4 bits)
     int C_mat       = GB_RSHIFT (method_code, 35, 1) ;

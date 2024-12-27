@@ -38,8 +38,8 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     // C in, A, B iso-valued and flipxy (one hex digit)
     bool C_in_iso   = GB_RSHIFT (method_code, 47, 1) ;
-    int A_iso_code  = GB_RSHIFT (method_code, 46, 1) ;
-    int B_iso_code  = GB_RSHIFT (method_code, 45, 1) ;
+    bool A_iso      = GB_RSHIFT (method_code, 46, 1) ;
+    bool B_iso      = GB_RSHIFT (method_code, 45, 1) ;
     bool flipxy     = GB_RSHIFT (method_code, 44, 1) ;
 
     // multiplier (5 hex digits)
@@ -381,12 +381,12 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     GB_macrofy_input (fp, "a", "A", "A", true,
         flipxy ? ytype : xtype,
-        atype, asparsity, acode, A_iso_code, -1,
+        atype, asparsity, acode, A_iso, -1,
         /* FIXME: */ false, false) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true,
         flipxy ? xtype : ytype,
-        btype, bsparsity, bcode, B_iso_code, -1,
+        btype, bsparsity, bcode, B_iso, -1,
         /* FIXME: */ false, false) ;
 
     //--------------------------------------------------------------------------

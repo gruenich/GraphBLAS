@@ -40,8 +40,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
 
     // C in, A, and B iso-valued (1 hex digit)
     bool C_in_iso   = GB_RSHIFT (method_code, 46, 1) ;
-    int A_iso_code  = GB_RSHIFT (method_code, 45, 1) ;
-    int B_iso_code  = GB_RSHIFT (method_code, 44, 1) ;
+    bool A_iso      = GB_RSHIFT (method_code, 45, 1) ;
+    bool B_iso      = GB_RSHIFT (method_code, 44, 1) ;
 
     // binary operator (5 hex digits)
     bool flipxy     = GB_RSHIFT (method_code, 43, 1) ;
@@ -173,10 +173,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     }
 
     GB_macrofy_cast_copy (fp, "C", "A", (C_iso || !is_eadd) ? NULL : ctype,
-            (acode == 0 || acode == 15) ? NULL : atype, A_iso_code) ;
+            (acode == 0 || acode == 15) ? NULL : atype, A_iso) ;
 
     GB_macrofy_cast_copy (fp, "C", "B", (C_iso || !is_eadd) ? NULL : ctype,
-            (bcode == 0 || bcode == 15) ? NULL : btype, B_iso_code) ;
+            (bcode == 0 || bcode == 15) ? NULL : btype, B_iso) ;
 
     //--------------------------------------------------------------------------
     // macros for the C matrix
@@ -252,10 +252,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     }
 
     GB_macrofy_input (fp, "a", "A", "A", true, flipxy ? ytype : xtype,
-        atype, asparsity, acode, A_iso_code, -1, Ap_is_32, Ai_is_32) ;
+        atype, asparsity, acode, A_iso, -1, Ap_is_32, Ai_is_32) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true, flipxy ? xtype : ytype,
-        btype, bsparsity, bcode, B_iso_code, -1, Bp_is_32, Bi_is_32) ;
+        btype, bsparsity, bcode, B_iso, -1, Bp_is_32, Bi_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

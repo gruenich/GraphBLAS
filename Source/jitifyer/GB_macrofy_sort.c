@@ -79,8 +79,8 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     // macros for the C matrix
     //--------------------------------------------------------------------------
 
-    GB_macrofy_input (fp, "c", "C", "C", true, xtype, ctype, 1, ccode, 0, -1,
-        Cp_is_32, Ci_is_32) ;
+    GB_macrofy_input (fp, "c", "C", "C", true, xtype, ctype, 1, ccode,
+        /* C_iso: */ false, -1, Cp_is_32, Ci_is_32) ;
     fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------

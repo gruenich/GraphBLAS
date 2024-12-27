@@ -48,7 +48,7 @@ void GB_macrofy_assign          // construct all macros for GrB_assign
     int C_replace   = GB_RSHIFT (method_code, 47, 1) ;
     int S_present   = GB_RSHIFT (method_code, 46, 1) ;
     bool s_assign   = GB_RSHIFT (method_code, 45, 1) ;
-    int A_iso       = GB_RSHIFT (method_code, 44, 1) ;
+    bool A_iso      = GB_RSHIFT (method_code, 44, 1) ;
 
     // Ikind, Jkind (1 hex digit)
     int Ikind       = GB_RSHIFT (method_code, 42, 2) ;

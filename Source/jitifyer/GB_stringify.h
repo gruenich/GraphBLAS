@@ -796,7 +796,7 @@ void GB_macrofy_input
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
     int acode,              // type code of the input (0 if pattern)
-    int A_iso_code,         // 1 if A is iso
+    bool A_iso,             // true if A is iso
     int azombies,           // 1 if A has zombies, 0 if A has no zombies,
                             // -1 if A can never have zombies
     int p_is_32,            // if true, Ap is 32-bit, else 64-bit

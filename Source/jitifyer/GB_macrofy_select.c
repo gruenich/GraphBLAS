@@ -240,7 +240,7 @@ void GB_macrofy_select          // construct all macros for GrB_select
     //--------------------------------------------------------------------------
 
     GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-        atype, asparsity, acode, 0, -1, Ap_is_32, Ai_is_32) ;
+        atype, asparsity, acode, A_iso, -1, Ap_is_32, Ai_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

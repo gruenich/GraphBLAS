@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64-bit
+#define GB_DEBUG
 
 #include "select/GB_select.h"
 #ifndef GBCOMPACT
@@ -293,6 +294,7 @@ GrB_Info GB_select_sparse
     GB_OK (GB_bix_alloc (C, cnz, csparsity, false, true, C_iso)) ;
     C->jumbled = A->jumbled ;
     C->nvals = cnz ;
+    ASSERT (C->iso == C_iso) ;
 
     //--------------------------------------------------------------------------
     // set the iso value of C
