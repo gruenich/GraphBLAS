@@ -62,12 +62,6 @@ static inline GrB_Info GB_sel   // C<M> = accum (C, select(A,k)) or select(A',k)
         A_transpose,                // descriptor for A
         Werk) ;
 
-    if (info == GrB_SUCCESS)
-    {
-        GB_assert (!(C->p_is_32)) ;    // FIXME not yet handled
-        GB_assert (!(C->i_is_32)) ;    // FIXME not yet handled
-    }
-
     GB_BURBLE_END ;
     return (info) ;
 }

@@ -76,12 +76,6 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
         false,                              // u, not transposed
         Werk) ;
 
-    if (info == GrB_SUCCESS)
-    {
-        GB_assert (!(w->p_is_32)) ;    // FIXME not yet handled
-        GB_assert (!(w->i_is_32)) ;    // FIXME not yet handled
-    }
-
     GB_BURBLE_END ;
     GB_FREE_ALL ;
     return (info) ;
