@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // JIT: possible: 96 variants. Could use one for each mask type (6: 1, 2,
 // 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse/

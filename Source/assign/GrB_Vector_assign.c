@@ -7,10 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Compare with GxB_Vector_subassign, which uses M and C_replace differently
-
 // DONE: 32/64 bit
-#define GB_DEBUG
+
+// Compare with GxB_Vector_subassign, which uses M and C_replace differently
 
 #include "assign/GB_assign.h"
 #include "assign/GB_bitmap_assign.h"

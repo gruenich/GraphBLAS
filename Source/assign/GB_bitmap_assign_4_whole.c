@@ -14,7 +14,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // C:           bitmap
 // M:           present, hypersparse or sparse, (not bitmap or full)

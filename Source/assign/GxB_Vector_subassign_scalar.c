@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Assigns a single scalar to a subvector, w(Rows)<M> = accum(w(Rows),x)
 // The scalar x is implicitly expanded into a vector u of size nRows-by-1,

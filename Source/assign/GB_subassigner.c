@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Submatrix assignment: C(I,J)<M> = A, or accum (C (I,J), A), no transpose
 

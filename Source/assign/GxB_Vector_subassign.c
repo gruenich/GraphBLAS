@@ -7,10 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Compare with GrB_Vector_assign, which uses M and C_replace differently
-
 // DONE: 32/64 bit
-#define GB_DEBUG
+
+// Compare with GrB_Vector_assign, which uses M and C_replace differently
 
 #include "assign/GB_subassign.h"
 #include "mask/GB_get_mask.h"

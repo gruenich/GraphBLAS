@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Method 06d: C(:,:)<A> = A ; no S, C is dense, M and A are aliased
 

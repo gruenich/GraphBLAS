@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Method 10: C(I,J)<M,repl> = A ; using S
 // Method 18: C(I,J)<!M,repl> = A ; using S

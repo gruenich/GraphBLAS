@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // The eWise add of two matrices, C=A+B, C<M>=A+B, or C<!M>=A+B starts with
 // this phase, which determines which vectors of C need to be computed.

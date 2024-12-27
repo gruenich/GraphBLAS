@@ -2635,7 +2635,7 @@ GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 // applications have access to these methods.
 
 #if defined ( __cplusplus )
-extern "C"
+extern "C"  // FIXME: move this up higher and test with CUDA and C++
 {
 #endif
 
@@ -5656,6 +5656,8 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 //==============================================================================
 // GxB_pack/GxB_unpack: Matrix and vector pack/unpack
 //==============================================================================
+
+// FIXME: 32/64 bit: pack/unpack
 
 // The pack/unpack functions allow the user application to create a GrB_Matrix
 // or GrB_Vector object, and to extract its contents, faster and with less

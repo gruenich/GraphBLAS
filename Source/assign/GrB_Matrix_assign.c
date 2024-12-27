@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 #include "assign/GB_assign.h"
 #include "assign/GB_bitmap_assign.h"

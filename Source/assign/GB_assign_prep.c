@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // GB_assign_prep checks the inputs for GB_assign and GB_subassign.
 

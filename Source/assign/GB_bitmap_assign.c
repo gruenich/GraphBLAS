@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Implements GrB_Row_assign, GrB_Col_assign, GrB_assign, GxB_subassign when C
 // is in bitmap form, or when C is converted into bitmap form.

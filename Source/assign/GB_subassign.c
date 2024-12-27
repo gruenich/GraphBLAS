@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // submatrix assignment: C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
 

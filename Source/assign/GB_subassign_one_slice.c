@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Constructs a set of tasks to compute C for a subassign method, based on
 // slicing a single input matrix (M or A).  Fine tasks must also find their
