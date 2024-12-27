@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
+// FIXME: 32/64 bit
 
 // Sort an index array and remove duplicates:
 
@@ -67,7 +67,6 @@ GrB_Info GB_ijsort
     ASSERT (I2_size_handle != NULL) ;
     ASSERT (I2k_is_32_handle != NULL) ;
     ASSERT (I2k_size_handle != NULL) ;
-    ASSERT (!I_is_32) ;     // FIXME
 
     //--------------------------------------------------------------------------
     // declare workspace and get inputs
@@ -105,12 +104,12 @@ GrB_Info GB_ijsort
 
     GB_WERK_PUSH (W, ntasks+1, uint64_t) ;
 
-    bool I1_is_32 = false ; // FIXME: (imax < UINT32_MAX) ;
+    bool I1_is_32 = false ; // FIXME: (imax < UINT32_MAX) for assign 32/64
     size_t i1size = (I1_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     I1 = GB_MALLOC_MEMORY (ni, i1size, &I1_size) ;
     GB_IPTR (I1, I1_is_32) ;
 
-    bool I1k_is_32 = false ; // FIXME: (ni < UINT32_MAX) ;
+    bool I1k_is_32 = false ; // FIXME: (ni < UINT32_MAX) for assign 32/64
     size_t i1ksize = (I1k_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     I1k = GB_MALLOC_MEMORY (ni, i1ksize, &I1k_size) ;
     GB_IPTR (I1k, I1k_is_32) ;

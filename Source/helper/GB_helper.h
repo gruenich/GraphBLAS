@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: 32/64
+
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
 
@@ -21,19 +23,19 @@ double GB_helper0 (void) ;
 void GB_helper1              // convert zero-based indices to one-based
 (
     double *restrict I_double,   // output array
-    const uint64_t *restrict I,  // input array
+    const uint64_t *restrict I,  // input array FIXME
     int64_t nvals                // size of input and output arrays
 ) ;
 
 void GB_helper1i             // convert zero-based indices to one-based
 (
-    int64_t *restrict I,         // input/output array
+    int64_t *restrict I,         // input/output array  FIXME
     int64_t nvals                // size of input/output array
 ) ;
 
 bool GB_helper3              // return true if OK, false on error
 (
-    int64_t *restrict List,      // size len, output array
+    int64_t *restrict List,      // size len, output array  FIXME
     const double *restrict List_double, // size len, input array
     int64_t len,
     int64_t *List_max            // also compute the max entry in the list
@@ -41,34 +43,34 @@ bool GB_helper3              // return true if OK, false on error
 
 bool GB_helper3i             // return true if OK, false on error
 (
-    int64_t *restrict List,      // size len, output array
-    const int64_t *restrict List_int64, // size len, input array
+    int64_t *restrict List,      // size len, output array  FIXME
+    const int64_t *restrict List_int64, // size len, input array    FIXME
     int64_t len,
     int64_t *List_max            // also compute the max entry in the list
 ) ;
 
 bool GB_helper4              // return true if OK, false on error
 (
-    const uint64_t *restrict I,  // array of size len
+    const uint64_t *restrict I,  // array of size len   FIXME
     const int64_t len,
     uint64_t *List_max           // find max (I) + 1
 ) ;
 
 void GB_helper5              // construct pattern of S
 (
-    uint64_t *restrict Si,          // array of size anz
-    uint64_t *restrict Sj,          // array of size anz
-    const uint64_t *restrict Mi,    // array of size mnz, M->i
-    const uint64_t *restrict Mj,    // array of size mnz
+    uint64_t *restrict Si,          // array of size anz    FIXME
+    uint64_t *restrict Sj,          // array of size anz    FIXME
+    const uint64_t *restrict Mi,    // array of size mnz, M->i  FIXME
+    const uint64_t *restrict Mj,    // array of size mnz    FIXME
     const int64_t mvlen,            // M->vlen
-    uint64_t *restrict Ai,          // array of size anz, A->i
+    uint64_t *restrict Ai,          // array of size anz, A->i  FIXME
     const int64_t avlen,            // M->vlen
     const uint64_t anz
 ) ;
 
 void GB_helper7              // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *restrict Kx,      // array of size mnz
+    uint64_t *restrict Kx,      // array of size mnz    FIXME
     const uint64_t mnz
 ) ;
 
