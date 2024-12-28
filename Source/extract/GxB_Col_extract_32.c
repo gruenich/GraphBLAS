@@ -28,7 +28,7 @@ GrB_Info GxB_Col_extract_32         // w<mask> = accum (w, A(I,j))
     uint64_t j,                     // column index
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

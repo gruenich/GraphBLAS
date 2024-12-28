@@ -16,7 +16,7 @@
 
 /*
     void *blob = NULL ;
-    GrB_Index blob_size = 0 ;
+    uint64_t blob_size = 0 ;
     GrB_Matrix A, B = NULL ;
     // construct a matrix A, then serialized it:
     GrB_Matrix_serializeSize (&blob_size, A) ;      // loose upper bound
@@ -35,7 +35,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     // output:
     void *blob,                     // the blob, already allocated in input
     // input/output:
-    GrB_Index *blob_size_handle,    // size of the blob on input.  On output,
+    uint64_t *blob_size_handle,     // size of the blob on input.  On output,
                                     // the # of bytes used in the blob.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -66,7 +66,7 @@ GrB_Info GrB_Matrix_serialize       // serialize a GrB_Matrix to a blob
     info = GB_serialize ((GB_void **) &blob, &blob_size, A, method, Werk) ;
     if (info == GrB_SUCCESS)
     { 
-        (*blob_size_handle) = (GrB_Index) blob_size ;
+        (*blob_size_handle) = (uint64_t) blob_size ;
     }
     GB_BURBLE_END ;
     #pragma omp flush

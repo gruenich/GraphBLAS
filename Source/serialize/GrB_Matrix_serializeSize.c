@@ -18,7 +18,7 @@
 GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 (
     // output:
-    GrB_Index *blob_size_handle,    // upper bound on the required size of the
+    uint64_t *blob_size_handle,     // upper bound on the required size of the
                                     // blob on output.
     // input:
     GrB_Matrix A                    // matrix to serialize
@@ -46,7 +46,7 @@ GrB_Info GrB_Matrix_serializeSize   // estimate the size of a blob
 
     size_t blob_size ;
     info = GB_serialize (NULL, &blob_size, A, method, Werk) ;
-    (*blob_size_handle) = (GrB_Index) blob_size ;
+    (*blob_size_handle) = (uint64_t) blob_size ;
     GB_BURBLE_END ;
     #pragma omp flush
     return (info) ;
