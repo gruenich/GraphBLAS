@@ -28,7 +28,7 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
                             // GxB_MAX_NAME_LEN, owned by the user application).
     // input, not modified:
     const void *blob,       // the blob
-    GrB_Index blob_size     // size of the blob
+    uint64_t blob_size      // size of the blob
 )
 {
 
