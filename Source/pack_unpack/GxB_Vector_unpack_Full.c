@@ -15,7 +15,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
 (
     GrB_Vector v,       // vector to unpack (type and length unchanged)
     void **vx,          // values
-    GrB_Index *vx_size, // size of vx in bytes
+    uint64_t *vx_size,  // size of vx in bytes
     bool *iso,          // if true, v is iso
     const GrB_Descriptor desc
 )
@@ -62,7 +62,7 @@ GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
     int sparsity ;
     bool is_csc ;
     GrB_Type type ;
-    GrB_Index vlen, vdim ;
+    uint64_t vlen, vdim ;
 
     info = GB_export (true, (GrB_Matrix *) (&v), &type, &vlen, &vdim, false,
         NULL, NULL,     // Ap

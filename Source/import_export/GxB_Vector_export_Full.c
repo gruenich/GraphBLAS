@@ -15,10 +15,10 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 (
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
-    GrB_Index *n,       // length of the vector
+    uint64_t *n,        // length of the vector
 
     void **vx,          // values
-    GrB_Index *vx_size, // size of vx in bytes
+    uint64_t *vx_size,  // size of vx in bytes
     bool *iso,          // if true, v is iso
 
     const GrB_Descriptor desc
@@ -66,7 +66,7 @@ GrB_Info GxB_Vector_export_Full   // export and free a full vector
 
     int sparsity ;
     bool is_csc ;
-    GrB_Index vdim ;
+    uint64_t vdim ;
 
     info = GB_export (false, (GrB_Matrix *) v, type, n, &vdim, false,
         NULL, NULL,     // Ap

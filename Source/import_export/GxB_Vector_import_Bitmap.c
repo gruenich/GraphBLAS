@@ -13,15 +13,15 @@ GrB_Info GxB_Vector_import_Bitmap // import a bitmap vector
 (
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
-    GrB_Index n,        // vector length
+    uint64_t n,         // vector length
 
     int8_t **vb,        // bitmap
     void **vx,          // values
-    GrB_Index vb_size,  // size of vb in bytes
-    GrB_Index vx_size,  // size of vx in bytes
+    uint64_t vb_size,   // size of vb in bytes
+    uint64_t vx_size,   // size of vx in bytes
     bool iso,           // if true, A is iso
 
-    GrB_Index nvals,    // # of entries in bitmap
+    uint64_t nvals,     // # of entries in bitmap
     const GrB_Descriptor desc
 )
 { 

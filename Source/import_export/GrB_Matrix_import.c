@@ -31,14 +31,14 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 (
     GrB_Matrix *A,          // handle of matrix to create
     GrB_Type type,          // type of matrix to create
-    GrB_Index nrows,        // number of rows of the matrix
-    GrB_Index ncols,        // number of columns of the matrix
-    const GrB_Index *Ap,    // pointers for CSR, CSC, row indices for COO
-    const GrB_Index *Ai,    // row indices for CSR, CSC, col indices for COO
+    uint64_t nrows,         // number of rows of the matrix
+    uint64_t ncols,         // number of columns of the matrix
+    const uint64_t *Ap,     // pointers for CSR, CSC, row indices for COO
+    const uint64_t *Ai,     // row indices for CSR, CSC, col indices for COO
     const void *Ax,         // values (must match the GrB_Type type parameter)
-    GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
-    GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
-    GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
+    uint64_t Ap_len,        // number of entries in Ap (not # of bytes)
+    uint64_t Ai_len,        // number of entries in Ai (not # of bytes)
+    uint64_t Ax_len,        // number of entries in Ax (not # of bytes)
     GrB_Format format,      // import format
     GB_Werk Werk
 )
@@ -64,7 +64,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         return (GrB_INVALID_VALUE) ;
     }
 
-    GrB_Index nvals = 0 ;
+    uint64_t nvals = 0 ;
     bool ok = true ;
     int64_t plen = (format == GrB_CSR_FORMAT) ? (nrows+1) : (ncols+1) ;
 
@@ -122,8 +122,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     // allocate copies of Ap, Ai, and Ax to be imported
     //--------------------------------------------------------------------------
 
-    GrB_Index *Ap_copy = NULL ; size_t Ap_size = 0 ;
-    GrB_Index *Ai_copy = NULL ; size_t Ai_size = 0 ;
+    uint64_t *Ap_copy = NULL ; size_t Ap_size = 0 ;
+    uint64_t *Ai_copy = NULL ; size_t Ai_size = 0 ;
     GB_void   *Ax_copy = NULL ; size_t Ax_size = 0 ;
     size_t typesize = type->size ;
 
@@ -135,8 +135,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     {
         case GrB_CSR_FORMAT : 
         case GrB_CSC_FORMAT : 
-            Ap_copy = GB_MALLOC (plen,           GrB_Index, &Ap_size) ;
-            Ai_copy = GB_MALLOC (nvals,          GrB_Index, &Ai_size) ;
+            Ap_copy = GB_MALLOC (plen,           uint64_t, &Ap_size) ;
+            Ai_copy = GB_MALLOC (nvals,          uint64_t, &Ai_size) ;
             Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
@@ -172,8 +172,8 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     {
         case GrB_CSR_FORMAT : 
         case GrB_CSC_FORMAT : 
-            GB_memcpy (Ap_copy, Ap, plen  * sizeof (GrB_Index), nthreads_max) ;
-            GB_memcpy (Ai_copy, Ai, nvals * sizeof (GrB_Index), nthreads_max) ;
+            GB_memcpy (Ap_copy, Ap, plen  * sizeof (uint64_t), nthreads_max) ;
+            GB_memcpy (Ai_copy, Ai, nvals * sizeof (uint64_t), nthreads_max) ;
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
             GB_memcpy (Ax_copy, Ax, nvals * typesize          , nthreads_max) ;
@@ -337,14 +337,14 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_import_, T) /* import a matrix */           \
 (                                                                              \
     GrB_Matrix *A,          /* handle of matrix to create                    */\
     GrB_Type type,          /* type of matrix to create                      */\
-    GrB_Index nrows,        /* number of rows of the matrix                  */\
-    GrB_Index ncols,        /* number of columns of the matrix               */\
-    const GrB_Index *Ap,    /* pointers for CSR, CSC, row indices for COO    */\
-    const GrB_Index *Ai,    /* row indices for CSR, CSC, col indices for COO */\
+    uint64_t nrows,         /* number of rows of the matrix                  */\
+    uint64_t ncols,         /* number of columns of the matrix               */\
+    const uint64_t *Ap,     /* pointers for CSR, CSC, row indices for COO    */\
+    const uint64_t *Ai,     /* row indices for CSR, CSC, col indices for COO */\
     const ctype *Ax,        /* values (must match GrB_Type type parameter)   */\
-    GrB_Index Ap_len,       /* number of entries in Ap (not # of bytes)      */\
-    GrB_Index Ai_len,       /* number of entries in Ai (not # of bytes)      */\
-    GrB_Index Ax_len,       /* number of entries in Ax (not # of bytes)      */\
+    uint64_t Ap_len,        /* number of entries in Ap (not # of bytes)      */\
+    uint64_t Ai_len,        /* number of entries in Ai (not # of bytes)      */\
+    uint64_t Ax_len,        /* number of entries in Ax (not # of bytes)      */\
     GrB_Format format       /* import format                                 */\
 )                                                                              \
 {                                                                              \

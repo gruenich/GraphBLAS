@@ -15,7 +15,7 @@ GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
     void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
+    uint64_t *Ax_size,  // size of Ax in bytes
     bool *iso,          // if true, A is iso
     const GrB_Descriptor desc
 )
@@ -70,7 +70,7 @@ GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
     int sparsity ;
     bool is_csc ;
     GrB_Type type ;
-    GrB_Index vlen, vdim ;
+    uint64_t vlen, vdim ;
 
     info = GB_export (true, &A, &type, &vlen, &vdim, false,
         NULL, NULL,     // Ap

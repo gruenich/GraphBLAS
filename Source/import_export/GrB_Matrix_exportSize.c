@@ -12,9 +12,9 @@
 
 GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
 (
-    GrB_Index *Ap_len,      // # of entries required for Ap (not # of bytes)
-    GrB_Index *Ai_len,      // # of entries required for Ai (not # of bytes)
-    GrB_Index *Ax_len,      // # of entries required for Ax (not # of bytes)
+    uint64_t *Ap_len,       // # of entries required for Ap (not # of bytes)
+    uint64_t *Ai_len,       // # of entries required for Ai (not # of bytes)
+    uint64_t *Ax_len,       // # of entries required for Ax (not # of bytes)
     GrB_Format format,      // export format
     GrB_Matrix A            // matrix to export
 )
@@ -31,7 +31,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     GB_RETURN_IF_NULL (Ai_len) ;
     GB_RETURN_IF_NULL (Ax_len) ;
 
-    GrB_Index nvals ;
+    uint64_t nvals ;
     GB_OK (GB_nvals (&nvals, A, Werk)) ;
     (*Ax_len) = nvals ;
 

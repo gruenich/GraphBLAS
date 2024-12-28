@@ -23,34 +23,37 @@
 
 GrB_Info GB_export      // export/unpack a matrix in any format
 (
-    bool unpacking,     // unpack if true, export and free if false
+    bool unpacking,     // unpack if true, export and free if false.
+                        // The false case is historical; GxB*unpack sets this
+                        // flag to true, and GrB*export does not use this
+                        // method.
 
     GrB_Matrix *A,      // handle of matrix to export and free, or unpack
     GrB_Type *type,     // type of matrix to export
-    GrB_Index *vlen,    // vector length
-    GrB_Index *vdim,    // vector dimension
+    uint64_t *vlen,     // vector length
+    uint64_t *vdim,     // vector dimension
     bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
-    GrB_Index **Ap,     // pointers
-    GrB_Index *Ap_size, // size of Ap in bytes
+    uint64_t **Ap,      // pointers
+    uint64_t *Ap_size,  // size of Ap in bytes
 
-    GrB_Index **Ah,     // vector indices
-    GrB_Index *Ah_size, // size of Ah in bytes
+    uint64_t **Ah,      // vector indices
+    uint64_t *Ah_size,  // size of Ah in bytes
 
     int8_t **Ab,        // bitmap
-    GrB_Index *Ab_size, // size of Ab in bytes
+    uint64_t *Ab_size,  // size of Ab in bytes
 
-    GrB_Index **Ai,     // indices
-    GrB_Index *Ai_size, // size of Ai in bytes
+    uint64_t **Ai,      // indices
+    uint64_t *Ai_size,  // size of Ai in bytes
 
     void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
+    uint64_t *Ax_size,  // size of Ax in bytes
 
     // additional information for specific formats:
-    GrB_Index *nvals,   // # of entries for bitmap format.
+    uint64_t *nvals,    // # of entries for bitmap format.
     bool *jumbled,      // if true, sparse/hypersparse may be jumbled.
-    GrB_Index *nvec,    // size of Ah for hypersparse format.
+    uint64_t *nvec,     // size of Ah for hypersparse format.
 
     // information for all formats:
     int *sparsity,      // hypersparse, sparse, bitmap, or full
@@ -188,7 +191,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             printf ("export A->h from memtable: %p\n", (*A)->h) ;   // MEMDUMP
             #endif
             GB_Global_memtable_remove ((*A)->h) ;
-            (*Ah) = (GrB_Index *) ((*A)->h) ; (*A)->h = NULL ;
+            (*Ah) = (uint64_t *) ((*A)->h) ; (*A)->h = NULL ;
             (*Ah_size) = (*A)->h_size ;
             // fall through to the sparse case
 
@@ -210,7 +213,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
                 printf ("export A->p from memtable: %p\n", (*A)->p) ; // MEMDUMP
                 #endif
                 GB_Global_memtable_remove ((*A)->p) ;
-                (*Ap) = (GrB_Index *) ((*A)->p) ; (*A)->p = NULL ;
+                (*Ap) = (uint64_t *) ((*A)->p) ; (*A)->p = NULL ;
                 (*Ap_size) = (*A)->p_size ;
             }
 
@@ -219,7 +222,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             printf ("export A->i from memtable: %p\n", (*A)->i) ;   // MEMDUMP
             #endif
             GB_Global_memtable_remove ((*A)->i) ;
-            (*Ai) = (GrB_Index *) ((*A)->i) ; (*A)->i = NULL ;
+            (*Ai) = (uint64_t *) ((*A)->i) ; (*A)->i = NULL ;
             (*Ai_size) = (*A)->i_size ;
             break ;
 
@@ -268,7 +271,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     }
     else
     { 
-        // export: free the header of A, and A->p if A is a sparse GrB_Vector
+        // GxB_export: free the header of A, and A->p if A is a sparse
+        // GrB_Vector.  This method is historical.
         GB_Matrix_free (A) ;
         ASSERT ((*A) == NULL) ;
     }

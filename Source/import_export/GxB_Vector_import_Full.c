@@ -13,10 +13,10 @@ GrB_Info GxB_Vector_import_Full // import a full vector
 (
     GrB_Vector *v,      // handle of vector to create
     GrB_Type type,      // type of vector to create
-    GrB_Index n,        // vector length
+    uint64_t n,         // vector length
 
     void **vx,          // values
-    GrB_Index vx_size,  // size of vx in bytes
+    uint64_t vx_size,   // size of vx in bytes
     bool iso,           // if true, v is iso
 
     const GrB_Descriptor desc

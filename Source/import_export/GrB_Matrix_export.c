@@ -39,12 +39,12 @@
 
 static GrB_Info GB_export_worker  // export a matrix
 (
-    GrB_Index *Ap,          // pointers for CSR, CSC, row indices for COO
-    GrB_Index *Ai,          // row indices for CSR, CSC, col indices for COO
+    uint64_t *Ap,           // pointers for CSR, CSC, row indices for COO
+    uint64_t *Ai,           // row indices for CSR, CSC, col indices for COO
     void *Ax,               // values (must match the type of A_input)
-    GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
-    GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
-    GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
+    uint64_t *Ap_len,       // number of entries in Ap (not # of bytes)
+    uint64_t *Ai_len,       // number of entries in Ai (not # of bytes)
+    uint64_t *Ax_len,       // number of entries in Ax (not # of bytes)
     GrB_Format format,      // export format
     GrB_Matrix A_input,     // matrix to export
     GB_Werk Werk
@@ -168,7 +168,7 @@ static GrB_Info GB_export_worker  // export a matrix
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
 
-    GrB_Index nvals = GB_nnz (A) ;
+    uint64_t nvals = GB_nnz (A) ;
     int64_t plen = A->vdim+1 ; 
 
     switch (format)
@@ -180,8 +180,8 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-            GB_memcpy (Ap, A->p, plen  * sizeof (GrB_Index), nthreads_max) ;
-            GB_memcpy (Ai, A->i, nvals * sizeof (GrB_Index), nthreads_max) ;
+            GB_memcpy (Ap, A->p, plen  * sizeof (uint64_t), nthreads_max) ;
+            GB_memcpy (Ai, A->i, nvals * sizeof (uint64_t), nthreads_max) ;
             (*Ap_len) = plen ;
             (*Ai_len) = nvals ;
 
@@ -240,12 +240,12 @@ static GrB_Info GB_export_worker  // export a matrix
 #define GB_EXPORT(prefix,ctype,Type,acode)                                     \
 GrB_Info GB_EVAL3 (prefix, _Matrix_export_, Type) /* export a matrix */        \
 (                                                                              \
-    GrB_Index *Ap,          /* pointers for CSR, CSC, row indices for COO    */\
-    GrB_Index *Ai,          /* row indices for CSR, CSC, col indices for COO */\
+    uint64_t *Ap,          /* pointers for CSR, CSC, row indices for COO    */\
+    uint64_t *Ai,          /* row indices for CSR, CSC, col indices for COO */\
     ctype *Ax,              /* values (must match the type of A)             */\
-    GrB_Index *Ap_len,      /* number of entries in Ap (not # of bytes)      */\
-    GrB_Index *Ai_len,      /* number of entries in Ai (not # of bytes)      */\
-    GrB_Index *Ax_len,      /* number of entries in Ax (not # of bytes)      */\
+    uint64_t *Ap_len,      /* number of entries in Ap (not # of bytes)      */\
+    uint64_t *Ai_len,      /* number of entries in Ai (not # of bytes)      */\
+    uint64_t *Ax_len,      /* number of entries in Ax (not # of bytes)      */\
     GrB_Format format,      /* export format                                 */\
     GrB_Matrix A            /* matrix to export                              */\
 )                                                                              \

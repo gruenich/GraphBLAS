@@ -15,10 +15,10 @@ GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
     int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
                         // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
+    uint64_t Ab_size,   // size of Ab in bytes
+    uint64_t Ax_size,   // size of Ax in bytes
     bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
+    uint64_t nvals,     // # of entries in bitmap
     const GrB_Descriptor desc
 )
 { 

@@ -13,11 +13,11 @@ GrB_Info GxB_Matrix_import_FullC  // import a full matrix, held by column
 (
     GrB_Matrix *A,      // handle of matrix to create
     GrB_Type type,      // type of matrix to create
-    GrB_Index nrows,    // number of rows of the matrix
-    GrB_Index ncols,    // number of columns of the matrix
+    uint64_t nrows,     // number of rows of the matrix
+    uint64_t ncols,     // number of columns of the matrix
 
     void **Ax,          // values
-    GrB_Index Ax_size,  // size of Ax in bytes
+    uint64_t Ax_size,   // size of Ax in bytes
     bool iso,           // if true, A is iso
 
     const GrB_Descriptor desc

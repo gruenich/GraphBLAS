@@ -14,13 +14,13 @@
 GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
+    uint64_t **Ap,      // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
+    uint64_t **Ai,      // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
                         // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
+    uint64_t Ap_size,   // size of Ap in bytes
+    uint64_t Ai_size,   // size of Ai in bytes
+    uint64_t Ax_size,   // size of Ax in bytes
     bool iso,           // if true, A is iso
     bool jumbled,       // if true, indices in each column may be unsorted
     const GrB_Descriptor desc

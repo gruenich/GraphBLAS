@@ -14,13 +14,13 @@
 GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
 (
     GrB_Vector v,       // vector to create (type and length unchanged)
-    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
+    uint64_t **vi,      // indices, vi_size >= nvals(v) * sizeof(int64_t)
     void **vx,          // values, vx_size >= nvals(v) * (type size)
                         // or vx_size >= (type size), if iso is true
-    GrB_Index vi_size,  // size of vi in bytes
-    GrB_Index vx_size,  // size of vx in bytes
+    uint64_t vi_size,   // size of vi in bytes
+    uint64_t vx_size,   // size of vx in bytes
     bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in vector
+    uint64_t nvals,     // # of entries in vector
     bool jumbled,       // if true, indices may be unsorted
     const GrB_Descriptor desc
 )

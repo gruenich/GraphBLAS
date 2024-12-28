@@ -14,7 +14,7 @@ GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
     void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
                         // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
+    uint64_t Ax_size,   // size of Ax in bytes
     bool iso,           // if true, A is iso
     const GrB_Descriptor desc
 )

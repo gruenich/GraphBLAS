@@ -15,15 +15,15 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
+    uint64_t *nrows,    // number of rows of the matrix
+    uint64_t *ncols,    // number of columns of the matrix
 
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ai,     // row indices
+    uint64_t **Ap,      // column "pointers"
+    uint64_t **Ai,      // row indices
     void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
+    uint64_t *Ap_size,  // size of Ap in bytes
+    uint64_t *Ai_size,  // size of Ai in bytes
+    uint64_t *Ax_size,  // size of Ax in bytes
     bool *iso,          // if true, A is iso
 
     bool *jumbled,      // if true, indices in each column may be unsorted

@@ -16,10 +16,10 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
     int8_t **Ab,        // bitmap
     void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
+    uint64_t *Ab_size,  // size of Ab in bytes
+    uint64_t *Ax_size,  // size of Ax in bytes
     bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
+    uint64_t *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 )
 {
@@ -62,7 +62,7 @@ GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
     int sparsity ;
     bool is_csc ;
     GrB_Type type ;
-    GrB_Index vlen, vdim ;
+    uint64_t vlen, vdim ;
 
     info = GB_export (true, &A, &type, &vlen, &vdim, false,
         NULL, NULL,     // Ap

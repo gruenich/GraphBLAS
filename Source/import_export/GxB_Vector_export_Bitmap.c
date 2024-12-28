@@ -15,15 +15,15 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
 (
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
-    GrB_Index *n,       // length of the vector
+    uint64_t *n,        // length of the vector
 
     int8_t **vb,        // bitmap
     void **vx,          // values
-    GrB_Index *vb_size, // size of vb in bytes
-    GrB_Index *vx_size, // size of vx in bytes
+    uint64_t *vb_size,  // size of vb in bytes
+    uint64_t *vx_size,  // size of vx in bytes
     bool *iso,          // if true, A is iso
 
-    GrB_Index *nvals,    // # of entries in bitmap
+    uint64_t *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 )
 { 
@@ -64,7 +64,7 @@ GrB_Info GxB_Vector_export_Bitmap   // export and free a bitmap vector
 
     int sparsity ;
     bool is_csc ;
-    GrB_Index vdim ;
+    uint64_t vdim ;
 
     info = GB_export (false, (GrB_Matrix *) v, type, n, &vdim, false,
         NULL, NULL,     // Ap

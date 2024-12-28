@@ -15,10 +15,10 @@ GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
     int8_t **vb,        // bitmap, vb_size >= n
     void **vx,          // values, vx_size >= n * (type size)
                         // or vx_size >= (type size), if iso is true
-    GrB_Index vb_size,  // size of vb in bytes
-    GrB_Index vx_size,  // size of vx in bytes
+    uint64_t vb_size,   // size of vb in bytes
+    uint64_t vx_size,   // size of vx in bytes
     bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in bitmap
+    uint64_t nvals,     // # of entries in bitmap
     const GrB_Descriptor desc
 )
 { 

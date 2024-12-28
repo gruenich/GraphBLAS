@@ -15,15 +15,15 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
 (
     GrB_Vector *v,      // handle of vector to export and free
     GrB_Type *type,     // type of vector exported
-    GrB_Index *n,       // length of the vector
+    uint64_t *n,        // length of the vector
 
-    GrB_Index **vi,     // indices
+    uint64_t **vi,      // indices
     void **vx,          // values
-    GrB_Index *vi_size, // size of Ai in bytes
-    GrB_Index *vx_size, // size of Ax in bytes
+    uint64_t *vi_size,  // size of Ai in bytes
+    uint64_t *vx_size,  // size of Ax in bytes
     bool *iso,          // if true, A is iso
 
-    GrB_Index *nvals,   // # of entries in vector
+    uint64_t *nvals,    // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
 )
@@ -75,7 +75,7 @@ GrB_Info GxB_Vector_export_CSC  // export and free a CSC vector
 
     int sparsity ;
     bool is_csc ;
-    GrB_Index vdim ;
+    uint64_t vdim ;
 
     info = GB_export (false, (GrB_Matrix *) v, type, n, &vdim, true,
         NULL, NULL,     // Ap

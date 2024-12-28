@@ -16,12 +16,12 @@
 GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
 (
     GrB_Vector v,       // vector to unpack (type and length unchanged)
-    GrB_Index **vi,     // indices
+    uint64_t **vi,      // indices
     void **vx,          // values
-    GrB_Index *vi_size, // size of vi in bytes
-    GrB_Index *vx_size, // size of vx in bytes
+    uint64_t *vi_size,  // size of vi in bytes
+    uint64_t *vx_size,  // size of vx in bytes
     bool *iso,          // if true, v is iso
-    GrB_Index *nvals,   // # of entries in vector
+    uint64_t *nvals,    // # of entries in vector
     bool *jumbled,      // if true, indices may be unsorted
     const GrB_Descriptor desc
 )
@@ -73,7 +73,7 @@ GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
     int sparsity ;
     bool is_csc ;
     GrB_Type type ;
-    GrB_Index vlen, vdim ;
+    uint64_t vlen, vdim ;
 
     info = GB_export (true, (GrB_Matrix *) (&v), &type, &vlen, &vdim, true,
         NULL, NULL,     // Ap

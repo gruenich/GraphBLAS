@@ -15,16 +15,16 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
 (
     GrB_Matrix *A,      // handle of matrix to export and free
     GrB_Type *type,     // type of matrix exported
-    GrB_Index *nrows,   // number of rows of the matrix
-    GrB_Index *ncols,   // number of columns of the matrix
+    uint64_t *nrows,    // number of rows of the matrix
+    uint64_t *ncols,    // number of columns of the matrix
 
     int8_t **Ab,        // bitmap
     void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
+    uint64_t *Ab_size,  // size of Ab in bytes
+    uint64_t *Ax_size,  // size of Ax in bytes
     bool *iso,          // if true, A is iso
 
-    GrB_Index *nvals,   // # of entries in bitmap
+    uint64_t *nvals,    // # of entries in bitmap
     const GrB_Descriptor desc
 )
 {

@@ -14,18 +14,18 @@
 GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
 (
     GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (plen+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // row indices, Ah_size >= plen*sizeof(int64_t)
+    uint64_t **Ap,      // row "pointers", Ap_size >= (plen+1)*sizeof(int64_t)
+    uint64_t **Ah,      // row indices, Ah_size >= plen*sizeof(int64_t)
                         // where plen = 1 if nrows = 1, or nvec otherwise.
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
+    uint64_t **Aj,      // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
     void **Ax,          // values, Ax_size >= nvals(A) * (type size)
                         // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
+    uint64_t Ap_size,   // size of Ap in bytes
+    uint64_t Ah_size,   // size of Ah in bytes
+    uint64_t Aj_size,   // size of Aj in bytes
+    uint64_t Ax_size,   // size of Ax in bytes
     bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of rows that appear in Ah
+    uint64_t nvec,      // number of rows that appear in Ah
     bool jumbled,       // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 )

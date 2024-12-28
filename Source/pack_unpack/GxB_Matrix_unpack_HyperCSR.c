@@ -16,16 +16,16 @@
 GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
 (
     GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Ah,     // row indices
-    GrB_Index **Aj,     // column indices
+    uint64_t **Ap,      // row "pointers"
+    uint64_t **Ah,      // row indices
+    uint64_t **Aj,      // column indices
     void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
+    uint64_t *Ap_size,  // size of Ap in bytes
+    uint64_t *Ah_size,  // size of Ah in bytes
+    uint64_t *Aj_size,  // size of Aj in bytes
+    uint64_t *Ax_size,  // size of Ax in bytes
     bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of rows that appear in Ah
+    uint64_t *nvec,     // number of rows that appear in Ah
     bool *jumbled,      // if true, indices in each row may be unsorted
     const GrB_Descriptor desc
 )
@@ -88,7 +88,7 @@ GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
     int sparsity ;
     bool is_csc ;
     GrB_Type type ;
-    GrB_Index vlen, vdim ;
+    uint64_t vlen, vdim ;
 
     info = GB_export (true, &A, &type, &vlen, &vdim, false,
         Ap,   Ap_size,  // Ap

@@ -14,7 +14,7 @@ GrB_Info GxB_Vector_pack_Full // pack a full vector
     GrB_Vector v,       // vector to create (type and length unchanged)
     void **vx,          // values, vx_size >= nvals(v) * (type size)
                         // or vx_size >= (type size), if iso is true
-    GrB_Index vx_size,  // size of vx in bytes
+    uint64_t vx_size,   // size of vx in bytes
     bool iso,           // if true, v is iso
     const GrB_Descriptor desc
 )

@@ -18,35 +18,35 @@
 
 GrB_Info GB_import      // import/pack a matrix in any format
 (
-    bool packing,       // pack if true, create and import false
+    bool packing,       // pack if true; create and import if false.
 
     GrB_Matrix *A,      // handle of matrix to create, or pack
     GrB_Type type,      // type of matrix to create
-    GrB_Index vlen,     // vector length
-    GrB_Index vdim,     // vector dimension
+    uint64_t vlen,      // vector length
+    uint64_t vdim,      // vector dimension
     bool is_sparse_vector,      // true if A is a sparse GrB_Vector
 
     // the 5 arrays:
-    GrB_Index **Ap,     // pointers, for sparse and hypersparse formats.
-    GrB_Index Ap_size,  // size of Ap in bytes
+    uint64_t **Ap,      // pointers, for sparse and hypersparse formats.
+    uint64_t Ap_size,   // size of Ap in bytes
 
-    GrB_Index **Ah,     // vector indices for hypersparse matrices
-    GrB_Index Ah_size,  // size of Ah in bytes
+    uint64_t **Ah,      // vector indices for hypersparse matrices
+    uint64_t Ah_size,   // size of Ah in bytes
 
     int8_t **Ab,        // bitmap, for bitmap format only.
-    GrB_Index Ab_size,  // size of Ab in bytes
+    uint64_t Ab_size,   // size of Ab in bytes
 
-    GrB_Index **Ai,     // indices for hyper and sparse formats
-    GrB_Index Ai_size,  // size of Ai in bytes
+    uint64_t **Ai,      // indices for hyper and sparse formats
+    uint64_t Ai_size,   // size of Ai in bytes
 
     void **Ax,          // values
-    GrB_Index Ax_size,  // size of Ax in bytes
+    uint64_t Ax_size,   // size of Ax in bytes
 
     // additional information for specific formats:
-    GrB_Index nvals,    // # of entries for bitmap format, or for a vector
+    uint64_t nvals,     // # of entries for bitmap format, or for a vector
                         // in CSC format.
     bool jumbled,       // if true, sparse/hypersparse may be jumbled.
-    GrB_Index nvec,     // size of Ah for hypersparse format.
+    uint64_t nvec,      // size of Ah for hypersparse format.
 
     // information for all formats:
     int sparsity,       // hypersparse, sparse, bitmap, or full
@@ -69,6 +69,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
 
     if (!packing)
     { 
+        // GxB*import and GrB*import: A is created by this method, including
+        // the header.  The GxB methods for packing == false are deprecated.
         (*A) = NULL ;
     }
 
@@ -91,7 +93,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     int64_t full_size = 0, Ax_size_for_non_iso ;
     if (sparsity == GxB_BITMAP || sparsity == GxB_FULL)
     { 
-        ok = GB_int64_multiply ((GrB_Index *) (&full_size), vlen, vdim) ;
+        ok = GB_int64_multiply ((uint64_t *) (&full_size), vlen, vdim) ;
         if (!ok) full_size = INT64_MAX ;
     }
 
