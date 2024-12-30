@@ -75,6 +75,7 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
     s->iso = true ;
 
     s->p_is_32 = false ;
+    s->j_is_32 = false ;
     s->i_is_32 = false ;
 
     //--------------------------------------------------------------------------

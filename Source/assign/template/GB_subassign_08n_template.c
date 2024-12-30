@@ -123,15 +123,15 @@
 
     int64_t Znvec ;
     GB_MDECL (Zh_shallow, const, u) ;
-    bool Zi_is_32 ;
+    bool Zj_is_32 ;
     GB_OK (GB_subassign_08n_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
         &Znvec, &Zh_shallow, &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
-        &Zi_is_32, C,
+        &Zj_is_32, C,
         I, GB_I_IS_32, nI, GB_I_KIND, Icolon,
         J, GB_J_IS_32, nJ, GB_J_KIND, Jcolon,
         A, M, Werk)) ;
-    GB_IPTR (Zh_shallow, Zi_is_32) ;
+    GB_IPTR (Zh_shallow, Zj_is_32) ;
     GB_ALLOCATE_NPENDING_WERK ;
 
     //--------------------------------------------------------------------------

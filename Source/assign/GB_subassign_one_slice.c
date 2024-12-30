@@ -127,6 +127,7 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
     const int64_t Cnvec = C->nvec ;
     const int64_t Cvlen = C->vlen ;
     const bool Cp_is_32 = C->p_is_32 ;
+    const bool Cj_is_32 = C->j_is_32 ;
     const bool Ci_is_32 = C->i_is_32 ;
 
     //--------------------------------------------------------------------------
@@ -352,8 +353,8 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
 
                         pleft = pC_start ;
                         pright = pC_end - 1 ;
-                        found = GB_split_binary_search_zombie (iC_end, Ci,
-                            Ci_is_32, &pleft, &pright, may_see_zombies,
+                        found = GB_split_binary_search_zombie (iC_end,
+                            Ci, Ci_is_32, &pleft, &pright, may_see_zombies,
                             &is_zombie) ;
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }

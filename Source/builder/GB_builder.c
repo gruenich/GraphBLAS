@@ -166,6 +166,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool I_is_32,       // true if I (I_work or I_input) is 32 bit, false if 64
     bool J_is_32,       // true if J (J_work or J_input) is 32 bit, false if 64
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
+    bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
     bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
 )
 {
@@ -230,7 +231,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool K_is_32 = (nvals < UINT32_MAX) ;
     GB_MDECL (K_work, , u) ; size_t K_work_size = 0 ;
 
-    Ti_is_32 = GB_determine_i_is_32 (Ti_is_32, vlen, vdim) ;     // OK
+    Tj_is_32 = GB_determine_j_is_32 (Tj_is_32, vdim) ;     // OK
+    Ti_is_32 = GB_determine_i_is_32 (Ti_is_32, vlen) ;     // OK
 
     // duplicate indices are flagged using an out-of-range index, after
     // any out-of-range indices on input have been checked.
@@ -336,7 +338,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // (if needed) would be a bit slower, and the transplant can only
         // happen if there are no duplicates.  If there are duplicates, T->i is
         // computed out-of-place from I_work, so there is no cast.
-        // I_is_32 = GB_determine_i_is_32 (true, vlen, vdim) ;   // OK
+        // I_is_32 = GB_determine_i_is_32 (true, vlen) ;   // OK
 
         // (2) This option allows the widest use of 32-bit indices for I_work,
         // which speeds up the sort when max(vlen,vdim) > GB_NMAX32.  However,
@@ -344,7 +346,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // transplanted into T->i.  In that case, this is slightly slower than
         // option (1), but it does use the least amount of memory of all 4
         // options when duplicates appear.
-        // I_is_32 = GB_IMAX (vlen, vdim) < UINT32_MAX ;
+        // I_is_32 = vlen < UINT32_MAX ;
 
         // (3) This option ensures I_work can be transplanted into T->i with no
         // cast when no duplicates appear.  The caller can request 64-bit
@@ -926,7 +928,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // either a static or dynamic header.
     GB_OK (GB_new (&T, // always hyper, existing header
         ttype, vlen, vdim, GB_ph_malloc, is_csc,
-        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec, Tp_is_32, Ti_is_32)) ;
+        GxB_HYPERSPARSE, GB_ALWAYS_HYPER, tnvec,
+        Tp_is_32, Tj_is_32, Ti_is_32)) ;
 
     ASSERT (T->p != NULL) ;
     ASSERT (T->h != NULL) ;
@@ -964,7 +967,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     void *Tp = T->p ;
     void *Th = T->h ;
     GB_IDECL (Tp, , u) ; GB_IPTR (Tp, Tp_is_32) ;
-    GB_IDECL (Th, , u) ; GB_IPTR (Th, Ti_is_32) ;
+    GB_IDECL (Th, , u) ; GB_IPTR (Th, Tj_is_32) ;
 
     // t2 = GB_OPENMP_GET_WTIME ;
 
@@ -1620,8 +1623,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ASSERT (GB_IS_HYPERSPARSE (T)) ;
     }
     tt = GB_OPENMP_GET_WTIME - tt;
-    GB_BURBLE_MATRIX (T, "(build %s/%s time: %g) ",
+    GB_BURBLE_MATRIX (T, "(build %s/%s/%s time: %g) ",
         Tp_is_32 ? "32" : "64",
+        Tj_is_32 ? "32" : "64",
         Ti_is_32 ? "32" : "64", tt) ;
     return (info) ;
 }

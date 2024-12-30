@@ -54,7 +54,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     int64_t anz = GB_nnz (A) ;
 
     bool Ap_is_32 = A->p_is_32 ;
-    bool Ai_is_32 = A->i_is_32 ;
+    bool Aj_is_32 = A->j_is_32 ;
     size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     // FIXME: if A->nvec_nonempty == n, just free A->h and A-Y
@@ -139,7 +139,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         void *Ap_old = A->p ;               // size nvec+1
         void *Ah_old = A->h ;               // size nvec
         GB_IDECL (Ap_old, const, u) ; GB_IPTR (Ap_old, Ap_is_32) ;
-        GB_IDECL (Ah_old, const, u) ; GB_IPTR (Ah_old, Ai_is_32) ;
+        GB_IDECL (Ah_old, const, u) ; GB_IPTR (Ah_old, Aj_is_32) ;
 
         //----------------------------------------------------------------------
         // construct the new vector pointers
@@ -170,7 +170,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
             #ifdef GB_DEBUG
             bool found =
             #endif
-            GB_split_binary_search (jstart, Ah_old, Ai_is_32, &k, &pright) ;
+            GB_split_binary_search (jstart, Ah_old, Aj_is_32, &k, &pright) ;
 
             ASSERT (k >= 0 && k <= nvec) ;
             ASSERT (GB_IMPLIES (nvec == 0, !found && k == 0)) ;

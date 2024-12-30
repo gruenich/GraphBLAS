@@ -73,6 +73,7 @@ GrB_Info GB_assign_zombie3
     int64_t pC_start, pC_end ;
     const int64_t Cnvec = C->nvec ;
     const bool Cp_is_32 = C->p_is_32 ;
+    const bool Cj_is_32 = C->j_is_32 ;
     const bool Ci_is_32 = C->i_is_32 ;
 
     if (Ch != NULL)
@@ -108,6 +109,7 @@ GrB_Info GB_assign_zombie3
     const int64_t Mvlen = M->vlen ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool Mp_is_32 = M->p_is_32 ;
+    const bool Mj_is_32 = M->j_is_32 ;
     const bool Mi_is_32 = M->i_is_32 ;
 
     int64_t pM_start = 0 ; // Mp [0]

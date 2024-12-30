@@ -93,7 +93,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     GB_OK (GB_new_bix (Chandle, // can be new or existing header
         numeric ? atype : ctype, A->vlen, A->vdim, GB_ph_malloc, A->is_csc,
         GB_sparsity (A), false, A->hyper_switch, A->plen, anz, true, C_iso,
-        A->p_is_32, A->i_is_32)) ;
+        A->p_is_32, A->j_is_32, A->i_is_32)) ;
     C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
@@ -108,6 +108,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     C->sparsity_control = sparsity_control ;
 
     size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (A->p != NULL)
@@ -116,7 +117,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     }
     if (A->h != NULL)
     { 
-        GB_memcpy (C->h, A->h, anvec * isize, nthreads_max) ;
+        GB_memcpy (C->h, A->h, anvec * jsize, nthreads_max) ;
     }
     if (A->b != NULL)
     { 

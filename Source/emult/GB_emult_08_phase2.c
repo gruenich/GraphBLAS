@@ -63,6 +63,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Cp_is_32,
+    const bool Cj_is_32,
     const bool Ci_is_32,
     const int C_sparsity,
     // from GB_emult_sparsity:
@@ -151,7 +152,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     GrB_Info info = GB_new_bix (&C, // sparse/hyper, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Ci_is_32) ;
+        Cp_is_32, Cj_is_32, Ci_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
@@ -161,6 +162,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     }
 
     ASSERT (C->p_is_32 == Cp_is_32) ;
+    ASSERT (C->j_is_32 == Cj_is_32) ;
     ASSERT (C->i_is_32 == Ci_is_32) ;
 
     // transplant Cp into C as the vector pointers, from GB_emult_08_phase1

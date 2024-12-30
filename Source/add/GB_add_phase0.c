@@ -81,7 +81,7 @@
 static inline bool GB_allocate_result
 (
     int64_t Cnvec,
-    int64_t **Ch_handle,              size_t *Ch_size_handle, size_t cisize,
+    int64_t **Ch_handle,              size_t *Ch_size_handle, size_t cjsize,
     int64_t *restrict *C_to_M_handle, size_t *C_to_M_size_handle,
     int64_t *restrict *C_to_A_handle, size_t *C_to_A_size_handle,
     int64_t *restrict *C_to_B_handle, size_t *C_to_B_size_handle
@@ -90,7 +90,7 @@ static inline bool GB_allocate_result
     bool ok = true ;
     if (Ch_handle != NULL)
     { 
-        (*Ch_handle) = GB_MALLOC_MEMORY (Cnvec, cisize, Ch_size_handle) ;
+        (*Ch_handle) = GB_MALLOC_MEMORY (Cnvec, cjsize, Ch_size_handle) ;
         ok = (*Ch_handle != NULL) ;
     }
     if (C_to_M_handle != NULL)
@@ -128,6 +128,7 @@ static inline bool GB_allocate_result
 //      size_t *C_to_B_size_handle,          // size of C_to_A in bytes
 //      bool *p_Ch_is_Mh,           // if true, then Ch == Mh
 //      bool *p_Cp_is_32,           // if true, Cp is 32-bit; else 64-bit
+//      bool *p_Cj_is_32,           // if true, Ch is 32-bit; else 64-bit
 //      bool *p_Ci_is_32,           // if true, Ci is 32-bit; else 64-bit
 //      int *C_sparsity,            // sparsity structure of C
 //      const GrB_Matrix M,         // optional mask, may be NULL; not compl.
@@ -151,6 +152,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
     ASSERT (p_Cp_is_32 != NULL) ;
+    ASSERT (p_Cj_is_32 != NULL) ;
     ASSERT (p_Ci_is_32 != NULL) ;
 
     ASSERT_MATRIX_OK_OR_NULL (M, "M for add phase0", GB0) ;
@@ -195,6 +197,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
         // nothing to do in phase0 for C bitmap or full
         (*p_Cnvec) = A->vdim ;  // not needed; to be consistent with GB_emult
         (*p_Cp_is_32) = false ;
+        (*p_Cj_is_32) = false ;
         (*p_Ci_is_32) = false ;
         return (GrB_SUCCESS) ;
     }
@@ -228,7 +231,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
     const bool A_is_hyper = (Ah != NULL) ;
     const bool Ap_is_32 = A->p_is_32 ;
-    const bool Ai_is_32 = A->i_is_32 ;
+    const bool Aj_is_32 = A->j_is_32 ;
     const int64_t anz = GB_nnz (A) ;
 
     int64_t Bnvec = B->nvec ;
@@ -236,7 +239,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
     const bool B_is_hyper = (Bh != NULL) ;
     const bool Bp_is_32 = B->p_is_32 ;
-    const bool Bi_is_32 = B->i_is_32 ;
+    const bool Bj_is_32 = B->j_is_32 ;
     const int64_t bnz = GB_nnz (A) ;
 
     int64_t Mnvec = (M == NULL) ? 0 : M->nvec ;
@@ -244,21 +247,23 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
     bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool Mp_is_32 = (M == NULL) ? false : M->p_is_32 ;
-    const bool Mi_is_32 = (M == NULL) ? false : M->i_is_32 ;
+    const bool Mj_is_32 = (M == NULL) ? false : M->j_is_32 ;
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool hack32 = true ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
-    bool Cp_is_32 = false ;
-    bool Ci_is_32 = false ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
         GxB_AUTO_SPARSITY, anz + bnz, A->vlen, A->vdim) ;
     (*p_Cp_is_32) = Cp_is_32 ;
+    (*p_Cj_is_32) = Cj_is_32 ;
     (*p_Ci_is_32) = Ci_is_32 ;
-    size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    GB_Type_code cicode = (Ci_is_32) ? GB_UINT32_code : GB_UINT64_code ;
-    GB_Type_code micode = (Mi_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    size_t cjsize = (Cj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    GB_Type_code cjcode = (Cj_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code mjcode = (Mj_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
     // For GB_add, if M is present, hypersparse, and not complemented, then C
     // will be hypersparse, and it will have the same set of vectors as M (Ch
@@ -283,7 +288,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
         nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
 
         if (!GB_allocate_result (Cnvec,
-            &Ch, &Ch_size, cisize,
+            &Ch, &Ch_size, cjsize,
             NULL, NULL,
             (A_is_hyper) ? (&C_to_A) : NULL, &C_to_A_size,
             (B_is_hyper) ? (&C_to_B) : NULL, &C_to_B_size))
@@ -292,10 +297,10 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_IPTR (Ch, Ci_is_32) ;
+        GB_IPTR (Ch, Cj_is_32) ;
 
         // copy Mh into Ch.  Ch is Mh so C_to_M is not needed.
-        GB_cast_int (Ch, cicode, Mh, micode, Mnvec, nthreads) ;
+        GB_cast_int (Ch, cjcode, Mh, mjcode, Mnvec, nthreads) ;
 
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
@@ -324,7 +329,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
                 { 
                     // C_to_A [k] = kA if Ah [kA] == j and A(:,j) is non-empty
                     int64_t pA, pA_end ;
-                    int64_t kA = GB_hyper_hash_lookup (Ap_is_32, Ai_is_32,
+                    int64_t kA = GB_hyper_hash_lookup (Ap_is_32, Aj_is_32,
                         Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                         j, &pA, &pA_end) ;
                     C_to_A [k] = (pA < pA_end) ? kA : -1 ;
@@ -333,7 +338,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
                 { 
                     // C_to_B [k] = kB if Bh [kB] == j and B(:,j) is non-empty
                     int64_t pB, pB_end ;
-                    int64_t kB = GB_hyper_hash_lookup (Bp_is_32, Bi_is_32,
+                    int64_t kB = GB_hyper_hash_lookup (Bp_is_32, Bj_is_32,
                         Bh, Bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
                         j, &pB, &pB_end) ;
                     C_to_B [k] = (pB < pB_end) ? kB : -1 ;
@@ -388,8 +393,8 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             GB_slice_vector (NULL, NULL,
                 &(kA_start [taskid]), &(kB_start [taskid]),
                 0, 0, NULL, false,          // Mi not present
-                0, Anvec, Ah, Ai_is_32,     // Ah, explicit list
-                0, Bnvec, Bh, Bi_is_32,     // Bh, explicit list
+                0, Anvec, Ah, Aj_is_32,     // Ah, explicit list
+                0, Bnvec, Bh, Bj_is_32,     // Bh, explicit list
                 n,                          // Ah and Bh have dimension n
                 target_work) ;
         }
@@ -447,7 +452,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
         // for computing Ch.  Ch is the set union of Ah and Bh.
 
         if (!GB_allocate_result (Cnvec,
-            &Ch, &Ch_size, cisize,
+            &Ch, &Ch_size, cjsize,
             (M_is_hyper) ? (&C_to_M) : NULL, &C_to_M_size,
             &C_to_A, &C_to_A_size,
             &C_to_B, &C_to_B_size))
@@ -456,7 +461,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_IPTR (Ch, Ci_is_32) ;
+        GB_IPTR (Ch, Cj_is_32) ;
 
         //----------------------------------------------------------------------
         // compute the result: Ch and the mappings C_to_[AB]
@@ -718,7 +723,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
                 int64_t j = GB_IGET (Ch, k) ;
                 // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
                 int64_t pM, pM_end ;
-                int64_t kM = GB_hyper_hash_lookup (Mp_is_32, Mi_is_32,
+                int64_t kM = GB_hyper_hash_lookup (Mp_is_32, Mj_is_32,
                     Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,
                     j, &pM, &pM_end) ;
                 C_to_M [k] = (pM < pM_end) ? kM : -1 ;
@@ -771,7 +776,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT ((*C_sparsity) == GxB_SPARSE || (*C_sparsity) == GxB_HYPERSPARSE) ;
     ASSERT (A != NULL) ;        // A and B are always present
     ASSERT (B != NULL) ;
-    GB_IPTR (Ch, Ci_is_32) ;
+    GB_IPTR (Ch, Cj_is_32) ;
     int64_t jlast = -1 ;
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {

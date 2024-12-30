@@ -204,6 +204,7 @@ GrB_Info GB_subref_phase0
 (
     // output
     void **p_Ch,            // Ch = C->h hyperlist, or NULL
+    bool *p_Cj_is_32,       // if true, C->h is 32-bit; else 64-bit
     bool *p_Ci_is_32,       // if true, C->i is 32-bit; else 64-bit
     size_t *p_Ch_size,
     void **p_Ap_start,      // A(:,kA) starts at Ap_start [kC]
@@ -274,9 +275,10 @@ GrB_Info GB_subref_phase0
     int64_t avdim = A->vdim ;
     const bool may_see_zombies = (A->nzombies > 0) ;
     bool Ap_is_32 = A->p_is_32 ;
+    bool Aj_is_32 = A->j_is_32 ;
     bool Ai_is_32 = A->i_is_32 ;
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t aisize = (Ai_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t ajsize = (Aj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // check the properties of I and J
@@ -322,17 +324,19 @@ GrB_Info GB_subref_phase0
     // determine the integer sizes of C
     //--------------------------------------------------------------------------
 
-    // determine the i_is_32 setting for the new matrix; p_is_32 is found later
+    // determine the j_is_32 and i_is_32 settings for the new matrix; p_is_32
+    // is found later
     bool hack32 = true ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
-    bool Cp_is_32 = false ;
-    bool Ci_is_32 = false ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    ASSERT (p_Cj_is_32 != NULL) ;
     ASSERT (p_Ci_is_32 != NULL) ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        GxB_AUTO_SPARSITY, 0, nI, nJ) ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control, GxB_AUTO_SPARSITY, 0, nI, nJ) ;
 
-    size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t cjsize = (Cj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // trim the hyperlist of A for (J = jbegin:jend case only)
@@ -355,11 +359,11 @@ GrB_Info GB_subref_phase0
         { 
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            GB_split_binary_search (jmin, Ah, Ai_is_32, &kleft, &kright) ;
+            GB_split_binary_search (jmin, Ah, Aj_is_32, &kleft, &kright) ;
             Ap = (void *) ((GB_void *) Ap + kleft * apsize) ;   // Ap += kleft
-            Ah = (void *) ((GB_void *) Ah + kleft * aisize) ;   // Ah += kleft
+            Ah = (void *) ((GB_void *) Ah + kleft * ajsize) ;   // Ah += kleft
             anvec -= kleft ;
-            GB_IPTR (Ah, Ai_is_32) ;
+            GB_IPTR (Ah, Aj_is_32) ;
         }
 
         //----------------------------------------------------------------------
@@ -371,7 +375,7 @@ GrB_Info GB_subref_phase0
             bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            found = GB_split_binary_search (jmax, Ah, Ai_is_32,
+            found = GB_split_binary_search (jmax, Ah, Aj_is_32,
                 &kleft, &kright) ;
             anvec = (found) ? (kleft + 1) : kleft ;
         }
@@ -558,7 +562,7 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using the hyper_hash
                     int64_t ignore1, ignore2 ;
-                    kA = GB_hyper_hash_lookup (Ap_is_32, Ai_is_32,
+                    kA = GB_hyper_hash_lookup (Ap_is_32, Aj_is_32,
                         Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, jA,
                         &ignore1, &ignore2) ;
                     found = (kA >= 0) ;
@@ -592,13 +596,13 @@ GrB_Info GB_subref_phase0
 
     if (C_is_hyper)
     {
-        Ch = GB_MALLOC_MEMORY (Cnvec, cisize, &Ch_size) ;
+        Ch = GB_MALLOC_MEMORY (Cnvec, cjsize, &Ch_size) ;
         if (Ch == NULL)
         { 
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_IPTR (Ch, Ci_is_32) ;
+        GB_IPTR (Ch, Cj_is_32) ;
     }
 
     if (Cnvec > 0)
@@ -761,7 +765,7 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using the hyper_hash
                     int64_t ignore1, ignore2 ;
-                    kA = GB_hyper_hash_lookup (Ap_is_32, Ai_is_32,
+                    kA = GB_hyper_hash_lookup (Ap_is_32, Aj_is_32,
                         Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits, jA,
                         &ignore1, &ignore2) ;
                     found = (kA >= 0) ;
@@ -770,7 +774,7 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using binary search
                     int64_t kright = anvec-1 ;
-                    found = GB_binary_search (jA, Ah, Ai_is_32, &kA, &kright) ;
+                    found = GB_binary_search (jA, Ah, Aj_is_32, &kA, &kright) ;
                 }
                 if (found)
                 { 
@@ -802,7 +806,7 @@ GrB_Info GB_subref_phase0
         // look for A(:,jA)
         GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
         GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
-        bool found = GB_lookup_debug (Ap_is_32, Ai_is_32, A_is_hyper,
+        bool found = GB_lookup_debug (Ap_is_32, Aj_is_32, A_is_hyper,
             Ah, A->p, A->vlen, &kA, pright, jA, &pA_start_all, &pA_end_all) ;
         // ensure that A(:,jA) is in Ai,Ax [pA_start_all:pA_end_all-1]:
         if (found && Ah != NULL)
@@ -860,6 +864,7 @@ GrB_Info GB_subref_phase0
     GB_FREE_WORKSPACE ;
     (*p_Ch           ) = Ch ;
     (*p_Ch_size      ) = Ch_size ;
+    (*p_Cj_is_32     ) = Cj_is_32 ;
     (*p_Ci_is_32     ) = Ci_is_32 ;
     (*p_Ap_start     ) = Ap_start ;
     (*p_Ap_start_size) = Ap_start_size ;

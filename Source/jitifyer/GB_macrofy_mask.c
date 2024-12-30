@@ -23,6 +23,7 @@ void GB_macrofy_mask
     char *Mname,            // name of the mask
     int msparsity,          // sparsity of the mask
     bool Mp_is_32,
+    bool Mj_is_32,
     bool Mi_is_32
 )
 {
@@ -224,6 +225,6 @@ void GB_macrofy_mask
     {
         GB_macrofy_nvals (fp, Mname, msparsity, false) ;
     }
-    GB_macrofy_bits (fp, "M", Mp_is_32, Mi_is_32) ;
+    GB_macrofy_bits (fp, Mname, Mp_is_32, Mj_is_32, Mi_is_32) ;
 }
 

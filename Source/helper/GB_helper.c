@@ -54,6 +54,10 @@ double GB_helper0 (void)
 // GB_helper1: convert 0-based indices to 1-based for gbextracttuples
 //------------------------------------------------------------------------------
 
+// FIXME: let the gbextractuples call GB_extractTuples directly, and
+// pass in the offset of 1.  Then all that is needed is the typecast,
+// which can be done with GrB_apply.  Then this method is not needed.
+
 void GB_helper1              // convert zero-based indices to one-based
 (
     double *restrict I_double,      // output array
@@ -75,6 +79,9 @@ void GB_helper1              // convert zero-based indices to one-based
 //------------------------------------------------------------------------------
 // GB_helper1i: convert 0-based indices to 1-based for gbextracttuples
 //------------------------------------------------------------------------------
+
+// FIXME: let the gbextractuples call GB_extractTuples directly, and
+// pass in the offset of 1.  Then this method is not needed.
 
 void GB_helper1i             // convert zero-based indices to one-based
 (

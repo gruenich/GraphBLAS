@@ -100,6 +100,7 @@ GrB_Info GB_assign_zombie5
     const void *M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
     const void *M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const bool Mp_is_32 = M->p_is_32 ;
+    const bool Mj_is_32 = M->j_is_32 ;
     const bool Mi_is_32 = M->i_is_32 ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
 

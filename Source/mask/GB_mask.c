@@ -174,6 +174,7 @@ GrB_Info GB_mask                // C<M> = Z
 
     bool hack32 = true ;   // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
 
     //--------------------------------------------------------------------------
@@ -271,14 +272,15 @@ GrB_Info GB_mask                // C<M> = Z
                 // created, which is what C_result would look like if cleared.
                 // C_result is left unchanged since changing it would change M.
                 // The C0 matrix is created as hypersparse.
-                bool Cp_is_32, Ci_is_32 ;
-                GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control,
-                    i_control, GxB_HYPERSPARSE, 1, vlen, vdim) ;
+                bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+                GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+                    p_control, j_control, i_control,
+                    GxB_HYPERSPARSE, 1, vlen, vdim) ;
                 GB_CLEAR_STATIC_HEADER (C0, &C0_header) ;
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, existing header
                     C_result->type, vlen, vdim, GB_ph_calloc, R_is_csc,
                     GxB_HYPERSPARSE, true, C_result->hyper_switch, 0, 0,
-                    true, false, Cp_is_32, Ci_is_32)) ;
+                    true, false, Cp_is_32, Cj_is_32, Ci_is_32)) ;
                 C = C0 ;
                 ASSERT (C->static_header || GBNSTATIC) ;
             }

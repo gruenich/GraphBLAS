@@ -14,9 +14,10 @@
 // entries (including zombies, if any).  If numeric is false, then A->x is
 // freed but not reallocated.
 
-// If A->p_is_32 or A->i_is_32 are invalid, GrB_INVALID_VALUE is returned and
-// the allocation fails.  If this method fails, A->b, A->i, and A->x are NULL
-// (having been freed if already present), but A->p and A->h are not modified.
+// If A->p_is_32, A->j_is_32, or A->i_is_32 are invalid, GrB_INVALID_VALUE is
+// returned and the allocation fails.  If this method fails, A->b, A->i, and
+// A->x are NULL (having been freed if already present), but A->p and A->h are
+// not modified.
 
 #include "GB.h"
 
@@ -42,7 +43,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
 
     ASSERT (A != NULL) ;
     ASSERT (GB_IMPLIES (sparsity == GxB_FULL || sparsity == GxB_BITMAP,
-        !(A->p_is_32) && !(A->i_is_32))) ;
+        !(A->p_is_32) && !(A->j_is_32) && !(A->i_is_32))) ;
 
     //--------------------------------------------------------------------------
     // allocate the A->b, A->x, and A->i content of the matrix
@@ -72,7 +73,8 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     else if (sparsity != GxB_FULL)
     {
         // sparsity: sparse or hypersparse
-        if (!GB_valid_pi_is_32 (A->p_is_32, A->i_is_32, nzmax, A->vlen,A->vdim))
+        if (!GB_valid_pji_is_32 (A->p_is_32, A->j_is_32, A->i_is_32,
+            nzmax, A->vlen, A->vdim))
         {
             // matrix is too large for its requested integer settings
             return (GrB_INVALID_VALUE) ;

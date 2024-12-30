@@ -184,7 +184,7 @@ GrB_Info GB_AxB_saxpy               // C = A*B using Gustavson/Hash/Bitmap
         info = GB_new_bix (&C, // existing header
             ztype, A->vlen, B->vdim, GB_ph_null, true, GxB_FULL, false,
             GB_HYPER_SWITCH_DEFAULT, -1, 1, true, true,
-            /* OK: */ false, false) ;
+            /* OK: */ false, false, false) ;
         if (info == GrB_SUCCESS)
         { 
             C->magic = GB_MAGIC ;

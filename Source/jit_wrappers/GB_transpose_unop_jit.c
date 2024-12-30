@@ -37,7 +37,7 @@ GrB_Info GB_transpose_unop_jit  // C = op (A'), transpose unop via the JIT
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_KERNEL_TRANSUNOP, GB_sparsity (C), true, C->type, C->p_is_32,
         C->i_is_32, false, op, false, GB_sparsity (A), true, A->type,
-        A->p_is_32, A->i_is_32, A->iso, A->nzombies) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

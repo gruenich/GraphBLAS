@@ -213,8 +213,8 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-            GB_OK (GB_extractTuples (Ap, Ai, Ax, &nvals, A->type, A,
-                /* FIXME: */ false, Werk)) ;
+            GB_OK (GB_extractTuples (Ap, /* FIXME: */ false,
+                Ai, /* FIXME: */ false, Ax, &nvals, A->type, A, Werk)) ;
             (*Ap_len) = nvals ;
             (*Ai_len) = nvals ;
             (*Ax_len) = nvals ;

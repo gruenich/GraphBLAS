@@ -36,6 +36,7 @@ GrB_Info GB_subref_phase0
 (
     // output
     void **p_Ch,            // Ch = C->h hyperlist, or NULL
+    bool *p_Cj_is_32,       // if true, C->h is 32-bit; else 64-bit
     bool *p_Ci_is_32,       // if true, C->i is 32-bit; else 64-bit
     size_t *p_Ch_size,
     void **p_Ap_start,      // A(:,kA) starts at Ap_start [kC]
@@ -161,6 +162,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
+    const bool Cj_is_32,        // if true, C->h is 32-bit; else 64-bit
     const bool Ci_is_32,        // if true, C->i is 32-bit; else 64-bit
     size_t Ch_size,
     const void *Ap_start,

@@ -59,9 +59,15 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 //  GB_BLOB_READ (typecode, int32_t) ;
 // now in GrB v10.0.0:
     GB_BLOB_READ (encoding, uint32_t) ;
-    uint32_t Cp_is_32 = GB_RSHIFT (encoding, 8, 4) ; // C->p_is_32
-    uint32_t Ci_is_32 = GB_RSHIFT (encoding, 4, 4) ; // C->i_is_32
-    uint32_t typecode = GB_RSHIFT (encoding, 0, 4) ; // 4 bit typecode
+    uint32_t Cp_is_32 = GB_RSHIFT (encoding, 12, 4) ; // C->p_is_32
+    uint32_t Cj_is_32 = GB_RSHIFT (encoding,  8, 4) ; // C->j_is_32
+    uint32_t Ci_is_32 = GB_RSHIFT (encoding,  4, 4) ; // C->i_is_32
+    uint32_t typecode = GB_RSHIFT (encoding,  0, 4) ; // 4 bit typecode
+
+    // GrB 10.0.0 reserves 4 bits each for Cp_is_32, Cj_is_32, and Ci_is_32,
+    // for future expansion.  This way, if a future GraphBLAS version needs
+    // more bits to create a serialized blob, then GrB 10.0.0 will gracefully
+    // fail if it attempts to deserialize the blob.
 
     uint64_t blob_size1 = (uint64_t) blob_size ;
 
@@ -73,7 +79,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
             blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN)
         // GrB v10.0.0 adds the following check, since it only supports the
         // values of 0 and 1, denoting 64-bit and 32-bit integers respectively:
-        || (Cp_is_32 > 1) || (Ci_is_32 > 1))
+        || (Cp_is_32 > 1) || (Cj_is_32 > 1) || (Ci_is_32 > 1))
     { 
         // blob is invalid
         return (GrB_INVALID_OBJECT)  ;
@@ -164,7 +170,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     // allocate the matrix with info from the header
     GB_OK (GB_new (&C,  // new header (C is NULL on input)
         ctype, vlen, vdim, GB_ph_null, is_csc,
-        sparsity, hyper_switch, nvec, Cp_is_32, Ci_is_32)) ;
+        sparsity, hyper_switch, nvec, Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     C->nvec = nvec ;
     C->nvec_nonempty = nvec_nonempty ;
@@ -175,6 +181,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     // added for GrB v10.0.0:
     C->p_is_32 = Cp_is_32 ;
+    C->j_is_32 = Cj_is_32 ;
     C->i_is_32 = Ci_is_32 ;
     C->p_control = p_control ;
     C->i_control = i_control ;

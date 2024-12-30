@@ -192,7 +192,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     void *Cwork    = NULL ; size_t Cwork_size = 0 ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
-    bool post_sort, need_qsort, Cp_is_32, Ci_is_32, Ihead_is_32 ;
+    bool post_sort, need_qsort, Cp_is_32, Cj_is_32, Ci_is_32, Ihead_is_32 ;
     int Ikind, ntasks, nthreads ;
 
     //--------------------------------------------------------------------------
@@ -211,7 +211,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     GB_OK (GB_subref_phase0 (
         // computed by phase0:
-        &Ch, &Ci_is_32, &Ch_size, &Ap_start, &Ap_start_size,
+        &Ch, &Cj_is_32, &Ci_is_32, &Ch_size, &Ap_start, &Ap_start_size,
         &Ap_end, &Ap_end_size, &Cnvec, &need_qsort, &Ikind, &nI, Icolon, &nJ,
         // original input:
         A, I, I_is_32, ni, J, J_is_32, nj, Werk)) ;
@@ -260,7 +260,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         // from phase1:
         TaskList, ntasks, nthreads, post_sort, Ihead, Inext, Ihead_is_32, ndupl,
         // from phase0:
-        &Ch, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
+        &Ch, Cj_is_32, Ci_is_32, Ch_size, Ap_start, Ap_end, Cnvec, need_qsort,
         Ikind, nI, Icolon, nJ,
         // from GB_subref, above:
         ctype, C_iso, cscalar,
@@ -280,7 +280,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     // C can be returned jumbled, even if A is not jumbled
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J) before convert", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;    // FIXME
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;

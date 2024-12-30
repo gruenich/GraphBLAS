@@ -40,8 +40,9 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     int64_t anz = GB_nnz_full (A) ;
     GB_BURBLE_N (anz, "(full to sparse) ") ;
 
-    bool Ap_is_32 = false ; // FIXME: use GB_determine_pi_is_32
-    bool Ai_is_32 = false ; // FIXME: use GB_determine_pi_is_32
+    bool Ap_is_32 = false ; // FIXME: use GB_determine_pji_is_32
+    bool Aj_is_32 = false ; // FIXME: use GB_determine_pji_is_32
+    bool Ai_is_32 = false ; // FIXME: use GB_determine_pji_is_32
 
     void *Ap = NULL ; size_t Ap_size = 0 ;
     void *Ai = NULL ; size_t Ai_size = 0 ;
@@ -62,6 +63,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     A->p = Ap ; A->p_size = Ap_size ;
     A->i = Ai ; A->i_size = Ai_size ;
     A->p_is_32 = Ap_is_32 ;
+    A->j_is_32 = Aj_is_32 ;
     A->i_is_32 = Ai_is_32 ;
     A->plen = avdim ;
     A->nvec = avdim ;

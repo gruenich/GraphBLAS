@@ -24,6 +24,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const GB_jit_kcode kcode,   // kernel to encode
     const GrB_Matrix R,         // may be NULL, for phase1
     const bool Rp_is_32,        // if true, R->p is 32 bit; else 64 bit
+    const bool Rj_is_32,        // if true, R->h is 32 bit; else 64 bit
     const bool Ri_is_32,        // if true, R->i is 32 bit; else 64 bit
     const GrB_Matrix M,
     const bool Mask_struct,
@@ -51,7 +52,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     //--------------------------------------------------------------------------
 
     encoding->kcode = kcode ;
-    GB_enumify_masker (&encoding->code, R, Rp_is_32, Ri_is_32,
+    GB_enumify_masker (&encoding->code, R, Rp_is_32, Rj_is_32, Ri_is_32,
         M, Mask_struct, Mask_comp, C, Z) ;
 
     //--------------------------------------------------------------------------

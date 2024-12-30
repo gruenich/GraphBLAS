@@ -19,6 +19,7 @@ void GB_enumify_masker      // enumify a masker problem
     // input:
     const GrB_Matrix R,     // NULL for phase 1
     const bool Rp_is_32,    // if true, R->p is 32-bit; else 64-bit
+    const bool Rj_is_32,    // if true, R->h is 32-bit; else 64-bit
     const bool Ri_is_32,    // if true, R->i is 32-bit; else 64-bit
     const GrB_Matrix M,
     const bool Mask_struct,
@@ -68,31 +69,45 @@ void GB_enumify_masker      // enumify a masker problem
     GB_enumify_sparsity (&zsparsity, Z_sparsity) ;
 
     int rp_is_32 = (Rp_is_32  ) ? 1 : 0 ;
+    int rj_is_32 = (Rj_is_32  ) ? 1 : 0 ;
     int ri_is_32 = (Ri_is_32  ) ? 1 : 0 ;
+
     int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int cj_is_32 = (C->j_is_32) ? 1 : 0 ;
     int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
+
     int mp_is_32 = (M->p_is_32) ? 1 : 0 ;
+    int mj_is_32 = (M->j_is_32) ? 1 : 0 ;
     int mi_is_32 = (M->i_is_32) ? 1 : 0 ;
+
     int zp_is_32 = (Z->p_is_32) ? 1 : 0 ;
+    int zj_is_32 = (Z->j_is_32) ? 1 : 0 ;
     int zi_is_32 = (Z->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the masker method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 26 (7 hex digits)
+    // total method_code bits: 30 (8 hex digits)
 
     (*method_code) =
                                                // range        bits
 
-                // R, C, M, Z: 32/64 bits (8 bits, 2 hex digits)
-                GB_LSHIFT (rp_is_32   , 27) |  // 0 or 1       1
-                GB_LSHIFT (ri_is_32   , 26) |  // 0 or 1       1
-                GB_LSHIFT (cp_is_32   , 25) |  // 0 or 1       1
-                GB_LSHIFT (ci_is_32   , 24) |  // 0 or 1       1
-                GB_LSHIFT (mp_is_32   , 23) |  // 0 or 1       1
-                GB_LSHIFT (mi_is_32   , 22) |  // 0 or 1       1
-                GB_LSHIFT (zp_is_32   , 21) |  // 0 or 1       1
+                // R, C, M, Z: 32/64 bits (12 bits, 3 hex digits)
+                GB_LSHIFT (rp_is_32   , 31) |  // 0 or 1       1
+                GB_LSHIFT (rj_is_32   , 30) |  // 0 or 1       1
+                GB_LSHIFT (ri_is_32   , 29) |  // 0 or 1       1
+
+                GB_LSHIFT (cp_is_32   , 28) |  // 0 or 1       1
+                GB_LSHIFT (cj_is_32   , 27) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 26) |  // 0 or 1       1
+
+                GB_LSHIFT (mp_is_32   , 25) |  // 0 or 1       1
+                GB_LSHIFT (mj_is_32   , 24) |  // 0 or 1       1
+                GB_LSHIFT (mi_is_32   , 23) |  // 0 or 1       1
+
+                GB_LSHIFT (zp_is_32   , 22) |  // 0 or 1       1
+                GB_LSHIFT (zj_is_32   , 21) |  // 0 or 1       1
                 GB_LSHIFT (zi_is_32   , 20) |  // 0 or 1       1
 
                 // C and Z iso properites (1 hex digit)

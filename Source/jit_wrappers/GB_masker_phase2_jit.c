@@ -47,7 +47,7 @@ GrB_Info GB_masker_phase2_jit       // phase2 for R = masker (C,M,Z)
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_masker (&encoding, &suffix,
-        GB_JIT_KERNEL_MASKER_PHASE2, R, R->p_is_32, R->i_is_32,
+        GB_JIT_KERNEL_MASKER_PHASE2, R, R->p_is_32, R->j_is_32, R->i_is_32,
         M, Mask_struct, Mask_comp, C, Z) ;
 
     //--------------------------------------------------------------------------

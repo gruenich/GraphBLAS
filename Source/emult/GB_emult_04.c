@@ -128,14 +128,16 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     GB_OK (GB_new (&C, // sparse or hyper (same as M), existing header
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, M->hyper_switch, nvec, M->p_is_32, M->i_is_32)) ;
+        C_sparsity, M->hyper_switch, nvec,
+        M->p_is_32, M->j_is_32, M->i_is_32)) ;
 
     GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;
     bool Cp_is_32 = C->p_is_32 ;
-    bool Ci_is_32 = C->i_is_32 ;
+    bool Cj_is_32 = C->j_is_32 ;
     ASSERT (Cp_is_32 == M->p_is_32) ;
-    ASSERT (Ci_is_32 == M->i_is_32) ;
+    ASSERT (Cj_is_32 == M->j_is_32) ;
+    ASSERT (C->i_is_32 == M->i_is_32) ;
 
     //--------------------------------------------------------------------------
     // slice the mask matrix M
@@ -232,12 +234,12 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
 
     // FIXME: could make this components of C shallow instead
 
-    size_t cisize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t cjsize = Cj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (GB_IS_HYPERSPARSE (M))
     { 
         // copy M->h into C->h
-        GB_memcpy (C->h, Mh, nvec * cisize, M_nthreads) ;
+        GB_memcpy (C->h, Mh, nvec * cjsize, M_nthreads) ;
     }
 
     C->nvec = nvec ;

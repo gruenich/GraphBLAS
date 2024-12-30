@@ -72,7 +72,7 @@ void GB_enumify_reduce      // enumerate a GrB_reduce problem
     GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
     int azombies = (A->nzombies > 0) ? 1 : 0 ;
 
-    // the reduce methods do not access A->p
+    // the reduce methods do not access A->p or A->h
     int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------

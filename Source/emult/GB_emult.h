@@ -66,6 +66,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     int64_t *restrict *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
     size_t *C_to_B_size_handle,
     bool *p_Cp_is_32,           // if true, Cp is 32-bit; else 64-bit
+    bool *p_Cj_is_32,           // if true, Ch is 32-bit; else 64-bit
     bool *p_Ci_is_32,           // if true, Ci is 32-bit; else 64-bit
     int *C_sparsity,            // sparsity structure of C
     // original input:
@@ -93,7 +94,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Cp_is_32,            // if true, Cp is 32-bit; else 64-bit
-    const bool Ci_is_32,            // if true, Ci is 32-bit; else 64-bit
+    const bool Cj_is_32,            // if true, Ch is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -126,6 +127,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Cp_is_32,
+    const bool Cj_is_32,
     const bool Ci_is_32,
     const int C_sparsity,
     // from GB_emult_sparsity:

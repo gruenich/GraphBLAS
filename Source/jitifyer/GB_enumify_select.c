@@ -63,22 +63,28 @@ void GB_enumify_select      // enumerate a GrB_selectproblem
     GB_enumify_sparsity (&asparsity, GB_sparsity (A)) ;
 
     int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int cj_is_32 = (C->j_is_32) ? 1 : 0 ;
     int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
+
     int ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+    int aj_is_32 = (A->j_is_32) ? 1 : 0 ;
     int ai_is_32 = (A->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the select method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits:  32 (8 hex digits)
+    // total method_code bits:  34 (9 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // C, A: 32/64 (1 hex digit)
-                GB_LSHIFT (cp_is_32   , 31) |  // 0 or 1       1
-                GB_LSHIFT (ci_is_32   , 30) |  // 0 or 1       1
-                GB_LSHIFT (ap_is_32   , 29) |  // 0 or 1       1
+                // C, A: 32/64 (2 hex digits)
+                GB_LSHIFT (cp_is_32   , 33) |  // 0 or 1       1
+                GB_LSHIFT (cj_is_32   , 32) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 31) |  // 0 or 1       1
+
+                GB_LSHIFT (ap_is_32   , 30) |  // 0 or 1       1
+                GB_LSHIFT (aj_is_32   , 29) |  // 0 or 1       1
                 GB_LSHIFT (ai_is_32   , 28) |  // 0 or 1       1
 
                 // op, z = f(x,i,j,y), flipij, and iso codes (5 hex digits)

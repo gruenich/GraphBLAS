@@ -65,7 +65,7 @@ GrB_Info GB_select_column
     const size_t asize = A->type->size ;
 
     GB_Type_code Ap_code = A->p_is_32 ? GB_UINT32_code : GB_UINT64_code ;
-    GB_Type_code Ah_code = A->i_is_32 ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code Ah_code = A->j_is_32 ? GB_UINT32_code : GB_UINT64_code ;
     GB_Type_code Ai_code = A->i_is_32 ? GB_INT32_code  : GB_INT64_code ;
 
     //--------------------------------------------------------------------------
@@ -101,7 +101,7 @@ GrB_Info GB_select_column
         // find the column j in the hyperlist of A
         // future:: use hyper_hash if present
         int64_t kright = anvec-1 ;
-        found = GB_split_binary_search (j, Ah, A->i_is_32, &k, &kright) ;
+        found = GB_split_binary_search (j, Ah, A->j_is_32, &k, &kright) ;
         // if found is true the Ah [k] == j
         // if found is false, then Ah [0..k-1] < j and Ah [k..anvec-1] > j
     }
@@ -142,12 +142,14 @@ GrB_Info GB_select_column
         cnvec = anvec - ((A_is_hyper) ? (found ? (k+1) : k) : 0) ;
     }
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
-    bool Cp_is_32, Ci_is_32 ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
         GxB_AUTO_SPARSITY, cnz, avlen, avdim) ;
 
     if (cnz == anz)
@@ -161,7 +163,7 @@ GrB_Info GB_select_column
         return (GB_new (&C, // auto (sparse or hyper), existing header
             A->type, avlen, avdim, GB_ph_calloc, true,
             GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 1,
-            Cp_is_32, Ci_is_32)) ;
+            Cp_is_32, Cj_is_32, Ci_is_32)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -171,9 +173,15 @@ GrB_Info GB_select_column
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     GB_OK (GB_new_bix (&C, // sparse or hyper (from A), existing header
         A->type, avlen, avdim, GB_ph_malloc, true, csparsity, false,
-        A->hyper_switch, cnvec, cnz, true, A_iso, Cp_is_32, Ci_is_32)) ;
+        A->hyper_switch, cnvec, cnz, true, A_iso,
+        Cp_is_32, Cj_is_32, Ci_is_32)) ;
+
+    ASSERT (Cp_is_32 == C->p_is_32) ;
+    ASSERT (Cj_is_32 == C->j_is_32) ;
+    ASSERT (Ci_is_32 == C->i_is_32) ;
 
     Cp_is_32 = C->p_is_32 ;
+    Cj_is_32 = C->j_is_32 ;
     Ci_is_32 = C->i_is_32 ;
 
     ASSERT (info == GrB_SUCCESS) ;
@@ -184,7 +192,7 @@ GrB_Info GB_select_column
     GB_Ci_DECLARE (Ci, ) ; GB_Ci_PTR (Ci, C) ;
 
     GB_Type_code Cp_code = Cp_is_32 ? GB_UINT32_code : GB_UINT64_code ;
-    GB_Type_code Ch_code = Ci_is_32 ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code Ch_code = Cj_is_32 ? GB_UINT32_code : GB_UINT64_code ;
     GB_Type_code Ci_code = Ci_is_32 ? GB_INT32_code  : GB_INT64_code ;
     size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 

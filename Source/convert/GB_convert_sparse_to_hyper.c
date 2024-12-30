@@ -110,9 +110,9 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         GB_Ah_DECLARE (Ah_new, ) ; size_t Ah_new_size = 0 ;
         int64_t plen_new = (n == 1) ? 1 : nvec_nonempty ;
         size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-        size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        size_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
         Ap_new = GB_MALLOC_MEMORY (plen_new+1, psize, &Ap_new_size) ;
-        Ah_new = GB_MALLOC_MEMORY (plen_new  , isize, &Ah_new_size) ;
+        Ah_new = GB_MALLOC_MEMORY (plen_new  , jsize, &Ah_new_size) ;
         if (Ap_new == NULL || Ah_new == NULL)
         { 
             // out of memory
@@ -122,7 +122,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
             return (GrB_OUT_OF_MEMORY) ;
         }
         GB_IPTR (Ap_new, A->p_is_32) ;
-        GB_IPTR (Ah_new, A->i_is_32) ;
+        GB_IPTR (Ah_new, A->j_is_32) ;
 
         //----------------------------------------------------------------------
         // transplant the new A->p and A->h into the matrix

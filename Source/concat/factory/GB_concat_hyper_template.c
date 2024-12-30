@@ -16,11 +16,20 @@
     // all Wx [...].   If both A and C are iso, then all tiles are iso,
     // and Wx is not extracted.
 
-    GB_OK (GB_extractTuples (
-        ((csc ? WORK_I : WORK_J) + pC),
-        ((csc ? WORK_J : WORK_I) + pC),
-        (C_iso) ? NULL : (Wx + pC * csize),
-        (uint64_t *) (&anz), ctype, A, Ci_is_32, Werk)) ;
+    // FIXME: pass in these offsets to GB_extractTuples instead
+
+    if (csc)
+    {
+        GB_OK (GB_extractTuples (WORK_I + pC, Ci_is_32, WORK_J + pC, Cj_is_32,
+            (C_iso) ? NULL : (Wx + pC * csize),
+            (uint64_t *) (&anz), ctype, A, Werk)) ;
+    }
+    else
+    {
+        GB_OK (GB_extractTuples (WORK_J + pC, Cj_is_32, WORK_I + pC, Ci_is_32,
+            (C_iso) ? NULL : (Wx + pC * csize),
+            (uint64_t *) (&anz), ctype, A, Werk)) ;
+    }
 
     // adjust the indices to reflect their new place in C
 
@@ -53,3 +62,4 @@
 
 #undef WORK_I
 #undef WORK_J
+

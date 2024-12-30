@@ -69,6 +69,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     GB_void *S_work = NULL ; size_t S_work_size = 0 ;
     GB_void *S_input = NULL ;
     bool I_work_is_32 = false ;
+    bool J_work_is_32 = false ;
 
     GB_WERK_DECLARE (T_ek_slicing, int64_t) ;
     GrB_Matrix C = NULL, T = NULL ;
@@ -98,6 +99,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
     bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
 
     //--------------------------------------------------------------------------
@@ -122,7 +124,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             // T = A'
             GB_OK (GB_new (&T,  // new header
                 type, A->vdim, A->vlen, GB_ph_null, by_col, GxB_AUTO_SPARSITY,
-                GB_Global_hyper_switch_get ( ), 0, A->p_is_32, A->i_is_32)) ;
+                GB_Global_hyper_switch_get ( ), 0,
+                A->p_is_32, A->j_is_32, A->i_is_32)) ;
             GB_OK (GB_transpose_cast (T, type, by_col, A, false, Werk)) ;
             // now T can be reshaped in-place to construct C
             in_place = true ;
@@ -227,8 +230,9 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         int T_nthreads, T_ntasks ;
         GB_SLICE_MATRIX (T, 1) ;
 
-        bool Cp_is_32, Ci_is_32 ;
-        GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+        bool Cp_is_32, Cj_is_32,Ci_is_32 ;
+        GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+            p_control, j_control, i_control,
             GxB_AUTO_SPARSITY, nvals, vlen_new, vdim_new) ;
 
         //----------------------------------------------------------------------
@@ -236,6 +240,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         //----------------------------------------------------------------------
 
         I_work_is_32 = (in_place) ? T->i_is_32 : Ci_is_32 ;
+        J_work_is_32 = (in_place) ? T->j_is_32 : Cj_is_32 ;
+        size_t jwsize = (J_work_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t iwsize = (I_work_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
         if (in_place)
@@ -269,7 +275,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             GB_OK (GB_new (&C, // new header
                 type, vlen_new, vdim_new, GB_ph_null, T_is_csc,
                 GxB_AUTO_SPARSITY, GB_Global_hyper_switch_get ( ), 0,
-                Cp_is_32, Ci_is_32)) ;
+                Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
             // allocate new space for the future C->i
             I_work = GB_MALLOC_MEMORY (nvals, iwsize, &I_work_size) ;
@@ -284,10 +290,11 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             S_input = T->x ;
         }
 
+        // allocate J_work
         if (vdim_new > 1)
         {
             // J_work is not needed if vdim_new == 1
-            J_work = GB_MALLOC_MEMORY (nvals, iwsize, &J_work_size) ;
+            J_work = GB_MALLOC_MEMORY (nvals, jwsize, &J_work_size) ;
             if (J_work == NULL)
             { 
                 // out of memory
@@ -297,7 +304,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         }
 
         GB_IPTR (I_work, I_work_is_32) ;
-        GB_IPTR (J_work, I_work_is_32) ;
+        GB_IPTR (J_work, J_work_is_32) ;
 
         //----------------------------------------------------------------------
         // construct the new indices
@@ -405,8 +412,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
             type,           // type of S_work and S_input
             true,           // burble is allowed
             Werk,
-            I_work_is_32, I_work_is_32, // integer sizes of I_work and J_work
-            Cp_is_32, Ci_is_32          // integer sizes of C->p and C->i
+            I_work_is_32, J_work_is_32,     // integer sizes of I_work, J_work
+            Cp_is_32, Cj_is_32, Ci_is_32    // integer sizes of C
         )) ;
 
         ASSERT (I_work == NULL) ;   // transplanted into C->i
@@ -431,7 +438,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C before convert int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C after convert int", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C result for reshape", GB0) ;

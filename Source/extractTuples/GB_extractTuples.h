@@ -27,12 +27,13 @@ GrB_Info GB_extract_vector_list // extract vector list from a matrix
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
     void *I_out,                // array for returning row indices of tuples
+    bool I_is_32,               // if true, I is 32-bit; else 64 bit
     void *J_out,                // array for returning col indices of tuples
+    bool J_is_32,               // if true, J is 32-bit; else 64 bit
     void *X,                    // array for returning values of tuples
     uint64_t *p_nvals,          // I,J,X size on input; # tuples on output
     const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
-    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 ) ;
 

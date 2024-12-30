@@ -28,7 +28,8 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     //--------------------------------------------------------------------------
 
     // integers of C
-    bool Cp_is_32   = GB_RSHIFT (method_code, 15, 1) ;
+    bool Cp_is_32   = GB_RSHIFT (method_code, 16, 1) ;
+    bool Cj_is_32   = GB_RSHIFT (method_code, 15, 1) ;
     bool Ci_is_32   = GB_RSHIFT (method_code, 14, 1) ;
 
     // binary operator
@@ -80,7 +81,7 @@ void GB_macrofy_sort            // construct all macros for GxB_sort
     //--------------------------------------------------------------------------
 
     GB_macrofy_input (fp, "c", "C", "C", true, xtype, ctype, 1, ccode,
-        /* C_iso: */ false, -1, Cp_is_32, Ci_is_32) ;
+        /* C_iso: */ false, -1, Cp_is_32, Cj_is_32, Ci_is_32) ;
     fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------

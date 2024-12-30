@@ -36,9 +36,10 @@ typedef struct
     size_t *logger_size_handle ;
     int pwerk ;                     // top of Werk stack, initially zero
 
-    // integer control, combines C->[pi]_control and Global [pi]_control:
-    int8_t p_control ;              // effective p_control for this method
-    int8_t i_control ;              // effective i_control for this method
+    // integer control, combines C->[pji]_control and Global [pji]_control:
+    uint8_t p_control ;             // effective p_control for this method
+    uint8_t j_control ;             // effective j_control for this method
+    uint8_t i_control ;             // effective i_control for this method
 }
 GB_Werk_struct ;
 

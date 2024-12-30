@@ -33,7 +33,8 @@ GrB_Info GB_rowscale_jit      // C=D*B, rowscale, via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_ROWSCALE, false,
-        false, false, GB_sparsity (C), C->type, C->p_is_32, C->i_is_32,
+        false, false, GB_sparsity (C), C->type,
+        C->p_is_32, C->j_is_32, C->i_is_32,
         NULL, false, false, binaryop, false, flipxy, D, B) ;
 
     //--------------------------------------------------------------------------

@@ -27,10 +27,14 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     //--------------------------------------------------------------------------
 
     // C, A integer sizes (2 hex digits)
-    bool Ihead_is_32 = GB_RSHIFT (method_code, 20, 1) ;
-    bool Cp_is_32    = GB_RSHIFT (method_code, 19, 1) ;
-    bool Ci_is_32    = GB_RSHIFT (method_code, 18, 1) ;
-    bool Ap_is_32    = GB_RSHIFT (method_code, 17, 1) ;
+    bool Ihead_is_32 = GB_RSHIFT (method_code, 22, 1) ;
+
+    bool Cp_is_32    = GB_RSHIFT (method_code, 21, 1) ;
+    bool Cj_is_32    = GB_RSHIFT (method_code, 20, 1) ;
+    bool Ci_is_32    = GB_RSHIFT (method_code, 19, 1) ;
+
+    bool Ap_is_32    = GB_RSHIFT (method_code, 18, 1) ;
+    bool Aj_is_32    = GB_RSHIFT (method_code, 17, 1) ;
     bool Ai_is_32    = GB_RSHIFT (method_code, 16, 1) ;
 
     // need_qsort, I_has_duplicates, I and J bits (1 hex digit)
@@ -105,14 +109,14 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_sparsity (fp, "C", csparsity) ;
     GB_macrofy_nvals (fp, "C", csparsity, false) ;
     GB_macrofy_type (fp, "C", "_", ctype->name) ;
-    GB_macrofy_bits (fp, "C", Cp_is_32, Ci_is_32) ;
+    GB_macrofy_bits (fp, "C", Cp_is_32, Cj_is_32, Ci_is_32) ;
     fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     GrB_Type atype = ctype ;        // C and A have the same type
     GB_macrofy_sparsity (fp, "A", asparsity) ;
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
     GB_macrofy_type (fp, "A", "_", atype->name) ;
-    GB_macrofy_bits (fp, "A", Ap_is_32, Ai_is_32) ;
+    GB_macrofy_bits (fp, "A", Ap_is_32, Aj_is_32, Ai_is_32) ;
     fprintf (fp, "#define GB_Ap_TYPE uint%d_t\n", Ap_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------

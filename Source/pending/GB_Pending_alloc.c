@@ -57,13 +57,14 @@ bool GB_Pending_alloc       // create a list of pending tuples
     Pending->x_size = 0 ;
 
     bool is_matrix = (C->vdim > 1) ;
+    size_t jsize = (C->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = (C->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     Pending->i = GB_MALLOC_MEMORY (nmax, isize, &(Pending->i_size)) ;
     Pending->j = NULL ;
     if (is_matrix)
     { 
-        Pending->j = GB_MALLOC_MEMORY (nmax, isize, &(Pending->j_size)) ;
+        Pending->j = GB_MALLOC_MEMORY (nmax, jsize, &(Pending->j_size)) ;
     }
     Pending->x = NULL ;
     if (!iso)

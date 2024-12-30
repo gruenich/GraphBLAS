@@ -118,7 +118,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     int R_ntasks = 0, R_nthreads ;
     size_t TaskList_size = 0 ; GB_task_struct *TaskList = NULL ;
-    bool Rp_is_32, Ri_is_32 ;
+    bool Rp_is_32, Rj_is_32, Ri_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity structure of R and the vectors of R
@@ -133,7 +133,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         &R_to_M, &R_to_M_size,
         &R_to_C, &R_to_C_size,
         &R_to_Z, &R_to_Z_size, /* Rh_is_Mh is false: */ NULL,
-        &Rp_is_32, &Ri_is_32,
+        &Rp_is_32, &Rj_is_32, &Ri_is_32,
         // input/output to phase0:
         &R_sparsity,
         // original input:
@@ -164,7 +164,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // computed by phase1a
             &TaskList, &TaskList_size, &R_ntasks, &R_nthreads,
             // computed by phase0:
-            Rnvec, Rh, Ri_is_32, R_to_M, R_to_C, R_to_Z, /* Rh_is_Mh: */ false,
+            Rnvec, Rh, Rj_is_32, R_to_M, R_to_C, R_to_Z, /* Rh_is_Mh: */ false,
             // original input:
             M, C, Z, Werk) ;
         if (info != GrB_SUCCESS)
@@ -184,7 +184,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             // from phase1a:
             TaskList, R_ntasks, R_nthreads,
             // from phase0:
-            Rnvec, Rh, R_to_M, R_to_C, R_to_Z, Rp_is_32, Ri_is_32,
+            Rnvec, Rh, R_to_M, R_to_C, R_to_Z, Rp_is_32, Rj_is_32,
             // original input:
             M, Mask_comp, Mask_struct, C, Z, Werk) ;
         if (info != GrB_SUCCESS)
@@ -227,7 +227,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
         TaskList, R_ntasks, R_nthreads,
         // from phase0:
         Rnvec, &Rh, Rh_size, R_to_M, R_to_C, R_to_Z,
-        Rp_is_32, Ri_is_32, R_sparsity,
+        Rp_is_32, Rj_is_32, Ri_is_32, R_sparsity,
         // original input:
         M, Mask_comp, Mask_struct, C, Z, Werk) ;
 

@@ -138,39 +138,49 @@ void GB_enumify_assign      // enumerate a GrB_assign problem
     int j_is_32 = (J_is_32) ? 1 : 0 ;
 
     int cp_is_32 = (C->p_is_32) ? 1 : 0 ;
+    int cj_is_32 = (C->j_is_32) ? 1 : 0 ;
     int ci_is_32 = (C->i_is_32) ? 1 : 0 ;
 
     int mp_is_32 = (M != NULL && M->p_is_32) ? 1 : 0 ;
+    int mj_is_32 = (M != NULL && M->j_is_32) ? 1 : 0 ;
     int mi_is_32 = (M != NULL && M->i_is_32) ? 1 : 0 ;
 
     int ap_is_32 = (A != NULL && A->p_is_32) ? 1 : 0 ;
+    int aj_is_32 = (A != NULL && A->j_is_32) ? 1 : 0 ;
     int ai_is_32 = (A != NULL && A->i_is_32) ? 1 : 0 ;
 
     int sp_is_32 = (S != NULL && S->p_is_32) ? 1 : 0 ;
+    int sj_is_32 = (S != NULL && S->j_is_32) ? 1 : 0 ;
     int si_is_32 = (S != NULL && S->i_is_32) ? 1 : 0 ;
     int sx_is_32 = (stype == GrB_UINT32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
-    // construct the assign method_code,
+    // construct the assign method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 59 (15 hex digits): 5 bits to sparse
+    // total method_code bits: 63 (16 hex digits): 1 bit to sparse
 
     (*method_code) =
                                                // range        bits
 
-                // S integer types (1 hex digit)
-                GB_LSHIFT (sp_is_32   , 58) |  // 0 to 1       1
-                GB_LSHIFT (si_is_32   , 57) |  // 0 to 1       1
-                GB_LSHIFT (sx_is_32   , 56) |  // 0 to 1       1
+                // S, C, M, A, I, J integer types (4 hex digits)
+                GB_LSHIFT (sp_is_32   , 62) |  // 0 to 1       1
+                GB_LSHIFT (sj_is_32   , 61) |  // 0 to 1       1
+                GB_LSHIFT (si_is_32   , 60) |  // 0 to 1       1
+                GB_LSHIFT (sx_is_32   , 59) |  // 0 to 1       1
 
-                // C, M, A, I, J integer types (2 hex digits)
-                GB_LSHIFT (cp_is_32   , 55) |  // 0 to 1       1
-                GB_LSHIFT (ci_is_32   , 54) |  // 0 to 1       1
-                GB_LSHIFT (mp_is_32   , 53) |  // 0 to 1       1
-                GB_LSHIFT (mi_is_32   , 52) |  // 0 to 1       1
-                GB_LSHIFT (ap_is_32   , 51) |  // 0 to 1       1
+                GB_LSHIFT (cp_is_32   , 58) |  // 0 to 1       1
+                GB_LSHIFT (cj_is_32   , 57) |  // 0 to 1       1
+                GB_LSHIFT (ci_is_32   , 56) |  // 0 to 1       1
+
+                GB_LSHIFT (mp_is_32   , 55) |  // 0 to 1       1
+                GB_LSHIFT (mj_is_32   , 54) |  // 0 to 1       1
+                GB_LSHIFT (mi_is_32   , 53) |  // 0 to 1       1
+
+                GB_LSHIFT (ap_is_32   , 52) |  // 0 to 1       1
+                GB_LSHIFT (aj_is_32   , 51) |  // 0 to 1       1
                 GB_LSHIFT (ai_is_32   , 50) |  // 0 to 1       1
+
                 GB_LSHIFT (i_is_32    , 49) |  // 0 to 1       1
                 GB_LSHIFT (j_is_32    , 48) |  // 0 to 1       1
 

@@ -27,11 +27,12 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     // extract the apply method_code
     //--------------------------------------------------------------------------
 
-    // C and A properties (2 hex digits)
-    bool Cp_is_32   = GB_RSHIFT (method_code, 43, 1) ;
-    bool Ci_is_32   = GB_RSHIFT (method_code, 42, 1) ;
-    bool Cj_is_32   = GB_RSHIFT (method_code, 41, 1) ;
-    bool Ap_is_32   = GB_RSHIFT (method_code, 40, 1) ;
+    // C and A properties (3 hex digits)
+    bool Cp_is_32   = GB_RSHIFT (method_code, 44, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 43, 1) ;
+    bool Cj_is_32   = GB_RSHIFT (method_code, 42, 1) ;
+    bool Ap_is_32   = GB_RSHIFT (method_code, 41, 1) ;
+    bool Aj_is_32   = GB_RSHIFT (method_code, 40, 1) ;
     bool Ai_is_32   = GB_RSHIFT (method_code, 39, 1) ;
     int A_mat       = GB_RSHIFT (method_code, 38, 1) ;
     int A_zombies   = GB_RSHIFT (method_code, 37, 1) ;
@@ -177,7 +178,7 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     { 
         // C = op(A) where C is a matrix
         GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, false,
-            false, Cp_is_32, Ci_is_32) ;
+            false, Cp_is_32, Cj_is_32, Ci_is_32) ;
     }
     else
     { 
@@ -201,7 +202,8 @@ void GB_macrofy_apply           // construct all macros for GrB_apply
     {
         // C or Cx = op(A) for a matrix A
         GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-            atype, asparsity, acode, A_iso, A_zombies, Ap_is_32, Ai_is_32) ;
+            atype, asparsity, acode, A_iso, A_zombies,
+            Ap_is_32, Aj_is_32, Ai_is_32) ;
         fprintf (fp, "#define GB_Ap_TYPE uint%d_t\n", Ap_is_32 ? 32 : 64) ;
     }
     else

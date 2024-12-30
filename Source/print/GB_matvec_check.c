@@ -161,10 +161,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR0 (" (jumbled)") ;
     }
     GBPR0 (" %s", A->is_csc ? "by col" : "by row") ;
-    if (is_sparse || is_hyper)
+    if (is_sparse || is_hyper || GB_DEVELOPER)
     {
-        GBPR0 (", ints: %s/%s",
+        GBPR0 (", ints: %s/%s/%s",
             A->p_is_32 ? "32" : "64",
+            A->j_is_32 ? "32" : "64",
             A->i_is_32 ? "32" : "64") ;
     }
     GBPR0 ("\n") ;
@@ -285,9 +286,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (is_hyper || is_sparse)
     {
         #if GB_DEVELOPER
-        GBPR0 ("  p_hint: %d, i_hint: %d\n", A->p_control, A->i_control) ;
+        GBPR0 ("  p_hint: %d, j_hint: %d, i_hint: %d\n",
+            A->p_control, A->j_control, A->i_control) ;
         #endif
-        if (!GB_valid_pi_is_32 (A->p_is_32, A->i_is_32,
+        if (!GB_valid_pji_is_32 (A->p_is_32, A->j_is_32, A->i_is_32,
             A->nvals, A->vlen, A->vdim))
         {
             GBPR0 ("  matrix is too large for 32-bit integers\n") ;
@@ -398,6 +400,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #endif
 
     int64_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    int64_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     int64_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (A->p != NULL && (A->p_size < (A->plen + 1) * psize))
@@ -406,7 +409,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         return (GrB_INVALID_OBJECT) ;
     }
 
-    if (A->h != NULL && (A->h_size < (A->plen) * isize))
+    if (A->h != NULL && (A->h_size < (A->plen) * jsize))
     { 
         GBPR0 ("  A->h is too small!\n") ;
         return (GrB_INVALID_OBJECT) ;
@@ -794,8 +797,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // A has pending tuples
         //---------------------------------------------------------------------
 
-        GB_MDECL (Pending_i, , u) ; GB_GET_PENDING_PTR (Pending_i, A, i) ;
-        GB_MDECL (Pending_j, , u) ; GB_GET_PENDING_PTR (Pending_j, A, j) ;
+        GB_MDECL (Pending_i, , u) ; GB_GET_PENDINGi_PTR (Pending_i, A) ;
+        GB_MDECL (Pending_j, , u) ; GB_GET_PENDINGj_PTR (Pending_j, A) ;
         GB_void *Pending_x = Pending->x ;
 
         #if GB_DEVELOPER
@@ -934,13 +937,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             GBPR0 ("  hyper_hash invalid") ;
             return (info) ;
         }
-        GrB_Type ytype = (A->i_is_32) ? GrB_UINT32 : GrB_UINT64 ;
+        GrB_Type ytype = (A->j_is_32) ? GrB_UINT32 : GrB_UINT64 ;
         if (Y->vlen != A->vdim || !GB_IS_POWER_OF_TWO (Y->vdim) ||
             Y->nvals != A->nvec || !GB_IS_SPARSE (Y) || Y->type != ytype ||
             !Y->is_csc || GB_ANY_PENDING_WORK (Y) ||
-            Y->p_is_32 != A->i_is_32 || Y->i_is_32 != A->i_is_32)
+            Y->p_is_32 != A->j_is_32 || Y->i_is_32 != A->j_is_32)
         { 
-            // Y must be sparse, uint32/uint64 (depending on A->i_is_32), held
+            // Y must be sparse, uint32/uint64 (depending on A->j_is_32), held
             // by column, with A->nvec values, vector length the same as
             // A->vdim, and with a Y->vdim that is a power of 2. It cannot have
             // any pending work.

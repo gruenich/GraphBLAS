@@ -66,6 +66,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
 
     int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
+    int Aj_is_32 = (A->j_is_32) ? 1 : 0 ;
     int Ai_is_32 = (A->i_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
@@ -173,6 +174,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
 
     size_t apsize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t ajsize = Aj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t aisize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     int64_t Ap_len = 0 ;
@@ -184,7 +186,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     switch (sparsity)
     {
         case GxB_HYPERSPARSE : 
-            Ah_len = aisize * nvec ;
+            Ah_len = ajsize * nvec ;
             // fall through to the sparse case
         case GxB_SPARSE :
             Ap_len = apsize * (nvec+1) ;
@@ -328,9 +330,9 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // The typecode in GraphBLAS is in range 0 to 14 and requires just 4 bits.
     // In GrB v9.4.2 and earlier, an entire int32_t was written to the blob
     // holding the typecode.  GrB v10.0.0 adds 32/64 bit integers for A->p,
-    // A->h, and A->i, requiring two bits: A->p_is_32 and A->i_is_32.  These
-    // are held as two nibbles (a nibble is 4 bits) to handle future
-    // extensions.
+    // A->h, and A->i, requiring three bits: A->p_is_32, A->j_is_32, and
+    // A->i_is_32.  These are held as two nibbles (a nibble is 4 bits) to
+    // handle future extensions.
 
     // These 2 nibbles are implicitly zero in GrB v9.4.2 and earlier, since
     // only 64-bit integers are supported in that version.
@@ -352,9 +354,10 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 //  now in GrB v10.0.0:
     typecode &= 0xF ;
     uint32_t encoding =
-        GB_LSHIFT (Ap_is_32, 8) |     // bits 8 to 11: Ap_is_32 (3 bits unused)
-        GB_LSHIFT (Ai_is_32, 4) |     // bits 4 to 7:  Ai_is_32 (3 bits unused)
-        GB_LSHIFT (typecode, 0) ;     // bits 0 to 3:  typecode
+        GB_LSHIFT (Ap_is_32, 12) |  // bits 8 to 11: Ap_is_32 (3 bits unused)
+        GB_LSHIFT (Aj_is_32,  8) |  // bits 8 to 11: Aj_is_32 (3 bits unused)
+        GB_LSHIFT (Ai_is_32,  4) |  // bits 4 to 7:  Ai_is_32 (3 bits unused)
+        GB_LSHIFT (typecode,  0) ;  // bits 0 to 3:  typecode
     GB_BLOB_WRITE (encoding, uint32_t) ;
 
     GB_BLOB_WRITE (version, int32_t) ;

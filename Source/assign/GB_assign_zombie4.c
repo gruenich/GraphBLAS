@@ -86,7 +86,7 @@ GrB_Info GB_assign_zombie4
     const void *M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
     const void *M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const bool Mp_is_32 = M->p_is_32 ;
-    const bool Mi_is_32 = M->i_is_32 ;
+    const bool Mj_is_32 = M->j_is_32 ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
 
     //--------------------------------------------------------------------------
@@ -164,7 +164,7 @@ GrB_Info GB_assign_zombie4
                         if (M_is_hyper)
                         { 
                             // M is hypersparse
-                            GB_hyper_hash_lookup (Mp_is_32, Mi_is_32,
+                            GB_hyper_hash_lookup (Mp_is_32, Mj_is_32,
                                 Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,
                                 j, &pM, &pM_end) ;
                         }

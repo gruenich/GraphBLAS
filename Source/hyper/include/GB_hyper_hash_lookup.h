@@ -13,25 +13,25 @@
 #define GB_HYPER_HASH_LOOKUP_H
 
 #define GB_PTYPE uint32_t
-#define GB_ITYPE uint32_t
+#define GB_JTYPE uint32_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_32_32
 #define GB_binary_search_T     GB_binary_search_32
 #include "include/GB_hyper_hash_lookup_template.h"
 
 #define GB_PTYPE uint32_t
-#define GB_ITYPE uint64_t
+#define GB_JTYPE uint64_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_32_64
 #define GB_binary_search_T     GB_binary_search_64
 #include "include/GB_hyper_hash_lookup_template.h"
 
 #define GB_PTYPE uint64_t
-#define GB_ITYPE uint32_t
+#define GB_JTYPE uint32_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_64_32
 #define GB_binary_search_T     GB_binary_search_32
 #include "include/GB_hyper_hash_lookup_template.h"
 
 #define GB_PTYPE uint64_t
-#define GB_ITYPE uint64_t
+#define GB_JTYPE uint64_t
 #define GB_hyper_hash_lookup_T GB_hyper_hash_lookup_64_64
 #define GB_binary_search_T     GB_binary_search_64
 #include "include/GB_hyper_hash_lookup_template.h"
@@ -40,7 +40,7 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup // k if j==Ah[k]; -1 if not found
 (
     // inputs, not modified:
     const bool Ap_is_32,            // if true, Ap is 32-bit; else 64-bit
-    const bool Ai_is_32,            // if true, Ah, Y->[pix] are 32-bit; else 64
+    const bool Aj_is_32,            // if true, Ah, Y->[pix] are 32-bit; else 64
     const void *Ah,                 // A->h [0..A->nvec-1]: list of vectors
     const int64_t anvec,
     const void *Ap,                 // A->p [0..A->nvec]: pointers to vectors
@@ -56,7 +56,7 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup // k if j==Ah[k]; -1 if not found
 {
     if (Ap_is_32)
     {
-        if (Ai_is_32)
+        if (Aj_is_32)
         { 
             // Ap is 32-bit; Ah, A_Y[pix] are 32-bit
             return (GB_hyper_hash_lookup_32_32 ((uint32_t *) Ah, anvec,
@@ -73,7 +73,7 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup // k if j==Ah[k]; -1 if not found
     }
     else
     {
-        if (Ai_is_32)
+        if (Aj_is_32)
         { 
             // Ap is 64-bit; Ah, A_Y[pix] are 32-bit
             return (GB_hyper_hash_lookup_64_32 ((uint32_t *) Ah, anvec,

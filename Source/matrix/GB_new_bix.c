@@ -49,7 +49,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
     const bool A_iso,           // if true, allocate A as iso
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
-    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
+    bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
+    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 )
 {
 
@@ -60,7 +61,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     ASSERT (Ahandle != NULL) ;
 
     if ((!(sparsity == GxB_FULL || sparsity == GxB_BITMAP)) &&
-        !GB_valid_pi_is_32 (p_is_32, i_is_32, nzmax, vlen, vdim))
+        !GB_valid_pji_is_32 (p_is_32, j_is_32, i_is_32, nzmax, vlen, vdim))
     { 
         // sparse/hyper matrix is too large for its requested integer settings
         return (GrB_INVALID_VALUE) ;
@@ -72,7 +73,8 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
 
     bool preexisting_header = (*Ahandle != NULL) ;
     GrB_Info info = GB_new (Ahandle, type, vlen, vdim,
-        Ap_option, is_csc, sparsity, hyper_switch, plen, p_is_32, i_is_32) ;
+        Ap_option, is_csc, sparsity, hyper_switch, plen,
+        p_is_32, j_is_32, i_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory.

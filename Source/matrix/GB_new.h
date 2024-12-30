@@ -36,13 +36,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t vdim,         // number of vectors
     const GB_ph_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
-    const int sparsity,         // hyper, sparse, bitmap, full, or
-                                // auto (hyper + sparse)
-    const float hyper_switch,   // A->hyper_switch, ignored if auto
+    const int sparsity,         // hyper, sparse, bitmap, full, or auto
+    const float hyper_switch,   // A->hyper_switch
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
-    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
+    bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
+    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 ) ;
 
 GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
@@ -60,9 +60,10 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     const int64_t nzmax,        // number of nonzeros the matrix must hold;
                                 // ignored if A is iso and full
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const bool iso,             // if true, allocate A as iso
+    const bool A_iso,           // if true, allocate A as iso
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
-    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
+    bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
+    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 ) ;
 
 GrB_Info GB_ix_realloc      // reallocate space in a matrix

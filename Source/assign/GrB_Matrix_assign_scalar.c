@@ -199,7 +199,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
         int64_t vdim = is_csc ? nCols : nRows ;
         GB_OK (GB_new (&A,  // existing header
             scalar->type, vlen, vdim, GB_ph_calloc, is_csc, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false)) ;
+            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false)) ;
         info = GB_assign (
             C, C_replace,                   // C matrix and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor

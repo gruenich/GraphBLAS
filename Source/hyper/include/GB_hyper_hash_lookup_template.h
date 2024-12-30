@@ -15,12 +15,12 @@
 GB_STATIC_INLINE int64_t GB_hyper_hash_lookup_T // k if j==Ah[k]; -1 not found
 (
     // inputs, not modified:
-    const GB_ITYPE *restrict Ah,    // A->h [0..A->nvec-1]: list of vectors
+    const GB_JTYPE *restrict Ah,    // A->h [0..A->nvec-1]: list of vectors
     const int64_t anvec,
     const GB_PTYPE *restrict Ap,    // A->p [0..A->nvec]: pointers to vectors
-    const GB_ITYPE *restrict A_Yp,  // A->Y->p
-    const GB_ITYPE *restrict A_Yi,  // A->Y->i
-    const GB_ITYPE *restrict A_Yx,  // A->Y->x
+    const GB_JTYPE *restrict A_Yp,  // A->Y->p
+    const GB_JTYPE *restrict A_Yi,  // A->Y->i
+    const GB_JTYPE *restrict A_Yx,  // A->Y->x
     const uint64_t hash_bits,       // A->Y->vdim-1, which is hash table size-1
     const int64_t j,                // find j in Ah [0..anvec-1], using A->Y
     // outputs:
@@ -123,6 +123,6 @@ GB_STATIC_INLINE int64_t GB_hyper_hash_lookup_T // k if j==Ah[k]; -1 not found
 }
 
 #undef GB_PTYPE
-#undef GB_ITYPE
+#undef GB_JTYPE
 #undef GB_hyper_hash_lookup_T
 #undef GB_binary_search_T

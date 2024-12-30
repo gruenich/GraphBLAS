@@ -31,6 +31,7 @@ void GB_macrofy_input
     int azombies,           // 1 if A has zombies, 0 if A has no zombies;
                             // -1 if the macro should not be created.
     int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int j_is_32,            // if true, Ah is 32-bit, else 64-bit
     int i_is_32             // if true, Ai is 32-bit, else 64-bit
 )
 {
@@ -151,6 +152,6 @@ void GB_macrofy_input
     // construct macros for 32/64 integer types
     //--------------------------------------------------------------------------
 
-    GB_macrofy_bits (fp, Aname, p_is_32, i_is_32) ;
+    GB_macrofy_bits (fp, Aname, p_is_32, j_is_32, i_is_32) ;
 }
 

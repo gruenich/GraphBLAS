@@ -33,7 +33,8 @@ GrB_Info GB_unjumble_jit
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_KERNEL_UNJUMBLE, GxB_FULL, false, A->type, false, false, false,
-        op, false, GxB_SPARSE, true, A->type, A->p_is_32, A->i_is_32, false, 0);
+        op, false, GxB_SPARSE, true, A->type,
+        A->p_is_32, A->j_is_32, A->i_is_32, false, 0) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

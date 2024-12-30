@@ -482,14 +482,15 @@ int32_t x_memory_location ;
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
 
-// the remaining content of this struct is exactly 16 bytes of int8_t and bool
+// the remaining content of this struct is 18 bytes
 
-// 3 bytes:
+// 5 bytes:
 int8_t sparsity_control ;   // controls sparsity structure: hypersparse,
                             // sparse, bitmap, or full, or any combination.
-
-int8_t p_control ;      // controls 32/64 setting for A->p
-int8_t i_control ;      // controls 32/64 setting for A->[hi] and A->Y
+uint8_t p_control ;     // controls 32/64 settings for A->p
+uint8_t j_control ;     // controls 32/64 settings for A->h and A->Y->[pix]
+uint8_t i_control ;     // controls 32/64 settings for A->i
+bool no_hyper_hash ;    // if true, disable the Y hyper_hash matrix
 
 //------------------------------------------------------------------------------
 // shallow matrices
@@ -506,14 +507,13 @@ int8_t i_control ;      // controls 32/64 setting for A->[hi] and A->Y
 // object is a pointer into components of another object.  They must not
 // be freed when freeing this object.
 
-// 8 bytes
+// 7 bytes
 bool p_shallow ;        // true if p is a shallow copy
 bool h_shallow ;        // true if h is a shallow copy
 bool b_shallow ;        // true if b is a shallow copy
 bool i_shallow ;        // true if i is a shallow copy
 bool x_shallow ;        // true if x is a shallow copy
 bool Y_shallow ;        // true if Y is a shallow matrix
-bool no_hyper_hash ;    // if true, disable the Y hyper_hash matrix
 bool static_header ;    // true if this struct is statically allocated
 
 //------------------------------------------------------------------------------
@@ -554,12 +554,12 @@ bool iso ;              // true if all entries have the same value
 // integer sizes
 //------------------------------------------------------------------------------
 
-// A->h, A->p, and A->i can be either 32-bit or 64-bit integers.
-// A->h and A->i always have the same integer size.
+// A->p, A->h, and A->i can be either 32-bit or 64-bit integers.
 
-// 2 bytes:
-bool p_is_32 ;  // true if A->p is int32_t, false if int64_t
-bool i_is_32 ;  // true if A->h and A->i are int32_t, false if int64_t
+// 3 bytes:
+bool p_is_32 ;  // true if A->p is 32-bit, false if 64
+bool j_is_32 ;  // true if A->h and A->Y->[pix] are 32-bit, false if 64
+bool i_is_32 ;  // true if A->i is 32-bit, false if 64
 
 //------------------------------------------------------------------------------
 // iterating through a matrix

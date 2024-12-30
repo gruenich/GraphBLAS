@@ -36,7 +36,7 @@ GrB_Info GB_concat_full_jit      // concatenate A into a full matrix C
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_KERNEL_CONCAT_FULL, GxB_FULL, true, C->type, C->p_is_32,
         C->i_is_32, false, op, false, GB_sparsity (A), true, A->type,
-        A->p_is_32, A->i_is_32, A->iso, A->nzombies) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

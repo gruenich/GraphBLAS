@@ -28,14 +28,21 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // extract the ewise method_code
     //--------------------------------------------------------------------------
 
-    // C, M, A, B: 32/64 (2 hex digits)
-    bool Cp_is_32   = GB_RSHIFT (method_code, 55, 1) ;
-    bool Ci_is_32   = GB_RSHIFT (method_code, 54, 1) ;
-    bool Mp_is_32   = GB_RSHIFT (method_code, 53, 1) ;
-    bool Mi_is_32   = GB_RSHIFT (method_code, 52, 1) ;
-    bool Ap_is_32   = GB_RSHIFT (method_code, 51, 1) ;
-    bool Ai_is_32   = GB_RSHIFT (method_code, 50, 1) ;
-    bool Bp_is_32   = GB_RSHIFT (method_code, 49, 1) ;
+    // C, M, A, B: 32/64 (3 hex digits)
+    bool Cp_is_32   = GB_RSHIFT (method_code, 59, 1) ;
+    bool Cj_is_32   = GB_RSHIFT (method_code, 58, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 57, 1) ;
+
+    bool Mp_is_32   = GB_RSHIFT (method_code, 56, 1) ;
+    bool Mj_is_32   = GB_RSHIFT (method_code, 55, 1) ;
+    bool Mi_is_32   = GB_RSHIFT (method_code, 54, 1) ;
+
+    bool Ap_is_32   = GB_RSHIFT (method_code, 53, 1) ;
+    bool Aj_is_32   = GB_RSHIFT (method_code, 52, 1) ;
+    bool Ai_is_32   = GB_RSHIFT (method_code, 51, 1) ;
+
+    bool Bp_is_32   = GB_RSHIFT (method_code, 50, 1) ;
+    bool Bj_is_32   = GB_RSHIFT (method_code, 49, 1) ;
     bool Bi_is_32   = GB_RSHIFT (method_code, 48, 1) ;
 
     // C in, A, and B iso-valued (1 hex digit)
@@ -183,7 +190,7 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     //--------------------------------------------------------------------------
 
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
-        C_in_iso, Cp_is_32, Ci_is_32) ;
+        C_in_iso, Cp_is_32, Cj_is_32, Ci_is_32) ;
 
     if (is_kron)
     { 
@@ -224,7 +231,8 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
-    GB_macrofy_mask (fp, mask_ecode, "M", msparsity, Mp_is_32, Mi_is_32) ;
+    GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
+        Mp_is_32, Mj_is_32, Mi_is_32) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A and B
@@ -252,10 +260,10 @@ void GB_macrofy_ewise           // construct all macros for GrB_eWise
     }
 
     GB_macrofy_input (fp, "a", "A", "A", true, flipxy ? ytype : xtype,
-        atype, asparsity, acode, A_iso, -1, Ap_is_32, Ai_is_32) ;
+        atype, asparsity, acode, A_iso, -1, Ap_is_32, Aj_is_32, Ai_is_32) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true, flipxy ? xtype : ytype,
-        btype, bsparsity, bcode, B_iso, -1, Bp_is_32, Bi_is_32) ;
+        btype, bsparsity, bcode, B_iso, -1, Bp_is_32, Bj_is_32, Bi_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

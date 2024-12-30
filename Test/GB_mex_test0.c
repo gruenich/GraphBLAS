@@ -4209,7 +4209,7 @@ void mexFunction
     A_Pending = A->Pending ;
     CHECK (A_Pending != NULL) ;
     GB_MDECL (Pending_j, , u) ;
-    GB_GET_PENDING_PTR (Pending_j, A, j) ;
+    GB_GET_PENDINGj_PTR (Pending_j, A) ;
     CHECK (Pending_j != NULL) ;
     isave = GB_IGET (Pending_j, 0) ;
     GB_ISET (Pending_j, 0, 1070) ;

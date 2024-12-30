@@ -44,8 +44,6 @@ GrB_Info GB_assign_zombie1
     const void *Ch = C->h ;
     int64_t pC_start, pC_end ;
     const int64_t Cnvec = C->nvec ;
-    const bool Cp_is_32 = C->p_is_32 ;
-    const bool Ci_is_32 = C->i_is_32 ;
 
     if (Ch != NULL)
     { 
@@ -54,7 +52,7 @@ GrB_Info GB_assign_zombie1
         const void *C_Yi = (C->Y == NULL) ? NULL : C->Y->i ;
         const void *C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
         const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
-        GB_hyper_hash_lookup (Cp_is_32, Ci_is_32,
+        GB_hyper_hash_lookup (C->p_is_32, C->j_is_32,
             Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
             j, &pC_start, &pC_end) ;
     }

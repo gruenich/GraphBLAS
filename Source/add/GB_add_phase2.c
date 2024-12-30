@@ -77,6 +77,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
     const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit
+    const bool Cj_is_32,        // if true, Ch is 32-bit; else 64-bit
     const bool Ci_is_32,        // if true, Ci is 32-bit; else 64-bit
     const int C_sparsity,
     // original input:
@@ -266,7 +267,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Info info = GB_new_bix (&C, // any sparsity, existing header
         ctype, A->vlen, A->vdim, GB_ph_null, C_is_csc,
         C_sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Ci_is_32) ;
+        Cp_is_32, Cj_is_32, Ci_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B

@@ -162,6 +162,7 @@ GrB_Info GX_add_phase0          /* find vectors in C for C=A+B or C<M>=A+B*/\
     size_t *C_to_B_size_handle,          /* size of C_to_A in bytes */      \
     bool *p_Ch_is_Mh,           /* if true, then Ch == Mh */                \
     bool *p_Cp_is_32,           /* if true, Cp is 32-bit; else 64-bit */    \
+    bool *p_Cj_is_32,           /* if true, Ch is 32-bit; else 64-bit */    \
     bool *p_Ci_is_32,           /* if true, Ci is 32-bit; else 64-bit */    \
     int *C_sparsity,            /* sparsity structure of C */               \
     const GrB_Matrix M,         /* optional mask, may be NULL; not compl */ \
@@ -181,7 +182,7 @@ GrB_Info GX_ewise_slice                                                     \
     /* input: */                                                            \
     const int64_t Cnvec,            /* # of vectors of C */                 \
     const void *Ch,                 /* vectors of C, if hypersparse */      \
-    const bool Ci_is_32,            /* if true, Ch is 32-bit, else 64-bit */\
+    const bool Cj_is_32,            /* if true, Ch is 32-bit, else 64-bit */\
     const int64_t *restrict C_to_M, /* mapping of C to M */                 \
     const int64_t *restrict C_to_A, /* mapping of C to A */                 \
     const int64_t *restrict C_to_B, /* mapping of C to B */                 \
@@ -231,7 +232,7 @@ GrB_Info GX_subassign_08n_slice                                             \
     size_t *Z_to_A_size_handle,                                             \
     int64_t *restrict *Z_to_M_handle,    /* Z_to_M: size Znvec, or NULL */  \
     size_t *Z_to_M_size_handle,                                             \
-    bool *Zi_is_32_handle,                                                  \
+    bool *Zj_is_32_handle,                                                  \
     /* input: */                                                            \
     const GrB_Matrix C,         /* output matrix C */                       \
     const void *I,              /* I index list */                          \

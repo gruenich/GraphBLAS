@@ -39,8 +39,8 @@ GrB_Info GB_convert_s2b_jit    // convert sparse to bitmap
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_KERNEL_CONVERT_S2B, GxB_FULL, false, A->type, false, false,
-        false, op, false, GB_sparsity (A), true, A->type, A->p_is_32,
-        A->i_is_32, A->iso, A->nzombies) ;
+        false, op, false, GB_sparsity (A), true, A->type,
+        A->p_is_32, A->j_is_32, A->i_is_32, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

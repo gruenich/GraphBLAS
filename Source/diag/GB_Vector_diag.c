@@ -41,7 +41,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     ASSERT_MATRIX_OK (A, "A input for GB_Vector_diag", GB0) ;
     ASSERT_MATRIX_OK (V, "V input for GB_Vector_diag", GB0) ;
     ASSERT (GB_VECTOR_OK (V)) ;             // V is a vector on input
-    ASSERT (!GB_any_aliased (A, V)) ;           // A and V cannot be aliased
+    ASSERT (!GB_any_aliased (A, V)) ;       // A and V cannot be aliased
     ASSERT (!GB_IS_HYPERSPARSE (V)) ;       // vectors cannot be hypersparse
 
     struct GB_Matrix_opaque T_header ;
@@ -122,14 +122,12 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     int sparsity_control = V->sparsity_control ;
 
     bool Vp_is_32 = T->p_is_32 ;
-    bool Vi_is_32 = T->i_is_32 ;
+    bool Vj_is_32 = T->j_is_32 ;
+    bool Vi_is_32 = (k >= 0) ? T->i_is_32 : T->j_is_32 ;
 
     GB_OK (GB_new (&V, // existing header
         vtype, n, 1, GB_ph_malloc, true, GxB_SPARSE,
-        GxB_NEVER_HYPER, 1, Vp_is_32, Vi_is_32)) ;
-
-    ASSERT (Vp_is_32 == T->p_is_32) ;
-    ASSERT (Vi_is_32 == T->i_is_32) ;
+        GxB_NEVER_HYPER, 1, Vp_is_32, Vj_is_32, Vi_is_32)) ;
 
     V->sparsity_control = sparsity_control ;
     V->bitmap_switch = bitmap_switch ;
@@ -200,7 +198,7 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (V, "V before convert_int for GB_Vector_diag", GB0) ;
-    GB_OK (GB_convert_int (V, false, false, true)) ;      // FIXME
+    GB_OK (GB_convert_int (V, false, false, false, true)) ;      // FIXME
     ASSERT_MATRIX_OK (V, "V before conform for GB_Vector_diag", GB0) ;
     GB_OK (GB_conform (V, Werk)) ;
     ASSERT_MATRIX_OK (V, "V output for GB_Vector_diag", GB0) ;

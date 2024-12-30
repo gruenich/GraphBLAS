@@ -87,7 +87,7 @@ GrB_Info GB_split_bitmap            // split a bitmap matrix
             GB_OK (GB_new_bix (&C, // new header
                 atype, cvlen, cvdim, GB_ph_null, csc, GxB_BITMAP, false,
                 hyper_switch, 0, cnzmax, true, A_iso,
-                /* OK: */ false, false)) ;
+                /* OK: */ false, false, false)) ;
             int8_t *restrict Cb = C->b ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;

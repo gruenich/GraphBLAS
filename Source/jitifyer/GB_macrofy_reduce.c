@@ -95,10 +95,11 @@ void GB_macrofy_reduce      // construct all macros for GrB_reduce to scalar
     // to a scalar, even for user-defined types and monoids.
 
     bool Ap_is_32 = false ; // OK: may be 32-bit but A->p is not accessed
+    bool Aj_is_32 = false ; // OK: may be 32-bit but A->h is not accessed
 
     GB_macrofy_input (fp, "a", "A", "A", true, monoid->op->ztype,
         atype, asparsity, acode, /* A_iso: */ false, azombies,
-        Ap_is_32, Ai_is_32) ;
+        Ap_is_32, Aj_is_32, Ai_is_32) ;
 
     //--------------------------------------------------------------------------
     // reduction method

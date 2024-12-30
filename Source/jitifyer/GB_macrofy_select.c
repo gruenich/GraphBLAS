@@ -28,10 +28,13 @@ void GB_macrofy_select          // construct all macros for GrB_select
     // extract the select method_code
     //--------------------------------------------------------------------------
 
-    // C, A: 32/64 (1 hex digit)
-    bool Cp_is_32   = GB_RSHIFT (method_code, 31, 1) ;
-    bool Ci_is_32   = GB_RSHIFT (method_code, 30, 1) ;
-    bool Ap_is_32   = GB_RSHIFT (method_code, 29, 1) ;
+    // C, A: 32/64 (2 hex digits)
+    bool Cp_is_32   = GB_RSHIFT (method_code, 33, 1) ;
+    bool Cj_is_32   = GB_RSHIFT (method_code, 32, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 31, 1) ;
+
+    bool Ap_is_32   = GB_RSHIFT (method_code, 30, 1) ;
+    bool Aj_is_32   = GB_RSHIFT (method_code, 29, 1) ;
     bool Ai_is_32   = GB_RSHIFT (method_code, 28, 1) ;
 
     // op, z = f(x,i,j,y), flipij, and iso codes (5 hex digits)
@@ -233,14 +236,14 @@ void GB_macrofy_select          // construct all macros for GrB_select
 
     // C has the same type as A
     GB_macrofy_output (fp, "c", "C", "C", atype, atype,
-        csparsity, C_iso, C_iso, Cp_is_32, Ci_is_32) ;
+        csparsity, C_iso, C_iso, Cp_is_32, Cj_is_32, Ci_is_32) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A
     //--------------------------------------------------------------------------
 
     GB_macrofy_input (fp, "a", "A", "A", true, xtype,
-        atype, asparsity, acode, A_iso, -1, Ap_is_32, Ai_is_32) ;
+        atype, asparsity, acode, A_iso, -1, Ap_is_32, Aj_is_32, Ai_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

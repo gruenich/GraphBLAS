@@ -39,7 +39,8 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     const bool A_is_matrix,
     const GrB_Type atype,
     const bool Ap_is_32,        // if true, A->p is uint32_t, else uint64_t
-    const bool Ai_is_32,        // if true, A->[hi] are uint32_t, else uint64_t
+    const bool Aj_is_32,        // if true, A->h is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, A->i is uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 )
@@ -102,22 +103,23 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
     int ci_is_32 = (Ci_is_32) ? 1 : 0 ;
     int cj_is_32 = (Cj_is_32) ? 1 : 0 ;
     int ap_is_32 = (Ap_is_32) ? 1 : 0 ;
+    int aj_is_32 = (Aj_is_32) ? 1 : 0 ;
     int ai_is_32 = (Ai_is_32) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------
     // construct the apply method_code
     //--------------------------------------------------------------------------
 
-    // total method_code bits: 44 bits (11 hex digits)
+    // total method_code bits: 45 bits (12 hex digits)
 
     (*method_code) =
                                                // range        bits
-                // C and A properties (2 hex digits)
-                GB_LSHIFT (cp_is_32   , 43) |  // 0 or 1       1
-                GB_LSHIFT (ci_is_32   , 42) |  // 0 or 1       1
-                GB_LSHIFT (cj_is_32   , 41) |  // 0 or 1       1
-                GB_LSHIFT (ap_is_32   , 40) |  // 0 or 1       1
-
+                // C and A properties (3 hex digits)
+                GB_LSHIFT (cp_is_32   , 44) |  // 0 or 1       1
+                GB_LSHIFT (ci_is_32   , 43) |  // 0 or 1       1
+                GB_LSHIFT (cj_is_32   , 42) |  // 0 or 1       1
+                GB_LSHIFT (ap_is_32   , 41) |  // 0 or 1       1
+                GB_LSHIFT (aj_is_32   , 40) |  // 0 or 1       1
                 GB_LSHIFT (ai_is_32   , 39) |  // 0 or 1       1
                 GB_LSHIFT (A_mat      , 38) |  // 0 or 1       1
                 GB_LSHIFT (A_zombies  , 37) |  // 0 or 1       1

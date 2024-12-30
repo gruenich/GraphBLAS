@@ -1813,12 +1813,12 @@ GrB_Info GB_jitifyer_load2_worker
     {
         case GB_jit_apply_family  : 
             op1 = op ;
-            method_code_digits = 11 ;
+            method_code_digits = 12 ;
             break ;
 
         case GB_jit_assign_family : 
             op1 = op ;
-            method_code_digits = 15 ;
+            method_code_digits = 16 ;
             break ;
 
         case GB_jit_build_family  : 
@@ -1828,7 +1828,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_ewise_family  : 
             op1 = op ;
-            method_code_digits = 14 ;
+            method_code_digits = 15 ;
             break ;
 
         case GB_jit_mxm_family    : 
@@ -1845,7 +1845,7 @@ GrB_Info GB_jitifyer_load2_worker
 
         case GB_jit_select_family : 
             op1 = op ;
-            method_code_digits = 8 ;
+            method_code_digits = 9 ;
             break ;
 
         case GB_jit_user_type_family : 
@@ -1858,7 +1858,7 @@ GrB_Info GB_jitifyer_load2_worker
             break ;
 
         case GB_jit_masker_family  : 
-            method_code_digits = 7 ;
+            method_code_digits = 8 ;
             break ;
 
         case GB_jit_subref_family  : 
@@ -1866,7 +1866,7 @@ GrB_Info GB_jitifyer_load2_worker
             break ;
 
         case GB_jit_sort_family  : 
-            method_code_digits = 4 ;
+            method_code_digits = 5 ;
             break ;
 
         default: ;

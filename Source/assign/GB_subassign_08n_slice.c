@@ -51,7 +51,7 @@ GrB_Info GB_subassign_08n_slice
     size_t *Z_to_A_size_handle,
     int64_t *restrict *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
     size_t *Z_to_M_size_handle,
-    bool *Zi_is_32_handle,
+    bool *Zj_is_32_handle,
     // input:
     const GrB_Matrix C,         // output matrix C
     const void *I,              // I index list
@@ -122,6 +122,7 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     const int64_t Cvlen = C->vlen ;
     const bool C_is_hyper = (Ch != NULL) ;
     const bool Cp_is_32 = C->p_is_32 ;
+    const bool Cj_is_32 = C->j_is_32 ;
     const bool Ci_is_32 = C->i_is_32 ;
     GB_GET_C_HYPER_HASH ;
 
@@ -148,12 +149,12 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     int64_t Znvec ;
     GB_MDECL (Zh_shallow, const, u) ;
 
-    bool Zp_is_32, Zi_is_32 ;
+    bool Zp_is_32, Zj_is_32, Zi_is_32 ;
 
     int Z_sparsity = GxB_SPARSE ;
     GB_OK (GB_emult_08_phase0 (&Znvec, &Zh_shallow, &Zh_size, NULL, NULL,
         &Z_to_A, &Z_to_A_size, &Z_to_M, &Z_to_M_size,
-        &Zp_is_32, &Zi_is_32,
+        &Zp_is_32, &Zj_is_32, &Zi_is_32,
         &Z_sparsity, NULL, false, A, M, Werk)) ;
 
     // Z is still sparse or hypersparse, not bitmap or full
@@ -161,10 +162,10 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
 
     GB_OK (GB_ewise_slice (
         &TaskList, &TaskList_size, &ntasks, &nthreads,
-        Znvec, Zh_shallow, Zi_is_32, NULL, Z_to_A, Z_to_M, false,
+        Znvec, Zh_shallow, Zj_is_32, NULL, Z_to_A, Z_to_M, false,
         NULL, A, M, Werk)) ;
 
-    GB_IPTR (Zh_shallow, Zi_is_32) ;
+    GB_IPTR (Zh_shallow, Zj_is_32) ;
 
     //--------------------------------------------------------------------------
     // slice C(:,jC) for each fine task
@@ -326,7 +327,7 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
     (*Zh_handle    ) = Zh_shallow ;
     (*Z_to_A_handle) = Z_to_A ; (*Z_to_A_size_handle) = Z_to_A_size ;
     (*Z_to_M_handle) = Z_to_M ; (*Z_to_M_size_handle) = Z_to_M_size ;
-    (*Zi_is_32_handle) = Zi_is_32 ;
+    (*Zj_is_32_handle) = Zj_is_32 ;
 
     return (GrB_SUCCESS) ;
 }

@@ -44,7 +44,7 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
     const int64_t *restrict R_to_C,
     const int64_t *restrict R_to_Z,
     const bool Rp_is_32,
-    const bool Ri_is_32,
+    const bool Rj_is_32,
     // original input:
     const GrB_Matrix M,             // required mask
     const bool Mask_comp,           // if true, then M is complemented
@@ -111,20 +111,9 @@ GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
         R_ntasks,                   // # of tasks
         R_nthreads,                 // # of threads to use
         // analysis from phase0:
-        Rnvec,
-        Rh,
-        R_to_M,
-        R_to_C,
-        R_to_Z,
-        Rp_is_32,
-        Ri_is_32,
+        Rnvec, Rh, R_to_M, R_to_C, R_to_Z, Rp_is_32, Rj_is_32,
         // original input:
-        M,                  // required mask
-        Mask_comp,          // if true, then M is complemented
-        Mask_struct,        // if true, use the only structure of M
-        C,
-        Z
-    ) ;
+        M, Mask_comp, Mask_struct, C, Z) ;
 
     if (info == GrB_NO_VALUE)
     { 

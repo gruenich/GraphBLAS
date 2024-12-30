@@ -255,7 +255,7 @@ GrB_Info GB_resize              // change the size of a matrix
             // 0...vdim_new-1.
             int64_t pleft = 0 ;
             int64_t pright = GB_IMIN (A->nvec, vdim_new) - 1 ;
-            GB_split_binary_search (vdim_new, A->h, A->i_is_32,
+            GB_split_binary_search (vdim_new, A->h, A->j_is_32,
                 &pleft, &pright) ;
             A->nvec = pleft ;
             A->nvals = GB_IGET (Ap, A->nvec) ;
@@ -308,18 +308,23 @@ GrB_Info GB_resize              // change the size of a matrix
 
         bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
         int8_t p_control = hack32 ? 32 : Werk->p_control ;
+        int8_t j_control = hack32 ? 64 : Werk->j_control ;
         int8_t i_control = hack32 ? 32 : Werk->i_control ;
-        bool Ap_is_32_new, Ai_is_32_new ;
-        GB_determine_pi_is_32 (&Ap_is_32_new, &Ai_is_32_new, p_control,
-            i_control, GB_sparsity (A), A->nvals, A->vlen, A->vdim) ;
+        bool Ap_is_32_new, Aj_is_32_new, Ai_is_32_new ;
+        GB_determine_pji_is_32 (&Ap_is_32_new, &Aj_is_32_new, &Ai_is_32_new,
+            p_control, j_control, i_control,
+            GB_sparsity (A), A->nvals, A->vlen, A->vdim) ;
 
-        if (Ap_is_32_new != A->p_is_32 || Ai_is_32_new != A->i_is_32)
+        if (Ap_is_32_new != A->p_is_32 ||
+            Aj_is_32_new != A->j_is_32 ||
+            Ai_is_32_new != A->i_is_32)
         {
             // The matrix integers need to change.  Do not validate the input
             // matrix or the new settings since the existing dimensions may not
             // be suitable with the existing integer sizes.  They will be valid
             // once the integer conversion is done.
-            GB_OK (GB_convert_int (A, Ap_is_32_new, Ai_is_32_new, false)) ;
+            GB_OK (GB_convert_int (A, Ap_is_32_new, Aj_is_32_new, Ai_is_32_new,
+                false)) ;
         }
 
         // The matrix and its integer sizes should now be valid.
@@ -331,7 +336,7 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "A before convert_int", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, true)) ;   // FIXME
+    GB_OK (GB_convert_int (A, false, false, false, true)) ;   // FIXME
     ASSERT_MATRIX_OK (A, "A after convert_int", GB0) ;
     GB_OK (GB_conform (A, Werk)) ;
     ASSERT_MATRIX_OK (A, "A final resized", GB0) ;

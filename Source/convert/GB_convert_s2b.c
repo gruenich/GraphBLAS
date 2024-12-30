@@ -286,6 +286,7 @@ GrB_Info GB_convert_s2b    // convert sparse/hypersparse to bitmap
     A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
 
     A->p_is_32 = false ;    // OK: bitmap always has p_is_32 = false
+    A->j_is_32 = false ;    // OK: bitmap always has j_is_32 = false
     A->i_is_32 = false ;    // OK: bitmap always has i_is_32 = false
 
     A->magic = GB_MAGIC ;

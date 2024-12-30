@@ -185,7 +185,7 @@ GrB_Info GxB_Vector_subassign_Scalar   // w<Mask>(I) = accum (w(I),s)
         GB_CLEAR_STATIC_HEADER (A, &A_header) ;
         GB_OK (GB_new (&A,  // existing header
             scalar->type, nRows, 1, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false)) ;
+            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false)) ;
         info = GB_subassign (
             (GrB_Matrix) w, C_replace,      // w vector and its descriptor
             M, Mask_comp, Mask_struct,      // mask matrix and its descriptor

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 matrix get/set
+// FIXME: 32/64 matrix get/set
 
 #include "get_set/GB_get_set.h"
 #include "transpose/GB_transpose.h"
@@ -85,6 +85,11 @@ GrB_Info GB_matvec_set
             }
             break ;
 
+//      case GxB_COLINDEX_INTEGER_HINT : // FIXME
+//      case GxB_ROWINDEX_INTEGER_HINT : // FIXME
+//      case GxB_COLINDEX_INTEGER_BITS : // FIXME
+//      case GxB_ROWINDEX_INTEGER_BITS : // FIXME
+
         case GxB_OFFSET_INTEGER_HINT : 
 
             if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
@@ -94,12 +99,12 @@ GrB_Info GB_matvec_set
             if (ivalue == 32 && !A->p_is_32)
             { 
                 // A->p is currently 64-bit; convert to 32-bit if possible
-                GB_OK (GB_convert_int (A, true, A->i_is_32, true)) ;
+                GB_OK (GB_convert_int (A, true, A->j_is_32, A->i_is_32, true)) ;
             }
             else if (ivalue == 64 && A->i_is_32)
             { 
                 // A->p is currently 32-bit; convert to 64-bit
-                GB_OK (GB_convert_int (A, false, A->i_is_32, true)) ;
+                GB_OK (GB_convert_int (A, false, A->j_is_32, A->i_is_32, true)) ;
             }
             A->p_control = ivalue ;
             break ;
@@ -113,12 +118,12 @@ GrB_Info GB_matvec_set
             if (ivalue == 32 && !A->i_is_32)
             { 
                 // A->i is currently 64-bit; convert to 32-bit if possible
-                GB_OK (GB_convert_int (A, A->p_is_32, true, true)) ;
+                GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, true, true)) ;
             }
             else if (ivalue == 64 && A->i_is_32)
             { 
                 // A->i is currently 32-bit; convert to 64-bit
-                GB_OK (GB_convert_int (A, A->p_is_32, false, true)) ;
+                GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, false, true)) ;
             }
             A->i_control = ivalue ;
             break ;

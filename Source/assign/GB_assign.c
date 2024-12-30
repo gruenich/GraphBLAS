@@ -399,7 +399,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C_in, "C before convert int", GB0) ;
-    GB_OK (GB_convert_int (C_in, false, false, true)) ; // FIXME
+    GB_OK (GB_convert_int (C_in, false, false, false, true)) ; // FIXME
     ASSERT_MATRIX_OK (C_in, "C to conform", GB0) ;
     GB_OK (GB_conform (C_in, Werk)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for assign", GB0) ;

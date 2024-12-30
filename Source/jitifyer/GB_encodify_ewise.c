@@ -25,6 +25,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const int C_sparsity,
     const GrB_Type ctype,
     const bool Cp_is_32,
+    const bool Cj_is_32,
     const bool Ci_is_32,
     // M matrix:
     const GrB_Matrix M,
@@ -62,7 +63,8 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
 
     encoding->kcode = kcode ;
     GB_enumify_ewise (&encoding->code, is_eWiseMult, is_eWiseUnion, is_kron,
-        is_eWiseAdd, C_iso, C_in_iso, C_sparsity, ctype, Cp_is_32, Ci_is_32,
+        is_eWiseAdd, C_iso, C_in_iso, C_sparsity, ctype,
+        Cp_is_32, Cj_is_32, Ci_is_32,
         M, Mask_struct, Mask_comp, binaryop, flipij, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------

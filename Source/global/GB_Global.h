@@ -132,6 +132,8 @@ void  *  GB_Global_free_function_get (void) ;
 
 void     GB_Global_p_control_set (int8_t p_control) ;
 int8_t   GB_Global_p_control_get (void) ;
+void     GB_Global_j_control_set (int8_t j_control) ;
+int8_t   GB_Global_j_control_get (void) ;
 void     GB_Global_i_control_set (int8_t i_control) ;
 int8_t   GB_Global_i_control_get (void) ;
 #endif

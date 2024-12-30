@@ -7,11 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, but with some cleanup needed
+// DONE: 32/64 bit
 
 // Constructs a triplet or CSC/CSR form (in Cp, Ci, Cj, and Cx_new) from the
 // bitmap input matrix A.  If A is iso or Cx_new is NULL then no values are
 // extracted.  The iso case is handled by the caller.
+
+// FIXME: make a separate function for constructing triplets
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -147,7 +149,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
         // cumulative sum to compute nnz(A(:,j)) for each vector j
         //----------------------------------------------------------------------
 
-        // FIXME: use a factory template
+        // FIXME: use a factory template here
 
         int64_t j ;
         if (Cp_is_32)
@@ -163,7 +165,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
                     Wtask32 [j] = ajnz ;
                     ajnz += c ;
                 }
-                Cp32 [j] = ajnz ;   // FIXME
+                Cp32 [j] = ajnz ;
             }
         }
         else
@@ -179,7 +181,7 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
                     Wtask64 [j] = ajnz ;
                     ajnz += c ;
                 }
-                Cp64 [j] = ajnz ;   // FIXME
+                Cp64 [j] = ajnz ;
             }
         }
     }

@@ -30,7 +30,7 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     const int64_t *restrict R_to_C,
     const int64_t *restrict R_to_Z,
     const bool Rp_is_32,            // if true, Rp is 32-bit; else 64-bit
-    const bool Ri_is_32,            // if true, Rh is 32-bit; else 64-bit
+    const bool Rj_is_32,            // if true, Rh is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // required mask
     const bool Mask_comp,           // if true, then M is complemented
@@ -47,7 +47,7 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_masker (&encoding, &suffix,
-        GB_JIT_KERNEL_MASKER_PHASE1, NULL, Rp_is_32, Ri_is_32,
+        GB_JIT_KERNEL_MASKER_PHASE1, NULL, Rp_is_32, Rj_is_32, false,
         M, Mask_struct, Mask_comp, C, Z) ;
 
     //--------------------------------------------------------------------------

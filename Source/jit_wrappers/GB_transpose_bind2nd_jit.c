@@ -37,7 +37,8 @@ GrB_Info GB_transpose_bind2nd_jit
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_KERNEL_TRANSBIND2, false,
-        false, false, GB_sparsity (C), C->type, C->p_is_32, C->i_is_32,
+        false, false, GB_sparsity (C), C->type,
+        C->p_is_32, C->j_is_32, C->i_is_32,
         NULL, false, false, binaryop, false, false, A, NULL) ;
 
     //--------------------------------------------------------------------------

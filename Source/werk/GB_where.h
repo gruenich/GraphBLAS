@@ -26,9 +26,10 @@ static inline GB_Werk GB_Werk_init (GB_Werk Werk, const char *where_string)
     // initialize the Werk stack
     Werk->pwerk = 0 ;
 
-    // get the global integer control; revised with C->[pi]_control by
+    // get the global integer control; revised with C->[pji]_control by
     // GB_WHERE_C_LOGGER (C).
     Werk->p_control = GB_Global_p_control_get ( ) ;
+    Werk->j_control = GB_Global_j_control_get ( ) ;
     Werk->i_control = GB_Global_i_control_get ( ) ;
 
     // return result
@@ -189,9 +190,10 @@ static inline GrB_Info GB_valid1
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
         Werk->logger_size_handle = &(C->logger_size) ;              \
-        /* combine the matrix and global pi_control */              \
-        Werk->p_control = GB_pi_control (C->p_control, Werk->p_control) ; \
-        Werk->i_control = GB_pi_control (C->i_control, Werk->i_control) ; \
+        /* combine the matrix and global pji_control */             \
+        Werk->p_control = GB_pji_control (C->p_control, Werk->p_control) ; \
+        Werk->j_control = GB_pji_control (C->j_control, Werk->j_control) ; \
+        Werk->i_control = GB_pji_control (C->i_control, Werk->i_control) ; \
     }
 
 // GB_WHEREn: check n arguments, first one is input/output matrix C for logger

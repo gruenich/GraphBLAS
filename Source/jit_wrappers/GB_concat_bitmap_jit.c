@@ -34,9 +34,10 @@ GrB_Info GB_concat_bitmap_jit      // concatenate A into a bitmap matrix C
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_CONCAT_BITMAP, GxB_BITMAP, true, C->type, C->p_is_32,
-        C->i_is_32, false, op, false, GB_sparsity (A), true, A->type,
-        A->p_is_32, A->i_is_32, A->iso, A->nzombies) ;
+        GB_JIT_KERNEL_CONCAT_BITMAP, GxB_BITMAP, true, C->type,
+        /* C is bitmap, is_32 is false: */ false, false, false,
+        op, false, GB_sparsity (A), true, A->type,
+        A->p_is_32, A->j_is_32, A->i_is_32, A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

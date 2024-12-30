@@ -61,6 +61,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     bool I_is_32,       // true if I (I_work or I_input) is 32 bit, false if 64
     bool J_is_32,       // true if J (J_work or J_input) is 32 bit, false if 64
     bool Tp_is_32,      // true if T->p is built as 32 bit, false if 64
+    bool Tj_is_32,      // true if T->h is built as 32 bit, false if 64
     bool Ti_is_32       // true if T->i is built as 32 bit, false if 64
 ) ;
 

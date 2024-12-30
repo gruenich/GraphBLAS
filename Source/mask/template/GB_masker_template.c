@@ -87,10 +87,10 @@
         // phase 1
         #ifdef GB_JIT_KERNEL
               GB_Rp_TYPE *Rp = (      GB_Rp_TYPE *) Rp_parameter ;
-        const GB_Ri_TYPE *Rh = (const GB_Ri_TYPE *) Rh_parameter ;
+        const GB_Rj_TYPE *Rh = (const GB_Rj_TYPE *) Rh_parameter ;
         #else
         GB_IDECL (Rp,      , u) ; GB_IPTR (Rp, Rp_is_32) ;  // OK
-        GB_IDECL (Rh, const, u) ; GB_IPTR (Rh, Ri_is_32) ;  // OK
+        GB_IDECL (Rh, const, u) ; GB_IPTR (Rh, Rj_is_32) ;  // OK
         #endif
 
     #endif

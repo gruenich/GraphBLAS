@@ -53,8 +53,10 @@ bool GB_mx_isequal     // true if A and B are exactly the same
     }
 
     if (A->p_is_32 != B->p_is_32) return (false) ;
+    if (A->j_is_32 != B->j_is_32) return (false) ;
     if (A->i_is_32 != B->i_is_32) return (false) ;
     size_t psize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     int64_t n = A->nvec ;
@@ -76,7 +78,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
         }
         if (A->h != NULL)
         {
-            if (!GB_mx_same ((char *) A->h, (char *) B->h, n * isize))
+            if (!GB_mx_same ((char *) A->h, (char *) B->h, n * jsize))
                 return (false) ;
         }
     }
@@ -141,7 +143,7 @@ bool GB_mx_isequal     // true if A and B are exactly the same
             return (false) ;
         }
         if (!GB_mx_same ((char *) A_Pending->j, (char *) B_Pending->j,
-            np*isize))
+            np*jsize))
         {
             return (false) ;
         }

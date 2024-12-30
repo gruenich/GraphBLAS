@@ -18,10 +18,12 @@ void GB_macrofy_bits
     // input:
     const char *Aname,      // name of the matrix
     int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int j_is_32,            // if true, Ah is 32-bit, else 64-bit
     int i_is_32             // if true, Ai is 32-bit, else 64-bit
 )
 {
     fprintf (fp, "#define GB_%sp_BITS %d\n", Aname, p_is_32 ? 32 : 64) ;
+    fprintf (fp, "#define GB_%sj_BITS %d\n", Aname, j_is_32 ? 32 : 64) ;
     fprintf (fp, "#define GB_%si_BITS %d\n", Aname, i_is_32 ? 32 : 64) ;
 }
 

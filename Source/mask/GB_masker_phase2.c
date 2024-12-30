@@ -65,6 +65,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     const int64_t *restrict R_to_C,
     const int64_t *restrict R_to_Z,
     const bool Rp_is_32,
+    const bool Rj_is_32,
     const bool Ri_is_32,
     const int R_sparsity,
     // original input:
@@ -155,7 +156,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     GrB_Info info = GB_new_bix (&R, // any sparsity, existing header
         C->type, C->vlen, C->vdim, GB_ph_null, R_is_csc,
         R_sparsity, true, C->hyper_switch, Rnvec, rnz, true, R_iso,
-        Rp_is_32, Ri_is_32) ;
+        Rp_is_32, Rj_is_32, Ri_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
@@ -165,6 +166,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     }
 
     ASSERT (R->p_is_32 == Rp_is_32) ;
+    ASSERT (R->j_is_32 == Rj_is_32) ;
     ASSERT (R->i_is_32 == Ri_is_32) ;
 
     // add Rp as the vector pointers for R, from GB_masker_phase1

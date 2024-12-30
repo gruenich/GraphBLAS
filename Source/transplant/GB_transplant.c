@@ -20,8 +20,6 @@
 // C->user_name, C->user_name_size, C->p_control, and C->i_control are not
 // modified by the transplant.
 
-// C->p_is_32 and/or C->i_is_32 may be revised, if their controls are strict.
-
 #define GB_FREE_ALL                 \
 {                                   \
     GB_phybix_free (C) ;            \
@@ -117,10 +115,13 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     bool p_is_32 = (C_is_full || C_is_bitmap) ? false : A->p_is_32 ;
+    bool j_is_32 = (C_is_full || C_is_bitmap) ? false : A->j_is_32 ;
     bool i_is_32 = (C_is_full || C_is_bitmap) ? false : A->i_is_32 ;
     size_t psize = p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     C->p_is_32 = p_is_32 ;
+    C->j_is_32 = j_is_32 ;
     C->i_is_32 = i_is_32 ;
 
     //--------------------------------------------------------------------------
@@ -271,7 +272,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             C->plen = GB_IMAX (1, anvec) ;
             C->nvec = anvec ;
             C->p = GB_MALLOC_MEMORY (C->plen+1, psize, &(C->p_size)) ;
-            C->h = GB_MALLOC_MEMORY (C->plen  , isize, &(C->h_size)) ;
+            C->h = GB_MALLOC_MEMORY (C->plen  , jsize, &(C->h_size)) ;
             if (C->p == NULL || C->h == NULL)
             { 
                 // out of memory
@@ -281,7 +282,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
             // copy A->p and A->h into the newly created C->p and C->h
             GB_memcpy (C->p, A->p, (anvec+1) * psize, nth) ;
-            GB_memcpy (C->h, A->h,  anvec    * isize, nth) ;
+            GB_memcpy (C->h, A->h,  anvec    * jsize, nth) ;
         }
         else
         {

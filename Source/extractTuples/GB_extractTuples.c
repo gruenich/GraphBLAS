@@ -20,6 +20,8 @@
 
 // If A is iso and X is not NULL, the iso scalar Ax [0] is expanded into X.
 
+// FIXME: pass in parameters I_offset and J_offset to add to I and J
+
 #include "GB.h"
 #include "extractTuples/GB_extractTuples.h"
 
@@ -31,12 +33,13 @@
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
     void *I_out,                // array for returning row indices of tuples
+    bool I_is_32_out,           // if true, I is 32-bit; else 64 bit
     void *J_out,                // array for returning col indices of tuples
+    bool J_is_32_out,           // if true, J is 32-bit; else 64 bit
     void *X,                    // array for returning values of tuples
     uint64_t *p_nvals,          // I,J,X size on input; # tuples on output
     const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
-    bool is_32,                 // if true, I and J are 32-bit; else 64-bit
     GB_Werk Werk
 )
 {
@@ -89,15 +92,20 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     void *I, *J ;
+    bool I_is_32, J_is_32 ;
     if (A->is_csc)
     { 
         I = I_out ;
         J = J_out ;
+        I_is_32 = I_is_32_out ;
+        J_is_32 = J_is_32_out ;
     }
     else
     { 
         I = J_out ;
         J = I_out ;
+        I_is_32 = J_is_32_out ;
+        J_is_32 = I_is_32_out ;
     }
 
     //--------------------------------------------------------------------------
@@ -128,8 +136,12 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // Extract the pattern and the values, typecasting if needed.  If A is
         // iso or X is NULL, GB_convert_b2s only does the symbolic work.
 
+        // FIXME: either extract the tuples directly from the bitmap, without
+        // the need for Cp, or revise GB_convert_b2s to take in offsets
+        // to add to I and J.
+
         GB_OK (GB_convert_b2s (Cp, I, J, (GB_void *) X, NULL,
-            Cp_is_32, is_32, is_32, xtype, A, Werk)) ;
+            Cp_is_32, I_is_32, J_is_32, xtype, A, Werk)) ;
 
         if (A->iso && X != NULL)
         { 
@@ -155,7 +167,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (I != NULL)
         {
-            GB_IDECL (I, , u) ; GB_IPTR (I, is_32) ;
+            GB_IDECL (I, , u) ; GB_IPTR (I, I_is_32) ;
             if (A->i == NULL)
             {
                 // A is full; construct the row indices
@@ -173,7 +185,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             { 
                 // A is sparse or hypersparse; copy/cast A->i into I
                 GB_cast_int (
-                    I,         is_32 ? GB_UINT32_code : GB_UINT64_code,
+                    I,       I_is_32 ? GB_UINT32_code : GB_UINT64_code,
                     A->i, A->i_is_32 ? GB_UINT32_code : GB_UINT64_code,
                     anz, nthreads_max) ;
             }
@@ -185,7 +197,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (J != NULL)
         {
-            GB_OK (GB_extract_vector_list (J, is_32, A, Werk)) ;
+            // FIXME: revise GB_extract_vector_list
+            GB_OK (GB_extract_vector_list (J, J_is_32, A, Werk)) ;
         }
 
         //----------------------------------------------------------------------
@@ -219,7 +232,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result 
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
     *p_nvals = anz ;            // number of tuples extracted

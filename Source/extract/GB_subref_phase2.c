@@ -129,15 +129,16 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     // allocate the final result Cp
     //--------------------------------------------------------------------------
 
-    // determine the final p_is_32 setting for the new matrix
+    // determine the final p_is_32 setting for the new matrix;
+    // j_is_32 and i_is_32 have already been determined by GB_subref_phase0
     bool hack32 = true ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
-    bool Cp_is_32 = false ;
-    bool Ci_is_32 = false ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     ASSERT (p_Cp_is_32 != NULL) ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
-        GxB_AUTO_SPARSITY, cnz, nI, nJ) ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control, GxB_AUTO_SPARSITY, cnz, nI, nJ) ;
 
     void *Cp = NULL ; size_t Cp_size = 0 ;
 

@@ -273,14 +273,14 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
 
         // FIXME: if anz >= UINT32_MAX, set A->p_is_32 false
-        // FIXME: pass in requested p_is_32 and i_is_32, for testing.
+        // FIXME: pass in requested p_is_32, j_is_32, and i_is_32, for testing.
         // FIXME: use GB_new_bix here instead
 
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
-            /* FIXME: */ false, false) ;
+            /* FIXME: */ false, false, false) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -317,7 +317,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
-            /* must be false (MATLAB matrices are 64/64 bit): */ false, false) ;
+            /* must be false (MATLAB matrices are 64/64 bit): */
+            false, false, false) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;

@@ -32,8 +32,11 @@ GrB_Info GB_iso_expand_jit  // expand an iso scalar into an entire array
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
-        GB_JIT_KERNEL_ISO_EXPAND, GxB_FULL, false, xtype, false, false, false,
-        op, false, GxB_FULL, false, xtype, false, false, true, 0) ;
+        GB_JIT_KERNEL_ISO_EXPAND, /* C sparsity: */ GxB_FULL, false, xtype,
+        /* C is_32: */ false, false, false,
+        op, /* flipij: */ false, /* A sparsity: */ GxB_FULL, false, xtype,
+        /* A is_32: */ false, false, false, /* A_iso: */ true,
+        /* nzombies: */ 0) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

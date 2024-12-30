@@ -170,9 +170,11 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 
     GB_OK (GB_new (&C, // sparse or hyper (same as B), existing header
         ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, B->hyper_switch, nvec, B->p_is_32, B->i_is_32)) ;
+        C_sparsity, B->hyper_switch, nvec,
+        B->p_is_32, B->j_is_32, B->i_is_32)) ;
 
     ASSERT (C->p_is_32 == B->p_is_32) ;
+    ASSERT (C->j_is_32 == B->j_is_32) ;
     ASSERT (C->i_is_32 == B->i_is_32) ;
 
     //--------------------------------------------------------------------------

@@ -238,7 +238,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             void *C_Yx = (C->Y == NULL) ? NULL : C->Y->x ;
             const int64_t C_hash_bits = (C->Y == NULL) ? 0 : (C->Y->vdim - 1) ;
             const int64_t cnvec = C->nvec ;
-            int64_t k = GB_hyper_hash_lookup (C->p_is_32, C->i_is_32,
+            int64_t k = GB_hyper_hash_lookup (C->p_is_32, C->j_is_32,
                 C->h, cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,
                 j, &pC_start, &pC_end) ;
             found = (k >= 0) ;

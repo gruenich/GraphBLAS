@@ -122,6 +122,9 @@
 #ifndef GB_Cp_IS_32
 #define GB_Cp_IS_32 Cp_is_32
 #endif
+#ifndef GB_Cj_IS_32
+#define GB_Cj_IS_32 Cj_is_32
+#endif
 #ifndef GB_Ci_IS_32
 #define GB_Ci_IS_32 Ci_is_32
 #endif
@@ -140,6 +143,9 @@
 #endif
 #ifndef GB_Mp_IS_32
 #define GB_Mp_IS_32 Mp_is_32
+#endif
+#ifndef GB_Mj_IS_32
+#define GB_Mj_IS_32 Mj_is_32
 #endif
 #ifndef GB_Mi_IS_32
 #define GB_Mi_IS_32 Mi_is_32
@@ -163,6 +169,9 @@
 #ifndef GB_Ap_IS_32
 #define GB_Ap_IS_32 Ap_is_32
 #endif
+#ifndef GB_Aj_IS_32
+#define GB_Aj_IS_32 Aj_is_32
+#endif
 #ifndef GB_Ai_IS_32
 #define GB_Ai_IS_32 Ai_is_32
 #endif
@@ -181,6 +190,9 @@
 #endif
 #ifndef GB_Sp_IS_32
 #define GB_Sp_IS_32 Sp_is_32
+#endif
+#ifndef GB_Sj_IS_32
+#define GB_Sj_IS_32 Sj_is_32
 #endif
 #ifndef GB_Si_IS_32
 #define GB_Si_IS_32 Si_is_32
@@ -223,6 +235,7 @@
     void *Ch = C->h ;                                                       \
     const int64_t Cnvec = C->nvec ;                                         \
     const bool Cp_is_32 = C->p_is_32 ;                                      \
+    const bool Cj_is_32 = C->j_is_32 ;                                      \
     const bool Ci_is_32 = C->i_is_32 ;                                      \
     const bool C_is_hyper = (Ch != NULL) ;                                  \
     GB_C_TYPE *restrict Cx = (GB_C_ISO) ? NULL : (GB_C_TYPE *) C->x ;       \
@@ -255,6 +268,7 @@
     GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;                         \
     GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;                         \
     const bool Mp_is_32 = M->p_is_32 ;                                      \
+    const bool Mj_is_32 = M->j_is_32 ;                                      \
     const bool Mi_is_32 = M->i_is_32 ;                                      \
     const int8_t *Mb = M->b ;                                               \
     const GB_M_TYPE *Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;  \
@@ -319,6 +333,7 @@
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;                         \
     const void *Ah = A->h ;                                                 \
     const bool Ap_is_32 = A->p_is_32 ;                                      \
+    const bool Aj_is_32 = A->j_is_32 ;                                      \
     const bool Ai_is_32 = A->i_is_32 ;                                      \
     const int8_t *Ab = A->b ;                                               \
     const int64_t Avlen = A->vlen ;                                         \
@@ -411,6 +426,7 @@
     GB_Sh_DECLARE (Sh, const) ; GB_Sh_PTR (Sh, S) ;                         \
     GB_Si_DECLARE (Si, const) ; GB_Si_PTR (Si, S) ;                         \
     const bool Sp_is_32 = S->p_is_32 ;                                      \
+    const bool Sj_is_32 = S->j_is_32 ;                                      \
     const bool Si_is_32 = S->i_is_32 ;                                      \
     ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;               \
     GB_GET_SX ;                                                             \
@@ -1318,15 +1334,15 @@
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     int Z_sparsity = GxB_SPARSE ;                                           \
     int64_t Znvec ;                                                         \
-    bool Zp_is_32, Zi_is_32 ;                                               \
+    bool Zp_is_32, Zj_is_32, Zi_is_32 ;                                     \
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, &Zh_size, NULL, NULL, &Z_to_X, &Z_to_X_size,           \
-        &Z_to_S, &Z_to_S_size, NULL, &Zp_is_32, &Zi_is_32, &Z_sparsity,     \
-        NULL, X, S, Werk)) ;                                                \
-    GB_IPTR (Zh, Zi_is_32) ;                                                \
+        &Z_to_S, &Z_to_S_size, NULL, &Zp_is_32, &Zj_is_32, &Zi_is_32,       \
+        &Z_sparsity, NULL, X, S, Werk)) ;                                   \
+    GB_IPTR (Zh, Zj_is_32) ;                                                \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &TaskList_size, &ntasks, &nthreads,                      \
-        Znvec, Zh, Zi_is_32, NULL, Z_to_X, Z_to_S, false,                   \
+        Znvec, Zh, Zj_is_32, NULL, Z_to_X, Z_to_S, false,                   \
         NULL, X, S, Werk)) ;                                                \
     GB_ALLOCATE_NPENDING_WERK ;
 
@@ -1416,7 +1432,7 @@
     {                                                               \
         if (GB_C_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (GB_Cp_IS_32, GB_Ci_IS_32,         \
+            GB_hyper_hash_lookup (GB_Cp_IS_32, GB_Cj_IS_32,         \
                 Ch, Cnvec, Cp, C_Yp, C_Yi, C_Yx, C_hash_bits,       \
                 j, &pC_start, &pC_end) ;                            \
         }                                                           \
@@ -1432,7 +1448,7 @@
     {                                                               \
         if (GB_M_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (GB_Mp_IS_32, GB_Mi_IS_32,         \
+            GB_hyper_hash_lookup (GB_Mp_IS_32, GB_Mj_IS_32,         \
                 Mh, Mnvec, Mp, M_Yp, M_Yi, M_Yx, M_hash_bits,       \
                 j, &pM_start, &pM_end) ;                            \
         }                                                           \
@@ -1448,7 +1464,7 @@
     {                                                               \
         if (GB_A_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (GB_Ap_IS_32, GB_Ai_IS_32,         \
+            GB_hyper_hash_lookup (GB_Ap_IS_32, GB_Aj_IS_32,         \
                 Ah, Anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,       \
                 j, &pA_start, &pA_end) ;                            \
         }                                                           \
@@ -1464,7 +1480,7 @@
     {                                                               \
         if (GB_S_IS_HYPER)                                          \
         {                                                           \
-            GB_hyper_hash_lookup (GB_Sp_IS_32, GB_Si_IS_32,         \
+            GB_hyper_hash_lookup (GB_Sp_IS_32, GB_Sj_IS_32,         \
                 Sh, Snvec, Sp, S_Yp, S_Yi, S_Yx, S_hash_bits,       \
                 j, &pS_start, &pS_end) ;                            \
         }                                                           \
@@ -1616,8 +1632,8 @@
         return (GrB_OUT_OF_MEMORY) ;                                        \
     }                                                                       \
     GB_Pending Pending = C->Pending ;                                       \
-    GB_CPending_DECLARE (Pending_i) ; GB_CPending_PTR (Pending_i, C, i) ;   \
-    GB_CPending_DECLARE (Pending_j) ; GB_CPending_PTR (Pending_j, C, j) ;   \
+    GB_CPendingi_DECLARE (Pending_i) ; GB_CPendingi_PTR (Pending_i, C) ;    \
+    GB_CPendingj_DECLARE (Pending_j) ; GB_CPendingj_PTR (Pending_j, C) ;    \
     GB_A_TYPE *restrict Pending_x = (GB_A_TYPE *) Pending->x ;              \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;

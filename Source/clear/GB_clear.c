@@ -86,12 +86,14 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // determine the p_is_32 and i_is_32 settings for the cleared matrix
     bool hack32 = true ;   // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
-    GB_determine_pi_is_32 (&(A->p_is_32), &(A->i_is_32), p_control,
-        i_control, GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim) ;
+    GB_determine_pji_is_32 (&(A->p_is_32), &(A->j_is_32), &(A->i_is_32),
+        p_control, j_control, i_control,
+        GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim) ;
 
     size_t apsize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t aisize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t ajsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // allocate new A->p and A->h components
@@ -134,7 +136,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
         A->nvec = 0 ;
         A->plen = plen ;
         A->p = GB_CALLOC_MEMORY (plen+1, apsize, &(A->p_size)) ;
-        A->h = GB_CALLOC_MEMORY (plen  , aisize, &(A->h_size)) ;
+        A->h = GB_CALLOC_MEMORY (plen  , ajsize, &(A->h_size)) ;
         if (A->p == NULL || A->h == NULL)
         { 
             // out of memory
@@ -150,7 +152,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (A, "clear before convert int", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, true)) ;  // FIXME
+    GB_OK (GB_convert_int (A, false, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (A, "clear after convert int", GB0) ;
     return (GB_conform (A, Werk)) ;
 }

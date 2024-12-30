@@ -48,6 +48,7 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
         // reallocate the i,j,x arrays
         //----------------------------------------------------------------------
 
+        size_t jsize = (C->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t isize = (C->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
         bool ok1 = true ;
@@ -58,7 +59,7 @@ bool GB_Pending_realloc     // reallocate a list of pending tuples
             &ok1) ;
         if (Pending->j != NULL)
         { 
-            GB_REALLOC_MEMORY (Pending->j, newsize, isize,
+            GB_REALLOC_MEMORY (Pending->j, newsize, jsize,
                 &(Pending->j_size), &ok2) ;
         }
         size_t s = Pending->size ;

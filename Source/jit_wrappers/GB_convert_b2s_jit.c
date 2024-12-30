@@ -43,7 +43,7 @@ GrB_Info GB_convert_b2s_jit         // extract CSC/CSR or triplets from bitmap
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_KERNEL_CONVERT_B2S, GxB_SPARSE, false, ctype, Cp_is_32,
         Ci_is_32, Cj_is_32, op, false, GxB_BITMAP, true, A->type,
-        A->p_is_32, A->i_is_32, A->iso, 0) ;
+        A->p_is_32, A->j_is_32, A->i_is_32, A->iso, 0) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

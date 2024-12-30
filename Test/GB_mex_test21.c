@@ -130,7 +130,7 @@ void mexFunction
     printf ("GB_enumify_ewise / GB_macrofy_ewise, C iso\n") ;
     GB_enumify_ewise (&method_code, false, false, false, true,
         /* C_iso: */ true, /* C_in_iso: */ false, GxB_SPARSE, GrB_BOOL,
-        /* is32: */ false, false,
+        /* is32: */ false, false, false,
         /* M: */ NULL, false, false, GrB_LAND, false, false, A, B) ;
     GB_macrofy_ewise (fp, method_code, GB_JIT_KERNEL_ADD,
         GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
@@ -140,7 +140,7 @@ void mexFunction
     printf ("GB_enumify_ewise / GB_macrofy_ewise, C non iso\n") ;
     GB_enumify_ewise (&method_code, false, false, false, true,
         /* C_iso: */ false, /* C_in_iso: */ false, GxB_SPARSE, GrB_BOOL,
-        /* is32: */ false, false,
+        /* is32: */ false, false, false,
         /* M: */ NULL, false, false, GrB_LAND, false, false, A, B) ;
     GB_macrofy_ewise (fp, method_code, GB_JIT_KERNEL_ADD,
         GrB_LAND, GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
@@ -229,7 +229,7 @@ void mexFunction
         printf ("GB_enumify_apply / GB_macrofy_apply: %s\n", op->name) ;
         GB_enumify_apply (&method_code, GxB_SPARSE, true, GrB_INT32,
             false, false, false, (GB_Operator) op, false, GB_sparsity (A),
-            true, GrB_INT32, false, false, A->iso, A->nzombies) ;
+            true, GrB_INT32, false, false, false, A->iso, A->nzombies) ;
         GB_macrofy_apply (fp, method_code, (GB_Operator) op,
             GrB_INT32, GrB_INT32) ;
     }
@@ -240,7 +240,7 @@ void mexFunction
     printf ("GB_enumify_apply / GB_macrofy_apply: %s\n", op1->name) ;
     GB_enumify_apply (&method_code, GxB_SPARSE, true, GrB_INT32,
         false, false, false, (GB_Operator) op1, false, GB_sparsity (A),
-        true, GrB_INT32, false, false, A->iso, A->nzombies) ;
+        true, GrB_INT32, false, false, false, A->iso, A->nzombies) ;
     GB_macrofy_apply (fp, method_code, (GB_Operator) op1,
         GrB_INT32, GrB_INT32) ;
 

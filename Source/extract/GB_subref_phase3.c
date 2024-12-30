@@ -35,6 +35,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     const bool I_has_duplicates,        // true if I has duplicates
     // from phase0:
     void **Ch_handle,
+    const bool Cj_is_32,        // if true, C->h is 32-bit; else 64-bit
     const bool Ci_is_32,        // if true, C->i is 32-bit; else 64-bit
     size_t Ch_size,
     const void *Ap_start,
@@ -100,7 +101,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     GrB_Info info = GB_new_bix (&C, // sparse or hyper, existing header
         ctype, nI, nJ, GB_ph_null, C_is_csc,
         sparsity, true, A->hyper_switch, Cnvec, cnz, true, C_iso,
-        Cp_is_32, Ci_is_32) ;
+        Cp_is_32, Cj_is_32, Ci_is_32) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -128,8 +129,9 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     C->nvec_nonempty = Cnvec_nonempty ;
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
-    C->p_is_32 = Cp_is_32 ;
-    C->i_is_32 = Ci_is_32 ;
+    ASSERT (C->p_is_32 == Cp_is_32) ;
+    ASSERT (C->j_is_32 == Cj_is_32) ;
+    ASSERT (C->i_is_32 == Ci_is_32) ;
 
     //--------------------------------------------------------------------------
     // phase3: C = A(I,J)

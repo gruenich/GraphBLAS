@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 matrix get/set
+// FIXME: 32/64 matrix get/set
 
 #include "get_set/GB_get_set.h"
 
@@ -35,6 +35,11 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
             (*value) = A->p_control ;
             break ;
 
+//      case GxB_COLINDEX_INTEGER_HINT : // FIXME
+//      case GxB_ROWINDEX_INTEGER_HINT : // FIXME
+//      case GxB_COLINDEX_INTEGER_BITS : // FIXME
+//      case GxB_ROWINDEX_INTEGER_BITS : // FIXME
+
         case GxB_INDEX_INTEGER_HINT : 
 
             (*value) = A->i_control ;
@@ -47,7 +52,7 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
 
         case GxB_INDEX_INTEGER_BITS : 
 
-            (*value) = (A->i_is_32) ? 32 : 64 ;
+            (*value) = (A->i_is_32) ? 32 : 64 ; // FIXME
             break ;
 
         case GxB_SPARSITY_STATUS : 

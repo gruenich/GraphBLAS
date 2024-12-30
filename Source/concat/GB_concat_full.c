@@ -51,6 +51,7 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
     { 
         GB_phybix_free (C) ;
         C->p_is_32 = false ;    // OK: full always has p_is_32 = false
+        C->j_is_32 = false ;    // OK: full always has j_is_32 = false
         C->i_is_32 = false ;    // OK: full always has i_is_32 = false
         GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso));
         C->plen = -1 ;

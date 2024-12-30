@@ -48,7 +48,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const int64_t plen,         // size of A->p and A->h, if A hypersparse.
                                 // Ignored if A is not hypersparse.
     bool p_is_32,               // if true, A->p is 32 bit; 64 bit otherwise
-    bool i_is_32                // if true, A->h,i are 32 bit; 64 bit otherwise
+    bool j_is_32,               // if true, A->h and A->Y are 32 bit; else 64
+    bool i_is_32                // if true, A->i is 32 bit; 64 bit otherwise
 )
 {
 
@@ -62,7 +63,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
 
     if ((!(sparsity == GxB_FULL || sparsity == GxB_BITMAP)) &&
-        !GB_valid_pi_is_32 (p_is_32, i_is_32, 1, vlen, vdim))
+        !GB_valid_pji_is_32 (p_is_32, j_is_32, i_is_32, 1, vlen, vdim))
     {
         // sparse/hyper matrix is too large for its requested integer settings
         return (GrB_INVALID_VALUE) ;
@@ -150,8 +151,9 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->nvec = vdim ;
         // all vectors present, unless matrix has a zero dimension 
         A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
-        // full/bitmap matrices ignore the A->p_is_32 and A->i_is_32 flags
+        // full/bitmap matrices ignore the A->[pji]_is_32 flags
         p_is_32 = false ;    // OK: bitmap/full always has p_is_32 = false
+        j_is_32 = false ;    // OK: bitmap/full always has j_is_32 = false
         i_is_32 = false ;    // OK: bitmap/full always has i_is_32 = false
     }
     else if (A_is_hyper)
@@ -183,6 +185,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->Pending = NULL ;
     A->iso = false ;
     A->p_is_32 = p_is_32 ;
+    A->j_is_32 = j_is_32 ;
     A->i_is_32 = i_is_32 ;
     A->p_control = 0 ;
     A->i_control = 0 ;
@@ -192,7 +195,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     //--------------------------------------------------------------------------
 
     size_t psize = p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t isize = i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t isize = i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     bool ok ;
     if (A_is_full_or_bitmap || Ap_option == GB_ph_null)
@@ -212,7 +216,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         if (A_is_hyper)
         { 
             // since nvec is zero, there is never any need to initialize A->h
-            A->h = GB_MALLOC_MEMORY (A->plen, isize, &(A->h_size)) ;
+            A->h = GB_MALLOC_MEMORY (A->plen, jsize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }
@@ -227,7 +231,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         ok = (A->p != NULL) ;
         if (A_is_hyper)
         { 
-            A->h = GB_MALLOC_MEMORY (A->plen, isize, &(A->h_size)) ;
+            A->h = GB_MALLOC_MEMORY (A->plen, jsize, &(A->h_size)) ;
             ok = ok && (A->h != NULL) ;
         }
     }

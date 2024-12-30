@@ -113,11 +113,11 @@
 //      int64_t i = (Ai32 ? Ai32 [k] : Ai64 [k]) ;
 //      i = (i < 0) ? (~i) : i ;
 
-// In the above examples, the "..." denotes separates the pointer
-// initialization, which happens just once, and the access of each entry, which
-// can happen many times.  In code outside of a JIT kernel, the hardware branch
-// predictor will help with the Ai32 ternary expression, since Ai32 typically
-// does not change.  It seems to be fast enough in practice.
+// In the above examples, the "..." separates the pointer initialization, which
+// happens just once, and the access of each entry, which can happen many
+// times.  In code outside of a JIT kernel, the hardware branch predictor will
+// help with the Ai32 ternary expression, since Ai32 typically does not change.
+// It seems to be fast enough in practice.
 
 // To ensure the ternary expression appears just once, to help clarify the
 // effect of the typecast from the int32_t array Ai to int64_t scalar i, and to

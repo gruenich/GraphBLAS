@@ -31,9 +31,11 @@ GrB_Info GB_ewise_fulla_jit    // C+=A+B via the JIT
     GB_jit_encoding encoding ;
     char *suffix ;
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
-        GB_JIT_KERNEL_EWISEFA, false,
-        false, false, GxB_FULL, C->type, false, false,
-        NULL, false, false, binaryop, false, false, A, B) ;
+        GB_JIT_KERNEL_EWISEFA, /* is_eWiseMult: */ false,
+        /* C_iso: */ false, false, GxB_FULL, C->type,
+        /* is_32: */ false, false, false,
+        /* M: */ NULL, false, false, binaryop,
+        /* flipij: */ false, /* flipxy: */ false, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

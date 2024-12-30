@@ -33,7 +33,8 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const bool A_is_matrix,
     const GrB_Type atype,
     const bool Ap_is_32,        // if true, Ap is uint32_t, else uint64_t
-    const bool Ai_is_32,        // if true, Ah,Ai are uint32_t, else uint64_t
+    const bool Aj_is_32,        // if true, Ah is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, Ai is uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 )
@@ -58,7 +59,7 @@ uint64_t GB_encodify_apply      // encode an apply problem
     encoding->kcode = kcode ;
     GB_enumify_apply (&encoding->code, C_sparsity, C_is_matrix, ctype,
         Cp_is_32, Ci_is_32, Cj_is_32, op, flipij, A_sparsity, A_is_matrix,
-        atype, Ap_is_32, Ai_is_32, A_iso, A_nzombies) ;
+        atype, Ap_is_32, Aj_is_32, Ai_is_32, A_iso, A_nzombies) ;
 
     //--------------------------------------------------------------------------
     // determine the suffix and its length

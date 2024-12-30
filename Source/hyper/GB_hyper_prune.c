@@ -13,8 +13,8 @@
 // A->h are created, which are not shallow, and any existing hyper hash is
 // freed.  If these arrays are not modified, and are shallow on input, then
 // they remain shallow on output.  If new A->p and A->h arrays are constructed,
-// the existing A->Y hyper_hash is freed.  A->p_is_32 and A->i_is_32 are
-// unchanged in all cases.
+// the existing A->Y hyper_hash is freed.  A->p_is_32, A->j_is_32, and
+// A->i_is_32 are unchanged in all cases.
 
 #include "GB.h"
 
@@ -73,7 +73,7 @@ GrB_Info GB_hyper_prune
     int64_t nvec_old = A->nvec ;
 
     size_t psize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -87,13 +87,13 @@ GrB_Info GB_hyper_prune
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    W = GB_MALLOC_MEMORY (nvec_old+1, isize, &W_size) ;
+    W = GB_MALLOC_MEMORY (nvec_old+1, jsize, &W_size) ;
     if (W == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_IPTR (W, A->i_is_32) ;
+    GB_IPTR (W, A->j_is_32) ;
 
     //--------------------------------------------------------------------------
     // count the # of nonempty vectors and mark their locations in W
@@ -110,7 +110,7 @@ GrB_Info GB_hyper_prune
     }
 
     int64_t nvec_new ;
-    GB_cumsum (W, A->i_is_32, nvec_old, &nvec_new, nthreads, Werk) ;
+    GB_cumsum (W, A->j_is_32, nvec_old, &nvec_new, nthreads, Werk) ;
 
     //--------------------------------------------------------------------------
     // allocate the result
@@ -118,7 +118,7 @@ GrB_Info GB_hyper_prune
 
     int64_t plen_new = GB_IMAX (1, nvec_new) ;
     Ap_new = GB_MALLOC_MEMORY (plen_new+1, psize, &Ap_new_size) ;
-    Ah_new = GB_MALLOC_MEMORY (plen_new  , isize, &Ah_new_size) ;
+    Ah_new = GB_MALLOC_MEMORY (plen_new  , jsize, &Ah_new_size) ;
     if (Ap_new == NULL || Ah_new == NULL)
     { 
         // out of memory
@@ -128,7 +128,7 @@ GrB_Info GB_hyper_prune
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_IPTR (Ap_new, A->p_is_32) ;
-    GB_IPTR (Ah_new, A->i_is_32) ;
+    GB_IPTR (Ah_new, A->j_is_32) ;
 
     //--------------------------------------------------------------------------
     // create the Ap_new and Ah_new result

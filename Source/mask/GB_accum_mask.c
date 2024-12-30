@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit: but need subassign 32/64
+// DONE: 32/64 bit
 
 // C<M> = accum (C,T)
 
@@ -374,7 +374,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_OK (GB_new (&Z, // sparse or hyper, existing header
                 C->type, C->vlen, C->vdim, GB_ph_null, C->is_csc,
                 GB_sparsity (T), T->hyper_switch, T->plen,
-                T->p_is_32, T->i_is_32)) ;
+                T->p_is_32, T->j_is_32, T->i_is_32)) ;
 
             // Transplant T into Z, typecasting if needed, and free T.  This
             // may need to do a deep copy if T is shallow.  T is always freed
@@ -432,7 +432,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T) before convert_int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
     return (GB_block (C, Werk)) ;
 }

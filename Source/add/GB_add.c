@@ -124,7 +124,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     int C_ntasks = 0, C_nthreads ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
 
-    bool Cp_is_32, Ci_is_32 ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
@@ -136,7 +136,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         &C_to_M, &C_to_M_size,
         &C_to_A, &C_to_A_size,
         &C_to_B, &C_to_B_size, &Ch_is_Mh,
-        &Cp_is_32, &Ci_is_32,
+        &Cp_is_32, &Cj_is_32, &Ci_is_32,
         // input/output to phase0:
         &C_sparsity,
         // original input:
@@ -165,7 +165,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
             // computed by phase1a
             &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
             // computed by phase0:
-            Cnvec, Ch, Ci_is_32, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
+            Cnvec, Ch, Cj_is_32, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
             // original input:
             (apply_mask) ? M : NULL, A, B, Werk) ;
         if (info != GrB_SUCCESS)
@@ -185,7 +185,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
             // from phase1a:
             TaskList, C_ntasks, C_nthreads,
             // from phase0:
-            Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh, Cp_is_32, Ci_is_32,
+            Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh, Cp_is_32, Cj_is_32,
             // original input:
             (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk) ;
         if (info != GrB_SUCCESS)
@@ -228,7 +228,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
         Cnvec, &Ch, Ch_size, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
-        Cp_is_32, Ci_is_32, C_sparsity,
+        Cp_is_32, Cj_is_32, Ci_is_32, C_sparsity,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B,
         is_eWiseUnion, alpha, beta, Werk) ;
@@ -249,7 +249,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C before convert int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;    // FIXME
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;

@@ -53,7 +53,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
     const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit
-    const bool Ci_is_32,        // if true, Ci is 32-bit; else 64-bit
+    const bool Cj_is_32,        // if true, Ch is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_struct,     // if true, use the only structure of M
@@ -88,6 +88,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
     const bool Cp_is_32,        // if true, Cp is 32-bit; else 64-bit
+    const bool Cj_is_32,        // if true, Ch is 32-bit; else 64-bit
     const bool Ci_is_32,        // if true, Ci is 32-bit; else 64-bit
     const int C_sparsity,
     // original input:

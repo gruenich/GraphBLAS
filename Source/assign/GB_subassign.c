@@ -137,7 +137,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C_in, "C for subassign before convert", GB0) ;
-    GB_OK (GB_convert_int (C_in, false, false, true)) ; // FIXME
+    GB_OK (GB_convert_int (C_in, false, false, false, true)) ; // FIXME
     ASSERT_MATRIX_OK (C_in, "C for subassign after convert", GB0) ;
     GB_OK (GB_conform (C_in, Werk)) ;
     ASSERT_MATRIX_OK (C_in, "Final C for subassign", GB0) ;

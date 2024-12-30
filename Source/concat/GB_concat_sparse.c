@@ -72,17 +72,19 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     // free all content of C and reallocate it
     GB_phybix_free (C) ;
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool hack32 = true ;    // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
-    bool Cp_is_32, Ci_is_32 ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
         GxB_SPARSE, cnz, cvlen, cvdim) ;
 
     GB_OK (GB_new_bix (&C, // existing header
         ctype, cvlen, cvdim, GB_ph_malloc, csc, GxB_SPARSE, false,
-        hyper_switch, cvdim, cnz, true, C_iso, Cp_is_32, Ci_is_32)) ;
+        hyper_switch, cvdim, cnz, true, C_iso, Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     // restore the settings of C
     C->bitmap_switch = bitmap_switch ;
@@ -140,7 +142,8 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
                 // T = (ctype) A', not in-place, using a dynamic header
                 GB_OK (GB_new (&T, // auto sparsity, new header
                     A->type, A->vdim, A->vlen, GB_ph_null, csc,
-                    GxB_AUTO_SPARSITY, -1, 1, A->p_is_32, A->i_is_32)) ;
+                    GxB_AUTO_SPARSITY, -1, 1,
+                    A->p_is_32, A->j_is_32, A->i_is_32)) ;
                 // save T in array S
                 if (csc)
                 { 

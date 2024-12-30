@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except for convert_int at the end
+// DONE: 32/64 bit
 
 #define GB_FREE_WORKSPACE               \
     GB_WERK_POP (Tile_cols, int64_t) ;  \
@@ -259,7 +259,7 @@ GrB_Info GB_concat                  // concatenate a 2D array of matrices
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C convert conform for GB_concat", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;   // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;   // FIXME
     ASSERT_MATRIX_OK (C, "C before conform for GB_concat", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_concat", GB0) ;

@@ -126,7 +126,7 @@ GrB_Info GB_subassign_26
     }
 
     //--------------------------------------------------------------------------
-    // phase1: compute Cp, Ch, # of new nonempty vectors, and matrix properties
+    // phase1: append to Cp and Ch; find # new nonempty vectors, and properties
     //--------------------------------------------------------------------------
 
     int64_t Anvec_nonempty = 0 ;
@@ -166,13 +166,12 @@ GrB_Info GB_subassign_26
     C->jumbled = C->jumbled || A->jumbled ;
 
     //--------------------------------------------------------------------------
-    // phase2: copy the indices and values
+    // phase2: append the indices and values to the end of Ci and Cx
     //--------------------------------------------------------------------------
 
     nthreads = (phase2_parallel) ? GB_nthreads (anz, chunk, nthreads_max) : 1 ;
 
     // copy Ci and Cx
-//  GB_memcpy (Ci + cnz, Ai, anz * sizeof (int64_t), nthreads) ;
     GB_cast_int (GB_IK (Ci, cnz), cicode, Ai, aicode, anz, nthreads) ;
     GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
 

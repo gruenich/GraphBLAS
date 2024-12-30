@@ -125,6 +125,7 @@ uint64_t GB_encodify_ewise      // encode an ewise problem
     const int C_sparsity,
     const GrB_Type ctype,
     const bool Cp_is_32,
+    const bool Cj_is_32,
     const bool Ci_is_32,
     // M matrix:
     const GrB_Matrix M,
@@ -154,6 +155,7 @@ void GB_enumify_ewise       // enumerate a GrB_eWise problem
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
     bool Cp_is_32,          // if true, Cp is 32-bit; else 64-bit
+    bool Cj_is_32,          // if true, Ch is 32-bit; else 64-bit
     bool Ci_is_32,          // if true, Ci is 32-bit; else 64-bit
     // M matrix:
     GrB_Matrix M,           // may be NULL
@@ -632,6 +634,7 @@ void GB_macrofy_mask
     char *Mname,            // name of the mask
     int msparsity,          // sparsity of the mask
     bool Mp_is_32,
+    bool Mj_is_32,
     bool Mi_is_32
 ) ;
 
@@ -789,17 +792,19 @@ void GB_macrofy_input
     FILE *fp,
     // input:
     const char *aname,      // name of the scalar aij = ...
-    const char *Amacro,     // name of the macro is GB_GET*(Amacro)
-    const char *Aname,      // name of the input matrix
+    const char *Amacro,     // name of the macro is GB_GETA, if Amacro is 'A'
+    const char *Aname,      // name of the input matrix (typically A or B)
     bool do_matrix_macros,  // if true, do the matrix macros
-    GrB_Type xtype,         // type of aij
+    GrB_Type a2type,        // type of aij after casting to x or y of f(x,y)
     GrB_Type atype,         // type of the input matrix
     int asparsity,          // sparsity format of the input matrix
-    int acode,              // type code of the input (0 if pattern)
+    int acode,              // type code of the input (0 if pattern,
+                            // 15 if A is NULL)
     bool A_iso,             // true if A is iso
-    int azombies,           // 1 if A has zombies, 0 if A has no zombies,
-                            // -1 if A can never have zombies
+    int azombies,           // 1 if A has zombies, 0 if A has no zombies;
+                            // -1 if the macro should not be created.
     int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int j_is_32,            // if true, Ah is 32-bit, else 64-bit
     int i_is_32             // if true, Ai is 32-bit, else 64-bit
 ) ;
 
@@ -816,6 +821,7 @@ void GB_macrofy_output
     bool C_iso,             // true if C is iso on output
     bool C_in_iso,          // true if C is iso on input
     int p_is_32,            // if true, Cp is 32-bit, else 64-bit
+    int j_is_32,            // if true, Ch is 32-bit, else 64-bit
     int i_is_32             // if true, Ci is 32-bit, else 64-bit
 ) ;
 
@@ -825,6 +831,7 @@ void GB_macrofy_bits
     // input:
     const char *Aname,      // name of the matrix
     int p_is_32,            // if true, Ap is 32-bit, else 64-bit
+    int j_is_32,            // if true, Ah is 32-bit, else 64-bit
     int i_is_32             // if true, Ai is 32-bit, else 64-bit
 ) ;
 
@@ -951,12 +958,12 @@ void GB_enumify_apply       // enumerate an apply or tranpose/apply problem
         const GB_Operator op,       // unary/index-unary to apply; not binaryop
         const bool flipij,          // if true, flip i,j for user idxunop
     // A matrix:
-//  const GrB_Matrix A              // input matrix
     const int A_sparsity,
     const bool A_is_matrix,
     const GrB_Type atype,
     const bool Ap_is_32,        // if true, A->p is uint32_t, else uint64_t
-    const bool Ai_is_32,        // if true, A->[hi] is uint32_t, else uint64_t
+    const bool Aj_is_32,        // if true, A->h is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, A->i is uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 ) ;
@@ -1020,7 +1027,8 @@ uint64_t GB_encodify_apply      // encode an apply problem
     const bool A_is_matrix,
     const GrB_Type atype,
     const bool Ap_is_32,        // if true, Ap is uint32_t, else uint64_t
-    const bool Ai_is_32,        // if true, A[hi] is uint32_t, else uint64_t
+    const bool Aj_is_32,        // if true, Ah is uint32_t, else uint64_t
+    const bool Ai_is_32,        // if true, Ai is uint32_t, else uint64_t
     const bool A_iso,
     const int64_t A_nzombies
 ) ;
@@ -1556,7 +1564,7 @@ GrB_Info GB_masker_phase1_jit       // count nnz in each R(:,j)
     const int64_t *restrict R_to_C,
     const int64_t *restrict R_to_Z,
     const bool Rp_is_32,            // if true, Rp is 32-bit; else 64-bit
-    const bool Ri_is_32,            // if true, Rh is 32-bit; else 64-bit
+    const bool Rj_is_32,            // if true, Rh is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // required mask
     const bool Mask_comp,           // if true, then M is complemented
@@ -1600,6 +1608,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const GB_jit_kcode kcode,   // kernel to encode
     const GrB_Matrix R,         // may be NULL, for phase1
     const bool Rp_is_32,        // if true, R->p is 32 bit; else 64 bit
+    const bool Rj_is_32,        // if true, R->h is 32 bit; else 64 bit
     const bool Ri_is_32,        // if true, R->i is 32 bit; else 64 bit
     const GrB_Matrix M,
     const bool Mask_struct,
@@ -1615,6 +1624,7 @@ void GB_enumify_masker      // enumify a masker problem
     // input:
     const GrB_Matrix R,     // NULL for phase 1
     const bool Rp_is_32,    // if true, R->p is 32-bit; else 64-bit
+    const bool Rj_is_32,    // if true, R->h is 32-bit; else 64-bit
     const bool Ri_is_32,    // if true, R->i is 32-bit; else 64-bit
     const GrB_Matrix M,
     const bool Mask_struct,

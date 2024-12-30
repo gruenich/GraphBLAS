@@ -71,6 +71,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
         return (false) ;
     }
     GB_Pending Pending = C->Pending ;
+    ASSERT (Pending != NULL) ;
     int64_t n = Pending->n ;
 
     ASSERT (Pending->type == type) ;
@@ -82,8 +83,8 @@ static inline bool GB_Pending_add   // add a tuple to the list
     // keep track of whether or not the pending tuples are already sorted
     //--------------------------------------------------------------------------
 
-    GB_CPending_DECLARE (Pending_i) ; GB_CPending_PTR (Pending_i, C, i) ;
-    GB_CPending_DECLARE (Pending_j) ; GB_CPending_PTR (Pending_j, C, j) ;
+    GB_CPendingi_DECLARE (Pending_i) ; GB_CPendingi_PTR (Pending_i, C) ;
+    GB_CPendingj_DECLARE (Pending_j) ; GB_CPendingj_PTR (Pending_j, C) ;
 
     if (n > 0 && Pending->sorted)
     { 

@@ -76,10 +76,12 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const bool A_iso = A->iso ;
 
     const bool Ap_is_32 = A->p_is_32 ;
+    const bool Aj_is_32 = A->j_is_32 ;
     const bool Ai_is_32 = A->i_is_32 ;
 
     bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
 
     //--------------------------------------------------------------------------
@@ -128,7 +130,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             // Ah [akstart:akend-1].
             akend = akstart ;
             int64_t pright = anvec - 1 ;
-            GB_split_binary_search (avend, Ah, Ai_is_32, &akend, &pright) ;
+            GB_split_binary_search (avend, Ah, Aj_is_32, &akend, &pright) ;
             ASSERT (GB_IMPLIES (akstart <= akend-1,
                 GB_IGET (Ah, akend-1) < avend)) ;
         }
@@ -159,15 +161,17 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             const int64_t cvlen = aiend - aistart ;
 
             // assume this tile C can acquire all the entries of A, for now;
-            // determine the p_is_32 and i_is_32 settings for the new Tile
-            bool Cp_is_32, Ci_is_32 ;
-            GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+            // determine the p_is_32, j_is_32, and i_is_32 settings for the new
+            // Tile
+            bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+            GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+                p_control, j_control, i_control,
                 A_sparsity, anz, cvlen, cvdim) ;
 
             C = NULL ;
             GB_OK (GB_new (&C, // new header
                 atype, cvlen, cvdim, GB_ph_malloc, csc, A_sparsity,
-                hyper_switch, cnvec, Cp_is_32, Ci_is_32)) ;
+                hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32)) ;
             C->sparsity_control = sparsity_control ;
             C->hyper_switch = hyper_switch ;
             C->nvec = cnvec ;

@@ -64,20 +64,21 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     yvdim = GB_IMAX (yvdim, 4) ;
     int64_t yvlen = A->vdim ;
     int64_t hash_bits = (yvdim - 1) ;   // yvdim is always a power of 2
+    bool Aj_is_32 = A->j_is_32 ;
 
     GB_OK (GB_new (&(A->Y), // new dynamic header, do not allocate any content
         GrB_UINT64, yvlen, yvdim, GB_ph_null, true, GxB_SPARSE, -1, 0,
-        A->i_is_32, A->i_is_32)) ;
+        Aj_is_32, Aj_is_32, Aj_is_32)) ;
     GrB_Matrix Y = A->Y ;
 
     //--------------------------------------------------------------------------
     // create the tuples for A->Y
     //--------------------------------------------------------------------------
 
-    size_t isize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    I_work = GB_MALLOC_MEMORY (anvec, isize, &I_work_size) ;
-    J_work = GB_MALLOC_MEMORY (anvec, isize, &J_work_size) ;
-    X_work = GB_MALLOC_MEMORY (anvec, isize, &X_work_size) ;
+    size_t jsize = (Aj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    I_work = GB_MALLOC_MEMORY (anvec, jsize, &I_work_size) ;
+    J_work = GB_MALLOC_MEMORY (anvec, jsize, &J_work_size) ;
+    X_work = GB_MALLOC_MEMORY (anvec, jsize, &X_work_size) ;
     if (I_work == NULL || J_work == NULL || X_work == NULL)
     { 
         // out of memory
@@ -85,9 +86,9 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         return (GrB_OUT_OF_MEMORY) ;
     }
 
-    GB_IPTR (I_work, A->i_is_32) ;
-    GB_IPTR (J_work, A->i_is_32) ;
-    GB_IPTR (X_work, A->i_is_32) ;
+    GB_IPTR (I_work, Aj_is_32) ;
+    GB_IPTR (J_work, Aj_is_32) ;
+    GB_IPTR (X_work, Aj_is_32) ;
 
     int nthreads_max = GB_Context_nthreads_max ( ) ;
     double chunk = GB_Context_chunk ( ) ;
@@ -111,7 +112,7 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
     // build A->Y, initially hypersparse
     //--------------------------------------------------------------------------
 
-    GrB_Type ytype = (A->i_is_32) ? GrB_UINT32 : GrB_UINT64 ;
+    GrB_Type ytype = (Aj_is_32) ? GrB_UINT32 : GrB_UINT64 ;
 
     GB_OK (GB_builder (
         Y,                      // create Y using a dynamic header
@@ -137,9 +138,8 @@ GB_CALLBACK_HYPER_HASH_BUILD_PROTO (GB_hyper_hash_build)
         ytype,                  // the type of X_work
         false,                  // no burble (already burbled above)
         Werk,
-        A->i_is_32, A->i_is_32, // if true, [IJ]_work 32-bit, else 64-bit
-        A->i_is_32, A->i_is_32  // integer size of A->Y->[pix] determined by
-                                // A->i_is_32
+        Aj_is_32, Aj_is_32,     // if true, [IJ]_work 32-bit, else 64-bit
+        Aj_is_32, Aj_is_32, Aj_is_32  // integer size of A->Y->[pix]
     )) ;
 
     Y->hyper_switch = -1 ;              // never make Y hypersparse

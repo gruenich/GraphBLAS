@@ -221,7 +221,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     info = GB_new (&C, // sparse or hyper, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
-        C_sparsity, B->hyper_switch, cnvec, /* FIXME: */ false, false) ;
+        C_sparsity, B->hyper_switch, cnvec, /* FIXME: */ false, false, false) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

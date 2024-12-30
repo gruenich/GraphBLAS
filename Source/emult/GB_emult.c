@@ -408,7 +408,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     int C_ntasks = 0, C_nthreads ;
 
-    bool Cp_is_32, Ci_is_32 ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
@@ -420,7 +420,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         &C_to_M, &C_to_M_size,
         &C_to_A, &C_to_A_size,
         &C_to_B, &C_to_B_size,
-        &Cp_is_32, &Ci_is_32,
+        &Cp_is_32, &Cj_is_32, &Ci_is_32,
         // input/output to phase0:
         &C_sparsity,
         // original input:
@@ -438,7 +438,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase1a:
         &TaskList, &TaskList_size, &C_ntasks, &C_nthreads,
         // computed by phase0:
-        Cnvec, Ch, Ci_is_32, C_to_M, C_to_A, C_to_B, /* Ch_is_Mh: */ false,
+        Cnvec, Ch, Cj_is_32, C_to_M, C_to_A, C_to_B, /* Ch_is_Mh: */ false,
         // original input:
         (apply_mask) ? M : NULL, A, B, Werk)) ;
 
@@ -449,7 +449,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase1a:
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Cp_is_32, Ci_is_32,
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Cp_is_32, Cj_is_32,
         // original input:
         (apply_mask) ? M : NULL, Mask_struct, Mask_comp, A, B, Werk)) ;
 
@@ -469,7 +469,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         TaskList, C_ntasks, C_nthreads,
         // from phase0:
         Cnvec, Ch, Ch_size, C_to_M, C_to_A, C_to_B,
-        Cp_is_32, Ci_is_32, C_sparsity,
+        Cp_is_32, Cj_is_32, Ci_is_32, C_sparsity,
         // from GB_emult_sparsity:
         ewise_method,
         // original input:
@@ -481,7 +481,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C output for emult before convert", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;        // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;        // FIXME
     ASSERT_MATRIX_OK (C, "C output for emult", GB0) ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;

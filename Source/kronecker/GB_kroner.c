@@ -163,18 +163,20 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     int C_sparsity = C_is_full ? GxB_FULL :
         ((C_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE) ;
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool hack32 = GB_Global_hack_get (4) ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
     int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
-    bool Cp_is_32, Ci_is_32 ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
         C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim) ;
 
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,
         C_sparsity, true, B->hyper_switch, cnvec, cnzmax, true, C_iso,
-        Cp_is_32, Ci_is_32)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     //--------------------------------------------------------------------------
     // compute the column counts of C: Cp and Ch if C is hypersparse
@@ -338,6 +340,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (info == GrB_SUCCESS)
     { 
         GB_OK (GB_hyper_prune (C, Werk)) ;
+        ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -346,10 +349,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     GB_FREE_WORKSPACE ;
     tt = GB_OPENMP_GET_WTIME - tt ;
-    GBURBLE ("(kron %d/%d nthreads: %d time: %g) ",
+    GBURBLE ("(kron %d/%d/%d nthreads: %d time: %g) ",
         Cp_is_32 ? 32 : 64,
+        Cj_is_32 ? 32 : 64,
         Ci_is_32 ? 32 : 64, nthreads, tt) ;
-    ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     return (info) ;
 }
 

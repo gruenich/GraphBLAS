@@ -190,9 +190,9 @@ GrB_Info GB_wait                // finish all pending computations
             stype,                  // type of Pending->x
             true,                   // burble is allowed
             Werk,
-            A->i_is_32, A->i_is_32, // true if Pending->[ij] are 32-bit,
+            A->i_is_32, A->j_is_32, // true if Pending->[ij] are 32-bit,
                                     // false if 64-bit
-            true, true              // create T with 32/64 bits
+            true, true, true        // create T with 32/64 bits
         ) ;
 
         //----------------------------------------------------------------------
@@ -282,7 +282,7 @@ GrB_Info GB_wait                // finish all pending computations
         // conform A to its desired sparsity structure and return result
         GB_OK (GB_conform (A, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
-        GB_OK (GB_convert_int (A, false, false, true)) ;      // FIXME
+        GB_OK (GB_convert_int (A, false, false, false, true)) ;      // FIXME
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -298,7 +298,7 @@ GrB_Info GB_wait                // finish all pending computations
         // conform A to its desired hypersparsity.
         GB_OK (GB_transplant_conform (A, A->type, &T, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
-        GB_OK (GB_convert_int (A, false, false, true)) ;      // FIXME
+        GB_OK (GB_convert_int (A, false, false, false, true)) ;      // FIXME
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -346,10 +346,11 @@ GrB_Info GB_wait                // finish all pending computations
     }
 
     bool Ai_is_32 = A->i_is_32 ;
+    bool Aj_is_32 = A->j_is_32 ;
 
     if (GB_IS_HYPERSPARSE (A) && GB_IS_HYPERSPARSE (S) && A->Y != NULL
         && S->Y == NULL && !A->Y_shallow && !GB_is_shallow (A->Y)
-        && Ai_is_32 == S->i_is_32 && S->nvec == anvec)
+        && Aj_is_32 == S->j_is_32 && S->nvec == anvec)
     {
         // A and S are both hypersparse, and the old A->Y exists and is not
         // shallow.  Check if S->h and A->h are identical.  If so, remove A->Y
@@ -365,7 +366,7 @@ GrB_Info GB_wait                // finish all pending computations
         { 
             // compare Ah and Sh with a single thread
             // FIXME: make this an inline function like GB_binary_search
-            if (Ai_is_32)
+            if (Aj_is_32)
             { 
                 hsame = (memcmp (Ah32, Sh32, anvec * sizeof (uint32_t)) == 0) ;
             }
@@ -390,7 +391,7 @@ GrB_Info GB_wait                // finish all pending computations
                 if (my_hsame)
                 {
                     // compare this task's region of Ah and Sh
-                    if (Ai_is_32)
+                    if (Aj_is_32)
                     { 
                         my_hsame = (memcmp (Ah32 + kstart, Sh32 + kstart,
                             (kend - kstart) * sizeof (uint32_t)) == 0) ;
@@ -431,18 +432,20 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     if (Y != NULL && GB_IS_HYPERSPARSE (A) && A->Y == NULL &&
-        Ai_is_32 == A->i_is_32)
+        Aj_is_32 == A->j_is_32)
     { 
         // The hyperlist of A has not changed.  A is still hypersparse, and has
         // no A->Y after the transplant/conform above.  The integer sizes in
-        // the Y matrix still match those of A, so the transplant/conform did
-        // not modify them.  The original A->Y is thus valid, so transplant it
-        // back into A.  If A is no longer hypersparse, Y is not transplanted
-        // into A, and is freed by GB_FREE_WORKSPACE.
+        // the Y matrix still match the j integers of A, so the
+        // transplant/conform did not modify them.  The original A->Y is thus
+        // valid, so transplant it back into A.  If A is no longer hypersparse,
+        // Y is not transplanted into A, and is freed by GB_FREE_WORKSPACE.
         A->Y = Y ;
         A->Y_shallow = false ;
         Y = NULL ;
-        ASSERT (A->Y->i_is_32 == A->i_is_32) ;
+        ASSERT (A->Y->i_is_32 == A->j_is_32) ;
+        ASSERT (A->Y->j_is_32 == A->j_is_32) ;
+        ASSERT (A->Y->p_is_32 == A->j_is_32) ;
     }
 
     //--------------------------------------------------------------------------
@@ -451,7 +454,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (A, "A for GB_wait", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, true)) ;      // FIXME
+    GB_OK (GB_convert_int (A, false, false, false, true)) ;      // FIXME
     ASSERT_MATRIX_OK (A, "A final for GB_wait", GB0) ;
     #pragma omp flush
     return (GrB_SUCCESS) ;

@@ -60,7 +60,7 @@ GrB_Info GB_select_bitmap
     GB_OK (GB_new_bix (&C, // always bitmap, existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, true,
         GxB_BITMAP, false, A->hyper_switch, -1, anz, true, C_iso,
-        /* OK: */ false, false)) ;
+        /* OK: */ false, false, false)) ;
 
     ASSERT (GxB_BITMAP == GB_sparsity (C)) ;
 

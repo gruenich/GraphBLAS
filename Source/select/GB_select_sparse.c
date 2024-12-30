@@ -94,37 +94,41 @@ GrB_Info GB_select_sparse
     int csparsity = (A_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
     int64_t anz = GB_nnz (A) ;
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool hack32 = GB_Global_hack_get (4) ; // FIXME
     hack32 = true ; // FIXME
     int8_t p_control = hack32 ? 32 : Werk->p_control ;  //FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;  //FIXME
     int8_t i_control = hack32 ? 32 : Werk->i_control ;  //FIXME
-    bool Cp_is_32, Ci_is_32 ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
         csparsity, anz, A->vlen, A->vdim) ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
-        csparsity, A->hyper_switch, A->plen, Cp_is_32, Ci_is_32)) ;
+        csparsity, A->hyper_switch, A->plen, Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     ASSERT (csparsity == GB_sparsity (C)) ;
     ASSERT (Cp_is_32 == C->p_is_32) ;
+    ASSERT (Cj_is_32 == C->j_is_32) ;
     ASSERT (Ci_is_32 == C->i_is_32) ;
 
     Cp_is_32 = C->p_is_32 ;
+    Cj_is_32 = C->j_is_32 ;
     Ci_is_32 = C->i_is_32 ;
 
-    bool Ai_is_32 = A->i_is_32 ;
+    bool Aj_is_32 = A->j_is_32 ;
 
-    GB_Type_code aucode = Ai_is_32 ? GB_UINT32_code : GB_UINT64_code ;
-    GB_Type_code cucode = Ci_is_32 ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code ajcode = Aj_is_32 ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code cjcode = Cj_is_32 ? GB_UINT32_code : GB_UINT64_code ;
 
     size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (A_is_hyper)
     { 
         // C->h is a deep copy of A->h
-        GB_cast_int (C->h, cucode, A->h, aucode, A->nvec, nthreads_max) ;
+        GB_cast_int (C->h, cjcode, A->h, ajcode, A->nvec, nthreads_max) ;
     }
 
     C->nvec = A->nvec ;

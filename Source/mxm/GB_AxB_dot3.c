@@ -174,7 +174,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         ctype, cvlen, cvdim, GB_ph_malloc, true,
         C_sparsity, true, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
-        true, C_iso, M->p_is_32, M->i_is_32)) ;
+        true, C_iso, M->p_is_32, M->j_is_32, M->i_is_32)) ;
 
     uint64_t *restrict Cp = C->p ;  // FIXME
     int64_t *restrict Ch = C->h ;

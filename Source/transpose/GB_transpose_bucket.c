@@ -126,19 +126,22 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // The bucket transpose only works when C is sparse.
     // A can be sparse or hypersparse.
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
     int8_t p_control = hack32 ? 32 : Werk->p_control ;
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;
     int8_t i_control = hack32 ? 32 : Werk->i_control ;
-    bool Cp_is_32, Ci_is_32 ;
-    GB_determine_pi_is_32 (&Cp_is_32, &Ci_is_32, p_control, i_control,
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
         GxB_SPARSE, anz, avdim, avlen) ;
 
     // C->p is allocated but not initialized.
     bool C_iso = (C_code_iso != GB_NON_ISO) ;
     GB_OK (GB_new_bix (&C, // sparse, existing header
         ctype, avdim, avlen, GB_ph_malloc, C_is_csc, GxB_SPARSE, true,
-        A->hyper_switch, avlen, anz, true, C_iso, Cp_is_32, Ci_is_32)) ;
+        A->hyper_switch, avlen, anz, true, C_iso,
+        Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     C->nvals = anz ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
@@ -225,7 +228,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_FREE_WORKSPACE ;
     ASSERT_MATRIX_OK (C, "C transpose of A", GB0) ;
     ASSERT (C->h == NULL) ;
-    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C transpose of A converted", GB0) ;
     return (GrB_SUCCESS) ;
 }

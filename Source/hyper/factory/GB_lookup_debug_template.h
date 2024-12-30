@@ -15,7 +15,7 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
 (
     // input:
     const bool A_is_hyper,          // true if A is hypersparse
-    const GB_ITYPE *restrict Ah,    // A->h [0..A->nvec-1]: list of vectors
+    const GB_JTYPE *restrict Ah,    // A->h [0..A->nvec-1]: list of vectors
     const GB_PTYPE *restrict Ap,    // A->p [0..A->nvec  ]: pointers to vectors
     const int64_t avlen,            // A->vlen
     // input/output:
@@ -62,7 +62,7 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
 }
 
 #undef GB_PTYPE
-#undef GB_ITYPE
+#undef GB_JTYPE
 #undef GB_lookup_debug_T
 #undef GB_binary_search_T
 

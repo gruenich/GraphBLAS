@@ -166,7 +166,8 @@ GrB_Info GrB_Global_get_Scalar
 
     GB_RETURN_IF_NULL (g) ;
     GB_RETURN_IF_NULL (scalar) ;
-    GB_WHERE_2 (g, scalar, "GrB_Global_get_Scalar (g, scalar, field)") ;
+    GB_WHERE_1 (scalar, "GrB_Global_get_Scalar (g, scalar, field)") ;
+    ASSERT_SCALAR_OK (scalar, "input Scalar for GrB_Global_get_Scalar", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -220,6 +221,7 @@ GrB_Info GrB_Global_get_Scalar
         }
     }
 
+    ASSERT_SCALAR_OK (scalar, "output Scalar for GrB_Global_get_Scalar", GB0) ;
     return (info) ;
 }
 

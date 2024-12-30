@@ -12,7 +12,7 @@
 // Change the size of the A->h and A->p hyperlist.
 // No change is made if A is not hypersparse.
 // No change is made to A->Y.
-// A->p_is_32 and A->i_is_32 are unchanged.
+// A->p_is_32, A->j_is_32, and A->i_is_32 are unchanged.
 
 #include "GB.h"
 
@@ -47,12 +47,12 @@ GrB_Info GB_hyper_realloc
         #endif
         plen_new = GB_IMAX (1, plen_new) ;      // new size of A->p and A->h
         size_t psize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-        size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        size_t jsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
         // change the size of A->h and A->p
         bool ok1 = true, ok2 = true ;
         GB_REALLOC_MEMORY (A->p, plen_new+1, psize, &(A->p_size), &ok1) ;
-        GB_REALLOC_MEMORY (A->h, plen_new  , isize, &(A->h_size), &ok2) ;
+        GB_REALLOC_MEMORY (A->h, plen_new  , jsize, &(A->h_size), &ok2) ;
         bool ok = ok1 && ok2 ;
 
         // always succeeds if the space shrinks

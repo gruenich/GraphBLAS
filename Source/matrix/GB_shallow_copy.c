@@ -58,7 +58,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     #endif
     GB_new (&C, // sparse or hyper, existing header
         A->type, A->vlen, A->vdim, GB_ph_null, C_is_csc,
-        GB_sparsity (A), A->hyper_switch, 0, A->p_is_32, A->i_is_32) ;
+        GB_sparsity (A), A->hyper_switch, 0,
+        A->p_is_32, A->j_is_32, A->i_is_32) ;
     ASSERT (info == GrB_SUCCESS) ;
 
     //--------------------------------------------------------------------------
@@ -71,6 +72,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->p = A->p ;                       // C->p is of size A->plen + 1
     C->h = A->h ;                       // C->h is of size A->plen
     C->p_is_32 = A->p_is_32 ;
+    C->j_is_32 = A->j_is_32 ;
     C->i_is_32 = A->i_is_32 ;
     C->p_size = A->p_size ;
     C->h_size = A->h_size ;

@@ -52,7 +52,7 @@
 //      // input:
 //      const int64_t Cnvec,            // # of vectors of C
 //      const void *Ch,                 // vectors of C, if hypersparse
-//      const bool Ci_is_32,            // if true, Ch is 32-bit, else 64-bit
+//      const bool Cj_is_32,            // if true, Ch is 32-bit, else 64-bit
 //      const int64_t *restrict C_to_M, // mapping of C to M
 //      const int64_t *restrict C_to_A, // mapping of C to A
 //      const int64_t *restrict C_to_B, // mapping of C to B
@@ -152,8 +152,8 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
     bool Ch_is_Bh = (Ch != NULL && B->h != NULL && Ch == B->h) ;
-    ASSERT (GB_IMPLIES (Ch_is_Ah, Ci_is_32 == A->i_is_32)) ;
-    ASSERT (GB_IMPLIES (Ch_is_Bh, Ci_is_32 == B->i_is_32)) ;
+    ASSERT (GB_IMPLIES (Ch_is_Ah, Cj_is_32 == A->j_is_32)) ;
+    ASSERT (GB_IMPLIES (Ch_is_Bh, Cj_is_32 == B->j_is_32)) ;
 
     GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
     void *Mi = NULL ;
@@ -169,7 +169,7 @@ GB_CALLBACK_EWISE_SLICE_PROTO (GB_ewise_slice)
         Mi_is_32 = M->i_is_32 ;
     }
 
-    GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Ci_is_32) ;
+    GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Cj_is_32) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace

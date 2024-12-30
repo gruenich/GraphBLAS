@@ -38,7 +38,8 @@ GrB_Info GB_apply_unop_jit      // Cx = op (A), apply unop via the JIT
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_KERNEL_APPLYUNOP, GxB_FULL, false, ctype, false, false, false,
-        op, flipij, GB_sparsity (A), true, A->type, A->p_is_32, A->i_is_32,
+        op, flipij, GB_sparsity (A), true, A->type,
+        A->p_is_32, A->j_is_32, A->i_is_32,
         A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------

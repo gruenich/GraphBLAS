@@ -48,6 +48,7 @@ void GB_convert_any_to_full     // convert any matrix to full
     A->i = NULL ;
     A->i_shallow = false ;
     A->p_is_32 = false ;    // OK: full always has p_is_32 = false
+    A->j_is_32 = false ;    // OK: full always has j_is_32 = false
     A->i_is_32 = false ;    // OK: full always has i_is_32 = false
 
     if (!A->b_shallow) GB_FREE (&(A->b), A->b_size) ;

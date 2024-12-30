@@ -111,22 +111,23 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         vdim = (int64_t) nrows ;
     }
 
-    // determine the p_is_32 and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32 and i_is_32 settings for the new matrix
     bool hack32 = true ;    // FIXME
     int8_t p_control = hack32 ? 32 : GB_Global_p_control_get ();
+    int8_t j_control = hack32 ? 64 : GB_Global_j_control_get ();
     int8_t i_control = hack32 ? 32 : GB_Global_i_control_get ();
-    bool Ap_is_32, Ai_is_32 ;
-    GB_determine_pi_is_32 (&Ap_is_32, &Ai_is_32, p_control, i_control,
-        GxB_AUTO_SPARSITY, 1, vlen, vdim) ;
+    bool Ap_is_32, Aj_is_32, Ai_is_32 ;
+    GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
+        p_control, j_control, i_control, GxB_AUTO_SPARSITY, 1, vlen, vdim) ;
 
     // create the matrix
     GB_OK (GB_new (A, // auto sparsity (sparse/hyper), new header
         type, vlen, vdim, GB_ph_calloc, A_is_csc, GxB_AUTO_SPARSITY,
-        GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Ai_is_32)) ;
+        GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Aj_is_32, Ai_is_32)) ;
 
     // HACK for now:
     ASSERT_MATRIX_OK (*A, "GrB_Matrix_new before convert", GB0) ;
-    GB_OK (GB_convert_int (*A, false, false, true)) ; // FIXME
+    GB_OK (GB_convert_int (*A, false, false, false, true)) ; // FIXME
     ASSERT_MATRIX_OK (*A, "GrB_Matrix_new after convert", GB0) ;
     GB_OK (GB_valid_matrix (*A)) ; 
 

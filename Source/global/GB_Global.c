@@ -139,7 +139,8 @@ typedef struct
     //--------------------------------------------------------------------------
 
     int8_t p_control ;      // controls A->p
-    int8_t i_control ;      // controls A->[hiY]
+    int8_t j_control ;      // controls A->h and A->Y->[pix]
+    int8_t i_control ;      // controls A->i
 
     //--------------------------------------------------------------------------
     // CUDA (DRAFT: in progress):
@@ -227,6 +228,7 @@ static GB_Global_struct GB_Global =
 
     // integer control
     .p_control = (int8_t) 64,   // FIXME: make it 32
+    .j_control = (int8_t) 32,   // FIXME: make it 32
     .i_control = (int8_t) 64,   // FIXME: make it 32
 
     // CUDA environment (DRAFT: in progress)
@@ -278,6 +280,16 @@ void GB_Global_p_control_set (int8_t p_control)
 int8_t GB_Global_p_control_get (void)
 { 
     return (GB_Global.p_control) ;
+}
+
+void GB_Global_j_control_set (int8_t j_control)
+{ 
+    GB_Global.j_control = j_control ;
+}
+
+int8_t GB_Global_j_control_get (void)
+{ 
+    return (GB_Global.j_control) ;
 }
 
 void GB_Global_i_control_set (int8_t i_control)

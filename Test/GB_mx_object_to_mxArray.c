@@ -55,13 +55,13 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     // ensure the matrix is 64/64 bit
     //--------------------------------------------------------------------------
 
-    if (C->p_is_32 || C->i_is_32)
+    if (C->p_is_32 || C->j_is_32 || C->i_is_32)
     {
         mexPrintf ("C has 32-bit components.  Where from?\n") ;
         GxB_print (C, 2) ;
         mexErrMsgTxt ("FIXME") ;
     }
-    GB_convert_int (C, false, false, true) ;
+    GB_convert_int (C, false, false, false, true) ;
 
     //--------------------------------------------------------------------------
     // check matrix

@@ -72,9 +72,11 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 
     GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     const bool Cp_is_32 = C->p_is_32 ;
+    const bool Cj_is_32 = C->j_is_32 ;
     const bool Ci_is_32 = C->i_is_32 ;
 
     ASSERT (C->p_is_32 == A->p_is_32) ;
+    ASSERT (C->j_is_32 == A->j_is_32) ;
     ASSERT (C->i_is_32 == A->i_is_32) ;
 
     const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
@@ -217,12 +219,13 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // FIXME: could make these components of C shallow instead of memcpy
 
     size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t cjsize = Cj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t cisize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     if (GB_IS_HYPERSPARSE (A))
     { 
         // copy A->h into C->h
-        GB_memcpy (C->h, Ah, nvec * cisize, A_nthreads) ;
+        GB_memcpy (C->h, Ah, nvec * cjsize, A_nthreads) ;
     }
 
     if (C_has_pattern_of_A)

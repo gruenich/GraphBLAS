@@ -186,7 +186,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_apply_unop_branch (ctype, A, op)
-            && !A->p_is_32 && !A->i_is_32)  // FIXME
+            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32)  // FIXME
         {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A,
                 (GB_void *) &thunk) ;
@@ -413,7 +413,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_apply_unop_branch (ctype, A, op)
-            && !A->p_is_32 && !A->i_is_32)  // FIXME
+            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32)  // FIXME
         {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, NULL) ;
         }
@@ -558,7 +558,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             #if defined ( GRAPHBLAS_HAS_CUDA )
             if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A)
-                && !A->p_is_32 && !A->i_is_32)  // FIXME
+                && !A->p_is_32 && !A->j_is_32 && !A->i_is_32)  // FIXME
             {
                 info = GB_cuda_apply_binop (Cx, ctype, (GrB_BinaryOp) op, A,
                     scalarx, true) ;
@@ -625,7 +625,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
             #if defined ( GRAPHBLAS_HAS_CUDA )
             if (GB_cuda_apply_binop_branch (ctype, (GrB_BinaryOp) op, A)
-                && !A->p_is_32 && !A->i_is_32)  // FIXME
+                && !A->p_is_32 && !A->j_is_32 && !A->i_is_32)  // FIXME
             {
                 info = GB_cuda_apply_binop (Cx, ctype, (GrB_BinaryOp) op, A,
                 scalarx, false) ;
@@ -763,7 +763,7 @@ GrB_Info GB_apply_op        // apply a unary op, idxunop, or binop, Cx = op (A)
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (GB_cuda_apply_unop_branch (ctype, A, op)
-            && !A->p_is_32 && !A->i_is_32)  // FIXME
+            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32)  // FIXME
         {
             info = GB_cuda_apply_unop (Cx, ctype, op, flipij, A, ythunk) ;
         }

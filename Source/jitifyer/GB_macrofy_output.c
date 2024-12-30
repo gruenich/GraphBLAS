@@ -28,6 +28,7 @@ void GB_macrofy_output
     bool C_iso,             // true if C is iso on output
     bool C_in_iso,          // true if C is iso on input
     int p_is_32,            // if true, Cp is 32-bit, else 64-bit
+    int j_is_32,            // if true, Ch is 32-bit, else 64-bit
     int i_is_32             // if true, Ci is 32-bit, else 64-bit
 )
 {
@@ -93,6 +94,6 @@ void GB_macrofy_output
     // construct macros for 32/64 integer types
     //--------------------------------------------------------------------------
 
-    GB_macrofy_bits (fp, Cname, p_is_32, i_is_32) ;
+    GB_macrofy_bits (fp, Cname, p_is_32, j_is_32, i_is_32) ;
 }
 

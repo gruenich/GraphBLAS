@@ -765,9 +765,10 @@ GrB_Info GB_sort
 
     bool C_is_hyper = GB_IS_HYPERSPARSE (C) ;
     size_t cisize = (C->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    GB_Type_code cicode = (C->i_is_32) ? GB_UINT32_code : GB_UINT64_code ;
     GB_Type_code cpcode = (C->p_is_32) ? GB_UINT32_code : GB_UINT64_code ;
-    GB_Type_code picode ;
+    GB_Type_code cjcode = (C->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code cicode = (C->i_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code picode, pjcode ;
 
     if (P != NULL)
     {
@@ -779,12 +780,16 @@ GrB_Info GB_sort
         P->vdim = C->vdim ;
 
         size_t ppsize = (P->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        size_t pjsize = (P->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
         size_t pxsize = ptype->size ;
         GB_Type_code pxcode = ptype->code ;
         GB_Type_code ppcode = (P->p_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+        pjcode = (P->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
         picode = (P->i_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
-        if (C_is_NULL && pxsize == cisize && P->p_is_32 == C->p_is_32 &&
+        if (C_is_NULL && pxsize == cisize &&
+            P->p_is_32 == C->p_is_32 &&
+            P->j_is_32 == C->j_is_32 &&
             P->i_is_32 == C->i_is_32)
         { 
             // C is a temporary matrix T, and its contents are not needed.  The
@@ -807,7 +812,7 @@ GrB_Info GB_sort
             P->h = NULL ;
             if (C_is_hyper)
             { 
-                P->h = GB_MALLOC (pplen, int64_t, &(P->h_size)) ;
+                P->h = GB_MALLOC_MEMORY (pplen, pjsize, &(P->h_size)) ;
             }
             if (P->x == NULL || P->p == NULL || (C_is_hyper && P->h == NULL))
             { 
@@ -824,7 +829,7 @@ GrB_Info GB_sort
             if (C_is_hyper)
             { 
 //              GB_memcpy (P->h, C->h, cnvec * sizeof (int64_t), nthreads_max) ;
-                GB_cast_int (P->h, picode, C->h, cicode, cnvec, nthreads_max) ;
+                GB_cast_int (P->h, pjcode, C->h, cjcode, cnvec, nthreads_max) ;
             }
         }
 
@@ -852,7 +857,7 @@ GrB_Info GB_sort
     if (!C_is_NULL)
     { 
         ASSERT_MATRIX_OK (C, "C output of GB_sort (before convert)", GB0) ;
-        GB_OK (GB_convert_int (C, false, false, true)) ;    // FIXME
+        GB_OK (GB_convert_int (C, false, false, false, true)) ;    // FIXME
         ASSERT_MATRIX_OK (C, "C output of GB_sort (before conform)", GB0) ;
         GB_OK (GB_conform (C, Werk)) ;
         ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ;
@@ -860,7 +865,7 @@ GrB_Info GB_sort
     if (P != NULL)
     { 
         ASSERT_MATRIX_OK (P, "P output of GB_sort (before convert)", GB0) ;
-        GB_OK (GB_convert_int (P, false, false, true)) ;    // FIXME
+        GB_OK (GB_convert_int (P, false, false, false, true)) ;    // FIXME
         ASSERT_MATRIX_OK (P, "P output of GB_sort (before conform)", GB0) ;
         GB_OK (GB_conform (P, Werk)) ;
         ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ;

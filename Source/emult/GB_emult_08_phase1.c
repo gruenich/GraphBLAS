@@ -40,7 +40,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Cp_is_32,            // if true, Cp is 32-bit; else 64-bit
-    const bool Ci_is_32,            // if true, Ci is 32-bit; else 64-bit
+    const bool Cj_is_32,            // if true, Ch is 32-bit; else 64-bit
     // original input:
     const GrB_Matrix M,             // optional mask, may be NULL
     const bool Mask_struct,         // if true, use the only structure of M
@@ -96,7 +96,7 @@ GrB_Info GB_emult_08_phase1                 // count nnz in each C(:,j)
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_IPTR (Cp, Cp_is_32) ;
-    GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Ci_is_32) ;
+    GB_IDECL (Ch, const, u) ; GB_IPTR (Ch, Cj_is_32) ;
 
     //--------------------------------------------------------------------------
     // count the entries in each vector of C

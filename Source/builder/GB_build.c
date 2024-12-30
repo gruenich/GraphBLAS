@@ -257,13 +257,12 @@ GrB_Info GB_build               // build matrix
     // build the matrix T
     //--------------------------------------------------------------------------
 
-    // Determine the Tp_is_32 and Ti_is_32 settings for the new matrix,
-    // assuming that nvals is not reduced by a massive # of duplicates.
-    // C->p_control and C->i_control may be strict; if so, T is created with
-    // these integer sizes.
-    bool Tp_is_32, Ti_is_32 ;
-    GB_determine_pi_is_32 (&Tp_is_32, &Ti_is_32, Werk->p_control,
-        Werk->i_control, GxB_HYPERSPARSE, nvals, C->vlen, C->vdim) ;
+    // Determine the Tp_is_32, Tj_is_32, and Ti_is_32 settings for the new
+    // matrix, assuming that nvals is not reduced by a massive # of duplicates.
+    bool Tp_is_32, Tj_is_32, Ti_is_32 ;
+    GB_determine_pji_is_32 (&Tp_is_32, &Tj_is_32, &Ti_is_32,
+        Werk->p_control, Werk->j_control, Werk->i_control,
+        GxB_HYPERSPARSE, nvals, C->vlen, C->vdim) ;
 
     // T is always built as hypersparse.  Its type is the same as the z output
     // of the z=dup(x,y) operator if dup is present, or xtype if dup is NULL.
@@ -306,7 +305,7 @@ GrB_Info GB_build               // build matrix
         true,           // burble is OK
         Werk,
         I_is_32, I_is_32,   // if true, I and J are 32 bit; otherwise 64-bit
-        Tp_is_32, Ti_is_32
+        Tp_is_32, Tj_is_32, Ti_is_32
     )) ;
 
     double tt = GB_OPENMP_GET_WTIME ;
@@ -368,7 +367,7 @@ GrB_Info GB_build               // build matrix
             I_is_32 ? "32" : "64", tt) ;
     }
 
-    GB_OK (GB_convert_int (C, false, false, true)) ;  // FIXME
+    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
     return (GrB_SUCCESS) ;
 }
 
