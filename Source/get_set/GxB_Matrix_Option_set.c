@@ -221,14 +221,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 // any nonzero value results in GxB_BY_COL.
                 bool new_csc = (format != GxB_BY_ROW) ;
                 // conform the matrix to the new by-row/by-col format
-                if (A->is_csc != new_csc)
-                { 
-                    // A = A', done in-place, and change to the new format.
-                    GB_BURBLE_N (GB_nnz (A), "(transpose) ") ;
-                    GB_OK (GB_transpose_in_place (A, new_csc, Werk)) ;
-                    ASSERT (A->is_csc == new_csc) ;
-                    ASSERT (GB_JUMBLED_OK (A)) ;
-                }
+                GB_OK (GB_transpose_in_place (A, new_csc, Werk)) ;
             }
             break ;
 

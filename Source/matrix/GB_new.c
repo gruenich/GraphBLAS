@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
 // See GB_new_bix instead.
@@ -62,8 +63,14 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     ASSERT (vlen >= 0 && vlen <= GB_NMAX)
     ASSERT (vdim >= 0 && vdim <= GB_NMAX) ;
 
-    if ((!(sparsity == GxB_FULL || sparsity == GxB_BITMAP)) &&
-        !GB_valid_pji_is_32 (p_is_32, j_is_32, i_is_32, 1, vlen, vdim))
+    if (sparsity == GxB_FULL || sparsity == GxB_BITMAP)
+    {
+        // full/bitmap matrices ignore the A->[pji]_is_32 flags
+        p_is_32 = false ;    // OK: bitmap/full always has p_is_32 = false
+        j_is_32 = false ;    // OK: bitmap/full always has j_is_32 = false
+        i_is_32 = false ;    // OK: bitmap/full always has i_is_32 = false
+    }
+    else if (!GB_valid_pji_is_32 (p_is_32, j_is_32, i_is_32, 1, vlen, vdim))
     {
         // sparse/hyper matrix is too large for its requested integer settings
         return (GrB_INVALID_VALUE) ;
@@ -151,10 +158,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         A->nvec = vdim ;
         // all vectors present, unless matrix has a zero dimension 
         A->nvec_nonempty = (vlen > 0) ? vdim : 0 ;
-        // full/bitmap matrices ignore the A->[pji]_is_32 flags
-        p_is_32 = false ;    // OK: bitmap/full always has p_is_32 = false
-        j_is_32 = false ;    // OK: bitmap/full always has j_is_32 = false
-        i_is_32 = false ;    // OK: bitmap/full always has i_is_32 = false
+
     }
     else if (A_is_hyper)
     { 
@@ -188,6 +192,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->j_is_32 = j_is_32 ;
     A->i_is_32 = i_is_32 ;
     A->p_control = 0 ;
+    A->j_control = 0 ;
     A->i_control = 0 ;
 
     //--------------------------------------------------------------------------

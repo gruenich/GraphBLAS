@@ -46,7 +46,6 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
     if (!(A->is_csc))
     { 
         // A = A', done in-place, to put A in by-col format
-        GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose_in_place (A, true, Werk)) ;
     }
 

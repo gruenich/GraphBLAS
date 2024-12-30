@@ -7,11 +7,130 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 matrix get/set
+// DONE: 32/64 matrix get/set
+#define GB_DEBUG
 
 #include "get_set/GB_get_set.h"
 #include "transpose/GB_transpose.h"
 #define GB_FREE_ALL ;
+
+//------------------------------------------------------------------------------
+// GB_set_format: set A->is_csc and transpose if needed
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_set_format
+(
+    GrB_Matrix A,
+    bool is_vector,
+    int format,
+    GB_Werk Werk
+)
+{
+    GrB_Info info ;
+    if (is_vector)
+    { 
+        // the hint is ignored
+        return (GrB_SUCCESS) ;
+    }
+    if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+    bool new_csc = (format != GxB_BY_ROW) ;
+    GB_OK (GB_transpose_in_place (A, new_csc, Werk)) ;
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_set_p_control: set A->p_control and convert integers if needed
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_set_p_control
+(
+    GrB_Matrix A,
+    int ivalue
+)
+{
+    GrB_Info info ;
+    if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+    if (ivalue == 32 && !A->p_is_32)
+    { 
+        // A->p is currently 64-bit; convert to 32-bit if possible
+        GB_OK (GB_convert_int (A, true, A->j_is_32, A->i_is_32, true)) ;
+    }
+    else if (ivalue == 64 && A->i_is_32)
+    { 
+        // A->p is currently 32-bit; convert to 64-bit
+        GB_OK (GB_convert_int (A, false, A->j_is_32, A->i_is_32, true)) ;
+    }
+    A->p_control = ivalue ;
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_set_j_control: set A->j_control and convert integers if needed
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_set_j_control
+(
+    GrB_Matrix A,
+    int ivalue
+)
+{
+    GrB_Info info ;
+    if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+    if (ivalue == 32 && !A->j_is_32)
+    { 
+        // A->h is currently 64-bit; convert to 32-bit if possible
+        GB_OK (GB_convert_int (A, A->p_is_32, true, A->i_is_32, true)) ;
+    }
+    else if (ivalue == 64 && A->j_is_32)
+    { 
+        // A->h is currently 32-bit; convert to 64-bit
+        GB_OK (GB_convert_int (A, A->p_is_32, false, A->j_is_32, true)) ;
+    }
+    A->j_control = ivalue ;
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_set_i_control: set A->i_control and convert integers if needed
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_set_i_control
+(
+    GrB_Matrix A,
+    int ivalue
+)
+{
+    GrB_Info info ;
+    if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
+    { 
+        return (GrB_INVALID_VALUE) ;
+    }
+    if (ivalue == 32 && !A->i_is_32)
+    { 
+        // A->i is currently 64-bit; convert to 32-bit if possible
+        GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, true, true)) ;
+    }
+    else if (ivalue == 64 && A->i_is_32)
+    { 
+        // A->i is currently 32-bit; convert to 64-bit
+        GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, false, true)) ;
+    }
+    A->i_control = ivalue ;
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_matvec_set
+//------------------------------------------------------------------------------
 
 GrB_Info GB_matvec_set
 (
@@ -64,69 +183,21 @@ GrB_Info GB_matvec_set
 
         case GxB_FORMAT : 
 
-            if (is_vector)
-            { 
-                // the hint is ignored
-                return (GrB_SUCCESS) ;
-            }
-            if (! (format == GxB_BY_ROW || format == GxB_BY_COL))
-            { 
-                return (GrB_INVALID_VALUE) ;
-            }
-            bool new_csc = (format != GxB_BY_ROW) ;
-            // conform the matrix to the new by-row/by-col format
-            if (A->is_csc != new_csc)
-            { 
-                // A = A', done in-place, and change to the new format.
-                GB_BURBLE_N (GB_nnz (A), "(transpose) ") ;
-                GB_OK (GB_transpose_in_place (A, new_csc, Werk)) ;
-                ASSERT (A->is_csc == new_csc) ;
-                ASSERT (GB_JUMBLED_OK (A)) ;
-            }
-            break ;
-
-//      case GxB_COLINDEX_INTEGER_HINT : // FIXME
-//      case GxB_ROWINDEX_INTEGER_HINT : // FIXME
-//      case GxB_COLINDEX_INTEGER_BITS : // FIXME
-//      case GxB_ROWINDEX_INTEGER_BITS : // FIXME
+            return (GB_set_format (A, is_vector, format, Werk)) ;
 
         case GxB_OFFSET_INTEGER_HINT : 
 
-            if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
-            { 
-                return (GrB_INVALID_VALUE) ;
-            }
-            if (ivalue == 32 && !A->p_is_32)
-            { 
-                // A->p is currently 64-bit; convert to 32-bit if possible
-                GB_OK (GB_convert_int (A, true, A->j_is_32, A->i_is_32, true)) ;
-            }
-            else if (ivalue == 64 && A->i_is_32)
-            { 
-                // A->p is currently 32-bit; convert to 64-bit
-                GB_OK (GB_convert_int (A, false, A->j_is_32, A->i_is_32, true)) ;
-            }
-            A->p_control = ivalue ;
-            break ;
+            return (GB_set_p_control (A, ivalue)) ;
 
-        case GxB_INDEX_INTEGER_HINT : 
+        case GxB_COLINDEX_INTEGER_HINT : 
 
-            if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
-            { 
-                return (GrB_INVALID_VALUE) ;
-            }
-            if (ivalue == 32 && !A->i_is_32)
-            { 
-                // A->i is currently 64-bit; convert to 32-bit if possible
-                GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, true, true)) ;
-            }
-            else if (ivalue == 64 && A->i_is_32)
-            { 
-                // A->i is currently 32-bit; convert to 64-bit
-                GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, false, true)) ;
-            }
-            A->i_control = ivalue ;
-            break ;
+            return (A->is_csc ? GB_set_j_control (A, ivalue) :
+                                GB_set_i_control (A, ivalue)) ;
+
+        case GxB_ROWINDEX_INTEGER_HINT : 
+
+            return (A->is_csc ? GB_set_i_control (A, ivalue) :
+                                GB_set_j_control (A, ivalue)) ;
 
         default : 
             return (GrB_INVALID_VALUE) ;

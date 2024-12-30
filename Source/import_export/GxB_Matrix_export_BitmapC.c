@@ -48,7 +48,6 @@ GrB_Info GxB_Matrix_export_BitmapC  // export and free a bitmap matrix, by col
     if (!((*A)->is_csc))
     { 
         // A = A', done in-place, to put A in by-col format
-        GBURBLE ("(export transpose) ") ;
         GB_OK (GB_transpose_in_place (*A, true, Werk)) ;
     }
 

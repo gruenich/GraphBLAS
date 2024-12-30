@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 matrix get/set
+// DONE: 32/64 matrix get/set
 
 #include "get_set/GB_get_set.h"
 
@@ -30,31 +30,6 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
             (*value) = A->sparsity_control ;
             break ;
 
-        case GxB_OFFSET_INTEGER_HINT : 
-
-            (*value) = A->p_control ;
-            break ;
-
-//      case GxB_COLINDEX_INTEGER_HINT : // FIXME
-//      case GxB_ROWINDEX_INTEGER_HINT : // FIXME
-//      case GxB_COLINDEX_INTEGER_BITS : // FIXME
-//      case GxB_ROWINDEX_INTEGER_BITS : // FIXME
-
-        case GxB_INDEX_INTEGER_HINT : 
-
-            (*value) = A->i_control ;
-            break ;
-
-        case GxB_OFFSET_INTEGER_BITS : 
-
-            (*value) = (A->p_is_32) ? 32 : 64 ;
-            break ;
-
-        case GxB_INDEX_INTEGER_BITS : 
-
-            (*value) = (A->i_is_32) ? 32 : 64 ; // FIXME
-            break ;
-
         case GxB_SPARSITY_STATUS : 
 
             (*value) = GB_sparsity (A) ;
@@ -68,6 +43,36 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
         case GxB_FORMAT : 
 
             (*value) = (A->is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
+            break ;
+
+        case GxB_OFFSET_INTEGER_HINT : 
+
+            (*value) = A->p_control ;
+            break ;
+
+        case GxB_OFFSET_INTEGER_BITS : 
+
+            (*value) = (A->p_is_32) ? 32 : 64 ;
+            break ;
+
+        case GxB_COLINDEX_INTEGER_HINT : 
+
+            (*value) = (A->is_csc) ? A->j_control : A->i_control ;
+            break ;
+
+        case GxB_COLINDEX_INTEGER_BITS : 
+
+            (*value) = ((A->is_csc) ? A->j_is_32 : A->i_is_32) ? 32 : 64 ;
+            break ;
+
+        case GxB_ROWINDEX_INTEGER_HINT : 
+
+            (*value) = (A->is_csc) ? A->i_control : A->j_control ;
+            break ;
+
+        case GxB_ROWINDEX_INTEGER_BITS : 
+
+            (*value) = ((A->is_csc) ? A->i_is_32 : A->j_is_32) ? 32 : 64 ;
             break ;
 
         default : 

@@ -1625,14 +1625,17 @@ typedef enum
     GxB_THETA = 7052,               // to get the value of theta
 
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
-    GxB_INDEX_INTEGER_HINT  = 7053, // hint for row/col indices
-    GxB_OFFSET_INTEGER_HINT = 7054, // hint for offsets
+    GxB_ROWINDEX_INTEGER_HINT = 7053,   // hint for row indices
+    GxB_COLINDEX_INTEGER_HINT = 7054,   // hint for column indices
+    GxB_OFFSET_INTEGER_HINT = 7056,     // hint for offsets
 
     // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
-    GxB_INDEX_INTEGER_BITS  = 7055, // # integer bits for row/col indices
-    GxB_OFFSET_INTEGER_BITS = 7056, // # integer bits for offsets
+    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
+    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
+    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
+
 }
-GrB_Field ;
+GrB_Field ; // FIXME: rename
 
 typedef enum
 {

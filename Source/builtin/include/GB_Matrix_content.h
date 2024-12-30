@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_matrix.h: definitions for GrB_Matrix and GrB_Vector
+// GB_Matrix_content.h: content of GrB_Matrix, GrB_Vector, and GrB_Scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

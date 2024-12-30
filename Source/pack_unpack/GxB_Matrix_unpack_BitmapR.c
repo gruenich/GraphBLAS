@@ -43,7 +43,6 @@ GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
     if (A->is_csc)
     { 
         // A = A', done in-place, to put A in by-row format
-        GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose_in_place (A, false, Werk)) ;
     }
 

@@ -31,7 +31,7 @@
 #include "pending/GB_Pending_n.h"
 #include "nvals/GB_nvals.h"
 #include "aliased/GB_aliased.h"
-#include "matrix/GB_new.h"
+#include "matrix/GB_matrix.h"
 #include "clear/GB_clear.h"
 #include "dup/GB_dup.h"
 #include "compatible/GB_code_compatible.h"

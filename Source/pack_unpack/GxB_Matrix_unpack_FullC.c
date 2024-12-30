@@ -50,7 +50,6 @@ GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
     if (!(A->is_csc))
     { 
         // A = A', done in-place, to put A in by-col format
-        GBURBLE ("(transpose) ") ;
         GB_OK (GB_transpose_in_place (A, true, Werk)) ;
         GB_MATRIX_WAIT (A) ;
     }

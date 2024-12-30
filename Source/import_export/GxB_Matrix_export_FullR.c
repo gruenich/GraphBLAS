@@ -56,7 +56,6 @@ GrB_Info GxB_Matrix_export_FullR  // export and free a full matrix, by row
     if ((*A)->is_csc)
     { 
         // A = A', done in-place, to put A in by-row format
-        GBURBLE ("(export transpose) ") ;
         GB_OK (GB_transpose_in_place (*A, false, Werk)) ;
         GB_MATRIX_WAIT (*A) ;
     }

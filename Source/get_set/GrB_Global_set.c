@@ -52,13 +52,36 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
             GB_Global_p_control_set (value) ;
             break ;
 
-        case GxB_INDEX_INTEGER_HINT : 
+        case GxB_COLINDEX_INTEGER_HINT : 
 
             if (!(value == 32 || value == 64))
             { 
                 return (GrB_INVALID_VALUE) ;
             }
-            GB_Global_i_control_set (value) ;
+            if (GB_Global_is_csc_get ( ))
+            {
+                GB_Global_j_control_set (value) ;
+            }
+            else
+            {
+                GB_Global_i_control_set (value) ;
+            }
+            break ;
+
+        case GxB_ROWINDEX_INTEGER_HINT : 
+
+            if (!(value == 32 || value == 64))
+            { 
+                return (GrB_INVALID_VALUE) ;
+            }
+            if (GB_Global_is_csc_get ( ))
+            {
+                GB_Global_i_control_set (value) ;
+            }
+            else
+            {
+                GB_Global_j_control_set (value) ;
+            }
             break ;
 
         case GxB_GLOBAL_NTHREADS :          // same as GxB_NTHREADS

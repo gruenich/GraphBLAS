@@ -378,32 +378,32 @@ struct GB_Type_opaque       // content of GrB_Type
 
 struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
 {
-    #include "include/GB_Operator.h"
+    #include "include/GB_Operator_content.h"
 } ;
 
 struct GB_IndexUnaryOp_opaque   // content of GrB_IndexUnaryOp
 {
-    #include "include/GB_Operator.h"
+    #include "include/GB_Operator_content.h"
 } ;
 
 struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
 {
-    #include "include/GB_Operator.h"
+    #include "include/GB_Operator_content.h"
 } ;
 
 struct GB_IndexBinaryOp_opaque   // content of GxB_IndexBinaryOp
 {
-    #include "include/GB_Operator.h"
+    #include "include/GB_Operator_content.h"
 } ;
 
 struct GB_SelectOp_opaque   // content of GxB_SelectOp
 {
-    #include "include/GB_Operator.h"
+    #include "include/GB_Operator_content.h"
 } ;
 
 struct GB_Operator_opaque   // content of GB_Operator
 {
-    #include "include/GB_Operator.h"
+    #include "include/GB_Operator_content.h"
 } ;
 
 // Any GrB_UnaryOp, GrB_IndexUnaryOp, GrB_BinaryOp, or GxB_SelectOp can be
@@ -529,17 +529,17 @@ typedef struct GB_Pending_struct *GB_Pending ;
 
 struct GB_Scalar_opaque     // content of GrB_Scalar: 1-by-1 standard CSC matrix
 {
-    #include "include/GB_matrix.h"
+    #include "include/GB_Matrix_content.h"
 } ;
 
 struct GB_Vector_opaque     // content of GrB_Vector: m-by-1 standard CSC matrix
 {
-    #include "include/GB_matrix.h"
+    #include "include/GB_Matrix_content.h"
 } ;
 
 struct GB_Matrix_opaque     // content of GrB_Matrix
 {
-    #include "include/GB_matrix.h"
+    #include "include/GB_Matrix_content.h"
 } ;
 
 //------------------------------------------------------------------------------

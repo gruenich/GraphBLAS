@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // Transplant A into C, and then free A.  If any part of A is shallow, or if A
 // must be typecasted, a deep copy is made into C.  Prior content of C is
@@ -17,8 +18,8 @@
 // must be compatible with A->type.
 
 // C->hyper_switch, C->bitmap_switch, C->sparsity_control, C->static_header,
-// C->user_name, C->user_name_size, C->p_control, and C->i_control are not
-// modified by the transplant.
+// C->user_name, C->user_name_size, C->p_control, C->j_control, and
+// C->i_control are not modified by the transplant.
 
 #define GB_FREE_ALL                 \
 {                                   \

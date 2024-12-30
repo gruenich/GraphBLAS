@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // CALLS:     GB_builder
 
@@ -97,11 +98,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;
     ASSERT_OP_OK_OR_NULL (op_in, "unop/binop for GB_transpose", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (scalar, "scalar for GB_transpose", GB0) ;
-
-    if (in_place)
-    { 
-        GBURBLE ("(in-place transpose) ") ;
-    }
 
     // get the current sparsity control of A
     float A_hyper_switch = A->hyper_switch ;

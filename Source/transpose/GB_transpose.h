@@ -33,10 +33,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_transpose_in_place   // C=A', no change of type, no operators
+GrB_Info GB_transpose_in_place  // A=A', to change A->is_csc
 (
-    GrB_Matrix C,               // output matrix C, possibly modified in-place
-    const bool C_is_csc,        // desired CSR/CSC format of C
+    GrB_Matrix A,           // input/output matrix
+    const bool new_csc,     // desired format, by row (false) or by col (true)
     GB_Werk Werk
 ) ;
 
@@ -93,14 +93,6 @@ GrB_Info GB_transpose_op // transpose, typecast, and apply operator to a matrix
     int nworkspaces,                    // # of workspaces to use
     // for all cases:
     int nthreads                        // # of threads to use
-) ;
-
-GrB_Info GB_shallow_copy    // create a purely shallow matrix
-(
-    GrB_Matrix C,           // output matrix C, with a static header
-    const bool C_is_csc,    // desired CSR/CSC format of C
-    const GrB_Matrix A,     // input matrix
-    GB_Werk Werk
 ) ;
 
 #endif

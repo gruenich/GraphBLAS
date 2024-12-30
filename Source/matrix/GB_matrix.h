@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_new.h: definitions for GB_new and related methods
+// GB_matrix.h: definitions for basic methods for the GrB_Matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,8 +9,8 @@
 
 // DONE: 32/64 bit
 
-#ifndef GB_NEW_H
-#define GB_NEW_H
+#ifndef GB_MATRIX_H
+#define GB_MATRIX_H
 
 typedef enum                    // input parameter to GB_new and GB_new_bix
 {
@@ -95,6 +95,14 @@ void GB_phybix_free             // free all content of a matrix
 void GB_Matrix_free             // free a matrix
 (
     GrB_Matrix *Ahandle         // handle of matrix to free
+) ;
+
+GrB_Info GB_shallow_copy    // create a purely shallow matrix
+(
+    GrB_Matrix C,           // output matrix C, with a static header
+    const bool C_is_csc,    // desired CSR/CSC format of C
+    const GrB_Matrix A,     // input matrix
+    GB_Werk Werk
 ) ;
 
 #endif

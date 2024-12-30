@@ -95,9 +95,18 @@ static GrB_Info GB_global_enum_get (int32_t *value, int field)
             (*value) = (int) GB_Global_p_control_get ( ) ;
             break ;
 
-        case GxB_INDEX_INTEGER_HINT : 
+        case GxB_COLINDEX_INTEGER_HINT : 
 
-            (*value) = (int) GB_Global_i_control_get ( ) ;
+            (*value) = (int) (GB_Global_is_csc_get ( ) ?
+                GB_Global_j_control_get ( ) :
+                GB_Global_i_control_get ( )) ;
+            break ;
+
+        case GxB_ROWINDEX_INTEGER_HINT : 
+
+            (*value) = (int) (GB_Global_is_csc_get ( ) ?
+                GB_Global_i_control_get ( ) :
+                GB_Global_j_control_get ( )) ;
             break ;
 
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS

@@ -192,10 +192,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     if (C->is_csc != T->is_csc)
     { 
         // T can be jumbled.
-        ASSERT (GB_JUMBLED_OK (T)) ;
         GB_OK (GB_transpose_in_place (T, C->is_csc, Werk)) ;
         T_transposed = true ;
-        ASSERT (GB_JUMBLED_OK (T)) ;
         ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
     }
 

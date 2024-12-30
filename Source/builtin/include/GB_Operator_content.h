@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_Operator.h: definitions of all operator objects
+// GB_Operator_content.h: content of all operator objects
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
