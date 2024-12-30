@@ -11,6 +11,7 @@
 
 // gbmonoidinfo (monoid)
 // gbmonoidinfo (monoid, type)
+// ok = gbmonoidinfo (monoid)
 
 #include "gb_interface.h"
 
@@ -29,7 +30,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 2 && nargout == 0, USAGE) ;
+    gb_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS monoid and print it
@@ -47,7 +48,12 @@ void mexFunction
     }
 
     GrB_Monoid op = gb_mxstring_to_monoid (pargin [0], type) ;
-    OK (GxB_Monoid_fprint (op, opstring, GxB_COMPLETE, NULL)) ;
+    int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
+    OK (GxB_Monoid_fprint (op, opstring, pr, NULL)) ;
+    if (nargout == 1)
+    {
+        pargout [0] = mxCreateLogicalScalar (true) ;
+    }
     GB_WRAPUP ;
 }
 

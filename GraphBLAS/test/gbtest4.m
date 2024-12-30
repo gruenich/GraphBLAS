@@ -29,10 +29,15 @@ for k1 = 1:length (ops)
                 GrB.semiringinfo (semiring) ;
                 GrB.semiringinfo (s, type) ;
                 nsemirings = nsemirings + 1 ;
+                ok = true ;
             catch
                 % this is an error, but it is expected since not all
                 % combinations operators and types can be used to construct
                 % a valid semiring.
+                ok = false ;
+            end
+            if (ok)
+                fprintf ('\nOK %s.%s\n', s, type) ;
             end
         end
     end

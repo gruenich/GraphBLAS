@@ -42,7 +42,7 @@ function C = subassign (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 %
 % Refer to GrB.assign for a description of the other input/outputs.
 %
-% See also GrB.assign, GrB/subsasgn.
+% See also GrB.assign, GrB/subsasgn, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

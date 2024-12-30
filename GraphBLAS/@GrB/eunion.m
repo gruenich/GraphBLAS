@@ -24,7 +24,7 @@ function C = eunion (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 % GrB.methods; see GrB.mxm and GrB.descriptorinfo for more details.  For
 % the binary operator, see GrB.binopinfo.
 %
-% See also GrB.emult.
+% See also GrB.emult, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

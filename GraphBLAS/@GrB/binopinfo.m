@@ -141,8 +141,8 @@ function binopinfo (op, optype)
 %   % invalid binary operator (an error; this is a unary op):
 %   GrB.binopinfo ('abs.double') ;
 %
-% See also GrB.descriptorinfo, GrB.monoidinfo, GrB.selectopinfo,
-% GrB.semiringinfo, GrB.unopinfo, GrB.optype.
+% See also GrB.binops, GrB.descriptorinfo, GrB.monoidinfo,
+% GrB.selectopinfo, GrB.semiringinfo, GrB.unopinfo, GrB.optype.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

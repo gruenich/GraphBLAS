@@ -20,7 +20,7 @@ function C = emult (arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 % GrB.methods; see GrB.mxm and GrB.descriptorinfo for more details.  For the
 % binary operator, see GrB.binopinfo.
 %
-% See also GrB.eadd.
+% See also GrB.eadd, GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

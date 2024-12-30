@@ -11,6 +11,7 @@
 
 // gbbinopinfo (binop)
 // gbbinopinfo (binop, type)
+// ok = gbbinopinfo (binop)
 
 #include "gb_interface.h"
 
@@ -29,7 +30,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 1 && nargin <= 2 && nargout == 0, USAGE) ;
+    gb_usage (nargin >= 1 && nargin <= 2 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS binary operator and print it
@@ -53,13 +54,18 @@ void mexFunction
     gb_mxstring_to_binop_or_idxunop (pargin [0], type, type,
         &op2, &idxunop, &ithunk) ;
 
+    int pr = (nargout < 1) ? GxB_COMPLETE : GxB_SILENT ;
     if (idxunop != NULL)
     {
-        OK (GxB_IndexUnaryOp_fprint (idxunop, opstring, GxB_COMPLETE, NULL)) ;
+        OK (GxB_IndexUnaryOp_fprint (idxunop, opstring, pr, NULL)) ;
     }
     else
     {
-        OK (GxB_BinaryOp_fprint (op2, opstring, GxB_COMPLETE, NULL)) ;
+        OK (GxB_BinaryOp_fprint (op2, opstring, pr, NULL)) ;
+    }
+    if (nargout == 1)
+    {
+        pargout [0] = mxCreateLogicalScalar (true) ;
     }
     GB_WRAPUP ;
 }
