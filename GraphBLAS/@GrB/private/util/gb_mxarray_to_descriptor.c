@@ -18,7 +18,7 @@ static void get_descriptor
     GrB_Descriptor desc,            // GraphBLAS descriptor to modify
     const mxArray *desc_builtin,    // built-in struct with d.out, etc
     const char *fieldname,          // fieldname to extract from desc_builtin
-    const GrB_Desc_Field field      // field to set in desc
+    const int field                 // field to set in desc
 )
 {
 
@@ -103,7 +103,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
 (
     const mxArray *desc_builtin, // built-in struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
-    GxB_Format_Value *fmt,      // by row or by col
+    int *fmt,                   // by row or by col
     int *sparsity,              // hypersparse/sparse/bitmap/full
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 )

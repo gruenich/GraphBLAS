@@ -15,7 +15,7 @@ static GrB_Info GB_desc_get
 (
     GrB_Descriptor desc,        // descriptor to query; NULL is ok
     int32_t *value,             // return value of the descriptor
-    int field                   // parameter to query
+    int field
 )
 {
 
@@ -92,7 +92,7 @@ GrB_Info GrB_Descriptor_get_Scalar
 (
     GrB_Descriptor desc,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -125,7 +125,7 @@ GrB_Info GrB_Descriptor_get_String
 (
     GrB_Descriptor desc,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -161,7 +161,7 @@ GrB_Info GrB_Descriptor_get_INT32
 (
     GrB_Descriptor desc,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -186,7 +186,7 @@ GrB_Info GrB_Descriptor_get_SIZE
 (
     GrB_Descriptor desc,
     size_t * value,
-    GrB_Field field
+    int field
 )
 {
 
@@ -227,7 +227,7 @@ GrB_Info GrB_Descriptor_get_VOID
 (
     GrB_Descriptor desc,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;

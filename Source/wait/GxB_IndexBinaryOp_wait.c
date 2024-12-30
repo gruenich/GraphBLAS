@@ -16,7 +16,7 @@
 GrB_Info GxB_IndexBinaryOp_wait   // no work, just check if valid
 (
     GxB_IndexBinaryOp op,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

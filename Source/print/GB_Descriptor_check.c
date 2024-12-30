@@ -16,11 +16,11 @@
 
 static GrB_Info GB_dc
 (
-    int kind,                           // 0, 1, or 2
+    int kind,               // 0, 1, or 2
     const char *field,
-    const GrB_Desc_Value v,
-    const GrB_Desc_Value nondefault,    // for kind == 0
-    int pr,                             // print level
+    const int v,
+    const int nondefault,   // for kind == 0
+    int pr,                 // print level
     FILE *f 
 )
 {

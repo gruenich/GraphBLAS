@@ -18,8 +18,8 @@ void     GB_Global_cpu_features_query (void) ;
 bool     GB_Global_cpu_features_avx2 (void) ;
 bool     GB_Global_cpu_features_avx512f (void) ;
 
-void     GB_Global_mode_set (GrB_Mode mode) ;
-GrB_Mode GB_Global_mode_get (void) ;
+void     GB_Global_mode_set (int mode) ;
+int      GB_Global_mode_get (void) ;
 
 void     GB_Global_sort_set (int sort) ;
 int      GB_Global_sort_get (void) ;

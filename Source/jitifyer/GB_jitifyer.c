@@ -96,7 +96,7 @@ static size_t   GB_jit_temp_allocated = 0 ;
 #define GB_JIT_C_CONTROL_INIT GxB_JIT_ON
 #endif
 
-static GxB_JIT_Control GB_jit_control = GB_JIT_C_CONTROL_INIT ;
+static int GB_jit_control = GB_JIT_C_CONTROL_INIT ;
 
 //------------------------------------------------------------------------------
 // check_table: check if the hash table is OK
@@ -295,7 +295,7 @@ GrB_Info GB_jitifyer_init (void)
     // can be used.
     control = GB_IMIN (control, (int) GxB_JIT_RUN) ;
     #endif
-    GB_jit_control = (GxB_JIT_Control) control ;
+    GB_jit_control = control ;
 
     GB_jitifyer_finalize ( ) ;
 
@@ -841,9 +841,9 @@ GrB_Info GB_jitifyer_extract_JITpackage (GrB_Info error_condition)
 // GB_jitifyer_get_control: get the JIT control
 //------------------------------------------------------------------------------
 
-GxB_JIT_Control GB_jitifyer_get_control (void)
+int GB_jitifyer_get_control (void)
 {
-    GxB_JIT_Control control ;
+    int control ;
     #pragma omp critical (GB_jitifyer_worker)
     { 
         control = GB_jit_control ;
@@ -868,7 +868,7 @@ void GB_jitifyer_set_control (int control)
         // used.  No JIT kernels can be loaded or compiled.
         control = GB_IMIN (control, (int) GxB_JIT_RUN) ;
         #endif
-        GB_jit_control = (GxB_JIT_Control) control ;
+        GB_jit_control = control ;
         if (GB_jit_control == GxB_JIT_OFF)
         { 
             // free all loaded JIT kernels but do not free the JIT hash table,

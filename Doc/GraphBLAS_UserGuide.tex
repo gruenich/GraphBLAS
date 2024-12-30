@@ -1131,7 +1131,7 @@ GrB_Mode ;
 \begin{verbatim}
 GrB_Info GrB_init           // start up GraphBLAS
 (
-    GrB_Mode mode           // blocking or non-blocking mode
+    int mode                // blocking or non-blocking mode (GrB_Mode)
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -1225,7 +1225,7 @@ API Specification supported by the library.
 \begin{verbatim}
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc
 (
-    GrB_Mode mode,          // blocking or non-blocking mode
+    int mode,               // blocking or non-blocking mode (GrB_Mode)
     // pointers to memory management functions.
     void * (* user_malloc_func  ) (size_t),
     void * (* user_calloc_func  ) (size_t, size_t),
@@ -1665,7 +1665,7 @@ to the size of the C type.
 GrB_Info GrB_wait               // wait for a user-defined type
 (
     GrB_Type type,              // type to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -2112,7 +2112,7 @@ The above example is identical to the following usage, except that
 GrB_Info GrB_wait               // wait for a user-defined unary operator
 (
     GrB_UnaryOp unaryop,        // unary operator to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -2590,7 +2590,7 @@ GrB_set (AbsDiff,
 GrB_Info GrB_wait               // wait for a user-defined binary operator
 (
     GrB_BinaryOp binaryop,      // binary operator to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -2911,7 +2911,7 @@ The \verb'banded_idx' function is defined the same as above.
 GrB_Info GrB_wait               // wait for a user-defined binary operator
 (
     GrB_IndexUnaryOp op,        // index-unary operator to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -3151,7 +3151,7 @@ is returned.
 GrB_Info GxB_IndexBinaryOp_wait
 (
     GxB_IndexBinaryOp op,
-    GrB_WaitMode waitmode
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -3401,7 +3401,7 @@ created by \verb'GxB_BinaryOp_new_IndexOp'.
 GrB_Info GrB_wait               // wait for a user-defined monoid
 (
     GrB_Monoid monoid,          // monoid to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -3677,7 +3677,7 @@ created by \verb'GxB_BinaryOp_new_IndexOp'.
 GrB_Info GrB_wait               // wait for a user-defined semiring
 (
     GrB_Semiring semiring,      // semiring to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -3776,7 +3776,7 @@ type.  The pattern of the new scalar is empty.
 GrB_Info GrB_wait               // wait for a scalar
 (
     GrB_Scalar s,               // scalar to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -4072,7 +4072,7 @@ type.  The pattern of the new vector is empty.
 GrB_Info GrB_wait               // wait for a vector
 (
     GrB_Vector w,               // vector to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -4653,7 +4653,7 @@ as an extension to the specification.
 GrB_Info GrB_wait               // wait for a matrix
 (
     GrB_Matrix C,               // matrix to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -7341,7 +7341,7 @@ GrB_Info GrB_Matrix_import  // import a matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -7417,7 +7417,7 @@ GrB_Info GrB_Matrix_export  // export a matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export
 ) ;
 \end{verbatim}
@@ -7459,7 +7459,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     GrB_Index *Ap_len,      // # of entries required for Ap (not # of bytes)
     GrB_Index *Ai_len,      // # of entries required for Ai (not # of bytes)
     GrB_Index *Ax_len,      // # of entries required for Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export
 ) ;
 \end{verbatim}
@@ -7479,7 +7479,7 @@ for exporting a matrix using \verb'GrB_Matrix_export', using the same
 \begin{verbatim}
 GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 (
-    GrB_Format *format,     // export format
+    int *format,            // export format (GrB_Format)
     GrB_Matrix A            // matrix to export
 ) ;
 \end{verbatim}
@@ -7863,7 +7863,7 @@ the final sort as pending work).
 GrB_Info GrB_wait                   // wait for a descriptor
 (
     GrB_Descriptor descriptor,      // descriptor to wait for
-    GrB_WaitMode mode               // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                        // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -8413,7 +8413,7 @@ safely does nothing if passed a \verb'NULL' handle, or if
 GrB_Info GrB_wait               // wait for a context
 (
     GxB_Context Context,        // context to wait for
-    GrB_WaitMode mode           // GrB_COMPLETE or GrB_MATERIALIZE
+    int mode                    // GrB_COMPLETE or GrB_MATERIALIZE
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -12073,7 +12073,7 @@ default.
 GrB_Info GxB_fprint                 // print and check a GraphBLAS object
 (
     GrB_<objecttype> object,        // object to print and check
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12095,7 +12095,7 @@ matrix \verb'A' to the file \verb'f', use
 GrB_Info GxB_print                  // print and check a GrB_Vector
 (
     GrB_<objecttype> object,        // object to print and check
-    GxB_Print_Level pr              // print level
+    int pr,                         // print level (GxB_Print_Level)
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -12115,7 +12115,7 @@ GrB_Info GxB_Type_fprint            // print and check a GrB_Type
 (
     GrB_Type type,                  // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12135,7 +12135,7 @@ GrB_Info GxB_UnaryOp_fprint         // print and check a GrB_UnaryOp
 (
     GrB_UnaryOp unaryop,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12156,7 +12156,7 @@ GrB_Info GxB_BinaryOp_fprint        // print and check a GrB_BinaryOp
 (
     GrB_BinaryOp binaryop,          // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12177,7 +12177,7 @@ GrB_Info GxB_IndexUnaryOp_fprint    // print and check a GrB_IndexUnaryOp
 (
     GrB_IndexUnaryOp op,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12198,7 +12198,7 @@ GrB_Info GxB_IndexBinaryOp_fprint   // print and check a GxB_IndexBinaryOp
 (
     GxB_IndexBinaryOp op,           // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12214,7 +12214,7 @@ GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
 (
     GrB_Monoid monoid,              // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12236,7 +12236,7 @@ GrB_Info GxB_Semiring_fprint        // print and check a GrB_Semiring
 (
     GrB_Semiring semiring,          // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12258,7 +12258,7 @@ GrB_Info GxB_Descriptor_fprint      // print and check a GrB_Descriptor
 (
     GrB_Descriptor descriptor,      // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12279,7 +12279,7 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 (
     GxB_Context Context,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12298,7 +12298,7 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
 (
     GrB_Matrix A,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12319,7 +12319,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 (
     GrB_Vector v,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -12338,7 +12338,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 (
     GrB_Scalar s,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 \end{verbatim} } \end{mdframed}

@@ -165,7 +165,7 @@ GrB_Info GrB_Global_get_Scalar
 (
     GrB_Global g,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -365,7 +365,7 @@ GrB_Info GrB_Global_get_String
 (
     GrB_Global g,
     char * value,
-    GrB_Field field
+    int field
 )
 {
 
@@ -406,7 +406,7 @@ GrB_Info GrB_Global_get_INT32
 (
     GrB_Global g,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -440,7 +440,7 @@ GrB_Info GrB_Global_get_SIZE
 (
     GrB_Global g,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -512,7 +512,7 @@ GrB_Info GrB_Global_get_VOID
 (
     GrB_Global g,
     void * value,
-    GrB_Field field
+    int field
 )
 {
 

@@ -31,17 +31,17 @@
 
 #include "gb_interface.h"
 
-GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
+int gb_get_format           // GxB_BY_ROW or GxB_BY_COL
 (
-    GrB_Index cnrows,                   // C is cnrows-by-cncols
+    GrB_Index cnrows,       // C is cnrows-by-cncols
     GrB_Index cncols,
-    GrB_Matrix A,                       // may be NULL
-    GrB_Matrix B,                       // may be NULL
-    GxB_Format_Value fmt_descriptor     // may be GxB_NO_FORMAT
+    GrB_Matrix A,           // may be NULL
+    GrB_Matrix B,           // may be NULL
+    int fmt_descriptor      // may be GxB_NO_FORMAT
 )
 {
 
-    GxB_Format_Value fmt ;
+    int fmt ;
 
     if (fmt_descriptor != GxB_NO_FORMAT)
     { 

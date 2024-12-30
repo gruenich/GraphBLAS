@@ -194,21 +194,21 @@ mxArray * gb_type_to_mxstring    // return the built-in string from a GrB_Type
     const GrB_Type type
 ) ;
 
-GrB_Matrix gb_typecast          // C = (type) A, where C is deep
+GrB_Matrix gb_typecast  // C = (type) A, where C is deep
 (
-    GrB_Matrix A,               // may be shallow
-    GrB_Type type,              // if NULL, copy but do not typecast
-    GxB_Format_Value fmt,       // format of C
-    int sparsity                // sparsity control for C, if 0 use A
+    GrB_Matrix A,       // may be shallow
+    GrB_Type type,      // if NULL, copy but do not typecast
+    int fmt,            // format of C
+    int sparsity        // sparsity control for C, if 0 use A
 ) ;
 
-GrB_Matrix gb_new               // create and empty matrix C
+GrB_Matrix gb_new       // create and empty matrix C
 (
-    GrB_Type type,              // type of C
-    GrB_Index nrows,            // # of rows
-    GrB_Index ncols,            // # of rows
-    GxB_Format_Value fmt,       // requested format
-    int sparsity                // sparsity control for C, 0 for default
+    GrB_Type type,      // type of C
+    GrB_Index nrows,    // # of rows
+    GrB_Index ncols,    // # of rows
+    int fmt,            // requested format
+    int sparsity        // sparsity control for C, 0 for default
 ) ;
 
 void gb_abort ( void ) ;    // failure
@@ -316,7 +316,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
 (
     const mxArray *desc_builtin,// built-in struct with possible descriptor
     kind_enum_t *kind,          // GrB, sparse, or full
-    GxB_Format_Value *fmt,      // by row or by col
+    int *fmt,                   // by row or by col
     int *sparsity,              // hypersparse/sparse/bitmap/full
     base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 ) ;
@@ -325,7 +325,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
 (
     const GrB_Matrix A,         // input matrix to expand to full
     GrB_Type type,              // type of C, if NULL use the type of A
-    GxB_Format_Value fmt,       // format of C
+    int fmt,                    // format of C
     GrB_Matrix id               // identity value, use zero if NULL
 ) ;
 
@@ -446,7 +446,7 @@ bool gb_mxstring_to_format      // true if a valid format is found
     // input
     const mxArray *mxformat,    // built-in string, 'by row' or 'by col'
     // output
-    GxB_Format_Value *fmt,
+    int *fmt,
     int *sparsity
 ) ;
 
@@ -466,7 +466,7 @@ GrB_Matrix gb_by_col            // return the matrix by column
     GrB_Matrix A_input          // input matrix, by row or column
 ) ;
 
-GxB_Format_Value gb_default_format      // GxB_BY_ROW or GxB_BY_COL
+int gb_default_format       // GxB_BY_ROW or GxB_BY_COL
 (
     GrB_Index nrows,        // row vectors are stored by row
     GrB_Index ncols         // column vectors are stored by column
@@ -477,16 +477,16 @@ bool gb_is_vector               // true if A is a row or column vector
     GrB_Matrix A                // GrB_Matrix to query
 ) ;
 
-GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
+int gb_get_format           // GxB_BY_ROW or GxB_BY_COL
 (
-    GrB_Index cnrows,                   // C is cnrows-by-cncols
+    GrB_Index cnrows,       // C is cnrows-by-cncols
     GrB_Index cncols,
-    GrB_Matrix A,                       // may be NULL
-    GrB_Matrix B,                       // may be NULL
-    GxB_Format_Value fmt_descriptor     // may be GxB_NO_FORMAT
+    GrB_Matrix A,           // may be NULL
+    GrB_Matrix B,           // may be NULL
+    int fmt_descriptor      // may be GxB_NO_FORMAT
 ) ;
 
-GxB_Format_Value gb_get_sparsity        // 1 to 15
+int gb_get_sparsity         // 1 to 15
 (
     GrB_Matrix A,                       // may be NULL
     GrB_Matrix B,                       // may be NULL
@@ -539,7 +539,7 @@ void gb_get_mxargs
     GrB_Descriptor *desc,       // last argument is always the descriptor
     base_enum_t *base,          // desc.base
     kind_enum_t *kind,          // desc.kind
-    GxB_Format_Value *fmt,      // desc.format : by row or by col
+    int *fmt,                   // desc.format : by row or by col
     int *sparsity               // desc.format : hypersparse/sparse/bitmap/full
 ) ;
 

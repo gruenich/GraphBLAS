@@ -96,7 +96,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     // get the sparsity_status and CSR/CSC format
     //--------------------------------------------------------------------------
 
-    GxB_Format_Value fmt ;
+    int fmt ;
     int sparsity_status, sparsity_control ;
     OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS,  &sparsity_status)) ;
     OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &sparsity_control)) ;

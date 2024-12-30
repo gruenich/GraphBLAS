@@ -16,7 +16,7 @@
 GrB_Info GxB_Context_set_INT32      // set a parameter in a Context
 (
     GxB_Context Context,            // Context to modify
-    GxB_Context_Field field,        // parameter to change
+    int field,                      // parameter to change
     int32_t value                   // value to change it to
 )
 {
@@ -60,7 +60,7 @@ GrB_Info GxB_Context_set_INT32      // set a parameter in a Context
 GrB_Info GxB_Context_set_FP64       // set a parameter in a Context
 (
     GxB_Context Context,            // Context to modify
-    GxB_Context_Field field,        // parameter to change
+    int field,                      // parameter to change
     double value                    // value to change it to
 )
 {
@@ -99,7 +99,7 @@ GrB_Info GxB_Context_set_FP64       // set a parameter in a Context
 GrB_Info GxB_Context_set            // set a parameter in a Context
 (
     GxB_Context Context,            // Context to modify
-    GxB_Context_Field field,        // parameter to change
+    int field,                      // parameter to change
     ...                             // value to change it to
 )
 {

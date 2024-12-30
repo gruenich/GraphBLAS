@@ -358,7 +358,7 @@ typedef uint32_t GxB_Index32 ;
 // called, which returns a string that provides more information on the last
 // return value from GraphBLAS.
 
-typedef enum
+typedef enum    // GrB_Info
 {
 
     GrB_SUCCESS = 0,            // all is well
@@ -413,7 +413,7 @@ GrB_Info ;
 // The extension GxB_init does the work of GrB_init, but it also defines the
 // memory management functions that SuiteSparse:GraphBLAS will use internally.
 
-typedef enum
+typedef enum    // GrB_Mode
 {
     GrB_NONBLOCKING = 0,        // methods may return with pending computations
     GrB_BLOCKING = 1,           // no computations are ever left pending
@@ -534,7 +534,7 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;       // use GrB_Scalar
 // GPU control (DRAFT: in progress, do not use)
 #define GxB_GPU_ID 7088
 
-typedef enum
+typedef enum    // GrB_Desc_Field ;
 {
     GrB_OUTP = 0,   // descriptor for output of a method
     GrB_MASK = 1,   // descriptor for the mask input of a method
@@ -547,7 +547,7 @@ typedef enum
 }
 GrB_Desc_Field ;
 
-typedef enum
+typedef enum    // GrB_Desc_Value ;
 {
     // for all GrB_Descriptor fields:
     GrB_DEFAULT = 0,    // default behavior of the method
@@ -1363,8 +1363,83 @@ GB_GLOBAL GrB_IndexUnaryOp
 // for floating-point types). They only affect the time and memory usage of the
 // computations.
 
-typedef enum            // for global options or matrix options
+typedef enum    // GxB_Option_Field ;
 {
+
+    //--------------------------------------------------------------------------
+    // GrB enums in the C API
+    //--------------------------------------------------------------------------
+
+    // GrB_Descriptor only:
+    GrB_OUTP_FIELD = 0,     // descriptor for output of a method
+    GrB_MASK_FIELD = 1,     // descriptor for the mask input of a method
+    GrB_INP0_FIELD = 2,     // descriptor for the first input of a method
+    GrB_INP1_FIELD = 3,     // descriptor for the second input of a method
+
+    // all objects, including GrB_GLOBAL:
+    GrB_NAME = 10,          // name of the object, as a string
+
+    // GrB_GLOBAL only:
+    GrB_LIBRARY_VER_MAJOR = 11,     // SuiteSparse:GraphBLAS version
+    GrB_LIBRARY_VER_MINOR = 12,
+    GrB_LIBRARY_VER_PATCH = 13,
+    GrB_API_VER_MAJOR = 14,         // C API version
+    GrB_API_VER_MINOR = 15,
+    GrB_API_VER_PATCH = 16,
+    GrB_BLOCKING_MODE = 17,         // GrB_Mode
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
+    GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
+    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_Code (see below)
+    GrB_EL_TYPE_STRING = 106,       // name of the type
+
+    // GrB_*Op, GrB_Monoid, and GrB_Semiring:
+    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_Code
+    GrB_INP1_TYPE_CODE = 104,
+    GrB_OUTP_TYPE_CODE = 105,
+    GrB_INP0_TYPE_STRING = 107,     // name of the type, as a string
+    GrB_INP1_TYPE_STRING = 108,
+    GrB_OUTP_TYPE_STRING = 109,
+
+    // GrB_Type (readable only):
+    GrB_SIZE = 110,                 // size of the type
+
+    //--------------------------------------------------------------------------
+    // SuiteSparse extensions:
+    //--------------------------------------------------------------------------
+
+    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, GrB_IndexUnaryOp,
+    // and GxB_IndexBinaryOp
+    GxB_JIT_C_NAME = 7041,          // C type or function name
+    GxB_JIT_C_DEFINITION = 7042,    // C typedef or function definition
+
+    // GrB_Monoid and GrB_Semiring:
+    GxB_MONOID_IDENTITY = 7043,     // monoid identity value
+    GxB_MONOID_TERMINAL = 7044,     // monoid terminal value
+    GxB_MONOID_OPERATOR = 7045,     // monoid binary operator
+
+    // GrB_Semiring only:
+    GxB_SEMIRING_MONOID = 7046,     // semiring monoid
+    GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
+
+    // GrB_BinaryOp and GxB_IndexBinaryOp:
+    GxB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
+    GxB_THETA_TYPE_STRING = 7051,
+
+    // GrB_BinaryOp or GrB_Semiring:
+    GxB_THETA = 7052,               // to get the value of theta
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
+    GxB_ROWINDEX_INTEGER_HINT = 7053,   // hint for row indices
+    GxB_COLINDEX_INTEGER_HINT = 7054,   // hint for column indices
+    GxB_OFFSET_INTEGER_HINT = 7056,     // hint for offsets
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
+    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
+    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
+    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
 
     //------------------------------------------------------------
     // GrB_get / GrB_set for GrB_Matrix and GrB_GLOBAL:
@@ -1444,7 +1519,7 @@ typedef enum            // for global options or matrix options
 } GxB_Option_Field ;
 
 // for GxB_JIT_C_CONTROL:
-typedef enum
+typedef enum    // GxB_JIT_Control ;
 {
     GxB_JIT_OFF = 0,    // do not use the JIT: free all JIT kernels if loaded
     GxB_JIT_PAUSE = 1,  // do not run JIT kernels but keep any loaded
@@ -1537,7 +1612,7 @@ GB_GLOBAL const double GxB_ALWAYS_HYPER, GxB_NEVER_HYPER ;
 // GxB_CONTEXT_WORLD is the default Context for all user threads.
 GB_GLOBAL GxB_Context GxB_CONTEXT_WORLD ;
 
-typedef enum
+typedef enum    // GxB_Context_Field
 {
     GxB_CONTEXT_NTHREADS = GxB_NTHREADS,     // max number of threads to use.
                     // If <= 0, then one thread is used.
@@ -1556,88 +1631,7 @@ GxB_Context_Field ;
 
 GB_GLOBAL const GrB_Global GrB_GLOBAL ;
 
-typedef enum
-{
-
-    //--------------------------------------------------------------------------
-    // GrB enums in the C API
-    //--------------------------------------------------------------------------
-
-    // GrB_Descriptor only:
-    GrB_OUTP_FIELD = 0,     // descriptor for output of a method
-    GrB_MASK_FIELD = 1,     // descriptor for the mask input of a method
-    GrB_INP0_FIELD = 2,     // descriptor for the first input of a method
-    GrB_INP1_FIELD = 3,     // descriptor for the second input of a method
-
-    // all objects, including GrB_GLOBAL:
-    GrB_NAME = 10,          // name of the object, as a string
-
-    // GrB_GLOBAL only:
-    GrB_LIBRARY_VER_MAJOR = 11,     // SuiteSparse:GraphBLAS version
-    GrB_LIBRARY_VER_MINOR = 12,
-    GrB_LIBRARY_VER_PATCH = 13,
-    GrB_API_VER_MAJOR = 14,         // C API version
-    GrB_API_VER_MINOR = 15,
-    GrB_API_VER_PATCH = 16,
-    GrB_BLOCKING_MODE = 17,         // GrB_Mode
-
-    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
-    GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
-
-    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
-    GrB_EL_TYPE_CODE = 102,         // a GrB_Type_Code (see below)
-    GrB_EL_TYPE_STRING = 106,       // name of the type
-
-    // GrB_*Op, GrB_Monoid, and GrB_Semiring:
-    GrB_INP0_TYPE_CODE = 103,       // GrB_Type_Code
-    GrB_INP1_TYPE_CODE = 104,
-    GrB_OUTP_TYPE_CODE = 105,
-    GrB_INP0_TYPE_STRING = 107,     // name of the type, as a string
-    GrB_INP1_TYPE_STRING = 108,
-    GrB_OUTP_TYPE_STRING = 109,
-
-    // GrB_Type (readable only):
-    GrB_SIZE = 110,                 // size of the type
-
-    //--------------------------------------------------------------------------
-    // SuiteSparse extensions:
-    //--------------------------------------------------------------------------
-
-    // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, GrB_IndexUnaryOp,
-    // and GxB_IndexBinaryOp
-    GxB_JIT_C_NAME = 7041,          // C type or function name
-    GxB_JIT_C_DEFINITION = 7042,    // C typedef or function definition
-
-    // GrB_Monoid and GrB_Semiring:
-    GxB_MONOID_IDENTITY = 7043,     // monoid identity value
-    GxB_MONOID_TERMINAL = 7044,     // monoid terminal value
-    GxB_MONOID_OPERATOR = 7045,     // monoid binary operator
-
-    // GrB_Semiring only:
-    GxB_SEMIRING_MONOID = 7046,     // semiring monoid
-    GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
-
-    // GrB_BinaryOp and GxB_IndexBinaryOp:
-    GxB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
-    GxB_THETA_TYPE_STRING = 7051,
-
-    // GrB_BinaryOp or GrB_Semiring:
-    GxB_THETA = 7052,               // to get the value of theta
-
-    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
-    GxB_ROWINDEX_INTEGER_HINT = 7053,   // hint for row indices
-    GxB_COLINDEX_INTEGER_HINT = 7054,   // hint for column indices
-    GxB_OFFSET_INTEGER_HINT = 7056,     // hint for offsets
-
-    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
-    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
-    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
-    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
-
-}
-GrB_Field ; // FIXME: rename
-
-typedef enum
+typedef enum    // GrB_Orientation
 {
     GrB_ROWMAJOR = 0,
     GrB_COLMAJOR = 1,
@@ -1646,7 +1640,7 @@ typedef enum
 }
 GrB_Orientation ;
 
-typedef enum
+typedef enum    // GrB_Type_Code
 {
     GrB_UDT_CODE    = 0,        // user-defined type
     GrB_BOOL_CODE   = 1,        // GraphBLAS: GrB_BOOL      C: bool
@@ -1669,7 +1663,7 @@ GrB_Type_Code ;
 // GrB_wait: finish computations
 //==============================================================================
 
-typedef enum
+typedef enum    // GrB_WaitMode
 {
     GrB_COMPLETE = 0,       // Establishes a happens-before relation; work may
         // remain but this can now be done safely by any user thread.
@@ -2588,7 +2582,7 @@ GB_GLOBAL GrB_Semiring
 // GxB_fprint and GxB_print: print the contents of a GraphBLAS object
 //==============================================================================
 
-typedef enum
+typedef enum    // GxB_Print_Level
 {
     GxB_SILENT = 0,     // nothing is printed, just check the object
     GxB_SUMMARY = 1,    // print a terse summary
@@ -2604,7 +2598,7 @@ GxB_Print_Level ;
 //==============================================================================
 
 // The GrB C API specification supports 3 formats:
-typedef enum
+typedef enum    // GrB_Format
 {
     GrB_CSR_FORMAT = 0,     // CSR format (equiv to GxB_SPARSE with GxB_BY_ROW)
     GrB_CSC_FORMAT = 1,     // CSC format (equiv to GxB_SPARSE with GxB_BY_COL)
@@ -2612,7 +2606,7 @@ typedef enum
 }
 GrB_Format ;
 
-typedef enum
+typedef enum    // GxB_Format_Value
 {
     GxB_BY_ROW = 0,         // matrix is held by row
     GxB_BY_COL = 1,         // matrix is held by column
@@ -2624,7 +2618,7 @@ GxB_Format_Value ;
 // const, so that if SuiteSparse:GraphBLAS is recompiled with a different
 // default format, and the application is relinked but not recompiled, it will
 // acquire the new default values.
-GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
+GB_GLOBAL const int GxB_FORMAT_DEFAULT ;
 
 //==============================================================================
 // serialize/deserialize compression levels
@@ -2654,13 +2648,12 @@ GB_GLOBAL const GxB_Format_Value GxB_FORMAT_DEFAULT ;
 
 GrB_Info GrB_init           // start up GraphBLAS
 (
-    GrB_Mode mode           // blocking or non-blocking mode, no GPU
+    int mode                // blocking or non-blocking mode, no GPU (GrB_Mode)
 ) ;
 
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
-    GrB_Mode mode,          // blocking or non-blocking mode,
-                            // with or without GPU
+    int mode,               // blocking or non-blocking mode (GrB_Mode)
     // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
@@ -3777,14 +3770,14 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 //  (
 //      Object object,      // GraphBLAS object to query
 //      result,             // GrB_Scalar, char *, int32_t *, size_t *, void *
-//      GrB_Field field     // what to query
+//      int field           // what to query
 //  ) ;
 //
 //  GrB_Info GrB_get        // a SuiteSparse:GraphBLAS extension
 //  (
 //      void *blob,         // GraphBLAS serialized blob
 //      result,             // GrB_Scalar, char *, int32_t *, size_t *, void *
-//      GrB_Field field,    // what to query
+//      int field,          // what to query
 //      size_t blobsize     // size of the blob
 //  ) ;
 
@@ -3901,11 +3894,11 @@ GrB_Info GxB_Context_disengage      // disengage a Context
 
 #undef  GB_DECLARE
 #define GB_DECLARE(Object)                                              \
-GrB_Info Object ## _get_Scalar (Object object, GrB_Scalar, GrB_Field) ; \
-GrB_Info Object ## _get_String (Object object, char *    , GrB_Field) ; \
-GrB_Info Object ## _get_INT32  (Object object, int32_t * , GrB_Field) ; \
-GrB_Info Object ## _get_SIZE   (Object object, size_t *  , GrB_Field) ; \
-GrB_Info Object ## _get_VOID   (Object object, void *    , GrB_Field) ;
+GrB_Info Object ## _get_Scalar (Object object, GrB_Scalar, int) ; \
+GrB_Info Object ## _get_String (Object object, char *    , int) ; \
+GrB_Info Object ## _get_INT32  (Object object, int32_t * , int) ; \
+GrB_Info Object ## _get_SIZE   (Object object, size_t *  , int) ; \
+GrB_Info Object ## _get_VOID   (Object object, void *    , int) ;
 GB_DECLARE (GrB_Scalar       )
 GB_DECLARE (GrB_Vector       )
 GB_DECLARE (GrB_Matrix       )
@@ -3919,21 +3912,21 @@ GB_DECLARE (GrB_Descriptor   )
 GB_DECLARE (GrB_Type         )
 GB_DECLARE (GrB_Global       )
 
-GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_String (const void *, char *    , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , GrB_Field, size_t) ;
-GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , GrB_Field, size_t) ;
+GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, int, size_t) ;
+GrB_Info GxB_Serialized_get_Scalar (const void *, GrB_Scalar, int, size_t) ;
+GrB_Info GxB_Serialized_get_String (const void *, char *    , int, size_t) ;
+GrB_Info GxB_Serialized_get_INT32  (const void *, int32_t * , int, size_t) ;
+GrB_Info GxB_Serialized_get_SIZE   (const void *, size_t *  , int, size_t) ;
+GrB_Info GxB_Serialized_get_VOID   (const void *, void *    , int, size_t) ;
 
 // Note that GxB_Context_get_INT has an irregular name.  This is because it
 // conflicts with the signature of the prior GxB_Context_get_INT32 method,
 // which is now historical.
-GrB_Info GxB_Context_get_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
-GrB_Info GxB_Context_get_String (GxB_Context, char *    , GrB_Field) ;
-GrB_Info GxB_Context_get_INT    (GxB_Context, int32_t * , GrB_Field) ;
-GrB_Info GxB_Context_get_SIZE   (GxB_Context, size_t *  , GrB_Field) ;
-GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
+GrB_Info GxB_Context_get_Scalar (GxB_Context, GrB_Scalar, int) ;
+GrB_Info GxB_Context_get_String (GxB_Context, char *    , int) ;
+GrB_Info GxB_Context_get_INT    (GxB_Context, int32_t * , int) ;
+GrB_Info GxB_Context_get_SIZE   (GxB_Context, size_t *  , int) ;
+GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , int) ;
 
 //==============================================================================
 // GrB_set: set a scalar, string, enum, size, or void * of an object
@@ -3943,14 +3936,14 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 //  (
 //      Object object,      // GraphBLAS object to modify
 //      <type> input,       // GrB_Scalar, char *, int32_t: new value of field
-//      GrB_Field field     // what to modify
+//      int field           // what to modify
 //  ) ;
 //
 //  GrB_Info GrB_set
 //  (
 //      Object object,      // GraphBLAS object to modify
 //      void *input,        // new value of the field
-//      GrB_Field field,    // what to field modify
+//      int field,          // what to field modify
 //      size_t inputsize    // size of the input
 //  ) ;
 
@@ -4040,10 +4033,10 @@ GrB_Info GxB_Context_get_VOID   (GxB_Context, void *    , GrB_Field) ;
 
 #undef  GB_DECLARE
 #define GB_DECLARE(Object)                                              \
-GrB_Info Object ## _set_Scalar (Object object, GrB_Scalar, GrB_Field) ; \
-GrB_Info Object ## _set_String (Object object, char *    , GrB_Field) ; \
-GrB_Info Object ## _set_INT32  (Object object, int32_t   , GrB_Field) ; \
-GrB_Info Object ## _set_VOID   (Object object, void *    , GrB_Field, size_t) ;
+GrB_Info Object ## _set_Scalar (Object object, GrB_Scalar, int) ; \
+GrB_Info Object ## _set_String (Object object, char *    , int) ; \
+GrB_Info Object ## _set_INT32  (Object object, int32_t   , int) ; \
+GrB_Info Object ## _set_VOID   (Object object, void *    , int, size_t) ;
 GB_DECLARE (GrB_Scalar       )
 GB_DECLARE (GrB_Vector       )
 GB_DECLARE (GrB_Matrix       )
@@ -4059,10 +4052,10 @@ GB_DECLARE (GrB_Global       )
 
 // GxB_Context_set_INT is slightly misnamed, because of the prior
 // GxB_Context_set_INT32.
-GrB_Info GxB_Context_set_Scalar (GxB_Context, GrB_Scalar, GrB_Field) ;
-GrB_Info GxB_Context_set_String (GxB_Context, char *    , GrB_Field) ;
-GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , GrB_Field) ;
-GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
+GrB_Info GxB_Context_set_Scalar (GxB_Context, GrB_Scalar, int) ;
+GrB_Info GxB_Context_set_String (GxB_Context, char *    , int) ;
+GrB_Info GxB_Context_set_INT    (GxB_Context, int32_t   , int) ;
+GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , int, size_t) ;
 
 //==============================================================================
 // GrB_wait: finish computations
@@ -4073,7 +4066,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
 //  GrB_Info GrB_wait
 //  (
 //      Object object,          // GraphBLAS object to wait on
-//      GrB_WaitMode waitmode
+//      int waitmode            // (GrB_WaitMode)
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
@@ -4096,7 +4089,7 @@ GrB_Info GxB_Context_set_VOID   (GxB_Context, void *    , GrB_Field, size_t) ;
 
 #undef  GB_DECLARE
 #define GB_DECLARE(Object) \
-GrB_Info Object ## _wait (Object object, GrB_WaitMode waitmode) ;
+GrB_Info Object ## _wait (Object object, int waitmode) ;
 GB_DECLARE (GrB_Type         )
 GB_DECLARE (GrB_UnaryOp      )
 GB_DECLARE (GrB_BinaryOp     )
@@ -5505,10 +5498,10 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 // GxB_fprint and GxB_print: print the contents of a GraphBLAS object
 //==============================================================================
 
-// GxB_fprint (object, GxB_Print_Level pr, FILE *f) prints the contents of any
-// of the 9 GraphBLAS objects to the file f, and also does an extensive test on
-// the object to determine if it is valid.  It returns one of the following
-// error conditions:
+// GxB_fprint (object, int pr, FILE *f) prints the contents of any of the 9
+// GraphBLAS objects to the file f, and also does an extensive test on the
+// object to determine if it is valid.  It returns one of the following error
+// conditions:
 //
 //      GrB_SUCCESS               object is valid
 //      GrB_UNINITIALIZED_OBJECT  object is not initialized
@@ -5537,8 +5530,8 @@ GrB_Info GrB_Vector_resize      // change the size of a vector
 // values > 3 are treated as GxB_COMPLETE.  If name is NULL, it is treated as
 // the empty string.
 //
-// GxB_print (object, GxB_Print_Level pr) is the same as GxB_fprint, except
-// that it prints the contents with printf instead of fprintf to a file f.
+// GxB_print (object, int pr) is the same as GxB_fprint, except that it prints
+// the contents with printf instead of fprintf to a file f.
 //
 // The exact content and format of what is printed is implementation-dependent,
 // and will change from version to version of SuiteSparse:GraphBLAS.  Do not
@@ -5550,7 +5543,7 @@ GrB_Info GxB_Type_fprint            // print and check a GrB_Type
 (
     GrB_Type type,                  // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5558,7 +5551,7 @@ GrB_Info GxB_UnaryOp_fprint         // print and check a GrB_UnaryOp
 (
     GrB_UnaryOp unaryop,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5566,7 +5559,7 @@ GrB_Info GxB_BinaryOp_fprint        // print and check a GrB_BinaryOp
 (
     GrB_BinaryOp binaryop,          // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5574,7 +5567,7 @@ GrB_Info GxB_IndexUnaryOp_fprint    // print and check a GrB_IndexUnaryOp
 (
     GrB_IndexUnaryOp op,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5582,7 +5575,7 @@ GrB_Info GxB_IndexBinaryOp_fprint   // print and check a GxB_IndexBinaryOp
 (
     GxB_IndexBinaryOp op,           // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5590,7 +5583,7 @@ GrB_Info GxB_Monoid_fprint          // print and check a GrB_Monoid
 (
     GrB_Monoid monoid,              // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5598,7 +5591,7 @@ GrB_Info GxB_Semiring_fprint        // print and check a GrB_Semiring
 (
     GrB_Semiring semiring,          // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5606,7 +5599,7 @@ GrB_Info GxB_Descriptor_fprint      // print and check a GrB_Descriptor
 (
     GrB_Descriptor descriptor,      // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5614,7 +5607,7 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
 (
     GrB_Matrix A,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5622,7 +5615,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 (
     GrB_Vector v,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5630,7 +5623,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
 (
     GrB_Scalar s,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -5638,7 +5631,7 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 (
     GxB_Context Context,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level (GxB_Print_Level)
     FILE *f                         // file for output
 ) ;
 
@@ -6350,7 +6343,7 @@ GrB_Info GrB_Matrix_import_BOOL     // import a GrB_BOOL matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_INT8     // import a GrB_INT8 matrix
@@ -6365,7 +6358,7 @@ GrB_Info GrB_Matrix_import_INT8     // import a GrB_INT8 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_INT16    // import a GrB_INT16 matrix
@@ -6380,7 +6373,7 @@ GrB_Info GrB_Matrix_import_INT16    // import a GrB_INT16 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_INT32    // import a GrB_INT32 matrix
@@ -6395,7 +6388,7 @@ GrB_Info GrB_Matrix_import_INT32    // import a GrB_INT32 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_INT64    // import a GrB_INT64 matrix
@@ -6410,7 +6403,7 @@ GrB_Info GrB_Matrix_import_INT64    // import a GrB_INT64 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_UINT8    // import a GrB_UINT8 matrix
@@ -6425,7 +6418,7 @@ GrB_Info GrB_Matrix_import_UINT8    // import a GrB_UINT8 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_UINT16   // import a GrB_UINT16 matrix
@@ -6440,7 +6433,7 @@ GrB_Info GrB_Matrix_import_UINT16   // import a GrB_UINT16 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_UINT32   // import a GrB_UINT32 matrix
@@ -6455,7 +6448,7 @@ GrB_Info GrB_Matrix_import_UINT32   // import a GrB_UINT32 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_UINT64   // import a GrB_UINT64 matrix
@@ -6470,7 +6463,7 @@ GrB_Info GrB_Matrix_import_UINT64   // import a GrB_UINT64 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_FP32   // import a GrB_FP32 matrix
@@ -6485,7 +6478,7 @@ GrB_Info GrB_Matrix_import_FP32   // import a GrB_FP32 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_FP64   // import a GrB_FP64 matrix
@@ -6500,7 +6493,7 @@ GrB_Info GrB_Matrix_import_FP64   // import a GrB_FP64 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GxB_Matrix_import_FC32   // import a GxB_FC32 matrix
@@ -6515,7 +6508,7 @@ GrB_Info GxB_Matrix_import_FC32   // import a GxB_FC32 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GxB_Matrix_import_FC64   // import a GxB_FC64 matrix
@@ -6530,7 +6523,7 @@ GrB_Info GxB_Matrix_import_FC64   // import a GxB_FC64 matrix
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 GrB_Info GrB_Matrix_import_UDT    // import a matrix with a user-defined type
@@ -6545,7 +6538,7 @@ GrB_Info GrB_Matrix_import_UDT    // import a matrix with a user-defined type
     GrB_Index Ap_len,       // number of entries in Ap (not # of bytes)
     GrB_Index Ai_len,       // number of entries in Ai (not # of bytes)
     GrB_Index Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format       // import format
+    int format              // import format (GrB_Format)
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
@@ -6571,7 +6564,7 @@ GrB_Info GrB_Matrix_export_BOOL     // export a GrB_BOOL matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_BOOL)
 ) ;
 
@@ -6583,7 +6576,7 @@ GrB_Info GrB_Matrix_export_INT8     // export a GrB_INT8 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_INT8)
 ) ;
 
@@ -6595,7 +6588,7 @@ GrB_Info GrB_Matrix_export_INT16     // export a GrB_INT16 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_INT16)
 ) ;
 
@@ -6607,7 +6600,7 @@ GrB_Info GrB_Matrix_export_INT32     // export a GrB_INT32 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_INT32)
 ) ;
 
@@ -6619,7 +6612,7 @@ GrB_Info GrB_Matrix_export_INT64     // export a GrB_INT64 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_INT64)
 ) ;
 
@@ -6631,7 +6624,7 @@ GrB_Info GrB_Matrix_export_UINT8     // export a GrB_UINT8 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_UINT8)
 ) ;
 
@@ -6643,7 +6636,7 @@ GrB_Info GrB_Matrix_export_UINT16     // export a GrB_UINT16 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_UINT16)
 ) ;
 
@@ -6655,7 +6648,7 @@ GrB_Info GrB_Matrix_export_UINT32     // export a GrB_UINT32 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_UINT32)
 ) ;
 
@@ -6667,7 +6660,7 @@ GrB_Info GrB_Matrix_export_UINT64     // export a GrB_UINT64 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_UINT64)
 ) ;
 
@@ -6679,7 +6672,7 @@ GrB_Info GrB_Matrix_export_FP32     // export a GrB_FP32 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_FP32)
 ) ;
 
@@ -6691,7 +6684,7 @@ GrB_Info GrB_Matrix_export_FP64     // export a GrB_FP64 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_FP64)
 ) ;
 
@@ -6703,7 +6696,7 @@ GrB_Info GxB_Matrix_export_FC32     // export a GrB_FC32 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_FC32)
 ) ;
 
@@ -6715,7 +6708,7 @@ GrB_Info GxB_Matrix_export_FC64     // export a GrB_FC64 matrix
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export (must be of type GrB_FC64)
 ) ;
 
@@ -6727,7 +6720,7 @@ GrB_Info GrB_Matrix_export_UDT      // export a matrix with a user-defined type
     GrB_Index *Ap_len,      // number of entries in Ap (not # of bytes)
     GrB_Index *Ai_len,      // number of entries in Ai (not # of bytes)
     GrB_Index *Ax_len,      // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format (GrB_Format)
     GrB_Matrix A            // matrix to export
 ) ;
 
@@ -6746,13 +6739,13 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     GrB_Index *Ap_len,      // # of entries required for Ap (not # of bytes)
     GrB_Index *Ai_len,      // # of entries required for Ai (not # of bytes)
     GrB_Index *Ax_len,      // # of entries required for Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format
     GrB_Matrix A            // matrix to export
 ) ;
 
 GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 (
-    GrB_Format *format,     // export format
+    int *format,            // export format
     GrB_Matrix A            // matrix to export
 ) ;
 
@@ -7199,7 +7192,7 @@ GrB_Info GB_Iterator_attach
 (
     GxB_Iterator iterator,      // iterator to attach to the matrix A
     GrB_Matrix A,               // matrix to attach
-    GxB_Format_Value format,    // by row, by col, or by entry (GxB_NO_FORMAT)
+    int format,                 // by row, col, or entry (GxB_Format_Value)
     GrB_Descriptor desc
 ) ;
 
@@ -8083,6 +8076,10 @@ GB_DECLARE (GxB_Iterator     )
 
 #ifndef NHISTORICAL
 
+typedef int GrB_Field ; // STRONGLY DEPRECATED: will be removed in v11.0.0,
+    // to allow the creation of a GraphBLAS object that represents a
+    // mathematical field: https://en.wikipedia.org/wiki/Field_(mathematics)
+
 // GrB_getVersion: use GrB_get instead
 GrB_Info GrB_getVersion (unsigned int *, unsigned int *) ;
 
@@ -8091,18 +8088,18 @@ GrB_Info GrB_getVersion (unsigned int *, unsigned int *) ;
 
 GrB_Info GxB_SelectOp_xtype (GrB_Type *, GxB_SelectOp) ;
 GrB_Info GxB_SelectOp_ttype (GrB_Type *, GxB_SelectOp) ;
-GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name,
-    GxB_Print_Level pr, FILE *f) ;
+GrB_Info GxB_SelectOp_fprint (GxB_SelectOp op, const char *name, int pr,
+    FILE *f) ;
 
 // GxB_Desc*get/set and GrB_Descriptor_set: use GrB_get/set instead.
-GrB_Info GrB_Descriptor_set (GrB_Descriptor, GrB_Desc_Field, GrB_Desc_Value) ;
-GrB_Info GxB_Descriptor_get (GrB_Desc_Value *, GrB_Descriptor, GrB_Desc_Field) ;
-GrB_Info GxB_Desc_set       (GrB_Descriptor, GrB_Desc_Field, ...) ;
-GrB_Info GxB_Desc_set_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t) ;
-GrB_Info GxB_Desc_set_FP64  (GrB_Descriptor, GrB_Desc_Field, double) ;
-GrB_Info GxB_Desc_get       (GrB_Descriptor, GrB_Desc_Field, ...) ;
-GrB_Info GxB_Desc_get_INT32 (GrB_Descriptor, GrB_Desc_Field, int32_t *) ;
-GrB_Info GxB_Desc_get_FP64  (GrB_Descriptor, GrB_Desc_Field, double *) ;
+GrB_Info GrB_Descriptor_set (GrB_Descriptor, int, int) ;
+GrB_Info GxB_Descriptor_get (int *, GrB_Descriptor, int) ;
+GrB_Info GxB_Desc_set       (GrB_Descriptor, int, ...) ;
+GrB_Info GxB_Desc_set_INT32 (GrB_Descriptor, int, int32_t) ;
+GrB_Info GxB_Desc_set_FP64  (GrB_Descriptor, int, double) ;
+GrB_Info GxB_Desc_get       (GrB_Descriptor, int, ...) ;
+GrB_Info GxB_Desc_get_INT32 (GrB_Descriptor, int, int32_t *) ;
+GrB_Info GxB_Desc_get_FP64  (GrB_Descriptor, int, double *) ;
 
 // GxB_Type_* queries: use GrB_get instead
 GrB_Info GxB_Type_name (char *, const GrB_Type) ;
@@ -8186,44 +8183,44 @@ GrB_Info GxB_Matrix_type (GrB_Type *, const GrB_Matrix) ;
 GrB_Info GxB_Matrix_type_name (char *, const GrB_Matrix) ;
 
 // GxB_*_Option_set/get: use GrB_get/set instead
-GrB_Info GxB_Matrix_Option_set       (GrB_Matrix, GxB_Option_Field, ...) ;
-GrB_Info GxB_Matrix_Option_set_INT32 (GrB_Matrix, GxB_Option_Field, int32_t) ;
-GrB_Info GxB_Matrix_Option_set_FP64  (GrB_Matrix, GxB_Option_Field, double) ;
-GrB_Info GxB_Matrix_Option_get       (GrB_Matrix, GxB_Option_Field, ...) ;
-GrB_Info GxB_Matrix_Option_get_INT32 (GrB_Matrix, GxB_Option_Field, int32_t *) ;
-GrB_Info GxB_Matrix_Option_get_FP64  (GrB_Matrix, GxB_Option_Field, double *) ;
-GrB_Info GxB_Vector_Option_set       (GrB_Vector, GxB_Option_Field, ...) ;
-GrB_Info GxB_Vector_Option_set_INT32 (GrB_Vector, GxB_Option_Field, int32_t) ;
-GrB_Info GxB_Vector_Option_set_FP64  (GrB_Vector, GxB_Option_Field, double) ;
-GrB_Info GxB_Vector_Option_get       (GrB_Vector, GxB_Option_Field, ...) ;
-GrB_Info GxB_Vector_Option_get_INT32 (GrB_Vector, GxB_Option_Field, int32_t *) ;
-GrB_Info GxB_Vector_Option_get_FP64  (GrB_Vector, GxB_Option_Field, double *) ;
-GrB_Info GxB_Global_Option_set             (GxB_Option_Field, ...) ;
-GrB_Info GxB_Global_Option_set_INT32       (GxB_Option_Field, int32_t) ;
-GrB_Info GxB_Global_Option_set_FP64        (GxB_Option_Field, double) ;
-GrB_Info GxB_Global_Option_set_FP64_ARRAY  (GxB_Option_Field, double *) ;
-GrB_Info GxB_Global_Option_set_INT64_ARRAY (GxB_Option_Field, int64_t *) ;
-GrB_Info GxB_Global_Option_set_CHAR        (GxB_Option_Field, const char *) ;
-GrB_Info GxB_Global_Option_set_FUNCTION    (GxB_Option_Field, void *) ;
-GrB_Info GxB_Global_Option_get             (GxB_Option_Field, ...) ;
-GrB_Info GxB_Global_Option_get_INT32       (GxB_Option_Field, int32_t *) ;
-GrB_Info GxB_Global_Option_get_FP64        (GxB_Option_Field, double *) ;
-GrB_Info GxB_Global_Option_get_INT64       (GxB_Option_Field, int64_t *) ;
-GrB_Info GxB_Global_Option_get_CHAR        (GxB_Option_Field, const char **) ;
-GrB_Info GxB_Global_Option_get_FUNCTION    (GxB_Option_Field, void **) ;
-GrB_Info GxB_Context_set_INT32 (GxB_Context, GxB_Context_Field, int32_t) ;
-GrB_Info GxB_Context_set_FP64  (GxB_Context, GxB_Context_Field, double) ;
-GrB_Info GxB_Context_set       (GxB_Context, GxB_Context_Field, ...) ;
-GrB_Info GxB_Context_get_INT32 (GxB_Context, GxB_Context_Field, int32_t *) ;
-GrB_Info GxB_Context_get_FP64  (GxB_Context, GxB_Context_Field, double *) ;
-GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
+GrB_Info GxB_Matrix_Option_set       (GrB_Matrix, int, ...) ;
+GrB_Info GxB_Matrix_Option_set_INT32 (GrB_Matrix, int, int32_t) ;
+GrB_Info GxB_Matrix_Option_set_FP64  (GrB_Matrix, int, double) ;
+GrB_Info GxB_Matrix_Option_get       (GrB_Matrix, int, ...) ;
+GrB_Info GxB_Matrix_Option_get_INT32 (GrB_Matrix, int, int32_t *) ;
+GrB_Info GxB_Matrix_Option_get_FP64  (GrB_Matrix, int, double *) ;
+GrB_Info GxB_Vector_Option_set       (GrB_Vector, int, ...) ;
+GrB_Info GxB_Vector_Option_set_INT32 (GrB_Vector, int, int32_t) ;
+GrB_Info GxB_Vector_Option_set_FP64  (GrB_Vector, int, double) ;
+GrB_Info GxB_Vector_Option_get       (GrB_Vector, int, ...) ;
+GrB_Info GxB_Vector_Option_get_INT32 (GrB_Vector, int, int32_t *) ;
+GrB_Info GxB_Vector_Option_get_FP64  (GrB_Vector, int, double *) ;
+GrB_Info GxB_Global_Option_set             (int, ...) ;
+GrB_Info GxB_Global_Option_set_INT32       (int, int32_t) ;
+GrB_Info GxB_Global_Option_set_FP64        (int, double) ;
+GrB_Info GxB_Global_Option_set_FP64_ARRAY  (int, double *) ;
+GrB_Info GxB_Global_Option_set_INT64_ARRAY (int, int64_t *) ;
+GrB_Info GxB_Global_Option_set_CHAR        (int, const char *) ;
+GrB_Info GxB_Global_Option_set_FUNCTION    (int, void *) ;
+GrB_Info GxB_Global_Option_get             (int, ...) ;
+GrB_Info GxB_Global_Option_get_INT32       (int, int32_t *) ;
+GrB_Info GxB_Global_Option_get_FP64        (int, double *) ;
+GrB_Info GxB_Global_Option_get_INT64       (int, int64_t *) ;
+GrB_Info GxB_Global_Option_get_CHAR        (int, const char **) ;
+GrB_Info GxB_Global_Option_get_FUNCTION    (int, void **) ;
+GrB_Info GxB_Context_set_INT32 (GxB_Context, int, int32_t) ;
+GrB_Info GxB_Context_set_FP64  (GxB_Context, int, double) ;
+GrB_Info GxB_Context_set       (GxB_Context, int, ...) ;
+GrB_Info GxB_Context_get_INT32 (GxB_Context, int, int32_t *) ;
+GrB_Info GxB_Context_get_FP64  (GxB_Context, int, double *) ;
+GrB_Info GxB_Context_get       (GxB_Context, int, ...) ;
 
 // GxB_get/set: use GrB_get/set instead
 #if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                           \
     _Generic ((arg1),                               \
         default:           GxB_Global_Option_set,   \
-        GxB_Option_Field : GxB_Global_Option_set,   \
+        int              : GxB_Global_Option_set,   \
         GrB_Vector       : GxB_Vector_Option_set,   \
         GrB_Matrix       : GxB_Matrix_Option_set,   \
         GrB_Descriptor   : GxB_Desc_set,            \
@@ -8232,7 +8229,7 @@ GrB_Info GxB_Context_get       (GxB_Context, GxB_Context_Field, ...) ;
 #define GxB_get(arg1,...)                           \
     _Generic ((arg1),                               \
         default:           GxB_Global_Option_get,   \
-        GxB_Option_Field : GxB_Global_Option_get,   \
+        int              : GxB_Global_Option_get,   \
         GrB_Vector       : GxB_Vector_Option_get,   \
         GrB_Matrix       : GxB_Matrix_Option_get,   \
         GrB_Descriptor   : GxB_Desc_get,            \
@@ -8344,12 +8341,6 @@ GrB_Info GxB_Matrix_select (GrB_Matrix, const GrB_Matrix, const GrB_BinaryOp,
 // GxB_deserialize_* queries: use GrB_get instead
 GrB_Info GxB_deserialize_type_name (char *, const void *, GrB_Index) ;
 
-#endif
-
-#endif  // GB_CUDA_FOLDER
-
-#ifndef NHISTORICAL
-
 // GxB_ABS_*: use GrB_ABS_* instead (as-is)
 GB_GLOBAL GrB_UnaryOp
     GxB_ABS_BOOL,  GxB_ABS_INT8,   GxB_ABS_INT16,  GxB_ABS_INT32, GxB_ABS_INT64,
@@ -8431,6 +8422,7 @@ GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
 
 #endif
 
+#endif  // GB_CUDA_FOLDER
 #if defined ( __cplusplus )
 }
 #endif

@@ -17,7 +17,7 @@ static GrB_Info GB_desc_set
 (
     GrB_Descriptor desc,        // descriptor to modify
     int32_t value,              // value to change it to
-    int field,                  // parameter to change
+    int field,
     GB_Werk Werk
 )
 {
@@ -143,7 +143,7 @@ GrB_Info GrB_Descriptor_set_Scalar
 (
     GrB_Descriptor desc,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -184,7 +184,7 @@ GrB_Info GrB_Descriptor_set_String
 (
     GrB_Descriptor desc,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -219,7 +219,7 @@ GrB_Info GrB_Descriptor_set_INT32
 (
     GrB_Descriptor desc,
     int32_t value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -252,7 +252,7 @@ GrB_Info GrB_Descriptor_set_VOID
 (
     GrB_Descriptor desc,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

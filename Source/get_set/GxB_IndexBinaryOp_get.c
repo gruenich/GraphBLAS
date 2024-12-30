@@ -17,7 +17,7 @@ GrB_Info GxB_IndexBinaryOp_get_Scalar
 (
     GxB_IndexBinaryOp op,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -46,7 +46,7 @@ GrB_Info GxB_IndexBinaryOp_get_String
 (
     GxB_IndexBinaryOp op,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -74,7 +74,7 @@ GrB_Info GxB_IndexBinaryOp_get_INT32
 (
     GxB_IndexBinaryOp op,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -102,7 +102,7 @@ GrB_Info GxB_IndexBinaryOp_get_SIZE
 (
     GxB_IndexBinaryOp op,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -130,7 +130,7 @@ GrB_Info GxB_IndexBinaryOp_get_VOID
 (
     GxB_IndexBinaryOp op,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;

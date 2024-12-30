@@ -16,7 +16,7 @@
 GrB_Info GxB_Context_get_INT32      // get a parameter of a Context
 (
     GxB_Context Context,            // Context to query
-    GxB_Context_Field field,        // parameter to query
+    int field,                      // parameter to query
     int32_t *value                  // return value from the Context
 )
 {
@@ -62,7 +62,7 @@ GrB_Info GxB_Context_get_INT32      // get a parameter of a Context
 GrB_Info GxB_Context_get_FP64       // get a parameter in a Context
 (
     GxB_Context Context,            // Context to query
-    GxB_Context_Field field,        // parameter to query
+    int field,                      // parameter to query
     double *value                   // return value from the Context
 )
 {
@@ -103,7 +103,7 @@ GrB_Info GxB_Context_get_FP64       // get a parameter in a Context
 GrB_Info GxB_Context_get            // get a parameter in a Context
 (
     GxB_Context Context,            // Context to query
-    GxB_Context_Field field,        // parameter to query
+    int field,                      // parameter to query
     ...                             // return value of the descriptor
 )
 {

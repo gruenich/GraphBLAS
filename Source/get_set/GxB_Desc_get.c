@@ -23,7 +23,7 @@
 GrB_Info GxB_Desc_get_INT32     // get a parameter from a descriptor
 (
     GrB_Descriptor desc,        // descriptor to query; NULL is ok
-    GrB_Desc_Field field,       // parameter to query
+    int field,                  // parameter to query
     int32_t *value              // return value of the descriptor
 )
 {
@@ -100,7 +100,7 @@ GrB_Info GxB_Desc_get_INT32     // get a parameter from a descriptor
 GrB_Info GxB_Desc_get_FP64      // get a parameter from a descriptor
 (
     GrB_Descriptor desc,        // descriptor to query; NULL is ok
-    GrB_Desc_Field field,       // parameter to query
+    int field,                  // parameter to query
     double *value               // return value of the descriptor
 )
 {
@@ -115,7 +115,7 @@ GrB_Info GxB_Desc_get_FP64      // get a parameter from a descriptor
 GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 (
     GrB_Descriptor desc,        // descriptor to query; NULL is ok
-    GrB_Desc_Field field,       // parameter to query
+    int field,                  // parameter to query
     ...                         // return value of the descriptor
 )
 {
@@ -139,7 +139,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
             {
                 va_start (ap, field) ;
-                GrB_Desc_Value *value = va_arg (ap, GrB_Desc_Value *) ;
+                int *value = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (value) ;
                 (*value) = (desc == NULL) ? GxB_DEFAULT : desc->out ;
@@ -150,7 +150,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
             {
                 va_start (ap, field) ;
-                GrB_Desc_Value *value = va_arg (ap, GrB_Desc_Value *) ;
+                int *value = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (value) ;
                 (*value) = (desc == NULL) ? GxB_DEFAULT : desc->mask ;
@@ -161,7 +161,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
             {
                 va_start (ap, field) ;
-                GrB_Desc_Value *value = va_arg (ap, GrB_Desc_Value *) ;
+                int *value = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (value) ;
                 (*value) = (desc == NULL) ? GxB_DEFAULT : desc->in0 ;
@@ -172,7 +172,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
             {
                 va_start (ap, field) ;
-                GrB_Desc_Value *value = va_arg (ap, GrB_Desc_Value *) ;
+                int *value = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (value) ;
                 (*value) = (desc == NULL) ? GxB_DEFAULT : desc->in1 ;
@@ -183,7 +183,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
             {
                 va_start (ap, field) ;
-                GrB_Desc_Value *value = va_arg (ap, GrB_Desc_Value *) ;
+                int *value = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (value) ;
                 (*value) = (desc == NULL) ? GxB_DEFAULT : desc->axb ;

@@ -16,7 +16,7 @@
 GrB_Info GrB_Type_wait      // no work, just check if the GrB_Type is valid
 (
     GrB_Type type,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

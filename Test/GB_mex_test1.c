@@ -209,7 +209,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Descriptor Duh ;
-    GrB_Desc_Value val ;
+    int val ;
     int v2 ;
 
     GrB_Descriptor_new (&Duh) ;
@@ -614,7 +614,7 @@ void mexFunction
 
     double h = 1, h2 = 3, bswitch [GxB_NBITMAP_SWITCH] ;
     double bswitch2 [GxB_NBITMAP_SWITCH] ;
-    GxB_Format_Value ff ;
+    int ff ;
     int32_t ff2 ;
     GxB_Global_Option_get_(GxB_HYPER_SWITCH, &h) ;
     GxB_Global_Option_get_FP64 (GxB_HYPER_SWITCH, &h2) ;
@@ -632,7 +632,7 @@ void mexFunction
         CHECK (bswitch [k] == bswitch2 [k]) ;
     }
 
-    GrB_Mode mode = GrB_BLOCKING ;
+    int mode = GrB_BLOCKING ;
     GxB_Global_Option_get_(GxB_MODE, &mode) ;
     printf ("mode: %d\n", mode) ;
 
@@ -968,7 +968,7 @@ void mexFunction
     OK (GxB_Vector_Option_get_INT32 (victor, GxB_SPARSITY_STATUS, &sparsity)) ;
     CHECK (sparsity == GxB_SPARSE) ;
 
-    GxB_Format_Value fmt ;
+    int fmt ;
     OK (GxB_Vector_Option_get_(victor, GxB_FORMAT, &fmt)) ;
     CHECK (fmt == GxB_BY_COL) ;
 

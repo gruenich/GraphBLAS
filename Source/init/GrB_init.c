@@ -19,7 +19,7 @@
 
 GrB_Info GrB_init           // start up GraphBLAS
 (
-    GrB_Mode mode           // blocking or non-blocking mode
+    int mode                // blocking or non-blocking mode
 )
 { 
 

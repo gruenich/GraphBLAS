@@ -33,7 +33,7 @@ void gb_get_mxargs
     GrB_Descriptor *desc,       // last argument is always the descriptor
     base_enum_t *base,          // desc.base
     kind_enum_t *kind,          // desc.kind
-    GxB_Format_Value *fmt,      // desc.format : by row or by col
+    int *fmt,                   // desc.format : by row or by col
     int *sparsity               // desc.format : hypersparse/sparse/bitmap/full
                                 // or 0 if not in the descriptor
 )

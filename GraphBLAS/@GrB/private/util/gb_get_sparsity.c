@@ -28,11 +28,11 @@
 
 #include "gb_interface.h"
 
-GxB_Format_Value gb_get_sparsity        // 0 to 15
+int gb_get_sparsity         // 0 to 15
 (
-    GrB_Matrix A,                       // may be NULL
-    GrB_Matrix B,                       // may be NULL
-    int sparsity_default                // may be 0
+    GrB_Matrix A,           // may be NULL
+    GrB_Matrix B,           // may be NULL
+    int sparsity_default    // may be 0
 )
 {
 

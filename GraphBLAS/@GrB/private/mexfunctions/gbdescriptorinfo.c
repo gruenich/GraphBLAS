@@ -37,7 +37,7 @@ void mexFunction
 
     base_enum_t base = BASE_DEFAULT ;
     kind_enum_t kind = KIND_GRB ;
-    GxB_Format_Value fmt = GxB_NO_FORMAT ;
+    int fmt = GxB_NO_FORMAT ;
     int sparsity = 0 ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 0)

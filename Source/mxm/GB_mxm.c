@@ -35,7 +35,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const GrB_Matrix B,             // input matrix
     const bool B_transpose,         // if true, use B' instead of B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    const int AxB_method,           // for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Werk Werk
 )

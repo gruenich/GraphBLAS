@@ -206,7 +206,7 @@ GrB_Info GxB_Serialized_get_Scalar
 (
     const void * blob,
     GrB_Scalar scalar,
-    GrB_Field field,
+    int field,
     size_t blob_size
 )
 {
@@ -309,7 +309,7 @@ GrB_Info GxB_Serialized_get_String
 (
     const void * blob,
     char * value,
-    GrB_Field field,
+    int field,
     size_t blob_size
 )
 { 
@@ -380,7 +380,7 @@ GrB_Info GxB_Serialized_get_INT32
 (
     const void * blob,
     int32_t * value,
-    GrB_Field field,
+    int field,
     size_t blob_size
 )
 { 
@@ -455,7 +455,7 @@ GrB_Info GxB_Serialized_get_SIZE
 (
     const void * blob,
     size_t * value,
-    GrB_Field field,
+    int field,
     size_t blob_size
 )
 { 
@@ -518,7 +518,7 @@ GrB_Info GxB_Serialized_get_VOID
 (
     const void * blob,
     void * value,
-    GrB_Field field,
+    int field,
     size_t blob_size
 )
 { 

@@ -9,12 +9,12 @@
 
 #include "gb_interface.h"
 
-GrB_Matrix gb_typecast          // C = (type) A, where C is deep
+GrB_Matrix gb_typecast  // C = (type) A, where C is deep
 (
-    GrB_Matrix A,               // may be shallow
-    GrB_Type type,              // if NULL, use the type of A
-    GxB_Format_Value fmt,       // format of C
-    int sparsity                // sparsity control for C, if 0 use A
+    GrB_Matrix A,       // may be shallow
+    GrB_Type type,      // if NULL, use the type of A
+    int fmt,            // format of C
+    int sparsity        // sparsity control for C, if 0 use A
 )
 {
 

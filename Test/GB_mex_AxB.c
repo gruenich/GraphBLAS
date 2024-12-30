@@ -44,7 +44,7 @@ int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
 struct GB_Matrix_opaque C_header ;
 
-GrB_Desc_Value AxB_method = GxB_DEFAULT ;
+int AxB_method = GxB_DEFAULT ;
 
 GrB_Info axb (GB_Werk Werk) ;
 GrB_Info axb_complex (GB_Werk Werk) ;
@@ -254,7 +254,7 @@ void mexFunction
     // 7083: dot
     // 7084: hash
     // 7085: saxpy
-    GET_SCALAR (4, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
+    GET_SCALAR (4, int, AxB_method, GxB_DEFAULT) ;
 
     if (! ((AxB_method == GxB_DEFAULT) ||
         (AxB_method == GxB_AxB_GUSTAVSON) ||

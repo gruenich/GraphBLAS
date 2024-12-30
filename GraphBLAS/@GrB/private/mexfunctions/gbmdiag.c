@@ -36,7 +36,7 @@ void mexFunction
 
     base_enum_t base ;
     kind_enum_t kind ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     int sparsity ;
     GrB_Descriptor desc = NULL ;
     desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt,

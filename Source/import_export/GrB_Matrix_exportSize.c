@@ -15,7 +15,7 @@ GrB_Info GrB_Matrix_exportSize  // determine sizes of user arrays for export
     uint64_t *Ap_len,       // # of entries required for Ap (not # of bytes)
     uint64_t *Ai_len,       // # of entries required for Ai (not # of bytes)
     uint64_t *Ax_len,       // # of entries required for Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format                   
     GrB_Matrix A            // matrix to export
 )
 { 

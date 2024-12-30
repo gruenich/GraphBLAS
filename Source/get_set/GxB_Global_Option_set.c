@@ -27,7 +27,7 @@
 
 GrB_Info GxB_Global_Option_set_INT32      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     int32_t value                   // value to change it to
 )
 {
@@ -98,7 +98,7 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
 
 GrB_Info GxB_Global_Option_set_FP64      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     double value                    // value to change it to
 )
 {
@@ -140,7 +140,7 @@ GrB_Info GxB_Global_Option_set_FP64      // set a global default option
 
 GrB_Info GxB_Global_Option_set_FP64_ARRAY      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     double *value                   // value to change it to
 )
 {
@@ -188,7 +188,7 @@ GrB_Info GxB_Global_Option_set_FP64_ARRAY      // set a global default option
 
 GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     int64_t *value                  // value to change it to
 )
 {
@@ -225,7 +225,7 @@ GrB_Info GxB_Global_Option_set_INT64_ARRAY      // set a global default option
 
 GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     const char *value               // value to change it to
 )
 {
@@ -293,7 +293,7 @@ GrB_Info GxB_Global_Option_set_CHAR      // set a global default option
 
 GrB_Info GxB_Global_Option_set_FUNCTION      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     void *value                     // value to change it to
 )
 {
@@ -335,7 +335,7 @@ GrB_Info GxB_Global_Option_set_FUNCTION      // set a global default option
 
 GrB_Info GxB_Global_Option_set      // set a global default option
 (
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     ...                             // value to change it to
 )
 {

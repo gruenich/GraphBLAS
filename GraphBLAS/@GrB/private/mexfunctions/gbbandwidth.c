@@ -43,7 +43,7 @@ void mexFunction
     int64_t hi = 0, lo = 0 ;
     GrB_Matrix x = NULL, imin = NULL, imax = NULL, idiag = NULL ;
 
-    GxB_Format_Value fmt ;
+    int fmt ;
     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
     bool by_col = (fmt == GxB_BY_COL) ;
 

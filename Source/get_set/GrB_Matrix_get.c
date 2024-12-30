@@ -17,7 +17,7 @@ GrB_Info GrB_Matrix_get_Scalar
 (
     GrB_Matrix A,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -75,7 +75,7 @@ GrB_Info GrB_Matrix_get_String
 (
     GrB_Matrix A,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -104,7 +104,7 @@ GrB_Info GrB_Matrix_get_INT32
 (
     GrB_Matrix A,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -133,7 +133,7 @@ GrB_Info GrB_Matrix_get_SIZE
 (
     GrB_Matrix A,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -162,7 +162,7 @@ GrB_Info GrB_Matrix_get_VOID
 (
     GrB_Matrix A,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;

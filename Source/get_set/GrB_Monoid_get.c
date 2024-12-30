@@ -17,7 +17,7 @@ GrB_Info GrB_Monoid_get_Scalar
 (
     GrB_Monoid monoid,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -46,7 +46,7 @@ GrB_Info GrB_Monoid_get_String
 (
     GrB_Monoid monoid,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -98,7 +98,7 @@ GrB_Info GrB_Monoid_get_INT32
 (
     GrB_Monoid monoid,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -126,7 +126,7 @@ GrB_Info GrB_Monoid_get_SIZE
 (
     GrB_Monoid monoid,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -181,7 +181,7 @@ GrB_Info GrB_Monoid_get_VOID
 (
     GrB_Monoid monoid,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
 

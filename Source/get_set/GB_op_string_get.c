@@ -13,7 +13,7 @@ GrB_Info GB_op_string_get
 (
     GB_Operator op,
     char * value,
-    GrB_Field field
+    int field
 )
 {
 

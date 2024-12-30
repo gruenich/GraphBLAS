@@ -33,7 +33,7 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
     GrB_Matrix T ;              // T will always be deep
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, *A_handle)) ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     OK (GxB_Matrix_Option_get (*A_handle, GxB_FORMAT, &fmt)) ;
 
     if (fmt == GxB_BY_COL &&

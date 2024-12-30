@@ -119,7 +119,7 @@ void mexFunction
     GrB_Matrix A = A_input ;
     GrB_Type atype ;
     GrB_Index anrows, ancols, anz ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     int A_sparsity ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;

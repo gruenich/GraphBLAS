@@ -27,7 +27,7 @@
 GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
 (
     GrB_Vector v,                   // vector to modify
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     int32_t value                   // value to change it to
 )
 {
@@ -76,7 +76,7 @@ GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
 GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
 (
     GrB_Vector v,                   // vector to modify
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     double value                    // value to change it to
 )
 {
@@ -125,7 +125,7 @@ GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
 GrB_Info GxB_Vector_Option_set      // set an option in a vector
 (
     GrB_Vector v,                   // vector to modify
-    GxB_Option_Field field,         // option to change
+    int field,                      // option to change
     ...                             // value to change it to
 )
 {

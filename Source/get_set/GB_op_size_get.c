@@ -13,7 +13,7 @@ GrB_Info GB_op_size_get
 (
     GB_Operator op,
     size_t * value,
-    GrB_Field field
+    int field
 )
 {
 

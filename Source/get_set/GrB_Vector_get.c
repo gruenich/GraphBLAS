@@ -17,7 +17,7 @@ GrB_Info GrB_Vector_get_Scalar
 (
     GrB_Vector v,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -71,7 +71,7 @@ GrB_Info GrB_Vector_get_String
 (
     GrB_Vector v,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -100,7 +100,7 @@ GrB_Info GrB_Vector_get_INT32
 (
     GrB_Vector v,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -129,7 +129,7 @@ GrB_Info GrB_Vector_get_SIZE
 (
     GrB_Vector v,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -158,7 +158,7 @@ GrB_Info GrB_Vector_get_VOID
 (
     GrB_Vector v,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;

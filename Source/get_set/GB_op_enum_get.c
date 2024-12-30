@@ -13,7 +13,7 @@ GrB_Info GB_op_enum_get
 (
     GB_Operator op,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 

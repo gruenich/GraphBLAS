@@ -17,7 +17,7 @@ GrB_Info GrB_Type_get_Scalar
 (
     GrB_Type type,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -65,7 +65,7 @@ GrB_Info GrB_Type_get_String
 (
     GrB_Type type,
     char * value,
-    GrB_Field field
+    int field
 )
 {
 
@@ -127,7 +127,7 @@ GrB_Info GrB_Type_get_INT32
 (
     GrB_Type type,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 {
 
@@ -168,7 +168,7 @@ GrB_Info GrB_Type_get_SIZE
 (
     GrB_Type type,
     size_t * value,
-    GrB_Field field
+    int field
 )
 {
 
@@ -228,7 +228,7 @@ GrB_Info GrB_Type_get_VOID
 (
     GrB_Type type,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;

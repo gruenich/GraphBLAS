@@ -16,7 +16,7 @@
 GrB_Info GrB_UnaryOp_wait   // no work, just check if the GrB_UnaryOp is valid
 (
     GrB_UnaryOp op,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

@@ -40,7 +40,7 @@ int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
-GrB_Desc_Value AxB_method = GxB_DEFAULT ;
+int AxB_method = GxB_DEFAULT ;
 bool flipxy = false ;
 bool done_in_place = false ;
 double C_scalar = 0 ;
@@ -221,7 +221,7 @@ void mexFunction
     // 7083: dot
     // 7084: hash
     // 7085: saxpy
-    GET_SCALAR (4, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
+    GET_SCALAR (4, int, AxB_method, GxB_DEFAULT) ;
 
     if (! ((AxB_method == GxB_DEFAULT) ||
         (AxB_method == GxB_AxB_GUSTAVSON) ||

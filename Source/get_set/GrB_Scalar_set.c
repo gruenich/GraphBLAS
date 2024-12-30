@@ -17,7 +17,7 @@ GrB_Info GrB_Scalar_set_Scalar
 (
     GrB_Scalar s,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
     // all settings are ignored
@@ -33,7 +33,7 @@ GrB_Info GrB_Scalar_set_String
 (
     GrB_Scalar s,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -62,7 +62,7 @@ GrB_Info GrB_Scalar_set_INT32
 (
     GrB_Scalar s,
     int32_t value,
-    GrB_Field field
+    int field
 )
 { 
     // all settings are ignored
@@ -78,7 +78,7 @@ GrB_Info GrB_Scalar_set_VOID
 (
     GrB_Scalar s,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

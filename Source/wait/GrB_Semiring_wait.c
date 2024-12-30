@@ -16,7 +16,7 @@
 GrB_Info GrB_Semiring_wait   // no work, just check if the GrB_Semiring is valid
 (
     GrB_Semiring semiring,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

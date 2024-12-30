@@ -13,7 +13,7 @@ GrB_Info GB_op_scalar_get
 (
     GB_Operator op,
     GrB_Scalar scalar,
-    GrB_Field field,
+    int field,
     GB_Werk Werk
 )
 {

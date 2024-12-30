@@ -13,7 +13,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 (
     GrB_Vector v,                   // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level
     FILE *f                         // file for output
 )
 {

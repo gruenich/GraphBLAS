@@ -16,7 +16,7 @@
 GrB_Info GrB_Monoid_wait   // no work, just check if the GrB_Monoid is valid
 (
     GrB_Monoid monoid,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

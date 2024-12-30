@@ -64,10 +64,9 @@ int main (int argc, char **argv)
     GrB_Info info ;
 
     OK (GrB_init (GrB_NONBLOCKING)) ;
-//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, (GrB_Field) GxB_BURBLE)) ;
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE)) ;
     int32_t nthreads ;
-    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads,
-        (GrB_Field) GxB_NTHREADS)) ;
+    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads, GxB_NTHREADS)) ;
     fprintf (stderr, "grow demo: nthreads %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
@@ -112,12 +111,9 @@ int main (int argc, char **argv)
 
     OK (GrB_Matrix_new (&C, atype, anrows, ancols)) ;
     OK (GrB_Vector_new (&w, atype, ancols)) ;
-    OK (GrB_Matrix_set_INT32 (C, (int32_t) false,
-        (GrB_Field) GxB_HYPER_HASH)) ;
-    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE,
-        (GrB_Field) GxB_SPARSITY_CONTROL)) ;
-    OK (GrB_Vector_set_INT32 (w, GxB_SPARSE,
-        (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_set_INT32 (C, (int32_t) false, GxB_HYPER_HASH)) ;
+    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Vector_set_INT32 (w, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
     double t, tt [4] = {0, 0, 0, 0}, t2 [4] = {0, 0, 0, 0} ;
     tt [0] = WALLCLOCK ;
@@ -141,7 +137,7 @@ int main (int argc, char **argv)
         tt [3] += (WALLCLOCK - t) ;
     }
 
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, (GrB_Field) GxB_BURBLE)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     tt [0] = WALLCLOCK - tt [0] ;
     printf ("one row at a time:\n") ;
@@ -159,8 +155,7 @@ int main (int argc, char **argv)
 
     GrB_Matrix_free (&C) ;
     OK (GrB_Matrix_new (&C, atype, anrows, ancols)) ;
-    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE,
-        (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_set_INT32 (C, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
 
     t2 [0] = WALLCLOCK ;
     int64_t i1 = 0 ;
@@ -177,8 +172,7 @@ int main (int argc, char **argv)
         // W = A (i1:i2,:)
         t = WALLCLOCK ;
         OK (GrB_Matrix_new (&W, atype, irows, ancols)) ;
-        OK (GrB_Matrix_set_INT32 (W, GxB_SPARSE,
-            (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+        OK (GrB_Matrix_set_INT32 (W, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
         GrB_Index Icolon [3] ;
         Icolon [GxB_BEGIN] = i1 ;
         Icolon [GxB_INC  ] = 1 ;
@@ -203,7 +197,7 @@ int main (int argc, char **argv)
 
         i1 += irows ;
     }
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, (GrB_Field) GxB_BURBLE)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     t2 [0] = WALLCLOCK - t2 [0] ;
     printf ("\nmany rows at a time:\n") ;
@@ -223,15 +217,13 @@ int main (int argc, char **argv)
     for (int trial = 1 ; trial <= 2 ; trial++)
     {
         int32_t threads ;
-        GrB_Global_get_INT32 (GrB_GLOBAL, &threads,
-            (GrB_Field) GxB_GLOBAL_NTHREADS) ;
+        GrB_Global_get_INT32 (GrB_GLOBAL, &threads, GxB_GLOBAL_NTHREADS) ;
         GrB_Matrix_free (&T) ;
         t = WALLCLOCK ;
         OK (GrB_Matrix_dup (&T, A)) ;
         t = (WALLCLOCK - t) ;
         printf ("dup:        %g (%d threads)\n", t, threads) ;
-        GrB_Global_set_INT32 (GrB_GLOBAL, (int) 1,
-            (GrB_Field) GxB_GLOBAL_NTHREADS) ;
+        GrB_Global_set_INT32 (GrB_GLOBAL, (int) 1, GxB_GLOBAL_NTHREADS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -240,7 +232,7 @@ int main (int argc, char **argv)
 
 #if 0
 
-//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1, (GrB_Field) GxB_BURBLE)) ;
+//  OK (GrB_Global_set_INT32 (GrB_GLOBAL, 1, GxB_BURBLE)) ;
     for (int p_hint = 0 ; p_hint <= 64 ; p_hint += 32)
     {
         for (int i_hint = 0 ; i_hint <= 64 ; i_hint += 32)

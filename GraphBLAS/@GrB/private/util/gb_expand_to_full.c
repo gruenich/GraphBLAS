@@ -13,7 +13,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
 (
     const GrB_Matrix A,         // input matrix to expand to full
     GrB_Type type,              // type of C, if NULL use the type of A
-    GxB_Format_Value fmt,       // format of C
+    int fmt,                    // format of C
     GrB_Matrix id               // identity value, use zero if NULL
 )
 {

@@ -39,7 +39,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     uint64_t Ap_len,        // number of entries in Ap (not # of bytes)
     uint64_t Ai_len,        // number of entries in Ai (not # of bytes)
     uint64_t Ax_len,        // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // import format
+    int format,             // import format
     GB_Werk Werk
 )
 { 
@@ -345,7 +345,7 @@ GrB_Info GB_EVAL3 (prefix, _Matrix_import_, T) /* import a matrix */           \
     uint64_t Ap_len,        /* number of entries in Ap (not # of bytes)      */\
     uint64_t Ai_len,        /* number of entries in Ai (not # of bytes)      */\
     uint64_t Ax_len,        /* number of entries in Ax (not # of bytes)      */\
-    GrB_Format format       /* import format                                 */\
+    int format              /* import format                                 */\
 )                                                                              \
 {                                                                              \
     GB_WHERE0 (GB_STR(prefix) "_Matrix_import_" GB_STR(T) " (&A, type, nrows," \

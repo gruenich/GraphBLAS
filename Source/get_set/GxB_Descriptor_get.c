@@ -13,9 +13,9 @@
 
 GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
 (
-    GrB_Desc_Value *val,        // value of the parameter
+    int *val,                   // value of the parameter
     GrB_Descriptor desc,        // descriptor to query; NULL is ok
-    GrB_Desc_Field field        // parameter to query
+    int field                   // parameter to query
 )
 {
 

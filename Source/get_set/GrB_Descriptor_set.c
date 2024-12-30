@@ -12,8 +12,8 @@
 GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    GrB_Desc_Field field,       // parameter to change
-    GrB_Desc_Value value        // value to change it to
+    int field,                  // parameter to change
+    int value                   // value to change it to
 )
 {
 
@@ -47,7 +47,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
                     "must be GxB_DEFAULT [%d] or GrB_REPLACE [%d]",
                     (int) value, (int) GxB_DEFAULT, (int) GrB_REPLACE) ;
             }
-            desc->out = value ;
+            desc->out = (GrB_Desc_Value) value ;
             break ;
 
         case GrB_MASK : 
@@ -86,7 +86,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
                     "must be GxB_DEFAULT [%d] or GrB_TRAN [%d]",
                     (int) value, (int) GxB_DEFAULT, (int) GrB_TRAN) ;
             }
-            desc->in0 = value ;
+            desc->in0 = (GrB_Desc_Value) value ;
             break ;
 
         case GrB_INP1 : 
@@ -98,7 +98,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
                     "must be GxB_DEFAULT [%d] or GrB_TRAN [%d]",
                     (int) value, (int) GxB_DEFAULT, (int) GrB_TRAN) ;
             }
-            desc->in1 = value ;
+            desc->in1 = (GrB_Desc_Value) value ;
             break ;
 
         case GxB_AxB_METHOD : 
@@ -115,7 +115,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
                     (int) GxB_AxB_DOT,
                     (int) GxB_AxB_HASH, (int) GxB_AxB_SAXPY) ;
             }
-            desc->axb = value ;
+            desc->axb = (GrB_Desc_Value) value ;
             break ;
 
         case GxB_IMPORT : 
@@ -127,7 +127,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
             // import/deserialization, if the GxB_IMPORT setting is made.
             // Only use the fast import/deserialize if the value is GxB_DEFAULT
             // or GxB_FAST_IMPORT; otherwise use the slower secure method.
-            desc->import =
+            desc->import = (int)
                 (value == GxB_DEFAULT) ? GxB_FAST_IMPORT : GxB_SECURE_IMPORT ;
             break ;
 

@@ -25,7 +25,7 @@
 GrB_Info GxB_Vector_Option_get_INT32    // gets the current option of a vector
 (
     GrB_Vector v,                   // vector to query
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     int32_t *value                  // return value of the vector option
 )
 {
@@ -80,7 +80,7 @@ GrB_Info GxB_Vector_Option_get_INT32    // gets the current option of a vector
 GrB_Info GxB_Vector_Option_get_FP64      // gets the current option of a vector
 (
     GrB_Vector v,                   // vector to query
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     double *value                   // return value of the vector option
 )
 {
@@ -124,7 +124,7 @@ GrB_Info GxB_Vector_Option_get_FP64      // gets the current option of a vector
 GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
 (
     GrB_Vector v,                   // vector to query
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     ...                             // return value of the vector option
 )
 {
@@ -185,7 +185,7 @@ GrB_Info GxB_Vector_Option_get      // gets the current option of a vector
             {
                 // a GrB_Vector is always stored by-column
                 va_start (ap, field) ;
-                GxB_Format_Value *format = va_arg (ap, GxB_Format_Value *) ;
+                int *format = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (format) ;
                 (*format) = GxB_BY_COL ;

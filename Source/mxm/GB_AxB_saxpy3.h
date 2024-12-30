@@ -30,7 +30,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
-    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    int AxB_method,                 // Default, Gustavson, or Hash
     const int do_sort,              // if nonzero, try to sort in saxpy3
     GB_Werk Werk
 ) ;
@@ -89,7 +89,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
-    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    int AxB_method,                 // Default, Gustavson, or Hash
     bool builtin_semiring,          // if true, semiring is builtin
     // outputs
     GB_saxpy3task_struct **SaxpyTasks_handle,

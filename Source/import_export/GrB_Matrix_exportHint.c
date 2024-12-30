@@ -12,7 +12,7 @@
 
 GrB_Info GrB_Matrix_exportHint  // suggest the best export format
 (
-    GrB_Format *format,     // export format
+    int *format,            // export format
     GrB_Matrix A            // matrix to export
 )
 { 

@@ -9,14 +9,14 @@
 
 #include "gb_interface.h"
 
-GxB_Format_Value gb_default_format      // GxB_BY_ROW or GxB_BY_COL
+int gb_default_format      // GxB_BY_ROW or GxB_BY_COL
 (
     GrB_Index nrows,        // row vectors are stored by row
     GrB_Index ncols         // column vectors are stored by column
 )
 {
 
-    GxB_Format_Value fmt ;
+    int fmt ;
     if (ncols == 1)
     { 
         // column vectors are stored by column, by default

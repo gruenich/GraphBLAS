@@ -17,7 +17,7 @@ GrB_Info GxB_Context_set_Scalar
 (
     GxB_Context Context,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -91,7 +91,7 @@ GrB_Info GxB_Context_set_String
 (
     GxB_Context Context,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -126,7 +126,7 @@ GrB_Info GxB_Context_set_INT
 (
     GxB_Context Context,
     int32_t value,
-    GrB_Field field
+    int field
 )
 {
 
@@ -170,7 +170,7 @@ GrB_Info GxB_Context_set_VOID
 (
     GxB_Context Context,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

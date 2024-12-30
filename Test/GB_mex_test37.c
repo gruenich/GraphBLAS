@@ -32,8 +32,8 @@ bool isequal (GrB_Matrix C1, GrB_Matrix C2)
     int32_t s ;
     OK (GrB_Matrix_get_INT32 (C1, &s, GrB_STORAGE_ORIENTATION_HINT)) ;
     OK (GrB_Matrix_set_INT32 (C2,  s, GrB_STORAGE_ORIENTATION_HINT)) ;
-    OK (GrB_Matrix_get_INT32 (C1, &s, (GrB_Field) GxB_SPARSITY_STATUS)) ;
-    OK (GrB_Matrix_set_INT32 (C2,  s, (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_get_INT32 (C1, &s, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Matrix_set_INT32 (C2,  s, GxB_SPARSITY_CONTROL)) ;
     OK (GrB_Matrix_wait (C1, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_wait (C2, GrB_MATERIALIZE)) ;
     // check if C1 and C2 are equal
@@ -451,8 +451,7 @@ void mexFunction
     OK (GrB_Matrix_dup (&A2, A)) ;
     OK (GrB_Matrix_dup (&M, A)) ;
 
-    OK (GrB_Matrix_set_INT32 (M, GxB_SPARSE,
-        (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_set_INT32 (M, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
     //--------------------------------------------------------------------------
     // create the expected results
@@ -487,12 +486,12 @@ void mexFunction
                                 // turn on/off the JIT
                                 OK (GrB_Global_set_INT32 (GrB_GLOBAL,
                                     jit ? GxB_JIT_ON : GxB_JIT_OFF,
-                                    (GrB_Field) GxB_JIT_C_CONTROL)) ;
+                                    GxB_JIT_C_CONTROL)) ;
 
                                 // change A sparsity
                                 OK (GrB_Matrix_set_INT32 (A,
                                     a1_sparsity ? GxB_SPARSE : GxB_BITMAP,
-                                    (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+                                    GxB_SPARSITY_CONTROL)) ;
 
                                 // change A storage orientation
                                 OK (GrB_Matrix_set_INT32 (A,
@@ -518,7 +517,7 @@ void mexFunction
                                 // change A sparsity again
                                 OK (GrB_Matrix_set_INT32 (A2,
                                     a2_sparsity ? GxB_SPARSE : GxB_BITMAP,
-                                    (GrB_Field) GxB_SPARSITY_CONTROL)) ;
+                                    GxB_SPARSITY_CONTROL)) ;
 
                                 // change A storage again
                                 OK (GrB_Matrix_set_INT32 (A,
@@ -582,8 +581,7 @@ void mexFunction
     //------------------------------------------------------------------------
 
     // turn on the JIT
-    OK (GrB_Global_set_INT32 (GrB_GLOBAL, GxB_JIT_ON,
-        (GrB_Field) GxB_JIT_C_CONTROL)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, GxB_JIT_ON, GxB_JIT_C_CONTROL)) ;
 
     int save_jit = 0, save_burble = 0 ;
     OK (GxB_get (GxB_JIT_C_CONTROL, &save_jit)) ;

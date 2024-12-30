@@ -45,7 +45,7 @@ static GrB_Info GB_export_worker  // export a matrix
     uint64_t *Ap_len,       // number of entries in Ap (not # of bytes)
     uint64_t *Ai_len,       // number of entries in Ai (not # of bytes)
     uint64_t *Ax_len,       // number of entries in Ax (not # of bytes)
-    GrB_Format format,      // export format
+    int format,             // export format
     GrB_Matrix A_input,     // matrix to export
     GB_Werk Werk
 )
@@ -240,13 +240,13 @@ static GrB_Info GB_export_worker  // export a matrix
 #define GB_EXPORT(prefix,ctype,Type,acode)                                     \
 GrB_Info GB_EVAL3 (prefix, _Matrix_export_, Type) /* export a matrix */        \
 (                                                                              \
-    uint64_t *Ap,          /* pointers for CSR, CSC, row indices for COO    */\
-    uint64_t *Ai,          /* row indices for CSR, CSC, col indices for COO */\
+    uint64_t *Ap,           /* pointers for CSR, CSC, row indices for COO    */\
+    uint64_t *Ai,           /* row indices for CSR, CSC, col indices for COO */\
     ctype *Ax,              /* values (must match the type of A)             */\
-    uint64_t *Ap_len,      /* number of entries in Ap (not # of bytes)      */\
-    uint64_t *Ai_len,      /* number of entries in Ai (not # of bytes)      */\
-    uint64_t *Ax_len,      /* number of entries in Ax (not # of bytes)      */\
-    GrB_Format format,      /* export format                                 */\
+    uint64_t *Ap_len,       /* number of entries in Ap (not # of bytes)      */\
+    uint64_t *Ai_len,       /* number of entries in Ai (not # of bytes)      */\
+    uint64_t *Ax_len,       /* number of entries in Ax (not # of bytes)      */\
+    int format,             /* export format                                 */\
     GrB_Matrix A            /* matrix to export                              */\
 )                                                                              \
 {                                                                              \

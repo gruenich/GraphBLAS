@@ -17,7 +17,7 @@ GrB_Info GrB_BinaryOp_set_Scalar
 (
     GrB_BinaryOp op,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;
@@ -31,7 +31,7 @@ GrB_Info GrB_BinaryOp_set_String
 (
     GrB_BinaryOp op,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -62,7 +62,7 @@ GrB_Info GrB_BinaryOp_set_INT32
 (
     GrB_BinaryOp op,
     int32_t value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;
@@ -76,7 +76,7 @@ GrB_Info GrB_BinaryOp_set_VOID
 (
     GrB_BinaryOp op,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

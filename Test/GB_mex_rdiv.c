@@ -36,7 +36,7 @@ int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
-GrB_Desc_Value AxB_method = GxB_DEFAULT ;
+int AxB_method = GxB_DEFAULT ;
 struct GB_Matrix_opaque MT_header, C_header ;
 
 GrB_Info axb (GB_Werk Werk, bool cprint) ;
@@ -175,7 +175,7 @@ void mexFunction
     // 7083: dot
     // 7084: hash
     // 7085: saxpy
-    GET_SCALAR (2, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
+    GET_SCALAR (2, int, AxB_method, GxB_DEFAULT) ;
 
     // get the cprint flag
     GET_SCALAR (3, bool, cprint, false) ;

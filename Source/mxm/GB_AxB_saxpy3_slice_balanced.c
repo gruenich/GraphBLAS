@@ -58,7 +58,7 @@ static inline int64_t GB_hash_table_size
 (
     int64_t flmax,      // max flop count for any vector computed by this task
     int64_t cvlen,      // vector length of C
-    const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
+    const int AxB_method     // Default, Gustavson, or Hash
 )
 {
     int64_t hash_size ;
@@ -125,7 +125,7 @@ static inline void GB_create_coarse_task
     double chunk,
     int nthreads_max,
     int64_t *Coarse_Work,   // workspace for parallel reduction for flop count
-    const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
+    const int AxB_method    // Default, Gustavson, or Hash
 )
 {
 
@@ -198,7 +198,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
-    GrB_Desc_Value AxB_method,      // Default, Gustavson, or Hash
+    int AxB_method,                 // Default, Gustavson, or Hash
     bool builtin_semiring,          // if true, semiring is builtin
     // outputs
     GB_saxpy3task_struct **SaxpyTasks_handle,

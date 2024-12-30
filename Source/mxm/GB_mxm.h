@@ -28,7 +28,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const GrB_Matrix B,             // input matrix
     const bool B_transpose,         // if true, use B' instead of B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    const int AxB_method,           // for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Werk Werk
 ) ;
@@ -70,7 +70,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C was computed in-place
-    GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
+    int AxB_method,                 // for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Werk Werk
 ) ;
@@ -290,7 +290,7 @@ void GB_AxB_meta_adotb_control
     bool can_do_in_place,
     bool allow_scale,
     bool B_is_diagonal,
-    GrB_Desc_Value AxB_method
+    int AxB_method
 ) ;
 
 // return value of axb_method from GB_AxB_meta_adotb_control

@@ -234,11 +234,11 @@ GrB_Info read_matrix        // read a double-precision or boolean matrix
 
     // descriptor dt2: transpose the 2nd input
     OK (GrB_Descriptor_new (&dt2)) ;
-    OK (GrB_Descriptor_set_INT32 (dt2, GrB_TRAN, (GrB_Field) GrB_INP1)) ;
+    OK (GrB_Descriptor_set_INT32 (dt2, GrB_TRAN, GrB_INP1)) ;
 
     // descriptor dt1: transpose the 1st input
     OK (GrB_Descriptor_new (&dt1)) ;
-    OK (GrB_Descriptor_set_INT32 (dt1, GrB_TRAN, (GrB_Field) GrB_INP0)) ;
+    OK (GrB_Descriptor_set_INT32 (dt1, GrB_TRAN, GrB_INP0)) ;
 
     //--------------------------------------------------------------------------
     // create the output matrix

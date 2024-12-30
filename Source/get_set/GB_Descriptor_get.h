@@ -18,7 +18,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     bool *Mask_struct,          // if true use the structure of M
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
-    GrB_Desc_Value *AxB_method, // method for C=A*B
+    int *AxB_method,            // method for C=A*B
     int *do_sort                // if nonzero, sort in GrB_mxm
 ) ;
 

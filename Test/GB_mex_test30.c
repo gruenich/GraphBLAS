@@ -19,8 +19,7 @@
     size_t siz1, siz2, siz3 ;                                               \
     OK (GrB_IndexUnaryOp_get_String (op, name, GrB_NAME)) ;                 \
     CHECK (MATCH (name, opname)) ;                                          \
-    OK (GrB_IndexUnaryOp_get_String (op, cname,                             \
-        (GrB_Field) GxB_JIT_C_NAME));                                       \
+    OK (GrB_IndexUnaryOp_get_String (op, cname, GxB_JIT_C_NAME));           \
     printf ("\n%s: %s\n", name, cname) ;                                    \
     OK (GxB_IndexUnaryOp_fprint (op, "idxunop", 5, stdout)) ;               \
     OK (GrB_IndexUnaryOp_get_SIZE (op, &size, GrB_NAME)) ;                  \

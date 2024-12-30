@@ -16,7 +16,7 @@
 GrB_Info GrB_IndexUnaryOp_wait   // no work, just check if valid
 (
     GrB_IndexUnaryOp op,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

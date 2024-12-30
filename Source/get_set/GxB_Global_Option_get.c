@@ -26,7 +26,7 @@
 
 GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 (
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     int32_t *value                  // return value of the global option
 )
 {
@@ -131,7 +131,7 @@ GrB_Info GxB_Global_Option_get_INT32    // gets the current global option
 
 GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
 (
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     double *value                   // return value of the global option
 )
 {
@@ -183,7 +183,7 @@ GrB_Info GxB_Global_Option_get_FP64     // gets the current global option
 
 GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
 (
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     int64_t *value                  // return value of the global option
 )
 {
@@ -226,7 +226,7 @@ GrB_Info GxB_Global_Option_get_INT64    // gets the current global option
 
 GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
 (
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     const char **value              // return value of the global option
 )
 {
@@ -366,7 +366,7 @@ GrB_Info GxB_Global_Option_get_CHAR     // gets the current global option
 
 GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
 (
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     void **value                    // return value of the global option
 )
 {
@@ -430,7 +430,7 @@ GrB_Info GxB_Global_Option_get_FUNCTION // gets the current global option
 
 GrB_Info GxB_Global_Option_get      // gets the current global option
 (
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     ...                             // return value of the global option
 )
 {
@@ -484,7 +484,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                GxB_Format_Value *format = va_arg (ap, GxB_Format_Value *) ;
+                int *format = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (format) ;
                 (*format) = (GB_Global_is_csc_get ( )) ?
@@ -500,7 +500,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             {
                 va_start (ap, field) ;
-                GrB_Mode *mode = va_arg (ap, GrB_Mode *) ;
+                int *mode = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (mode) ;
                 (*mode) = GB_Global_mode_get ( )  ;

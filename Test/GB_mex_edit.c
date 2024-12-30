@@ -69,7 +69,7 @@ void mexFunction
     }
 
     GrB_Index ncols ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     bool is_hyper ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
     OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt)) ;

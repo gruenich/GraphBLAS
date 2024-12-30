@@ -16,7 +16,7 @@
 GrB_Info GxB_Context_wait      // no work, just check if GxB_Context is valid
 (
     GxB_Context Context,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

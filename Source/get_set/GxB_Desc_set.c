@@ -28,7 +28,7 @@
 GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    GrB_Desc_Field field,       // parameter to change
+    int field,                  // parameter to change
     int32_t value               // value to change it to
 )
 {
@@ -167,7 +167,7 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
 GrB_Info GxB_Desc_set_FP64      // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    GrB_Desc_Field field,       // parameter to change
+    int field,                  // parameter to change
     double value                // value to change it to
 )
 {
@@ -182,7 +182,7 @@ GrB_Info GxB_Desc_set_FP64      // set a parameter in a descriptor
 GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    GrB_Desc_Field field,       // parameter to change
+    int field,                  // parameter to change
     ...                         // value to change it to
 )
 {

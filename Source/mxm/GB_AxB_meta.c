@@ -58,7 +58,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
     bool *done_in_place,            // if true, C was computed in-place
-    GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
+    int AxB_method,                 // for auto vs user selection of methods
     const int do_sort,              // if nonzero, try to return C unjumbled
     GB_Werk Werk
 )

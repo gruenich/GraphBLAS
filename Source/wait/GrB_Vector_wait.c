@@ -16,7 +16,7 @@
 GrB_Info GrB_Vector_wait    // finish all work on a vector
 (
     GrB_Vector v,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

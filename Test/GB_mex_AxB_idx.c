@@ -171,7 +171,7 @@ void mexFunction
     bool GET_SCALAR (3, bool, btrans, false) ;
 
     // get the axb_method
-    GrB_Desc_Value GET_SCALAR (4, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
+    int GET_SCALAR (4, int, AxB_method, GxB_DEFAULT) ;
 
     // get the C_is_csc option
     bool GET_SCALAR (5, bool, C_is_csc, true) ;

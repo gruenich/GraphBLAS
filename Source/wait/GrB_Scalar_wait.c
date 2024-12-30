@@ -16,7 +16,7 @@
 GrB_Info GrB_Scalar_wait    // finish all work on a scalar
 (
     GrB_Scalar s,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

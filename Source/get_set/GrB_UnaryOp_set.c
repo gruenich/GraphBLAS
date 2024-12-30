@@ -17,7 +17,7 @@ GrB_Info GrB_UnaryOp_set_Scalar
 (
     GrB_UnaryOp op,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;
@@ -31,7 +31,7 @@ GrB_Info GrB_UnaryOp_set_String
 (
     GrB_UnaryOp op,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -59,7 +59,7 @@ GrB_Info GrB_UnaryOp_set_INT32
 (
     GrB_UnaryOp op,
     int32_t value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;
@@ -73,7 +73,7 @@ GrB_Info GrB_UnaryOp_set_VOID
 (
     GrB_UnaryOp op,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

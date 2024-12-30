@@ -17,7 +17,7 @@ GrB_Info GrB_Matrix_set_Scalar
 (
     GrB_Matrix A,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 {
 
@@ -69,7 +69,7 @@ GrB_Info GrB_Matrix_set_String
 (
     GrB_Matrix A,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -98,7 +98,7 @@ GrB_Info GrB_Matrix_set_INT32
 (
     GrB_Matrix A,
     int32_t value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -126,7 +126,7 @@ GrB_Info GrB_Matrix_set_VOID
 (
     GrB_Matrix A,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

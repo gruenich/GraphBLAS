@@ -18,7 +18,7 @@ static bool get_descriptor
     GrB_Descriptor D,               // GraphBLAS descriptor to modify
     const mxArray *D_builtin,       // built-in struct with D.output, etc
     const char *fieldname,          // fieldname to extract from D_builtin
-    const GrB_Desc_Field field      // field to set in D
+    const int field                 // field to set in D
 )
 {
 

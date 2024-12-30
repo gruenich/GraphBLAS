@@ -161,7 +161,7 @@ void mexFunction
         semiring2 = NULL ;
     GrB_Descriptor desc = NULL, dcrud = NULL, d0 = NULL,
         dnt = NULL, dtn = NULL, dtt = NULL, descb = NULL ;
-    GrB_Desc_Value dval ;
+    int dval ;
     GrB_Index n = 0, nvals = 0, n2 = 0, i = 0, j = 0, a, b, uvals = 0 ;
     GrB_Index *I0 = NULL, *J0 = NULL ;
     #define LEN 100
@@ -4434,7 +4434,7 @@ void mexFunction
     CHECK (GB_IS_HYPERSPARSE (A)) ;
     CHECK (A->is_csc) ;
 
-    GxB_Format_Value format = 0;
+    int format = 0;
     OK (GxB_Matrix_Option_get_(A, GxB_FORMAT, &format)) ;
     CHECK (format == GxB_BY_COL) ;
 

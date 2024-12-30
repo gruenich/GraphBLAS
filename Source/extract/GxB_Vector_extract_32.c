@@ -66,7 +66,7 @@ GrB_Info GxB_Vector_extract_32      // w<mask> = accum (w, u(I))
         accum,                          // optional accum for z=accum(w,t)
         (GrB_Matrix) u,     false,      // u as matrix; never transposed
         I, true, ni,                    // row indices I and length ni (32-bit)
-        GxB_ALL32, true, 1,             // all columns (32-bit)
+        GrB_ALL, true, 1,               // all columns (32-bit)
         Werk) ;
 
     GB_BURBLE_END ;

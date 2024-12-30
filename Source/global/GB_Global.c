@@ -29,7 +29,7 @@ typedef struct
     // blocking/non-blocking mode, set by GrB_init
     //--------------------------------------------------------------------------
 
-    GrB_Mode mode ;             // GrB_NONBLOCKING, GrB_BLOCKING
+    int mode ;                  // GrB_NONBLOCKING, GrB_BLOCKING
                                 // GxB_NONBLOCKING_GPU, or GxB_BLOCKING_GPU
     bool init_called ;          // true if GrB_init already called
 
@@ -244,12 +244,12 @@ static GB_Global_struct GB_Global =
 // mode
 //------------------------------------------------------------------------------
 
-void GB_Global_mode_set (GrB_Mode mode)
+void GB_Global_mode_set (int mode)
 { 
     GB_Global.mode = mode ;
 }
 
-GrB_Mode GB_Global_mode_get (void)
+int GB_Global_mode_get (void)
 { 
     return (GB_Global.mode) ;
 }

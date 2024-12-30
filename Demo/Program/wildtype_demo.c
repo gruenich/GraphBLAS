@@ -212,10 +212,10 @@ int main (void)
 
     // start GraphBLAS
     GrB_init (GrB_NONBLOCKING) ;
-    GrB_Global_set_INT32 (GrB_GLOBAL, true, (GrB_Field) GxB_BURBLE) ;
+    GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_BURBLE) ;
 
     int nthreads ;
-    GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads, (GrB_Field) GxB_GLOBAL_NTHREADS) ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads, GxB_GLOBAL_NTHREADS) ;
     fprintf (stderr, "\n" LINE "wildtype_demo: nthreads: %d\n", nthreads ) ;
 
     #define STRLEN 5000
@@ -261,7 +261,7 @@ int main (void)
 
     GrB_Scalar Hyper ;
     GrB_Scalar_new (&Hyper, GrB_FP64) ;
-    GrB_Global_get_Scalar (GrB_GLOBAL, Hyper, (GrB_Field) GxB_HYPER_SWITCH) ;
+    GrB_Global_get_Scalar (GrB_GLOBAL, Hyper, GxB_HYPER_SWITCH) ;
     double hyper_switch ;
     GrB_Scalar_extractElement (&hyper_switch, Hyper) ;
     fprintf (stderr, "hyper switch: %g\n", hyper_switch) ;
@@ -276,7 +276,7 @@ int main (void)
         "blocking" : "non-blocking") ;
 
     int nthreads_max ;
-    GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads_max, (GrB_Field) GxB_GLOBAL_NTHREADS) ;
+    GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads_max, GxB_GLOBAL_NTHREADS) ;
     fprintf (stderr, "max # of threads used internally: %d\n", nthreads_max) ;
 
     // create the WildType

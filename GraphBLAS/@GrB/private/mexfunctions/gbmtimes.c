@@ -51,7 +51,7 @@ void mexFunction
     mxArray *Matrix [6], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     int nmatrices, nstrings, ncells, sparsity ;
     GrB_Descriptor desc ;
     gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
@@ -104,7 +104,7 @@ void mexFunction
     OK (GrB_Matrix_ncols (&bncols, B)) ;
 
     // get the descriptor contents to determine if A and B are transposed
-    GrB_Desc_Value in0, in1 ;
+    int in0, in1 ;
     OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
     OK (GxB_Desc_get (desc, GrB_INP1, &in1)) ;
     bool A_transpose = (in0 == GrB_TRAN) ;

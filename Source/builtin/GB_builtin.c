@@ -577,7 +577,7 @@ const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;
 // stored in hypersparse format, respectively.
 const double GxB_ALWAYS_HYPER = GB_ALWAYS_HYPER ;
 const double GxB_NEVER_HYPER  = GB_NEVER_HYPER ;
-const GxB_Format_Value GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
+const int GxB_FORMAT_DEFAULT = GxB_BY_ROW ;
 
 //------------------------------------------------------------------------------
 // predefined built-in monoids

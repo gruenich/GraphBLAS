@@ -15,10 +15,10 @@
 GrB_Info GB_Iterator_attach
 (
     // input/output:
-    GxB_Iterator iterator,      // iterator to attach to the matrix A
+    GxB_Iterator iterator,  // iterator to attach to the matrix A
     // input
-    GrB_Matrix A,               // matrix to attach
-    GxB_Format_Value format,    // by row, by col, or by entry (GxB_NO_FORMAT)
+    GrB_Matrix A,           // matrix to attach
+    int format,             // by row, by col, or by entry (GxB_NO_FORMAT)
     GrB_Descriptor desc
 )
 {

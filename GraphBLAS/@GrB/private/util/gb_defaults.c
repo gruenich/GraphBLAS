@@ -41,8 +41,7 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     GrB_Scalar chunk_default = NULL ;
     OK (GrB_Scalar_new (&chunk_default, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (chunk_default, GB_CHUNK_DEFAULT)) ;
-    OK (GrB_Global_set_Scalar (GrB_GLOBAL, chunk_default,
-        (GrB_Field) GxB_CHUNK)) ;
+    OK (GrB_Global_set_Scalar (GrB_GLOBAL, chunk_default, GxB_CHUNK)) ;
     OK (GrB_Scalar_free (&chunk_default)) ;
 
     // for printing memory sizes of matrices

@@ -20,7 +20,7 @@ GrB_Matrix gb_by_col            // return the matrix by column
 {
 
     // get the format of A_input
-    GxB_Format_Value fmt ;
+    int fmt ;
     OK (GxB_Matrix_Option_get (A_input, GxB_FORMAT, &fmt)) ;
 
     GrB_Matrix A_copy = NULL, A ;

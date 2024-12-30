@@ -9,13 +9,13 @@
 
 #include "gb_interface.h"
 
-GrB_Matrix gb_new               // create and empty matrix C
+GrB_Matrix gb_new       // create and empty matrix C
 (
-    GrB_Type type,              // type of C
-    GrB_Index nrows,            // # of rows
-    GrB_Index ncols,            // # of rows
-    GxB_Format_Value fmt,       // requested format, if < 0 use default
-    int sparsity                // sparsity control for C, 0 for default
+    GrB_Type type,      // type of C
+    GrB_Index nrows,    // # of rows
+    GrB_Index ncols,    // # of rows
+    int fmt,            // requested format, if < 0 use default
+    int sparsity        // sparsity control for C, 0 for default
 )
 {
 
@@ -30,7 +30,7 @@ GrB_Matrix gb_new               // create and empty matrix C
     }
 
     // set the desired format
-    GxB_Format_Value fmt_current ;
+    int fmt_current ;
     OK (GxB_Matrix_Option_get (C, GxB_FORMAT, &fmt_current)) ;
     if (fmt != fmt_current)
     { 

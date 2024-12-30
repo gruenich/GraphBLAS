@@ -13,7 +13,7 @@ GrB_Info GxB_IndexBinaryOp_fprint   // print and check a GxB_IndexBinaryOp
 (
     GxB_IndexBinaryOp op,           // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level
     FILE *f                         // file for output
 )
 { 

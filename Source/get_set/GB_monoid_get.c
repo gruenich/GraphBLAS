@@ -13,7 +13,7 @@ GrB_Info GB_monoid_get
 (
     GrB_Monoid monoid,
     GrB_Scalar scalar,
-    GrB_Field field,
+    int field,
     GB_Werk Werk
 )
 {

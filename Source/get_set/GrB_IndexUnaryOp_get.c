@@ -17,7 +17,7 @@ GrB_Info GrB_IndexUnaryOp_get_Scalar
 (
     GrB_IndexUnaryOp op,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -47,7 +47,7 @@ GrB_Info GrB_IndexUnaryOp_get_String
 (
     GrB_IndexUnaryOp op,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -75,7 +75,7 @@ GrB_Info GrB_IndexUnaryOp_get_INT32
 (
     GrB_IndexUnaryOp op,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -103,7 +103,7 @@ GrB_Info GrB_IndexUnaryOp_get_SIZE
 (
     GrB_IndexUnaryOp op,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -131,7 +131,7 @@ GrB_Info GrB_IndexUnaryOp_get_VOID
 (
     GrB_IndexUnaryOp op,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;

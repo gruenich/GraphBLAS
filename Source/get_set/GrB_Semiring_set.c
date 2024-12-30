@@ -17,7 +17,7 @@ GrB_Info GrB_Semiring_set_Scalar
 (
     GrB_Semiring semiring,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;
@@ -31,7 +31,7 @@ GrB_Info GrB_Semiring_set_String
 (
     GrB_Semiring semiring,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -66,7 +66,7 @@ GrB_Info GrB_Semiring_set_INT32
 (
     GrB_Semiring semiring,
     int32_t value,
-    GrB_Field field
+    int field
 )
 { 
     return (GrB_INVALID_VALUE) ;
@@ -80,7 +80,7 @@ GrB_Info GrB_Semiring_set_VOID
 (
     GrB_Semiring semiring,
     void * value,
-    GrB_Field field,
+    int field,
     size_t size
 )
 { 

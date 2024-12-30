@@ -70,7 +70,7 @@ void mexFunction
 
     if (nargout > 0)
     { 
-        GxB_JIT_Control c ;
+        int c ;
         OK (GxB_Global_Option_get (GxB_JIT_C_CONTROL, &c)) ;
         switch (c)
         {

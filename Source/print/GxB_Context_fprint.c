@@ -13,7 +13,7 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 (
     GxB_Context Context,            // object to print and check
     const char *name,               // name of the object
-    GxB_Print_Level pr,             // print level
+    int pr,                         // print level
     FILE *f                         // file for output
 )
 { 

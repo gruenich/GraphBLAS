@@ -16,7 +16,7 @@
 GrB_Info GrB_Matrix_wait    // finish all work on a matrix
 (
     GrB_Matrix A,
-    GrB_WaitMode waitmode
+    int waitmode
 )
 { 
 

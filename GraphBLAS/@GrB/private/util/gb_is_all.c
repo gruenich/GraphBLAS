@@ -66,7 +66,7 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     // C = A .* B, where the pattern of C is the intersection of A and B
     //--------------------------------------------------------------------------
 
-    GxB_Format_Value fmt ;
+    int fmt ;
     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
     int sparsity = gb_get_sparsity (A, B, 0) ;
     GrB_Matrix C = gb_new (GrB_BOOL, nrows1, ncols1, fmt, sparsity) ;

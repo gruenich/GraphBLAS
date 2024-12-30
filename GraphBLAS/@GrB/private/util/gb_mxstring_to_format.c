@@ -39,7 +39,7 @@ bool gb_mxstring_to_format      // true if a valid format is found
     // input
     const mxArray *mxformat,    // built-in string, 'by row' or 'by col'
     // output
-    GxB_Format_Value *fmt,
+    int *fmt,
     int *sparsity
 )
 {

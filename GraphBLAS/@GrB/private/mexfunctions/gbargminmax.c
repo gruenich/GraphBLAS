@@ -2525,7 +2525,7 @@ void mexFunction
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     GrB_Type A_type ;
     OK (GxB_Matrix_type (&A_type, A)) ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
 
     //--------------------------------------------------------------------------

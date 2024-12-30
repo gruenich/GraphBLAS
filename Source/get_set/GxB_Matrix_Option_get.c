@@ -23,7 +23,7 @@
 GrB_Info GxB_Matrix_Option_get_INT32    // gets the current option of a matrix
 (
     GrB_Matrix A,                   // matrix to query
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     int32_t *value                  // return value of the matrix option
 )
 {
@@ -76,7 +76,7 @@ GrB_Info GxB_Matrix_Option_get_INT32    // gets the current option of a matrix
 GrB_Info GxB_Matrix_Option_get_FP64     // gets the current option of a matrix
 (
     GrB_Matrix A,                   // matrix to query
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     double *value                   // return value of the matrix option
 )
 {
@@ -124,7 +124,7 @@ GrB_Info GxB_Matrix_Option_get_FP64     // gets the current option of a matrix
 GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 (
     GrB_Matrix A,                   // matrix to query
-    GxB_Option_Field field,         // option to query
+    int field,                      // option to query
     ...                             // return value of the matrix option
 )
 {
@@ -195,7 +195,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 
             {
                 va_start (ap, field) ;
-                GxB_Format_Value *format = va_arg (ap, GxB_Format_Value *) ;
+                int *format = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (format) ;
                 (*format) = (A->is_csc) ? GxB_BY_COL : GxB_BY_ROW ;

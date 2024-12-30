@@ -43,7 +43,7 @@ void mexFunction
     GxB_Global_Option_get_(GxB_NTHREADS, &nthreads) ;
     pargout [0] = mxCreateDoubleScalar (nthreads) ;
 
-    GxB_Format_Value format ;
+    int format ;
     GxB_Global_Option_get_(GxB_FORMAT, &format) ;
     pargout [1] = mxCreateDoubleScalar (format) ;
 

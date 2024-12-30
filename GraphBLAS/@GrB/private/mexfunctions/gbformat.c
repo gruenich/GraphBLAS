@@ -37,7 +37,7 @@ void mexFunction
     // get/set the format
     //--------------------------------------------------------------------------
 
-    GxB_Format_Value fmt = GxB_BY_COL ;
+    int fmt = GxB_BY_COL ;
     int sparsity = GxB_AUTO_SPARSITY ;
     bool iso = false ;
     bool v5_1_or_later = false ;

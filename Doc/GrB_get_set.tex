@@ -14,9 +14,9 @@ The general polymorphic signatures of these methods are given below:
 
 {\footnotesize
 \begin{verbatim}
-    GrB_Info GrB_get (object, value, GrB_Field field) ;
-    GrB_Info GrB_set (object, value, GrB_Field field) ;
-    GrB_Info GrB_set (object, void *value, GrB_Field field, size_t s) ; \end{verbatim}}
+    GrB_Info GrB_get (object, value, int field) ;
+    GrB_Info GrB_set (object, value, int field) ;
+    GrB_Info GrB_set (object, void *value, int field, size_t s) ; \end{verbatim}}
 
 \noindent
 where \verb'object' can be any GraphBLAS object.  The \verb'value' can be a
@@ -30,9 +30,9 @@ is any GraphBLAS object.
 
 {\footnotesize
 \begin{verbatim}
-    GrB_Info GrB_[OBJ]_get_[KIND] (object, value, GrB_Field field) ;
-    GrB_Info GrB_[OBJ]_set_[KIND] (object, value, GrB_Field field) ;
-    GrB_Info GrB_[OBJ]_set_VOID (object, void *value, GrB_Field field, size_t s) ; \end{verbatim}}
+    GrB_Info GrB_[OBJ]_get_[KIND] (object, value, int field) ;
+    GrB_Info GrB_[OBJ]_set_[KIND] (object, value, int field) ;
+    GrB_Info GrB_[OBJ]_set_VOID (object, void *value, int field, size_t s) ; \end{verbatim}}
 
 The \verb'[KIND]' suffix defines the type of second parameter, and can be:
     \verb'Scalar' (for \verb'GrB_Scalar'),
@@ -42,7 +42,7 @@ The \verb'[KIND]' suffix defines the type of second parameter, and can be:
     \verb'VOID' (for \verb'void *').
 
 The tables below list all the valid fields that can be used for each object. 
-Each table contains four columns:  (1) the \verb'GrB_Field',
+Each table contains four columns:  (1) the \verb'int',
 (2) a column labelled R/W, (3) a column defining the C type, and a description.
 For the R/W column:
 
@@ -165,7 +165,7 @@ and {\sf GrB\_Type\_Code}}
 \label{get_set_enums}
 %-------------------------------------------------------------------------------
 
-The get/set methods share a \verb'GrB_Field' enum type to specify which
+The get/set methods share a \verb'int' (enum) type to specify which
 component of the object is to be set or retrieved.
 fields.
 
@@ -229,14 +229,9 @@ typedef enum
 
     // GrB_BinaryOp or GrB_Semiring:
     GxB_THETA = 7052,               // to get the value of theta
-}
-GrB_Field ;
 
 #define GxB_NTHREADS 7086
 #define GxB_CHUNK 7087
-
-typedef enum            // more SuiteSparse extensions for GrB_Field:
-{
 
     // GrB_get/GrB_set for GrB_Matrix and GrB_GLOBAL:
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
@@ -328,16 +323,16 @@ denote global settings to read or modify.  To use it with \verb'GrB_get' and
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Global g, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Global g, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Global g, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Global g, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Global g, void *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Global g, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Global g, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Global g, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Global g, size_t *   value, int f) ;
+GrB_Info GrB_get (GrB_Global g, void *     value, int f) ;
 
-GrB_Info GrB_set (GrB_Global g, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Global g, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Global g, int32_t    value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
+GrB_Info GrB_set (GrB_Global g, GrB_Scalar value, int f) ;
+GrB_Info GrB_set (GrB_Global g, char *     value, int f) ;
+GrB_Info GrB_set (GrB_Global g, int32_t    value, int f) ;
+GrB_Info GrB_set (GrB_Global g, void *     value, int f, size_t s) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -346,7 +341,7 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.5in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_LIBRARY_VER_MAJOR'        & R    & \verb'int32_t'& major version of the library \\
 \verb'GrB_LIBRARY_VER_MINOR'        & R    & \verb'int32_t'& minor version of the library \\
@@ -367,7 +362,7 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.5in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_STORAGE_ORIENTATION_HINT' & R/W  & \verb'int32_t'& see \verb'GrB_Orientation': default
                                                             format for matrices. \\
@@ -420,7 +415,7 @@ GrB_Info GrB_set (GrB_Global g, void *     value, GrB_Field f, size_t s) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.5in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \verb'GxB_BITMAP_SWITCH'            & R/W  & \verb'void *' & \verb'double' array of size \newline
                                                                 \verb'GxB_NBITMAP_SWITCH'.  \newline
                                                                 See Section~\ref{bitmap_switch}. \\
@@ -614,12 +609,12 @@ Specification.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Type t, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Type t, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Type t, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Type t, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Type t, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Type t, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Type t, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Type t, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Type t, char *     value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -627,7 +622,7 @@ GrB_Info GrB_set (GrB_Type t, char *     value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.85in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& type code (see \verb'GrB_Type_Code') \\
 \verb'GrB_SIZE'                     & R    & \verb'size_t' & \verb'sizeof' the type \\
@@ -685,12 +680,12 @@ The size of the type can be returned as a \verb'size_t' C scalar, or as a
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_UnaryOp op, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_UnaryOp op, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_UnaryOp op, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_UnaryOp op, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, char *     value, int f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_UnaryOp op, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_UnaryOp op, char *     value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -698,7 +693,7 @@ GrB_Info GrB_set (GrB_UnaryOp op, char *     value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& input type code (see \verb'GrB_Type_code') \\
 \verb'GrB_OUTP_TYPE_CODE'          & R    & \verb'int32_t'& output type code \\
@@ -734,12 +729,12 @@ used in JIT kernels only when both the JIT C name and the definition are set.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_IndexUnaryOp op, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_IndexUnaryOp op, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_IndexUnaryOp op, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, char *     value, int f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_IndexUnaryOp op, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -747,7 +742,7 @@ GrB_Info GrB_set (GrB_IndexUnaryOp op, char *     value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
 \verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
@@ -785,12 +780,12 @@ used in JIT kernels only when both the JIT C name and the definition are set.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_BinaryOp op, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_BinaryOp op, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_BinaryOp op, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_BinaryOp op, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, char *     value, int f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_BinaryOp op, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_BinaryOp op, char *     value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -798,7 +793,7 @@ GrB_Info GrB_set (GrB_BinaryOp op, char *     value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
 \verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
@@ -852,12 +847,12 @@ created by \verb'GxB_BinaryOp_new_IndexOp'.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GxB_IndexBinaryOp op, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_IndexBinaryOp op, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_IndexBinaryOp op, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_IndexBinaryOp op, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_IndexBinaryOp op, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GxB_IndexBinaryOp op, char *     value, int f) ;
+GrB_Info GrB_get (GxB_IndexBinaryOp op, int32_t *  value, int f) ;
+GrB_Info GrB_get (GxB_IndexBinaryOp op, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GxB_IndexBinaryOp op, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_IndexBinaryOp op, char *     value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -865,7 +860,7 @@ GrB_Info GrB_set (GxB_IndexBinaryOp op, char *     value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code') \\
 \verb'GrB_INP1_TYPE_CODE'          & R    & \verb'int32_t'& 2nd input type code \\
@@ -911,13 +906,13 @@ later on after the operator is created.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Monoid monoid, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid monoid, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid monoid, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid monoid, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Monoid monoid, void *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, size_t *   value, int f) ;
+GrB_Info GrB_get (GrB_Monoid monoid, void *     value, int f) ;
 
-GrB_Info GrB_set (GrB_Monoid monoid, char *     value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Monoid monoid, char *     value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -926,7 +921,7 @@ GrB_Info GrB_set (GrB_Monoid monoid, char *     value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.5in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code \newline
                                                              (see \verb'GrB_Type_code') \\
@@ -1004,13 +999,13 @@ operator of the corresponding built-in monoid:
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring semiring, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring semiring, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring semiring, size_t *   value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Semiring semiring, void *     value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, size_t *   value, int f) ;
+GrB_Info GrB_get (GrB_Semiring semiring, void *     value, int f) ;
 
-GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1018,7 +1013,7 @@ GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.8in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                   & R/W  & C type        & description \\
 \hline
 \verb'GrB_INP0_TYPE_CODE'          & R    & \verb'int32_t'& 1st input type code (see \verb'GrB_Type_code')
     of the multiplicative operator \\
@@ -1055,7 +1050,7 @@ GrB_Info GrB_set (GrB_Semiring semiring, GrB_Scalar value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.5in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GxB_MONOID_IDENTITY'          & R  & \verb'GrB_Scalar' &
     identity value of the monoid.  The type of the \verb'GrB_Scalar'
@@ -1108,14 +1103,14 @@ operator of the semiring was created by \verb'GxB_BinaryOp_new_IndexOp'.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Matrix A, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Matrix A, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Matrix A, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Matrix A, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Matrix A, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Matrix A, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Matrix A, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Matrix A, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_Matrix A, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Matrix A, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Matrix A, int32_t    value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Matrix A, GrB_Scalar value, int f) ;
+GrB_Info GrB_set (GrB_Matrix A, char *     value, int f) ;
+GrB_Info GrB_set (GrB_Matrix A, int32_t    value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1123,7 +1118,7 @@ GrB_Info GrB_set (GrB_Matrix A, int32_t    value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{2.2in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_STORAGE_ORIENTATION_HINT' & R/W  & \verb'int32_t'& See \verb'GrB_Orientation', \newline
                                                              and Section~\ref{storage_orientation}. \\
@@ -1408,14 +1403,14 @@ except full:
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Vector v, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Vector v, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Vector v, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Vector v, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Vector v, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Vector v, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Vector v, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Vector v, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_Vector v, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Vector v, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Vector v, int32_t    value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Vector v, GrB_Scalar value, int f) ;
+GrB_Info GrB_set (GrB_Vector v, char *     value, int f) ;
+GrB_Info GrB_set (GrB_Vector v, int32_t    value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1423,7 +1418,7 @@ GrB_Info GrB_set (GrB_Vector v, int32_t    value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{3in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& vector type \\
 \verb'GxB_SPARSITY_CONTROL'         & R/W  & \verb'int32_t'& See Section~\ref{sparsity_status} \\
@@ -1452,14 +1447,14 @@ hypersparse.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Scalar s, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Scalar s, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Scalar s, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Scalar s, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Scalar s, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Scalar s, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Scalar s, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Scalar s, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_Scalar s, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Scalar s, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Scalar s, int32_t    value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Scalar s, GrB_Scalar value, int f) ;
+GrB_Info GrB_set (GrB_Scalar s, char *     value, int f) ;
+GrB_Info GrB_set (GrB_Scalar s, int32_t    value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1467,7 +1462,7 @@ GrB_Info GrB_set (GrB_Scalar s, int32_t    value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{3in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 
 \verb'GrB_EL_TYPE_CODE'             & R    & \verb'int32_t'& scalar type \\
@@ -1494,14 +1489,14 @@ a 1-by-1 matrix, and is always in column major form.  It is never hypersparse.
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GrB_Descriptor desc, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Descriptor desc, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Descriptor desc, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GrB_Descriptor desc, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, char *     value, int f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, int32_t *  value, int f) ;
+GrB_Info GrB_get (GrB_Descriptor desc, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GrB_Descriptor desc, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Descriptor desc, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GrB_Descriptor desc, int32_t    value, GrB_Field f) ;
+GrB_Info GrB_set (GrB_Descriptor desc, GrB_Scalar value, int f) ;
+GrB_Info GrB_set (GrB_Descriptor desc, char *     value, int f) ;
+GrB_Info GrB_set (GrB_Descriptor desc, int32_t    value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1509,7 +1504,7 @@ GrB_Info GrB_set (GrB_Descriptor desc, int32_t    value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{3.3in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_OUTP'         & R/W  & \verb'int32_t'& \verb'GrB_DEFAULT' or \verb'GrB_REPLACE' \\
 \verb'GrB_MASK'         & R/W  & \verb'int32_t'& \verb'GrB_DEFAULT', \verb'GrB_COMP', \verb'GrB_STRUCTURE', or
@@ -1633,14 +1628,14 @@ field      & &  \\
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (GxB_Context Context, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context Context, char *     value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context Context, int32_t *  value, GrB_Field f) ;
-GrB_Info GrB_get (GxB_Context Context, size_t *   value, GrB_Field f) ;
+GrB_Info GrB_get (GxB_Context Context, GrB_Scalar value, int f) ;
+GrB_Info GrB_get (GxB_Context Context, char *     value, int f) ;
+GrB_Info GrB_get (GxB_Context Context, int32_t *  value, int f) ;
+GrB_Info GrB_get (GxB_Context Context, size_t *   value, int f) ;
 
-GrB_Info GrB_set (GxB_Context Context, GrB_Scalar value, GrB_Field f) ;
-GrB_Info GrB_set (GxB_Context Context, char *     value, GrB_Field f) ;
-GrB_Info GrB_set (GxB_Context Context, int32_t    value, GrB_Field f) ;
+GrB_Info GrB_set (GxB_Context Context, GrB_Scalar value, int f) ;
+GrB_Info GrB_set (GxB_Context Context, char *     value, int f) ;
+GrB_Info GrB_set (GxB_Context Context, int32_t    value, int f) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1648,7 +1643,7 @@ GrB_Info GrB_set (GxB_Context Context, int32_t    value, GrB_Field f) ;
 {\small
 \begin{tabular}{|l|l|l|p{3.5in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GxB_NTHREADS' & R/W & \verb'int32_t' & number of OpenMP threads to use;
     See Section~\ref{omp_parallelism} \\
@@ -1689,10 +1684,10 @@ non-polymorphic methods, the use of \verb'GxB_Context_get_INT' and
 \begin{mdframed}[userdefinedwidth=6.5in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GrB_get (const void *blob, GrB_Scalar value, GrB_Field f, size_t blobsize) ;
-GrB_Info GrB_get (const void *blob, char *     value, GrB_Field f, size_t blobsize) ;
-GrB_Info GrB_get (const void *blob, int32_t *  value, GrB_Field f, size_t blobsize) ;
-GrB_Info GrB_get (const void *blob, size_t *   value, GrB_Field f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, GrB_Scalar value, int f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, char *     value, int f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, int32_t *  value, int f, size_t blobsize) ;
+GrB_Info GrB_get (const void *blob, size_t *   value, int f, size_t blobsize) ;
 \end{verbatim}
 }\end{mdframed}
 
@@ -1700,7 +1695,7 @@ GrB_Info GrB_get (const void *blob, size_t *   value, GrB_Field f, size_t blobsi
 {\small
 \begin{tabular}{|l|l|l|p{2.2in}|}
 \hline
-\verb'GrB_Field'                    & R/W  & C type        & description \\
+\verb'int field'                    & R/W  & C type        & description \\
 \hline
 \verb'GrB_STORAGE_ORIENTATION_HINT' & R    & \verb'int32_t'& See \verb'GrB_Orientation', \newline
                                                              and Section~\ref{storage_orientation}. \\

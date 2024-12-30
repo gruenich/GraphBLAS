@@ -1036,7 +1036,7 @@ void mexFunction
         GrB_ALL, 4, NULL)) ;
     OK (GrB_Matrix_setElement_FP32 (A, (float) 32, 0, 0)) ;
 
-    GrB_Format fmt ;
+    int fmt ;
 
     OK (GxB_Matrix_Option_set (A, GxB_FORMAT, GxB_BY_ROW)) ;
     OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;

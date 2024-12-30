@@ -369,7 +369,7 @@ GrB_Info GB_jitifyer_alloc_space (void) ;
 GrB_Info GB_jitifyer_include (void) ;
 
 void GB_jitifyer_set_control (int control) ;
-GxB_JIT_Control GB_jitifyer_get_control (void) ;
+int GB_jitifyer_get_control (void) ;
 
 const char *GB_jitifyer_get_cache_path (void) ;
 GrB_Info GB_jitifyer_set_cache_path (const char *new_cache_path) ;

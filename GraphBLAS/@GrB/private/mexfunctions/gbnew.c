@@ -48,7 +48,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     int sparsity = 0 ;
 
     if (nargin == 1)

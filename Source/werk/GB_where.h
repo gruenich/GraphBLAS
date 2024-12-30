@@ -369,7 +369,7 @@ const char *GB_status_code (GrB_Info info) ;
 #define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo,dsort)          \
     bool dout, dmc, dms, d0, d1 ;                                            \
     int dsort ;                                                              \
-    GrB_Desc_Value dalgo ;                                                   \
+    int dalgo ;                                                              \
     /* if desc is NULL then defaults are used.  This is OK */                \
     info = GB_Descriptor_get (desc, &dout, &dmc, &dms, &d0, &d1, &dalgo,     \
         &dsort) ;                                                            \

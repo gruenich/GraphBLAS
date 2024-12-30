@@ -264,7 +264,7 @@ void mexFunction
     GrB_Matrix_nrows (&snrows, S) ;
     GrB_Matrix_ncols (&sncols, S) ;
     GrB_Matrix_nvals (&snvals, S) ;
-    GxB_Format_Value fmt ;
+    int fmt ;
     GxB_Matrix_Option_get_(S, GxB_FORMAT, &fmt) ;
     if (snrows != 1 || sncols != 1 || snvals != 1 || fmt != GxB_BY_COL)
     {

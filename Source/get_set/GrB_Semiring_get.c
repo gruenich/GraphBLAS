@@ -17,7 +17,7 @@ GrB_Info GrB_Semiring_get_Scalar
 (
     GrB_Semiring semiring,
     GrB_Scalar scalar,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -54,7 +54,7 @@ GrB_Info GrB_Semiring_get_String
 (
     GrB_Semiring semiring,
     char * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -107,7 +107,7 @@ GrB_Info GrB_Semiring_get_INT32
 (
     GrB_Semiring semiring,
     int32_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -135,7 +135,7 @@ GrB_Info GrB_Semiring_get_SIZE
 (
     GrB_Semiring semiring,
     size_t * value,
-    GrB_Field field
+    int field
 )
 { 
 
@@ -205,7 +205,7 @@ GrB_Info GrB_Semiring_get_VOID
 (
     GrB_Semiring semiring,
     void * value,
-    GrB_Field field
+    int field
 )
 { 
 
