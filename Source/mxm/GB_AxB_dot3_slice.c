@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Constructs a set of tasks that slice the matrix C for C<M>=A'*B.  The matrix
 // C has been allocated, and its pattern will be a copy of M, but with some
@@ -51,7 +51,9 @@ GrB_Info GB_AxB_dot3_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
-    const GrB_Matrix C,             // matrix to slice
+    const GrB_Matrix C,             // matrix to slice (only C->p, C->h present)
+    float *Cwork,                   // workspace of size cnz+1
+    int64_t cnz,                    // # entries that will appear in C
     GB_Werk Werk
 )
 {
@@ -64,13 +66,6 @@ GrB_Info GB_AxB_dot3_slice
     ASSERT (p_TaskList_size != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
-    // ASSERT_MATRIX_OK (C, ...) cannot be done since C->i is the work need to
-    // compute the entry, not the row index itself.
-
-    // C is always constructed as sparse or hypersparse, not full, since it
-    // must accomodate zombies
-    ASSERT (!GB_IS_FULL (C)) ;
-    ASSERT (!GB_IS_BITMAP (C)) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_TaskList_size) = 0 ;
@@ -91,23 +86,31 @@ GrB_Info GB_AxB_dot3_slice
     const void *Cp = C->p ;
     bool Cp_is_32 = C->p_is_32 ;
 
-    int64_t *restrict Cwork = C->i ;    // FIXME
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
-    const int64_t cnz = GB_nnz_held (C) ;
+
+//  if (Cp_is_32)
+//  {
+//      const uint32_t *Cp32 = C->p ;
+//      for (int kk = 0 ; kk <= C->nvec ; kk++) printf ("Cp [%d] %d\n",
+//          kk, Cp32 [kk]) ;
+//  }
+//  else
+//  {
+//      const uint64_t *Cp64 = C->p ;
+//      for (int kk = 0 ; kk <= C->nvec ; kk++) printf ("Cp [%d] %ld\n",
+//          kk, Cp64 [kk]) ;
+//  }
 
     //--------------------------------------------------------------------------
     // compute the cumulative sum of the work
     //--------------------------------------------------------------------------
 
-    // FIXME: if C is 32-bit, Cwork probably still needs to be 64-bit, so it
-    // can't be done with C->i.
-
-    // FUTURE:: handle possible int64_t overflow
-
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-    GB_cumsum (Cwork, false, cnz, NULL, nthreads, Werk) ;
+    GB_cumsum_float (Cwork, cnz, nthreads, Werk) ;
     double total_work = (double) Cwork [cnz] ;
+
+// printf ("tot work %g\n", total_work) ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -121,6 +124,8 @@ GrB_Info GB_AxB_dot3_slice
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
     GB_REALLOC_TASK_WORK (TaskList, ntasks0, max_ntasks) ;
+
+// printf (" ntasks0 %d cnz %ld\n", ntasks0, cnz) ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task
@@ -161,7 +166,7 @@ GrB_Info GB_AxB_dot3_slice
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Cwork, false, cnz, ntasks1, false) ;    // FIXME
+    GB_p_slice_float (Coarse, Cwork, cnz, ntasks1) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

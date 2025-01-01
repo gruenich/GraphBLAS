@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is full.
 // A is bitmap or full.
 // B is sparse or hypersparse.

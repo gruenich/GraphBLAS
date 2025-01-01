@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // This template is not used If C is iso, since all that is needed is to create
 // C as a shallow-copy of the pattern of A.
@@ -30,8 +30,8 @@
     // get C, A, and D
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
     const GB_A_TYPE *restrict Ax = (GB_A_TYPE *) A->x ;
     const GB_B_TYPE *restrict Dx = (GB_B_TYPE *) D->x ;
           GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
@@ -73,9 +73,9 @@
             // find the part of A(:,k) and C(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
-            int64_t j = GBH_A (Ah, k) ;
+            int64_t j = GBh_A (Ah, k) ;
             GB_GET_PA (pA_start, pA_end, tid, k, kfirst, klast, pstart_Aslice,
-                GBP_A (Ap, k, avlen), GBP_A (Ap, k+1, avlen)) ;
+                GBp_A (Ap, k, avlen), GBp_A (Ap, k+1, avlen)) ;
 
             //------------------------------------------------------------------
             // C(:,j) = A(:,j)*D(j,j)

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Symbolic analysis for C=A*B, C<M>=A*B or C<!M>=A*B, via GB_AxB_saxpy3.
 // Coarse tasks compute nnz (C (:,j)) for each of their vectors j.  Fine tasks
@@ -50,13 +50,13 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     const int64_t cvlen = C->vlen ;
 
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const int8_t  *restrict Bb = B->b ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    const int8_t *restrict Bb = B->b ;
     const int64_t bvlen = B->vlen ;
 
     ASSERT (GB_B_IS_SPARSE == GB_IS_SPARSE (B)) ;
@@ -64,10 +64,10 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     ASSERT (GB_B_IS_BITMAP == GB_IS_BITMAP (B)) ;
     ASSERT (GB_B_IS_FULL   == GB_IS_FULL   (B)) ;
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const int8_t  *restrict Ab = A->b ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+    const int8_t *restrict Ab = A->b ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     const bool A_jumbled = A->jumbled ;
@@ -76,19 +76,25 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     ASSERT (GB_A_IS_HYPER  == GB_IS_HYPERSPARSE (A)) ;
     ASSERT (GB_A_IS_BITMAP == GB_IS_BITMAP (A)) ;
     ASSERT (GB_A_IS_FULL   == GB_IS_FULL   (A)) ;
+    const bool Ai_is_32 = A->i_is_32 ;
+    #define GB_Ai_IS_32 Ai_is_32
 
     #if GB_A_IS_HYPER
-    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;   //FIXME
-    const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
-    const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
+    const void *A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const void *A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const void *A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
+    const bool Ap_is_32 = A->p_is_32 ;
+    const bool Aj_is_32 = A->j_is_32 ;
+    #define GB_Ap_IS_32 Ap_is_32
+    #define GB_Aj_IS_32 Aj_is_32
     #endif
 
     #if ( !GB_NO_MASK )
-    const uint64_t *restrict Mp = M->p ;    // FIXME
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
-    const int8_t  *restrict Mb = M->b ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
+    const int8_t *restrict Mb = M->b ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     size_t  msize = M->type->size ;
     int64_t mnvec = M->nvec ;
@@ -97,10 +103,14 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
     const bool M_jumbled = GB_JUMBLED (M) ;
     // get the M hyper_hash
-    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ; // FIXME
-    const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
-    const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
+    const void *M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+    const void *M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
+    const void *M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
+    const bool Mp_is_32 = M->p_is_32 ;
+    const bool Mj_is_32 = M->j_is_32 ;
+    #define GB_Mp_IS_32 Mp_is_32
+    #define GB_Mj_IS_32 Mj_is_32
     #endif
 
     //==========================================================================
@@ -137,7 +147,8 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 //--------------------------------------------------------------
 
                 int64_t kk = SaxpyTasks [taskid].vector ;
-                int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
+                int64_t bjnz = (Bp == NULL) ? bvlen :
+                    (GB_IGET (Bp, kk+1) - GB_IGET (Bp, kk)) ;
                 // no work to do if B(:,j) is empty
                 if (bjnz == 0) continue ;
 
@@ -202,7 +213,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                     {
                         GB_GET_M_ij (pM) ;              // get M(i,j)
                         if (!mij) continue ;            // skip if M(i,j)=0
-                        int64_t i = GBI_M (Mi, pM, mvlen) ;
+                        int64_t i = GBi_M (Mi, pM, mvlen) ;
                         int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
                         for (GB_HASH (i))
                         { 
@@ -448,7 +459,8 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
         {
             int64_t kk = SaxpyTasks [taskid].vector ;
             ASSERT (kk >= 0 && kk < B->nvec) ;
-            int64_t bjnz = (Bp == NULL) ? bvlen : (Bp [kk+1] - Bp [kk]) ;
+            int64_t bjnz = (Bp == NULL) ? bvlen :
+                    (GB_IGET (Bp, kk+1) - GB_IGET (Bp, kk)) ;
             // no work to do if B(:,j) is empty
             if (bjnz == 0) continue ;
             int64_t hash_size = SaxpyTasks [taskid].hsize ;
@@ -472,7 +484,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     GB_GET_M_ij (pM) ;               // get M(i,j)
-                    int64_t i = GBI_M (Mi, pM, mvlen) ;
+                    int64_t i = GBi_M (Mi, pM, mvlen) ;
                     ASSERT (Hf [i] == mij) ;
                 }
                 for (int64_t i = 0 ; i < cvlen ; i++)
@@ -494,7 +506,7 @@ void GB_EVAL2 (GB (AxB_saxpy3_sym), GB_MASK_A_B_SUFFIX)
                 {
                     GB_GET_M_ij (pM) ;              // get M(i,j)
                     if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = GBI_M (Mi, pM, mvlen) ;
+                    int64_t i = GBi_M (Mi, pM, mvlen) ;
                     int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
                     int64_t probe = 0 ;
                     for (GB_HASH (i))

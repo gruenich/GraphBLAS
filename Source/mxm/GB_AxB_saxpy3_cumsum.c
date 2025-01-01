@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // phase3: fine tasks finalize their computation nnz(C(:,j))
 // phase4: cumulative sum of C->p
@@ -23,9 +23,11 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
 
     ASSERT (!GB_IS_BITMAP (C)) ;
     ASSERT (!GB_IS_FULL (C)) ;
-    uint64_t *restrict Cp = C->p ;  // FIXME
+
+    GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
+    const bool Cp_is_32 = C->p_is_32 ;
     ASSERT (Cp != NULL) ;
 
     //==========================================================================
@@ -110,14 +112,14 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     for (taskid = 0 ; taskid < nfine ; taskid++)
     { 
         int64_t kk = SaxpyTasks [taskid].vector ;
-        Cp [kk] = 0 ;
+        GB_ISET (Cp, kk, 0) ; // Cp [kk] = 0 ;
     }
 
     for (taskid = 0 ; taskid < nfine ; taskid++)
     { 
         int64_t kk = SaxpyTasks [taskid].vector ;
         int64_t my_cjnz = SaxpyTasks [taskid].my_cjnz ;
-        Cp [kk] += my_cjnz ;
+        GB_IINC (Cp, kk, my_cjnz) ; // Cp [kk] += my_cjnz ;
         ASSERT (my_cjnz <= cvlen) ;
     }
 
@@ -126,10 +128,10 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     //--------------------------------------------------------------------------
 
     // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
-    // fine tasks or coarse tasks, and where j == GBH (Bh, kk) 
+    // fine tasks or coarse tasks, and where j == GBh_B (Bh, kk) 
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    GB_cumsum (Cp, false, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+    GB_cumsum (Cp, Cp_is_32, cnvec, &(C->nvec_nonempty), nth, Werk) ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks
@@ -141,16 +143,6 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
         if (taskid == SaxpyTasks [taskid].leader)
         {
             cjnz_sum = 0 ;
-            // also find the max (C (:,j)) for any fine hash tasks
-            #if 0
-            int64_t hash_size = SaxpyTasks [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cvlen) ;
-            if (!use_Gustavson)
-            { 
-                int64_t kk = SaxpyTasks [taskid].vector ;
-                int64_t cjnz = Cp [kk+1] - Cp [kk] ;
-            }
-            #endif
         }
         int64_t my_cjnz = SaxpyTasks [taskid].my_cjnz ;
         SaxpyTasks [taskid].my_cjnz = cjnz_sum ;

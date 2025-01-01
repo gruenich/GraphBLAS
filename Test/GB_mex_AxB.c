@@ -92,7 +92,6 @@ GrB_Info axb (GB_Werk Werk)
 
     GrB_Monoid_free_(&add) ;
     GrB_Semiring_free_(&semiring) ;
-
     return (info) ;
 }
 
@@ -188,7 +187,6 @@ GrB_Info axb_complex (GB_Werk Werk)
 
     GrB_Matrix_free_(&Bconj) ;
     GrB_Matrix_free_(&Aconj) ;
-
     return (info) ;
 }
 
@@ -287,6 +285,7 @@ void mexFunction
     }
 
     // return C
+    GB_convert_int (C, false, false, false, true) ;     // FIXME
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
 
     FREE_ALL ;

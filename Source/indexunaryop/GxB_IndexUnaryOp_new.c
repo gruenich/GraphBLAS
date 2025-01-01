@@ -71,6 +71,10 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     op->unop_function = NULL ;
     op->idxunop_function = function ;
     op->binop_function = NULL ;
+    op->idxbinop_function = NULL ;
+    op->theta_type = NULL ;
+    op->theta = NULL ;
+    op->theta_size = 0 ;
 
     op->opcode = GB_USER_idxunop_code ;
 

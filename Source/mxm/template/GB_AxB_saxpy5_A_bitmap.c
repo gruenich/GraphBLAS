@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // C is full.
 // A is bitmap, and not iso-valued and not pattern-only.
@@ -33,9 +33,9 @@
 
     const int64_t m = C->vlen ;     // # of rows of C and A
     const int8_t  *restrict Ab = A->b ;
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     #ifdef GB_JIT_KERNEL
     #define B_iso GB_B_ISO
     #else
@@ -62,15 +62,15 @@
         for (int64_t jB = jB_start ; jB < jB_end ; jB++)
         {
             // get B(:,j) and C(:,j)
-            const int64_t j = GBH_B (Bh, jB) ;
+            const int64_t j = GBh_B (Bh, jB) ;
             const int64_t pC = j * m ;
-            const int64_t pB_start = Bp [jB] ;
-            const int64_t pB_end   = Bp [jB+1] ;
+            const int64_t pB_start = GB_IGET (Bp, jB) ;
+            const int64_t pB_end   = GB_IGET (Bp, jB+1) ;
             // C(:,j) += A*B(:,j)
             for (int64_t pB = pB_start ; pB < pB_end ; pB++)
             { 
                 // get B(k,j)
-                const int64_t k = Bi [pB] ;
+                const int64_t k = GB_IGET (Bi, pB) ;
                 GB_DECLAREB (bkj) ;
                 GB_GETB (bkj, Bx, pB, B_iso) ;
                 // get A(:,k)

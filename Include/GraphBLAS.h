@@ -389,7 +389,7 @@ typedef enum    // GrB_Info
     GrB_INVALID_OBJECT = -104,      // object is corrupted
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
     GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
-    GxB_JIT_ERROR = -1001,          // JIT compiler/loader error
+    GxB_JIT_ERROR = -7001,          // JIT compiler/loader error
 
 }
 GrB_Info ;

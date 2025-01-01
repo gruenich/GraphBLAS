@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // This function only computes C<M>=A'*B.  The mask must be present, and not
 // complemented, and can be either valued or structural.  The mask is always
@@ -25,6 +25,7 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
+    GB_FREE_WORK (&Cwork,    Cwork_size) ;      \
     GB_FREE_WORK (&TaskList, TaskList_size) ;   \
 }
 
@@ -77,6 +78,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     int ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
+    float *Cwork = NULL ; size_t Cwork_size = 0 ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -117,9 +119,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Mp = M->p ;    // FIXME
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
@@ -128,34 +129,38 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_sparse = GB_IS_SPARSE (M) ;
+    const bool Mp_is_32 = M->p_is_32 ;
+    const bool Mj_is_32 = M->j_is_32 ;
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    void *Ah = A->h ;
     const int64_t vlen = A->vlen ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool Ap_is_32 = A->p_is_32 ;
+    const bool Aj_is_32 = A->j_is_32 ;
 
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    void *Bh = B->h ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = GB_IS_HYPERSPARSE (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
+    const bool Bp_is_32 = B->p_is_32 ;
+    const bool Bj_is_32 = B->j_is_32 ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (vlen > 0) ;
 
-    // FIXME:
-    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
-    const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
-    const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
+    const void *A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const void *A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const void *A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
-    // FIXME:
-    const uint64_t *restrict B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
-    const int64_t *restrict B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
-    const int64_t *restrict B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
+    const void *B_Yp = (B->Y == NULL) ? NULL : B->Y->p ;
+    const void *B_Yi = (B->Y == NULL) ? NULL : B->Y->i ;
+    const void *B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
 
     //--------------------------------------------------------------------------
@@ -169,16 +174,40 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t cnvec = mnvec ;
     int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
-    // C is sparse or hypersparse, not full or bitmap
-    GB_OK (GB_new_bix (&C, // sparse or hyper (from M), existing header
-        ctype, cvlen, cvdim, GB_ph_malloc, true,
-        C_sparsity, true, M->hyper_switch, cnvec,
-        cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
-        true, C_iso, M->p_is_32, M->j_is_32, M->i_is_32)) ;
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
+        C_sparsity, cnz, cvlen, cvdim) ;
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Cwork = C->i ;    // use C->i as workspace
+    // C is sparse or hypersparse, not full or bitmap
+    GB_OK (GB_new (&C, // sparse or hyper (from M), existing header
+        ctype, cvlen, cvdim, GB_ph_malloc, true,
+        C_sparsity, M->hyper_switch, cnvec,
+        Cp_is_32, Cj_is_32, Ci_is_32)) ;
+
+    GB_Ch_DECLARE (Ch, ) ; GB_Ch_PTR (Ch, C) ;
+
+    // C->i and C->x are allocated later
+
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    // This workspace is large, of size cnz+1, so the logic below may allow it
+    // to be resused as C->i and C->x, which have not yet been allocated.
+
+    Cwork = GB_MALLOC_MEMORY (cnz+1, sizeof (float), &Cwork_size) ;
+    if (Cwork == NULL)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -194,11 +223,20 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // M is sparse or hypersparse; C is the same as M
     nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
 
-    // TODO: try this with Cp and Ch shallow
-    GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;    // FIXME
+    GB_Type_code cpcode = (Cp_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
+    GB_Type_code cjcode = (Cj_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
+
+    GB_Type_code mpcode = (Mp_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
+    GB_Type_code mjcode = (Mj_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
+
+    // TODO: if integer types of Cp,Ch match Mp,Mh then they could be shallow
+//  GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
+    GB_cast_int (C->p, cpcode, Mp, mpcode, cnvec+1, nthreads) ;
+
     if (M_is_hyper)
     { 
-        GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;    // FIXME
+//      GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
+        GB_cast_int (Ch, cjcode, M->h, mjcode, cnvec, nthreads) ;
     }
     C->nvec_nonempty = M->nvec_nonempty ;
     C->nvec = M->nvec ;
@@ -248,12 +286,55 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GB_FREE_WORK (&TaskList, TaskList_size) ;
     GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
-        C, Werk)) ;
+        C, Cwork, cnz, Werk)) ;
 
     GBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
 
     //--------------------------------------------------------------------------
-    // C<M> = A'*B, via masked dot product method and built-in semiring
+    // free workspace and allocate C->i and C->x
+    //--------------------------------------------------------------------------
+
+    size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    if (sizeof (float) == sizeof (uint32_t) && Ci_is_32)
+    { 
+        // transplant Cwork as C->i, and allocate just C->x
+        C->i = (void *) Cwork ;
+        C->i_size = Cwork_size ;
+        Cwork = NULL ;
+        Cwork_size = 0 ;
+        C->x = GB_XALLOC (false, C_iso, cnz+1, C->type->size, &(C->x_size)) ;
+    }
+    else if (sizeof (float) == C->type->size && !C_iso)
+    { 
+        // transplant Cwork as C->x, and allocate just C->i
+        C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_size)) ;
+        C->x = (void *) Cwork ;
+        C->x_size = Cwork_size ;
+        Cwork = NULL ;
+        Cwork_size = 0 ;
+    }
+    else
+    { 
+        // otherwise, free Cwork and allocate both C->i and C->x
+        GB_FREE_WORK (&Cwork, Cwork_size) ;
+        C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_size)) ;
+        C->x = GB_XALLOC (false, C_iso, cnz+1, C->type->size, &(C->x_size)) ;
+    }
+
+    // Cwork has either been transplanted into C as C->i or C->x, or it has
+    // been freed.
+    ASSERT (Cwork == NULL) ;
+
+    if (C->i == NULL || C->x == NULL)
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase2: C<M> = A'*B, via masked dot product method and built-in semiring
     //--------------------------------------------------------------------------
 
     if (C_iso)
@@ -337,12 +418,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         }
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

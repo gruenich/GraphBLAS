@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C+=A'*B where C is full and computed in-place.  The monoid of the semiring
 // matches the accum operator, and the type of C matches the ztype of accum.
 
@@ -382,12 +384,12 @@
                 { 
                     // get A(:,i)
                     #if GB_A_IS_HYPER
-                    const int64_t i = Ah [kA] ;
+                    const int64_t i = GB_IGET (Ah, kA) ;
                     #else
                     const int64_t i = kA ;
                     #endif
-                    int64_t pA = Ap [kA] ;
-                    const int64_t pA_end = Ap [kA+1] ;
+                    int64_t pA = GB_IGET (Ap, kA) ;
+                    const int64_t pA_end = GB_IGET (Ap, kA+1) ;
                     const int64_t ainz = pA_end - pA ;
                     // C(i) += A(:,i)'*B(:,0)
                     #include "template/GB_AxB_dot4_cij.c"
@@ -408,12 +410,12 @@
                 {
                     // get A(:,i)
                     #if GB_A_IS_HYPER
-                    const int64_t i = Ah [kA] ;
+                    const int64_t i = GB_IGET (Ah, kA) ;
                     #else
                     const int64_t i = kA ;
                     #endif
-                    int64_t pA = Ap [kA] ;
-                    const int64_t pA_end = Ap [kA+1] ;
+                    int64_t pA = GB_IGET (Ap, kA) ;
+                    const int64_t pA_end = GB_IGET (Ap, kA+1) ;
                     const int64_t ainz = pA_end - pA ;
                     // C(i,:) += A(:,i)'*B
                     for (int64_t j = 0 ; j < bvdim ; j++)
@@ -479,8 +481,8 @@
                         for (int64_t i = kA_start ; i < kA_end ; i++)
                         {
                             // get A(:,i)
-                            const int64_t pA = Ap [i] ;
-                            const int64_t pA_end = Ap [i+1] ;
+                            const int64_t pA = GB_IGET (Ap, i) ;
+                            const int64_t pA_end = GB_IGET (Ap, i+1) ;
                             // cx [0] = C(i,j1)
                             GB_C_TYPE cx [1] ;
                             GB_GET4C (cx [0], i + j1*cvlen) ;
@@ -488,7 +490,7 @@
                             for (int64_t p = pA ; p < pA_end ; p++)
                             { 
                                 // aki = A(k,i)
-                                const int64_t k = Ai [p] ;
+                                const int64_t k = GB_IGET (Ai, p) ;
                                 GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 GB_DECLAREB (bkj) ;
@@ -537,8 +539,8 @@
                         for (int64_t i = kA_start ; i < kA_end ; i++)
                         {
                             // get A(:,i)
-                            const int64_t pA = Ap [i] ;
-                            const int64_t pA_end = Ap [i+1] ;
+                            const int64_t pA = GB_IGET (Ap, i) ;
+                            const int64_t pA_end = GB_IGET (Ap, i+1) ;
                             // cx [0:1] = C(i,j1:j1+1)
                             GB_C_TYPE cx [2] ;
                             GB_GET4C (cx [0], i + (j1  )*cvlen) ;
@@ -547,7 +549,7 @@
                             for (int64_t p = pA ; p < pA_end ; p++)
                             { 
                                 // aki = A(k,i)
-                                const int64_t k = Ai [p] ;
+                                const int64_t k = GB_IGET (Ai, p) ;
                                 GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 const int64_t k2 = k << 1 ;
@@ -598,8 +600,8 @@
                         for (int64_t i = kA_start ; i < kA_end ; i++)
                         {
                             // get A(:,i)
-                            const int64_t pA = Ap [i] ;
-                            const int64_t pA_end = Ap [i+1] ;
+                            const int64_t pA = GB_IGET (Ap, i) ;
+                            const int64_t pA_end = GB_IGET (Ap, i+1) ;
                             // cx [0:2] = C(i,j1:j1+2)
                             GB_C_TYPE cx [3] ;
                             GB_GET4C (cx [0], i + (j1  )*cvlen) ;
@@ -609,7 +611,7 @@
                             for (int64_t p = pA ; p < pA_end ; p++)
                             { 
                                 // aki = A(k,i)
-                                const int64_t k = Ai [p] ;
+                                const int64_t k = GB_IGET (Ai, p) ;
                                 GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 const int64_t k3 = k * 3 ;
@@ -664,8 +666,8 @@
                         for (int64_t i = kA_start ; i < kA_end ; i++)
                         {
                             // get A(:,i)
-                            const int64_t pA = Ap [i] ;
-                            const int64_t pA_end = Ap [i+1] ;
+                            const int64_t pA = GB_IGET (Ap, i) ;
+                            const int64_t pA_end = GB_IGET (Ap, i+1) ;
                             // cx [0:3] = C(i,j1:j1+3)
                             GB_C_TYPE cx [4] ;
                             GB_GET4C (cx [0], i + (j1  )*cvlen) ;
@@ -676,7 +678,7 @@
                             for (int64_t p = pA ; p < pA_end ; p++)
                             { 
                                 // aki = A(k,i)
-                                const int64_t k = Ai [p] ;
+                                const int64_t k = GB_IGET (Ai, p) ;
                                 GB_DECLAREA (aki) ;
                                 GB_GETA (aki, Ax, p, A_iso) ;
                                 const int64_t k4 = k << 2 ;
@@ -733,13 +735,13 @@
             //------------------------------------------------------------------
 
             #if GB_B_IS_HYPER
-            const int64_t j = Bh [kB] ;
+            const int64_t j = GB_IGET (Bh, kB) ;
             #else
             const int64_t j = kB ;
             #endif
             const int64_t pC_start = j * cvlen ;
-            const int64_t pB_start = Bp [kB] ;
-            const int64_t pB_end = Bp [kB+1] ;
+            const int64_t pB_start = GB_IGET (Bp, kB) ;
+            const int64_t pB_end = GB_IGET (Bp, kB+1) ;
             const int64_t bjnz = pB_end - pB_start ;
 
             //------------------------------------------------------------------
@@ -813,7 +815,7 @@
                         // MIN_FIRSTJ semiring: take the first entry in B(:,j)
                         if (bjnz > 0)
                         { 
-                            int64_t k = Bi [pB] + GB_OFFSET ;
+                            int64_t k = GB_IGET (Bi, pB) + GB_OFFSET ;
                             cij = GB_IMIN (cij, k) ;
                         }
                     }
@@ -822,7 +824,7 @@
                         // MAX_FIRSTJ semiring: take the last entry in B(:,j)
                         if (bjnz > 0)
                         { 
-                            int64_t k = Bi [pB_end-1] + GB_OFFSET ;
+                            int64_t k = GB_IGET (Bi, pB_end-1) + GB_OFFSET ;
                             cij = GB_IMAX (cij, k) ;
                         }
                     }
@@ -831,7 +833,7 @@
                         GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t p = pB ; p < pB_end ; p++)
                         { 
-                            int64_t k = Bi [p] ;
+                            int64_t k = GB_IGET (Bi, p) ;
                             GB_DOT (k, pA+k, p) ;   // cij += A(k,i)*B(k,j)
                         }
                     }
@@ -850,7 +852,7 @@
                         // MIN_FIRSTJ semiring: take the first entry
                         for (int64_t p = pB ; p < pB_end ; p++)
                         {
-                            int64_t k = Bi [p] ;
+                            int64_t k = GB_IGET (Bi, p) ;
                             if (Ab [pA+k])
                             { 
                                 cij = GB_IMIN (cij, k + GB_OFFSET) ;
@@ -863,7 +865,7 @@
                         // MAX_FIRSTJ semiring: take the last entry
                         for (int64_t p = pB_end-1 ; p >= pB ; p--)
                         {
-                            int64_t k = Bi [p] ;
+                            int64_t k = GB_IGET (Bi, p) ;
                             if (Ab [pA+k])
                             { 
                                 cij = GB_IMAX (cij, k + GB_OFFSET) ;
@@ -876,7 +878,7 @@
                         GB_PRAGMA_SIMD_REDUCTION_MONOID (cij)
                         for (int64_t p = pB ; p < pB_end ; p++)
                         {
-                            int64_t k = Bi [p] ;
+                            int64_t k = GB_IGET (Bi, p) ;
                             if (Ab [pA+k])
                             { 
                                 GB_DOT (k, pA+k, p) ;   // cij += A(k,i)*B(k,j)
@@ -932,13 +934,13 @@
             //------------------------------------------------------------------
 
             #if GB_B_IS_HYPER
-            const int64_t j = Bh [kB] ;
+            const int64_t j = GB_IGET (Bh, kB) ;
             #else
             const int64_t j = kB ;
             #endif
             const int64_t pC_start = j * cvlen ;
-            const int64_t pB_start = Bp [kB] ;
-            const int64_t pB_end = Bp [kB+1] ;
+            const int64_t pB_start = GB_IGET (Bp, kB) ;
+            const int64_t pB_end = GB_IGET (Bp, kB+1) ;
             const int64_t bjnz = pB_end - pB_start ;
 
             //------------------------------------------------------------------
@@ -953,12 +955,12 @@
                 //--------------------------------------------------------------
 
                 #if GB_A_IS_HYPER
-                const int64_t i = Ah [kA] ;
+                const int64_t i = GB_IGET (Ah, kA) ;
                 #else
                 const int64_t i = kA ;
                 #endif
-                int64_t pA = Ap [kA] ;
-                const int64_t pA_end = Ap [kA+1] ;
+                int64_t pA = GB_IGET (Ap, kA) ;
+                const int64_t pA_end = GB_IGET (Ap, kA+1) ;
                 const int64_t ainz = pA_end - pA ;
 
                 //--------------------------------------------------------------
@@ -985,8 +987,8 @@
                 // B(:,j).
 
                 if (ainz == 0 || bjnz == 0 || 
-                    Ai [pA_end-1] < Bi [pB_start] ||
-                    Bi [pB_end-1] < Ai [pA])
+                    GB_IGET (Ai, pA_end-1) < GB_IGET (Bi, pB_start) ||
+                    GB_IGET (Bi, pB_end-1) < GB_IGET (Ai, pA))
                 { 
 
                     //------------------------------------------------------
@@ -1003,15 +1005,15 @@
 
                     while (pA < pA_end && pB < pB_end)
                     {
-                        int64_t ia = Ai [pA] ;
-                        int64_t ib = Bi [pB] ;
+                        int64_t ia = GB_IGET (Ai, pA) ;
+                        int64_t ib = GB_IGET (Bi, pB) ;
                         if (ia < ib)
                         { 
                             // A(ia,i) appears before B(ib,j)
                             // discard all entries A(ia:ib-1,i)
                             int64_t pleft = pA + 1 ;
                             int64_t pright = pA_end - 1 ;
-                            GB_trim_binary_search (ib, Ai, false,
+                            GB_trim_binary_search (ib, Ai, GB_Ai_IS_32,
                                 &pleft, &pright) ;
                             ASSERT (pleft > pA) ;
                             pA = pleft ;
@@ -1043,8 +1045,8 @@
 
                     while (pA < pA_end && pB < pB_end)
                     {
-                        int64_t ia = Ai [pA] ;
-                        int64_t ib = Bi [pB] ;
+                        int64_t ia = GB_IGET (Ai, pA) ;
+                        int64_t ib = GB_IGET (Bi, pB) ;
                         if (ia < ib)
                         { 
                             // A(ia,i) appears before B(ib,j)
@@ -1056,7 +1058,7 @@
                             // discard all entries B(ib:ia-1,j)
                             int64_t pleft = pB + 1 ;
                             int64_t pright = pB_end - 1 ;
-                            GB_trim_binary_search (ia, Bi, false,
+                            GB_trim_binary_search (ia, Bi, GB_Bi_IS_32,
                                 &pleft, &pright) ;
                             ASSERT (pleft > pB) ;
                             pB = pleft ;
@@ -1083,8 +1085,8 @@
 
                     while (pA < pA_end && pB < pB_end)
                     {
-                        int64_t ia = Ai [pA] ;
-                        int64_t ib = Bi [pB] ;
+                        int64_t ia = GB_IGET (Ai, pA) ;
+                        int64_t ib = GB_IGET (Bi, pB) ;
                         if (ia < ib)
                         { 
                             // A(ia,i) appears before B(ib,j)

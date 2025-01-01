@@ -41,6 +41,7 @@ GrB_Info GB_AxB_dot2_jit        // C<M>=A'*B, dot2 method, via the JIT
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_AXB_DOT2,
         C->iso, false, GB_sparsity (C), C->type,
+        C->p_is_32, C->j_is_32, C->i_is_32,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_AxB_saxpy3 computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel.  If the
 // mask matrix M has too many entries compared to the work to compute A*B, then
@@ -219,24 +219,32 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cvdim = B->vdim ;
     int64_t cnvec = B->nvec ;
 
-    info = GB_new (&C, // sparse or hyper, existing header
-        ctype, cvlen, cvdim, GB_ph_malloc, true,
-        C_sparsity, B->hyper_switch, cnvec, /* FIXME: */ false, false, false) ;
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        Werk->p_control, Werk->j_control, Werk->i_control,
+        C_sparsity, 1, cvlen, cvdim) ;
 
-    C->iso = C_iso ;    // OK
+    // Cp_is_32 is determined later, since nnz(C) is not yet known.  For now,
+    // always allocate Cp as 64-bit.
+    Cp_is_32 = false ;
+
+    GB_OK (GB_new (&C, // sparse or hyper, existing header
+        ctype, cvlen, cvdim, GB_ph_malloc, true,
+        C_sparsity, B->hyper_switch, cnvec, Cp_is_32, Cj_is_32, Ci_is_32)) ;
+
+    C->iso = C_iso ;
+
+    GB_Type_code cjcode = (Cj_is_32  ) ? GB_UINT32_code : GB_UINT64_code ; 
+    GB_Type_code bjcode = (B->j_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
 
     if (GB_IS_HYPERSPARSE (B))
     { 
         // B and C are both hypersparse
         ASSERT (C_sparsity == GxB_HYPERSPARSE) ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
-        GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nth) ;
+//      GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nth) ;
+        GB_cast_int (C->h, cjcode, B->h, bjcode, cnvec, nth) ;
         C->nvec = B->nvec ;
     }
     else
@@ -561,8 +569,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //==========================================================================
 
     // TODO constructing the tasks (the work above) can take a lot of time.
-    // See the web graph, where it takes a total of 3.03 sec for 64 trials, vs
-    // a total of 5.9 second for phase 7 (the numerical work below).
     // Figure out a faster method.
 
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_in_place,
@@ -655,12 +661,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // prune empty vectors, free workspace, and return result

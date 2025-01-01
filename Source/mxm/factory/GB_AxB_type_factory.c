@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // A template file #include'd in GB_AxB_factory.c, which calls up to 61
 // semirings.  Not all multiplicative operators and types are used with every
 // monoid.  The 2 complex types appear only in the times, plus, and any

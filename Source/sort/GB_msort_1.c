@@ -21,6 +21,7 @@
 #define GB_msort_1_create_merge_tasks GB_msort_1_create_merge_tasks_32
 #define GB_msort_1_merge              GB_msort_1_merge_32
 #define GB_msort_1_method             GB_msort_1_32
+#define GB_qsort_1_method             GB_qsort_1_32
 
 #include "sort/factory/GB_msort_1_template.c"
 
@@ -33,12 +34,14 @@
 #undef  GB_msort_1_create_merge_tasks
 #undef  GB_msort_1_merge
 #undef  GB_msort_1_method
+#undef  GB_qsort_1_method
 
 #define GB_A0_t uint64_t
 #define GB_msort_1_binary_search      GB_msort_1_binary_search_64
 #define GB_msort_1_create_merge_tasks GB_msort_1_create_merge_tasks_64
 #define GB_msort_1_merge              GB_msort_1_merge_64
 #define GB_msort_1_method             GB_msort_1_64
+#define GB_qsort_1_method             GB_qsort_1_64
 
 #include "sort/factory/GB_msort_1_template.c"
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // C+=A'*B where C is a dense matrix and computed in-place.  The monoid of the
 // semiring matches the accum operator, and the type of C matches the ztype of
@@ -45,10 +45,10 @@
 
     const int64_t cvlen = C->vlen ;
 
-    const uint64_t  *restrict Bp = B->p ;    // FIXME
-    const int64_t  *restrict Bh = B->h ;
-    const int64_t  *restrict Bi = B->i ;
-    const int8_t   *restrict Bb = B->b ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    const int8_t *restrict Bb = B->b ;
     const int64_t vlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
 
@@ -62,12 +62,14 @@
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
     const bool B_is_sparse = GB_IS_SPARSE (B) ;
     const bool B_iso = B->iso ;
+    const bool Bi_is_32 = B->i_is_32 ;
+    #define GB_Bi_IS_32 Bi_is_32
     #endif
 
-    const uint64_t  *restrict Ap = A->p ;   // FIXME
-    const int64_t  *restrict Ah = A->h ;
-    const int64_t  *restrict Ai = A->i ;
-    const int8_t   *restrict Ab = A->b ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+    const int8_t *restrict Ab = A->b ;
     const int64_t avdim = A->vdim ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (A->vdim == C->vlen) ;
@@ -82,6 +84,8 @@
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_iso = A->iso ;
+    const bool Ai_is_32 = A->i_is_32 ;
+    #define GB_Ai_IS_32 Ai_is_32
     #endif
 
     #if GB_IS_ANY_MONOID

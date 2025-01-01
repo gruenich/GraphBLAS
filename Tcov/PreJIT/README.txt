@@ -1,6 +1,8 @@
 These JIT kernels a subset of those created by test145.
 They are placed here to use a PreJIT kernels for the Tcov tests.
 
+FIXME: get new kernels for Tcov/PreJIT
+
 This file has an intentionally stale function definition:
 
     GB_jit__AxB_dot2__4000bbb0bbbcd__plus_my_rdiv.c

@@ -231,13 +231,13 @@
                 // C(:,j) += A(:,k) * B(k,j)
                 //--------------------------------------------------------------
 
-                int64_t k = GBH_A (Ah, kk) ;      // k in range k1:k2
+                int64_t k = GBh_A (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
                 #if GB_B_IS_BITMAP
-                if (!GBB_B (Bb, pB)) continue ;   
+                if (!GBb_B (Bb, pB)) continue ;   
                 #endif
-                int64_t pA = Ap [kk] ;
-                int64_t pA_end = Ap [kk+1] ;
+                int64_t pA = GB_IGET (Ap, kk) ;
+                int64_t pA_end = GB_IGET (Ap, kk+1) ;
                 GB_GET_B_kj ;                   // bkj = B(k,j)
 
                 for ( ; pA < pA_end ; pA++)
@@ -247,7 +247,7 @@
                     // get A(i,k)
                     //----------------------------------------------------------
 
-                    int64_t i = Ai [pA] ;       // get A(i,k) index
+                    int64_t i = GB_IGET (Ai, pA) ;       // get A(i,k) index
 
                     //----------------------------------------------------------
                     // C(i,j) += A(i,k) * B(k,j)
@@ -359,18 +359,18 @@
                 // W(:,k) += A(:,k) * B(k,j)
                 //--------------------------------------------------------------
 
-                int64_t k = GBH_A (Ah, kk) ;    // k in range k1:k2
+                int64_t k = GBh_A (Ah, kk) ;    // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
                 #if GB_B_IS_BITMAP
-                if (!GBB_B (Bb, pB)) continue ;   
+                if (!GBb_B (Bb, pB)) continue ;   
                 #endif
-                int64_t pA = Ap [kk] ;
-                int64_t pA_end = Ap [kk+1] ;
+                int64_t pA = GB_IGET (Ap, kk) ;
+                int64_t pA_end = GB_IGET (Ap, kk+1) ;
                 GB_GET_B_kj ;                   // bkj = B(k,j)
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-                    int64_t i = Ai [pA] ;       // get A(i,k) index
+                    int64_t i = GB_IGET (Ai, pA) ;       // get A(i,k) index
                     // W(i,k) += A(i,k) * B(k,j)
                     GB_MULT_A_ik_B_kj ;         // t = A(i,k)*B(k,j)
                     GB_HX_UPDATE (i, t) ;       // Hx(i) += t

@@ -25,7 +25,7 @@
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
         GB_GET_B_j ;            // get B(:,j)
-        Cp [kk] = 0 ;
+        GB_ISET (Cp, kk, 0) ;   // Cp [kk] = 0 ;
 
         //----------------------------------------------------------------------
         // special case when B(:,j) is empty
@@ -56,7 +56,7 @@
             { 
                 GB_GET_B_kj_INDEX ;     // get index k of B(k,j)
                 GB_GET_A_k ;            // get A(:,k)
-                Cp [kk] = aknz ;
+                GB_ISET (Cp, kk, aknz) ;    // Cp [kk] = aknz
                 continue ;
             }
             #endif
@@ -109,7 +109,8 @@
                 }
             }
         }
-        Cp [kk] = cjnz ;                // count the entries in C(:,j)
+        // count the entries in C(:,j)
+        GB_ISET (Cp, kk, cjnz) ;    // Cp [kk] = cjnz ;
     }
 }
 

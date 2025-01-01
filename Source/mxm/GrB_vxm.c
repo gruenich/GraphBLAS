@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // w'<M'> = accum (w',t) where t = u'*A or u'*A'
 
 // Rows w', u', and M' are simply columns w, u, and M.  Thus:

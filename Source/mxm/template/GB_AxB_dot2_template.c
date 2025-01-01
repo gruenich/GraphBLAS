@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // A and B are sparse, bitmap, or full; never hypersparse.  If the input
 // matrices A and/or B are hypersparse, they are converted into hyper_shallow
 // sparse matrices, and C is converted from bitmap to sparse/hypersparse when
@@ -105,8 +107,8 @@
 
             #if GB_B_IS_SPARSE
                 // B is sparse (never hypersparse)
-                const int64_t pB_start = Bp [j] ;
-                const int64_t pB_end = Bp [j+1] ;
+                const int64_t pB_start = GB_IGET (Bp, j) ;
+                const int64_t pB_end = GB_IGET (Bp, j+1) ;
                 const int64_t bjnz = pB_end - pB_start ;
                 if (bjnz == 0)
                 { 
@@ -116,8 +118,8 @@
                 }
                 #if GB_A_IS_SPARSE
                     // Both A and B are sparse; get first and last in B(:,j)
-                    const int64_t ib_first = Bi [pB_start] ;
-                    const int64_t ib_last  = Bi [pB_end-1] ;
+                    const int64_t ib_first = GB_IGET (Bi, pB_start) ;
+                    const int64_t ib_last  = GB_IGET (Bi, pB_end-1) ;
                 #endif
             #else
                 // B is bitmap or full
@@ -189,8 +191,8 @@
 
                     #if GB_A_IS_SPARSE
                         // A is sparse
-                        int64_t pA = Ap [i] ;
-                        const int64_t pA_end = Ap [i+1] ;
+                        int64_t pA = GB_IGET (Ap, i) ;
+                        const int64_t pA_end = GB_IGET (Ap, i+1) ;
                         const int64_t ainz = pA_end - pA ;
                         #if (!GB_C_IS_FULL)
                         if (ainz > 0)       // skip this test if C is full

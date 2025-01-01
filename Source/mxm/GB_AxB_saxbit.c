@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
@@ -167,8 +167,8 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
                 GB_FREE_ALL ;
                 return (GrB_OUT_OF_MEMORY) ;
             }
-            GB_p_slice (A_slice, A->p, false,   // FIXME
-                A->nvec, nfine_tasks_per_vector, true) ;
+            GB_p_slice (A_slice, A->p, A->p_is_32, A->nvec,
+                nfine_tasks_per_vector, true) ;
         }
 
         //----------------------------------------------------------------------

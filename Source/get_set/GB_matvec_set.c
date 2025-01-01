@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 matrix get/set
-#define GB_DEBUG
 
 #include "get_set/GB_get_set.h"
 #include "transpose/GB_transpose.h"

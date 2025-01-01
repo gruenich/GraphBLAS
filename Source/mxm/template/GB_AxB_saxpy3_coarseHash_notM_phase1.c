@@ -18,7 +18,7 @@
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
         GB_GET_B_j ;            // get B(:,j)
-        Cp [kk] = 0 ;
+        GB_ISET (Cp, kk, 0) ;   // Cp [kk] = 0 ;
 
         //----------------------------------------------------------------------
         // special case when B(:,j) is empty
@@ -63,7 +63,8 @@
                 }
             }
         }
-        Cp [kk] = cjnz ;                // count the entries in C(:,j)
+        // count the entries in C(:,j)
+        GB_ISET (Cp, kk, cjnz) ;    // Cp [kk] = cjnz ;
     }
 }
 

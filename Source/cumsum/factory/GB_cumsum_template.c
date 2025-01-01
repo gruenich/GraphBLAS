@@ -18,94 +18,13 @@
 // On output, count [n] is the total sum.
 
 {
-    if (kresult == NULL)
+    #ifndef GB_NO_KRESULT
+    if (kresult != NULL)
     {
 
-        if (nthreads <= 2)
-        {
-
-            //------------------------------------------------------------------
-            // cumsum with one thread
-            //------------------------------------------------------------------
-
-            return (GB_CUMSUM1_TYPE (count, n)) ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // cumsum with multiple threads
-            //------------------------------------------------------------------
-
-            // allocate workspace
-            GB_WERK_DECLARE (ws, uint64_t) ;
-            GB_WERK_PUSH (ws, nthreads, uint64_t) ;
-            if (ws == NULL)
-            { 
-                // out of memory; use a single thread instead
-                return (GB_CUMSUM1_TYPE (count, n)) ;
-            }
-
-            int tid ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (tid = 0 ; tid < nthreads ; tid++)
-            {
-                // each task sums up its own part
-                int64_t istart, iend ;
-                GB_PARTITION (istart, iend, n, tid, nthreads) ;
-                uint64_t s = 0 ;
-                for (int64_t i = istart ; i < iend ; i++)
-                { 
-                    s += count [i] ;
-                }
-                ws [tid] = s ;
-            }
-
-            #if GB_CHECK_OVERFLOW
-            {
-                uint64_t total = 0 ;
-                for (tid = 0 ; tid < nthreads ; tid++)
-                { 
-                    total += ws [tid] ;
-                }
-                if (total > UINT32_MAX)
-                { 
-                    return (false) ;
-                }
-            }
-            #endif
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (tid = 0 ; tid < nthreads ; tid++)
-            {
-                // each tasks computes the cumsum of its own part
-                int64_t istart, iend ;
-                GB_PARTITION (istart, iend, n, tid, nthreads) ;
-                uint64_t s = 0 ;
-                for (int i = 0 ; i < tid ; i++)
-                { 
-                    s += ws [i] ;
-                }
-                for (int64_t i = istart ; i < iend ; i++)
-                { 
-                    uint64_t c = count [i] ;
-                    count [i] = s ;
-                    s += c ;
-                }
-                if (iend == n)
-                { 
-                    count [n] = s ;
-                }
-            }
-
-            // free workspace
-            GB_WERK_POP (ws, uint64_t) ;
-        }
-
-    }
-    else
-    {
+        //----------------------------------------------------------------------
+        // cumsum, and compute k, for uint32_t or uint64_t cases only
+        //----------------------------------------------------------------------
 
         if (nthreads <= 2)
         {
@@ -220,6 +139,97 @@
             // free workspace
             GB_WERK_POP (wk, uint64_t) ;
             GB_WERK_POP (ws, uint64_t) ;
+        }
+    }
+    else
+    #endif
+    {
+
+        //----------------------------------------------------------------------
+        // cumsum without k, for all types (uint32_t, uint64_t, and float)
+        //----------------------------------------------------------------------
+
+        if (nthreads <= 2)
+        {
+
+            //------------------------------------------------------------------
+            // cumsum with one thread
+            //------------------------------------------------------------------
+
+            return (GB_CUMSUM1_TYPE (count, n)) ;
+
+        }
+        else
+        {
+
+            //------------------------------------------------------------------
+            // cumsum with multiple threads
+            //------------------------------------------------------------------
+
+            // allocate workspace
+            GB_WERK_DECLARE (ws, GB_WS_TYPE) ;
+            GB_WERK_PUSH (ws, nthreads, GB_WS_TYPE) ;
+            if (ws == NULL)
+            { 
+                // out of memory; use a single thread instead
+                return (GB_CUMSUM1_TYPE (count, n)) ;
+            }
+
+            int tid ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (tid = 0 ; tid < nthreads ; tid++)
+            {
+                // each task sums up its own part
+                int64_t istart, iend ;
+                GB_PARTITION (istart, iend, n, tid, nthreads) ;
+                GB_WS_TYPE s = 0 ;
+                for (int64_t i = istart ; i < iend ; i++)
+                { 
+                    s += count [i] ;
+                }
+                ws [tid] = s ;
+            }
+
+            #if GB_CHECK_OVERFLOW
+            {
+                // for uint32_t case only
+                uint64_t total = 0 ;
+                for (tid = 0 ; tid < nthreads ; tid++)
+                { 
+                    total += ws [tid] ;
+                }
+                if (total > UINT32_MAX)
+                { 
+                    return (false) ;
+                }
+            }
+            #endif
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (tid = 0 ; tid < nthreads ; tid++)
+            {
+                // each tasks computes the cumsum of its own part
+                int64_t istart, iend ;
+                GB_PARTITION (istart, iend, n, tid, nthreads) ;
+                GB_WS_TYPE s = 0 ;
+                for (int i = 0 ; i < tid ; i++)
+                { 
+                    s += ws [i] ;
+                }
+                for (int64_t i = istart ; i < iend ; i++)
+                { 
+                    GB_WS_TYPE c = count [i] ;
+                    count [i] = s ;
+                    s += c ;
+                }
+                if (iend == n)
+                { 
+                    count [n] = s ;
+                }
+            }
+
+            // free workspace
+            GB_WERK_POP (ws, GB_WS_TYPE) ;
         }
     }
 }

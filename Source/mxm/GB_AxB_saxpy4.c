@@ -2,12 +2,12 @@
 // GB_AxB_saxpy4: compute C+=A*B: C full, A sparse/hyper, B bitmap/full
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_AxB_saxpy4 computes C+=A*B where C is as-if-full, A is
 // sparse/hypersparse, and B is bitmap/full (or as-if-full).  No mask is
@@ -190,8 +190,8 @@ GrB_Info GB_AxB_saxpy4              // C += A*B
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-        GB_p_slice (A_slice, A->p, false,   // FIXME
-            A->nvec, nfine_tasks_per_vector, true) ;
+        GB_p_slice (A_slice, A->p, A->p_is_32, A->nvec, nfine_tasks_per_vector,
+            /* perfectly_balanced: */ true) ;
 
         if (!use_atomics)
         { 

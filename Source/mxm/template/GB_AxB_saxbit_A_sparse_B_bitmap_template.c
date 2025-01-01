@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is bitmap. A is hyper/sparse, B is bitmap/full.  M is anything. If M is
 // sparse or hypersparse, it has been scattered into the bitmap of C.
 
@@ -282,13 +284,13 @@
                 // C<#M>(:,j) += A(:,k) * B(k,j)
                 //--------------------------------------------------------------
 
-                int64_t k = GBH_A (Ah, kk) ;      // k in range k1:k2
+                int64_t k = GBh_A (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
                 #if GB_B_IS_BITMAP
-                if (!GBB_B (Bb, pB)) continue ;   
+                if (!GBb_B (Bb, pB)) continue ;   
                 #endif
-                int64_t pA = Ap [kk] ;
-                int64_t pA_end = Ap [kk+1] ;
+                int64_t pA = GB_IGET (Ap, kk) ;
+                int64_t pA_end = GB_IGET (Ap, kk+1) ;
                 GB_GET_B_kj ;                   // bkj = B(k,j)
 
                 for ( ; pA < pA_end ; pA++)
@@ -298,7 +300,7 @@
                     // get A(i,k) and C(i,j)
                     //----------------------------------------------------------
 
-                    int64_t i = Ai [pA] ;       // get A(i,k) index
+                    int64_t i = GB_IGET (Ai, pA) ;       // get A(i,k) index
                     int64_t pC = pC_start + i ; // get C(i,j) pointer
 
                     //----------------------------------------------------------
@@ -513,13 +515,13 @@
                 // W<#M>(:,tid) += A(:,k) * B(k,j)
                 //--------------------------------------------------------------
 
-                int64_t k = GBH_A (Ah, kk) ;      // k in range k1:k2
+                int64_t k = GBh_A (Ah, kk) ;      // k in range k1:k2
                 int64_t pB = pB_start + k ;     // get pointer to B(k,j)
                 #if GB_B_IS_BITMAP
-                if (!GBB_B (Bb, pB)) continue ;   
+                if (!GBb_B (Bb, pB)) continue ;   
                 #endif
-                int64_t pA = Ap [kk] ;
-                int64_t pA_end = Ap [kk+1] ;
+                int64_t pA = GB_IGET (Ap, kk) ;
+                int64_t pA_end = GB_IGET (Ap, kk+1) ;
                 GB_GET_B_kj ;                   // bkj = B(k,j)
 
                 for ( ; pA < pA_end ; pA++)
@@ -529,7 +531,7 @@
                     // get A(i,k)
                     //----------------------------------------------------------
 
-                    int64_t i = Ai [pA] ;       // get A(i,k) index
+                    int64_t i = GB_IGET (Ai, pA) ;       // get A(i,k) index
 
                     //----------------------------------------------------------
                     // check M(i,j)

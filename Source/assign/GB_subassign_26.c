@@ -172,7 +172,7 @@ GrB_Info GB_subassign_26
     nthreads = (phase2_parallel) ? GB_nthreads (anz, chunk, nthreads_max) : 1 ;
 
     // copy Ci and Cx
-    GB_cast_int (GB_IK (Ci, cnz), cicode, Ai, aicode, anz, nthreads) ;
+    GB_cast_int (GB_IADDR (Ci, cnz), cicode, Ai, aicode, anz, nthreads) ;
     GB_memcpy (Cx + cnz * csize, Ax, anz * csize, nthreads) ;
 
     //--------------------------------------------------------------------------

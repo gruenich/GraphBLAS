@@ -340,9 +340,7 @@ static GrB_Info GB_msort_1_method      // sort array A of size 1-by-n
     { 
         int64_t leaf = Slice [tid] ;
         int64_t leafsize = Slice [tid+1] - leaf ;
-        GB_qsort_1 (
-            A_0 + leaf, sizeof (GB_A0_t) == sizeof (uint32_t),
-            leafsize) ;
+        GB_qsort_1_method (A_0 + leaf, leafsize) ;
     }
 
     //--------------------------------------------------------------------------

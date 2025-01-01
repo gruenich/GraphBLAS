@@ -580,7 +580,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             //------------------------------------------------------------------
 
             // The binary op is not used if fadd is null since in that case
-            // the intersection of A and B is empty
+            // the intersection of A and B is empty.  The fadd function pointer
+            // can be NULL if the op is a generated FIRST_UDT or SECOND_UDT
+            // operator.
 
             // z = op (aij, bij)
             #undef  GB_BINOP

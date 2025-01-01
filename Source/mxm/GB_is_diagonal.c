@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Returns true if A is a square diagonal matrix, with all diagonal entries
 // present.  All pending tuples are ignored.  Zombies are treated as entries.
@@ -85,8 +85,8 @@ bool GB_is_diagonal             // true if A is diagonal
     // examine each vector of A
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ai = A->i ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
 
     int diagonal = true ;
 
@@ -114,14 +114,14 @@ bool GB_is_diagonal             // true if A is diagonal
         GB_PARTITION (jstart, jend, n, tid, ntasks) ;
         for (int64_t j = jstart ; diag && j < jend ; j++)
         {
-            int64_t p = Ap [j] ;
-            int64_t ajnz = Ap [j+1] - p ;
+            int64_t p = GB_IGET (Ap, j) ;
+            int64_t ajnz = GB_IGET (Ap, j+1) - p ;
             if (ajnz != 1)
             { 
                 // A(:,j) must have exactly one entry
                 diag = false ;
             }
-            int64_t i = Ai [p] ;
+            int64_t i = GB_IGET (Ai, p) ;
             if (i != j)
             { 
                 // the single entry must be A(i,i)

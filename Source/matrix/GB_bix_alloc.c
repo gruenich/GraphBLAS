@@ -84,8 +84,7 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
         ok = (A->i != NULL) ;
         if (ok)
         { 
-            // Ai [0] = 0
-            memset (A->i, 0, isize) ;
+            memset (A->i, 0, isize) ; // Ai [0] = 0; FIXME: why do I need this?
         }
     }
 

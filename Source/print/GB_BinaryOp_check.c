@@ -78,10 +78,15 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         GBPR0 ("(user-defined index):\n    z=%s(x,ix,iy,y,iy,yj,theta)\n",
             op_name) ;
     }
-    else if (opcode == GB_FIRST_binop_code && op->ztype->code == GB_UDT_code)
+    else if (op_is_first && op->ztype->code == GB_UDT_code)
     { 
         // FIRST_UDT binary operator created by GB_reduce_to_vector
-        GBPR0 ("(generated): z=%s(x,y)\n", op_name) ;
+        GBPR0 ("(generated 1st): z=%s(x,y)\n", op_name) ;
+    }
+    else if (op_is_second && op->ztype->code == GB_UDT_code)
+    { 
+        // SECOND_UDT binary operator created by GB_wait or GB_builder
+        GBPR0 ("(generated 2nd): z=%s(x,y)\n", op_name) ;
     }
     else if (op_is_from_idxbinop)
     { 
@@ -93,6 +98,11 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         // built-in
         GBPR0 ("(built-in): z=%s(x,y)\n", op_name) ;
     }
+
+// FIXME:
+#include "include/GB_pedantic_disable.h"
+GBPR0 ("   binop ptr: %p\n", (void *) op->binop_function) ;
+GBPR0 ("   idxop ptr: %p\n", (void *) op->idxbinop_function) ;
 
     if ((!(op_is_from_idxbinop || op_is_first || op_is_second)
             && op->binop_function == NULL)

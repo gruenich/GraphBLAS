@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GB_AxB_saxpy_generic_method computes C=A*B, C<M>=A*B, or C<!M>=A*B.  with
 // arbitrary types and operators.  C can be hyper, sparse, or bitmap, but not
 // full.  For all cases, the four matrices C, M (if present), A, and B have the

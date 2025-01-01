@@ -48,6 +48,7 @@
 #define GB_FREE_ALL             \
 {                               \
     GB_FREE_WORKSPACE ;         \
+    GB_FREE (&Cp, Cp_size) ;    \
     GB_phybix_free (C) ;        \
 }
 
@@ -90,6 +91,11 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
     int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
     int64_t *restrict C_to_B = NULL ; size_t C_to_B_size = 0 ;
+    int64_t Cnvec, Cnvec_nonempty ;
+    void *Cp = NULL ; size_t Cp_size = 0 ;
+    void *Ch = NULL ; size_t Ch_size = 0 ;
+    int C_ntasks = 0, C_nthreads ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -399,20 +405,11 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         GB_sparsity_char_matrix (B)) ;
 
     //--------------------------------------------------------------------------
-    // initializations
-    //--------------------------------------------------------------------------
-
-    int64_t Cnvec, Cnvec_nonempty ;
-    void *Cp = NULL ; size_t Cp_size = 0 ;
-    void *Ch = NULL ; size_t Ch_size = 0 ;
-
-    int C_ntasks = 0, C_nthreads ;
-
-    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
-
-    //--------------------------------------------------------------------------
     // phase0: finalize the sparsity C and find the vectors in C
     //--------------------------------------------------------------------------
+
+    // Ch is either NULL, or a shallow copy of M->h, A->h, or B->h, and must
+    // not be freed here.
 
     GB_OK (GB_emult_08_phase0 (
         // computed by phase0:

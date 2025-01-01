@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Determine if A*B uses a built-in semiring and matches the types of its
 // inputs A and B.  Returns the opcodes and type codoes of the semiring.  If
 // this method returns true, the semiring is a candidate for a switch factory.

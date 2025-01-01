@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_AxB_saxpy5 computes C+=A*B where C is full, A is bitmap/full, and B is
 // sparse/hypersparse.  No mask is present, C_replace is false, and the accum
@@ -153,8 +153,7 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
         GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (B_slice, B->p, false,   // FIXME
-        bnvec, ntasks, false) ;
+    GB_p_slice (B_slice, B->p, B->p_is_32, bnvec, ntasks, false) ;
 
     //--------------------------------------------------------------------------
     // via the factory kernel
@@ -197,8 +196,8 @@ GrB_Info GB_AxB_saxpy5              // C += A*B
 
     if (info == GrB_NO_VALUE)
     { 
-        info = GB_AxB_saxpy5_jit (C, A, B, semiring, flipxy,
-            ntasks, nthreads, B_slice) ;
+        info = GB_AxB_saxpy5_jit (C, A, B, semiring, flipxy, ntasks, nthreads,
+            B_slice) ;
     }
 
     //--------------------------------------------------------------------------

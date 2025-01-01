@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // Return true if C=A*B results in an iso matrix C, and return the iso value of
 // C.  The type of the matrix C and scalar c is semiring->add->ztype.
 

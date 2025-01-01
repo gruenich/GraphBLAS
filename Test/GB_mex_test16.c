@@ -115,7 +115,7 @@ void mexFunction
     GB_jit_encoding e ;
     char *suffix ;
     uint64_t code = GB_encodify_mxm (&e, &suffix, 0, false, false, GxB_SPARSE,
-        GrB_FP32, NULL, false, false, s, false, A, B) ;
+        GrB_FP32, false, false, false, NULL, false, false, s, false, A, B) ;
     CHECK (code == UINT64_MAX) ;
 
     code = GB_encodify_reduce (&e, &suffix, GB_JIT_KERNEL_REDUCE, mon, A) ;

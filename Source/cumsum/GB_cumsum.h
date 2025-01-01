@@ -22,5 +22,13 @@ bool GB_cumsum                  // cumulative sum of an array
     GB_Werk Werk
 ) ;
 
+bool GB_cumsum_float            // cumulative sum of an array
+(
+    float *restrict count,      // size n+1, input/output
+    const int64_t n,
+    int nthreads,
+    GB_Werk Werk
+) ;
+
 #endif
 

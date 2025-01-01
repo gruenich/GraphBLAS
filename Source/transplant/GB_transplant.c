@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Transplant A into C, and then free A.  If any part of A is shallow, or if A
 // must be typecasted, a deep copy is made into C.  Prior content of C is

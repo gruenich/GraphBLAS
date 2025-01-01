@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C, C<M>, C<!M> = A*B, A'*B, A*B', or A'*B' : both symbolic and numeric, with
 // the optional mask matrix.  This function is called by GB_mxm only.  If the
 // mask matrix is present, it can be regular or complemented, and either valued

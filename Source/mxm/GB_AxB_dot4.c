@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_AxB_dot4 does its computation in a single phase, computing its result in
 // the input matrix C, which is already as-if-full (in any format).  The mask M
@@ -204,8 +204,8 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
         GB_FREE_WORKSPACE ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (A_slice, A->p, false, anvec, naslice, false) ;  // FIXME
-    GB_p_slice (B_slice, B->p, false, bnvec, nbslice, false) ;  // FIXME
+    GB_p_slice (A_slice, A->p, A->p_is_32, anvec, naslice, false) ;
+    GB_p_slice (B_slice, B->p, B->p_is_32, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
     // convert C to non-iso

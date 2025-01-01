@@ -257,22 +257,14 @@ void GX_bitmap_assign_to_full   /* set all C->b to 1, or make C full */     \
     int nthreads_max                                                        \
 )
 
-#define GB_CALLBACK_QSORT_1_PROTO(GX_qsort_1)                               \
-void GX_qsort_1    /* sort array A of size 1-by-n */                        \
-(                                                                           \
-    void *restrict A_0,             /* size n array */                      \
-    bool A0_is_32,                  /* if true: uint32_t, else uint64_t */  \
-    const int64_t n                                                         \
-)
-
 #define GB_CALLBACK_P_SLICE_PROTO(GX_p_slice)                               \
 void GX_p_slice                 /* slice Ap, 32-bit or 64-bit */            \
 (                                                                           \
     /* output: */                                                           \
     int64_t *restrict Slice,    /* size ntasks+1 */                         \
     /* input: */                                                            \
-    const void *Ap,             /* array size n+1 (full/bitmap: NULL)*/     \
-    bool Ap_is_32,              /* if true, Ap is uint32_t, else uint64_t */\
+    const void *Work,           /* array size n+1 (full/bitmap: NULL)*/     \
+    bool Work_is_32,            /* if true, Ap is uint32_t, else uint64_t */\
     const int64_t n,                                                        \
     const int ntasks,           /* # of tasks */                            \
     const bool perfectly_balanced                                           \

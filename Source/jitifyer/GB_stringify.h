@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #ifndef GB_STRINGIFY_H
 #define GB_STRINGIFY_H
@@ -394,8 +394,6 @@ GrB_Info GB_colscale_jit      // C=A*D, colscale, via the JIT
 // GrB_mxm
 //------------------------------------------------------------------------------
 
-// FUTURE: add accumulator for mxm?
-
 uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
 (
     // output:
@@ -404,15 +402,22 @@ uint64_t GB_encodify_mxm        // encode a GrB_mxm problem
     char **suffix,              // suffix for user-defined kernel
     // input:
     const GB_jit_kcode kcode,   // kernel to encode
+    // C matrix:
     const bool C_iso,
     const bool C_in_iso,
     const int C_sparsity,
     const GrB_Type ctype,
+    bool Cp_is_32,          // if true, C->p is 32-bit; else 64
+    bool Cj_is_32,          // if true, C->h is 32-bit; else 64
+    bool Ci_is_32,          // if true, C->i is 32-bit; else 64
+    // M matrix:
     const GrB_Matrix M,
     const bool Mask_struct,
     const bool Mask_comp,
+    // semiring:
     const GrB_Semiring semiring,
     const bool flipxy,
+    // A and B:
     const GrB_Matrix A,
     const GrB_Matrix B
 ) ;
@@ -427,6 +432,9 @@ void GB_enumify_mxm         // enumerate a GrB_mxm problem
     bool C_in_iso,          // C input iso status
     int C_sparsity,         // sparse, hyper, bitmap, or full
     GrB_Type ctype,         // C=((ctype) T) is the final typecast
+    bool Cp_is_32,          // if true, C->p is 32-bit; else 64
+    bool Cj_is_32,          // if true, C->h is 32-bit; else 64
+    bool Ci_is_32,          // if true, C->i is 32-bit; else 64
     // M matrix:
     GrB_Matrix M,           // may be NULL
     bool Mask_struct,       // mask is structural

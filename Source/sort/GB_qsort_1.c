@@ -81,10 +81,15 @@ void GB_qsort_1_64
 }
 
 //------------------------------------------------------------------------------
-// GB_qsort_1: 32 or 64 bit
+// GB_qsort_1: sort an array A of size 1-by-n, 32 or 64 bit
 //------------------------------------------------------------------------------
 
-GB_CALLBACK_QSORT_1_PROTO (GB_qsort_1)
+void GB_qsort_1
+(
+    void *restrict A_0,         // size n array
+    bool A0_is_32,              // if true: A_0 is 32-bit; else 64-bit
+    const int64_t n
+)
 {
     if (A0_is_32)
     { 

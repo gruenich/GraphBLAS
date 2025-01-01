@@ -236,8 +236,8 @@ GrB_Info GB_select_column
             GB_cast_int (Ch, Ch_code, Ah, Ah_code, k, nth) ;
 
             // Ch [k:cnvec-1] = Ah [k+1:anvec-1]
-            GB_cast_int (GB_IK (Ch, k), Ch_code, GB_IK (Ah, k+1), Ah_code,
-                cnvec - k, nth) ;
+            GB_cast_int (GB_IADDR (Ch, k  ), Ch_code,
+                         GB_IADDR (Ah, k+1), Ah_code, cnvec - k, nth) ;
 
         }
         else
@@ -260,8 +260,8 @@ GrB_Info GB_select_column
         GB_cast_int (Ci, Ci_code, Ai, Ai_code, pstart, nth) ;
 
         // Ci [pstart:cnz-1] = Ai [pend:anz-1]
-        GB_cast_int (GB_IK (Ci, pstart), Ci_code,
-                     GB_IK (Ai, pend  ), Ai_code, cnz - pstart, nth) ;
+        GB_cast_int (GB_IADDR (Ci, pstart), Ci_code,
+                     GB_IADDR (Ai, pend  ), Ai_code, cnz - pstart, nth) ;
 
         if (!A_iso)
         { 
@@ -333,7 +333,8 @@ GrB_Info GB_select_column
             }
 
             // Ch [0:cnvec-1] = Ah [k+found:anvec-1]
-            GB_cast_int (Ch, Ch_code, GB_IK (Ah, k+found), Ah_code, cnvec, nth);
+            GB_cast_int (Ch, Ch_code, GB_IADDR (Ah, k+found), Ah_code,
+                cnvec, nth) ;
 
         }
         else
@@ -355,7 +356,7 @@ GrB_Info GB_select_column
         }
 
         // Ci [0:cnz-1] = Ai [pend:anz-1]
-        GB_cast_int (Ci, Ci_code, GB_IK (Ai, pend), Ai_code, cnz, nth) ;
+        GB_cast_int (Ci, Ci_code, GB_IADDR (Ai, pend), Ai_code, cnz, nth) ;
 
         if (!A_iso)
         { 

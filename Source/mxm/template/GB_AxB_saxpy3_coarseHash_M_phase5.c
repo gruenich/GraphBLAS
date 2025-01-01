@@ -24,8 +24,8 @@
 
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
-        int64_t pC = Cp [kk] ;
-        int64_t cjnz = Cp [kk+1] - pC ;
+        int64_t pC = GB_IGET (Cp, kk) ;
+        int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
         if (cjnz == 0) continue ;   // nothing to do
         GB_GET_M_j ;                // get M(:,j)
         GB_GET_M_j_RANGE (64) ;     // get 1st & last in M(:,j)
@@ -53,7 +53,8 @@
                             /* C(i,j) is new */                         \
                             Hf [hash] = mark1 ;     /* mark seen */     \
                             GB_HX_WRITE (hash, t) ; /* Hx[hash] = t */  \
-                            Ci [pC++] = i ;                             \
+                            GB_ISET (Ci, pC, i) ;   /* Ci [pC] = i */   \
+                            pC++ ;                                      \
                         }                                               \
                         else                                            \
                         {                                               \

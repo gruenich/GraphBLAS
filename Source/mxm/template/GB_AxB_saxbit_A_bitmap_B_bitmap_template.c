@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C is bitmap, A and B are bitmap/full.  M has any format.  If M is sparse
 // or hypersparse, it has been scattered into the bitmap of C.
 
@@ -132,7 +134,7 @@
                 for (int64_t i = istart ; i < iend ; i++)
                 {
                     int64_t pA = i + k * avlen ;
-                    int8_t ab = GBB_A (Ab, pA) ;
+                    int8_t ab = GBb_A (Ab, pA) ;
                     i_local = i - istart ;
                     k_local = k - kstart ;
                     Ab_cache [i_local * GB_KTILE_SIZE ...
@@ -256,8 +258,8 @@
                         {
                             int64_t pA = i + k * avlen ;    // pointer to A(i,k)
                             int64_t pB = k + j * bvlen ;    // pointer to B(k,j)
-                            if (!GBB_A (Ab, pA)) continue ;
-                            if (!GBB_B (Bb, pB)) continue ;
+                            if (!GBb_A (Ab, pA)) continue ;
+                            if (!GBb_B (Bb, pB)) continue ;
                             GB_GET_B_kj ;                   // get B(k,j)
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             if (cb == 0)
@@ -288,8 +290,8 @@
                         { 
                             int64_t pA = i + k * avlen ;    // pointer to A(i,k)
                             int64_t pB = k + j * bvlen ;    // pointer to B(k,j)
-                            if (!GBB_A (Ab, pA)) continue ;
-                            if (!GBB_B (Bb, pB)) continue ;
+                            if (!GBb_A (Ab, pA)) continue ;
+                            if (!GBb_B (Bb, pB)) continue ;
                             GB_GET_B_kj ;                   // get B(k,j)
                             GB_MULT_A_ik_B_kj ;             // t = A(i,k)*B(k,j)
                             // C(i,j) += A(i,k) * B(k,j)

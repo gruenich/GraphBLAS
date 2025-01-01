@@ -153,7 +153,8 @@ void mexFunction
     fprintf (fp, "GB_enumify_mxm / GB_macrofy_mxm, C iso\n") ;
     printf ("GB_enumify_mxm / GB_macrofy_mxm, C iso\n") ;
     GB_enumify_mxm (&method_code, /* C_iso: */ true, /* C_in_iso: */ true,
-        GxB_SPARSE, GrB_BOOL, /* M: */ NULL, false, false,
+        GxB_SPARSE, GrB_BOOL, /* is_32: */ false, false, false,
+        /* M: */ NULL, false, false,
         GrB_LAND_LOR_SEMIRING_BOOL, /* flipxy: */ true, A, B) ;
     GB_macrofy_mxm (fp, method_code, GrB_LAND_LOR_SEMIRING_BOOL,
         GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
@@ -162,7 +163,8 @@ void mexFunction
     fprintf (fp, "GB_enumify_mxm / GB_macrofy_mxm, any_pair, flipxy\n") ;
     printf ("GB_enumify_mxm / GB_macrofy_mxm, any_pair, flipxy\n") ;
     GB_enumify_mxm (&method_code, /* C_iso: */ true, /* C_in_iso: */ false,
-        GxB_SPARSE, GrB_BOOL, /* M: */ NULL, false, false,
+        GxB_SPARSE, GrB_BOOL, /* is_32: */ false, false, false,
+        /* M: */ NULL, false, false,
         GxB_ANY_PAIR_BOOL, /* flipxy: */ true, A, B) ;
     GB_macrofy_mxm (fp, method_code, GxB_ANY_PAIR_BOOL,
         GrB_BOOL, GrB_BOOL, GrB_BOOL) ;
@@ -171,7 +173,8 @@ void mexFunction
     fprintf (fp, "GB_enumify_mxm / GB_macrofy_mxm, any_pair fp32\n") ;
     printf ("GB_enumify_mxm / GB_macrofy_mxm, any_pair fp32\n") ;
     GB_enumify_mxm (&method_code, /* C_iso: */ false, /* C_in_iso: */ false,
-        GxB_SPARSE, GrB_FP32, /* M: */ NULL, false, false,
+        GxB_SPARSE, GrB_FP32, /* is_32: */ false, false, false,
+        /* M: */ NULL, false, false,
         GxB_ANY_PAIR_FP32, /* flipxy: */ true, A, B) ;
     GB_macrofy_mxm (fp, method_code, GxB_ANY_PAIR_FP32,
         GrB_FP32, GrB_FP32, GrB_FP32) ;

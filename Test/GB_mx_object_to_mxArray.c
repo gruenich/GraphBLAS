@@ -57,10 +57,12 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 
     if (C->p_is_32 || C->j_is_32 || C->i_is_32)
     {
-        mexPrintf ("C has 32-bit components.  Where from?\n") ;
+        mexPrintf ("C has 32-bit components (%d,%d,%d).  Where from?\n",
+            C->p_is_32, C->j_is_32, C->i_is_32) ;
         GxB_print (C, 2) ;
-        mexErrMsgTxt ("FIXME") ;
+        mexErrMsgTxt ("FIXME: import GrB_Matrix with 32-bits)") ;
     }
+
     GB_convert_int (C, false, false, false, true) ;
 
     //--------------------------------------------------------------------------

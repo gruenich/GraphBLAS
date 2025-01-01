@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Constructs a set of tasks that slice a single input matrix M.  This function
 // is currently only used by GB_AxB_dot3, to slice the mask matrix M, which has
@@ -80,10 +80,11 @@ GrB_Info GB_AxB_dot3_one_slice
     // get M
     //--------------------------------------------------------------------------
 
-    const uint64_t *restrict Mp = M->p ; // FIXME
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
     const int64_t mnz = GB_nnz_held (M) ;
     const int64_t mnvec = M->nvec ;
     const int64_t mvlen = M->vlen ;
+    const bool Mp_is_32 = M->p_is_32 ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -134,7 +135,7 @@ GrB_Info GB_AxB_dot3_one_slice
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (Coarse, Mp, false, mnvec, ntasks1, false) ;     // FIXME
+    GB_p_slice (Coarse, Mp, Mp_is_32, mnvec, ntasks1, false) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
@@ -206,7 +207,8 @@ GrB_Info GB_AxB_dot3_one_slice
             // determine the # of fine-grain tasks to create for vector k
             //------------------------------------------------------------------
 
-            int64_t mknz = (Mp == NULL) ? mvlen : (Mp [k+1] - Mp [k]) ;
+            int64_t mknz = (Mp == NULL) ? mvlen :
+                (GB_IGET (Mp, k+1) - GB_IGET (Mp, k)) ;
             int nfine = ((double) mknz) / target_task_size ;
             nfine = GB_IMAX (nfine, 1) ;
 
@@ -248,7 +250,7 @@ GrB_Info GB_AxB_dot3_one_slice
                     // slice M(:,k) for this task
                     int64_t p1, p2 ;
                     GB_PARTITION (p1, p2, mknz, tfine, nfine) ;
-                    int64_t pM_start = GBP (Mp, k, mvlen) ;
+                    int64_t pM_start = GB_IGET (Mp, k) ;
                     int64_t pM     = pM_start + p1 ;
                     int64_t pM_end = pM_start + p2 ;
                     TaskList [ntasks].pM     = pM ;
@@ -262,6 +264,7 @@ GrB_Info GB_AxB_dot3_one_slice
     }
 
     ASSERT (ntasks <= max_ntasks) ;
+// printf ("dot3 one slice: ntasks %d\n", ntasks) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

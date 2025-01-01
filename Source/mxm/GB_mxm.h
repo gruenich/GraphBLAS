@@ -152,12 +152,14 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 GrB_Info GB_AxB_dot3_slice
 (
     // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
+    GB_task_struct **p_TaskList,    // array of structs
     size_t *p_TaskList_size,        // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
-    const GrB_Matrix C,             // matrix to slice
+    const GrB_Matrix C,             // matrix to slice (only C->p, C->h present)
+    float *Cwork,                   // workspace of size cnz+1
+    int64_t cnz,                    // # entries that will appear in C
     GB_Werk Werk
 ) ;
 

@@ -361,7 +361,7 @@ void GB_qsort_1b_32_size16 // GB_qsort_1b, A_1 with sizeof = 16, A0: 32 bit
 
 #include "sort/template/GB_qsort_template.c"
 
-void GB_qsort_1b_64_size16 // GB_qsort_1, A_1 with sizeof = 16, A0: 64 bit
+void GB_qsort_1b_64_size16 // GB_qsort_1b, A_1 with sizeof = 16, A0: 64 bit
 (
     GB_A0_t *restrict A_0,      // size n array
     GB_A1_t *restrict A_1,      // size n array

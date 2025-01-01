@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #ifndef GB_AXB_SAXPY_GENERIC_H
 #define GB_AXB_SAXPY_GENERIC_H
 

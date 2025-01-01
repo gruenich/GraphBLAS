@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
-// Parallel matrix-matrix multiply, A'*B, with optional mask M.  This
-// method is used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of the latter two
-// methods, B on input will be an nrows-by-1 column vxector.
+// Parallel matrix-matrix multiply, A'*B, with optional mask M.  This method is
+// used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of the latter two methods,
+// B on input will be an nrows-by-1 column vxector.
 
 // This function, and the matrices C, M, A, and B are all CSR/CSC agnostic.
 // For this discussion, suppose they are CSC, with vlen = # of rows, and vdim =
@@ -158,13 +158,21 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
     if (A->vlen == 0)
     { 
+
         // no work to do; C is an empty matrix, normally hypersparse
+
+        // determine the p_is_32, j_is_32, and i_is_32 settings for the new
+        // matrix
+        bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+        GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+            Werk->p_control, Werk->j_control, Werk->i_control,
+            GxB_AUTO_SPARSITY, 1, A->vdim, B->vdim) ;
+
         GBURBLE ("(empty dot) ") ;
         if (C_in != NULL) return (GrB_SUCCESS) ;
         return (GB_new (&C, // auto sparsity, existing header
             ztype, A->vdim, B->vdim, GB_ph_calloc, true, GxB_AUTO_SPARSITY,
-            GB_Global_hyper_switch_get ( ), 1,
-            /* FIXME: */ false, false, false)) ;
+            GB_Global_hyper_switch_get ( ), 1, Cp_is_32, Cj_is_32, Ci_is_32)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -195,7 +203,11 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (!C_iso &&   // Fixme for CUDA, remove and create C iso on output
-            GB_cuda_AxB_dot3_branch (M, Mask_struct, A, B, semiring, flipxy))
+            GB_cuda_AxB_dot3_branch (M, Mask_struct, A, B, semiring, flipxy)
+            && !C->p_is_32 && !C->j_is_32 && !C->i_is_32
+            && !M->p_is_32 && !M->j_is_32 && !M->i_is_32
+            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32
+            && !B->p_is_32 && !B->j_is_32 && !B->i_is_32)
         {
             info = (GB_cuda_AxB_dot3 (C, M, Mask_struct, A, B, semiring,
                 flipxy)) ;

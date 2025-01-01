@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "mxm/GB_mxm.h"
 #include "binaryop/GB_binop.h"
 #include "apply/GB_apply.h"
@@ -211,7 +213,10 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_colscale_branch (A, D, semiring, flipxy))
+        if (GB_cuda_colscale_branch (A, D, semiring, flipxy)
+            && !C->p_is_32 && !C->j_is_32 && !C->i_is_32    
+            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32    
+            && !D->p_is_32 && !D->j_is_32 && !D->i_is_32)
         {
             info = GB_cuda_colscale (C, A, D, semiring, flipxy) ;
         }

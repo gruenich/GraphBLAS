@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Creates a new matrix but does not allocate space for A->b, A->i, and A->x.
 // See GB_new_bix instead.

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // C and M are both sparse or both hyper, and C->h is a copy of M->h.
 // M is present, and not complemented.  It may be valued or structural.
@@ -30,6 +30,9 @@
         int64_t pC_last  = TaskList [tid].pC_end ;
         int64_t task_nzombies = 0 ;     // # of zombies found by this task
 
+// printf ("task %d, kifrst %ld klask %ld, pc first %ld pc last %ld\n",
+//     tid, kfirst, klast, pC_first, pC_last) ;
+
         //----------------------------------------------------------------------
         // compute all vectors in this task
         //----------------------------------------------------------------------
@@ -46,11 +49,12 @@
             const int64_t j = k ;
             #else
             // M and C are either both sparse or both hypersparse
-            const int64_t j = GBH_C (Ch, k) ;
+            const int64_t j = GBh_C (Ch, k) ;
             #endif
 
-            int64_t pC_start = Cp [k] ;
-            int64_t pC_end   = Cp [k+1] ;
+            int64_t pC_start = GB_IGET (Cp, k) ;
+            int64_t pC_end   = GB_IGET (Cp, k+1) ;
+// printf ("\n--------------- k %ld pC %ld %ld\n", k, pC_start, pC_end) ;
             if (k == kfirst)
             { 
                 // First vector for task; may only be partially owned.
@@ -66,6 +70,7 @@
             { 
                 // task completely owns this vector C(:,k).
             }
+// printf ("\n   k %ld pC %ld %ld\n", k, pC_start, pC_end) ;
 
             //------------------------------------------------------------------
             // get B(:,j)
@@ -74,13 +79,13 @@
             #if GB_B_IS_HYPER
                 // B is hyper: find B(:,j) using the B->Y hyper hash
                 int64_t pB_start, pB_end ;
-                GB_hyper_hash_lookup (false, false, // FIXME
+                GB_hyper_hash_lookup (GB_Bp_IS_32, GB_Bj_IS_32,
                     Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
                     j, &pB_start, &pB_end) ;
             #elif GB_B_IS_SPARSE
                 // B is sparse
-                const int64_t pB_start = Bp [j] ;
-                const int64_t pB_end = Bp [j+1] ;
+                const int64_t pB_start = GB_IGET (Bp, j) ;
+                const int64_t pB_end = GB_IGET (Bp, j+1) ;
             #else
                 // B is bitmap or full
                 const int64_t pB_start = j * vlen ;
@@ -88,6 +93,7 @@
 
             #if (GB_B_IS_SPARSE || GB_B_IS_HYPER)
                 const int64_t bjnz = pB_end - pB_start ;
+// printf ("do %ld: %ld\n", j, bjnz) ;
                 if (bjnz == 0)
                 {
                     // no work to do if B(:,j) is empty, except for zombies
@@ -95,21 +101,24 @@
                     for (int64_t pC = pC_start ; pC < pC_end ; pC++)
                     { 
                         // C(i,j) is a zombie
-                        int64_t i = Mi [pC] ;
-                        Ci [pC] = GB_ZOMBIE (i) ;   // FIXME
+                        int64_t i = GB_IGET (Mi, pC) ;
+                        i = GB_ZOMBIE (i) ;
+                        GB_ISET (Ci, pC, i) ;   // Ci [pC] = i
                     }
                     continue ;
                 }
                 #if (GB_A_IS_SPARSE || GB_A_IS_HYPER)
                     // Both A and B are sparse; get first and last in B(:,j)
-                    const int64_t ib_first = Bi [pB_start] ;
-                    const int64_t ib_last  = Bi [pB_end-1] ;
+                    const int64_t ib_first = GB_IGET (Bi, pB_start) ;
+                    const int64_t ib_last  = GB_IGET (Bi, pB_end-1) ;
                 #endif
             #endif
 
             //------------------------------------------------------------------
             // C(:,j)<M(:,j)> = A(:,i)'*B(:,j)
             //------------------------------------------------------------------
+
+// printf ("pC %ld %ld\n", pC_start, pC_end) ;
 
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             {
@@ -122,12 +131,14 @@
                 GB_DECLARE_IDENTITY (cij) ;
 
                 // get the value of M(i,j)
-                int64_t i = Mi [pC] ;
+                int64_t i = GB_IGET (Mi, pC) ;
+// printf ("got %ld: \n", i) ;
                 #if !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                 // if M is structural, no need to check its values
                 if (GB_MCAST (Mx, pC, msize))
                 #endif
                 { 
+// printf ("do %ld: \n", i) ;
 
                     //----------------------------------------------------------
                     // the mask allows C(i,j) to be computed
@@ -136,15 +147,15 @@
                     #if GB_A_IS_HYPER
                     // A is hyper: find A(:,i) using the A->Y hyper hash
                     int64_t pA, pA_end ;
-                    GB_hyper_hash_lookup (false, false, // FIXME
+                    GB_hyper_hash_lookup (GB_Ap_IS_32, GB_Aj_IS_32,
                         Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                         i, &pA, &pA_end) ;
                     const int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     #elif GB_A_IS_SPARSE
                     // A is sparse
-                    int64_t pA = Ap [i] ;
-                    const int64_t pA_end = Ap [i+1] ;
+                    int64_t pA = GB_IGET (Ap, i) ;
+                    const int64_t pA_end = GB_IGET (Ap, i+1) ;
                     const int64_t ainz = pA_end - pA ;
                     if (ainz > 0)
                     #else
@@ -152,6 +163,7 @@
                     const int64_t pA = i * vlen ;
                     #endif
                     { 
+// printf ("dot3 for (%ld,%ld)\n", i, j) ;
                         // C(i,j) = A(:,i)'*B(:,j)
                         #include "template/GB_AxB_dot_cij.c"
                     }
@@ -161,7 +173,8 @@
                 { 
                     // C(i,j) is a zombie
                     task_nzombies++ ;
-                    Ci [pC] = GB_ZOMBIE (i) ;   // FIXME
+                    i = GB_ZOMBIE (i) ;
+                    GB_ISET (Ci, pC, i) ;   // Ci [pC] = i
                 }
             }
         }

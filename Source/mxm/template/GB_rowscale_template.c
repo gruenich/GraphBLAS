@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // This template is not used If C is iso, since all that is needed is to create
 // C as a shallow-copy of the pattern of A.
@@ -42,7 +42,7 @@
     const bool B_iso = B->iso ;
     #endif
 
-    const int64_t *restrict Bi = B->i ; // FIXME
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     GB_B_NVALS (bnz) ;      // const int64_t bnz = GB_nnz (B) ;
     const int64_t bvlen = B->vlen ;
 
@@ -65,7 +65,7 @@
         GB_PRAGMA_SIMD_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
         { 
-            int64_t i = GBI_B (Bi, p, bvlen) ;      // get row index of B(i,j)
+            int64_t i = GBi_B (Bi, p, bvlen) ;      // get row index of B(i,j)
             GB_DECLAREA (dii) ;
             GB_GETA (dii, Dx, i, D_iso) ;           // dii = D(i,i)
             GB_DECLAREB (bij) ;

@@ -78,6 +78,8 @@ GrB_Info GxB_IndexBinaryOp_new
     op->idxunop_function = NULL ;
     op->binop_function = NULL ;
     op->idxbinop_function = function ;
+    op->theta = NULL ;
+    op->theta_size = 0 ;
 
     op->opcode = GB_USER_idxbinop_code ;
 

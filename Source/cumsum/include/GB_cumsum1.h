@@ -88,5 +88,39 @@ static inline bool GB_cumsum1_32   // cumulative sum of an array
     return (s <= UINT32_MAX) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_cumsum1_float: float variant
+//------------------------------------------------------------------------------
+
+static inline bool GB_cumsum1_float   // cumulative sum of an array
+(
+    float *restrict count,   // size n+1, input/output
+    const int64_t n
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (count != NULL) ;
+    ASSERT (n >= 0) ;
+
+    //--------------------------------------------------------------------------
+    // count = cumsum ([0 count[0:n-1]]) ;
+    //--------------------------------------------------------------------------
+
+    double s = 0 ;
+    for (int64_t i = 0 ; i < n ; i++)
+    { 
+        double c = count [i] ;
+        count [i] = s ;
+        s += c ;
+    }
+    count [n] = s ;
+
+    return (true) ;
+}
+
 #endif
 

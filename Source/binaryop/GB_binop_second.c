@@ -45,15 +45,17 @@ GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
             // be used at all anyway).  This binary op will not be treated as a
             // builtin operator, however, since its data type is not builtin.
             // Its hash, op->hash, will be nonzero.  The name of SECOND_UDT is
-            // the same as the name of the type.
+            // the same as the name of the type.  This is a sufficiently unique
+            // name for the JIT, because the opcode differs from any user-
+            // defined op, and no other mechanism exists for creating a
+            // SECOND_UDT opertor except for this method.
             if (op == NULL) return (NULL) ;
             // op = &op_header has been provided by the caller
             op->header_size = 0 ;
             #ifdef GB_DEBUG
             GrB_Info info =
             #endif
-            GB_binop_new (op,
-                NULL,               // op->binop_function is NULL for SECOND_UDT
+            GB_binop_new (op, NULL, // op->binop_function is NULL for SECOND_UDT
                 type, type, type,   // type is user-defined
                 type->name,         // same name as type
                 NULL,               // no op->defn for the SECOND_UDT operator

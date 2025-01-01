@@ -20,8 +20,8 @@
 
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
-        int64_t pC = Cp [kk] ;
-        int64_t cjnz = Cp [kk+1] - pC ;
+        int64_t pC = GB_IGET (Cp, kk) ;
+        int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
         if (cjnz == 0) continue ;   // nothing to do
         GB_GET_B_j ;                // get B(:,j)
         #ifndef GB_GENERIC
@@ -99,7 +99,8 @@
                         Hf [i] = mark1 ;        // mark as seen
                         GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
                         GB_HX_WRITE (i, t) ;    // Hx [i] = t
-                        Ci [pC++] = i ;         // create C(:,j) pattern
+                        GB_ISET (Ci, pC, i) ;   // Ci [pC] = i
+                        pC++ ;
                     }
                     else if (hf == mark1)
                     { 

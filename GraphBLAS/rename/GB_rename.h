@@ -275,6 +275,7 @@
 #define GB_csignum GM_csignum
 #define GB_ctruncf GM_ctruncf
 #define GB_ctrunc GM_ctrunc
+#define GB_cumsum_float GM_cumsum_float
 #define GB_cumsum GM_cumsum
 #define GB_demacrofy_name GM_demacrofy_name
 #define GB_desc_name_get GM_desc_name_get
@@ -1144,6 +1145,9 @@
 #define GB_pow_uint64 GM_pow_uint64
 #define GB_pow_uint8 GM_pow_uint8
 #define GB_prejit GM_prejit
+#define GB_p_slice_32 GM_p_slice_32
+#define GB_p_slice_64 GM_p_slice_64
+#define GB_p_slice_float GM_p_slice_float
 #define GB_p_slice GM_p_slice
 #define GB_qsort_1_32 GM_qsort_1_32
 #define GB_qsort_1_64 GM_qsort_1_64

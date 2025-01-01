@@ -151,12 +151,9 @@ GrB_Info axb (GB_Werk Werk)
     {
         GrB_Matrix_free_(&C) ;
     }
-
     GrB_Matrix_free_(&T) ;
-
     GrB_BinaryOp_free_(&My_rdiv2) ;
     GrB_Semiring_free_(&My_plus_rdiv2) ;
-
     return (info) ;
 }
 
@@ -264,6 +261,7 @@ void mexFunction
     METHOD (axb (Werk)) ;
 
     // return C
+    GB_convert_int (C, false, false, false, true) ;     // FIXME
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
     pargout [1] = mxCreateDoubleScalar ((double) done_in_place) ;
 

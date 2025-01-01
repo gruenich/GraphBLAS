@@ -15,8 +15,8 @@
         // get C(:,j) and B(:,j)
         //----------------------------------------------------------------------
 
-        int64_t pC = Cp [kk] ;
-        int64_t cjnz = Cp [kk+1] - pC ;
+        int64_t pC = GB_IGET (Cp, kk) ;
+        int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
         if (cjnz == 0) continue ;           // no work to do if C(:,j) empty
         GB_GET_B_j ;
 
@@ -105,7 +105,8 @@
                         // C(i,j) = A(i,k) * B(k,j)
                         Hf [i] = mark ;
                         GB_HX_WRITE (i, t) ;    // Hx [i] = t
-                        Ci [pC++] = i ;
+                        GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
+                        pC++ ;
                     }
                     else
                     { 

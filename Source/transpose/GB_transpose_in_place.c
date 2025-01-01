@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
 
 // All other uses of GB_transpose are not in-place.
 // No operator is applied and no typecasting is done.

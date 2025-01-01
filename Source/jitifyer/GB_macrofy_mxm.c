@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
@@ -32,6 +32,23 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
     // extract the semiring method_code
     //--------------------------------------------------------------------------
+
+    // C, M, A, B: 32/64 (3 hex digits)
+    bool Cp_is_32   = GB_RSHIFT (method_code, 63, 1) ;
+    bool Cj_is_32   = GB_RSHIFT (method_code, 62, 1) ;
+    bool Ci_is_32   = GB_RSHIFT (method_code, 61, 1) ;
+
+    bool Mp_is_32   = GB_RSHIFT (method_code, 60, 1) ;
+    bool Mj_is_32   = GB_RSHIFT (method_code, 59, 1) ;
+    bool Mi_is_32   = GB_RSHIFT (method_code, 58, 1) ;
+
+    bool Ap_is_32   = GB_RSHIFT (method_code, 57, 1) ;
+    bool Aj_is_32   = GB_RSHIFT (method_code, 56, 1) ;
+    bool Ai_is_32   = GB_RSHIFT (method_code, 55, 1) ;
+
+    bool Bp_is_32   = GB_RSHIFT (method_code, 54, 1) ;
+    bool Bj_is_32   = GB_RSHIFT (method_code, 53, 1) ;
+    bool Bi_is_32   = GB_RSHIFT (method_code, 52, 1) ;
 
     // monoid (4 bits, 1 hex digit)
 //  int add_code    = GB_RSHIFT (method_code, 48, 5) ;
@@ -362,15 +379,15 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     //--------------------------------------------------------------------------
 
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
-        C_in_iso,
-        /* FIXME: */ false, false, false) ;
+        C_in_iso, Cp_is_32, Cj_is_32, Ci_is_32) ;
+    fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name
     //--------------------------------------------------------------------------
 
     GB_macrofy_mask (fp, mask_ecode, "M", msparsity,
-        /* FIXME: */ false, false, false) ;
+        Mp_is_32, Mj_is_32, Mi_is_32) ;
 
     //--------------------------------------------------------------------------
     // construct the macros for A and B
@@ -381,13 +398,11 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     GB_macrofy_input (fp, "a", "A", "A", true,
         flipxy ? ytype : xtype,
-        atype, asparsity, acode, A_iso, -1,
-        /* FIXME: */ false, false, false) ;
+        atype, asparsity, acode, A_iso, -1, Ap_is_32, Aj_is_32, Ai_is_32) ;
 
     GB_macrofy_input (fp, "b", "B", "B", true,
         flipxy ? xtype : ytype,
-        btype, bsparsity, bcode, B_iso, -1,
-        /* FIXME: */ false, false, false) ;
+        btype, bsparsity, bcode, B_iso, -1, Bp_is_32, Bj_is_32, Bi_is_32) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

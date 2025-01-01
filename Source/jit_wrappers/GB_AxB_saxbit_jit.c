@@ -48,6 +48,7 @@ GrB_Info GB_AxB_saxbit_jit      // C<M>=A*B, saxbit, via the JIT
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_AXB_SAXBIT,
         false, false, GxB_BITMAP, C->type,
+        /* OK, C is bitmap: */ false, false, false,
         M, Mask_struct, Mask_comp, semiring, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -43,6 +43,8 @@ GrB_Info GB_bitmap_expand_to_hyper
     ASSERT_MATRIX_OK (A, "A for expand C from bitmap/full to hyper", GB0) ;
     ASSERT_MATRIX_OK (B, "B for expand C from bitmap/full to hyper", GB0) ;
 
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+
     int64_t cvlen = C->vlen ;
     int64_t cvdim = C->vdim ;
     int64_t cnz = cvlen * cvdim ;
@@ -58,23 +60,38 @@ GrB_Info GB_bitmap_expand_to_hyper
     // allocate the sparse/hypersparse structure of the final C
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Cp = NULL ; size_t Cp_size = 0 ; // FIXME
-    int64_t *restrict Ch = NULL ; size_t Ch_size = 0 ;  // FIXME
-    int64_t *restrict Ci = NULL ; size_t Ci_size = 0 ;  // FIXME
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        Werk->p_control, Werk->j_control, Werk->i_control,
+        GxB_HYPERSPARSE, cnz, cvlen, cvdim) ;
 
-    Cp = GB_MALLOC (cvdim+1, uint64_t, &Cp_size) ;   // FIXME
-    Ch = NULL ;
+    size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t cjsize = (Cj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t cisize = (Ci_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    GB_Type_code cjcode = (Cj_is_32  ) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code bjcode = (B->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+
+    GB_MDECL (Cp, , u) ; size_t Cp_size = 0 ;
+    GB_MDECL (Ci, , u) ; size_t Ci_size = 0 ;
+    void *Ch = NULL ; size_t Ch_size = 0 ;
+
+    Cp = GB_MALLOC_MEMORY (cvdim+1, cpsize, &Cp_size) ;
     if (B_is_hyper)
     { 
-        Ch = GB_MALLOC (cvdim, int64_t, &Ch_size) ; // FIXME
+        Ch = GB_MALLOC_MEMORY (cvdim, cjsize, &Ch_size) ;
     }
-    Ci = GB_MALLOC (cnz, int64_t, &Ci_size) ;   // FIXME
+    Ci = GB_MALLOC_MEMORY (cnz, cisize, &Ci_size) ;
     if (Cp == NULL || (B_is_hyper && Ch == NULL) || Ci == NULL)
     { 
         // out of memory
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
+
+    GB_IPTR (Cp, Cp_is_32) ;
+    GB_IPTR (Ci, Ci_is_32) ;
 
     //--------------------------------------------------------------------------
     // construct the hyperlist of C, if B is hypersparse
@@ -87,7 +104,8 @@ GrB_Info GB_bitmap_expand_to_hyper
     { 
         // C becomes hypersparse
         ASSERT (cvdim == B->nvec) ;
-        GB_memcpy (Ch, B->h, cvdim * sizeof (int64_t), nthreads) ;  // FIXME
+//      GB_memcpy (Ch, B->h, cvdim * sizeof (int64_t), nthreads) ;
+        GB_cast_int (Ch, cjcode, B->h, bjcode, cvdim, nthreads) ;
     }
 
     //--------------------------------------------------------------------------
@@ -98,7 +116,8 @@ GrB_Info GB_bitmap_expand_to_hyper
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (pC = 0 ; pC < cvdim+1 ; pC++)
     { 
-        Cp [pC] = pC * cvlen ;  // FIXME
+        int64_t p = pC * cvlen ;
+        GB_ISET (Cp, pC, p) ;   // Cp [pC] = p
     }
 
     //--------------------------------------------------------------------------
@@ -116,13 +135,13 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            const uint64_t *restrict Ah = (uint64_t *) A->h ; // FIXME
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)
             {
-                int64_t i = Ah [pC % cvlen] ;
-                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;   // FIXME
+                int64_t i = GB_IGET (Ah, pC % cvlen) ;
+                i = (Cb [pC]) ? i : GB_ZOMBIE (i) ;
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
             }
         }
         else
@@ -133,7 +152,8 @@ GrB_Info GB_bitmap_expand_to_hyper
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = pC % cvlen ;
-                Ci [pC] = (Cb [pC]) ? i : GB_ZOMBIE (i) ;   // FIXME
+                i = (Cb [pC]) ? i : GB_ZOMBIE (i) ;
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
             }
         }
     }
@@ -143,13 +163,12 @@ GrB_Info GB_bitmap_expand_to_hyper
         if (A_is_hyper)
         { 
             // only for C=A'*B
-            const uint64_t *restrict Ah = (uint64_t *) A->h ; // FIXME
             ASSERT (cvlen == A->nvec) ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < cnz ; pC++)
             {
-                int64_t i = Ah [pC % cvlen] ;
-                Ci [pC] = i ;   // FIXME
+                int64_t i = GB_IGET (Ah, pC % cvlen) ;
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
             }
         }
         else
@@ -160,7 +179,7 @@ GrB_Info GB_bitmap_expand_to_hyper
             for (pC = 0 ; pC < cnz ; pC++)
             {
                 int64_t i = pC % cvlen ;
-                Ci [pC] = i ;   // FIXME
+                GB_ISET (Ci, pC, i) ;   // Ci [pC] = i ;
             }
         }
     }
@@ -179,6 +198,9 @@ GrB_Info GB_bitmap_expand_to_hyper
     C->nvec = cvdim ;
     C->plen = cvdim ;
     C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
+    C->p_is_32 = Cp_is_32 ;
+    C->j_is_32 = Cj_is_32 ;
+    C->i_is_32 = Ci_is_32 ;
 
     // free the bitmap, if present
     GB_FREE ((&C->b), C->b_size) ;

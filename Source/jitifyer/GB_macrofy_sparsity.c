@@ -31,16 +31,8 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 "#define GB_%s_IS_HYPER  1\n"
                 "#define GB_%s_IS_SPARSE 0\n"
                 "#define GB_%s_IS_BITMAP 0\n"
-                "#define GB_%s_IS_FULL   0\n"
-                "#define GBP_%s(%sp,k,vlen) %sp [k]\n"  // FIXME remove
-                "#define GBH_%s(%sh,k)      %sh [k]\n"
-                "#define GBI_%s(%si,p,vlen) %si [p]\n"
-                "#define GBB_%s(%sb,p)      1\n",
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name) ;
-
+                "#define GB_%s_IS_FULL   0\n",
+                matrix_name, matrix_name, matrix_name, matrix_name) ;
             fprintf (fp,
                 "#define GBp_%s(%sp,k,vlen) %sp [k]\n"
                 "#define GBh_%s(%sh,k)      %sh [k]\n"
@@ -57,16 +49,8 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 "#define GB_%s_IS_HYPER  0\n"
                 "#define GB_%s_IS_SPARSE 1\n"
                 "#define GB_%s_IS_BITMAP 0\n"
-                "#define GB_%s_IS_FULL   0\n"
-                "#define GBP_%s(%sp,k,vlen) %sp [k]\n"
-                "#define GBH_%s(%sh,k)      (k)\n"
-                "#define GBI_%s(%si,p,vlen) %si [p]\n"
-                "#define GBB_%s(%sb,p)      1\n",
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name) ;
-
+                "#define GB_%s_IS_FULL   0\n",
+                matrix_name, matrix_name, matrix_name, matrix_name) ;
             fprintf (fp,
                 "#define GBp_%s(%sp,k,vlen) %sp [k]\n"
                 "#define GBh_%s(%sh,k)      (k)\n"
@@ -83,16 +67,8 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 "#define GB_%s_IS_HYPER  0\n"
                 "#define GB_%s_IS_SPARSE 0\n"
                 "#define GB_%s_IS_BITMAP 1\n"
-                "#define GB_%s_IS_FULL   0\n"
-                "#define GBP_%s(%sp,k,vlen) ((k) * (vlen))\n"
-                "#define GBH_%s(%sh,k)      (k)\n"
-                "#define GBI_%s(%si,p,vlen) ((p) %% (vlen))\n"
-                "#define GBB_%s(%sb,p)      %sb [p]\n",
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name) ;
-
+                "#define GB_%s_IS_FULL   0\n",
+                matrix_name, matrix_name, matrix_name, matrix_name) ;
             fprintf (fp,
                 "#define GBp_%s(%sp,k,vlen) ((k) * (vlen))\n"
                 "#define GBh_%s(%sh,k)      (k)\n"
@@ -109,15 +85,8 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 "#define GB_%s_IS_HYPER  0\n"
                 "#define GB_%s_IS_SPARSE 0\n"
                 "#define GB_%s_IS_BITMAP 0\n"
-                "#define GB_%s_IS_FULL   1\n"
-                "#define GBP_%s(%sp,k,vlen) ((k) * (vlen))\n"
-                "#define GBH_%s(%sh,k)      (k)\n"
-                "#define GBI_%s(%si,p,vlen) ((p) %% (vlen))\n"
-                "#define GBB_%s(%sb,p)      1\n",
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
+                "#define GB_%s_IS_FULL   1\n",
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
-
             fprintf (fp,
                 "#define GBp_%s(%sp,k,vlen) ((k) * (vlen))\n"
                 "#define GBh_%s(%sh,k)      (k)\n"
@@ -133,15 +102,8 @@ void GB_macrofy_sparsity    // construct macros for sparsity structure
                 "#define GB_%s_IS_HYPER  0\n"
                 "#define GB_%s_IS_SPARSE 0\n"
                 "#define GB_%s_IS_BITMAP 0\n"
-                "#define GB_%s_IS_FULL   1\n"
-                "#define GBP_%s(%sp,k,vlen) 0\n"
-                "#define GBH_%s(%sh,k)      (k)\n"
-                "#define GBI_%s(%si,p,vlen) 0\n"
-                "#define GBB_%s(%sb,p)      1\n",
-                matrix_name, matrix_name, matrix_name, matrix_name,
-                matrix_name, matrix_name, matrix_name, matrix_name,
+                "#define GB_%s_IS_FULL   1\n",
                 matrix_name, matrix_name, matrix_name, matrix_name) ;
-
             fprintf (fp,
                 "#define GBp_%s(%sp,k,vlen) 0\n"
                 "#define GBh_%s(%sh,k)      (k)\n"

@@ -2121,6 +2121,7 @@ void mexFunction
 
     OK (GB_AxB_dot2 (HugeMatrix, false, NULL, NULL, false, false,
         false, HugeRow, HugeRow, GxB_PLUS_TIMES_FP64, false, Werk)) ;
+    OK (GB_convert_int (HugeMatrix, false, false, false, true)) ;   // FIXME
 
     GxB_Matrix_fprint (HugeMatrix, "HugeMatrix", G3, ff) ;
     GrB_Matrix_free_(&HugeMatrix) ;

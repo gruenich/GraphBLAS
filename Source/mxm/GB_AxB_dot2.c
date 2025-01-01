@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // This method always constructs C as bitmap or full; it then converts C to
 // sparse or hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C
@@ -126,8 +126,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     bool A_is_hyper = GB_IS_HYPERSPARSE (A_in) ;
     bool B_is_hyper = GB_IS_HYPERSPARSE (B_in) ;
     bool A_or_B_hyper = A_is_hyper || B_is_hyper ;
-    uint64_t *restrict Ah = (uint64_t *) A_in->h ;    // FIXME
-    uint64_t *restrict Bh = (uint64_t *) B_in->h ;    // FIXME
+    void *Ah = A_in->h ;
+    void *Bh = B_in->h ;
 
     if (A_is_hyper)
     { 
@@ -180,8 +180,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         // if Mask_struct then Mwork is extracted as iso
         GB_CLEAR_STATIC_HEADER (Mwork, &Mwork_header) ;
         GB_OK (GB_subref (Mwork, Mask_struct, M_in->is_csc, M_in,
-            (A_is_hyper) ? Ah : GrB_ALL, /* FIXME: */ false, cvlen,
-            (B_is_hyper) ? Bh : GrB_ALL, /* FIXME: */ false, cvdim,
+            (A_is_hyper) ? Ah : GrB_ALL, A->j_is_32, cvlen,
+            (B_is_hyper) ? Bh : GrB_ALL, B->j_is_32, cvdim,
             false, Werk)) ;
         M = Mwork ;
         ASSERT_MATRIX_OK_OR_NULL (M, "M submask dot A'*B", GB0) ;
@@ -298,8 +298,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    GB_p_slice (A_slice, A->p, false, anvec, naslice, false) ;  // FIXME
-    GB_p_slice (B_slice, B->p, false, bnvec, nbslice, false) ;  // FIXME
+    GB_p_slice (A_slice, A->p, A->p_is_32, anvec, naslice, false) ;
+    GB_p_slice (B_slice, B->p, B->p_is_32, bnvec, nbslice, false) ;
 
     //--------------------------------------------------------------------------
     // allocate C
@@ -367,10 +367,20 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
             GB_sparsity_char_matrix (B_in)) ;
     }
 
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
+    bool hack32 = GB_Global_hack_get (4) ; // FIXME
+    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
+    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
+    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        p_control, j_control, i_control,
+        C_sparsity, cnz, cvlen, cvdim) ;
+
     GB_OK (GB_new_bix (&C, // bitmap/full, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true, C_sparsity,
         M_is_sparse_or_hyper, B->hyper_switch, cnvec, cnz, true, C_iso,
-        /* OK: */ false, false, false)) ;
+        Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     //--------------------------------------------------------------------------
     // if M is sparse/hyper, scatter it into the C bitmap
@@ -497,12 +507,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         }
     }
 
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory, or other error
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    GB_OK (info) ;
 
     //--------------------------------------------------------------------------
     // free workspace

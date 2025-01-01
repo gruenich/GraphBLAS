@@ -44,6 +44,7 @@ GrB_Info GB_AxB_saxpy4_jit          // C+=A*B, saxpy4 method, via the JIT
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_AXB_SAXPY4,
         false, false, GxB_FULL, C->type,
+        /* OK, C is full: */ false, false, false,
         NULL, true, false, semiring, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------

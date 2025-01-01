@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Purely symbolic phase1 for the dot3 method of GrB_mxm.  This does not
 // access any values, except for the mask.
@@ -47,7 +47,7 @@
             const int64_t j = k ;
             #else
             // M and C are either both sparse or both hypersparse
-            const int64_t j = GBH_C (Ch, k) ;
+            const int64_t j = GBh_C (Ch, k) ;
             #endif
 
             int64_t pM, pM_end ;
@@ -60,8 +60,8 @@
             else
             { 
                 // vectors are never sliced for a coarse task
-                pM     = GBP_M (Mp, k, mvlen) ;      // FIXME
-                pM_end = GBP_M (Mp, k+1, mvlen) ;    // FIXME
+                pM     = GBp_M (Mp, k, mvlen) ;
+                pM_end = GBp_M (Mp, k+1, mvlen) ;
             }
 
             //------------------------------------------------------------------
@@ -71,13 +71,13 @@
             #if GB_B_IS_HYPER
                 // B is hyper: find B(:,j) using the B->Y hyper hash
                 int64_t pB_start, pB_end ;
-                GB_hyper_hash_lookup (false, false, // FIXME
+                GB_hyper_hash_lookup (Bp_is_32, Bj_is_32,
                     Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
                     j, &pB_start, &pB_end) ;
             #elif GB_B_IS_SPARSE
                 // B is sparse
-                const int64_t pB_start = Bp [j] ;
-                const int64_t pB_end = Bp [j+1] ;
+                const int64_t pB_start = GB_IGET (Bp, j) ;
+                const int64_t pB_end = GB_IGET (Bp, j+1) ;
             #else
                 // B is bitmap or full
                 const int64_t pB_start = j * vlen ;
@@ -111,7 +111,7 @@
             {
                 for ( ; pM < pM_end ; pM++)
                 {
-                    int64_t work = 1 ;
+                    float work = 1 ;
                     #if !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                     // if M is structural, no need to check its values
                     if (GB_MCAST (Mx, pM, msize))
@@ -119,26 +119,28 @@
                     { 
                         #if GB_A_IS_HYPER
                         // A is hyper: find A(:,i) using the A->Y hyper hash
-                        const int64_t i = Mi [pM] ;
+                        const int64_t i = GB_IGET (Mi, pM) ;
                         int64_t pA, pA_end ;
-                        GB_hyper_hash_lookup (false, false, // FIXME
+                        GB_hyper_hash_lookup (Ap_is_32, Aj_is_32,
                             Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
                             i, &pA, &pA_end) ;
                         const int64_t ainz = pA_end - pA ;
                         work += GB_IMIN (ainz, bjnz) ;
                         #elif GB_A_IS_SPARSE
                         // A is sparse
-                        const int64_t i = Mi [pM] ;
-                        const int64_t pA = Ap [i] ;
-                        const int64_t pA_end = Ap [i+1] ;
+                        const int64_t i = GB_IGET (Mi, pM) ;
+                        const int64_t pA = GB_IGET (Ap, i) ;
+                        const int64_t pA_end = GB_IGET (Ap, i+1) ;
                         const int64_t ainz = pA_end - pA ;
                         work += GB_IMIN (ainz, bjnz) ;
+//                  printf ("Cwork %ld = %g,  C(%ld,%ld)\n", pM, work, i,j);
                         #else
                         // A is bitmap or full
                         work += bjnz ;
                         #endif
                     }
                     Cwork [pM] = work ;
+
                 }
             }
         }

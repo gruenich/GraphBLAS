@@ -598,8 +598,8 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
     #define GB_IINC(I,k,i) \
         { if (I ## 64) { I ## 64 [k] += (i) ; } else { I ## 32 [k] += (i) ; } }
 
-    // GB_IK: &(I [k]) for a 32/64-bit integer array I
-    #define GB_IK(I,k) (I ## 32 ?   \
+    // GB_IADDR: &(I [k]) for a 32/64-bit integer array I
+    #define GB_IADDR(I,k) (I ## 32 ?   \
         ((void *) (I ## 32 + k)) :  \
         ((void *) (I ## 64 + k)))
 
@@ -1001,61 +1001,11 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 #endif
 
 //------------------------------------------------------------------------------
-// OLD style: remove all of these
+// OLD style: remove all of these?
 //------------------------------------------------------------------------------
 
 #define GBP(Ap,k,avlen) ((Ap) ? Ap [k] : ((k) * (avlen)))
-#define GBH(Ah,k)       ((Ah) ? Ah [k] : (k))
 #define GBI(Ai,p,avlen) ((Ai) ? Ai [p] : ((p) % (avlen)))
-#define GBB(Ab,p)       ((Ab) ? Ab [p] : 1)
 
-// these macros are #defined by the JIT kernels:
-// FIXME replace GB[PHIB]_[CMABSRZ] with GB[phib]_[CMABSRZ].
-
-#ifndef GB_JIT_KERNEL
-
-    // accessing the C matrix
-    #define GBP_C(Cp,k,vlen) GBP (Cp,k,vlen)
-    #define GBH_C(Ch,k)      GBH (Ch,k)
-    #define GBI_C(Ci,p,vlen) GBI (Ci,p,vlen)
-    #define GBB_C(Cb,p)      GBB (Cb,p)
-
-    // accessing the M matrix
-    #define GBP_M(Mp,k,vlen) GBP (Mp,k,vlen)
-    #define GBH_M(Mh,k)      GBH (Mh,k)
-    #define GBI_M(Mi,p,vlen) GBI (Mi,p,vlen)
-    #define GBB_M(Mb,p)      GBB (Mb,p)
-
-    // accessing the A matrix
-    #define GBP_A(Ap,k,vlen) GBP (Ap,k,vlen)
-    #define GBH_A(Ah,k)      GBH (Ah,k)
-    #define GBI_A(Ai,p,vlen) GBI (Ai,p,vlen)
-    #define GBB_A(Ab,p)      GBB (Ab,p)
-
-    // accessing the B matrix
-    #define GBP_B(Bp,k,vlen) GBP (Bp,k,vlen)
-    #define GBH_B(Bh,k)      GBH (Bh,k)
-    #define GBI_B(Bi,p,vlen) GBI (Bi,p,vlen)
-    #define GBB_B(Bb,p)      GBB (Bb,p)
-
-    // accessing the S matrix
-    #define GBP_S(Sp,k,vlen) GBP (Sp,k,vlen)
-    #define GBH_S(Sh,k)      GBH (Sh,k)
-    #define GBI_S(Si,p,vlen) GBI (Si,p,vlen)
-    #define GBB_S(Sb,p)      GBB (Sb,p)
-
-    // accessing the R matrix
-    #define GBP_R(Rp,k,vlen) GBP (Rp,k,vlen)
-    #define GBH_R(Rh,k)      GBH (Rh,k)
-    #define GBI_R(Ri,p,vlen) GBI (Ri,p,vlen)
-    #define GBB_R(Rb,p)      GBB (Rb,p)
-
-    // accessing the Z matrix
-    #define GBP_Z(Zp,k,vlen) GBP (Zp,k,vlen)
-    #define GBH_Z(Zh,k)      GBH (Zh,k)
-    #define GBI_Z(Zi,p,vlen) GBI (Zi,p,vlen)
-    #define GBB_Z(Zb,p)      GBB (Zb,p)
-
-#endif
 #endif
 

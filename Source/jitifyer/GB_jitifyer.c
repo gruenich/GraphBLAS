@@ -1835,7 +1835,7 @@ GrB_Info GB_jitifyer_load2_worker
             monoid = semiring->add ;
             op1 = (GB_Operator) semiring->add->op ;
             op2 = (GB_Operator) semiring->multiply ;
-            method_code_digits = 13 ;
+            method_code_digits = 16 ;
             break ;
 
         case GB_jit_reduce_family : 

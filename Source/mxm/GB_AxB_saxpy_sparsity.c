@@ -16,6 +16,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "mxm/GB_AxB_saxpy.h"
 
 void GB_AxB_saxpy_sparsity          // determine C_sparsity and method to use

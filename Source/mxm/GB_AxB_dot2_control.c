@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // C=A'*B, C<M>=A'*B, or C<!M>=A'*B where C is constructed in bitmap format.
 // C must be small and likely very dense.
 

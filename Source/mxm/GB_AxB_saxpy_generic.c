@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // GB_AxB_saxpy_generic computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel,
 // with arbitrary types and operators, via memcpy and function pointers.  C can
 // be hyper, sparse, or bitmap (never full).  For all cases, the four matrices

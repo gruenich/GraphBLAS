@@ -31,8 +31,8 @@
             // B is sparse
             #define GB_GET_B_j                              \
                 const int64_t j = kk ;                      \
-                int64_t pB = Bp [kk] ;                      \
-                const int64_t pB_end = Bp [kk+1] ;          \
+                int64_t pB = GB_IGET (Bp, kk) ;             \
+                const int64_t pB_end = GB_IGET (Bp, kk+1) ; \
                 const int64_t bjnz = pB_end - pB ;          \
                 GB_GET_T_FOR_SECONDJ
 
@@ -70,7 +70,7 @@
 
         // B is hyper or sparse
         #define GB_GET_B_kj_INDEX                   \
-            const int64_t k = Bi [pB]
+            const int64_t k = GB_IGET (Bi, pB)
 
     #elif ( GB_B_IS_BITMAP )
 
@@ -91,8 +91,8 @@
 
     // for any format of B
     #define GB_GET_B_kj_INDEX                       \
-        if (!GBB_B (Bb, pB)) continue ;             \
-        const int64_t k = GBI_B (Bi, pB, bvlen)
+        if (!GBb_B (Bb, pB)) continue ;             \
+        const int64_t k = GBi_B (Bi, pB, bvlen)
 
 #endif
 
@@ -113,8 +113,8 @@
 
         // A is sparse
         #define GB_GET_A_k                              \
-            const int64_t pA_start = Ap [k] ;           \
-            const int64_t pA_end = Ap [k+1] ;           \
+            const int64_t pA_start = GB_IGET (Ap, k) ;  \
+            const int64_t pA_end = GB_IGET (Ap, k+1) ;  \
             const int64_t aknz = pA_end - pA_start
 
     #else
@@ -146,7 +146,7 @@
 
         // A is hyper or sparse
         #define GB_GET_A_ik_INDEX                   \
-            const int64_t i = Ai [pA]
+            const int64_t i = GB_IGET (Ai, pA)
 
     #elif ( GB_A_IS_BITMAP )
 
@@ -167,8 +167,8 @@
 
     // for any format of A
     #define GB_GET_A_ik_INDEX                       \
-        if (!GBB_A (Ab, pA)) continue ;             \
-        const int64_t i = GBI_A (Ai, pA, avlen)
+        if (!GBb_A (Ab, pA)) continue ;             \
+        const int64_t i = GBi_A (Ai, pA, avlen)
 
 #endif
 
@@ -184,12 +184,17 @@
 #if GB_IS_ANY_PAIR_SEMIRING
 
     // ANY_PAIR: result is purely symbolic; no numeric work to do
-    #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
-        ASSERT (A_is_sparse || A_is_hyper) ;                        \
-        GB_GET_B_kj_INDEX ;         /* get index k of B(k,j) */     \
-        GB_GET_A_k ;                /* get A(:,k) */                \
-        memcpy (Ci + pC, Ai + pA_start, aknz * sizeof (int64_t)) ;  \
-        /* C becomes jumbled if A is jumbled */                     \
+    #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                          \
+        ASSERT (A_is_sparse || A_is_hyper) ;                            \
+        GB_GET_B_kj_INDEX ;         /* get index k of B(k,j) */         \
+        GB_GET_A_k ;                /* get A(:,k) */                    \
+     /* memcpy (Ci + pC, Ai + pA_start, aknz * sizeof (int64_t)) ; */   \
+        for (int64_t kk = 0 ; kk < aknz ; kk++)                         \
+        {                                                               \
+            int64_t i = GB_IGET (Ai, pA_start + kk) ;                   \
+            GB_ISET (Ci, pC + kk, i) ;                                  \
+        }                                                               \
+        /* C becomes jumbled if A is jumbled */                         \
         task_C_jumbled = task_C_jumbled || A_jumbled ;
 
 #else
@@ -204,9 +209,10 @@
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)            \
         {                                                           \
             GB_GET_A_ik_INDEX ;     /* get index i of A(i,k) */     \
-            GB_MULT_A_ik_B_kj ;         /* t = A(i,k)*B(k,j) */     \
-            GB_CIJ_WRITE (pC, t) ;      /* Cx [pC] = t */           \
-            Ci [pC++] = i ;                                         \
+            GB_MULT_A_ik_B_kj ;     /* t = A(i,k)*B(k,j) */         \
+            GB_CIJ_WRITE (pC, t) ;  /* Cx [pC] = t */               \
+            GB_ISET (Ci, pC, i) ;   /* Ci [pC] = i */               \
+            pC++ ;                                                  \
         }                                                           \
         /* C becomes jumbled if A is jumbled */                     \
         task_C_jumbled = task_C_jumbled || A_jumbled ;
@@ -229,7 +235,7 @@
     #define GB_COMPUTE_DENSE_C_j                                    \
         for (int64_t i = 0 ; i < cvlen ; i++)                       \
         {                                                           \
-            Ci [pC + i] = i ;                                       \
+            GB_ISET (Ci, pC + i, i) ;   /* Ci [pC + i] = i */       \
         }
 
 #else
@@ -238,7 +244,7 @@
     #define GB_COMPUTE_DENSE_C_j                                    \
         for (int64_t i = 0 ; i < cvlen ; i++)                       \
         {                                                           \
-            Ci [pC + i] = i ;                                       \
+            GB_ISET (Ci, pC + i, i) ;   /* Ci [pC + i] = i */       \
             GB_CIJ_WRITE (pC + i, zidentity) ;  /* C(i,j)=0 */      \
         }                                                           \
         for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */           \
@@ -278,11 +284,11 @@
         {                                                                   \
             GB_GET_M_ij (pM) ;      /* get M(i,j) */                        \
             if (!mij) continue ;    /* skip if M(i,j)=0 */                  \
-            int64_t i = Mi [pM] ;                                           \
+            int64_t i = GB_IGET (Mi, pM) ;                                  \
             bool found ;            /* search for A(i,k) */                 \
             if (M_jumbled) pA = pA_start ;                                  \
             int64_t apright = pA_end - 1 ;                                  \
-            found = GB_binary_search (i, Ai, false, &pA, &apright) ;        \
+            found = GB_binary_search (i, Ai, GB_Ai_IS_32, &pA, &apright) ;  \
             if (found)                                                      \
             {                                                               \
                 /* C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method. */    \

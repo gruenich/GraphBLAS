@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // GB_AxB_saxpy3_template.c computes C=A*B for any semiring and matrix types,
 // where C is sparse or hypersparse.
@@ -24,15 +24,19 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    uint64_t *restrict Cp = C->p ;  // FIXME
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
     ASSERT (Cp != NULL) ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
+    #ifndef GB_JIT_KERNEL
+    const bool Ci_is_32 = C->i_is_32 ;
+    #define GB_Ci_IS_32 Ci_is_32
+    #endif
 
-    const uint64_t *restrict Bp = B->p ;    // FIXME
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const int8_t  *restrict Bb = B->b ;
+    GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
+    GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
+    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    const int8_t *restrict Bb = B->b ;
     const int64_t bvlen = B->vlen ;
     #ifdef GB_JIT_KERNEL
     #define B_iso GB_B_ISO
@@ -48,10 +52,10 @@
     const bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
     #endif
 
-    const uint64_t *restrict Ap = A->p ;    // FIXME
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const int8_t  *restrict Ab = A->b ;
+    GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
+    GB_Ah_DECLARE (Ah, const) ; GB_Ah_PTR (Ah, A) ;
+    GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
+    const int8_t *restrict Ab = A->b ;
     const int64_t anvec = A->nvec ;
     const int64_t avlen = A->vlen ;
     #ifdef GB_JIT_KERNEL
@@ -64,21 +68,27 @@
     const bool A_is_sparse = GB_IS_SPARSE (A) ;
     const bool A_is_hyper = GB_IS_HYPERSPARSE (A) ;
     const bool A_is_bitmap = GB_IS_BITMAP (A) ;
+    const bool Ap_is_32 = A->p_is_32 ;
+    const bool Aj_is_32 = A->j_is_32 ;
+    const bool Ai_is_32 = A->i_is_32 ;
+    #define GB_Ap_IS_32 Ap_is_32
+    #define GB_Aj_IS_32 Aj_is_32
+    #define GB_Ai_IS_32 Ai_is_32
     #endif
     const bool A_jumbled = A->jumbled ;
     const bool A_ok_for_binary_search = 
         ((A_is_sparse || A_is_hyper) && !A_jumbled) ;
 
-    const uint64_t *restrict A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;//FIXME
-    const int64_t *restrict A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
-    const int64_t *restrict A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
+    const void *A_Yp = (A->Y == NULL) ? NULL : A->Y->p ;
+    const void *A_Yi = (A->Y == NULL) ? NULL : A->Y->i ;
+    const void *A_Yx = (A->Y == NULL) ? NULL : A->Y->x ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
 
     #if ( !GB_NO_MASK )
-    const uint64_t *restrict Mp = M->p ;    // FIXME
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
-    const int8_t  *restrict Mb = M->b ;
+    GB_Mp_DECLARE (Mp, const) ; GB_Mp_PTR (Mp, M) ;
+    GB_Mh_DECLARE (Mh, const) ; GB_Mh_PTR (Mh, M) ;
+    GB_Mi_DECLARE (Mi, const) ; GB_Mi_PTR (Mi, M) ;
+    const int8_t *restrict Mb = M->b ;
     const GB_M_TYPE *restrict Mx = (GB_M_TYPE *) (Mask_struct ? NULL : (M->x)) ;
     #ifdef GB_JIT_KERNEL
     #define M_is_hyper  GB_M_IS_HYPER
@@ -86,15 +96,19 @@
     #else
     const bool M_is_hyper = GB_IS_HYPERSPARSE (M) ;
     const bool M_is_bitmap = GB_IS_BITMAP (M) ;
+    const bool Mp_is_32 = M->p_is_32 ;
+    const bool Mj_is_32 = M->j_is_32 ;
+    #define GB_Mp_IS_32 Mp_is_32
+    #define GB_Mj_IS_32 Mj_is_32
     #endif
     const bool M_jumbled = GB_JUMBLED (M) ;
     size_t msize = M->type->size ;
     int64_t mnvec = M->nvec ;
     int64_t mvlen = M->vlen ;
     // get the M hyper_hash
-    const uint64_t *restrict M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;//FIXME
-    const int64_t *restrict M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
-    const int64_t *restrict M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
+    const void *M_Yp = (M->Y == NULL) ? NULL : M->Y->p ;
+    const void *M_Yi = (M->Y == NULL) ? NULL : M->Y->i ;
+    const void *M_Yx = (M->Y == NULL) ? NULL : M->Y->x ;
     const int64_t M_hash_bits = (M->Y == NULL) ? 0 : (M->Y->vdim - 1) ;
     #endif
 
@@ -127,7 +141,7 @@
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t pB     = SaxpyTasks [taskid].start ;
         int64_t pB_end = SaxpyTasks [taskid].end + 1 ;
-        int64_t j = GBH_B (Bh, kk) ;
+        int64_t j = GBh_B (Bh, kk) ;
 
         GB_GET_T_FOR_SECONDJ ;
 
@@ -317,7 +331,9 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    // FIXME: if C->p_is_32 and cumsum overflows, reallocate to 64-bit
+    // FIXME: C->p is currently only uint64_t, to avoid overflow when cnz >
+    // UINT32_MAX.  Figure out how to set it to uint32_t for smaller matrices.
+
     GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
 
     //==========================================================================
@@ -325,12 +341,9 @@
     //==========================================================================
 
     // C is iso for the ANY_PAIR semiring, and non-iso otherwise
+
     // allocate Ci and Cx
-    int64_t cnz = Cp [cnvec] ;
-
-    // FIXME: ensure GB_new set C->p_is_32 and C->i_is_32 OK for cnz
-
-    // set C->iso = GB_IS_ANY_PAIR_SEMIRING     OK
+    int64_t cnz = GB_IGET (Cp, cnvec) ;
     GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
         GB_IS_ANY_PAIR_SEMIRING) ;
     if (info != GrB_SUCCESS)
@@ -342,7 +355,7 @@
     }
     C->nvals = cnz ;
 
-    int64_t *restrict Ci = C->i ;   // FIXME
+    GB_Ci_DECLARE_U (Ci, ) ; GB_Ci_PTR (Ci, C) ;
     #if ( !GB_IS_ANY_PAIR_SEMIRING )
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
@@ -375,7 +388,7 @@
             int team_size = SaxpyTasks [taskid].team_size ;
             int leader    = SaxpyTasks [taskid].leader ;
             int my_teamid = taskid - leader ;
-            int64_t pC = Cp [kk] ;
+            int64_t pC = GB_IGET (Cp, kk) ;
 
             if (use_Gustavson)
             {
@@ -387,7 +400,7 @@
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
                 int8_t *restrict
                     Hf = (int8_t *restrict) SaxpyTasks [taskid].Hf ;
-                int64_t cjnz = Cp [kk+1] - pC ;
+                int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
                 if (cjnz == cvlen)
@@ -395,7 +408,7 @@
                     // C(:,j) is dense
                     for (int64_t i = istart ; i < iend ; i++)
                     { 
-                        Ci [pC + i] = i ;
+                        GB_ISET (Ci, pC + i, i) ;   // Ci [pC + i] = i ;
                     }
                     // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
                     GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
@@ -408,8 +421,9 @@
                     {
                         if (Hf [i] == 2)
                         { 
-                            GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
-                            Ci [pC++] = i ;
+                            GB_CIJ_GATHER (pC, i) ;     // Cx [pC] = Hx [i]
+                            GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
+                            pC++ ;
                         }
                     }
                 }
@@ -436,7 +450,7 @@
                     if ((hf & 3) == 2)
                     { 
                         int64_t i = (hf >> 2) - 1 ; // found C(i,j) in hash
-                        Ci [pC] = i ;
+                        GB_ISET (Ci, pC, i) ;       // Ci [pC] = i ;
                         GB_CIJ_GATHER (pC, hash) ;  // Cx [pC] = Hx [hash]
                         pC++ ;
                     }

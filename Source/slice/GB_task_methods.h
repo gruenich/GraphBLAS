@@ -105,5 +105,37 @@ void GB_task_cumsum
     GB_Werk Werk
 ) ;
 
+void GB_p_slice_32       // slice Work, 32-bit
+(
+    // output:
+    int64_t *restrict Slice,    // size ntasks+1
+    // input:
+    const uint32_t *Work,       // array size n+1
+    const int64_t n,
+    const int ntasks,           // # of tasks
+    const bool perfectly_balanced
+) ;
+
+void GB_p_slice_64       // slice Work, 64-bit
+(
+    // output:
+    int64_t *restrict Slice,    // size ntasks+1
+    // input:
+    const uint64_t *Work,       // array size n+1
+    const int64_t n,
+    const int ntasks,           // # of tasks
+    const bool perfectly_balanced
+) ;
+
+void GB_p_slice_float       // slice Work, float
+(
+    // output:
+    int64_t *restrict Slice,    // size ntasks+1
+    // input:
+    const float *Work,          // array size n+1
+    const int64_t n,
+    const int ntasks            // # of tasks
+) ;
+
 #endif
 

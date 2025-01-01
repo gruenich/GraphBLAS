@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 // A template file #include'd in GB_AxB_factory.c, which calls 50 or 55
 // semirings, with 5 monoids (lor, land, eq, lxor, any) and 10 or 11 types (the
 // 10 real, non-boolean times, plus boolean).

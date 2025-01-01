@@ -9,8 +9,9 @@
 
 // DONE: 32/64 bit
 
-// create the qsort kernel
 #include "include/GB_subref_method.h"
+
+// create the qsort kernel:
 #define GB_A0_t GB_Ci_TYPE
 #define GB_A1_t GB_C_TYPE
 #include "include/GB_qsort_1b_kernel.h"

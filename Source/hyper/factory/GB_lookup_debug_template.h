@@ -39,8 +39,8 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
         {
             // j appears in the hyperlist at Ah [pleft]
             // k = (*pleft)
-            (*pstart) = Ap [(*pleft)] ;
-            (*pend)   = Ap [(*pleft)+1] ;
+            (*pstart) = Ap [(*pleft)] ;     // OK
+            (*pend)   = Ap [(*pleft)+1] ;   // OK
         }
         else
         {

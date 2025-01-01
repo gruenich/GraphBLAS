@@ -38,6 +38,7 @@ GrB_Info GB_AxB_saxpy5_jit          // C+=A*B, saxpy5 method, via the JIT
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_KERNEL_AXB_SAXPY5,
         false, false, GxB_FULL, C->type,
+        /* OK, C is full: */ false, false, false,
         NULL, true, false, semiring, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------

@@ -117,6 +117,13 @@ void GB_qsort_1_64
     const int64_t n
 ) ;
 
+void GB_qsort_1
+(
+    void *restrict A_0,         // size n array
+    bool A0_is_32,              // if true: A_0 is 32-bit; else 64-bit
+    const int64_t n
+) ;
+
 void GB_qsort_2_64_64   // sort A of size 2-by-n, A0: 64bit, A1: 64bit
 (
     uint64_t *restrict A_0,     // size n array

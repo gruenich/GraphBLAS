@@ -163,12 +163,12 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // user-defined type and this "reduce_1st" will be a unique name
             // for the constructed semiring (if "reduce" is the name of the
             // monoid).  In addition, it is not possible for the user to create
-            // a jitfyable operator with the name "1st", because of the leading
-            // "1" character in its name.  So "reduce_1st" must be unique.
+            // a jitifyable operator with the name "1st", because of the
+            // leading "1" character in its name.  So "reduce_1st" must be
+            // unique.
             op = &op_header ;
             op->header_size = 0 ;
-            info = GB_binop_new (op,
-                NULL,   // op->binop_function is NULL for FIRST_UDT
+            info = GB_binop_new (op, NULL, // op->binop_func. NULL for FIRST_UDT
                 ztype, ztype, ztype,    // ztype is user-defined
                 "1st",                  // a simple name for FIRST_UDT
                 NULL,   // no op->defn for the FIRST_UDT operator
