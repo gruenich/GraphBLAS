@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit; only all-64-bit is supported
 
 #include "import_export/GB_export.h"
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit; only 64-bit export is supported
 
 // Exports the contents of a matrix in one of 3 formats: CSR, CSC, or COO
 // (triplet format).  The exported matrix is not modified.  No typecast is
@@ -170,6 +170,8 @@ static GrB_Info GB_export_worker  // export a matrix
 
     uint64_t nvals = GB_nnz (A) ;
     int64_t plen = A->vdim+1 ; 
+    GB_Type_code apcode = (A->p_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code aicode = (A->i_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
     switch (format)
     {
@@ -180,8 +182,10 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-            GB_memcpy (Ap, A->p, plen  * sizeof (uint64_t), nthreads_max) ;
-            GB_memcpy (Ai, A->i, nvals * sizeof (uint64_t), nthreads_max) ;
+//          GB_memcpy (Ap, A->p, plen  * sizeof (uint64_t), nthreads_max) ;
+            GB_cast_int (Ap, GB_UINT64_code, A->p, apcode, plen, nthreads_max) ;
+//          GB_memcpy (Ai, A->i, nvals * sizeof (uint64_t), nthreads_max) ;
+            GB_cast_int (Ai, GB_UINT64_code, A->i, aicode, nvals, nthreads_max);
             (*Ap_len) = plen ;
             (*Ai_len) = nvals ;
 
@@ -213,8 +217,10 @@ static GrB_Info GB_export_worker  // export a matrix
                 GB_FREE_ALL ;
                 return (GrB_INSUFFICIENT_SPACE) ;
             }
-            GB_OK (GB_extractTuples (Ap, /* FIXME: */ false,
-                Ai, /* FIXME: */ false, Ax, &nvals, A->type, A, Werk)) ;
+            GB_OK (GB_extractTuples (
+                Ap, /* OK; 64-bit only: */ false,
+                Ai, /* OK; 64-bit only: */ false,
+                Ax, &nvals, A->type, A, Werk)) ;
             (*Ap_len) = nvals ;
             (*Ai_len) = nvals ;
             (*Ax_len) = nvals ;

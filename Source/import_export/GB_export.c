@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit; only 64-bit export is supported
 
-// No conversion is done, except to convert to non-iso if requested.  The
-// matrix is exported in its current sparsity structure and by-row/by-col
-// format.
+// No conversion is done, except to convert to non-iso if requested, and all
+// integers are converted to 64-bits.  The matrix is exported in its current
+// sparsity structure and by-row/by-col format.
 
 #include "import_export/GB_export.h"
 
@@ -69,8 +69,8 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;   // FIXME
-    int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;   // FIXME
+    int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;   // OK; only 64-bit
+    int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;   // OK; only 64-bit
     ASSERT (A != NULL) ;
     GB_RETURN_IF_NULL_OR_INVALID (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;
@@ -126,11 +126,11 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     {
         plen_new = (avdim == 0) ? 0 : 1 ;
         nvec_new = (avdim == 1) ? 1 : 0 ;
-        Ap_new = GB_CALLOC (plen_new+1, int64_t, &(Ap_new_size)) ;  // FIXME
+        Ap_new = GB_CALLOC (plen_new+1, int64_t, &(Ap_new_size)) ; // OK; 64-bit
         if (avdim > 1)
         { 
             // A is sparse if avdim <= 1, hypersparse if avdim > 1
-            Ah_new = GB_CALLOC (1, int64_t, &(Ah_new_size)) ;   // FIXME
+            Ah_new = GB_CALLOC (1, int64_t, &(Ah_new_size)) ; // OK; 64-bit only
         }
         if (Ap_new == NULL || (avdim > 1 && Ah_new == NULL))
         { 
@@ -147,7 +147,6 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     if (iso == NULL)
     {
         // ensure A is non-iso
-        // set A->iso = false   OK
         if ((*A)->iso)
         { 
             GBURBLE ("(iso to non-iso export) ") ;
@@ -164,6 +163,12 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             GBURBLE ("(iso export) ") ;
         }
     }
+
+    //--------------------------------------------------------------------------
+    // ensure the matrix is all-64-bit
+    //--------------------------------------------------------------------------
+
+    GB_OK (GB_convert_int (*A, false, false, false, false)) ;
 
     //--------------------------------------------------------------------------
     // export the matrix
@@ -204,7 +209,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             // export A->p, unless A is a sparse vector in CSC format
             if (is_sparse_vector)
             { 
-                uint64_t *restrict Ap = (*A)->p ;       // FIXME
+                uint64_t *restrict Ap = (*A)->p ;       // OK; 64-bit only
                 (*nvals) = Ap [1] ;
             }
             else
@@ -267,6 +272,9 @@ GrB_Info GB_export      // export/unpack a matrix in any format
         (*A)->p = Ap_new ; (*A)->p_size = Ap_new_size ;
         (*A)->h = Ah_new ; (*A)->h_size = Ah_new_size ;
         (*A)->magic = GB_MAGIC ;
+        (*A)->p_is_32 = false ;
+        (*A)->j_is_32 = false ;
+        (*A)->i_is_32 = false ;
         ASSERT_MATRIX_OK (*A, "A unpacked", GB0) ;
     }
     else

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit; only 64-bit import is supported
 
 // This method takes O(1) time and memory, unless secure is true (used
 // when the input data is not trusted).
@@ -102,7 +102,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         case GxB_HYPERSPARSE : 
             // check Ap and get nvals
             if (nvec > vdim) return (GrB_INVALID_VALUE) ;
-            if (Ap_size < (((vdim == 1) ? 1 : nvec)+1) * sizeof (int64_t))
+            if (Ap_size < (((vdim == 1) ? 1 : nvec)+1) * sizeof (uint64_t))
             { 
                 return (GrB_INVALID_VALUE) ;
             }
@@ -112,7 +112,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             // check Ah
             GB_RETURN_IF_NULL (Ah) ;
             GB_RETURN_IF_NULL (*Ah) ;
-            if (Ah_size < nvec * sizeof (int64_t))
+            if (Ah_size < nvec * sizeof (uint64_t))
             { 
                 return (GrB_INVALID_VALUE) ;
             }
@@ -122,7 +122,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
-            if (Ai_size < nvals * sizeof (int64_t))
+            if (Ai_size < nvals * sizeof (uint64_t))
             { 
                 return (GrB_INVALID_VALUE) ;
             }
@@ -136,7 +136,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 // GxB_Vector_import_CSC passes in Ap as a NULL, and nvals as
                 // the # of entries in the vector.  All other uses of GB_import
                 // pass in Ap for the sparse case
-                if (Ap_size < (vdim+1) * sizeof (int64_t))
+                if (Ap_size < (vdim+1) * sizeof (uint64_t))
                 { 
                     return (GrB_INVALID_VALUE) ;
                 }
@@ -150,7 +150,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 GB_RETURN_IF_NULL (Ai) ;
                 GB_RETURN_IF_NULL (*Ai) ;
             }
-            if (Ai_size < nvals * sizeof (int64_t))
+            if (Ai_size < nvals * sizeof (uint64_t))
             { 
                 return (GrB_INVALID_VALUE) ;
             }
@@ -213,7 +213,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     GrB_Info info = GB_new (A, // any sparsity, new or existing user header
         type, vlen, vdim, is_sparse_vector ? GB_ph_calloc : GB_ph_null,
         is_csc, sparsity, GB_Global_hyper_switch_get ( ), nvec,
-        /* FIXME: */ false, false, false) ;
+        /* OK, import as all-64-bit: */ false, false, false) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -237,7 +237,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             (*A)->nvec = nvec ;
 
             // import A->h, then fall through to sparse case
-            (*A)->h = (int64_t *) (*Ah) ; (*Ah) = NULL ;
+            (*A)->h = (*Ah) ; (*Ah) = NULL ;
             (*A)->h_size = Ah_size ;
             if (add_to_memtable)
             { 
@@ -257,13 +257,13 @@ GrB_Info GB_import      // import/pack a matrix in any format
             if (is_sparse_vector)
             { 
                 // GxB_Vector_import_CSC passes in Ap as NULL
-                uint64_t *restrict Ap = (*A)->p ;       // FIXME
+                uint64_t *restrict Ap = (*A)->p ;       // OK; 64-bit only
                 Ap [1] = nvals ;
             }
             else
             { 
                 // import A->p, unless already created for a sparse CSC vector
-                (*A)->p = (int64_t *) (*Ap) ; (*Ap) = NULL ;
+                (*A)->p = (*Ap) ; (*Ap) = NULL ;        // OK; 64-bit only
                 (*A)->p_size = Ap_size ;
                 if (add_to_memtable)
                 { 
@@ -277,7 +277,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             }
 
             // import A->i
-            (*A)->i = (int64_t *) (*Ai) ; (*Ai) = NULL ;
+            (*A)->i = (*Ai) ; (*Ai) = NULL ;    // OK; 64-bit only
             (*A)->i_size = Ai_size ;
             if (add_to_memtable)
             { 

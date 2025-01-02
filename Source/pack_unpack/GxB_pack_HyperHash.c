@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit; only all-64-bit is supported
+
 // GxB_pack_HyperHash assigns the input Y matrix as the A->Y hyper_hash of the
 // hypersparse matrix A.  Normally, this method is called immediately after
 // calling one of the four methods GxB_Matrix_(import/pack)_Hyper(CSR/CSC).
@@ -92,11 +94,19 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
 
     if ((*Y)->vlen != A->vdim || !GB_IS_POWER_OF_TWO ((*Y)->vdim) ||
         (*Y)->nvals != A->nvec || !GB_IS_SPARSE (*Y) || (*Y)->Y != NULL ||
-        (*Y)->type != GrB_UINT64 || !(*Y)->is_csc || GB_ANY_PENDING_WORK (*Y))
+        (!((*Y)->type == GrB_UINT64 || (*Y)->type == GrB_UINT32)) ||
+        !(*Y)->is_csc || GB_ANY_PENDING_WORK (*Y))
     { 
         // Y is invalid
         return (GrB_INVALID_OBJECT) ;
     }
+
+    //--------------------------------------------------------------------------
+    // ensure A and Y are all-64-bit
+    //--------------------------------------------------------------------------
+
+    GB_OK (GB_convert_int (A, false, false, false, false)) ;
+    GB_OK (GB_convert_int (Y, false, false, false, false)) ;
 
     //--------------------------------------------------------------------------
     // pack the hyper_hash matrix Y into A

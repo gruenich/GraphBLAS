@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit; only 64-bit import is supported
 
 // No typecasting is done.  The type of entries in the Ax array must match
 // the GrB_Type type parameter.
@@ -124,7 +124,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
 
     uint64_t *Ap_copy = NULL ; size_t Ap_size = 0 ;
     uint64_t *Ai_copy = NULL ; size_t Ai_size = 0 ;
-    GB_void   *Ax_copy = NULL ; size_t Ax_size = 0 ;
+    GB_void  *Ax_copy = NULL ; size_t Ax_size = 0 ;
     size_t typesize = type->size ;
 
     // Ap_copy, Ai_copy, Ax_copy are GB_MALLOC'ed so they are already in the
@@ -271,7 +271,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                 GB_OK (GB_new (A, // new header
                     type, vlen, vdim, GB_ph_null, is_csc, GxB_AUTO_SPARSITY,
                     GB_Global_hyper_switch_get ( ), 0,
-                    /* FIXME: */ false, false, false)) ;
+                    /* OK; 64-bit only: */ false, false, false)) ;
 
                 // build A from the input triplets
                 GB_OK (GB_builder (
@@ -299,7 +299,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
                     type,           // type of the X array
                     true,           // burble is allowed
                     Werk,
-                    false, false, false, false, false  // FIXME
+                    false, false, false, false, false  // OK; 64-bit only
                 )) ;
             }
             break ;

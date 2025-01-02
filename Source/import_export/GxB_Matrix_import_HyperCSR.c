@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit; only all-64-bit is supported
+
 #include "import_export/GB_export.h"
 
 GrB_Info GxB_Matrix_import_HyperCSR      // import a hypersparse CSR matrix

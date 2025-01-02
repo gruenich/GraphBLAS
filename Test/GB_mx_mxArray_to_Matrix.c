@@ -55,7 +55,7 @@
 
 GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 (
-    const mxArray *A_builtin,           // built-in version of A
+    const mxArray *A_builtin,           // MATLAB built-in version of A
     const char *name,                   // name of the argument
     bool deep_copy,                     // if true, return a deep copy
     const bool empty    // if false, 0-by-0 matrices are returned as NULL.
@@ -194,7 +194,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     atype_out_code = atype_out->code ;
 
     //--------------------------------------------------------------------------
-    // get the size and content of the built-in matrix
+    // get the size and content of the MATLAB built-in matrix
     //--------------------------------------------------------------------------
 
     int64_t nrows = mxGetM (Amatrix) ;
@@ -311,7 +311,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
 
         // the GraphBLAS pattern (A->p and A->i) are pointers into the
-        // built-in matrix and must not be modified.
+        // MATLAB built-in sparse mxArray, and must not be modified.
 
         // [ create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, // sparse or full, new header
