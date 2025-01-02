@@ -51,7 +51,7 @@
 GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    const int64_t *restrict *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
+    const void **Ch_handle,     // Ch is M->h, A->h, B->h, or NULL
     size_t *Ch_size_handle,
     int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
     size_t *C_to_M_size_handle,

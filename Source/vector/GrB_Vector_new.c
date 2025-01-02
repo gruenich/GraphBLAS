@@ -65,9 +65,9 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
 
     // HACK for now:
     ASSERT_VECTOR_OK (*v, "GrB_Vector_new before convert", GB0) ;
-    GB_OK (GB_convert_int (*v, false, false, false, true)) ; // FIXME
+    GB_OK (GB_convert_int ((GrB_Matrix) *v, false, false, false, true)) ;//FIXME
     ASSERT_VECTOR_OK (*v, "GrB_Vector_new after convert", GB0) ;
-    GB_OK (GB_valid_matrix ((GrB_Matrix *) *v)) ;
+    GB_OK (GB_valid_matrix ((GrB_Matrix) *v)) ;
 
     return (GrB_SUCCESS) ;
 }

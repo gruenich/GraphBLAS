@@ -228,9 +228,9 @@ GrB_Info GX_subassign_08n_slice                                             \
     int *p_nthreads,                /* # of threads to use */               \
     int64_t *p_Znvec,               /* # of vectors to compute in Z */      \
     const void **Zh_handle,         /* Zh is A->h, M->h, or NULL */         \
-    int64_t *restrict *Z_to_A_handle,    /* Z_to_A: size Znvec, or NULL */  \
+    int64_t *restrict *Z_to_A_handle, /* Z_to_A: size Znvec, or NULL */     \
     size_t *Z_to_A_size_handle,                                             \
-    int64_t *restrict *Z_to_M_handle,    /* Z_to_M: size Znvec, or NULL */  \
+    int64_t *restrict *Z_to_M_handle, /* Z_to_M: size Znvec, or NULL */     \
     size_t *Z_to_M_size_handle,                                             \
     bool *Zj_is_32_handle,                                                  \
     /* input: */                                                            \

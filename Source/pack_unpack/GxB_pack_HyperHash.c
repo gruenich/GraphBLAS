@@ -106,7 +106,7 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     //--------------------------------------------------------------------------
 
     GB_OK (GB_convert_int (A, false, false, false, false)) ;
-    GB_OK (GB_convert_int (Y, false, false, false, false)) ;
+    GB_OK (GB_convert_int (*Y, false, false, false, false)) ;
 
     //--------------------------------------------------------------------------
     // pack the hyper_hash matrix Y into A

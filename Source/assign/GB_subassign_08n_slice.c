@@ -38,36 +38,36 @@
 #include "assign/include/GB_assign_shared_definitions.h"
 
 #if 0
-GrB_Info GB_subassign_08n_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    size_t *p_TaskList_size,        // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads to use
-    int64_t *p_Znvec,               // # of vectors to compute in Z
-    const void **Zh_handle,         // Zh is A->h, M->h, or NULL
-    int64_t *restrict *Z_to_A_handle,    // Z_to_A: size Znvec, or NULL
-    size_t *Z_to_A_size_handle,
-    int64_t *restrict *Z_to_M_handle,    // Z_to_M: size Znvec, or NULL
-    size_t *Z_to_M_size_handle,
-    bool *Zj_is_32_handle,
-    // input:
-    const GrB_Matrix C,         // output matrix C
-    const void *I,              // I index list
-    const bool I_is_32,
-    const int64_t nI,
-    const int Ikind,
-    const int64_t Icolon [3],
-    const void *J,              // J index list
-    const bool J_is_32,
-    const int64_t nJ,
-    const int Jkind,
-    const int64_t Jcolon [3],
-    const GrB_Matrix A,         // matrix to slice
-    const GrB_Matrix M,         // matrix to slice
-    GB_Werk Werk
-) ;
+GrB_Info GX_subassign_08n_slice                                             \
+(                                                                           \
+    /* output: */                                                           \
+    GB_task_struct **p_TaskList,    /* size max_ntasks */                   \
+    size_t *p_TaskList_size,        /* size of TaskList */                  \
+    int *p_ntasks,                  /* # of tasks constructed */            \
+    int *p_nthreads,                /* # of threads to use */               \
+    int64_t *p_Znvec,               /* # of vectors to compute in Z */      \
+    const void **Zh_handle,         /* Zh is A->h, M->h, or NULL */         \
+    int64_t **Z_to_A_handle,        /* Z_to_A: size Znvec, or NULL */       \
+    size_t *Z_to_A_size_handle,                                             \
+    int64_t **Z_to_M_handle,        /* Z_to_M: size Znvec, or NULL */       \
+    size_t *Z_to_M_size_handle,                                             \
+    bool *Zj_is_32_handle,                                                  \
+    /* input: */                                                            \
+    const GrB_Matrix C,         /* output matrix C */                       \
+    const void *I,              /* I index list */                          \
+    const bool I_is_32,                                                     \
+    const int64_t nI,                                                       \
+    const int Ikind,                                                        \
+    const int64_t Icolon [3],                                               \
+    const void *J,              /* J index list */                          \
+    const bool J_is_32,                                                     \
+    const int64_t nJ,                                                       \
+    const int Jkind,                                                        \
+    const int64_t Jcolon [3],                                               \
+    const GrB_Matrix A,         /* matrix to slice */                       \
+    const GrB_Matrix M,         /* matrix to slice */                       \
+    GB_Werk Werk                                                            \
+)
 #endif
 
 GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)

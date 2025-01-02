@@ -52,9 +52,9 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
 
     // HACK for now:
     ASSERT_SCALAR_OK (*s, "GrB_Scalar_new before convert", GB0) ;
-    GB_OK (GB_convert_int (*s, false, false, false, true)) ; // FIXME
+    GB_OK (GB_convert_int ((GrB_Matrix) *s, false, false, false, true));//FIXME
     ASSERT_SCALAR_OK (*s, "GrB_Scalar_new after convert", GB0) ;
-    GB_OK (GB_valid_matrix ((GrB_Matrix *) *s)) ;
+    GB_OK (GB_valid_matrix ((GrB_Matrix) *s)) ;
 
     return (GrB_SUCCESS) ;
 }

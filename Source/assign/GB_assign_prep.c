@@ -54,7 +54,7 @@ GrB_Info GB_assign_prep
     GrB_Matrix AT_header_handle,
 
     // modified versions of the Rows/Cols lists, and their analysis:
-    const void **I_handle,      // Rows, Cols, or a modified copy I2
+    void **I_handle,            // Rows, Cols, or a modified copy I2
     bool *I_is_32_handle,
     void **I2_handle,           // NULL, or sorted/pruned Rows or Cols
     size_t *I2_size_handle,
@@ -63,9 +63,9 @@ GrB_Info GB_assign_prep
     int *Ikind_handle,
     int64_t Icolon [3],
 
-    const void **J_handle,      // Rows, Cols, or a modified copy J2
+    void **J_handle,            // Rows, Cols, or a modified copy J2
     bool *J_is_32_handle,
-    uint64_t **J2_handle,       // NULL, or sorted/pruned Rows or Cols
+    void **J2_handle,           // NULL, or sorted/pruned Rows or Cols
     size_t *J2_size_handle,
     int64_t *nj_handle,
     int64_t *nJ_handle,
@@ -1297,7 +1297,7 @@ GrB_Info GB_assign_prep
     (*scalar_type_handle) = scalar_type ;   // may be NULL
 
     // modified versions of the Rows/Cols lists, and their analysis:
-    (*I_handle      ) = I ;         // either Rows, Cols, or I2
+    (*I_handle      ) = (void *) I ;    // either Rows, Cols, or I2
     (*I_is_32_handle) = I_is_32 ;
     (*I2_handle     ) = I2 ;        // temporary sorted copy of Rows/Cols list
     (*I2_size_handle) = I2_size ;
@@ -1305,7 +1305,7 @@ GrB_Info GB_assign_prep
     (*nI_handle     ) = nI ;
     (*Ikind_handle  ) = Ikind ;
 
-    (*J_handle      ) = J ;         // either Rows, Cols, or J2
+    (*J_handle      ) = (void *) J ;    // either Rows, Cols, or J2
     (*J_is_32_handle) = J_is_32 ;
     (*J2_handle     ) = J2 ;        // temporary sorted copy of Rows/Cols list
     (*J2_size_handle) = J2_size ;

@@ -51,12 +51,12 @@ GrB_Info GB_ijsort
     const void *I,              // size ni, where ni > 1 always holds
     const bool I_is_32,
     int64_t imax,               // maximum value in I 
-    int64_t *restrict p_ni,     // : size of I, output: # of indices in I2
+    int64_t *p_ni,              // : size of I, output: # of indices in I2
     void **p_I2,                // size ni2, where I2 [0..ni2-1] contains the
                                 // sorted indices with duplicates removed.
     bool *I2_is_32_handle,      // if I2_is_32 true, I2 is 32 bits; else 64 bits
     size_t *I2_size_handle,
-    uint64_t *restrict *p_I2k,  // output array of size ni2
+    void **p_I2k,               // output array of size ni2
     bool *I2k_is_32_handle,     // if I2k_is_32 true, I2 is 32 bits; else 64
     size_t *I2k_size_handle,
     GB_Werk Werk

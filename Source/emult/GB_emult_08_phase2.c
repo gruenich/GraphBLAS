@@ -57,7 +57,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     const int C_nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    void *Ch,
+    const void *Ch,
     size_t Ch_size,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -175,7 +175,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     if (C_is_hyper)
     { 
         // C->h is currently shallow; a copy is made at the end
-        C->h = Ch ; C->h_size = Ch_size ;
+        C->h = (void *) Ch ; C->h_size = Ch_size ;
         C->h_shallow = true ;
         C->nvec = Cnvec ;
     }

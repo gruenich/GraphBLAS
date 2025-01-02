@@ -81,7 +81,7 @@
 static inline bool GB_allocate_result
 (
     int64_t Cnvec,
-    int64_t **Ch_handle,              size_t *Ch_size_handle, size_t cjsize,
+    void **Ch_handle,                size_t *Ch_size_handle, size_t cjsize,
     int64_t *restrict *C_to_M_handle, size_t *C_to_M_size_handle,
     int64_t *restrict *C_to_A_handle, size_t *C_to_A_size_handle,
     int64_t *restrict *C_to_B_handle, size_t *C_to_B_size_handle

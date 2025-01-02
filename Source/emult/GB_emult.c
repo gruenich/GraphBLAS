@@ -88,12 +88,12 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
-    int64_t *restrict C_to_M = NULL ; size_t C_to_M_size = 0 ;
-    int64_t *restrict C_to_A = NULL ; size_t C_to_A_size = 0 ;
-    int64_t *restrict C_to_B = NULL ; size_t C_to_B_size = 0 ;
+    int64_t *C_to_M = NULL ; size_t C_to_M_size = 0 ;
+    int64_t *C_to_A = NULL ; size_t C_to_A_size = 0 ;
+    int64_t *C_to_B = NULL ; size_t C_to_B_size = 0 ;
     int64_t Cnvec, Cnvec_nonempty ;
     void *Cp = NULL ; size_t Cp_size = 0 ;
-    void *Ch = NULL ; size_t Ch_size = 0 ;
+    const void *Ch = NULL ; size_t Ch_size = 0 ;
     int C_ntasks = 0, C_nthreads ;
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 

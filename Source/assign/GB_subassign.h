@@ -127,7 +127,7 @@ GrB_Info GB_assign_prep
     GrB_Matrix AT_header_handle,
 
     // modified versions of the Rows/Cols lists, and their analysis:
-    const void **I_handle,      // Rows, Cols, or a modified copy I2
+    void **I_handle,            // Rows, Cols, or a modified copy I2
     bool *I_is_32_handle,
     void **I2_handle,           // NULL, or sorted/pruned Rows or Cols
     size_t *I2_size_handle,
@@ -136,9 +136,9 @@ GrB_Info GB_assign_prep
     int *Ikind_handle,
     int64_t Icolon [3],
 
-    const void **J_handle,      // Rows, Cols, or a modified copy J2
+    void **J_handle,            // Rows, Cols, or a modified copy J2
     bool *J_is_32_handle,
-    uint64_t **J2_handle,       // NULL, or sorted/pruned Rows or Cols
+    void **J2_handle,           // NULL, or sorted/pruned Rows or Cols
     size_t *J2_size_handle,
     int64_t *nj_handle,
     int64_t *nJ_handle,

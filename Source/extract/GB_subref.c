@@ -189,7 +189,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     void *Ap_end   = NULL ; size_t Ap_end_size = 0 ;
     void *Ihead    = NULL ; size_t Ihead_size = 0 ;
     void *Inext    = NULL ; size_t Inext_size = 0 ;
-    void *Cwork    = NULL ; size_t Cwork_size = 0 ;
+    uint64_t *Cwork = NULL ; size_t Cwork_size = 0 ;
     GB_task_struct *TaskList = NULL ; size_t TaskList_size = 0 ;
     int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
     bool post_sort, need_qsort, Cp_is_32, Cj_is_32, Ci_is_32, Ihead_is_32 ;
