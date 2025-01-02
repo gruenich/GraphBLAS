@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Test lots of random stuff.  The function otherwise serves no purpose.
 
@@ -136,10 +136,12 @@ void mexFunction
     OK (GxB_pack_HyperHash (A, &Y, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A hypersparse (pack did nothing)", 3, NULL)) ;
 
-    int64_t *A_Yi = A->Y->i ;   // FIXME: make generic
-    A_Yi [0] = 99 ;
+    GB_MDECL (A_Yi, , ) ;
+    A_Yi = A->Y->i ;
+    GB_IPTR (A_Yi, A->Y->i_is_32) ;
+    GB_ISET (A_Yi, 0, 99) ; // A_Yi [0] = 99 ;
     ERR (GxB_Matrix_fprint (A, "A->Y invalid (not found) ", 3, NULL)) ;
-    A_Yi [0] = 0 ;
+    GB_ISET (A_Yi, 0,  0) ; // A_Yi [0] = 0 ;
 
     int64_t *Yx = A->Y->x ;
     Yx [0] = 99 ;
@@ -255,8 +257,10 @@ void mexFunction
     OK (GxB_Matrix_fprint (A, "A->Y with many collisions", 2, NULL)) ;
 
     CHECK (A->Y != NULL) ;
-    uint64_t *Yp = A->Y->p ;
-    CHECK (Yp [1] == 257) ;
+    GB_MDECL (A_Yp, , ) ;
+    A_Yp = A->Y->p ;
+    GB_IPTR (A_Yp, A->Y->p_is_32) ;
+    CHECK (GB_IGET (A_Yp, 1) == 257) ;
 
     OK (GrB_mxm (C1, A, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A,
         GrB_DESC_T0)) ;

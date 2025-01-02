@@ -75,7 +75,6 @@ void mexFunction
         false, NULL, NULL, op, false, false, Werk)) ;
 
     // return C as a plain sparse matrix
-    GB_convert_int (C, false, false, false, true) ;     // FIXME
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AplusB result", false) ;
 
     FREE_ALL ;

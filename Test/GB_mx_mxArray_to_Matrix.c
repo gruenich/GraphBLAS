@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Convert a built-in sparse or full matrix, or a struct to a GraphBLAS sparse
 // matrix.  The mxArray is either a struct containing two terms: a sparse or
@@ -261,9 +262,52 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
     GrB_Info info ;
 
-    // built-in matrices are sparse or full CSC, not hypersparse or bitmap
+    // MATLAB matrices are sparse or full CSC, not hypersparse or bitmap
     bool is_csc = true ;
     int sparsity = (A_is_sparse) ? GxB_SPARSE : GxB_FULL ;
+
+    //--------------------------------------------------------------------------
+    // get the integer sizes
+    //--------------------------------------------------------------------------
+
+    // MATLAB matrices are all-64-bit
+    bool p_is_32 = false ;
+    bool j_is_32 = false ;
+    bool i_is_32 = false ;
+
+    if (mxIsStruct (A_builtin))
+    {
+
+        // look for A.p_is_32
+        int fieldnumber = mxGetFieldNumber (A_builtin, "p_is_32") ;
+        if (fieldnumber >= 0)
+        {
+            p_is_32 = mxGetScalar (mxGetFieldByNumber (A_builtin,
+                0, fieldnumber)) ;
+        }
+
+        // look for A.j_is_32
+        fieldnumber = mxGetFieldNumber (A_builtin, "j_is_32") ;
+        if (fieldnumber >= 0)
+        {
+            j_is_32 = mxGetScalar (mxGetFieldByNumber (A_builtin,
+                0, fieldnumber)) ;
+        }
+
+        // look for A.i_is_32
+        fieldnumber = mxGetFieldNumber (A_builtin, "i_is_32") ;
+        if (fieldnumber >= 0)
+        {
+            i_is_32 = mxGetScalar (mxGetFieldByNumber (A_builtin,
+                0, fieldnumber)) ;
+        }
+    }
+
+    // can only do a deep copy if the resulting GrB_Matrix is all-64
+    deep_copy = deep_copy || p_is_32 || j_is_32 || i_is_32 ;
+
+    GB_Type_code apcode = (p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    GB_Type_code aicode = (i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     //--------------------------------------------------------------------------
     // get the pattern of A
@@ -272,15 +316,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     if (deep_copy)
     {
 
-        // FIXME: if anz >= UINT32_MAX, set A->p_is_32 false
-        // FIXME: pass in requested p_is_32, j_is_32, and i_is_32, for testing.
-        // FIXME: use GB_new_bix here instead
-
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
-            /* FIXME: */ false, false, false) ;
+            p_is_32, j_is_32, i_is_32) ;
         if (info != GrB_SUCCESS)
         {
             FREE_ALL ;
@@ -299,12 +339,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         if (sparsity != GxB_FULL)
         {
-            int64_t *Ap = A->p ;    // FIXME
-            memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;   // FIXME
-            memcpy (A->i, Mi, anz * sizeof (int64_t)) ; // FIXME
-            A->nvals = Ap [ncols] ;
+//          memcpy (A->p, Mp, (ncols+1) * sizeof (int64_t)) ;
+            GB_cast_int (A->p, apcode, Mp, GB_UINT64_code, ncols+1, 1) ;
+//          memcpy (A->i, Mi, anz * sizeof (int64_t)) ;
+            GB_cast_int (A->i, aicode, Mi, GB_UINT64_code, anz, 1) ;
         }
-        A->magic = GB_MAGIC ;
 
     }
     else
@@ -313,7 +352,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         // the GraphBLAS pattern (A->p and A->i) are pointers into the
         // MATLAB built-in sparse mxArray, and must not be modified.
 
-        // [ create the GraphBLAS matrix, do not allocate A->p
+        // create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, // sparse or full, new header
             atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
             GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
@@ -334,8 +373,6 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             A->i_size = GB_IMAX (anz, 1) * sizeof (int64_t) ;
             A->p_shallow = true ;
             A->i_shallow = true ;
-            int64_t *Ap = A->p ;
-            A->nvals = Ap [ncols] ;
         }
         else
         {
@@ -348,8 +385,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
 
         A->h_shallow = false ;      // A->h is NULL
-        A->magic = GB_MAGIC ;       // A->p now initialized ]
     }
+
+    A->nvals = anz ;
+    A->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
     // copy the numerical values from built-in to the GraphBLAS matrix

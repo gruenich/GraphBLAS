@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
+#define GB_DEBUG
 
 // Convert a GraphBLAS sparse or full matrix to a built-in struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.
@@ -36,7 +37,15 @@
     (p) = NULL ;                        \
 }
 
-static const char *MatrixFields [ ] = { "matrix", "class", "iso", "values" } ;
+static const char *MatrixFields [ ] = {
+    "matrix",       // 0
+    "class",        // 1
+    "iso",          // 2
+    "is_csc",       // 3
+    "p_is_32",      // 4
+    "j_is_32",      // 5
+    "i_is_32",      // 6
+    "values" } ;    // 7
 
 mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 (
@@ -52,18 +61,14 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     GrB_Type ctype = C->type ;
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is 64/64 bit
+    // ensure the matrix is 64/64/64 bit
     //--------------------------------------------------------------------------
 
-    if (C->p_is_32 || C->j_is_32 || C->i_is_32)
-    {
-        mexPrintf ("C has 32-bit components (%d,%d,%d).  Where from?\n",
-            C->p_is_32, C->j_is_32, C->i_is_32) ;
-        GxB_print (C, 2) ;
-        mexErrMsgTxt ("FIXME: import GrB_Matrix with 32-bits)") ;
-    }
-
-    GB_convert_int (C, false, false, false, true) ;
+    bool is_csc = C->is_csc ;
+    bool Cp_is_32 = C->p_is_32 ;
+    bool Cj_is_32 = C->j_is_32 ;
+    bool Ci_is_32 = C->i_is_32 ;
+    GB_convert_int (C, false, false, false, false) ;
 
     //--------------------------------------------------------------------------
     // check matrix
@@ -156,18 +161,18 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         if (C->i == NULL)
         {
             ASSERT (cnz == 0) ;
-            C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),   // FIXME
+            C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),
                 &(C->i_size)) ;
-            int64_t *Ci = C->i ;    // FIXME
-            Ci [0] = 0 ;    // FIXME
+            int64_t *Ci = C->i ;
+            Ci [0] = 0 ;
             C->i_shallow = false ;
         }
         if (C->p == NULL)
         {
             ASSERT (cnz == 0) ;
             C->p = (int64_t *) GB_malloc_memory (C->vdim + 1, 
-                sizeof (int64_t), &(C->p_size)) ;   // FIXME
-            memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;    // FIXME
+                sizeof (int64_t), &(C->p_size)) ;
+            memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
             C->p_shallow = false ;
         }
     }
@@ -371,15 +376,25 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         mxArray *atype = GB_mx_Type_to_mxstring (ctype) ;
         // create the iso flag
         mxArray *c_iso = mxCreateLogicalScalar (C_iso) ;
+        // create the csc flag
+        mxArray *c_csc = mxCreateLogicalScalar (is_csc) ;
+        // create the *is_32 flags
+        mxArray *p_32 = mxCreateLogicalScalar (Cp_is_32) ;
+        mxArray *j_32 = mxCreateLogicalScalar (Cj_is_32) ;
+        mxArray *i_32 = mxCreateLogicalScalar (Ci_is_32) ;
         // create the output struct
         Astruct = mxCreateStructMatrix (1, 1,
-           (X == NULL) ? 3 : 4, MatrixFields) ;
-        mxSetFieldByNumber (Astruct, 0, 0, A) ;
-        mxSetFieldByNumber (Astruct, 0, 1, atype) ;
-        mxSetFieldByNumber (Astruct, 0, 2, c_iso) ;
+           (X == NULL) ? 7 : 8, MatrixFields) ;
+        mxSetFieldByNumber (Astruct, 0, 0, A) ;             // matrix
+        mxSetFieldByNumber (Astruct, 0, 1, atype) ;         // class
+        mxSetFieldByNumber (Astruct, 0, 2, c_iso) ;         // iso
+        mxSetFieldByNumber (Astruct, 0, 3, c_csc) ;         // is_csc
+        mxSetFieldByNumber (Astruct, 0, 4, p_32) ;          // p_is_32
+        mxSetFieldByNumber (Astruct, 0, 5, j_32) ;          // j_is_32
+        mxSetFieldByNumber (Astruct, 0, 6, i_32) ;          // i_is_32
         if (X != NULL)
         {
-            mxSetFieldByNumber (Astruct, 0, 3, X) ;
+            mxSetFieldByNumber (Astruct, 0, 7, X) ;         // values
         }
         return (Astruct) ;
     }

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit
+// DONE: 32/64 bit
 
 // Test lots of random stuff.  The function otherwise serves no purpose.
 
@@ -95,8 +95,11 @@ void mexFunction
     OK (GxB_Matrix_Option_set ((GrB_Matrix) scalar, GxB_SPARSITY_CONTROL,
         GxB_SPARSE)) ;
     CHECK (scalar->i != NULL) ;
-    int64_t *Si = scalar->i ;   // FIXME
-    Si [0] = GB_ZOMBIE (0) ;    // FIXME
+    GB_MDECL (Si, , ) ;
+    Si = scalar->i ;
+    GB_IPTR (Si, scalar->i_is_32) ;
+    i = GB_ZOMBIE (0) ;
+    GB_ISET (Si, 0, i) ;    // Si [0] = i
     scalar->nzombies = 1 ;
     OK (GxB_Scalar_fprint (scalar, "scalar with zombie", 3, NULL)) ;
     expected = GrB_NO_VALUE ;
@@ -132,11 +135,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int64_t Slice [30] ;
-    GB_p_slice (Slice, A->p, false, n, 2, true) ;
+    GB_p_slice (Slice, A->p, A->p_is_32, n, 2, true) ;
     CHECK (Slice [0] == 0) ;
 
     int64_t Ap [11] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } ;
-    GB_p_slice (Slice, Ap, false, 10, 10, false) ;
+    GB_p_slice (Slice, Ap, /* OK: */ false, 10, 10, false) ;
     printf ("Slice: ") ;
     for (int k = 0 ; k <= 10 ; k++) printf (" %ld", Slice [k]) ;
     printf ("\n") ;
@@ -385,9 +388,10 @@ void mexFunction
 
     // jumble the matrix
     C->jumbled = true ;
-    int64_t *Ci = C->i ;
-    Ci [0] = 1 ;
-    Ci [1] = 0 ;
+    GB_MDECL (Ci, , ) ;
+    Ci = C->i ;
+    GB_ISET (Ci, 0, 1) ;    // Ci [0] = 1 ;
+    GB_ISET (Ci, 1, 0) ;    // Ci [1] = 0 ;
     OK (GxB_Matrix_fprint (C, "wild matrix jumbled", GxB_SHORT, NULL)) ;
 
     // unjumble the matrix

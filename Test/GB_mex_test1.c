@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+// DONE: 32/64 bit
 
 // Test lots of random stuff.  The function otherwise serves no purpose.
 
@@ -664,7 +665,7 @@ void mexFunction
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_wait_(B, GrB_MATERIALIZE)) ;
     CHECK (!GB_any_aliased (A, B)) ;
-    int64_t *Bh_save = B->h ;
+    void *Bh_save = B->h ;
     B->h = A->h ; B->h_shallow = true ;
     CHECK (GB_any_aliased (A, B)) ;
     B->h = Bh_save ; B->h_shallow = false ;

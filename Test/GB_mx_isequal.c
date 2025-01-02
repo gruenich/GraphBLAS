@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// DONE: 32/64 bit
+
 #include "GB_mex.h"
 
 bool GB_mx_isequal     // true if A and B are exactly the same

@@ -1,4 +1,4 @@
-function test02
+% function test02 FIXME
 %TEST02 test GrB_*_dup
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -43,6 +43,8 @@ for k1 = 1:length (types)
                     C2 = GB_mex_dup (A, ctype, 1) ;
                     C2_matrix = full (C2.matrix) ;
                     C2_pattern = full (GB_spones_mex (C2.matrix)) ;
+                    C
+                    C2
                     assert (isequal (C, C2))  ;
                     assert (GB_spok (1*C2.matrix) == 1) ;
                 end

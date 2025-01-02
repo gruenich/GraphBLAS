@@ -203,7 +203,6 @@ void mexFunction
     METHOD (axb (Werk, cprint)) ;
 
     // return C
-    GB_convert_int (C, false, false, false, true) ;     // FIXME
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
 
     FREE_ALL ;
