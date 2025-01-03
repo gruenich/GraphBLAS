@@ -164,18 +164,18 @@ GrB_Info ewise
     OK (GrB_transpose (b, NULL, NULL, b, NULL)) ;
 
     // extract a in bitmap CSC format
-    OK (GxB_Matrix_unpack_BitmapC (a, &Ab, &Ax, &Ab_size, &Ax_size,
+    OK (GxB_Matrix_unpack_BitmapC (a, &Ab, (void **) &Ax, &Ab_size, &Ax_size,
         NULL, &A_nvals, NULL)) ;
     GrB_Matrix_free (&a) ;
 
     // extract b in bitmap CSC format
-    OK (GxB_Matrix_unpack_BitmapC (b, &Bb, &Bx, &Bb_size, &Bx_size,
+    OK (GxB_Matrix_unpack_BitmapC (b, &Bb, (void **) &Bx, &Bb_size, &Bx_size,
         NULL, &B_nvals, NULL)) ;
     GrB_Matrix_free (&b) ;
 
     // create T and extract in bitmap CSC format
     OK (GrB_Matrix_new (&T, GrB_FP64, n, n)) ;
-    OK (GxB_Matrix_unpack_BitmapC (T, &Tb, &Tx, &Tb_size, &Tx_size,
+    OK (GxB_Matrix_unpack_BitmapC (T, &Tb, (void **) &Tx, &Tb_size, &Tx_size,
         NULL, &T_nvals, NULL)) ;
 
     //--------------------------------------------------------------------------
@@ -251,7 +251,7 @@ GrB_Info ewise
     }
 
     // pack T in bitmap CSC format
-    OK (GxB_Matrix_pack_BitmapC (T, &Tb, &Tx, Tb_size, Tx_size,
+    OK (GxB_Matrix_pack_BitmapC (T, &Tb, (void **) &Tx, Tb_size, Tx_size,
         false, T_nvals, NULL)) ;
 
     //--------------------------------------------------------------------------
@@ -395,7 +395,7 @@ void mexFunction
 
     char theta_type_name [256] ;
     theta_type_name [0] = '\0' ;
-    OK (GxB_IndexBinaryOp_get_String (Iop, &theta_type_name,
+    OK (GxB_IndexBinaryOp_get_String (Iop, theta_type_name,
         GxB_THETA_TYPE_STRING)) ;
     CHECK (strcmp (theta_type_name, "GrB_FP64") == 0)  ;
 
@@ -438,7 +438,7 @@ void mexFunction
     CHECK (theta_type_namelen == strlen ("GrB_FP64") + 1) ;
 
     theta_type_name [0] = '\0' ;
-    OK (GrB_BinaryOp_get_String (Bop, &theta_type_name,
+    OK (GrB_BinaryOp_get_String (Bop, theta_type_name,
         GxB_THETA_TYPE_STRING)) ;
     CHECK (strcmp (theta_type_name, "GrB_FP64") == 0)  ;
 
@@ -642,7 +642,7 @@ void mexFunction
     OK (GrB_Type_new (&Crud_Type, 4)) ;
     OK (GrB_Scalar_new (&Crud_Scalar, Crud_Type)) ;
     ERR (GxB_BinaryOp_new_IndexOp (&Crud_Bop, Iop, Crud_Scalar)) ;
-    ERR (GrB_Matrix_apply (A, NULL, NULL, Bop, A, NULL)) ;
+    ERR (GrB_Matrix_apply (A, NULL, NULL, (GrB_UnaryOp) Bop, A, NULL)) ;
 
     //------------------------------------------------------------------------
     // JIT testing

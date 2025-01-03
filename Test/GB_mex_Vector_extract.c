@@ -82,7 +82,8 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices (&I, NULL, pargin [4], &ni, I_range, &ignore))
+    if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [4], &ni,
+        I_range, &ignore))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;

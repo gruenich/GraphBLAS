@@ -5274,7 +5274,7 @@ void mexFunction
 
     printf ("\n----------------------------- import/export\n") ;
     OK (GxB_Matrix_fprint (A, "A to import/export", GxB_COMPLETE, stdout)) ;
-    int64_t *Aj ;
+    uint64_t *Aj ;
     GrB_Index nrows, ncols, nvecs ;
     double *Ax ;
     GrB_Type atype ;

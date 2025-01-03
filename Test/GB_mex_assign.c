@@ -353,7 +353,8 @@ GrB_Info many_assign
 
         // get I
         p = mxGetFieldByNumber (pargin [1], k, fI) ;
-        if (!GB_mx_mxArray_to_indices (&I, NULL, p, &ni, I_range, &ignore))
+        if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, p, &ni, I_range,
+            &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
@@ -361,7 +362,8 @@ GrB_Info many_assign
 
         // get J
         p = mxGetFieldByNumber (pargin [1], k, fJ) ;
-        if (!GB_mx_mxArray_to_indices (&J, NULL, p, &nj, J_range, &ignore))
+        if (!GB_mx_mxArray_to_indices ((void **) &J, NULL, p, &nj, J_range,
+            &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;
@@ -563,14 +565,16 @@ void mexFunction
         }
 
         // get I
-        if (!GB_mx_mxArray_to_indices (&I, NULL, pargin [4], &ni, I_range, &ignore))
+        if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [4], &ni,
+            I_range, &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
         }
 
         // get J
-        if (!GB_mx_mxArray_to_indices (&J, NULL, pargin [5], &nj, J_range, &ignore))
+        if (!GB_mx_mxArray_to_indices ((void **) &J, NULL, pargin [5], &nj,
+            J_range, &ignore))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;

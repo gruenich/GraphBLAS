@@ -191,7 +191,7 @@ void mexFunction
             NULL, NULL)) ;
     }
     OK (GxB_IndexBinaryOp_wait (Iop, GrB_MATERIALIZE)) ;
-    char *error ;
+    const char *error ;
     OK (GxB_IndexBinaryOp_error (&error, Iop)) ;
     if (error == NULL || strlen (error) > 0)
     {
@@ -273,10 +273,10 @@ void mexFunction
     OK (GxB_IndexBinaryOp_get_SIZE (Iop, &name_size, GxB_JIT_C_NAME)) ;
     // printf ("name size %d\n", (int) name_size) ;
     char name [256] ;
-    OK (GxB_IndexBinaryOp_get_String (Iop, &name, GxB_JIT_C_NAME)) ;
+    OK (GxB_IndexBinaryOp_get_String (Iop, name, GxB_JIT_C_NAME)) ;
     // printf ("name [%s]\n", name) ;
     int expected = GrB_INVALID_VALUE ;
-    ERR (GxB_IndexBinaryOp_get_VOID (Iop, &name, GxB_JIT_C_NAME)) ;
+    ERR (GxB_IndexBinaryOp_get_VOID (Iop, name, GxB_JIT_C_NAME)) ;
 
     OK (GxB_IndexBinaryOp_set_String (Iop, "my index binop", GrB_NAME)) ;
     name [0] = '\0' ;

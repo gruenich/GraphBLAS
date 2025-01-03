@@ -56,7 +56,7 @@ void mexFunction
     }
 
     Ap = (mwIndex *) mxGetJc (pargin [0]) ;
-    Ai = (SPOK_INT *) mxGetIr (pargin [0]) ;
+    Ai = (mwIndex *) mxGetIr (pargin [0]) ;
     m = mxGetM (pargin [0]) ;
     n = mxGetN (pargin [0]) ;
     nzmax = mxGetNzmax (pargin [0]) ;
@@ -93,8 +93,9 @@ void mexFunction
         }
     }
 
-   switch (spok (m, n, nzmax, Ap, Ai, Ax, Az, As, &njumbled, &nzeros))
-   {
+    switch (spok (m, n, nzmax, (int64_t *) Ap, (int64_t *) Ai, Ax, Az, As,
+        &njumbled, &nzeros))
+    {
 
         case SPOK_FATAL_M:
             ERROR ("negative number of rows") ;

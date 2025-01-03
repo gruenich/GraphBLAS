@@ -14,10 +14,11 @@
 bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
 (
     void **handle,                  // index array returned
-    bool *I_is_32,                  // if true, index is uint32; else uint64
+    bool *I_is_32,                  // if true, index is uint32; else uint64;
+                                    // if NULL: must be uint64
     const mxArray *I_builtin,       // built-in mxArray to get
-    GrB_Index *ni,                  // length of I, or special
-    GrB_Index Icolon [3],           // for all but GB_LIST
+    uint64_t *ni,                   // length of I, or special
+    uint64_t Icolon [3],            // for all but GB_LIST
     bool *I_is_list                 // true if GB_LIST
 )
 {
@@ -25,11 +26,11 @@ bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
     (*handle) = NULL ;
 
     mxArray *X ;
-    GrB_Index *I ;
+    uint64_t *I ;
 
     if (I_builtin == NULL || mxIsEmpty (I_builtin))
     {
-        I = (GrB_Index *) GrB_ALL ;       // like the ":" in C=A(:,j)
+        I = (uint64_t *) GrB_ALL ;       // like the ":" in C=A(:,j)
         (*ni) = 0 ;
         (*handle) = I ;
         (*I_is_list) = false ;

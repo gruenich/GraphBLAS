@@ -194,10 +194,11 @@ GrB_Monoid GB_mx_BinaryOp_to_Monoid // monoid, or NULL if error
 bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
 (
     void **handle,                  // index array returned
-    bool *I_is_32,                  // if true, index is uint32; else uint64
+    bool *I_is_32,                  // if true, index is uint32; else uint64;
+                                    // if NULL: must be uint64
     const mxArray *I_builtin,       // built-in mxArray to get
-    GrB_Index *ni,                  // length of I, or special
-    GrB_Index Icolon [3],           // for all but GB_LIST
+    uint64_t *ni,                   // length of I, or special
+    uint64_t Icolon [3],            // for all but GB_LIST
     bool *I_is_list                 // true if GB_LIST
 ) ;
 
@@ -276,8 +277,8 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 
 mxArray *GB_mx_create_full      // return new built-in full matrix
 (
-    const GrB_Index nrows,
-    const GrB_Index ncols,
+    const uint64_t nrows,
+    const uint64_t ncols,
     GrB_Type type               // type of the matrix to create
 ) ;
 

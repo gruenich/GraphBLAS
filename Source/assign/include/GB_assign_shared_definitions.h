@@ -432,7 +432,7 @@
     ASSERT (Sp_is_32 == Sj_is_32) ;                                         \
     ASSERT (Sp_is_32 == (S->type->code == GB_UINT32_code)) ;                \
     ASSERT (S->type->code == GB_UINT32_code                                 \
-         || S->type->code == GrB_UINT64_code) ;                             \
+         || S->type->code == GB_UINT64_code) ;                              \
     GB_GET_SX ;                                                             \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \

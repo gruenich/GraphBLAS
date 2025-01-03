@@ -190,7 +190,7 @@ void mexFunction
     // check to see if A and C are equal
     OK (check_result (A, C, eq)) ;
     GrB_Matrix_free (&C) ;
-    GrB_Matrix_free (&w) ;
+    GrB_Vector_free (&w) ;
 
     //--------------------------------------------------------------------------
     // C = A, multiple rows at a time

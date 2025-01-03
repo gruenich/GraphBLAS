@@ -11,8 +11,8 @@
 
 mxArray *GB_mx_create_full      // return new built-in full matrix
 (
-    const GrB_Index nrows,
-    const GrB_Index ncols,
+    const uint64_t nrows,
+    const uint64_t ncols,
     GrB_Type type               // type of the matrix to create
 )
 {

@@ -325,7 +325,7 @@ void mexFunction
 
     // get I
     bool I_is_32 = false ;
-    if (!GB_mx_mxArray_to_indices (&I, &I_is_32, pargin [I_ARG], &ni,
+    if (!GB_mx_mxArray_to_indices ((void **) &I, &I_is_32, pargin [I_ARG], &ni,
         I_range, &is_list))
     {
         FREE_ALL ;
@@ -339,7 +339,7 @@ void mexFunction
     #ifdef MATRIX
     // get J for a matrix
     bool J_is_32 = false ;
-    if (!GB_mx_mxArray_to_indices (&J, &J_is_32, pargin [J_ARG], &nj,
+    if (!GB_mx_mxArray_to_indices ((void **) &J, &J_is_32, pargin [J_ARG], &nj,
         J_range, &is_list))
     {
         FREE_ALL ;
@@ -491,12 +491,12 @@ void mexFunction
     METHOD (builder (&C, ctype, nrows, ncols, I, J, I_is_32, 
         X, scalar_build, ni, dup, C_is_csc, xtype)) ;
 
-    ASSERT_MATRIX_OK (C, "C built", GB0) ;
-
     // return C as a struct and free the GraphBLAS C
     #ifdef MATRIX
+    ASSERT_MATRIX_OK (C, "C matrix built", GB0) ;
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
     #else
+    ASSERT_VECTOR_OK (C, "C vector built", GB0) ;
     pargout [0] = GB_mx_Vector_to_mxArray (&C, "C output", true) ;
     #endif
 
