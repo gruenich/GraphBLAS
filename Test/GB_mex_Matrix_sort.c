@@ -76,7 +76,9 @@ void mexFunction
     if (arg1 < 0 && op == GrB_LT_FP64)
     { 
         // use a user-defined "<" op instead of GrB_LT_FP64
-        GrB_BinaryOp_new (&lt, my_lt_double, GrB_BOOL, GrB_FP64, GrB_FP64) ;
+        GrB_BinaryOp_new (&lt,
+            (GxB_binary_function)
+            my_lt_double, GrB_BOOL, GrB_FP64, GrB_FP64) ;
         op = lt ;
     }
 

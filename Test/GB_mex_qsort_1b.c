@@ -51,8 +51,8 @@ void mexFunction
     uint64_t *Jout = mxGetData (pargout [1]) ;
     memcpy (Jout, J, n * sizeof (uint64_t)) ;
 
-    double t = omp_get_wtime ( ) ;
+//  double t = omp_get_wtime ( ) ;
     GB_qsort_1b_64_generic (Iout, (GB_void *) Jout, sizeof (int64_t), n) ;
-    printf ("1b_64_generic time %g\n", omp_get_wtime ( ) - t) ;
+//  printf ("1b_64_generic time %g\n", omp_get_wtime ( ) - t) ;
 }
 

@@ -128,8 +128,10 @@ void mexFunction
         {
 //          printf ("use_mydouble A\n") ;
             OK (GrB_Type_new (&mydouble, sizeof (double))) ;
-            OK (GrB_UnaryOp_new (&castdouble, cast_double, mydouble, GrB_FP64)) ;
-            OK (GrB_UnaryOp_new (&castback,   cast_back,   GrB_FP64, mydouble)) ;
+            OK (GrB_UnaryOp_new (&castdouble, 
+                (GxB_unary_function) cast_double, mydouble, GrB_FP64)) ;
+            OK (GrB_UnaryOp_new (&castback,   
+                (GxB_unary_function) cast_back,   GrB_FP64, mydouble)) ;
             OK (GrB_Matrix_nrows (&m, A)) ;
             OK (GrB_Matrix_ncols (&n, A)) ;
 //          OK (GxB_print (A, 2)) ;

@@ -204,9 +204,9 @@ void mexFunction
             A [k].j = J32 [k] ;
             A [k].k = K32 [k] ;
         }
-        t = omp_get_wtime ( ) ;
+//      t = omp_get_wtime ( ) ;
         GB_quicksort_32_32_32 (A, n, &seed) ;
-        t = omp_get_wtime ( ) - t ;
+//      t = omp_get_wtime ( ) - t ;
         for (int64_t k = 0 ; k < n ; k++)
         {
             Io32 [k] = A [k].i ;
@@ -223,9 +223,9 @@ void mexFunction
             A [k].j = J32 ? ((uint64_t) J32 [k]) : J64 [k] ;
             A [k].k = K32 ? ((uint64_t) K32 [k]) : K64 [k] ;
         }
-        t = omp_get_wtime ( ) ;
+//      t = omp_get_wtime ( ) ;
         GB_quicksort_64_64_64 (A, n, &seed) ;
-        t = omp_get_wtime ( ) - t ;
+//      t = omp_get_wtime ( ) - t ;
         for (int64_t k = 0 ; k < n ; k++)
         {
             if (Io32) { Io32 [k] = A [k].i ; } else { Io64 [k] = A [k].i ; }
@@ -233,7 +233,7 @@ void mexFunction
             if (Ko32) { Ko32 [k] = A [k].k ; } else { Ko64 [k] = A [k].k ; }
         }
     }
-    printf ("bsort time: %g\n:", t) ;
+//  printf ("bsort time: %g\n:", t) ;
 }
 
 
