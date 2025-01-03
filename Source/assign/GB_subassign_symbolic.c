@@ -116,10 +116,11 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
 
     // get S
     ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;
+    ASSERT (S->i_is_32 == (S->type == GrB_UINT32)) ;
+    const bool Sx_is_32 = S->i_is_32 ;
     GB_Sp_DECLARE (Sp, const) ; GB_Sp_PTR (Sp, S) ;
     GB_Sh_DECLARE (Sh, const) ; GB_Sh_PTR (Sh, S) ;
     GB_Si_DECLARE (Si, const) ; GB_Si_PTR (Si, S) ;
-    const bool Sx_is_32 = (S->type == GrB_UINT32) ;
     GB_MDECL (Sx, const, u) ;
     Sx = S->x ;
     GB_IPTR (Sx, Sx_is_32) ;

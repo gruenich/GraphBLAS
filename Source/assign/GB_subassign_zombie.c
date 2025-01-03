@@ -74,7 +74,8 @@ GrB_Info GB_subassign_zombie
     //--------------------------------------------------------------------------
 
     ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;
-    const bool Sx_is_32 = (S->type == GrB_UINT32) ;
+    ASSERT (S->i_is_32 == (S->type == GrB_UINT32)) ;
+    const bool Sx_is_32 = S->i_is_32 ;
     GB_MDECL (Sx, const, u) ;
     Sx = S->x ;
     GB_IPTR (Sx, Sx_is_32) ;

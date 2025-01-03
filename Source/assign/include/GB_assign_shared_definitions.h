@@ -414,7 +414,7 @@
         const GB_Sx_TYPE *restrict Sx = S->x ;
 #else
     #define GB_GET_SX                                                       \
-        const bool Sx_is_32 = (S->type == GrB_UINT32) ;                     \
+        const bool Sx_is_32 = S->i_is_32 ;                                  \
         GB_MDECL (Sx, const, u) ;                                           \
         Sx = S->x ;                                                         \
         GB_IPTR (Sx, Sx_is_32) ;
@@ -428,7 +428,11 @@
     const bool Sp_is_32 = S->p_is_32 ;                                      \
     const bool Sj_is_32 = S->j_is_32 ;                                      \
     const bool Si_is_32 = S->i_is_32 ;                                      \
-    ASSERT (S->type == GrB_UINT32 || S->type == GrB_UINT64) ;               \
+    ASSERT (Sp_is_32 == Si_is_32) ;                                         \
+    ASSERT (Sp_is_32 == Sj_is_32) ;                                         \
+    ASSERT (Sp_is_32 == (S->type->code == GB_UINT32_code)) ;                \
+    ASSERT (S->type->code == GB_UINT32_code                                 \
+         || S->type->code == GrB_UINT64_code) ;                             \
     GB_GET_SX ;                                                             \
     const int64_t Svlen = S->vlen ;                                         \
     const int64_t Snvec = S->nvec ;                                         \
