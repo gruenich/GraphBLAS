@@ -51,6 +51,19 @@
 // R is iso if both C and Z are iso and zij == cij.  This is handled in
 // GB_masker_phase2.
 
+#include "include/GB_compiler.h"
+#if GB_COMPILER_CLANG
+// On the Mac, this file triggers a bug in AppleClang 16.0.0 when -O3
+// optimization is used (MacOS 14.6.1 (23G93), Xcode 16.2):
+//      Apple clang version 16.0.0 (clang-1600.0.26.6)
+//      Target: arm64-apple-darwin23.6.0
+//      Thread model: posix
+//      InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+// See the test for R_sparsity below.  R_sparsity is 4 but the if test (for
+// R_sparsity 1 or 2) evaluates as true, and then the assertion fails.
+#pragma clang optimize off
+#endif
+
 #include "mask/GB_mask.h"
 #include "add/GB_add.h"
 #define GB_FREE_ALL ;
@@ -116,7 +129,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     int64_t *R_to_C = NULL ; size_t R_to_C_size = 0 ;
     int64_t *R_to_Z = NULL ; size_t R_to_Z_size = 0 ;
 
-    int R_ntasks = 0, R_nthreads ;
+    int R_ntasks = 0 ;
     size_t TaskList_size = 0 ; GB_task_struct *TaskList = NULL ;
     bool Rp_is_32, Rj_is_32, Ri_is_32 ;
 
@@ -152,11 +165,26 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
     // phase1: split R into tasks, and count entries in each vector of R
     //--------------------------------------------------------------------------
 
+    double work = M->vlen * M->vdim ;
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
+    int R_nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+
     if (R_sparsity == GxB_SPARSE || R_sparsity == GxB_HYPERSPARSE)
     {
 
         //----------------------------------------------------------------------
-        // R is sparse or hypersparse: slice and analyze the R matrix
+        // R is sparse or hypersparse: but double-check
+        //----------------------------------------------------------------------
+
+        // This assertion fails on AppleClang 16.0.0 with -O3, even though the
+        // assertion exactly matches the enclosing if condition.  Optimization
+        // is not critical for this file, so it is turned off when using any
+        // clang compiler.
+        GB_assert (R_sparsity == GxB_SPARSE || R_sparsity == GxB_HYPERSPARSE) ;
+
+        //----------------------------------------------------------------------
+        // slice and analyze the R matrix
         //----------------------------------------------------------------------
 
         // phase1a: split R into tasks
@@ -198,17 +226,6 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
             return (info) ;
         }
 
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // R is bitmap or full: only determine how many threads to use
-        //----------------------------------------------------------------------
-
-        int nthreads_max = GB_Context_nthreads_max ( ) ;
-        double chunk = GB_Context_chunk ( ) ;
-        R_nthreads = GB_nthreads (M->vlen * M->vdim, chunk, nthreads_max) ;
     }
 
     //--------------------------------------------------------------------------

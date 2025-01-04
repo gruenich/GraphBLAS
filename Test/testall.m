@@ -212,8 +212,8 @@ logstat ('test159'    ,t, J0   , F0   ) ; % A*B
 logstat ('test259'    ,t, J40  , F00  ) ; % plus_plus_fp32 semiring
 logstat ('testc4(0)'  ,t, J4   , F1   ) ; % extractElement, setElement, udt
 logstat ('test157'    ,t, J40  , F10  ) ; % sparsity formats
-% FIXME: segfault on mac here:
-% logstat ('test182'    ,s, J40  , F10  ) ; % for internal wait
+% FIXME: seg fault on Mac: GB_masker, test182
+logstat ('test182'    ,s, J40  , F10  ) ; % for internal wait
 logstat ('test195'    ,t, J4   , F1   ) ; % saxpy3 slice_balanced
 logstat ('test173'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test135'    ,t, J4   , F1   ) ; % reduce to scalar
@@ -319,6 +319,7 @@ logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending operators
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
 logstat ('test192'    ,t, J4   , F1   ) ; % C<C,struct>=scalar
+% FIXME: seg fault on Mac: GB_masker: test181
 logstat ('test181'    ,s, J40  , F10  ) ; % transpose with 0's in mask
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 

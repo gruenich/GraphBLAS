@@ -58,6 +58,11 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 3.3 )
         message ( FATAL_ERROR "clang version must be at least 3.3" )
     endif ( )
+elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang" )
+    # options for Apple Clang
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fsanitize=address" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fsanitize=thread" )
 elseif ( MSVC )
     # options for MicroSoft Visual Studio
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /O2 -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"" )

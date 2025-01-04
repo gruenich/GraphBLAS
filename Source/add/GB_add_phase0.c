@@ -176,7 +176,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     ASSERT (GB_IMPLIES (M != NULL, A->vlen == M->vlen)) ;
 
     //--------------------------------------------------------------------------
-    // initializations
+    // initializations and check for quick return
     //--------------------------------------------------------------------------
 
     (*p_Cnvec) = 0 ;
