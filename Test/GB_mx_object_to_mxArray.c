@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Convert a GraphBLAS sparse or full matrix to a built-in struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.

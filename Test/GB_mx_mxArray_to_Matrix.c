@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // Convert a built-in sparse or full matrix, or a struct to a GraphBLAS sparse
 // matrix.  The mxArray is either a struct containing two terms: a sparse or
