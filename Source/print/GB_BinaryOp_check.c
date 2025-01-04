@@ -91,18 +91,14 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     else if (op_is_from_idxbinop)
     { 
         // built-in index binary operator
-        GBPR0 ("(built-in index):\n    z=%s(x,ix,iy,y,iy,yj,theta)\n", op_name) ;
+        GBPR0 ("(built-in index):\n    z=%s(x,ix,iy,y,iy,yj,theta)\n",
+            op_name) ;
     }
     else
     { 
         // built-in
         GBPR0 ("(built-in): z=%s(x,y)\n", op_name) ;
     }
-
-// FIXME:
-#include "include/GB_pedantic_disable.h"
-GBPR0 ("   binop ptr: %p\n", (void *) op->binop_function) ;
-GBPR0 ("   idxop ptr: %p\n", (void *) op->idxbinop_function) ;
 
     if ((!(op_is_from_idxbinop || op_is_first || op_is_second)
             && op->binop_function == NULL)

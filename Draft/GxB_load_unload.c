@@ -1,41 +1,41 @@
-// Methods, and an example.
+// Methods, and an example.  These methods are entirely new and do not use my
+// existing "pack/unpack" naming scheme.
 
-GrB_Info GxB_Matrix_pack    // pack a matrix in any format
+GrB_Info GxB_Container_to_Matrix // load a matrix in any format from Container
 (
-    GrB_Matrix A,               // matrix to pack from the Container
-    GxB_Container Container,    // Container with contents to pack into A
+    // output:
+    GrB_Matrix A,               // matrix to load from the Container
+    // input:
+    GxB_Container Container,    // Container with contents to load into A
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Vector_pack    // pack a Vector in any format
+GrB_Info GxB_Container_to_Vector // load a Vector in any format from Container
 (
-    GrB_Vector A,               // Vector to pack from the Container
-    GxB_Container Container,    // Container with contents to pack into A
+    // output:
+    GrB_Vector A,               // Vector to load from the Container
+    // input:
+    GxB_Container Container,    // Container with contents to load into A
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Matrix_unpack  // unpack a matrix in any format
+GrB_Info GxB_Matrix_to_Container  // unload a matrix in any format to Container
 (
-    GrB_Matrix A,               // matrix to unpack into the Container
+    // output:
     GxB_Container Container,    // Container to hold the contents from A
+    // input:
+    GrB_Matrix A,               // matrix to unload into the Container
     const GrB_Descriptor desc
 ) ;
 
-GrB_Info GxB_Vector_unpack  // unpack a Vector in any format
+GrB_Info GxB_Vector_to_Container  // unload a Vector in any format to Container
 (
-    GrB_Vector A,               // Vector to unpack into the Container
+    // output:
     GxB_Container Container,    // Container to hold the contents from A
+    // input:
+    GrB_Vector A,               // Vector to unload into the Container
     const GrB_Descriptor desc
 ) ;
-
-// Naming of the above 4 methods:  since they all use the GxB_Container object,
-// perhaps a better naming scheme would be:
-/*
-    GxB_Container_pack_Matrix
-    GxB_Container_pack_Vector
-    GxB_Container_unpack_Matrix
-    GxB_Container_unpack_Vector
-*/
 
 GrB_Info GxB_Container_new  // create a Container
 (
@@ -49,9 +49,10 @@ GrB_Info GxB_Container_free // free a Container
 
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Container_unpack   // unpack a single GrB_Vector from a Container
+GrB_Info GxB_Container_unload   // unload a single GrB_Vector from a Container
 (
-    GrB_Vector v,       // Container->[phibx] to unpack
+    // input/output:
+    GrB_Vector v,       // Container->[phibx] to unload
     void **vx,          // values
     uint64_t *vlen,     // length of the vector
     GrB_Type *vtype     // type of vector
@@ -62,19 +63,17 @@ GrB_Info GxB_Container_unpack   // unpack a single GrB_Vector from a Container
     // vlen, and of type vtype.  On output, the Container->vector has no
     // entries and has a new length of 0.
 
-    // Naming:  should this perhaps be called:
-    //      GxB_Container_unpack_contents?
-
     // This method can be used on any GrB_Vector v that is completely full with
     // all its entries present.  It is like my existing GxB_Vector_unpack_Full,
     // but the latter leaves the length of v unchanged.  Here, the length of
-    // v starts as zero, and is set to vlen when the pack is done.
+    // v starts as zero, and is set to vlen when the "unload" is done.
 
 //------------------------------------------------------------------------------
 
-GrB_Info GxB_Container_pack     // pack a single GrB_Vector from a Container
+GrB_Info GxB_Container_load     // load a single GrB_Vector from a Container
 (
-    GrB_Vector v,       // Container->[phibx] to unpack
+    // input/output:
+    GrB_Vector v,       // Container->[phibx] to load
     void **vx,          // values
     uint64_t vlen,      // length of the vector
     GrB_Type vtype,     // type of vector
@@ -85,40 +84,37 @@ GrB_Info GxB_Container_pack     // pack a single GrB_Vector from a Container
     // On output, vx is NULL.  Its contents have been moved into the
     // Container->vector, which now has length vlen and type vtype.
 
-    // Naming:  should this perhaps be called:
-    //      GxB_Container_pack_contents?
-
     // This method can be used on any GrB_Vector v that is completely full with
     // all its entries present.  It is like my existing GxB_Vector_pack_Full,
     // but the latter leaves the length of v unchanged.  Here, the length of
-    // v is set to zero when the pack is done.
+    // v is set to zero when the "load" is done.
 
 //------------------------------------------------------------------------------
 // Example
 //------------------------------------------------------------------------------
 
-// Usage: with a given GrB_Matrix A to unpack/pack, of size nrows-by-ncols,
+// Usage: with a given GrB_Matrix A to unload/load, of size nrows-by-ncols,
 // with nvals entries, of type atype.  The following will take O(1) time,
 // and the only mallocs are in GxB_Container_new (which can be reused for
-// an arbitrary number of  pack/unpack cycles).
+// an arbitrary number of  load/unload cycles).
 
 GxB_Container_new (&Container) ;    // requires several O(1)-sized mallocs
 
 for (as many times as you like)
 {
 
-    GxB_Matrix_unpack (A, Container, desc) ;
+    GxB_Matrix_to_Container (A, Container, desc) ;
     // A is now 0-by-0 with nvals(A)=0.  Its type is unchanged.
 
     // All of the following is optional; if any item in the Container is not
-    // needed by the user, it can be left as-is, and then it will be packed
+    // needed by the user, it can be left as-is, and then it will be put
     // back into A at the end.  (This is done for the Container->Y).
 
     // to extract numerical values from the Container:
     void *x = NULL ;
     uint64_t nvals = 0 ;
     GrB_Type atype = NULL ;
-    GxB_Container_unpack (Container->x, &x, &nvals, &atype, desc) ;
+    GxB_Container_unload (Container->x, &x, &nvals, &atype, desc) ;
 
     // The C array x now has size nvals of the original A, with type atype
     // being the original type of the matrix A.  The Container->x GrB_Vector
@@ -132,15 +128,15 @@ for (as many times as you like)
     switch (Container->format)
     {
         case GxB_HYPERSPARSE :
-            // The Container->Y matrix can be unpacked here as well,
+            // The Container->Y matrix can be unloaded here as well,
             // if desired.  Its use is optional.
-            GxB_Container_unpack (Container->h, &h, &plen, &htype, desc) ;
+            GxB_Container_unload (Container->h, &h, &plen, &htype, desc) ;
         case GxB_SPARSE :
-            GxB_Container_unpack (Container->p, &p, &plen1, &ptype, desc) ;
-            GxB_Container_unpack (Container->i, &i, &nvals, &itype, desc) ;
+            GxB_Container_unload (Container->p, &p, &plen1, &ptype, desc) ;
+            GxB_Container_unload (Container->i, &i, &nvals, &itype, desc) ;
             break ;
         case GxB_BITMAP :
-            GxB_Container_unpack (Container->b, &b, &nvals, &btype, desc) ;
+            GxB_Container_unload (Container->b, &b, &nvals, &btype, desc) ;
             break ;
     }
 
@@ -155,26 +151,40 @@ for (as many times as you like)
         case GxB_HYPERSPARSE :
             // The Container->Y matrix can be packed here as well,
             // if desired.  Its use is optional.
-            GxB_Container_pack (Container->h, &h, plen, htype, desc) ;
+            GxB_Container_load (Container->h, &h, plen, htype, desc) ;
         case GxB_SPARSE :
-            GxB_Container_unpack (Container->p, p, plen1, ptype, desc) ;
-            GxB_Container_unpack (Container->i, i, nvals, itype, desc) ;
+            GxB_Container_load (Container->p, p, plen1, ptype, desc) ;
+            GxB_Container_load (Container->i, i, nvals, itype, desc) ;
             break ;
         case GxB_BITMAP :
-            GxB_Container_unpack (Container->b, b, nvals, btype, desc) ;
+            GxB_Container_load (Container->b, b, nvals, btype, desc) ;
             break ;
     }
-    GxB_Container_pack (Container->x, &x, nvals, atype, desc) ;
+    GxB_Container_load (Container->x, &x, nvals, atype, desc) ;
 
     // Now the C arrays p, h, i, b, and x are all NULL.  They are in the
     // Container->p,h,b,i,x GrB_Vectors.  Pack the non-opaque Container
     // back into A:
 
-    GxB_Matrix_pack (A, Container, desc) ;
+    GxB_Container_to_Matrix (A, Container, desc) ;
     // A is now back to its original state.  The Container->p,h,b,i,x
     // GrB_Vectors exist but all have length 0.
 
 }
 
 GxB_Container_free (&Container) ;    // does several O(1)-sized free's
+
+//------------------------------------------------------------------------------
+// additional options:
+
+// The Container method could be extended to the COO / Tuples format.  It would
+// be like GrB_Matrix_build when moving the tuples to a matrix, but the method
+// would be faster than GrB_Matrix_build / GrB_Matrix_extractTuples.  The
+// row indices, column indices, and values in the Container could be moved
+// into the matrix, saving time and space.  I already have this capability
+// in my internal methods but there is no user interface for it.
+
+// The container could include a binary operator, which would be used to
+// combine duplicate entries.
+
 
