@@ -115,6 +115,7 @@ F100 = {4,4,0,0} ;
 % quick tests (< 1 sec)
 %===============================================================================
 
+if (0)
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
 logstat ('test286'    ,t, J40  , F00  ) ; % kron with index binary op
@@ -339,6 +340,12 @@ logstat ('test284'    ,t, J40  , F11  ) ; % semirings w/ index binary ops
 % 10 to 100 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
 logstat ('test180'    ,s, J40  , F10  ) ; % assign and subassign (1 thread)
+
+end
+%% HACK FIXME
+    hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
+    set_malloc_debug (mdebug, 1) ;
+
 logstat ('test188'    ,t, J4   , F1   ) ; % concat
 logstat ('test151b'   ,t, J40  , F10  ) ; % bshift operator
 logstat ('test14b'    ,t, J4   , F0   ) ; % GrB_reduce

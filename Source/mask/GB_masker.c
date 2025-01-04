@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // GB_masker (R, C, M, Z), does R=C ; R<M>=Z.  No typecasting is performed.
 // The operation is similar to both R=C+Z via GB_add and R=C.*Z via GB_emult,

@@ -85,7 +85,9 @@ void mexFunction
     OK (GxB_Scalar_fprint (scalar, "scalar after remove", 3, NULL)) ;
     i = 777 ;
     expected = GrB_NO_VALUE ;
+//  printf ("here %d\n", __LINE__) ;
     ERR (GrB_Scalar_extractElement_INT32 (&i, scalar)) ;
+//  printf ("here %d %d\n", __LINE__, i) ;
     CHECK (i == 777) ;
 
     // force a zombie into the scalar
@@ -103,9 +105,11 @@ void mexFunction
     scalar->nzombies = 1 ;
     OK (GxB_Scalar_fprint (scalar, "scalar with zombie", 3, NULL)) ;
     expected = GrB_NO_VALUE ;
+    i = 123456 ;
     ERR (GrB_Scalar_extractElement_INT32 (&i, scalar)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar after extract", 3, NULL)) ;
-    CHECK (i == 777) ;
+//  printf ("here %d %d\n", __LINE__, i) ;
+    CHECK (i == 123456) ;
 
     GrB_Vector_free_(&victor) ;
     GrB_Matrix_free_(&A) ;
@@ -390,6 +394,7 @@ void mexFunction
     C->jumbled = true ;
     GB_MDECL (Ci, , ) ;
     Ci = C->i ;
+    GB_IPTR (Ci, C->i_is_32) ;
     GB_ISET (Ci, 0, 1) ;    // Ci [0] = 1 ;
     GB_ISET (Ci, 1, 0) ;    // Ci [1] = 0 ;
     OK (GxB_Matrix_fprint (C, "wild matrix jumbled", GxB_SHORT, NULL)) ;

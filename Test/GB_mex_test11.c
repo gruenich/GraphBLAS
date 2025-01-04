@@ -57,6 +57,9 @@ void mexFunction
     size_t mysize = 99 ;
     bool use_cmake = false ;
 
+    #define MAXLEN 4096
+    char save_string [MAXLEN+1] ;
+
     //--------------------------------------------------------------------------
     // startup GraphBLAS
     //--------------------------------------------------------------------------
@@ -117,6 +120,10 @@ if (jit_enabled)
     CHECK (onebased_int == 0) ;
     OK (GrB_free (&A)) ;
 
+    //--------------------------------------------------------------------------
+    // try cmake
+    //--------------------------------------------------------------------------
+
     OK (GxB_set (GxB_BURBLE, true)) ;
     OK (GxB_set (GxB_JIT_USE_CMAKE, true)) ;
     OK (GxB_get (GxB_JIT_USE_CMAKE, &use_cmake)) ;
@@ -124,7 +131,6 @@ if (jit_enabled)
     OK (GxB_Global_Option_get_INT32 (GxB_JIT_USE_CMAKE, &use_cmake_int)) ;
     CHECK (use_cmake_int == 1) ;
 
-    // try cmake
     GrB_Type MyType = NULL ;
     info = GxB_Type_new (&MyType, 0, "mytype", "typedef double mytype ;") ;
     if (info != GrB_SUCCESS || MyType->size != sizeof (double))
@@ -139,11 +145,15 @@ if (jit_enabled)
     CHECK (mysize == sizeof (double)) ;
     OK (GrB_free (&MyType)) ;
 
+    //--------------------------------------------------------------------------
+    // test compiler name
+    //--------------------------------------------------------------------------
+
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_NAME, &c)) ;
     printf ("default compiler [%s]\n", c) ;
-    int len = strlen (c) ;
-    char *save_c = mxMalloc (len+2) ;
-    strcpy (save_c, c) ;
+    strncpy (save_string, c, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_C_COMPILER_NAME, "cc")) ;
     OK (GxB_get (GxB_JIT_C_COMPILER_NAME, &s)) ;
     CHECK (MATCH (s, "cc")) ;
@@ -153,19 +163,20 @@ if (jit_enabled)
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_NAME, &t)) ;
     CHECK (MATCH (t, "gcc")) ;
 
-    #ifdef __APPLE__
-    // reset the compiler back to the default on the Mac
-    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_NAME, save_c)) ;
-    #endif
-    mxFree (save_c) ;
-    save_c = NULL ;
+    // reset the compiler back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_NAME, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_NAME, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
 
+    //--------------------------------------------------------------------------
     // test compiler flags
+    //--------------------------------------------------------------------------
+
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_FLAGS, &s)) ;
     printf ("default flags [%s]\n", s) ;
-    len = strlen (s) ;
-    char *save_flags = mxMalloc (len+2) ;
-    strcpy (save_flags, s) ;
+    strncpy (save_string, s, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_C_COMPILER_FLAGS, "-g")) ;
     OK (GxB_get (GxB_JIT_C_COMPILER_FLAGS, &s)) ;
     CHECK (MATCH (s, "-g")) ;
@@ -174,13 +185,21 @@ if (jit_enabled)
     OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_FLAGS, "-O0")) ;
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_FLAGS, &t)) ;
     CHECK (MATCH (t, "-O0")) ;
-    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_FLAGS, save_flags)) ;
-    mxFree (save_flags) ;
-    save_flags = NULL ;
 
+    // reset the flags back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_COMPILER_FLAGS, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_COMPILER_FLAGS, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
+
+    //--------------------------------------------------------------------------
     // test libraries for cmake
+    //--------------------------------------------------------------------------
+
     OK (GxB_get (GxB_JIT_C_CMAKE_LIBS, &s)) ;
     printf ("default C cmake libs [%s]\n", s) ;
+    strncpy (save_string, s, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     printf ("set cmake libs:\n") ;
     OK (GxB_set (GxB_JIT_C_CMAKE_LIBS, "m")) ;
     printf ("get cmake libs:\n") ;
@@ -192,17 +211,37 @@ if (jit_enabled)
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_CMAKE_LIBS, &t)) ;
     CHECK (MATCH (t, "m;dl")) ;
 
+    // reset the cmake libraries back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_CMAKE_LIBS, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_CMAKE_LIBS, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
+
+    //--------------------------------------------------------------------------
+    // test new type
+    //--------------------------------------------------------------------------
+
     OK (GxB_Type_new (&MyType, 0, "mytype", "typedef int32_t mytype ;")) ;
     OK (GxB_Type_size (&mysize, MyType)) ;
     CHECK (mysize == sizeof (int32_t)) ;
     OK (GrB_free (&MyType)) ;
 
+    //--------------------------------------------------------------------------
+    // switch back from cmake to use the C compiler
+    //--------------------------------------------------------------------------
+
     OK (GxB_Global_Option_set_INT32 (GxB_JIT_USE_CMAKE, false)) ;
     OK (GxB_get (GxB_JIT_USE_CMAKE, &use_cmake)) ;
     CHECK (use_cmake == false) ;
 
+    //--------------------------------------------------------------------------
+    // test C linker flags
+    //--------------------------------------------------------------------------
+
     OK (GxB_get (GxB_JIT_C_LINKER_FLAGS, &s)) ;
     printf ("default linker flags [%s]\n", s) ;
+    strncpy (save_string, s, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_C_LINKER_FLAGS, "-shared")) ;
     OK (GxB_get (GxB_JIT_C_LINKER_FLAGS, &s)) ;
     CHECK (MATCH (s, "-shared")) ;
@@ -212,8 +251,20 @@ if (jit_enabled)
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_LINKER_FLAGS, &t)) ;
     CHECK (MATCH (t, " -shared  ")) ;
 
+    // reset the C linker flags back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_LINKER_FLAGS, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_LINKER_FLAGS, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
+
+    //--------------------------------------------------------------------------
+    // test C libraries
+    //--------------------------------------------------------------------------
+
     OK (GxB_get (GxB_JIT_C_LIBRARIES, &s)) ;
     printf ("default C libraries [%s]\n", s) ;
+    strncpy (save_string, s, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_C_LIBRARIES, "-lm")) ;
     OK (GxB_get (GxB_JIT_C_LIBRARIES, &s)) ;
     CHECK (MATCH (s, "-lm")) ;
@@ -223,8 +274,20 @@ if (jit_enabled)
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_LIBRARIES, &t)) ;
     CHECK (MATCH (t, "-lm -ldl")) ;
 
+    // reset the C libraries back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_LIBRARIES, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_LIBRARIES, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
+
+    //--------------------------------------------------------------------------
+    // test C preface
+    //--------------------------------------------------------------------------
+
     OK (GxB_get (GxB_JIT_C_PREFACE, &s)) ;
     printf ("default C preface [%s]\n", s) ;
+    strncpy (save_string, s, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_C_PREFACE, "// stuff here")) ;
     OK (GxB_get (GxB_JIT_C_PREFACE, &s)) ;
     CHECK (MATCH (s, "// stuff here")) ;
@@ -234,8 +297,20 @@ if (jit_enabled)
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_PREFACE, &t)) ;
     CHECK (MATCH (t, "// more stuff here")) ;
 
+    // reset the C preface back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_C_PREFACE, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_C_PREFACE, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
+
+    //--------------------------------------------------------------------------
+    // test CUDA preface
+    //--------------------------------------------------------------------------
+
     OK (GxB_get (GxB_JIT_CUDA_PREFACE, &s)) ;
     printf ("default CUDA preface [%s]\n", s) ;
+    strncpy (save_string, s, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_CUDA_PREFACE, "// cuda stuff here")) ;
     OK (GxB_get (GxB_JIT_CUDA_PREFACE, &s)) ;
     CHECK (MATCH (s, "// cuda stuff here")) ;
@@ -245,6 +320,15 @@ if (jit_enabled)
         "// more cuda stuff here")) ;
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_CUDA_PREFACE, &t)) ;
     CHECK (MATCH (t, "// more cuda stuff here")) ;
+
+    // reset the CUDA preface back to the default
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_CUDA_PREFACE, save_string)) ;
+    OK (GxB_Global_Option_get_CHAR (GxB_JIT_CUDA_PREFACE, &t)) ;
+    CHECK (MATCH (t, save_string)) ;
+
+    //--------------------------------------------------------------------------
+    // test JIT error handling
+    //--------------------------------------------------------------------------
 
     OK (GxB_Type_new (&MyType, 0, "mytype", "typedef double mytype ;")) ;
     OK (GxB_Type_size (&mysize, MyType)) ;
@@ -285,6 +369,7 @@ if (jit_enabled)
 
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_ERROR_LOG, &s)) ;
     CHECK (MATCH (s, "/tmp/grb_error_log.txt")) ;
+
     OK (GxB_Global_Option_set_CHAR (GxB_JIT_ERROR_LOG, "/tmp/grberr2.txt")) ;
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_ERROR_LOG, &s)) ;
     CHECK (MATCH (s, "/tmp/grberr2.txt")) ;
@@ -297,11 +382,15 @@ if (jit_enabled)
     ignore = system ("cat /tmp/grberr2.txt") ;
     printf ("\n-------------------------------------------------------\n\n") ;
 
+    //--------------------------------------------------------------------------
+    // test JIT cache path
+    //--------------------------------------------------------------------------
+
     OK (GxB_get (GxB_JIT_CACHE_PATH, &cache)) ;
     printf ("default cache path: [%s]\n", cache) ;
-    len = strlen (cache) ;
-    char *save_cache = mxMalloc (len+2) ;
-    strcpy (save_cache, cache) ;
+    strncpy (save_string, cache, MAXLEN) ;
+    save_string [MAXLEN] = '\0' ;
+
     OK (GxB_set (GxB_JIT_CACHE_PATH, "/tmp/grb_cache")) ;
     OK (GxB_get (GxB_JIT_CACHE_PATH, &s)) ;
     printf ("new cache path: [%s]\n", s) ;
@@ -346,20 +435,19 @@ if (jit_enabled)
     ERR (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, "/root/noperm")) ;
     OK (GxB_get (GxB_JIT_C_CONTROL, &control)) ;
     CHECK (control == GxB_JIT_RUN) ;
-
     printf ("\nhere %d control is now: %d\n", __LINE__,
         GB_jitifyer_get_control ( )) ;
 
     // restore cache path
-    printf ("set back to default cache path: [%s]\n", save_cache) ;
-    OK (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, save_cache)) ;
     OK (GxB_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    printf ("\nhere %d control is now: %d\n", __LINE__,
+        GB_jitifyer_get_control ( )) ;
+    printf ("\nset back to default cache path: [%s]\n", save_string) ;
+    OK (GxB_Global_Option_set_CHAR (GxB_JIT_CACHE_PATH, save_string)) ;
     OK (GxB_Global_Option_get_CHAR (GxB_JIT_CACHE_PATH, &s)) ;
-    printf ("cache [%s]\n" , save_cache) ;
+    printf ("cache [%s]\n" , save_string) ;
     printf ("s     [%s]\n" , s) ;
-    CHECK (MATCH (s, save_cache)) ;
-    mxFree (save_cache) ;
-    save_cache = NULL ;
+    CHECK (MATCH (s, save_string)) ;
 }
 
     //--------------------------------------------------------------------------
