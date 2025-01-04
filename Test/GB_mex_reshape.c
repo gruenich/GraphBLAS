@@ -38,10 +38,10 @@ void mexFunction
 
     #define FREE_DEEP_COPY GrB_Matrix_free_(&C) ;
 
-    GrB_Index nrows_new = (GrB_Index) mxGetScalar (pargin [1]) ;
-    GrB_Index ncols_new = (GrB_Index) mxGetScalar (pargin [2]) ;
-    bool      by_col    = (bool     ) mxGetScalar (pargin [3]) ;
-    bool      in_place  = (bool     ) mxGetScalar (pargin [4]) ;
+    uint64_t nrows_new = (uint64_t) mxGetScalar (pargin [1]) ;
+    uint64_t ncols_new = (uint64_t) mxGetScalar (pargin [2]) ;
+    bool     by_col    = (bool    ) mxGetScalar (pargin [3]) ;
+    bool     in_place  = (bool    ) mxGetScalar (pargin [4]) ;
 
     // reshape the matrix
     if (in_place)

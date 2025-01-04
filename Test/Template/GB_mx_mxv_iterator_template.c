@@ -105,8 +105,8 @@
         // attach it to the matrix A
         OK (GxB_rowIterator_attach (iterator, A, NULL)) ;
         // get the kount
-        GrB_Index kount2 = 0 ;
-        GrB_Index kount1 = GxB_rowIterator_kount (iterator) ;
+        uint64_t kount2 = 0 ;
+        uint64_t kount1 = GxB_rowIterator_kount (iterator) ;
         // seek to A(0,:)
         info = GxB_rowIterator_seekRow (iterator, 0) ;
         OK (info) ;
@@ -114,12 +114,12 @@
         {
             // iterate over entries in A(i,:)
             kount2++ ;
-            GrB_Index i = GxB_rowIterator_getRowIndex (iterator) ;
+            uint64_t i = GxB_rowIterator_getRowIndex (iterator) ;
             my_assert (i >= 0 && i < nrows) ;
             while (info == GrB_SUCCESS)
             {
                 // get the entry A(i,j)
-                GrB_Index j = GxB_rowIterator_getColIndex (iterator) ;
+                uint64_t j = GxB_rowIterator_getColIndex (iterator) ;
                 my_assert (j >= 0 && j < ncols) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
@@ -135,7 +135,7 @@
         my_assert (kount1 == kount2) ;
 
         // check the return value when the iterator is exhausted
-        GrB_Index i = GxB_rowIterator_getRowIndex (iterator) ;
+        uint64_t i = GxB_rowIterator_getRowIndex (iterator) ;
         my_assert (i == nrows) ;
 
     }
@@ -149,8 +149,8 @@
         // attach it to the matrix A
         OK (GxB_colIterator_attach (iterator, A, NULL)) ;
         // get the kount
-        GrB_Index kount2 = 0 ;
-        GrB_Index kount1 = GxB_colIterator_kount (iterator) ;
+        uint64_t kount2 = 0 ;
+        uint64_t kount1 = GxB_colIterator_kount (iterator) ;
         // seek to A(:,0)
         info = GxB_colIterator_seekCol (iterator, 0) ;
         OK (info) ;
@@ -158,12 +158,12 @@
         {
             // iterate over entries in A(:,j)
             kount2++ ;
-            GrB_Index j = GxB_colIterator_getColIndex (iterator) ;
+            uint64_t j = GxB_colIterator_getColIndex (iterator) ;
             my_assert (j >= 0 && j < ncols) ;
             while (info == GrB_SUCCESS)
             {
                 // get the entry A(i,j)
-                GrB_Index i = GxB_colIterator_getRowIndex (iterator) ;
+                uint64_t i = GxB_colIterator_getRowIndex (iterator) ;
                 my_assert (i >= 0 && i < nrows) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
@@ -179,7 +179,7 @@
         my_assert (kount1 == kount2) ;
 
         // check the return value when the iterator is exhausted
-        GrB_Index j = GxB_rowIterator_getRowIndex (iterator) ;
+        uint64_t j = GxB_rowIterator_getRowIndex (iterator) ;
         my_assert (j == ncols) ;
 
     }
@@ -200,7 +200,7 @@
         while (info != GxB_EXHAUSTED)
         {
             // get the entry A(i,j)
-            GrB_Index i, j ;
+            uint64_t i, j ;
             GxB_Matrix_Iterator_getIndex (iterator, &i, &j) ;
             my_assert (i >= 0 && i < nrows) ;
             my_assert (j >= 0 && j < ncols) ;
@@ -211,8 +211,8 @@
             OK (info);
         }
 
-        GrB_Index p = GxB_Matrix_Iterator_getp (iterator) ;
-        GrB_Index pmax = GxB_Matrix_Iterator_getpmax (iterator) ;
+        uint64_t p = GxB_Matrix_Iterator_getp (iterator) ;
+        uint64_t pmax = GxB_Matrix_Iterator_getpmax (iterator) ;
         my_assert (p == pmax) ;
 
     }
@@ -226,22 +226,22 @@
         // attach it to the matrix A
         OK (GxB_rowIterator_attach (iterator, A, NULL)) ;
         // get the kount
-        GrB_Index kount = GxB_rowIterator_kount (iterator) ;
+        uint64_t kount = GxB_rowIterator_kount (iterator) ;
         for (int k = kount-1 ; k >= 0 ; k--)
         {
             // seek to A(k,:)
-            info = GxB_rowIterator_kseek (iterator, (GrB_Index) k) ;
+            info = GxB_rowIterator_kseek (iterator, (uint64_t) k) ;
             my_assert (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
 
             // get the row index
-            GrB_Index i = GxB_rowIterator_getRowIndex (iterator) ;
+            uint64_t i = GxB_rowIterator_getRowIndex (iterator) ;
             my_assert (i >= 0 && i <= nrows) ;
 
             // iterate over entries in A(i,:)
             while (info == GrB_SUCCESS)
             {
                 // get the entry A(i,j)
-                GrB_Index j = GxB_rowIterator_getColIndex (iterator) ;
+                uint64_t j = GxB_rowIterator_getColIndex (iterator) ;
                 my_assert (j >= 0 && j < ncols) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
@@ -262,22 +262,22 @@
         // attach it to the matrix A
         OK (GxB_colIterator_attach (iterator, A, NULL)) ;
         // get the kount
-        GrB_Index kount = GxB_colIterator_kount (iterator) ;
+        uint64_t kount = GxB_colIterator_kount (iterator) ;
         for (int k = kount-1 ; k >= 0 ; k--)
         {
             // seek to A(:,k)
-            info = GxB_colIterator_kseek (iterator, (GrB_Index) k) ;
+            info = GxB_colIterator_kseek (iterator, (uint64_t) k) ;
             my_assert (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
 
             // get the col index
-            GrB_Index j = GxB_colIterator_getColIndex (iterator) ;
+            uint64_t j = GxB_colIterator_getColIndex (iterator) ;
             my_assert (j >= 0 && j <= ncols) ;
 
             // iterate over entries in A(:,j)
             while (info == GrB_SUCCESS)
             {
                 // get the entry A(i,j)
-                GrB_Index i = GxB_colIterator_getRowIndex (iterator) ;
+                uint64_t i = GxB_colIterator_getRowIndex (iterator) ;
                 my_assert (i >= 0 && i < nrows) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
@@ -301,11 +301,11 @@
         for (int k = 0 ; k < nrows ; k++)
         {
             // seek to A(k,:)
-            info = GxB_rowIterator_seekRow (iterator, (GrB_Index) k) ;
+            info = GxB_rowIterator_seekRow (iterator, (uint64_t) k) ;
             my_assert (info >= GrB_SUCCESS) ;
 
             // get the row index
-            GrB_Index i = GxB_rowIterator_getRowIndex (iterator) ;
+            uint64_t i = GxB_rowIterator_getRowIndex (iterator) ;
             my_assert (i >= 0 && i <= nrows) ;
 
             // if the matrix is hypersparse, seekRow can skip
@@ -315,7 +315,7 @@
             while (info == GrB_SUCCESS)
             {
                 // get the entry A(i,j)
-                GrB_Index j = GxB_rowIterator_getColIndex (iterator) ;
+                uint64_t j = GxB_rowIterator_getColIndex (iterator) ;
                 my_assert (j >= 0 && j < ncols) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
@@ -342,11 +342,11 @@
         for (int k = 0 ; k < ncols ; k++)
         {
             // seek to A(:,k)
-            info = GxB_colIterator_seekCol (iterator, (GrB_Index) k) ;
+            info = GxB_colIterator_seekCol (iterator, (uint64_t) k) ;
             my_assert (info >= GrB_SUCCESS) ;
 
             // get the col index
-            GrB_Index j = GxB_colIterator_getColIndex (iterator) ;
+            uint64_t j = GxB_colIterator_getColIndex (iterator) ;
             my_assert (j >= 0 && j <= ncols) ;
 
             // if the matrix is hypersparse, seekCol can skip
@@ -356,7 +356,7 @@
             while (info == GrB_SUCCESS)
             {
                 // get the entry A(i,j)
-                GrB_Index i = GxB_colIterator_getRowIndex (iterator) ;
+                uint64_t i = GxB_colIterator_getRowIndex (iterator) ;
                 my_assert (i >= 0 && i < nrows) ;
                 // Y (i) += A(i,j) * X (j)
                 MULTADD ;
@@ -380,9 +380,9 @@
 
         // attach it to the matrix A
         OK (GxB_Matrix_Iterator_attach (iterator, A, NULL)) ;
-        GrB_Index pmax = GxB_Matrix_Iterator_getpmax (iterator) ;
+        uint64_t pmax = GxB_Matrix_Iterator_getpmax (iterator) ;
 
-        for (GrB_Index p = 0 ; p < pmax ; p++)
+        for (uint64_t p = 0 ; p < pmax ; p++)
         {
             // seek to the pth entry
             OK (GxB_Matrix_Iterator_seek (iterator, p)) ;
@@ -390,7 +390,7 @@
             if (p == GxB_Matrix_Iterator_getp (iterator))
             {
                 // get the entry A(i,j)
-                GrB_Index i, j ;
+                uint64_t i, j ;
                 GxB_Matrix_Iterator_getIndex (iterator, &i, &j) ;
                 my_assert (i >= 0 && i < nrows) ;
                 my_assert (j >= 0 && j < ncols) ;

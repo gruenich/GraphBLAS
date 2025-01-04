@@ -24,21 +24,12 @@
     GB_mx_put_global (true) ;           \
 }
 
-#if 0
-bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b) ;
-bool isnan64 (GrB_Index i, GrB_Index j, const void *x, const void *b)
-{ 
-    double aij = * ((double *) x) ;
-    return (isnan (aij)) ;
-}
-#else
-void isnan64 (bool *z, const void *x, GrB_Index i, GrB_Index j, const void *b) ;
-void isnan64 (bool *z, const void *x, GrB_Index i, GrB_Index j, const void *b)
+void isnan64 (bool *z, const void *x, uint64_t i, uint64_t j, const void *b) ;
+void isnan64 (bool *z, const void *x, uint64_t i, uint64_t j, const void *b)
 { 
     double aij = * ((double *) x) ;
     (*z) = (isnan (aij)) ;
 }
-#endif
 
 void mexFunction
 (

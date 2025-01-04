@@ -45,8 +45,8 @@ void mexFunction
     // create and reduce a huge iso full matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index nrows = 1UL << 40 ;
-    GrB_Index ncols = 1UL << 48 ;
+    uint64_t nrows = 1UL << 40 ;
+    uint64_t ncols = 1UL << 48 ;
     double pi = 3.141592653589793 ;
     double sum = 0 ;
     mexPrintf (

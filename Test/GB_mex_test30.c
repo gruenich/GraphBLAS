@@ -47,16 +47,16 @@
     GETOP (op, #op) ;                                       \
 }
 
-void myfunc (bool *z, const float *x, GrB_Index i, GrB_Index j,
+void myfunc (bool *z, const float *x, uint64_t i, uint64_t j,
     const float *y) ;
-void myfunc (bool *z, const float *x, GrB_Index i, GrB_Index j,
+void myfunc (bool *z, const float *x, uint64_t i, uint64_t j,
     const float *y)
 {
     (*z) = (*x) > 2 ;
 }
 
 #define MYFUNC_DEFN \
-"void myfunc (bool *z, const float *x, GrB_Index i, GrB_Index j,    \n" \
+"void myfunc (bool *z, const float *x, uint64_t i, uint64_t j,      \n" \
 "    const float *y)                                                \n" \
 "{                                                                  \n" \
 "    (*z) = (*x) > 2 ;                                              \n" \

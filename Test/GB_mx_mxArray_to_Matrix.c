@@ -317,7 +317,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         // create the GraphBLAS matrix
         info = GB_new (&A, // sparse or full, new header
-            atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
+            atype_out, (uint64_t) nrows, (uint64_t) ncols,
             GB_ph_calloc, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
             p_is_32, j_is_32, i_is_32) ;
         if (info != GrB_SUCCESS)
@@ -353,7 +353,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
 
         // create the GraphBLAS matrix, do not allocate A->p
         info = GB_new (&A, // sparse or full, new header
-            atype_out, (GrB_Index) nrows, (GrB_Index) ncols,
+            atype_out, (uint64_t) nrows, (uint64_t) ncols,
             GB_ph_null, is_csc, sparsity, GxB_HYPER_DEFAULT, 0,
             /* must be false (MATLAB matrices are 64/64 bit): */
             false, false, false) ;
@@ -454,7 +454,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             GrB_Type ttype = (atype_in_code == GB_UDT_code) ?
                 GxB_FC64 : atype_in ;
             void *Tx = MatlabX ;
-            GrB_Index nrows = anz, ncols = 1, Tx_size = anz * asize ;
+            uint64_t nrows = anz, ncols = 1, Tx_size = anz * asize ;
             GxB_Matrix_import_FullC (&T, ttype, nrows, ncols, &Tx, Tx_size,
                 false, NULL) ;
             GB_cast_array (A->x, code1, T, 1) ;

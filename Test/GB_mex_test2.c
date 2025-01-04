@@ -245,8 +245,8 @@ void mexFunction
 
     OK (GxB_Global_Option_set_(GxB_BURBLE, true)) ;
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
-    GrB_Index I [3] = { 1, 1, 0 } ;
-    int32_t I32 [3] = { 1, 1, 0 } ;
+    uint64_t  I [3] = { 1, 1, 0 } ; // OK
+    int32_t I32 [3] = { 1, 1, 0 } ; // OK
     OK (GrB_Matrix_new (&C, GrB_INT32, n, 0)) ;
     OK (GrB_Matrix_extract_(C, NULL, NULL, A, GrB_ALL, n, I, GxB_STRIDE,
         NULL)) ;
@@ -332,18 +332,18 @@ void mexFunction
     OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
-    // GrB_build an empty matrix
+    // GrB_build an empty matrix of type GrB_UINT32
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
-    OK (GrB_Matrix_build_INT32 (A, I, I, I32, 0, GrB_PLUS_INT32)) ;
+    OK (GrB_Matrix_build_INT32 (A, I, I, I32, 0, GrB_PLUS_INT32)) ;     // OK
     OK (GxB_Matrix_fprint (A, "empty", GxB_COMPLETE, NULL)) ;
     CHECK (!GB_is_shallow (A)) ;
     GrB_Matrix_free_(&A) ;
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
     expected = GrB_DOMAIN_MISMATCH ;
-    ERR (GrB_Matrix_build_INT32 (A, I, I, I32, 0, GxB_FIRSTI_INT32)) ;
+    ERR (GrB_Matrix_build_INT32 (A, I, I, I32, 0, GxB_FIRSTI_INT32)) ;  // OK
     OK (GrB_Matrix_error (&message, A)) ;
     printf ("expected error: %s\n", message) ;
     GrB_Matrix_free_(&A) ;
@@ -429,7 +429,7 @@ void mexFunction
         NULL, UINT64_MAX, false, NULL) ;
     if (info != GrB_INVALID_VALUE || X != NULL) mexErrMsgTxt ("huge fail1") ;
 
-    GrB_Index nhuge = (((GrB_Index) 2) << 50) ;
+    uint64_t nhuge = (((uint64_t) 2) << 50) ;
     info = GxB_Matrix_import_BitmapC (&X, GrB_FP32, nhuge, nhuge,
         NULL, NULL, 0, 0, false, 0, NULL) ;
     if (info != GrB_INVALID_VALUE || X != NULL) mexErrMsgTxt ("huge fail5") ;
@@ -485,8 +485,8 @@ void mexFunction
     GrB_Matrix Tiles [4] ;
     memset (Tiles, 0, 4 * sizeof (GrB_Matrix)) ;
     n = 20 ;
-    GrB_Index Tile_nrows [2] = { 5, 15 } ;
-    GrB_Index Tile_ncols [2] = { 12, 8 } ;
+    uint64_t Tile_nrows [2] = { 5, 15 } ;
+    uint64_t Tile_ncols [2] = { 12, 8 } ;
 
     for (int k = 0 ; k <= 3 ; k++)
     {

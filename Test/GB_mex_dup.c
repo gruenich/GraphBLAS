@@ -77,7 +77,7 @@ void mexFunction
 
             // C = create an exact copy of A, just like GrB_Matrix_dup
             GrB_Type type ;
-            GrB_Index nrows, ncols ;
+            uint64_t nrows, ncols ;
 
             #undef GET_DEEP_COPY
             #undef FREE_DEEP_COPY
@@ -129,7 +129,7 @@ void mexFunction
         }
 
         // C = (ctype) A
-        GrB_Index nrows, ncols ;
+        uint64_t nrows, ncols ;
 
         #define GET_DEEP_COPY                               \
         {                                                   \

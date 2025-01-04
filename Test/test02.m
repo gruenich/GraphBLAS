@@ -1,4 +1,4 @@
-% function test02 FIXME
+function test02
 %TEST02 test GrB_*_dup
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

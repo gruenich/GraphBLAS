@@ -29,7 +29,7 @@ void mexFunction
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Vector v = NULL ;
     bool *X = NULL ;
-    GrB_Index *I = NULL, ni = 0, I_range [3] ;
+    uint64_t *I = NULL, ni = 0, I_range [3] ;       // OK
     bool is_list ;
 
     // check inputs

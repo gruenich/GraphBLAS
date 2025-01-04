@@ -92,8 +92,8 @@ void f3 (GxB_FC64_t *z, const GxB_FC64_t *x, const double *y)
     (*z) = GB_FC64_add ((*x), GB_CMPLX64 (0,(*y))) ;
 }
 
-bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k) ;
-bool fselect (GrB_Index i, GrB_Index j, const double *x, const double *k)
+bool fselect (uint64_t i, uint64_t j, const double *x, const double *k) ;
+bool fselect (uint64_t i, uint64_t j, const double *x, const double *k)
 {
     // select entries in triu(A) that are greater than k
     int64_t i2 = (int64_t) i ;
@@ -162,12 +162,12 @@ void mexFunction
     GrB_Descriptor desc = NULL, dcrud = NULL, d0 = NULL,
         dnt = NULL, dtn = NULL, dtt = NULL, descb = NULL ;
     int dval ;
-    GrB_Index n = 0, nvals = 0, n2 = 0, i = 0, j = 0, a, b, uvals = 0 ;
-    GrB_Index *I0 = NULL, *J0 = NULL ;
+    uint64_t n = 0, nvals = 0, n2 = 0, i = 0, j = 0, a, b, uvals = 0 ;
+    uint64_t *I0 = NULL, *J0 = NULL ;   // OK
     #define LEN 100
-    GrB_Index I [5] = { 0,   7,   8,   3,    2 },       I2 [LEN] ;
-    GrB_Index J [5] = { 4,   1,   2,   2,    1 },       J2 [LEN] ;
-    double    X [5] = { 4.5, 8.2, 9.1, -1.2, 3.14159 }, X2 [LEN]  ;
+    uint64_t I [5] = { 0,   7,   8,   3,    2 },       I2 [LEN] ;   // OK
+    uint64_t J [5] = { 4,   1,   2,   2,    1 },       J2 [LEN] ;   // OK
+    double   X [5] = { 4.5, 8.2, 9.1, -1.2, 3.14159 }, X2 [LEN] ;
     GB_Pending A_Pending = NULL ;
 
     size_t s ;
@@ -2112,7 +2112,7 @@ void mexFunction
     // GrB_mxm dot product
     //--------------------------------------------------------------------------
 
-    GrB_Index huge = GB_NMAX ;
+    uint64_t huge = GB_NMAX ;
     GrB_Matrix HugeRow ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
     GB_Matrix_check (HugeRow, "huge row", G3, NULL) ;
@@ -2865,8 +2865,8 @@ void mexFunction
     fprintf (ff, "done bounds test: error returned:\n%s\n", err) ;
     OK (GrB_Matrix_free_(&A4)) ;
 
-    GrB_Index I3 [5] = { 0,   1,   2,   3,    4 } ;
-    GrB_Index J3 [5] = { 0,   1,   2,   3,    4 } ;
+    uint64_t I3 [5] = { 0,   1,   2,   3,    4 } ;      // OK
+    uint64_t J3 [5] = { 0,   1,   2,   3,    4 } ;      // OK
 
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, NULL)) ;
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, ff)) ;
@@ -4096,8 +4096,8 @@ void mexFunction
     OK (GrB_Matrix_free_(&A)) ;
     OK (GrB_Matrix_new (&A, GrB_FP64, 10, 4)) ;
 
-    GrB_Index I00 [1] = { 0 } ;
-    GrB_Index J00 [1] = { 0 } ;
+    uint64_t I00 [1] = { 0 } ;     // OK
+    uint64_t J00 [1] = { 0 } ;     // OK
     OK (GrB_Matrix_setElement_FP64 (A, 3.14159, 0, 0)) ;
     OK (GrB_Matrix_assign_BOOL (A, NULL, GrB_SECOND_FP64, true, I00, 1, J00, 1,
         NULL)) ;
@@ -4860,18 +4860,14 @@ void mexFunction
     CHECK (!ok) ;
     CHECK (n == 0) ;
 
-    ok = GB_int64_multiply (&n,
-        ((GrB_Index) GB_NMAX)+1,
-        ((GrB_Index) GB_NMAX)+1) ;
+    ok = GB_int64_multiply (&n, ((uint64_t) GB_NMAX)+1, ((uint64_t) GB_NMAX)+1);
     CHECK (!ok) ;
 
-    ok = GB_int64_multiply (&n,
-        ((GrB_Index) GB_NMAX),
-        ((GrB_Index) GB_NMAX)) ;
+    ok = GB_int64_multiply (&n, ((uint64_t) GB_NMAX), ((uint64_t) GB_NMAX)) ;
     CHECK (!ok) ;
 
-    a = (GrB_Index) 16777216/2 ;     // (2^24)/2
-    b = (GrB_Index) 16777216 ;
+    a = (uint64_t) 16777216/2 ;     // (2^24)/2
+    b = (uint64_t) 16777216 ;
     ok = GB_int64_multiply (&n, a, b) ;
     // printf ("%lld %lld n\n", n, a*b) ;
     CHECK (ok) ;
@@ -4932,8 +4928,8 @@ void mexFunction
     n = NWHAT ;
     nvals = 40 ;
     uvals = 4 ;
-    GrB_Index ilist [NWHAT] = { 8, 9, 0, 1, 5, 6, 11, 3, 2, 10, 7, 4 } ;
-    GrB_Index jlist [NWHAT] = { 0, 11, 1, 7, 8, 4, 2, 3, 5, 6, 10, 9 } ;
+    uint64_t ilist [NWHAT] = { 8, 9, 0, 1, 5, 6, 11, 3, 2, 10, 7, 4 } ; // OK
+    uint64_t jlist [NWHAT] = { 0, 11, 1, 7, 8, 4, 2, 3, 5, 6, 10, 9 } ; // OK
 
     OK (GB_mx_random_matrix (&A, false, false, n, n, nvals, 0, false)) ;
     OK (GrB_Vector_new (&u, GrB_FP64, n)) ;
@@ -5234,7 +5230,7 @@ void mexFunction
 
         OK (GrB_transpose (B, Amask, NULL, A, NULL)) ;
         OK (GrB_transpose (A, Amask, NULL, A, NULL)) ;
-        GrB_Index ignore ;
+        uint64_t ignore ;
 
         OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
         OK (GrB_Matrix_wait (B, GrB_MATERIALIZE)) ;
@@ -5274,8 +5270,8 @@ void mexFunction
 
     printf ("\n----------------------------- import/export\n") ;
     OK (GxB_Matrix_fprint (A, "A to import/export", GxB_COMPLETE, stdout)) ;
-    uint64_t *Aj ;
-    GrB_Index nrows, ncols, nvecs ;
+    uint64_t *Aj ;      // OK
+    uint64_t nrows, ncols, nvecs ;
     double *Ax ;
     GrB_Type atype ;
     bool jumbled, iso ;
@@ -5283,7 +5279,7 @@ void mexFunction
 
 {
     // import/export are all-64-bit
-    uint64_t *Ap, *Ah, *Ai ;
+    uint64_t *Ap, *Ah, *Ai ;    // OK
 
     OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols,
         &Ap, &Aj, (void **) &Ax, &Ap_size, &Aj_size, &Ax_size, &iso,

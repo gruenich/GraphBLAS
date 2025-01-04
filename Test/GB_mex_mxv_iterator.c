@@ -61,7 +61,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     GB_Global_print_one_based_set (0) ;
@@ -75,7 +75,7 @@ void mexFunction
     }
     // GxB_print (X, 3) ;
 
-    GrB_Index n ;
+    uint64_t n ;
     OK (GrB_Vector_size (&n, X)) ;
     if (n != ncols)
     {

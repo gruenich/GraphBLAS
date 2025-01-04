@@ -34,8 +34,8 @@ void mexFunction
     GrB_Vector mask = NULL ;
     GrB_Matrix A = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Index *I = NULL, ni = 0, I_range [3] ;
-    GrB_Index *J = NULL, nj = 0, J_range [3] ;
+    uint64_t *I = NULL, ni = 0, I_range [3] ;       // FIXME: allow 32
+    uint64_t *J = NULL, nj = 0, J_range [3] ;       // FIXME: allow 32
     bool ignore ;
 
     // check inputs
@@ -104,7 +104,7 @@ void mexFunction
         mexErrMsgTxt ("j must be a scalar") ;
     }
 
-    GrB_Index j = J [0] ;
+    uint64_t j = J [0] ;    // FIXME: allow 32
 
     // get desc
     if (!GB_mx_mxArray_to_Descriptor (&desc, PARGIN (6), "desc"))

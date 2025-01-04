@@ -252,8 +252,8 @@ void mexFunction
     mytype scalar1 ;
     scalar1.x = 4 ;
     scalar1.y = 3 ;
-    GrB_Index *Ap = NULL ;
-    GrB_Index *Ai = NULL ;
+    uint64_t *Ap = NULL ;   // OK; 64-bit only
+    uint64_t *Ai = NULL ;   // OK; 64-bit only
     float *Ax = NULL  ;
     void *blob = NULL ;
 
@@ -924,7 +924,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     blob = NULL ;
-    GrB_Index blob_size = 0, blob_size2 = 0 ;
+    uint64_t blob_size = 0, blob_size2 = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
     OK (GxB_Matrix_deserialize (&C, MyType, blob, blob_size, NULL)) ;
     OK (GxB_Matrix_fprint (C, "C of MyType", 3, NULL)) ;
@@ -1131,11 +1131,11 @@ void mexFunction
     // import/export
     //--------------------------------------------------------------------------
 
-    GrB_Index Ap_len = 5 ;
-    GrB_Index Ai_len = 16 ;
-    GrB_Index Ax_len = 16 ;
-    Ap = mxCalloc (Ap_len , sizeof (GrB_Index)) ;
-    Ai = mxCalloc (Ax_len, sizeof (GrB_Index)) ;
+    uint64_t Ap_len = 5 ;
+    uint64_t Ai_len = 16 ;
+    uint64_t Ax_len = 16 ;
+    Ap = mxCalloc (Ap_len, sizeof (uint64_t)) ;
+    Ai = mxCalloc (Ax_len, sizeof (uint64_t)) ;
     Ax = mxCalloc (Ax_len, sizeof (float))  ;
     OK (GrB_Matrix_new (&A, GrB_FP32, 4, 4)) ;
     OK (GrB_Matrix_setElement_FP32 (A, 1, 0, 0)) ;
@@ -1199,10 +1199,9 @@ void mexFunction
     // build with duplicates
     //--------------------------------------------------------------------------
 
-#if 1
-    GrB_Index *I = mxCalloc (4, sizeof (GrB_Index)) ;
-    GrB_Index *J = mxCalloc (4, sizeof (GrB_Index)) ;
-    double *X    = mxCalloc (4, sizeof (double)) ;
+    uint64_t *I = mxCalloc (4, sizeof (uint64_t)) ; // OK
+    uint64_t *J = mxCalloc (4, sizeof (uint64_t)) ; // OK
+    double   *X = mxCalloc (4, sizeof (double)) ;
     expected = GrB_INVALID_VALUE ;
     OK (GrB_Matrix_new (&A, GrB_FP64, 5, 5)) ;
     ERR (GrB_Matrix_build (A, I, J, X, 4, NULL)) ;
@@ -1460,7 +1459,6 @@ void mexFunction
     }
 
     OK (GrB_Matrix_free_ (&A)) ;
-#endif
 
     //--------------------------------------------------------------------------
     // wrapup
@@ -1470,25 +1468,6 @@ void mexFunction
     MXFREE (Ap) ;
     MXFREE (Ai) ;
     MXFREE (Ax) ;
-
-#if 0
-    GrB_free (&C) ;
-    GrB_free (&A) ;
-    GrB_free (&M) ;
-    GrB_free (&S) ;
-    GrB_free (&E) ;
-    GrB_free (&desc) ;
-    GrB_free (&w) ;
-    GrB_free (&scalar) ;
-    GrB_free (&Banded) ;
-    GrB_free (&UpperBanded) ;
-    GrB_free (&UpperBanded_int64) ;
-    GrB_free (&Gunk) ;
-    GrB_free (&Banded32) ;
-    GrB_free (&type) ;
-    GrB_free (&MyType) ;
-    GrB_free (&MyInt64) ;
-#endif
 
     GB_mx_put_global (true) ;
     printf ("\nGB_mex_test5: all tests passed\n\n") ;

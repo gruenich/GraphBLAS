@@ -32,7 +32,7 @@ GrB_Monoid add = NULL ;
 GrB_Semiring semiring = NULL ;
 GrB_Info adotb_complex (GB_Werk Werk) ;
 GrB_Info adotb (GB_Werk Werk) ;
-GrB_Index anrows, ancols, bnrows, bncols, mnrows, mncols ;
+uint64_t anrows, ancols, bnrows, bncols, mnrows, mncols ;
 bool flipxy = false ;
 struct GB_Matrix_opaque C_header ;
 

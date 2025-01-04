@@ -34,7 +34,7 @@ void mexFunction
     // create some valid matrices
     //--------------------------------------------------------------------------
 
-    GrB_Index n = 4 ;
+    uint64_t n = 4 ;
     GrB_Matrix A = NULL, B = NULL, F = NULL, C = NULL, D = NULL, G = NULL,
         S = NULL, H = NULL, F2 = NULL, F3 = NULL ;
     OK (GrB_Matrix_new (&A, GrB_FP32, n, n)) ;
@@ -180,8 +180,8 @@ void mexFunction
     ERR (GxB_Matrix_concat (G, Tiles, 2, 2, NULL)) ;
 
     // split full
-    GrB_Index Tile_rows [2] = {2, 2} ;
-    GrB_Index Tile_cols [2] = {2, 2} ;
+    uint64_t Tile_rows [2] = {2, 2} ;
+    uint64_t Tile_cols [2] = {2, 2} ;
     ERR (GxB_Matrix_split (Tiles, 2, 2, Tile_rows, Tile_cols, F, NULL)) ;
 
     // split sparse

@@ -34,7 +34,7 @@ void mexFunction
     GrB_Vector mask = NULL ;
     GrB_Vector u = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Index *I = NULL, ni = 0, I_range [3] ;
+    uint64_t *I = NULL, ni = 0, I_range [3] ;       // FIXME: allow 32
     bool ignore ;
 
     // check inputs

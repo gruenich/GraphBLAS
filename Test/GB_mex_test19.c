@@ -43,7 +43,7 @@ void mexFunction
     // OK (GxB_print (A, 2)) ;
 
     void *blob = NULL ;
-    GrB_Index blob_size ;
+    uint64_t blob_size ;
 
     // default compression
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;

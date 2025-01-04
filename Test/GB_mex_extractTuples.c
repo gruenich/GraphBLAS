@@ -28,7 +28,7 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
-    GrB_Index nvals = 0 ;
+    uint64_t nvals = 0 ;
 
     // check inputs
     if (nargout > 3 || nargin < 1 || nargin > 3)

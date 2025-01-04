@@ -33,6 +33,8 @@ function test182
 %
 % This test case comes from Gabor Szarnyas and Marton Elekes.
 
+% FIXME: mac seg fault in GB_masker!
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 

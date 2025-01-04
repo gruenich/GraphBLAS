@@ -28,16 +28,16 @@
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 
-void opi32func (GxB_FC32_t *z, const GxB_FC32_t *x, GrB_Index i, GrB_Index j,
+void opi32func (GxB_FC32_t *z, const GxB_FC32_t *x, uint64_t i, uint64_t j,
     const GxB_FC32_t *y) ;
-void opi32func (GxB_FC32_t *z, const GxB_FC32_t *x, GrB_Index i, GrB_Index j,
+void opi32func (GxB_FC32_t *z, const GxB_FC32_t *x, uint64_t i, uint64_t j,
     const GxB_FC32_t *y)
 {
     (*z) = (*x) ;
 }
 #define OPI32_DEFN \
-"void opi32func (GxB_FC32_t *z, const GxB_FC32_t *x, GrB_Index i, GrB_Index j, \n" \
-"    const GxB_FC32_t *y)   \n" \
+"void opi32func (GxB_FC32_t *z, const GxB_FC32_t *x, uint64_t i, uint64_t j,\n"\
+" const GxB_FC32_t *y)      \n" \
 "{                          \n" \
 "    (*z) = (*x) ;          \n" \
 "}"

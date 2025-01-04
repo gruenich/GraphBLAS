@@ -260,7 +260,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("scalar failed") ;
     }
-    GrB_Index snrows, sncols, snvals ;
+    uint64_t snrows, sncols, snvals ;
     GrB_Matrix_nrows (&snrows, S) ;
     GrB_Matrix_ncols (&sncols, S) ;
     GrB_Matrix_nvals (&snvals, S) ;

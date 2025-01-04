@@ -67,7 +67,7 @@ void mexFunction
     // reshape error handling
     //--------------------------------------------------------------------------
 
-    GrB_Index n =  (1L << 40) ;
+    uint64_t n = (1L << 40) ;
     OK (GrB_Matrix_new (&C, GrB_BOOL, n, n)) ;
     expected = GrB_OUT_OF_MEMORY ;
     ERR (GxB_Matrix_reshape (C, true, n/2, 2*n, NULL)) ;

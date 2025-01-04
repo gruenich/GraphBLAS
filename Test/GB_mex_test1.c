@@ -22,17 +22,17 @@ GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
     return (GrB_SUCCESS) ;
 }
 
-bool select_plus_one (GrB_Index i, GrB_Index j, const double *x, const double *thunk) ;
+bool select_plus_one (uint64_t i, uint64_t j, const double *x, const double *thunk) ;
 
-bool select_nothing (GrB_Index i, GrB_Index j, const void *x, const void *thunk) ;
+bool select_nothing (uint64_t i, uint64_t j, const void *x, const void *thunk) ;
 
-bool select_plus_one (GrB_Index i, GrB_Index j, const double *x, const double *thunk)
+bool select_plus_one (uint64_t i, uint64_t j, const double *x, const double *thunk)
 {
     // return true if x >= thunk+1
     return ((*x) >= ((*thunk)+1)) ;
 }
 
-bool select_nothing (GrB_Index i, GrB_Index j, const void *x, const void *thunk)
+bool select_nothing (uint64_t i, uint64_t j, const void *x, const void *thunk)
 {
     return (false) ;
 }
@@ -1021,7 +1021,7 @@ void mexFunction
     GrB_Matrix_free_(&A) ;
     OK (GrB_Matrix_new (&A, GrB_FP64, 8, 8)) ;
 
-    GrB_Index I [1] = { 0 }, J [1] = { 0 } ;
+    uint64_t I [1] = { 0 }, J [1] = { 0 } ;     // OK
     OK (GrB_Matrix_assign_FP64_(A, NULL, GrB_PLUS_FP64,
         (double) 2, I, 1, J, 1, NULL)) ;
     GxB_Matrix_fprint_(A, GxB_COMPLETE, NULL) ;
@@ -1145,7 +1145,7 @@ void mexFunction
     // GrB_Scalar
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals = 42 ;
+    uint64_t nvals = 42 ;
     GrB_Scalar scalar = NULL, scalar2 = NULL ;
     OK (GrB_Scalar_new (&scalar, GrB_FP64)) ;
     OK (GrB_Scalar_nvals (&nvals, scalar)) ;
@@ -1304,13 +1304,13 @@ void mexFunction
     // assign scalar into hypersparse
     //--------------------------------------------------------------------------
 
-    GrB_Index n = INT32_MAX ;
+    uint64_t n = INT32_MAX ;
     n = n * 1024 ;
     OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
     OK (GrB_Matrix_assign_FP64_(A, NULL, NULL, (double) 1,
         GrB_ALL, n, GrB_ALL, n, NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso full", 3, NULL)) ;
-    GrB_Index I0 [1] = { 0 } ;
+    uint64_t I0 [1] = { 0 } ;   // OK
     expected = GrB_OUT_OF_MEMORY ;
     ERR1 (A, GrB_Matrix_assign_FP64_(A, NULL, NULL, (double) 2,
         I0, 1, I0, 1, NULL)) ;

@@ -105,13 +105,13 @@ static GrB_Info builder
     GrB_Vector *Chandle,
     #endif
     GrB_Type ctype,
-    GrB_Index nrows,
-    GrB_Index ncols,
+    uint64_t nrows,
+    uint64_t ncols,
     void *I,
     void *J,
     bool I_is_32,
     GB_void *X, bool scalar_build,
-    GrB_Index ni,
+    uint64_t ni,
     GrB_BinaryOp dup,
     bool C_is_csc,
     GrB_Type xtype
@@ -362,7 +362,7 @@ void mexFunction
     #endif
 
     // get X
-    GrB_Index nx = mxGetNumberOfElements (pargin [X_ARG]) ;
+    uint64_t nx = mxGetNumberOfElements (pargin [X_ARG]) ;
     bool scalar_build = (nx == 1) ;
     if (!scalar_build && ni != nx)
     {

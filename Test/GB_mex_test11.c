@@ -26,13 +26,13 @@ void myinc (float *z, const float *x) { (*z) = (*x)+1 ; }
 #define MYINC_DEFN \
 "void myinc (float *z, const float *x) { (*z) = (*x)+1 ; }"
 
-void myidx (int64_t *z, const void *x, GrB_Index i, GrB_Index j, const void *y);
-void myidx (int64_t *z, const void *x, GrB_Index i, GrB_Index j, const void *y)
+void myidx (int64_t *z, const void *x, uint64_t i, uint64_t j, const void *y);
+void myidx (int64_t *z, const void *x, uint64_t i, uint64_t j, const void *y)
 {
     (*z) = i + j ;
 }
 #define MYIDX_DEFN \
-"void myidx (int64_t *z, const void *x, GrB_Index i, GrB_Index j," \
+"void myidx (int64_t *z, const void *x, uint64_t i, uint64_t j," \
 " const void *y)\n" \
 "{ \n" \
 "    (*z) = (int64_t) (i + j) ; \n" \
@@ -650,7 +650,7 @@ if (jit_enabled)
     //--------------------------------------------------------------------------
 
     GB_WERK ("about11") ;
-    GrB_Index I [1] = {0} ;
+    uint64_t I [1] = {0} ;  // OK
     int Ikind = GB_LIST ;
     int64_t Icolon [3] = {0,0,0}, imin_result, imax_result ;
     bool I_is_unsorted, I_has_dupl, I_is_contig ;

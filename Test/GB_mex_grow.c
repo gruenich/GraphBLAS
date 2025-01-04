@@ -31,7 +31,7 @@ GrB_Info check_result (GrB_Matrix A1, GrB_Matrix C1, GrB_BinaryOp eq)
     GrB_Info info ;
     GrB_Matrix A = NULL, C = NULL, T = NULL, W = NULL ;
     GrB_Vector w = NULL ;
-    GrB_Index anvals, cnvals, tnvals, anrows, ancols ;
+    uint64_t anvals, cnvals, tnvals, anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A1)) ;
     OK (GrB_Matrix_ncols (&ancols, A1)) ;
     OK (GrB_Matrix_nvals (&anvals, A1)) ;
@@ -92,7 +92,7 @@ void mexFunction
     // get A matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index anrows, ancols ;
+    uint64_t anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
 
@@ -222,7 +222,7 @@ void mexFunction
         OK (GrB_set (W, false, GxB_HYPER_HASH)) ;
         OK (GrB_set (W, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
         OK (GrB_set (W, GrB_ROWMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
-        GrB_Index Icolon [3] ;
+        uint64_t Icolon [3] ;       // OK
         Icolon [GxB_BEGIN] = i1 ;
         Icolon [GxB_INC  ] = 1 ;
         Icolon [GxB_END  ] = i2 ;

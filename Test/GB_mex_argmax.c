@@ -17,22 +17,22 @@
 "typedef struct { int64_t k ; double v ; } tuple_kv ;"
 
 void make_tuple_kv (tuple_kv *z,
-    const double *x, GrB_Index ix, GrB_Index jx,
-    const void   *y, GrB_Index iy, GrB_Index jy,
+    const double *x, uint64_t ix, uint64_t jx,
+    const void   *y, uint64_t iy, uint64_t jy,
     const void *theta) ;
 void make_tuple_kv (tuple_kv *z,
-    const double *x, GrB_Index ix, GrB_Index jx,
-    const void   *y, GrB_Index iy, GrB_Index jy,
+    const double *x, uint64_t ix, uint64_t jx,
+    const void   *y, uint64_t iy, uint64_t jy,
     const void *theta)
 {
     z->k = (int64_t) jx + 1 ;
     z->v = (*x) ;
 }
 
-#define MAKE_TUPLE_KV \
+#define MAKE_TUPLE_KV_DEFN \
 "void make_tuple_kv (tuple_kv *z,                    \n" \
-"    const double *x, GrB_Index ix, GrB_Index jx,    \n" \
-"    const void   *y, GrB_Index iy, GrB_Index jy,    \n" \
+"    const double *x, uint64_t ix, uint64_t jx,      \n" \
+"    const void   *y, uint64_t iy, uint64_t jy,      \n" \
 "    const void *theta)                              \n" \
 "{                                                   \n" \
 "    z->k = (int64_t) jx + 1 ;                       \n" \
@@ -145,7 +145,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("failed") ;
     }
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
 
@@ -180,7 +180,7 @@ void mexFunction
         METHOD (GxB_IndexBinaryOp_new (&Iop,
             (GxB_index_binary_function) make_tuple_kv,
             Tuple, GrB_FP64, GrB_BOOL, GrB_BOOL,
-            "make_tuple_kv", MAKE_TUPLE_KV)) ;
+            "make_tuple_kv", MAKE_TUPLE_KV_DEFN)) ;
     }
     else
     {

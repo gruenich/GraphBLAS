@@ -67,7 +67,7 @@ void mexFunction
     }
 
     // create C and P
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     GrB_Matrix_nrows (&nrows, A) ;
     GrB_Matrix_ncols (&ncols, A) ;
     if (ncols != 1)

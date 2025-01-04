@@ -39,7 +39,7 @@ void mexFunction
     uint8_t stuff [256] ;
     void *nothing = stuff ;
     size_t size ;
-    GrB_Index blob_size = 0 ;
+    uint64_t blob_size = 0 ;
     char name [256] ;
     char defn [2048] ;
     int32_t code, i ;

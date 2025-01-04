@@ -41,7 +41,7 @@ void mexFunction
     // create some valid matrices
     //--------------------------------------------------------------------------
 
-    GrB_Index n = 4 ;
+    uint64_t n = 4 ;
     GrB_Matrix A = NULL, B = NULL, C = NULL ;
     GrB_Vector v = NULL ;
     OK (GrB_Matrix_new (&A, GrB_FP32, n, n)) ;
@@ -160,7 +160,7 @@ void mexFunction
     OK (GxB_set (C, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
     OK (GrB_Row_assign (A, NULL, NULL, v, 0, GrB_ALL, n, NULL)) ;
     OK (GrB_Col_assign (A, NULL, NULL, v, GrB_ALL, n, 0, NULL)) ;
-    GrB_Index I [4] = {0,1,2,3} ;
+    uint64_t I [4] = {0,1,2,3} ;    // OK
     OK (GrB_assign (C, NULL, NULL, A, I, 4, I, 4, NULL)) ;
     OK (GxB_subassign (C, NULL, NULL, A, I, 4, I, 4, NULL)) ;
 

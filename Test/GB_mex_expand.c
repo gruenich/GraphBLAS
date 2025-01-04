@@ -45,7 +45,7 @@ void mexFunction
         mexErrMsgTxt ("M failed") ;
     }
 
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     GrB_Matrix_nrows (&nrows, M) ;
     GrB_Matrix_ncols (&ncols, M) ;
 

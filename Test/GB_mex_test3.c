@@ -79,7 +79,7 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
 
     printf ("\nBurble with standard printf/flush:\n") ;
-    GrB_Index nvals ;
+    uint64_t nvals ;
     OK (GrB_Matrix_nvals (&nvals, C)) ;
     CHECK (nvals == 0) ;
 
@@ -213,7 +213,7 @@ void mexFunction
     // empty scalar for iso build
     //--------------------------------------------------------------------------
 
-    GrB_Index I [4] = { 1, 2, 3, 4 } ;
+    uint64_t I [4] = { 1, 2, 3, 4 } ;       // OK
     GrB_Scalar scalar = NULL ;
     OK (GrB_Scalar_new (&scalar, GrB_FP32)) ;
     OK (GxB_Scalar_fprint (scalar, "scalar init", GxB_COMPLETE, NULL)) ;
@@ -268,8 +268,8 @@ void mexFunction
     }
 
     GrB_Type type ;
-    GrB_Index nrows, ncols, Ap_size, Ai_size, Ax_size, Ah_size, nvec ;
-    GrB_Index *Ap = NULL, *Ai = NULL, *Ah = NULL ;
+    uint64_t nrows, ncols, Ap_size, Ai_size, Ax_size, Ah_size, nvec ;
+    uint64_t *Ap = NULL, *Ai = NULL, *Ah = NULL ;   // OK
     float *Ax = NULL ;
     bool iso, jumbled ;
     OK (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
@@ -360,8 +360,8 @@ void mexFunction
     OK (GrB_Matrix_new (&C, My4x64, 4, 4)) ;
 
     GrB_Matrix Tiles [4]  = { NULL, NULL, NULL, NULL} ;
-    GrB_Index Tile_nrows [2] = { 2, 2 } ;
-    GrB_Index Tile_ncols [2] = { 2, 2 } ;
+    uint64_t Tile_nrows [2] = { 2, 2 } ;
+    uint64_t Tile_ncols [2] = { 2, 2 } ;
 
     for (int sparsity_control = 1 ;
              sparsity_control <= 8 ;

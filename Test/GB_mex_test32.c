@@ -88,7 +88,7 @@ void mexFunction
     int32_t code, i ;
     float fvalue ;
     double dvalue ;
-    GrB_Index nvals = 999 ;
+    uint64_t nvals = 999 ;
 
     OK (GrB_Scalar_new (&s_fp64, GrB_FP64)) ;
     OK (GrB_Scalar_new (&s_fp32, GrB_FP32)) ;

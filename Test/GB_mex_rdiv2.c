@@ -90,8 +90,8 @@ GrB_Info axb (GB_Werk Werk)
     if (do_in_place)
     {
         // construct the result matrix and fill it with the scalar
-        GrB_Index cnrows = anrows ;
-        GrB_Index cncols = bncols ;
+        uint64_t cnrows = anrows ;
+        uint64_t cncols = bncols ;
         info = GrB_Matrix_new (&C, GrB_FP64, cnrows, cncols) ;
         if (info != GrB_SUCCESS)
         {

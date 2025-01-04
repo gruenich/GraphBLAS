@@ -26,7 +26,7 @@ GrB_Info assign_mask_scalar (void) ;
 GrB_Info assign_mask_scalar (void)
 {
     GrB_Info info ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     GrB_Matrix_nrows (&nrows, C) ;
     GrB_Matrix_ncols (&ncols, C) ;
     GrB_Type stype ;
@@ -159,7 +159,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("scalar failed") ;
     }
-    GrB_Index snrows, sncols, snvals ;
+    uint64_t snrows, sncols, snvals ;
     GrB_Matrix_nrows (&snrows, S) ;
     GrB_Matrix_ncols (&sncols, S) ;
     GrB_Matrix_nvals (&snvals, S) ;

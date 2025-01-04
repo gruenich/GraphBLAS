@@ -43,7 +43,7 @@ void mexFunction
 
     int pr = GxB_SILENT ;
 
-    GrB_Index m = 4, n = 5 ;
+    uint64_t m = 4, n = 5 ;
     OK (GrB_Matrix_new (&S, GrB_FP64, m, n)) ;
     OK (GxB_Matrix_Option_set (S, GxB_FORMAT, GxB_BY_ROW)) ;
     double x = 0 ;
@@ -51,8 +51,7 @@ void mexFunction
     {
         for (int j = 0 ; j < n ; j++)
         {
-            OK (GrB_Matrix_setElement_FP64 (S, x,
-                (GrB_Index) i, (GrB_Index) j)) ;
+            OK (GrB_Matrix_setElement_FP64 (S, x, (uint64_t) i, (uint64_t) j)) ;
             x++ ;
         }
     }
@@ -60,12 +59,12 @@ void mexFunction
     OK (GxB_Matrix_fprint (S, "initial S by row", pr, NULL)) ;
 
     double *Cx = NULL ;
-    GrB_Index *Cp = NULL, *Ch = NULL, *Ci = NULL ;
+    uint64_t *Cp = NULL, *Ch = NULL, *Ci = NULL ;   // OK; 64-bit only
     int8_t *Cb = NULL ;
-    GrB_Index Cp_size = 0, Ch_size = 0, Cb_size = 0, Ci_size = 0, Cx_size = 0 ;
+    uint64_t Cp_size = 0, Ch_size = 0, Cb_size = 0, Ci_size = 0, Cx_size = 0 ;
     bool C_iso = false ;
     bool jumbled = false ;
-    GrB_Index nrows = 0, ncols = 0, nvals = 0, nvec = 0 ;
+    uint64_t nrows = 0, ncols = 0, nvals = 0, nvec = 0 ;
 
     // full (row to col)
     OK (GrB_Matrix_dup (&C, S)) ;

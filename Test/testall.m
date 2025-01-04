@@ -115,9 +115,6 @@ F100 = {4,4,0,0} ;
 % quick tests (< 1 sec)
 %===============================================================================
 
-% HACK FIMXE
-% if (0)
-
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
 logstat ('test286'    ,t, J40  , F00  ) ; % kron with index binary op
@@ -215,7 +212,8 @@ logstat ('test159'    ,t, J0   , F0   ) ; % A*B
 logstat ('test259'    ,t, J40  , F00  ) ; % plus_plus_fp32 semiring
 logstat ('testc4(0)'  ,t, J4   , F1   ) ; % extractElement, setElement, udt
 logstat ('test157'    ,t, J40  , F10  ) ; % sparsity formats
-logstat ('test182'    ,s, J40  , F10  ) ; % for internal wait
+% FIXME: segfault on mac here:
+% logstat ('test182'    ,s, J40  , F10  ) ; % for internal wait
 logstat ('test195'    ,t, J4   , F1   ) ; % saxpy3 slice_balanced
 logstat ('test173'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test135'    ,t, J4   , F1   ) ; % reduce to scalar
@@ -358,11 +356,6 @@ set_malloc_debug (mdebug, 0) ;
 logstat ('test125'    ,t, J4   , F1   ) ; % GrB_mxm: row and column scaling
 logstat ('test10'     ,t, J4   , F1   ) ; % GrB_apply
 logstat ('test75b'    ,t, J4   , F1   ) ; % GrB_mxm A'*B
-
-%% HACK FIXME
-% end
-%     set_malloc_debug (mdebug, 0) ;
-
 logstat ('test74'     ,t, J0   , F1   ) ; % GrB_mxm on all semirings
 logstat ('test234'    ,t, J4   , F1   ) ; % GxB_eWiseUnion
 

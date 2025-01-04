@@ -118,11 +118,11 @@ void mexFunction
     // construct tuples for a decent-sized random matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index n = 1000 ; // 10000 ;
-    GrB_Index nvals = 20000 ; // 2000000 ;
+    uint64_t n = 1000 ; // 10000 ;
+    uint64_t nvals = 20000 ; // 2000000 ;
     simple_rand_seed (1) ;
-    GrB_Index *I = mxMalloc (nvals * sizeof (GrB_Index)) ;
-    GrB_Index *J = mxMalloc (nvals * sizeof (GrB_Index)) ;
+    uint64_t *I = mxMalloc (nvals * sizeof (uint64_t)) ;    // OK
+    uint64_t *J = mxMalloc (nvals * sizeof (uint64_t)) ;    // OK
     double    *X = mxMalloc (nvals * sizeof (double)) ;
     for (int k = 0 ; k < nvals ; k++)
     {

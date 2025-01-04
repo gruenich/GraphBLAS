@@ -52,7 +52,7 @@ void mexFunction
     GrB_Matrix A = NULL, C = NULL ;
     GrB_Descriptor desc = NULL ;
     void *blob = NULL ;
-    GrB_Index blob_size = 0 ;
+    uint64_t blob_size = 0 ;
 
     // check inputs
     if (nargout > 1 || nargin < 1 || nargin > 3)

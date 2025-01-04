@@ -43,7 +43,7 @@ bool isequal (GrB_Matrix C1, GrB_Matrix C2)
         printf ("\n=========================================\n") ;
         printf ("matrices differ!\n") ;
         printf ("\n=========================================\n") ;
-        GrB_Index nvals = 0, nrows = 0, ncols = 0 ;
+        uint64_t nvals = 0, nrows = 0, ncols = 0 ;
         OK (GrB_Matrix_nrows (&nrows, C1)) ;
         OK (GrB_Matrix_ncols (&ncols, C1)) ;
         OK (GrB_Matrix_new (&D, GrB_FP64, nrows, ncols)) ;
@@ -63,22 +63,22 @@ bool isequal (GrB_Matrix C1, GrB_Matrix C2)
 //------------------------------------------------------------------------------
 
 void test37_idxbinop (double *z,
-    const double *x, GrB_Index ix, GrB_Index jx,
-    const double *y, GrB_Index iy, GrB_Index jy,
+    const double *x, uint64_t ix, uint64_t jx,
+    const double *y, uint64_t iy, uint64_t jy,
     const double *theta) ;
 
 void test37_idxbinop (double *z,
-    const double *x, GrB_Index ix, GrB_Index jx,
-    const double *y, GrB_Index iy, GrB_Index jy,
+    const double *x, uint64_t ix, uint64_t jx,
+    const double *y, uint64_t iy, uint64_t jy,
     const double *theta)
 {
     (*z) = (*x) + 2*(*y) - 42*ix + jx + 3*iy + 1000*jy - (*theta) ;
 }
 
-#define TEST37_IDXBINOP                                                     \
+#define TEST37_IDXBINOP_DEFN                                                \
 "void test37_idxbinop (double *z,                                       \n" \
-"    const double *x, GrB_Index ix, GrB_Index jx,                       \n" \
-"    const double *y, GrB_Index iy, GrB_Index jy,                       \n" \
+"    const double *x, uint64_t ix, uint64_t jx,                         \n" \
+"    const double *y, uint64_t iy, uint64_t jy,                         \n" \
 "    const double *theta)                                               \n" \
 "{                                                                      \n" \
 "    (*z) = (*x) + 2*(*y) - 42*ix + jx + 3*iy + 1000*jy - (*theta) ;    \n" \
@@ -137,11 +137,11 @@ GrB_Info ewise
     int8_t *Ab = NULL, *Bb = NULL, *Tb = NULL ;
     double *Ax = NULL, *Bx = NULL, *Tx = NULL ;
     GrB_Matrix T = NULL, C = NULL, a = NULL, b = NULL ;
-    GrB_Index Ab_size = 0, Ax_size = 0, A_nvals = 0,
-              Bb_size = 0, Bx_size = 0, B_nvals = 0,
-              Tb_size = 0, Tx_size = 0, T_nvals = 0 ;
+    uint64_t Ab_size = 0, Ax_size = 0, A_nvals = 0,
+             Bb_size = 0, Bx_size = 0, B_nvals = 0,
+             Tb_size = 0, Tx_size = 0, T_nvals = 0 ;
     void (* free_function) (void *) = NULL ;
-    GrB_Index n = 0 ;
+    uint64_t n = 0 ;
     (*C_handle) = NULL ;
 
     //--------------------------------------------------------------------------
@@ -189,9 +189,9 @@ GrB_Info ewise
 
     T_nvals = 0 ;
 
-    for (GrB_Index i = 0 ; i < n ; i++)
+    for (uint64_t i = 0 ; i < n ; i++)
     {
-        for (GrB_Index j = 0 ; j < n ; j++)
+        for (uint64_t j = 0 ; j < n ; j++)
         {
             int64_t p = i + j*n ;
 
@@ -382,7 +382,7 @@ void mexFunction
     OK (GxB_IndexBinaryOp_new (&Iop,
         (GxB_index_binary_function) test37_idxbinop,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
-        "test37_idxbinop", TEST37_IDXBINOP)) ;
+        "test37_idxbinop", TEST37_IDXBINOP_DEFN)) ;
 
     OK (GxB_IndexBinaryOp_set_String (Iop, "test37 idx binop", GrB_NAME)) ;
     OK (GxB_print (Iop, 5)) ;
@@ -650,10 +650,10 @@ void mexFunction
 
     printf ("\n\n-------------- lots of compiler errors expected here:\n") ;
 
-    #define CRUD_IDXBINOP                               \
+    #define CRUD_IDXBINOP_DEFN                          \
     "void crud_idxbinop (double *z, "                   \
-    " const double *x, GrB_Index ix, GrB_Index jx, "    \
-    " const double *y, GrB_Index iy, GrB_Index jy, "    \
+    " const double *x, uint64_t ix, uint64_t jx, "      \
+    " const double *y, uint64_t iy, uint64_t jy, "      \
     " const double *theta) "                            \
     "{ "                                                \
     "    compiler error occurs here "                   \
@@ -671,7 +671,7 @@ void mexFunction
     expected = GxB_JIT_ERROR ;
     ERR (GxB_IndexBinaryOp_new (&Crud_Iop, NULL,
         GrB_FP64, GrB_FP64, GrB_FP64, GrB_FP64,
-        "crud_idxbinop", CRUD_IDXBINOP)) ;
+        "crud_idxbinop", CRUD_IDXBINOP_DEFN)) ;
 
     // restore the JIT control and the burble
     OK (GxB_set (GxB_JIT_C_CONTROL, save_jit)) ;

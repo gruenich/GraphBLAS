@@ -99,7 +99,7 @@ void mexFunction
     }
 
     // T = B*E
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     GrB_Matrix_nrows (&nrows, B) ;
     GrB_Matrix_ncols (&ncols, E) ;
     GrB_Matrix_new (&T, A->type, nrows, ncols) ;

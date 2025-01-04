@@ -79,7 +79,7 @@ void mexFunction
     bool use_macros = (kind <= 1) ;
     kind = kind % 2 ;
 
-    GrB_Index n, ny ;
+    uint64_t n, ny ;
     OK (GrB_Vector_size (&n, X)) ;
     OK (GrB_Vector_size (&ny, Y)) ;
 
@@ -121,7 +121,7 @@ void mexFunction
     int x_sparsity, y_sparsity ;
     OK (GxB_Vector_Option_get (X, GxB_SPARSITY_STATUS, &x_sparsity)) ;
     OK (GxB_Vector_Option_get (Y, GxB_SPARSITY_STATUS, &y_sparsity)) ;
-    GrB_Index xnvals, ynvals ;
+    uint64_t xnvals, ynvals ;
     OK (GrB_Vector_nvals (&xnvals, X)) ;
     OK (GrB_Vector_nvals (&ynvals, Y)) ;
 
