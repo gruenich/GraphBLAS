@@ -130,10 +130,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     bool Aj_is_32 = A->j_is_32 ;
     bool Ai_is_32 = A->i_is_32 ;
 
-    bool hack32 = GB_Global_hack_get (4) ; // FIXME: enable 32-bit cases:
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
 
     size_t apsize = (Ap_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
@@ -260,7 +256,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // T is created using the requested integers of C.
 
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            p_control, j_control, i_control,
+            Werk->p_control, Werk->j_control, Werk->i_control,
             GxB_HYPERSPARSE, 0, avdim, avlen) ;
 
         // create a new empty matrix T, with the new type and dimensions.
@@ -788,7 +784,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             // T is created using the requested integers of C.
             GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                p_control, j_control, i_control,
+                Werk->p_control, Werk->j_control, Werk->i_control,
                 GxB_HYPERSPARSE, anz, avdim, avlen) ;
 
             // initialize the header of T, with no content,
@@ -961,15 +957,10 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     // in that form.
 
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        p_control, j_control, i_control,
+        Werk->p_control, Werk->j_control, Werk->i_control,
         GB_sparsity (C), anz, avdim, avlen) ;
 
     GB_OK (GB_convert_int (T, Cp_is_32, Cj_is_32, Ci_is_32, true)) ;
-
-    // this is a hack since the code below may not yet support 32-bit integers:
-    // move it to the end of the function once all methods below are OK for
-    // 32/64 bit matrices.
-    GB_OK (GB_convert_int (T, false, false, false, true)) ;  // FIXME
 
     //==========================================================================
     // free workspace, apply positional op, and transplant/conform T into C

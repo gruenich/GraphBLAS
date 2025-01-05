@@ -10,10 +10,12 @@
 // DONE: 32/64 bit
 
 // Compare with GxB_Vector_subassign, which uses M and C_replace differently
+#define GB_DEBUG
 
 #include "assign/GB_assign.h"
 #include "assign/GB_bitmap_assign.h"
 #include "mask/GB_get_mask.h"
+#define GB_FREE_ALL ;
 
 GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
 (
@@ -63,6 +65,12 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ASSIGN,
         Werk) ;
+
+    if (info == GrB_SUCCESS)
+    {
+        ASSERT_MATRIX_OK ((GrB_Matrix) w, "w result, GrB_Vector_assign", GB0) ;
+        GB_OK (GB_valid_matrix ((GrB_Matrix) w)) ;
+    }
 
     GB_BURBLE_END ;
     return (info) ;

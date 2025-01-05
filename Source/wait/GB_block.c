@@ -32,6 +32,8 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     if (!(GB_ANY_PENDING_WORK (A) || GB_hyper_hash_need (A)))
     { 
         // no pending work, so no need to block
+        GB_OK (GB_convert_int (A, false, false, false, true)) ; // fixme
+        GB_OK (GB_valid_matrix (A)) ;   // fixme
         return (GrB_SUCCESS) ;
     }
 
@@ -48,6 +50,9 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
         GB_OK (GB_wait (A, "matrix", Werk)) ;
         GB_OK (GB_hyper_hash_build (A, Werk)) ;
     }
+
+    GB_OK (GB_convert_int (A, false, false, false, true)) ; // fixme
+    GB_OK (GB_valid_matrix (A)) ;   // fixme
     return (GrB_SUCCESS) ;
 }
 

@@ -159,10 +159,6 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     //--------------------------------------------------------------------------
 
-    bool hack32 = true ; // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     int64_t anz = GB_nnz (A) ;
     int64_t bnz = GB_nnz (B) ;
@@ -173,7 +169,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         cnz = GB_IMIN (cnz, mnz) ;
     }
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        p_control, j_control, i_control,
+        Werk->p_control, Werk->j_control, Werk->i_control,
         GxB_AUTO_SPARSITY, cnz, A->vlen, A->vdim) ;
 
     //--------------------------------------------------------------------------

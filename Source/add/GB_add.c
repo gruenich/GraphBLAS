@@ -234,8 +234,6 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     GB_FREE_WORKSPACE ;
     GB_OK (info) ;
-    ASSERT_MATRIX_OK (C, "C before convert int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, false, true)) ;    // FIXME
     ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
     (*mask_applied) = apply_mask ;
     return (GrB_SUCCESS) ;

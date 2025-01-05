@@ -279,8 +279,6 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GB_FREE_WORKSPACE ;
 
     // C can be returned jumbled, even if A is not jumbled
-    ASSERT_MATRIX_OK (C, "C output for C=A(I,J) before convert", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, false, true)) ;    // FIXME
     ASSERT_MATRIX_OK (C, "C output for C=A(I,J)", GB0) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_JUMBLED_OK (C)) ;

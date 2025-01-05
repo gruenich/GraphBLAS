@@ -97,11 +97,6 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         return (GrB_DIMENSION_MISMATCH) ;
     }
 
-    bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;
-
     //--------------------------------------------------------------------------
     // finish any pending work, and transpose the input matrix if needed
     //--------------------------------------------------------------------------
@@ -232,7 +227,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
         bool Cp_is_32, Cj_is_32,Ci_is_32 ;
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            p_control, j_control, i_control,
+            Werk->p_control, Werk->j_control, Werk->i_control,
             GxB_AUTO_SPARSITY, nvals, vlen_new, vdim_new) ;
 
         //----------------------------------------------------------------------
@@ -437,9 +432,6 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (C, "C before convert int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
-    ASSERT_MATRIX_OK (C, "C after convert int", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C result for reshape", GB0) ;
     if (Chandle != NULL)

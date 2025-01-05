@@ -153,9 +153,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // C has been computed in-place; no more work to do
         GB_FREE_ALL ;
         GB_OK (GB_conform (C, Werk)) ;
-        ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place), before convert", GB0) ;
-        GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
         ASSERT_MATRIX_OK (C, "C from GB_mxm (in-place), final", GB0) ;
+        GB_OK (GB_valid_matrix (C)) ;
         return (info) ;
     }
 
@@ -224,9 +223,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     if (info == GrB_SUCCESS)
     {
-        ASSERT_MATRIX_OK (C, "C for convert_int", GB0) ;
-        GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
-        ASSERT_MATRIX_OK (C, "Final C for mxm", GB0) ;
+        GB_OK (GB_valid_matrix (C)) ;
     }
     return (info) ;
 }

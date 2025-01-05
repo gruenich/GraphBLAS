@@ -38,10 +38,10 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     //--------------------------------------------------------------------------
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new scalar
-    bool hack32 = true ;    // FIXME
-    int8_t p_control = hack32 ? 32 : GB_Global_p_control_get ();
-    int8_t j_control = hack32 ? 64 : GB_Global_j_control_get ();
-    int8_t i_control = hack32 ? 32 : GB_Global_i_control_get ();
+    int8_t p_control = GB_Global_p_control_get ( ) ;
+    int8_t j_control = GB_Global_j_control_get ( ) ;
+    int8_t i_control = GB_Global_i_control_get ( ) ;
+
     bool Sp_is_32, Sj_is_32, Si_is_32 ;
     GB_determine_pji_is_32 (&Sp_is_32, &Sj_is_32, &Si_is_32,
         p_control, j_control, i_control, GxB_SPARSE, 1, 1, 1) ;
@@ -52,7 +52,7 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
 
     // HACK for now:
     ASSERT_SCALAR_OK (*s, "GrB_Scalar_new before convert", GB0) ;
-    GB_OK (GB_convert_int ((GrB_Matrix) *s, false, false, false, true));//FIXME
+    GB_OK (GB_convert_int ((GrB_Matrix) *s, false, false, false, true));//fixme
     ASSERT_SCALAR_OK (*s, "GrB_Scalar_new after convert", GB0) ;
     GB_OK (GB_valid_matrix ((GrB_Matrix) *s)) ;
 

@@ -326,15 +326,13 @@ GrB_Info GB_subref_phase0
 
     // determine the j_is_32 and i_is_32 settings for the new matrix; p_is_32
     // is found later
-    bool hack32 = true ; // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;//FIXME
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;//FIXME
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;//FIXME
+
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     ASSERT (p_Cj_is_32 != NULL) ;
     ASSERT (p_Ci_is_32 != NULL) ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        p_control, j_control, i_control, GxB_AUTO_SPARSITY, 0, nI, nJ) ;
+        Werk->p_control, Werk->j_control, Werk->i_control,
+        GxB_AUTO_SPARSITY, 0, nI, nJ) ;
 
     size_t cjsize = (Cj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 

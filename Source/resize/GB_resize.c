@@ -306,13 +306,9 @@ GrB_Info GB_resize              // change the size of a matrix
         // of Ap, Ah, and Ai have not.  The integer sizes may be temporarily
         // invalid.  They will be valid after the call to GB_convert_int below.
 
-        bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
-        int8_t p_control = hack32 ? 32 : Werk->p_control ;
-        int8_t j_control = hack32 ? 64 : Werk->j_control ;
-        int8_t i_control = hack32 ? 32 : Werk->i_control ;
         bool Ap_is_32_new, Aj_is_32_new, Ai_is_32_new ;
         GB_determine_pji_is_32 (&Ap_is_32_new, &Aj_is_32_new, &Ai_is_32_new,
-            p_control, j_control, i_control,
+            Werk->p_control, Werk->j_control, Werk->i_control,
             GB_sparsity (A), A->nvals, A->vlen, A->vdim) ;
 
         if (Ap_is_32_new != A->p_is_32 ||
@@ -335,9 +331,6 @@ GrB_Info GB_resize              // change the size of a matrix
     // conform the matrix to its desired sparsity structure
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A before convert_int", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, false, true)) ;   // FIXME
-    ASSERT_MATRIX_OK (A, "A after convert_int", GB0) ;
     GB_OK (GB_conform (A, Werk)) ;
     ASSERT_MATRIX_OK (A, "A final resized", GB0) ;
     return (GrB_SUCCESS) ;

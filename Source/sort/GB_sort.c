@@ -856,17 +856,11 @@ GrB_Info GB_sort
 
     if (!C_is_NULL)
     { 
-        ASSERT_MATRIX_OK (C, "C output of GB_sort (before convert)", GB0) ;
-        GB_OK (GB_convert_int (C, false, false, false, true)) ;    // FIXME
-        ASSERT_MATRIX_OK (C, "C output of GB_sort (before conform)", GB0) ;
         GB_OK (GB_conform (C, Werk)) ;
         ASSERT_MATRIX_OK (C, "C output of GB_sort", GB0) ;
     }
     if (P != NULL)
     { 
-        ASSERT_MATRIX_OK (P, "P output of GB_sort (before convert)", GB0) ;
-        GB_OK (GB_convert_int (P, false, false, false, true)) ;    // FIXME
-        ASSERT_MATRIX_OK (P, "P output of GB_sort (before conform)", GB0) ;
         GB_OK (GB_conform (P, Werk)) ;
         ASSERT_MATRIX_OK (P, "P output of GB_sort", GB0) ;
     }

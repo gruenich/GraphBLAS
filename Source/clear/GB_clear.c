@@ -42,7 +42,6 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT (A != NULL) ;
     ASSERT (A->magic == GB_MAGIC || A->magic == GB_MAGIC2) ;
 
@@ -84,12 +83,8 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     //--------------------------------------------------------------------------
 
     // determine the p_is_32 and i_is_32 settings for the cleared matrix
-    bool hack32 = true ;   // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;
     GB_determine_pji_is_32 (&(A->p_is_32), &(A->j_is_32), &(A->i_is_32),
-        p_control, j_control, i_control,
+        Werk->p_control, Werk->j_control, Werk->i_control,
         GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim) ;
 
     size_t apsize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
@@ -151,9 +146,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
     // conform A to its desired sparsity 
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "clear before convert int", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, false, true)) ;  // FIXME
-    ASSERT_MATRIX_OK (A, "clear after convert int", GB0) ;
+    ASSERT_MATRIX_OK (A, "cleared", GB0) ;
     return (GB_conform (A, Werk)) ;
 }
 

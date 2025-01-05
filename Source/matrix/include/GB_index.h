@@ -289,9 +289,14 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     }
 
     // HACK for now: assume all inputs/outputs to GrB* methods are 64-bit
-    GB_assert (!A->p_is_32) ;   // FIXME
-    GB_assert (!A->j_is_32) ;   // FIXME
-    GB_assert (!A->i_is_32) ;   // FIXME
+    if (A->p_is_32 || A->i_is_32 || A->j_is_32)                     // fixme
+    {
+        printf ("\ninvalid HACK ! here %s %d: %d %d %d\n",          // fixme
+        __FILE__, __LINE__, A->p_is_32, A->i_is_32, A->j_is_32) ;   // fixme
+    }
+    GB_assert (!A->p_is_32) ;   // fixme
+    GB_assert (!A->j_is_32) ;   // fixme
+    GB_assert (!A->i_is_32) ;   // fixme
 
     return (GrB_SUCCESS) ;
 }

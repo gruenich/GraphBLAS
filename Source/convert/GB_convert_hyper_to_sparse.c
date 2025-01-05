@@ -284,7 +284,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     //--------------------------------------------------------------------------
 
     ASSERT (anz == GB_nnz (A)) ;
-    ASSERT_MATRIX_OK (A, "A converted to sparse", GB0) ;
+    ASSERT_MATRIX_OK (A, "A converted to sparse (pre convert_int)", GB0) ;
     ASSERT (GB_IS_SPARSE (A)) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;

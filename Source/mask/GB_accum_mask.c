@@ -46,8 +46,10 @@
 // The descriptor affects how C and M are handled.  If the descriptor is
 // NULL, defaults are used.
 
+#include "ok/include/GB_ok.h"
 #define GB_FREE_ALL                 \
 {                                   \
+    GB_convert_int (C, false, false, false, false) ;  /* fixme */ \
     GB_Matrix_free (Thandle) ;      \
     GB_Matrix_free (&MT) ;          \
     GB_Matrix_free (&Z) ;           \
@@ -429,8 +431,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C<M>=accum(C,T) before convert_int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
     return (GB_block (C, Werk)) ;
 }

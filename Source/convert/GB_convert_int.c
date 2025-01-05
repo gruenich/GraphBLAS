@@ -21,6 +21,8 @@
 // are left unchanged.  If the dimension of A is too large for i_is_32_new ==
 // true, A->i.  is left unchanged.  These are not error conditions.
 
+#define GB_DEBUG
+
 #include "GB.h"
 #define GB_FREE_ALL ;
 
@@ -41,11 +43,13 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (A == NULL || A->magic != GB_MAGIC)
     { 
         // nothing to convert 
         return (GrB_SUCCESS) ;
     }
+
+    ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
 
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;

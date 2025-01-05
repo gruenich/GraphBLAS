@@ -358,7 +358,7 @@ const char *GB_status_code (GrB_Info info) ;
     if (Mask_comp && (M == NULL || (GB_IS_FULL (M) && Mask_struct)))        \
     {                                                                       \
         /* C<!NULL>=NULL since result does not depend on computing Z */     \
-        return (C_replace ? GB_clear (C, Werk) : GrB_SUCCESS) ;          \
+        return (C_replace ? GB_clear (C, Werk) : GrB_SUCCESS) ;             \
     }
 
 //------------------------------------------------------------------------------

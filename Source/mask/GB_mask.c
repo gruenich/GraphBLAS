@@ -172,11 +172,6 @@ GrB_Info GB_mask                // C<M> = Z
     GrB_Matrix C = NULL, C0 = NULL, R = NULL ;
     struct GB_Matrix_opaque C0_header, R_header ;
 
-    bool hack32 = true ;   // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;
-
     //--------------------------------------------------------------------------
     // apply the mask
     //--------------------------------------------------------------------------
@@ -274,7 +269,7 @@ GrB_Info GB_mask                // C<M> = Z
                 // The C0 matrix is created as hypersparse.
                 bool Cp_is_32, Cj_is_32, Ci_is_32 ;
                 GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                    p_control, j_control, i_control,
+                    Werk->p_control, Werk->j_control, Werk->i_control,
                     GxB_HYPERSPARSE, 1, vlen, vdim) ;
                 GB_CLEAR_STATIC_HEADER (C0, &C0_header) ;
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, existing header

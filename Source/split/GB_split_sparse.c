@@ -79,11 +79,6 @@ GrB_Info GB_split_sparse            // split a sparse matrix
     const bool Aj_is_32 = A->j_is_32 ;
     const bool Ai_is_32 = A->i_is_32 ;
 
-    bool hack32 = true ; // GB_Global_hack_get (4) ; // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;
-
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
@@ -165,7 +160,7 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             // Tile
             bool Cp_is_32, Cj_is_32, Ci_is_32 ;
             GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                p_control, j_control, i_control,
+                Werk->p_control, Werk->j_control, Werk->i_control,
                 A_sparsity, anz, cvlen, cvdim) ;
 
             C = NULL ;

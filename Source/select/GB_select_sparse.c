@@ -95,14 +95,10 @@ GrB_Info GB_select_sparse
     int64_t anz = GB_nnz (A) ;
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
-    bool hack32 = GB_Global_hack_get (4) ; // FIXME
-    hack32 = true ; // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;  //FIXME
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;  //FIXME
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;  //FIXME
+
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        p_control, j_control, i_control,
+        Werk->p_control, Werk->j_control, Werk->i_control,
         csparsity, anz, A->vlen, A->vdim) ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header

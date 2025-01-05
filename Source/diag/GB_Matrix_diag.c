@@ -96,13 +96,9 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     const int sparsity_control = C->sparsity_control ;
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
-    bool hack32 = true ;    // FIXME
-    int8_t p_control = hack32 ? 32 : Werk->p_control ;  // FIXME
-    int8_t j_control = hack32 ? 64 : Werk->j_control ;  // FIXME
-    int8_t i_control = hack32 ? 32 : Werk->i_control ;  // FIXME
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        p_control, j_control, i_control,
+        Werk->p_control, Werk->j_control, Werk->i_control,
         C_sparsity, vnz, n, n) ;
 
     GB_OK (GB_new_bix (&C, // existing header
@@ -229,9 +225,6 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (C, "C before convert for GB_Matrix_diag", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, false, true)) ;      // FIXME
-    ASSERT_MATRIX_OK (C, "C before conform for GB_Matrix_diag", GB0) ;
     GB_OK (GB_conform (C, Werk)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_Matrix_diag", GB0) ;
     return (GrB_SUCCESS) ;

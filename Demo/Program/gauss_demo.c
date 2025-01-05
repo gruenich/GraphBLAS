@@ -424,8 +424,7 @@ int main (void)
     OK (GrB_Matrix_new (&C, Gauss, 4, 4)) ;
     printgauss (C, "\nGauss C empty matrix") ;
 
-    OK (GrB_Matrix_set_INT32 (A, GxB_SPARSE,
-        GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_set_INT32 (A, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
     OK (GrB_Matrix_set_INT32 (D, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
     OK (GrB_mxm (C, D, NULL, GaussSemiring, A, A, GrB_DESC_T1)) ;
     printgauss (C, "\n=============== Gauss C = diag(AA') matrix:\n") ;

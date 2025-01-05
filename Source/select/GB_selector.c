@@ -173,7 +173,6 @@ GrB_Info GB_selector
         // COLGT:    C = A(:,j+1:n)
         // where j = ithunk.
         GB_OK (GB_select_column (C, op, A, ithunk, Werk)) ;
-        GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
         GB_FREE_ALL ;
         return (GrB_SUCCESS) ;
     }
@@ -191,13 +190,13 @@ GrB_Info GB_selector
     #if defined ( GRAPHBLAS_HAS_CUDA )
     if ((GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A))
         && GB_cuda_select_branch (A, op)
-        && !(A->p_is_32) && !(A->j_is_32) && !(A->i_is_32))  // FIXME
+        && !(A->p_is_32) && !(A->j_is_32) && !(A->i_is_32))  // Fixme CUDA
     {
         // It is possible for non-sparse matrices to use the sparse kernel; see
         // the use_select_bitmap test above (the DIAG operator). The CUDA
         // select_sparse kernel will not work in this case, so make this go to
         // the CPU.
-        // FIXME: put the test of sparse(A) or hypersparse(A) in
+        // Fixme CUDA: put the test of sparse(A) or hypersparse(A) in
         // GB_cuda_select_branch.
         info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, athunk, ythunk) ;
     }
@@ -216,8 +215,6 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_MATRIX_OK (C, "C before convert_int", GB0) ;
-    GB_OK (GB_convert_int (C, false, false, false, true)) ;  // FIXME
     ASSERT_MATRIX_OK (C, "C output of GB_selector", GB0) ;
     return (GrB_SUCCESS) ;
 }

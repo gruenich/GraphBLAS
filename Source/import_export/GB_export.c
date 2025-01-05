@@ -72,6 +72,11 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     int64_t *Ap_new = NULL ; size_t Ap_new_size = 0 ;   // OK; only 64-bit
     int64_t *Ah_new = NULL ; size_t Ah_new_size = 0 ;   // OK; only 64-bit
     ASSERT (A != NULL) ;
+    GB_RETURN_IF_NULL (*A) ;
+
+    // ensure the matrix is all-64-bit
+    GB_OK (GB_convert_int (*A, false, false, false, false)) ;
+
     GB_RETURN_IF_NULL_OR_INVALID (*A) ;
     ASSERT_MATRIX_OK (*A, "A to export", GB0) ;
     ASSERT (!GB_ZOMBIES (*A)) ;
@@ -163,12 +168,6 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             GBURBLE ("(iso export) ") ;
         }
     }
-
-    //--------------------------------------------------------------------------
-    // ensure the matrix is all-64-bit
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_convert_int (*A, false, false, false, false)) ;
 
     //--------------------------------------------------------------------------
     // export the matrix
