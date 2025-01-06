@@ -7722,7 +7722,7 @@ GB_DECLARE (GxB_Iterator     )
 // present in this version of GraphBLAS.
 
 // A user application can request that no historical methods should be
-// available, by compiling their application with -DNHISTORICAL.
+// available, by compiling with -DNHISTORICAL.
 
 #ifndef NHISTORICAL
 
