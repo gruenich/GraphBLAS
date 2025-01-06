@@ -10,7 +10,6 @@
 // DONE: 32/64 bit
 
 // Compare with GxB_Vector_subassign, which uses M and C_replace differently
-#define GB_DEBUG
 
 #include "assign/GB_assign.h"
 #include "assign/GB_bitmap_assign.h"

@@ -21,8 +21,6 @@
 // are left unchanged.  If the dimension of A is too large for i_is_32_new ==
 // true, A->i.  is left unchanged.  These are not error conditions.
 
-#define GB_DEBUG
-
 #include "GB.h"
 #define GB_FREE_ALL ;
 
