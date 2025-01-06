@@ -121,12 +121,6 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
         type, vlen, vdim, GB_ph_calloc, A_is_csc, GxB_AUTO_SPARSITY,
         GB_Global_hyper_switch_get ( ), 1, Ap_is_32, Aj_is_32, Ai_is_32)) ;
 
-    // HACK for now:
-    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new before convert", GB0) ;
-    GB_OK (GB_convert_int (*A, false, false, false, true)) ; // fixme
-    ASSERT_MATRIX_OK (*A, "GrB_Matrix_new after convert", GB0) ;
-    GB_OK (GB_valid_matrix (*A)) ; 
-
     return (GrB_SUCCESS) ;
 }
 

@@ -227,9 +227,9 @@ static GB_Global_struct GB_Global =
     .cpu_features_avx512f = false,      // x86_64 with AVX512f
 
     // integer control
-    .p_control = (int8_t) 64,   // fixme: make it 32
-    .j_control = (int8_t) 32,   // fixme: make it 32
-    .i_control = (int8_t) 64,   // fixme: make it 32
+    .p_control = (int8_t) 32,
+    .j_control = (int8_t) 32,
+    .i_control = (int8_t) 32,
 
     // CUDA environment (DRAFT: in progress)
     .gpu_count = 0,                     // # of GPUs in the system

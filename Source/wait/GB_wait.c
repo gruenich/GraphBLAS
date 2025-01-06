@@ -120,7 +120,6 @@ GrB_Info GB_wait                // finish all pending computations
         {
             A->nvec_nonempty = GB_nvec_nonempty (A) ;
         }
-        GB_OK (GB_convert_int (A, false, false, false, true)) ;      // fixme
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -138,7 +137,6 @@ GrB_Info GB_wait                // finish all pending computations
         // present, it remains valid.
         GB_OK (GB_unjumble (A, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
-        GB_OK (GB_convert_int (A, false, false, false, true)) ;      // fixme
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -453,8 +451,6 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    ASSERT_MATRIX_OK (A, "A for GB_wait", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, false, true)) ;      // fixme
     ASSERT_MATRIX_OK (A, "A final for GB_wait", GB0) ;
     #pragma omp flush
     return (GrB_SUCCESS) ;

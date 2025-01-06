@@ -59,12 +59,6 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
         GxB_SPARSE, GB_Global_hyper_switch_get ( ), 1,
         Vp_is_32, Vj_is_32, Vi_is_32)) ;
 
-    // HACK for now:
-    ASSERT_VECTOR_OK (*v, "GrB_Vector_new before convert", GB0) ;
-    GB_OK (GB_convert_int ((GrB_Matrix) *v, false, false, false, true)) ;//fixme
-    ASSERT_VECTOR_OK (*v, "GrB_Vector_new after convert", GB0) ;
-    GB_OK (GB_valid_matrix ((GrB_Matrix) *v)) ;
-
     return (GrB_SUCCESS) ;
 }
 

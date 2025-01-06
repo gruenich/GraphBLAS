@@ -49,7 +49,6 @@
 #include "ok/include/GB_ok.h"
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_convert_int (C, false, false, false, false) ;  /* fixme */ \
     GB_Matrix_free (Thandle) ;      \
     GB_Matrix_free (&MT) ;          \
     GB_Matrix_free (&Z) ;           \

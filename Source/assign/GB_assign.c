@@ -110,10 +110,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (subassign_method == 0)
     { 
         // GB_assign_prep has handled the entire assignment itself
-        GB_OK (GB_convert_int (C_in, false, false, false, true)) ; // fixme
         ASSERT_MATRIX_OK (C_in, "QUICK : Final C for assign", GB0) ;
         ASSERT (C == C_in) ;
-        GB_OK (GB_valid_matrix (C_in)) ;    // fixme
         return (GrB_SUCCESS) ;
     }
 

@@ -390,10 +390,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A conformed; to convert_int", GB0) ;
-    GB_OK (GB_convert_int (A, false, false, false, true)) ;  // fixme
     ASSERT_MATRIX_OK (A, "A conformed", GB0) ;
-    GB_OK (GB_valid_matrix (A)) ;       // fixme
     return (GrB_SUCCESS) ;
 }
 

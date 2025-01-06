@@ -338,7 +338,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             if (info != GrB_NO_VALUE)
             { 
                 GB_FREE_ALL ;
-                GB_OK (GB_convert_int (C, false, false, false, true)) ;// fixme
                 return (info) ;
             }
 
@@ -357,7 +356,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             if (info != GrB_NO_VALUE)
             { 
                 GB_FREE_ALL ;
-                GB_OK (GB_convert_int (C, false, false, false, true)) ;// fixme
                 return (info) ;
             }
         }
@@ -506,10 +504,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
             Mask_struct, Werk) ;
         GB_Matrix_free (&MT) ;
-        if (info == GrB_SUCCESS)
-        {
-            GB_OK (GB_valid_matrix (C)) ;   // fixme
-        }
         return (info) ;
     }
 }

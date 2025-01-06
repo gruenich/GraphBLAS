@@ -72,19 +72,12 @@ GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
     GB_RETURN_IF_INVALID (*Y) ;
 
     //--------------------------------------------------------------------------
-    // ensure A and Y are all-64-bit
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_convert_int (A, false, false, false, false)) ;
-
-    //--------------------------------------------------------------------------
     // unpack the hyper_hash matrix Y from A
     //--------------------------------------------------------------------------
 
     (*Y) = A->Y ;
     A->Y = NULL ;
     A->Y_shallow = false ;
-
     return (GrB_SUCCESS) ;
 }
 

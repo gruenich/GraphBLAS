@@ -221,10 +221,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
         #endif
     }
 
-    if (info == GrB_SUCCESS)
-    {
-        GB_OK (GB_valid_matrix (C)) ;
-    }
     return (info) ;
 }
 

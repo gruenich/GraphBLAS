@@ -102,11 +102,11 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     }
 
     //--------------------------------------------------------------------------
-    // ensure A and Y are all-64-bit
+    // ensure Y has the same integers as A->h
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_convert_int (A, false, false, false, false)) ;
-    GB_OK (GB_convert_int (*Y, false, false, false, false)) ;
+    bool Aj_is_32 = A->j_is_32 ;
+    GB_OK (GB_convert_int (*Y, Aj_is_32, Aj_is_32, Aj_is_32, false)) ;  // OK
 
     //--------------------------------------------------------------------------
     // pack the hyper_hash matrix Y into A
@@ -116,7 +116,7 @@ GrB_Info GxB_pack_HyperHash         // move Y into A->Y
     (*Y) = NULL ;
     A->Y_shallow = false ;
     A->no_hyper_hash = false ;  // A now has a hyper_hash matrix A->Y
-
+    ASSERT_MATRIX_OK (A, "A with new hyperhash", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

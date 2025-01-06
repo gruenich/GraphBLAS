@@ -46,12 +46,6 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
         type, 1, 1, GB_ph_calloc, true, GxB_SPARSE,
         GB_Global_hyper_switch_get ( ), 1, Sp_is_32, Sj_is_32, Si_is_32)) ;
 
-    // HACK for now:
-    ASSERT_SCALAR_OK (*s, "GrB_Scalar_new before convert", GB0) ;
-    GB_OK (GB_convert_int ((GrB_Matrix) *s, false, false, false, true));//fixme
-    ASSERT_SCALAR_OK (*s, "GrB_Scalar_new after convert", GB0) ;
-    GB_OK (GB_valid_matrix ((GrB_Matrix) *s)) ;
-
     return (GrB_SUCCESS) ;
 }
 

@@ -67,7 +67,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     bool Cp_is_32 = C->p_is_32 ;
     bool Cj_is_32 = C->j_is_32 ;
     bool Ci_is_32 = C->i_is_32 ;
-    GB_convert_int (C, false, false, false, false) ;
+    GB_convert_int (C, false, false, false, false) ; // OK: for MATLAB mxArray
 
     //--------------------------------------------------------------------------
     // check matrix
