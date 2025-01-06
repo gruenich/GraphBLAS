@@ -38,7 +38,7 @@ void mexFunction
 
     GrB_Matrix d = NULL, x = NULL ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
 

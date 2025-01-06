@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_get_shallow: create a shallow copy of a built-in sparse matrix
+// gb_get_shallow: create a shallow copy of a MATLAB sparse matrix or struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// A = gb_get_shallow (X) constructs a shallow GrB_Matrix from a built-in
-// mxArray, which can either be a built-in sparse matrix (double, complex, or
-// logical) or a built-in struct that contains a GraphBLAS matrix.
+// A = gb_get_shallow (X) constructs a shallow GrB_Matrix from a MATLAB
+// mxArray, which can either be a MATLAB sparse matrix (double, complex, or
+// logical) or a MATLAB struct that contains a GraphBLAS matrix.
 
 // X must not be NULL, but it can be an empty matrix, as X = [ ] or even X = ''
 // (the empty string).  In this case, A is returned as NULL.  This is not an
@@ -20,7 +20,7 @@
 // For v5, iso is present but false, and the s component has length 10.
 // For v5_1, iso is true/false, and the s component has length 10.
 // For v7_3: the same content as v5_1, except that Yp, Yi, and Yx are added.
-// For v10: Ap, Ah, Ai, Yp, Yi, and Yx can be 32-bit FIXME
+// For v10: Ap, Ah, Ai, Yp, Yi, and Yx can be 32-bit or 64-bit
 
 // mxGetData is used instead of the MATLAB-recommended mxGetDoubles, etc,
 // because mxGetData works best for Octave, and it works fine for MATLAB
@@ -31,7 +31,7 @@
 #define IF(error,message) \
     CHECK_ERROR (error, "invalid GraphBLAS struct (" message ")" ) ;
 
-GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
+GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
 (
     const mxArray *X
 )
@@ -64,7 +64,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         // matrix is empty
         //----------------------------------------------------------------------
 
-        // X is a 0-by-0 built-in matrix.  Create a new 0-by-0 matrix of the
+        // X is a 0-by-0 MATLAB-in matrix.  Create a new 0-by-0 matrix of the
         // same type as X, with the default format.
         OK (GrB_Matrix_new (&A, gb_mxarray_type (X), 0, 0)) ;
 
@@ -73,19 +73,25 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     { 
 
         //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy from a built-in struct
+        // construct a shallow GrB_Matrix copy from a MATLAB struct
         //----------------------------------------------------------------------
 
         bool GraphBLASv4 = false ;
         bool GraphBLASv3 = false ;
 
         // get the type
-        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv7_3") ;
+        mxArray *mx_type = mxGetField (X, 0, "GraphBLASv10") ;
+        if (mx_type == NULL)
+        {
+            // check if it is a GraphBLASv7_3 struct
+            mx_type = mxGetField (X, 0, "GraphBLASv7_3") ;
+        }
         if (mx_type == NULL)
         {
             // check if it is a GraphBLASv5_1 struct
             mx_type = mxGetField (X, 0, "GraphBLASv5_1") ;
         }
+
         if (mx_type == NULL)
         {
             // check if it is a GraphBLASv5 struct
@@ -192,16 +198,20 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         }
 
         // each component
-        uint64_t *Ap = NULL ; size_t Ap_size = 0 ;  // FIXME
-        uint64_t *Ah = NULL ; size_t Ah_size = 0 ;
-        uint64_t *Ai = NULL ; size_t Ai_size = 0 ;
-        int8_t   *Ab = NULL ; size_t Ab_size = 0 ;
-        void     *Ax = NULL ; size_t Ax_size = 0 ; 
+        void   *Ap = NULL ; size_t Ap_size = 0 ;
+        void   *Ah = NULL ; size_t Ah_size = 0 ;
+        void   *Ai = NULL ; size_t Ai_size = 0 ;
+        int8_t *Ab = NULL ; size_t Ab_size = 0 ;
+        void   *Ax = NULL ; size_t Ax_size = 0 ;
 
-        uint64_t *Yp = NULL ; size_t Yp_size = 0 ;  // FIXME
-        uint64_t *Yi = NULL ; size_t Yi_size = 0 ;
-        void     *Yx = NULL ; size_t Yx_size = 0 ;
-        int64_t yvdim = 0 ; 
+        void   *Yp = NULL ; size_t Yp_size = 0 ;
+        void   *Yi = NULL ; size_t Yi_size = 0 ;
+        void   *Yx = NULL ; size_t Yx_size = 0 ;
+        int64_t yvdim = 0 ;
+
+        bool Ap_is_32 = false ; // controls Ap
+        bool Aj_is_32 = false ; // controls Ah, Yp, Yi, Yx
+        bool Ai_is_32 = false ; // controls Ai
 
         if (sparsity_status == GxB_HYPERSPARSE || sparsity_status == GxB_SPARSE)
         {
@@ -211,15 +221,25 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
             mxArray *Ap_mx = mxGetField (X, 0, "p") ;
             IF (Ap_mx == NULL, ".p missing") ;
             IF (mxGetM (Ap_mx) != 1, ".p wrong size") ;
-            Ap = (uint64_t *) mxGetData (Ap_mx) ;
-            Ap_size = mxGetN (Ap_mx) * sizeof (int64_t) ;
+            mxClassID class = mxGetClassID (Ap_mx) ;
+            IF (!(class == mxUINT64_CLASS || class == mxUINT32_CLASS ||
+                  class == mxINT64_CLASS), ".p wrong class")
+            Ap_is_32 = (class == mxUINT32_CLASS) ;
+            Ap = (void *) mxGetData (Ap_mx) ;
+            size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+            Ap_size = mxGetN (Ap_mx) * psize ;
 
             // get Ai
             mxArray *Ai_mx = mxGetField (X, 0, "i") ;
             IF (Ai_mx == NULL, ".i missing") ;
             IF (mxGetM (Ai_mx) != 1, ".i wrong size") ;
-            Ai_size = mxGetN (Ai_mx) * sizeof (int64_t) ;
-            Ai = (Ai_size == 0) ? NULL : ((uint64_t *) mxGetData (Ai_mx)) ;
+            class = mxGetClassID (Ai_mx) ;
+            IF (!(class == mxUINT64_CLASS || class == mxUINT32_CLASS ||
+                  class == mxINT64_CLASS), ".i wrong class")
+            Ai_is_32 = (class == mxUINT32_CLASS) ;
+            size_t isize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+            Ai_size = mxGetN (Ai_mx) * isize ;
+            Ai = (Ai_size == 0) ? NULL : ((void *) mxGetData (Ai_mx)) ;
         }
 
         // get the values
@@ -229,44 +249,58 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         Ax_size = mxGetN (Ax_mx) ;
         Ax = (Ax_size == 0) ? NULL : ((void *) mxGetData (Ax_mx)) ;
 
-        if (sparsity_status == GxB_HYPERSPARSE)
+        if (sparsity_status == GxB_SPARSE)
+        {
+            // A is sparse; determine Aj_is_32
+            Aj_is_32 = GB_determine_j_is_32 (true, vdim) ;
+        }
+        else if (sparsity_status == GxB_HYPERSPARSE)
         { 
             // A is hypersparse
             // get the hyperlist
             mxArray *Ah_mx = mxGetField (X, 0, "h") ;
             IF (Ah_mx == NULL, ".h missing") ;
             IF (mxGetM (Ah_mx) != 1, ".h wrong size") ;
-            Ah_size = mxGetN (Ah_mx) * sizeof (uint64_t) ;
-            Ah = (Ah_size == 0) ? NULL : ((uint64_t *) mxGetData (Ah_mx)) ;
+            mxClassID Ah_class = mxGetClassID (Ah_mx) ;
+            IF (!(Ah_class == mxUINT64_CLASS || Ah_class == mxUINT32_CLASS ||
+                  Ah_class == mxINT64_CLASS),
+                ".h wrong class")
+            Aj_is_32 = (Ah_class == mxUINT32_CLASS) ;
+            size_t jsize = Aj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+            Ah_size = mxGetN (Ah_mx) * jsize ;
+            Ah = (Ah_size == 0) ? NULL : ((void *) mxGetData (Ah_mx)) ;
 
             // get the A->Y hyper_hash, if it exists
 
             if (nfields == 9)
-            {
+            { 
                 // get Yp, Yi, and Yx
 
-                // Yp must be 1-by-(yvdim+1)
+                // Yp must be 1-by-(yvdim+1), with the same class as Ah
                 mxArray *Yp_mx = mxGetField (X, 0, "Yp") ;
                 IF (Yp_mx == NULL, ".Yp missing") ;
                 IF (mxGetM (Yp_mx) != 1, ".Yp wrong size") ;
                 yvdim = mxGetN (Yp_mx) - 1 ;
-                Yp_size = mxGetN (Yp_mx) * sizeof (uint64_t) ;
-                Yp = (Yp_size == 0) ? NULL : ((uint64_t *) mxGetData (Yp_mx)) ;
+                IF (mxGetClassID (Yp_mx) != Ah_class, ".Yp wrong class") ;
+                Yp_size = mxGetN (Yp_mx) * jsize ;
+                Yp = (Yp_size == 0) ? NULL : ((void *) mxGetData (Yp_mx)) ;
 
-                // Yi must be 1-by-nvec
+                // Yi must be 1-by-nvec, with the same class as Ah
                 mxArray *Yi_mx = mxGetField (X, 0, "Yi") ;
                 IF (Yi_mx == NULL, ".Yi missing") ;
                 IF (mxGetM (Yi_mx) != 1, ".Yi wrong size") ;
                 IF (mxGetN (Yi_mx) != nvec, ".Yi wrong size") ;
-                Yi_size = mxGetN (Yi_mx) * sizeof (uint64_t) ;
-                Yi = (Yi_size == 0) ? NULL : ((uint64_t *) mxGetData (Yi_mx)) ;
+                IF (mxGetClassID (Yi_mx) != Ah_class, ".Yi wrong class") ;
+                Yi_size = mxGetN (Yi_mx) * jsize ;
+                Yi = (Yi_size == 0) ? NULL : ((void *) mxGetData (Yi_mx)) ;
 
                 // Yx must be 1-by-nvec
                 mxArray *Yx_mx = mxGetField (X, 0, "Yx") ;
                 IF (Yx_mx == NULL, ".Yx missing") ;
                 IF (mxGetM (Yx_mx) != 1, ".Yx wrong size") ;
                 IF (mxGetN (Yx_mx) != nvec, ".Yx wrong size") ;
-                Yx_size = mxGetN (Yx_mx) * sizeof (int64_t) ;
+                IF (mxGetClassID (Yx_mx) != Ah_class, ".Yx wrong class") ;
+                Yx_size = mxGetN (Yx_mx) * jsize ;
                 Yx = (Yx_size == 0) ? NULL : ((void *) mxGetData (Yx_mx)) ;
             }
         }
@@ -286,87 +320,84 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         // import the matrix
         //----------------------------------------------------------------------
 
-        int64_t nrows = (by_col) ? vlen : vdim ;
-        int64_t ncols = (by_col) ? vdim : vlen ;
-        OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
+        OK (GB_new (&A, // new header
+            type, 0, 0, GB_ph_null, by_col, /* revised below: */ GxB_FULL,
+            GB_Global_hyper_switch_get ( ), 1,
+            /* revised below: */ false, false, false)) ;
+
+        A->magic = GB_MAGIC ;
+        A->iso = iso ;
+        A->jumbled = false ;
+        A->nvals = nvals ;  // revised below for v3
+        A->vlen = vlen ;
+        A->vdim = vdim ;
+        A->plen = plen ;
+        A->nvec = nvec ;
+        A->nvec_nonempty = nvec_nonempty ;
+        A->p_is_32 = Ap_is_32 ;
+        A->j_is_32 = Aj_is_32 ;
+        A->i_is_32 = Ai_is_32 ;
 
         switch (sparsity_status)
         {
-            case GxB_FULL :
-                if (by_col)
+            case GxB_HYPERSPARSE : 
+                A->h = Ah ; Ah = NULL ; A->h_size = Ah_size ;
+                // fall through to sparse case
+
+            case GxB_SPARSE : 
+
+                if (GraphBLASv3)
                 {
-                    OK (GxB_Matrix_pack_FullC (A,
-                        &Ax, Ax_size, iso, NULL)) ;
+                    // get nvals from Ap [nvec].  Ap must be uint64_t
+                    uint64_t *Ap64 = (uint64_t *) Ap ;
+                    nvals = Ap64 [nvec] ;
+                    A->nvals = nvals ;
                 }
-                else
-                {
-                    OK (GxB_Matrix_pack_FullR (A,
-                        &Ax, Ax_size, iso, NULL)) ;
-                }
+
+                A->p = Ap ; Ap = NULL ; A->p_size = Ap_size ;
+                A->i = Ai ; Ai = NULL ; A->i_size = Ai_size ;
+
                 break ;
 
-            case GxB_SPARSE :
-                if (by_col)
-                {
-                    OK (GxB_Matrix_pack_CSC (A,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso,
-                        false, NULL)) ;
-                }
-                else
-                {
-                    OK (GxB_Matrix_pack_CSR (A,
-                        &Ap, &Ai, &Ax, Ap_size, Ai_size, Ax_size, iso,
-                        false, NULL)) ;
-                }
+            case GxB_BITMAP : 
+                A->b = Ab ; Ab = NULL ; A->b_size = Ab_size ;
                 break ;
 
-            case GxB_HYPERSPARSE :
-                if (by_col)
-                {
-                    OK (GxB_Matrix_pack_HyperCSC (A,
-                        &Ap, &Ah, &Ai, &Ax,
-                        Ap_size, Ah_size, Ai_size, Ax_size, iso,
-                        nvec, false, NULL)) ;
-                }
-                else
-                {
-                    OK (GxB_Matrix_pack_HyperCSR (A,
-                        &Ap, &Ah, &Ai, &Ax,
-                        Ap_size, Ah_size, Ai_size, Ax_size, iso,
-                        nvec, false, NULL)) ;
-                }
-                break ;
-
-            case GxB_BITMAP :
-                if (by_col)
-                {
-                    OK (GxB_Matrix_pack_BitmapC (A,
-                        &Ab, &Ax, Ab_size, Ax_size, iso, nvals, NULL)) ;
-                }
-                else
-                {
-                    OK (GxB_Matrix_pack_BitmapR (A,
-                        &Ab, &Ax, Ab_size, Ax_size, iso, nvals, NULL)) ;
-                }
+            case GxB_FULL : 
                 break ;
 
             default: ;
         }
+
+        // import the values
+        A->x = Ax ; Ax = NULL ; A->x_size = Ax_size ;
 
         //----------------------------------------------------------------------
         // import the A->Y hyper_hash, if it exists
         //----------------------------------------------------------------------
 
         if (nfields == 9)
-        {
+        { 
             // A->Y is sparse, uint64, (A->vdim)-by-yvdim, held by column
-            OK (GrB_Matrix_new (&Y, GrB_UINT64, vdim, yvdim)) ;
-            OK (GxB_Matrix_Option_set (Y, GxB_FORMAT, GxB_BY_COL)) ;
-            OK (GxB_Matrix_pack_CSC (Y,
-                &Yp, &Yi, &Yx, Yp_size, Yi_size, Yx_size, false,
-                false, NULL)) ;
-            OK (GxB_Matrix_Option_set (Y, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-            OK (GxB_pack_HyperHash (A, &Y, NULL)) ;
+            GrB_Type ytype = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
+            OK (GB_new (&Y, // new header
+                ytype, vdim, yvdim, GB_ph_null, /* is_csc: */ true,
+                GxB_SPARSE, GB_Global_hyper_switch_get ( ), yvdim,
+                Aj_is_32, Aj_is_32, Aj_is_32)) ;
+            Y->magic = GB_MAGIC ;
+            Y->iso = false ;
+            Y->jumbled = false ;
+            Y->p = Yp ; Yp = NULL ; Y->p_size = Yp_size ;
+            Y->i = Yi ; Yi = NULL ; Y->i_size = Yi_size ;
+            Y->x = Yx ; Yx = NULL ; Y->x_size = Yx_size ;
+            Y->sparsity_control = GxB_SPARSE ;
+            Y->nvals = nvec ;
+            Y->vlen = vdim ;
+            Y->vdim = yvdim ;
+            Y->plen = yvdim ;
+            Y->nvec_nonempty = -1 ;
+            A->Y = Y ;
+            Y = NULL ;
         }
 
         // tell GraphBLAS the matrix is shallow
@@ -384,18 +415,18 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
         bool X_is_sparse = mxIsSparse (X) ;
 
         GrB_Type type = gb_mxarray_type (X) ;
-        GrB_Index nrows = (GrB_Index) mxGetM (X) ;
-        GrB_Index ncols = (GrB_Index) mxGetN (X) ;
+        uint64_t nrows = (uint64_t) mxGetM (X) ;
+        uint64_t ncols = (uint64_t) mxGetN (X) ;
         OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
 
         // get Xp, Xi, nzmax, or create them
-        GrB_Index *Xp, *Xi, nzmax ;
+        uint64_t *Xp, *Xi, nzmax ;
         if (X_is_sparse)
         { 
             // get the nzmax, Xp, and Xi from the built-in sparse matrix X
-            nzmax = (GrB_Index) mxGetNzmax (X) ;
-            Xp = (GrB_Index *) mxGetJc (X) ;
-            Xi = (GrB_Index *) mxGetIr (X) ;
+            nzmax = (uint64_t) mxGetNzmax (X) ;
+            Xp = (uint64_t *) mxGetJc (X) ;
+            Xi = (uint64_t *) mxGetIr (X) ;
         }
         else
         { 
@@ -522,6 +553,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
     //--------------------------------------------------------------------------
 
     OK (GrB_set (GrB_GLOBAL, burble, GxB_BURBLE)) ;
+OK (GB_matvec_check (A, "got_matrix", 0, NULL, "matrix")) ; // FIXME
     return (A) ;
 }
 

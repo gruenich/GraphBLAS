@@ -288,6 +288,7 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
         return (GrB_INVALID_OBJECT) ;
     }
 
+#if 0
     // HACK for now: assume all inputs/outputs to GrB* methods are 64-bit
     if (A->p_is_32 || A->i_is_32 || A->j_is_32)                     // fixme
     {
@@ -297,6 +298,7 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     GB_assert (!A->p_is_32) ;   // fixme
     GB_assert (!A->j_is_32) ;   // fixme
     GB_assert (!A->i_is_32) ;   // fixme
+#endif
 
     return (GrB_SUCCESS) ;
 }

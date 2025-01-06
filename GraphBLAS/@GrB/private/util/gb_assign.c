@@ -100,7 +100,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // get the size of Cin
     //--------------------------------------------------------------------------
 
-    GrB_Index cnrows, cncols ;
+    uint64_t cnrows, cncols ;
     OK (GrB_Matrix_nrows (&cnrows, C)) ;
     OK (GrB_Matrix_ncols (&cncols, C)) ;
 
@@ -108,9 +108,9 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // get I and J
     //--------------------------------------------------------------------------
 
-    GrB_Index *I = (GrB_Index *) GrB_ALL ;
-    GrB_Index *J = (GrB_Index *) GrB_ALL ;
-    GrB_Index ni = cnrows, nj = cncols ;
+    uint64_t *I = (uint64_t *) GrB_ALL ;
+    uint64_t *J = (uint64_t *) GrB_ALL ;
+    uint64_t ni = cnrows, nj = cncols ;
     bool I_allocated = false, J_allocated = false ;
     int64_t I_max = -1, J_max = -1 ;
 
@@ -144,12 +144,12 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // expand C if needed
     //--------------------------------------------------------------------------
 
-    GrB_Index cnrows_required = I_max + 1 ;
-    GrB_Index cncols_required = J_max + 1 ;
+    uint64_t cnrows_required = I_max + 1 ;
+    uint64_t cncols_required = J_max + 1 ;
     if (cnrows_required > cnrows || cncols_required > cncols)
     {
-        GrB_Index cnrows_new = GB_IMAX (cnrows, cnrows_required) ;
-        GrB_Index cncols_new = GB_IMAX (cncols, cncols_required) ;
+        uint64_t cnrows_new = GB_IMAX (cnrows, cnrows_required) ;
+        uint64_t cncols_new = GB_IMAX (cncols, cncols_required) ;
         OK (GrB_Matrix_resize (C, cnrows_new, cncols_new)) ;
     }
 
@@ -157,7 +157,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // determine if A is a scalar (ignore the transpose descriptor)
     //--------------------------------------------------------------------------
 
-    GrB_Index anrows, ancols ;
+    uint64_t anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
     bool scalar_assignment = (anrows == 1) && (ancols == 1) ;

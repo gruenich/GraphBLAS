@@ -90,7 +90,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = gb_get_deep (pargin [0]) ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, C)) ;
     OK (GrB_Matrix_ncols (&ncols, C)) ;
 
@@ -102,13 +102,11 @@ void mexFunction
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
     GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL,
         GxB_SPARSE + GxB_HYPERSPARSE) ;
-//  OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
-//      NULL, NULL)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
 
     OK (GrB_Matrix_free (&M_input)) ;
-    GrB_Index mnz ;
+    uint64_t mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
 
     //--------------------------------------------------------------------------
@@ -118,7 +116,7 @@ void mexFunction
     GrB_Matrix A_input = gb_get_shallow (pargin [2]) ;
     GrB_Matrix A = A_input ;
     GrB_Type atype ;
-    GrB_Index anrows, ancols, anz ;
+    uint64_t anrows, ancols, anz ;
     int fmt ;
     int A_sparsity ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
@@ -186,7 +184,6 @@ void mexFunction
     // extract the values and pattern of A; handle iso case
     //--------------------------------------------------------------------------
 
-    GrB_Index *Ai =  (GrB_Index *) A->i ;   // FIXME
     void *Ax = A->x ;          		 	 	 	 	 	
     char nil [16] = "iso logassign  " ;
     if (Ax == NULL) Ax = &nil ;
@@ -195,17 +192,17 @@ void mexFunction
     // extract the pattern of M
     //--------------------------------------------------------------------------
 
-    GrB_Index *Mi = (GrB_Index *) (M->i) ;  // FIXME
-    GrB_Index *Mj = mxMalloc (MAX (mnz, 1) * sizeof (GrB_Index)) ;
+    uint64_t *Mj = mxMalloc (MAX (mnz, 1) * sizeof (uint64_t)) ;
     OK (GrB_Matrix_extractTuples_BOOL (NULL, Mj, NULL, &mnz, M)) ;
 
     //--------------------------------------------------------------------------
     // construct a subset of the pattern of M corresponding to the entries of A
     //--------------------------------------------------------------------------
 
-    GrB_Index *Si = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
-    GrB_Index *Sj = mxMalloc (MAX (anz, 1) * sizeof (GrB_Index)) ;
-    GB_helper5 (Si, Sj, Mi, Mj, M->vlen, Ai, A->vlen, anz) ;
+    uint64_t *Si = mxMalloc (MAX (anz, 1) * sizeof (uint64_t)) ;
+    uint64_t *Sj = mxMalloc (MAX (anz, 1) * sizeof (uint64_t)) ;
+    GB_helper5 (Si, Sj, M->i, M->i_is_32, Mj, M->vlen, A->i, A->i_is_32,
+        A->vlen, anz) ;
     GrB_Matrix S = gb_new (atype, nrows, ncols, GxB_BY_COL, 0) ;
 
     if (A->iso)

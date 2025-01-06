@@ -52,7 +52,6 @@ void mexFunction
         char compiler [2048] ;
         int32_t cver [3] ;
         int32_t have_openmp ;
-//      OK (GrB_Global_get_SIZE (GrB_GLOBAL, &len, GxB_COMPILER_NAME)) ;
         OK (GrB_Global_get_String (GrB_GLOBAL, compiler, GxB_COMPILER_NAME)) ;
         OK (GrB_Global_get_VOID (GrB_GLOBAL, (void *) cver,
             GxB_COMPILER_VERSION)) ;

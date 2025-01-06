@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// mex_complex: test the complex type supported by the compiler
+// check_mex_complex: test the complex type supported by the compiler
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.

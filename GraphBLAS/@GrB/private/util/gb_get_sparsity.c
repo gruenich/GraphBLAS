@@ -39,7 +39,7 @@ int gb_get_sparsity         // 0 to 15
     int sparsity ;
     int A_sparsity = 0 ;
     int B_sparsity = 0 ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
 
     //--------------------------------------------------------------------------
     // get the sparsity of the matrices A and B

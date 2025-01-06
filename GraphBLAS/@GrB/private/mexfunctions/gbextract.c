@@ -103,7 +103,7 @@ void mexFunction
 
     int in0 ;
     OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
-    GrB_Index anrows, ancols ;
+    uint64_t anrows, ancols ;
     bool A_transpose = (in0 == GrB_TRAN) ;
     if (A_transpose)
     { 
@@ -122,9 +122,9 @@ void mexFunction
     // get I and J
     //--------------------------------------------------------------------------
 
-    GrB_Index *I = (GrB_Index *) GrB_ALL ;
-    GrB_Index *J = (GrB_Index *) GrB_ALL ;
-    GrB_Index ni = anrows, nj = ancols ;
+    uint64_t *I = (uint64_t *) GrB_ALL ;
+    uint64_t *J = (uint64_t *) GrB_ALL ;
+    uint64_t ni = anrows, nj = ancols ;
     bool I_allocated = false, J_allocated = false ;
 
     if (anrows == 1 && ncells == 1)
@@ -152,8 +152,8 @@ void mexFunction
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
-    const bool I_is_32 = false ;    // FIXME
-    const bool J_is_32 = false ;    // FIXME
+    const bool I_is_32 = false ;
+    const bool J_is_32 = false ;
 
     if (C == NULL)
     { 
@@ -162,7 +162,7 @@ void mexFunction
         // accum must be null
         int I_kind, J_kind ;
         int64_t I_colon [3], J_colon [3] ;
-        GrB_Index cnrows, cncols ;
+        uint64_t cnrows, cncols ;
         GB_ijlength (I, I_is_32, ni, anrows, (int64_t *) &cnrows, &I_kind,
             I_colon) ;
         GB_ijlength (J, J_is_32, nj, ancols, (int64_t *) &cncols, &J_kind,

@@ -39,9 +39,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     void *blob = mxGetData (pargin [0]) ;
-    GrB_Index m = (GrB_Index) mxGetM (pargin [0]) ;
-    GrB_Index n = (GrB_Index) mxGetN (pargin [0]) ;
-    GrB_Index blob_size = m*n ;
+    uint64_t m = (uint64_t) mxGetM (pargin [0]) ;
+    uint64_t n = (uint64_t) mxGetN (pargin [0]) ;
+    uint64_t blob_size = m*n ;
 
     //--------------------------------------------------------------------------
     // deserialize the blob into a matrix

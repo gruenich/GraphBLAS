@@ -104,9 +104,11 @@ void GB_helper1i             // convert zero-based indices to one-based
 // GB_helper3: convert 1-based indices to 0-based for gb_mxarray_to_list
 //------------------------------------------------------------------------------
 
+// FIXME: add support for 32-bit integers
+
 bool GB_helper3             // return true if OK, false on error
 (
-    int64_t *restrict List,             // size len, output array   FIXME
+    int64_t *restrict List,             // size len, output array
     const double *restrict List_double, // size len, input array
     int64_t len,
     int64_t *List_max       // also compute the max entry in the list (1-based)
@@ -162,9 +164,11 @@ bool GB_helper3             // return true if OK, false on error
 // GB_helper3i: convert 1-based indices to 0-based for gb_mxarray_to_list
 //------------------------------------------------------------------------------
 
+// FIXME: add support for 32-bit integers
+
 bool GB_helper3i        // return true if OK, false on error
 (
-    int64_t *restrict List,             // size len, output array   FIXME
+    int64_t *restrict List,             // size len, output array
     const int64_t *restrict List_int64, // size len, input array
     int64_t len,
     int64_t *List_max   // also compute the max entry in the list (1-based)
@@ -208,9 +212,11 @@ bool GB_helper3i        // return true if OK, false on error
 // GB_helper4: find the max entry in a list of type uint64_t
 //------------------------------------------------------------------------------
 
+// FIXME: add support for 32-bit integers
+
 bool GB_helper4             // return true if OK, false on error
 (
-    const uint64_t *restrict I,    // array of size len FIXME
+    const uint64_t *restrict I,    // array of size len
     const int64_t len,
     uint64_t *List_max      // also compute the max entry in the list (1-based,
                             // which is max(I)+1)
@@ -254,15 +260,19 @@ bool GB_helper4             // return true if OK, false on error
 // GB_helper5: construct pattern of S for gblogassign
 //------------------------------------------------------------------------------
 
-void GB_helper5              // construct pattern of S
+void GB_helper5             // construct pattern of S
 (
-    uint64_t *restrict Si,          // array of size anz    FIXME
-    uint64_t *restrict Sj,          // array of size anz    FIXME
-    const uint64_t *restrict Mi,// array of size mnz, M->i, may be NULL FIXME
-    const uint64_t *restrict Mj,    // array of size mnz,   FIXME
+    // output:
+    uint64_t *restrict Si,          // array of size anz
+    uint64_t *restrict Sj,          // array of size anz
+    // input:
+    const void *Mi,                 // array of size mnz, M->i, may be NULL
+    const bool Mi_is_32,            // if true, M->i is 32-bit; else 64-bit
+    const uint64_t *restrict Mj,    // array of size mnz
     const int64_t mvlen,            // M->vlen
-    uint64_t *restrict Ai,      // array of size anz, A->i, may be NULL FIXME
-    const int64_t avlen,            // M->vlen
+    const void *Ai,                 // array of size anz, A->i, may be NULL
+    const bool Ai_is_32,            // if true, A->i is 32-bit; else 64-bit
+    const int64_t avlen,            // A->vlen
     const uint64_t anz
 )
 {
@@ -272,12 +282,15 @@ void GB_helper5              // construct pattern of S
     ASSERT (Si != NULL) ;
     ASSERT (Sj != NULL) ;
 
+    GB_IDECL (Ai, const, u) ; GB_IPTR (Ai, Ai_is_32) ;
+    GB_IDECL (Mi, const, u) ; GB_IPTR (Mi, Mi_is_32) ;
+
     int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (k = 0 ; k < anz ; k++)
     {
-        int64_t i = GBI (Ai, k, avlen) ;    // FIXME
-        Si [k] = GBI (Mi, i, mvlen) ;       // FIXME
+        int64_t i = GBi_A (Ai, k, avlen) ;
+        Si [k] = GBi_M (Mi, i, mvlen) ;
         Sj [k] = Mj [i] ;
     }
 }

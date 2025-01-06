@@ -131,15 +131,15 @@ void mexFunction
         bool B_transpose = (in1 == GrB_TRAN) ;
 
         // get the size of A and B
-        GrB_Index anrows, ancols, bnrows, bncols ;
+        uint64_t anrows, ancols, bnrows, bncols ;
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
         OK (GrB_Matrix_nrows (&bnrows, B)) ;
         OK (GrB_Matrix_ncols (&bncols, B)) ;
 
         // determine the size of C
-        GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
-        GrB_Index cncols = (B_transpose) ? bnrows : bncols ;
+        uint64_t cnrows = (A_transpose) ? ancols : anrows ;
+        uint64_t cncols = (B_transpose) ? bnrows : bncols ;
 
         // use the semiring's additive monoid as the type of C
         GrB_Monoid add_monoid ;

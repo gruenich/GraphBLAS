@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export_to_mxstruct: export a GrB_Matrix to a built-in struct
+// gb_export_to_mxstruct: export a GrB_Matrix to a MATLAB struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 // The input GrB_Matrix A is exported to a GraphBLAS matrix struct G, and freed.
 
-// The input GrB_Matrix A must be deep.  The output is a built-in struct
+// The input GrB_Matrix A must be deep.  The output is a MATLAB struct
 // holding the content of the GrB_Matrix.
 
 // The GraphBLASv4 and v5 structs are identical, except that s has size 9
@@ -23,6 +23,9 @@
 // GraphBLASv7_3 is identical to GraphBLASv5_1, except that it adds the Y
 // hyper_hash with 3 components: Yp, Yi, and Yx.
 
+// GraphBLASv10 is identical to GraphBLASv7_3, except that Ap, Ah, Ai, Yp, Yi,
+// and Yx can be uint32_t.  The fields are the same as GraphBLASv7_3.
+
 // mxGetData and mxSetData are used instead of the MATLAB-recommended
 // mxGetDoubles, etc, because mxGetData and mxSetData work best for Octave, and
 // they work fine for MATLAB since GraphBLAS requires R2018a with the
@@ -35,7 +38,7 @@ static const char *MatrixFields [9] =
 {
     // these fields are identical to GraphBLASv5_1, except for the name
     // of the first field
-    "GraphBLASv7_3",    // 0: "logical", "int8", ... "double",
+    "GraphBLASv10",     // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
     "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or
@@ -52,7 +55,7 @@ static const char *MatrixFields [9] =
 // for bitmap matrices only
 static const char *Bitmap_MatrixFields [4] =
 {
-    "GraphBLASv7_3",    // 0: "logical", "int8", ... "double",
+    "GraphBLASv10",     // 0: "logical", "int8", ... "double",
                         //    "single complex", or "double complex"
     "s",                // 1: all scalar info goes here
     "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or
@@ -62,7 +65,7 @@ static const char *Bitmap_MatrixFields [4] =
 
 //------------------------------------------------------------------------------
 
-mxArray *gb_export_to_mxstruct  // return exported built-in struct G
+mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
 )
@@ -86,6 +89,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     GrB_Matrix A = (*A_handle) ;
     GrB_Matrix Y = NULL ;
 
+OK (GB_matvec_check (A, "export_matrix", 0, NULL, "matrix")) ; // FIXME
+
     //--------------------------------------------------------------------------
     // make sure the matrix is finished, including the creation of A->Y
     //--------------------------------------------------------------------------
@@ -93,121 +98,69 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     OK1 (A, GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
 
     //--------------------------------------------------------------------------
-    // get the sparsity_status and CSR/CSC format
+    // extract the content of the GrB_Matrix and free it
     //--------------------------------------------------------------------------
 
-    int fmt ;
-    int sparsity_status, sparsity_control ;
+    int sparsity_status ;
     OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS,  &sparsity_status)) ;
-    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &sparsity_control)) ;
-    OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-
-    //--------------------------------------------------------------------------
-    // extract the opaque content not provided by GxB*export
-    //--------------------------------------------------------------------------
+    int sparsity_control = A->sparsity_control ;
 
     int64_t nzmax = GB_nnz_max (A) ;
     int64_t plen = A->plen ;
     int64_t nvec_nonempty = A->nvec_nonempty ;
 
-    //--------------------------------------------------------------------------
-    // extract the content of the GrB_Matrix and free it
-    //--------------------------------------------------------------------------
+    GrB_Type type = A->type ;
+    size_t type_size = type->size ;
+    int64_t vlen = A->vlen ;
+    int64_t vdim = A->vdim ;
 
-    size_t type_size = 0 ;
-    GrB_Type type = NULL ;
-    GrB_Index nrows = 0, ncols = 0 ;
-    int8_t *Ab = NULL ;
-    uint64_t *Ap = NULL ;       // FIXME
-    int64_t *Ah = NULL, *Ai = NULL ;
-    void *Ax = NULL ;
-    GrB_Index Ap_size = 0, Ah_size = 0, Ab_size = 0, Ai_size = 0, Ax_size = 0 ;
-    uint64_t nvals = 0, nvec = 0 ;
-    bool by_col = (fmt == GxB_BY_COL) ;
-    bool iso = false ;
+    void   *Ap = A->p ; A->p = NULL ;
+    void   *Ah = A->h ; A->h = NULL ;
+    int8_t *Ab = A->b ; A->b = NULL ;
+    void   *Ai = A->i ; A->i = NULL ;
+    int8_t *Ax = A->x ; A->x = NULL ;
+
+    uint64_t Ap_size = A->p_size ;
+    uint64_t Ah_size = A->h_size ;
+    uint64_t Ab_size = A->b_size ;
+    uint64_t Ai_size = A->i_size ;
+    uint64_t Ax_size = A->x_size ;
+
+    uint64_t nvals = A->nvals ;
+    uint64_t nvec = A->nvec ;
+    bool by_col = A->is_csc ;
+    bool iso = A->iso ;
+
+    bool Ap_is_32 = A->p_is_32 ;
+    bool Aj_is_32 = A->j_is_32 ;
+    bool Ai_is_32 = A->i_is_32 ;
+
+    mxClassID Ap_class = Ap_is_32 ? mxUINT32_CLASS : mxUINT64_CLASS ;
+    mxClassID Aj_class = Aj_is_32 ? mxUINT32_CLASS : mxUINT64_CLASS ;
+    mxClassID Ai_class = Ai_is_32 ? mxUINT32_CLASS : mxUINT64_CLASS ;
+
+    size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = Aj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     GrB_Type ytype = NULL ;
-    uint64_t *Yp = NULL ; GrB_Index Yp_size = 0 ;       // FIXME
-    uint64_t *Yi = NULL ; GrB_Index Yi_size = 0 ;
-    void     *Yx = NULL ; GrB_Index Yx_size = 0 ;
-    uint64_t yvdim, ynrows ;
-
-    switch (sparsity_status)
+    uint64_t *Yp = NULL ; uint64_t Yp_size = 0 ;
+    uint64_t *Yi = NULL ; uint64_t Yi_size = 0 ;
+    void     *Yx = NULL ; uint64_t Yx_size = 0 ;
+    uint64_t yvdim = 0, yvlen = 0 ;
+    if (A->Y != NULL)
     {
-        case GxB_FULL :
-            if (by_col)
-            {
-                OK (GxB_Matrix_export_FullC (&A, &type, &nrows, &ncols,
-                    &Ax, &Ax_size, &iso, NULL)) ;
-            }
-            else
-            {
-                OK (GxB_Matrix_export_FullR (&A, &type, &nrows, &ncols,
-                    &Ax, &Ax_size, &iso, NULL)) ;
-            }
-            break ;
-
-        case GxB_SPARSE :
-            if (by_col)
-            {
-                OK (GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols,
-                    &Ap, &Ai, &Ax,
-                    &Ap_size, &Ai_size, &Ax_size, &iso, NULL, NULL)) ;
-            }
-            else
-            {
-                OK (GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols,
-                    &Ap, &Ai, &Ax,
-                    &Ap_size, &Ai_size, &Ax_size, &iso, NULL, NULL)) ;
-            }
-            break ;
-
-        case GxB_HYPERSPARSE :
-
-            // export and free the A->Y hyper_hash.  It is always sparse,
-            // GrB_UINT64, held by column, and non-iso
-            OK (GxB_unpack_HyperHash (A, &Y, NULL)) ;
-            if (Y != NULL)
-            {
-                OK (GxB_Matrix_export_CSC (&Y, &ytype, &ynrows, &yvdim,
-                    &Yp, &Yi, &Yx, &Yp_size, &Yi_size, &Yx_size,
-                    NULL, NULL, NULL)) ;
-            }
-
-            // export and free the rest of the hypersparse matrix
-            if (by_col)
-            {
-                OK (GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols,
-                    &Ap, &Ah, &Ai, &Ax,
-                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &iso,
-                    &nvec, NULL, NULL)) ;
-            }
-            else
-            {
-                OK (GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols,
-                    &Ap, &Ah, &Ai, &Ax,
-                    &Ap_size, &Ah_size, &Ai_size, &Ax_size, &iso,
-                    &nvec, NULL, NULL)) ;
-            }
-            break ;
-
-        case GxB_BITMAP :
-            if (by_col)
-            {
-                OK (GxB_Matrix_export_BitmapC (&A, &type, &nrows, &ncols,
-                    &Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, NULL)) ;
-            }
-            else
-            {
-                OK (GxB_Matrix_export_BitmapR (&A, &type, &nrows, &ncols,
-                    &Ab, &Ax, &Ab_size, &Ax_size, &iso, &nvals, NULL)) ;
-            }
-            break ;
-
-        default: ;
+        Yp = A->Y->p ; A->Y->p = NULL ;
+        Yi = A->Y->i ; A->Y->i = NULL ;
+        Yx = A->Y->x ; A->Y->x = NULL ;
+        Yp_size = A->Y->p_size ;
+        Yi_size = A->Y->i_size ;
+        Yx_size = A->Y->x_size ;
+        yvdim = A->Y->vdim ;
+        yvlen = A->Y->vlen ;
     }
 
-    OK (GxB_Type_size (&type_size, type)) ;
+    GrB_Matrix_free (&A) ;
 
     //--------------------------------------------------------------------------
     // construct the output struct
@@ -252,8 +205,8 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     mxArray *opaque = mxCreateNumericMatrix (1, 10, mxINT64_CLASS, mxREAL) ;
     int64_t *s = (int64_t *) mxGetData (opaque) ;
     s [0] = plen ;
-    s [1] = (by_col) ? nrows : ncols ;  // was A->vlen ;
-    s [2] = (by_col) ? ncols : nrows ;  // was A->vdim ;
+    s [1] = vlen ;
+    s [2] = vdim ;
     s [3] = (sparsity_status == GxB_HYPERSPARSE) ? nvec : (s [2]) ;
     s [4] = nvec_nonempty ;
     s [5] = sparsity_control ;
@@ -270,17 +223,17 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     if (sparsity_status == GxB_SPARSE || sparsity_status == GxB_HYPERSPARSE)
     {
         // export the pointers
-        mxArray *Ap_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
-        mxSetN (Ap_mx, Ap_size / sizeof (int64_t)) ;
+        mxArray *Ap_mx = mxCreateNumericMatrix (1, 0, Ap_class, mxREAL) ;
+        mxSetN (Ap_mx, Ap_size / psize) ;
         void *p = (void *) mxGetData (Ap_mx) ; gb_mxfree (&p) ;
         mxSetData (Ap_mx, Ap) ;
         mxSetFieldByNumber (G, 0, 3, Ap_mx) ;
 
         // export the indices
-        mxArray *Ai_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
+        mxArray *Ai_mx = mxCreateNumericMatrix (1, 0, Ai_class, mxREAL) ;
         if (Ai_size > 0)
         { 
-            mxSetN (Ai_mx, Ai_size / sizeof (int64_t)) ;
+            mxSetN (Ai_mx, Ai_size / isize) ;
             p = (void *) mxGetData (Ai_mx) ; gb_mxfree (&p) ;
             mxSetData (Ai_mx, Ai) ;
         }
@@ -300,14 +253,15 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     if (sparsity_status == GxB_HYPERSPARSE)
     {
         // export the hyperlist
-        mxArray *Ah_mx = mxCreateNumericMatrix (1, 0, mxINT64_CLASS, mxREAL) ;
-        if (Ah_size > nvec * sizeof (int64_t))
+        mxArray *Ah_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
+        if (Ah_size > nvec * jsize)
         {
-            memset (Ah + nvec, 0, Ah_size - nvec * sizeof (int64_t)) ;
+            // FIXME: is this necessary?
+            memset (Ah + nvec, 0, Ah_size - nvec * jsize) ;
         }
         if (Ah_size > 0)
         { 
-            mxSetN (Ah_mx, Ah_size / sizeof (int64_t)) ;
+            mxSetN (Ah_mx, Ah_size / jsize) ;
             void *p = (void *) mxGetData (Ah_mx) ; gb_mxfree (&p) ;
             mxSetData (Ah_mx, Ah) ;
         }
@@ -317,24 +271,21 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
         {
 
             // export Yp, of size yvdim+1
-            mxArray *Yp_mx = mxCreateNumericMatrix (1, 0, mxUINT64_CLASS,
-                mxREAL) ;
+            mxArray *Yp_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
             mxSetN (Yp_mx, yvdim+1) ;
             void *p = (void *) mxGetData (Yp_mx) ; gb_mxfree (&p) ;
             mxSetData (Yp_mx, Yp) ;
             mxSetFieldByNumber (G, 0, 6, Yp_mx) ;
 
             // export Yi, of size nvec
-            mxArray *Yi_mx = mxCreateNumericMatrix (1, 0, mxUINT64_CLASS,
-                mxREAL) ;
+            mxArray *Yi_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
             mxSetN (Yi_mx, nvec) ;
             p = (void *) mxGetData (Yi_mx) ; gb_mxfree (&p) ;
             mxSetData (Yi_mx, Yi) ;
             mxSetFieldByNumber (G, 0, 7, Yi_mx) ;
 
             // export Yx, of size nvec
-            mxArray *Yx_mx = mxCreateNumericMatrix (1, 0, mxUINT64_CLASS,
-                mxREAL) ;
+            mxArray *Yx_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
             mxSetN (Yx_mx, nvec) ;
             p = (void *) mxGetData (Yx_mx) ; gb_mxfree (&p) ;
             mxSetData (Yx_mx, Yx) ;
@@ -356,7 +307,7 @@ mxArray *gb_export_to_mxstruct  // return exported built-in struct G
     }
 
     //--------------------------------------------------------------------------
-    // return the built-in struct
+    // return the built-in MATLAB struct containing the GrB_Matrix components
     //--------------------------------------------------------------------------
 
     return (G) ;

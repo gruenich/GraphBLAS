@@ -23,7 +23,7 @@ GrB_Matrix gb_expand_to_full    // C = full (A), and typecast
     //--------------------------------------------------------------------------
 
     GrB_Type atype ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     OK (GxB_Matrix_type (&atype, A)) ;

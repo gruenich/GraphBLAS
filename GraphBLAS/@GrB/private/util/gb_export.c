@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export: export a GrB_Matrix as a built-in matrix or GraphBLAS struct
+// gb_export: export a GrB_Matrix as a MATLAB matrix or GraphBLAS struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,12 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// mxArray pargout [0] = gb_export (&C, kind) ; exports C as a built-in matrix
+// mxArray pargout [0] = gb_export (&C, kind) ; exports C as a MATLAB matrix
 // and frees the remaining content of C.
 
 #include "gb_interface.h"
 
-mxArray *gb_export              // return the exported built-in matrix or struct
+mxArray *gb_export              // return the exported MATLAB matrix or struct
 (
     GrB_Matrix *C_handle,       // GrB_Matrix to export and free
     kind_enum_t kind            // GrB, sparse, full, or built-in
@@ -23,11 +23,11 @@ mxArray *gb_export              // return the exported built-in matrix or struct
     // determine if all entries in C are present
     //--------------------------------------------------------------------------
 
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     bool is_full = false ;
     if (kind == KIND_BUILTIN || kind == KIND_FULL)
     { 
-        GrB_Index nvals ;
+        uint64_t nvals ;
         OK (GrB_Matrix_nvals (&nvals, *C_handle)) ;
         OK (GrB_Matrix_nrows (&nrows, *C_handle)) ;
         OK (GrB_Matrix_ncols (&ncols, *C_handle)) ;
@@ -48,7 +48,7 @@ mxArray *gb_export              // return the exported built-in matrix or struct
     { 
 
         //----------------------------------------------------------------------
-        // export C as a built-in sparse matrix
+        // export C as a MATLAB sparse matrix
         //----------------------------------------------------------------------
 
         // Typecast to double, if C is integer (int8, ..., uint64)
@@ -59,10 +59,10 @@ mxArray *gb_export              // return the exported built-in matrix or struct
     { 
 
         //----------------------------------------------------------------------
-        // export C as a built-in full matrix, adding explicit zeros if needed
+        // export C as a MATLAB full matrix, adding explicit zeros if needed
         //----------------------------------------------------------------------
 
-        // No typecasting is needed since built-in full matrices support all
+        // No typecasting is needed since MATLAB full matrices support all
         // the same types.
 
         GrB_Matrix C = NULL ;
@@ -88,7 +88,7 @@ mxArray *gb_export              // return the exported built-in matrix or struct
         // export as a full matrix, held by column, not uniform-valued
         void *Cx = NULL ;
         GrB_Type ctype = NULL ;
-        GrB_Index Cx_size ;
+        uint64_t Cx_size ;
         OK (GxB_Matrix_export_FullC (C_handle, &ctype, &nrows, &ncols,
             &Cx, &Cx_size, NULL, NULL)) ;
 
@@ -99,10 +99,10 @@ mxArray *gb_export              // return the exported built-in matrix or struct
     { 
 
         //----------------------------------------------------------------------
-        // export C as a built-in struct containing a verbatim GrB_Matrix
+        // export C as a MATLAB struct containing a verbatim GrB_Matrix
         //----------------------------------------------------------------------
 
-        // No typecasting is needed since the built-in struct can hold all of
+        // No typecasting is needed since the MATLAB struct can hold all of
         // the opaque content of the GrB_Matrix.
         return (gb_export_to_mxstruct (C_handle)) ;
     }

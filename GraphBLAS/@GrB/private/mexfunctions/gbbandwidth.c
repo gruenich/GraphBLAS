@@ -32,7 +32,7 @@ void mexFunction
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
     bool compute_lo = (bool) mxGetScalar (pargin [1]) ;
     bool compute_hi = (bool) mxGetScalar (pargin [2]) ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
 

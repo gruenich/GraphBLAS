@@ -123,7 +123,7 @@ void mexFunction
         bool B_transpose = (in1 == GrB_TRAN) ;
 
         // get the size of A and B
-        GrB_Index anrows, ancols, bnrows, bncols ;
+        uint64_t anrows, ancols, bnrows, bncols ;
         if (A_transpose)
         { 
             OK (GrB_Matrix_nrows (&ancols, A)) ;
@@ -146,8 +146,8 @@ void mexFunction
         }
 
         // determine the size of C
-        GrB_Index cnrows = anrows * bnrows ;
-        GrB_Index cncols = ancols * bncols ;
+        uint64_t cnrows = anrows * bnrows ;
+        uint64_t cncols = ancols * bncols ;
 
         // use the ztype of the op as the type of C
         OK (GxB_BinaryOp_ztype (&ctype, op)) ;

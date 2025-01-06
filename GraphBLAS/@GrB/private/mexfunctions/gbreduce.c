@@ -117,7 +117,7 @@ void mexFunction
     // ensure C is 1-by-1
     //--------------------------------------------------------------------------
 
-    GrB_Index cnrows, cncols ;
+    uint64_t cnrows, cncols ;
     OK (GrB_Matrix_nrows (&cnrows, C)) ;
     OK (GrB_Matrix_ncols (&cncols, C)) ;
     if (cnrows != 1 || cncols != 1)

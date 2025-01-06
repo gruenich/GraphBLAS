@@ -43,7 +43,7 @@ void mexFunction
     // get the # of entries in the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals ;
+    uint64_t nvals ;
     OK (GrB_Matrix_nvals (&nvals, X)) ;
 
     //--------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void mexFunction
     double anvals ;
     if (nvals == INT64_MAX)
     {
-        GrB_Index nrows, ncols ;
+        uint64_t nrows, ncols ;
         OK (GrB_Matrix_nrows (&nrows, X)) ;
         OK (GrB_Matrix_ncols (&ncols, X)) ;
         anvals = ((double) nrows) * ((double) ncols) ;

@@ -97,7 +97,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // get the size of A and B
-    GrB_Index anrows, ancols, bnrows, bncols, cnrows, cncols ;
+    uint64_t anrows, ancols, bnrows, bncols, cnrows, cncols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
     OK (GrB_Matrix_nrows (&bnrows, B)) ;
@@ -152,7 +152,7 @@ void mexFunction
         // C = alpha * B or C = A * beta
         //----------------------------------------------------------------------
 
-        GrB_Index nvals ;
+        uint64_t nvals ;
         OK (GrB_Scalar_nvals (&nvals, scalar)) ;
         if (nvals == 0)
         {

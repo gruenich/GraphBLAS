@@ -11,8 +11,8 @@
 
 int gb_default_format      // GxB_BY_ROW or GxB_BY_COL
 (
-    GrB_Index nrows,        // row vectors are stored by row
-    GrB_Index ncols         // column vectors are stored by column
+    uint64_t nrows,        // row vectors are stored by row
+    uint64_t ncols         // column vectors are stored by column
 )
 {
 

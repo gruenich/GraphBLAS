@@ -36,7 +36,7 @@ void mexFunction
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
 
-    GrB_Index anrows, ancols ;
+    uint64_t anrows, ancols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
 
@@ -60,7 +60,7 @@ void mexFunction
     { 
         // s = norm (A,p) where A is an FP32 or FP64 vector,
         // or when p = 0 (for Frobenius norm).  A cannot be bitmap.
-        GrB_Index anz ;
+        uint64_t anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;
         s = GB_helper10 (A->x, A->iso, NULL, false, atype, norm_kind, anz) ;
         if (s < 0) ERROR ("unknown norm") ;

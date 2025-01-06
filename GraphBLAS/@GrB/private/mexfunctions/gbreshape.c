@@ -30,8 +30,8 @@ void mexFunction
 
     gb_usage ((nargin == 3 || nargin == 4) && nargout == 1, USAGE) ;
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Index nrows_new = gb_mxget_uint64_scalar (pargin [1], "nrows_new") ;
-    GrB_Index ncols_new = gb_mxget_uint64_scalar (pargin [2], "ncols_new") ;
+    uint64_t nrows_new = gb_mxget_uint64_scalar (pargin [1], "nrows_new") ;
+    uint64_t ncols_new = gb_mxget_uint64_scalar (pargin [2], "ncols_new") ;
     bool by_col = (nargin == 3) ? true : ((bool) mxGetScalar (pargin [3])) ;
 
     //--------------------------------------------------------------------------

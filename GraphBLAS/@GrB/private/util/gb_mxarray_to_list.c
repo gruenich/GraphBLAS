@@ -15,6 +15,8 @@
 // because mxGetData works best for Octave, and it works fine for MATLAB
 // since GraphBLAS requires R2018a with the interleaved complex data type.
 
+// FIXME: add support for 32-bit integers
+
 #include "gb_interface.h"
 
 int64_t *gb_mxarray_to_list     // return List of integers

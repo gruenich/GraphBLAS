@@ -9,6 +9,8 @@
 
 // Usage:
 
+// FIXME: add support for 32-bit integers
+
 // A = gbbuild (I, J, X)
 // A = gbbuild (I, J, X, desc)
 // A = gbbuild (I, J, X, m, desc)
@@ -81,14 +83,14 @@ void mexFunction
     // get I and J
     //--------------------------------------------------------------------------
 
-    GrB_Index ni, nj ;
+    uint64_t ni, nj ;
     bool I_allocated, J_allocated ;
     int64_t Imax = -1, Jmax = -1 ;
 
-    GrB_Index *I = (GrB_Index *) gb_mxarray_to_list (pargin [0], base,
+    uint64_t *I = (uint64_t *) gb_mxarray_to_list (pargin [0], base,
         &I_allocated, (int64_t *) &ni, &Imax) ;
 
-    GrB_Index *J = (GrB_Index *) gb_mxarray_to_list (pargin [1], base,
+    uint64_t *J = (uint64_t *) gb_mxarray_to_list (pargin [1], base,
         &J_allocated, (int64_t *) &nj, &Jmax) ;
 
     //--------------------------------------------------------------------------
@@ -97,13 +99,13 @@ void mexFunction
 
     const mxArray *Xm = pargin [2] ;
     GrB_Type xtype = gb_mxarray_type (Xm) ;
-    GrB_Index nx = mxGetNumberOfElements (Xm) ;
+    uint64_t nx = mxGetNumberOfElements (Xm) ;
 
     //--------------------------------------------------------------------------
     // check the sizes of I, J, and X, and the type of X
     //--------------------------------------------------------------------------
 
-    GrB_Index nvals = MAX (ni, nj) ;
+    uint64_t nvals = MAX (ni, nj) ;
     nvals = MAX (nvals, nx) ;
 
     if (!(ni == 1 || ni == nvals) ||
@@ -123,8 +125,8 @@ void mexFunction
 
     if (ni == 1 && ni < nvals)
     { 
-        GrB_Index *I2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
-        GB_helper8 ((GB_void *) I2, (GB_void *) I, nvals, sizeof (GrB_Index)) ;
+        uint64_t *I2 = (uint64_t *) mxMalloc (nvals * sizeof (uint64_t)) ;
+        GB_helper8 ((GB_void *) I2, (GB_void *) I, nvals, sizeof (uint64_t)) ;
         if (I_allocated) gb_mxfree ((void **) (&I)) ;
         I_allocated = true ;
         I = I2 ;
@@ -132,8 +134,8 @@ void mexFunction
 
     if (nj == 1 && nj < nvals)
     { 
-        GrB_Index *J2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
-        GB_helper8 ((GB_void *) J2, (GB_void *) J, nvals, sizeof (GrB_Index)) ;
+        uint64_t *J2 = (uint64_t *) mxMalloc (nvals * sizeof (uint64_t)) ;
+        GB_helper8 ((GB_void *) J2, (GB_void *) J, nvals, sizeof (uint64_t)) ;
         if (J_allocated) gb_mxfree ((void **) (&J)) ;
         J_allocated = true ;
         J = J2 ;
@@ -143,7 +145,7 @@ void mexFunction
     // get m and n if present
     //--------------------------------------------------------------------------
 
-    GrB_Index nrows = 0, ncols = 0 ;
+    uint64_t nrows = 0, ncols = 0 ;
 
     if (nargin < 4)
     {

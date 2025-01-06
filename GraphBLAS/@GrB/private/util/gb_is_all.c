@@ -21,7 +21,7 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
 )
 {
 
-    GrB_Index nrows1, ncols1, nrows2, ncols2, nvals, nvals1, nvals2 ;
+    uint64_t nrows1, ncols1, nrows2, ncols2, nvals, nvals1, nvals2 ;
 
     //--------------------------------------------------------------------------
     // check the size of A and B

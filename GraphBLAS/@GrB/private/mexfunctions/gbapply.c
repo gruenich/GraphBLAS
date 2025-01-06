@@ -119,13 +119,13 @@ void mexFunction
         bool A_transpose = (in0 == GrB_TRAN) ;
 
         // get the size of A
-        GrB_Index anrows, ancols ;
+        uint64_t anrows, ancols ;
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
 
         // determine the size of C
-        GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
-        GrB_Index cncols = (A_transpose) ? anrows : ancols ;
+        uint64_t cnrows = (A_transpose) ? ancols : anrows ;
+        uint64_t cncols = (A_transpose) ? anrows : ancols ;
 
         // use the ztype of the op as the type of C
         OK (GxB_UnaryOp_ztype (&ctype, op)) ;

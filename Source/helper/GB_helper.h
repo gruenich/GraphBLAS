@@ -56,15 +56,19 @@ bool GB_helper4              // return true if OK, false on error
     uint64_t *List_max           // find max (I) + 1
 ) ;
 
-void GB_helper5              // construct pattern of S
+void GB_helper5             // construct pattern of S
 (
-    uint64_t *restrict Si,          // array of size anz    FIXME
-    uint64_t *restrict Sj,          // array of size anz    FIXME
-    const uint64_t *restrict Mi,    // array of size mnz, M->i  FIXME
-    const uint64_t *restrict Mj,    // array of size mnz    FIXME
+    // output:
+    uint64_t *restrict Si,          // array of size anz
+    uint64_t *restrict Sj,          // array of size anz
+    // input:
+    const void *Mi,                 // array of size mnz, M->i, may be NULL
+    const bool Mi_is_32,            // if true, M->i is 32-bit; else 64-bit
+    const uint64_t *restrict Mj,    // array of size mnz
     const int64_t mvlen,            // M->vlen
-    uint64_t *restrict Ai,          // array of size anz, A->i  FIXME
-    const int64_t avlen,            // M->vlen
+    const void *Ai,                 // array of size anz, A->i, may be NULL
+    const bool Ai_is_32,            // if true, A->i is 32-bit; else 64-bit
+    const int64_t avlen,            // A->vlen
     const uint64_t anz
 ) ;
 

@@ -120,6 +120,7 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     (*sparsity) = 0 ;
 
     if (desc_builtin == NULL || !mxIsStruct (desc_builtin)
+        || (mxGetField (desc_builtin, 0, "GraphBLASv10") != NULL)
         || (mxGetField (desc_builtin, 0, "GraphBLASv7_3") != NULL)
         || (mxGetField (desc_builtin, 0, "GraphBLASv5_1") != NULL)
         || (mxGetField (desc_builtin, 0, "GraphBLASv5") != NULL)

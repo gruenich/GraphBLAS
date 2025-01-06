@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbbuiltin: convert to a sparse or full built-in matrix
+// gbbuiltin: convert to a sparse or full built-in MATLAB matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard built-in
-// sparse or full matrix.  The output is a standard built-in sparse or full
-// matrix: full if all entries are present, and sparse otherwise.
+// MATLAB sparse or full matrix.  The output is a standard built-in sparse or
+// full matrix: full if all entries are present, and sparse otherwise.
 
 // Usage:
 

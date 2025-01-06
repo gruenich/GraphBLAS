@@ -35,7 +35,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Index nrows, ncols, nvals ;
+    uint64_t nrows, ncols, nvals ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     int burble ;
@@ -47,7 +47,7 @@ void mexFunction
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     GrB_Type xtype ;
     OK (GxB_Matrix_type (&xtype, A)) ;
-    GrB_Index s = MAX (nvals, 1) ;
+    uint64_t s = MAX (nvals, 1) ;
 
     //--------------------------------------------------------------------------
     // extract the tuples

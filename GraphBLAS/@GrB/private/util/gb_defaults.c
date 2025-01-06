@@ -37,7 +37,6 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     OK (GxB_Global_Option_set (GxB_NTHREADS, GB_omp_get_max_threads ( ))) ;
 
     // default chunk
-//  OK (GxB_Global_Option_set (GxB_CHUNK, (double) GB_CHUNK_DEFAULT)) ;
     GrB_Scalar chunk_default = NULL ;
     OK (GrB_Scalar_new (&chunk_default, GrB_FP64)) ;
     OK (GrB_Scalar_setElement_FP64 (chunk_default, GB_CHUNK_DEFAULT)) ;

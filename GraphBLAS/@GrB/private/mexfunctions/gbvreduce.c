@@ -128,12 +128,12 @@ void mexFunction
         bool A_transpose = (in0 == GrB_TRAN) ;
 
         // get the size of A
-        GrB_Index anrows, ancols ;
+        uint64_t anrows, ancols ;
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
 
         // determine the size of the vector C
-        GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
+        uint64_t cnrows = (A_transpose) ? ancols : anrows ;
 
         // use the ztype of the monoid as the type of C
         GrB_BinaryOp binop ;

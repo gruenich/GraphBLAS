@@ -38,7 +38,7 @@ void mexFunction
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;
 
-    GrB_Index anrows, ancols, bnrows, bncols ;
+    uint64_t anrows, ancols, bnrows, bncols ;
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
     OK (GrB_Matrix_nrows (&bnrows, B)) ;
@@ -60,7 +60,7 @@ void mexFunction
     {
         // s = norm (A-B,p) where A and B are full FP32 or FP64 vectors,
         // or when p = 0 (for Frobenius norm)
-        GrB_Index anz ;
+        uint64_t anz ;
         OK (GrB_Matrix_nvals (&anz, A)) ;
         s = GB_helper10 (A->x, A->iso, B->x, B->iso,
             atype, norm_kind, anz) ;

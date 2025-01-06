@@ -97,7 +97,7 @@ void mexFunction
     // determine which input is the scalar and which is the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index anrows, ancols, bnrows, bncols, anvals, bnvals ;
+    uint64_t anrows, ancols, bnrows, bncols, anvals, bnvals ;
 
     // get the size of A and B
     OK (GrB_Matrix_nrows (&anrows, A)) ;
@@ -173,7 +173,7 @@ void mexFunction
     if (C == NULL)
     { 
         // get the descriptor to determine if the input matrix is transposed
-        GrB_Index cnrows, cncols ;
+        uint64_t cnrows, cncols ;
         if (binop_bind1st)
         {
             // A is the scalar and B is the matrix

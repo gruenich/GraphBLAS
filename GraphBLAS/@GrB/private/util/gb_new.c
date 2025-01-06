@@ -12,8 +12,8 @@
 GrB_Matrix gb_new       // create and empty matrix C
 (
     GrB_Type type,      // type of C
-    GrB_Index nrows,    // # of rows
-    GrB_Index ncols,    // # of rows
+    uint64_t nrows,     // # of rows
+    uint64_t ncols,     // # of rows
     int fmt,            // requested format, if < 0 use default
     int sparsity        // sparsity control for C, 0 for default
 )

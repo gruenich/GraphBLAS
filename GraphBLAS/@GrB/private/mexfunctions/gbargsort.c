@@ -103,7 +103,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL, P = NULL ;
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;

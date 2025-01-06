@@ -44,7 +44,12 @@ void mexFunction
     if (class == mxSTRUCT_CLASS)
     {
         // get the content of a GraphBLASv7_3 struct
-        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
+        mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLASv10") ;
+        if (mx_type == NULL)
+        { 
+            // check if it is a GraphBLASv5_1 struct
+            mx_type = mxGetField (pargin [0], 0, "GraphBLASv7_3") ;
+        }
         if (mx_type == NULL)
         { 
             // check if it is a GraphBLASv5_1 struct

@@ -40,7 +40,7 @@ GrB_Matrix gb_typecast  // C = (type) A, where C is deep
     // create the empty C matrix and set its format and sparsity
     //--------------------------------------------------------------------------
 
-    GrB_Index nrows, ncols ;
+    uint64_t nrows, ncols ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     GrB_Matrix C = gb_new (type, nrows, ncols, fmt, sparsity) ;

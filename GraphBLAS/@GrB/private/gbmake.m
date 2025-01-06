@@ -166,14 +166,14 @@ end
 try
     % try C99 complex types
     cflag = ' -DGxB_HAVE_COMPLEX_C99=1' ;
-    mexcmd = sprintf ('mex -silent %s %s complex/mex_complex.c', ...
+    mexcmd = sprintf ('mex -silent %s %s complex/check_mex_complex.c', ...
         flags, cflag) ;
     eval (mexcmd) ;
 catch me
     % try MSVC complex types
     try
         cflag = ' -DGxB_HAVE_COMPLEX_MSVC=1' ;
-        mexcmd = sprintf ('mex -silent %s %s complex/mex_complex.c', ...
+        mexcmd = sprintf ('mex -silent %s %s complex/check_mex_complex.c', ...
             flags, cflag) ;
         eval (mexcmd) ;
     catch me
@@ -181,7 +181,7 @@ catch me
     end
 end
 flags = [flags cflag] ;
-mex_complex
+check_mex_complex
 
 Lflags = sprintf ('-L''%s''', library_path) ;
 

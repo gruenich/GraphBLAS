@@ -21,15 +21,17 @@
 //                  or uint64).  This defines I = start:inc:fini in colon
 //                  notation.
 
+// FIXME: add support for 32-bit integers
+
 #include "gb_interface.h"
 
-GrB_Index *gb_mxcell_to_index   // return index list I
+uint64_t *gb_mxcell_to_index    // return index list I
 (
     const mxArray *I_cell,      // built-in cell array
     base_enum_t base,           // I is one-based or zero-based
-    const GrB_Index n,          // dimension of matrix being indexed
+    const uint64_t n,           // dimension of matrix being indexed
     bool *I_allocated,          // true if output array I is allocated
-    GrB_Index *ni,              // length (I)
+    uint64_t *ni,               // length (I)
     int64_t *I_max              // max (I) is computed if I_max is not NULL.
                                 // I_max is 0-based.
 )
@@ -51,12 +53,12 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     bool Item_allocated [3] = { false, false, false } ;
     int64_t Item_len [3] = { 0, 0, 0 } ;
     int64_t Item_max [3] = { -1, -1, -1 } ;
-    GrB_Index *Item [3] = { NULL, NULL, NULL } ;
+    uint64_t *Item [3] = { NULL, NULL, NULL } ;
 
     for (int k = 0 ; k < len ; k++)
     { 
         // convert I_cell {k} content to an integer list
-        Item [k] = (GrB_Index *) gb_mxarray_to_list (mxGetCell (I_cell, k),
+        Item [k] = (uint64_t *) gb_mxarray_to_list (mxGetCell (I_cell, k),
             base, &Item_allocated [k], &Item_len [k], &Item_max [k]) ;
     }
 
@@ -64,7 +66,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     // parse the lists in the cell array
     //--------------------------------------------------------------------------
 
-    GrB_Index *I ;
+    uint64_t *I ;
 
     if (len == 0)
     { 
@@ -75,7 +77,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 
         (*ni) = n ;
         (*I_allocated) = false ;
-        I = (GrB_Index *) GrB_ALL ;
+        I = (uint64_t *) GrB_ALL ;
         if (I_max != NULL)
         { 
             // I_max is the last index in the matrix, based on its dimension.
@@ -92,7 +94,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 
         (*ni) = Item_len [0] ;
         (*I_allocated) = Item_allocated [0] ;
-        I = (GrB_Index *) (Item [0]) ;
+        I = (uint64_t *) (Item [0]) ;
         if (I_max != NULL)
         {
             // find the max entry in the list
@@ -105,7 +107,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
             else
             { 
                 // find the max entry (0-based)
-                GrB_Index List_max = 0 ;
+                uint64_t List_max = 0 ;
                 GB_helper4 (I, (*ni), &List_max) ;
                 (*I_max) = ((int64_t) List_max) - 1 ;
             }
@@ -122,7 +124,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         CHECK_ERROR (Item_len [0] != 1 || Item_len [1] != 1,
             "start and fini must be scalars for start:fini") ;
 
-        I = mxMalloc (3 * sizeof (GrB_Index)) ;
+        I = mxMalloc (3 * sizeof (uint64_t)) ;
         (*I_allocated) = true ;
 
         I [GxB_BEGIN] = Item [0][0] ;
@@ -151,7 +153,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
             Item_len [2] != 1,
             "start, inc, and fini must be scalars for start:inc:fini") ;
 
-        I = mxMalloc (3 * sizeof (GrB_Index)) ;
+        I = mxMalloc (3 * sizeof (uint64_t)) ;
         (*I_allocated) = true ;
 
         I [GxB_BEGIN] = Item [0][0] ;
@@ -173,7 +175,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 
         if (iinc < 0)
         { 
-            I [GxB_INC] = (GrB_Index) (-iinc) ;
+            I [GxB_INC] = (uint64_t) (-iinc) ;
             (*ni) = GxB_BACKWARDS ;
             if (I_max != NULL)
             {
@@ -191,7 +193,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         }
         else
         { 
-            I [GxB_INC] = (GrB_Index) (iinc) ;
+            I [GxB_INC] = (uint64_t) (iinc) ;
             (*ni) = GxB_STRIDE ;
             if (I_max != NULL)
             {

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export_to_mxsparse: export a GrB_Matrix to a built-in sparse matrix
+// gb_export_to_mxsparse: export a GrB_Matrix to a MATLAB sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// The input GrB_Matrix A is exported to a built-in sparse mxArray S, and freed.
+// The input GrB_Matrix A is exported to a MATLAB sparse mxArray S, and freed.
 
 // The input GrB_Matrix A may be shallow or deep.  The output is a standard
-// built-in sparse matrix as an mxArray.
+// MATLAB sparse matrix as an mxArray.
 
 #include "gb_interface.h"
 
-mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
+mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
 )
@@ -27,7 +27,7 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
     CHECK_ERROR (A_handle == NULL || (*A_handle) == NULL, "internal error 2") ;
 
     //--------------------------------------------------------------------------
-    // typecast to a native built-in sparse type and free A
+    // typecast to a native MATLAB sparse type and free A
     //--------------------------------------------------------------------------
 
     GrB_Matrix T ;              // T will always be deep
@@ -104,7 +104,7 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
     // create the new built-in sparse matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index nrows, ncols, nvals ;
+    uint64_t nrows, ncols, nvals ;
     OK (GrB_Matrix_nvals (&nvals, T)) ;
     OK (GrB_Matrix_nrows (&nrows, T)) ;
     OK (GrB_Matrix_ncols (&ncols, T)) ;
@@ -137,7 +137,7 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
     {
 
         //----------------------------------------------------------------------
-        // export the content of T as a sparse CSC matrix
+        // export the content of T as a sparse CSC matrix (all-64-bit)
         //----------------------------------------------------------------------
 
         GrB_Index Tp_size, Ti_size, Tx_size, type_size ;
@@ -195,7 +195,7 @@ mxArray *gb_export_to_mxsparse  // return exported built-in sparse matrix S
     }
 
     //--------------------------------------------------------------------------
-    // return the new built-in sparse matrix
+    // return the new built-in MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
     return (S) ;

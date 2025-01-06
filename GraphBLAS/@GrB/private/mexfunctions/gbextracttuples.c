@@ -9,6 +9,8 @@
 
 // Usage:
 
+// FIXME: add support for 32-bit integers
+
 // [I J X] = GrB.extracttuples (A)
 // [I J X] = GrB.extracttuples (A, desc)
 
@@ -60,7 +62,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-    GrB_Index nrows, ncols, nvals ;
+    uint64_t nrows, ncols, nvals ;
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     int burble ;
@@ -85,9 +87,9 @@ void mexFunction
     // allocate I and J
     //--------------------------------------------------------------------------
 
-    GrB_Index s = MAX (nvals, 1) ;
-    GrB_Index *I = extract_I ? mxMalloc (s * sizeof (GrB_Index)) : NULL ;
-    GrB_Index *J = extract_J ? mxMalloc (s * sizeof (GrB_Index)) : NULL ;
+    uint64_t s = MAX (nvals, 1) ;
+    uint64_t *I = extract_I ? mxMalloc (s * sizeof (uint64_t)) : NULL ;
+    uint64_t *J = extract_J ? mxMalloc (s * sizeof (uint64_t)) : NULL ;
 
     //--------------------------------------------------------------------------
     // extract the tuples and export X

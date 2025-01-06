@@ -20,7 +20,7 @@ double gb_norm              // compute norm (A,kind)
     // get input matrix, select types and operators, and allocate X
     //--------------------------------------------------------------------------
 
-    GrB_Index nrows, ncols, nvals ;
+    uint64_t nrows, ncols, nvals ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     if (nvals == 0) return ((double) 0) ;
 

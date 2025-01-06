@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: exploit 32-bit integers for T and V
+
 // gblogextract computes the built-in logical indexing expression C = A(M).  The
 // matrices A and M must be the same size.  M is normally logical but it can be
 // of any type in this mexFunction.  M should not have any explicit zeros.  C
@@ -256,9 +258,10 @@ void mexFunction
     gb_mxfree ((void **) (&V->x)) ;
 
     // transplant values of T as the row indices of V
-    V->i = (int64_t *) Tx ;
+    V->i = (void *) Tx ;
     V->i_size = Tx_size ;
     V->i_shallow = false ;
+    V->i_is_32 = false ;
     #ifdef GB_MEMDUMP
     printf ("add V->i to memtable: %p\n", V->i) ;
     #endif
@@ -274,9 +277,10 @@ void mexFunction
     #endif
     GB_Global_memtable_add (V->x, V->x_size) ;  // this was the old G->x
 
-    int64_t *Vp = V->p ;    // FIXME
-    Vp [0] = 0 ;
-    Vp [1] = tnvals ;
+    GB_Ap_DECLARE (Vp, ) ; GB_Ap_PTR (Vp, V) ;
+    GB_ISET (Vp, 0, 0) ;        // Vp [0] = 0 ;
+    GB_ISET (Vp, 1, tnvals) ;   // Vp [1] = tnvals ;
+
     V->nvals = tnvals ;
     V->magic = GB_MAGIC ;
     V->nvec_nonempty = (tnvals > 0) ? 1 : 0 ;
