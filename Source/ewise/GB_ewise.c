@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // C<M> = accum (C,A+B), A.*B and variations.  The input matrices A and B are
 // optionally transposed.  Does the work for GrB_eWiseAdd_* and
 // GrB_eWiseMult_*.  Handles all cases of the mask.
