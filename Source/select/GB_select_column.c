@@ -143,11 +143,9 @@ GrB_Info GB_select_column
     }
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
-
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, cnz, avlen, avdim) ;
+        GxB_AUTO_SPARSITY, cnz, avlen, avdim, Werk) ;
 
     if (cnz == anz)
     { 

@@ -379,11 +379,9 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     else if (is_empty)
     { 
         // get the integer sizes for the new empty matrix T
-
         bool Cp_is_32, Cj_is_32, Ci_is_32 ;
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            Werk->p_control, Werk->j_control, Werk->i_control,
-            GxB_SPARSE, 0, A->vlen, A->vdim) ;
+            GxB_SPARSE, 0, A->vlen, A->vdim, Werk) ;
 
         // T is an empty non-iso matrix
         GB_OK (GB_new (&T, // auto (sparse or hyper), existing header

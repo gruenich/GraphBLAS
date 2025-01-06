@@ -261,8 +261,7 @@ GrB_Info GB_build               // build matrix
     // matrix, assuming that nvals is not reduced by a massive # of duplicates.
     bool Tp_is_32, Tj_is_32, Ti_is_32 ;
     GB_determine_pji_is_32 (&Tp_is_32, &Tj_is_32, &Ti_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_HYPERSPARSE, nvals, C->vlen, C->vdim) ;
+        GxB_HYPERSPARSE, nvals, C->vlen, C->vdim, Werk) ;
 
     // T is always built as hypersparse.  Its type is the same as the z output
     // of the z=dup(x,y) operator if dup is present, or xtype if dup is NULL.

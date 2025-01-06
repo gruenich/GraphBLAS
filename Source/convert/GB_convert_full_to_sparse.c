@@ -42,8 +42,7 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
 
     bool Ap_is_32, Aj_is_32, Ai_is_32 ;
     GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, anz, avlen, avdim) ;
+        GxB_AUTO_SPARSITY, anz, avlen, avdim, Werk) ;
 
     void *Ap = NULL ; size_t Ap_size = 0 ;
     void *Ai = NULL ; size_t Ai_size = 0 ;

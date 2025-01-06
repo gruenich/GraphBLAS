@@ -49,14 +49,9 @@ GrB_Info GrB_Vector_new     // create a new vector with no entries
     int64_t vlen = (int64_t) n ;
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new vector
-
-    int8_t p_control = GB_Global_p_control_get ( ) ;
-    int8_t j_control = GB_Global_j_control_get ( ) ;
-    int8_t i_control = GB_Global_i_control_get ( ) ;
-
     bool Vp_is_32, Vj_is_32, Vi_is_32 ;
     GB_determine_pji_is_32 (&Vp_is_32, &Vj_is_32, &Vi_is_32,
-        p_control, j_control, i_control, GxB_SPARSE, 1, vlen, 1) ;
+        GxB_SPARSE, 1, vlen, 1, NULL) ;
 
     GB_OK (GB_new ((GrB_Matrix *) v, // new user header
         type, vlen, 1, GB_ph_calloc,

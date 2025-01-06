@@ -227,8 +227,7 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
 
         bool Cp_is_32, Cj_is_32,Ci_is_32 ;
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            Werk->p_control, Werk->j_control, Werk->i_control,
-            GxB_AUTO_SPARSITY, nvals, vlen_new, vdim_new) ;
+            GxB_AUTO_SPARSITY, nvals, vlen_new, vdim_new, Werk) ;
 
         //----------------------------------------------------------------------
         // allocate output and workspace

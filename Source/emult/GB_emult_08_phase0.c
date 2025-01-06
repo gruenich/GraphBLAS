@@ -169,8 +169,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
         cnz = GB_IMIN (cnz, mnz) ;
     }
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, cnz, A->vlen, A->vdim) ;
+        GxB_AUTO_SPARSITY, cnz, A->vlen, A->vdim, Werk) ;
 
     //--------------------------------------------------------------------------
     // determine if C is sparse or hypersparse, and find its hyperlist

@@ -95,11 +95,9 @@ GrB_Info GB_select_sparse
     int64_t anz = GB_nnz (A) ;
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
-
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        csparsity, anz, A->vlen, A->vdim) ;
+        csparsity, anz, A->vlen, A->vdim, Werk) ;
 
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,

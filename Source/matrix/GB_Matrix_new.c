@@ -112,13 +112,9 @@ GrB_Info GB_Matrix_new          // create a new matrix with no entries
     }
 
     // determine the p_is_32, j_is_32 and i_is_32 settings for the new matrix
-    int8_t p_control = GB_Global_p_control_get ( ) ;
-    int8_t j_control = GB_Global_j_control_get ( ) ;
-    int8_t i_control = GB_Global_i_control_get ( ) ;
     bool Ap_is_32, Aj_is_32, Ai_is_32 ;
     GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
-        p_control, j_control, i_control,
-        GxB_AUTO_SPARSITY, 1, vlen, vdim) ;
+        GxB_AUTO_SPARSITY, 1, vlen, vdim, NULL) ;
 
     // create the matrix
     GB_OK (GB_new (A, // auto sparsity (sparse/hyper), new header

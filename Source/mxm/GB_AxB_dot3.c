@@ -175,11 +175,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int C_sparsity = (M_is_hyper) ? GxB_HYPERSPARSE : GxB_SPARSE ;
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
-
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        C_sparsity, cnz, cvlen, cvdim) ;
+        C_sparsity, cnz, cvlen, cvdim, Werk) ;
 
     // C is sparse or hypersparse, not full or bitmap
     GB_OK (GB_new (&C, // sparse or hyper (from M), existing header

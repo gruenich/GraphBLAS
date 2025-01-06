@@ -38,13 +38,9 @@ GrB_Info GrB_Scalar_new     // create a new GrB_Scalar with no entries
     //--------------------------------------------------------------------------
 
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new scalar
-    int8_t p_control = GB_Global_p_control_get ( ) ;
-    int8_t j_control = GB_Global_j_control_get ( ) ;
-    int8_t i_control = GB_Global_i_control_get ( ) ;
-
     bool Sp_is_32, Sj_is_32, Si_is_32 ;
     GB_determine_pji_is_32 (&Sp_is_32, &Sj_is_32, &Si_is_32,
-        p_control, j_control, i_control, GxB_SPARSE, 1, 1, 1) ;
+        GxB_SPARSE, 1, 1, 1, NULL) ;
 
     GB_OK (GB_new ((GrB_Matrix *) s, // new user header
         type, 1, 1, GB_ph_calloc, true, GxB_SPARSE,

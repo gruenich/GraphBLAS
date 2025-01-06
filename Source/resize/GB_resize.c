@@ -308,8 +308,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
         bool Ap_is_32_new, Aj_is_32_new, Ai_is_32_new ;
         GB_determine_pji_is_32 (&Ap_is_32_new, &Aj_is_32_new, &Ai_is_32_new,
-            Werk->p_control, Werk->j_control, Werk->i_control,
-            GB_sparsity (A), A->nvals, A->vlen, A->vdim) ;
+            GB_sparsity (A), A->nvals, A->vlen, A->vdim, Werk) ;
 
         if (Ap_is_32_new != A->p_is_32 ||
             Aj_is_32_new != A->j_is_32 ||

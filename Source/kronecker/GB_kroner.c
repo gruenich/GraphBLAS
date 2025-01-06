@@ -167,8 +167,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim) ;
+        C_sparsity, cnzmax, (int64_t) cvlen, (int64_t) cvdim, Werk) ;
 
     GB_OK (GB_new_bix (&C, // full, sparse, or hyper; existing header
         ctype, (int64_t) cvlen, (int64_t) cvdim, GB_ph_malloc, C_is_csc,

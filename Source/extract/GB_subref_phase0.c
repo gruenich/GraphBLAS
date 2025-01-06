@@ -331,8 +331,7 @@ GrB_Info GB_subref_phase0
     ASSERT (p_Cj_is_32 != NULL) ;
     ASSERT (p_Ci_is_32 != NULL) ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, 0, nI, nJ) ;
+        GxB_AUTO_SPARSITY, 0, nI, nJ, Werk) ;
 
     size_t cjsize = (Cj_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
 

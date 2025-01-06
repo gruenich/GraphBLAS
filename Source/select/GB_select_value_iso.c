@@ -85,11 +85,9 @@ GrB_Info GB_select_value_iso
         // C is an empty: create a new empty matrix (not a shallow copy of A)
 
         // determine the p_is_32, j_is_32, and i_is_32 settings for C
-
         bool Cp_is_32, Cj_is_32, Ci_is_32 ;
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            Werk->p_control, Werk->j_control, Werk->i_control,
-            GxB_AUTO_SPARSITY, 0, A->vlen, A->vdim) ;
+            GxB_AUTO_SPARSITY, 0, A->vlen, A->vdim, Werk) ;
 
         return (GB_new (&C, // existing header
             A->type, A->vlen, A->vdim, GB_ph_calloc, true,

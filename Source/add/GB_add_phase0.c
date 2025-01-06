@@ -252,8 +252,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
     // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, anz + bnz, A->vlen, A->vdim) ;
+        GxB_AUTO_SPARSITY, anz + bnz, A->vlen, A->vdim, Werk) ;
     (*p_Cp_is_32) = Cp_is_32 ;
     (*p_Cj_is_32) = Cj_is_32 ;
     (*p_Ci_is_32) = Ci_is_32 ;

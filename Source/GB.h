@@ -16,6 +16,7 @@
 
 // These are not needed by JIT kernels and do not appear in GB_jit_kernel.h:
 #include "global/GB_Global.h"
+#include "pji_control/GB_determine_pji_is_32.h"
 #include "print/GB_printf.h"
 #include "ok/GB_assert_library.h"
 #if defined ( GRAPHBLAS_HAS_CUDA )

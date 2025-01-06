@@ -135,8 +135,7 @@ GrB_Info GB_subref_phase2               // count nnz in each C(:,j)
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     ASSERT (p_Cp_is_32 != NULL) ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, cnz, nI, nJ) ;
+        GxB_AUTO_SPARSITY, cnz, nI, nJ, Werk) ;
 
     void *Cp = NULL ; size_t Cp_size = 0 ;
 

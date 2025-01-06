@@ -165,8 +165,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
         // matrix
         bool Cp_is_32, Cj_is_32, Ci_is_32 ;
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            Werk->p_control, Werk->j_control, Werk->i_control,
-            GxB_AUTO_SPARSITY, 1, A->vdim, B->vdim) ;
+            GxB_AUTO_SPARSITY, 1, A->vdim, B->vdim, Werk) ;
 
         GBURBLE ("(empty dot) ") ;
         if (C_in != NULL) return (GrB_SUCCESS) ;

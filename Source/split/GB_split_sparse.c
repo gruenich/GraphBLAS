@@ -155,13 +155,11 @@ GrB_Info GB_split_sparse            // split a sparse matrix
             const int64_t cvdim = avend - avstart ;
             const int64_t cvlen = aiend - aistart ;
 
-            // assume this tile C can acquire all the entries of A, for now;
-            // determine the p_is_32, j_is_32, and i_is_32 settings for the new
-            // Tile
+            // Assume this tile C can acquire all the entries of A to determine
+            // the p_is_32, j_is_32, and i_is_32 settings for the new Tile.
             bool Cp_is_32, Cj_is_32, Ci_is_32 ;
             GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                Werk->p_control, Werk->j_control, Werk->i_control,
-                A_sparsity, anz, cvlen, cvdim) ;
+                A_sparsity, anz, cvlen, cvdim, Werk) ;
 
             C = NULL ;
             GB_OK (GB_new (&C, // new header

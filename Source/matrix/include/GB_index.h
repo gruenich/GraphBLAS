@@ -106,93 +106,6 @@ static inline int8_t GB_pji_control
 }
 
 //------------------------------------------------------------------------------
-// GB_determine_pji_is_32: determine [pji]_is_32 for a new matrix
-//------------------------------------------------------------------------------
-
-// The caller has determined the pji_control for new matrices it will create,
-// typically with the following when Werk is initialized:
-//
-//      p_control = GB_pji_control (C->p_control, GB_Global_p_control_get ( )) ;
-//      j_control = GB_pji_control (C->j_control, GB_Global_j_control_get ( )) ;
-//      i_control = GB_pji_control (C->i_control, GB_Global_i_control_get ( )) ;
-//
-//  or, if it has no output matrix C, simply use:
-//
-//      p_control = GB_Global_p_control_get ( ) ;
-//      j_control = GB_Global_j_control_get ( ) ;
-//      i_control = GB_Global_i_control_get ( ) ;
-//
-// If the global or per-matrix controls are not relevant, simply use the
-// following to use the smallest valid integer sizes:
-//
-//      p_control = 32 ;
-//      j_control = 32 ;
-//      i_control = 32 ;
-//
-// This method then determines the final p_is_32, j_is_32, and i_is_32 for a
-// new matrix of the requested size.
-
-static inline void GB_determine_pji_is_32
-(
-    // output
-    bool *p_is_32,      // if true, Ap will be 32 bits; else 64
-    bool *j_is_32,      // if true, Ah and A->Y will be 32 bits; else 64
-    bool *i_is_32,      // if true, Ai will be 32 bits; else 64
-    // input
-    int8_t p_control,   // effective p_control for the caller
-    int8_t j_control,   // effective j_control for the caller
-    int8_t i_control,   // effective i_control for the caller
-    int sparsity,       // sparse, hyper, bitmap, full, or auto (sparse/hyper)
-    int64_t nvals,      // upper bound on # of entries in the matrix to create
-    int64_t vlen,       // dimensions of the matrix to create
-    int64_t vdim
-)
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (p_is_32 != NULL) ;
-    ASSERT (j_is_32 != NULL) ;
-    ASSERT (i_is_32 != NULL) ;
-
-    //--------------------------------------------------------------------------
-    // determine the 32/64 bit integer sizes for a new matrix
-    //--------------------------------------------------------------------------
-
-    if (sparsity == GxB_FULL || sparsity == GxB_BITMAP)
-    {
-    
-        //----------------------------------------------------------------------
-        // full/bitmap matrices do not have any integer sizes
-        //----------------------------------------------------------------------
-
-        (*p_is_32) = false ;
-        (*j_is_32) = false ;
-        (*i_is_32) = false ;
-
-    }
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // determine the 32/64 integer sizes for a sparse/hypersparse matrix
-        //----------------------------------------------------------------------
-
-        // determine ideal 32/64 sizes for any matrix created by the caller
-        bool p_prefer_32 = (p_control <= 32) ;
-        bool j_prefer_32 = (j_control <= 32) ;
-        bool i_prefer_32 = (i_control <= 32) ;
-
-        // revise them accordering to the matrix content
-        (*p_is_32) = GB_determine_p_is_32 (p_prefer_32, nvals) ;    // OK
-        (*j_is_32) = GB_determine_j_is_32 (j_prefer_32, vdim) ;     // OK
-        (*i_is_32) = GB_determine_i_is_32 (i_prefer_32, vlen) ;     // OK
-    }
-}
-
-//------------------------------------------------------------------------------
 // GB_valid_[pji]_is_32: returns true if [pji] settings are OK
 //------------------------------------------------------------------------------
 
@@ -287,18 +200,6 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     { 
         return (GrB_INVALID_OBJECT) ;
     }
-
-#if 0
-    // HACK for now: assume all inputs/outputs to GrB* methods are 64-bit
-    if (A->p_is_32 || A->i_is_32 || A->j_is_32)                     // fixme
-    {
-        printf ("\ninvalid HACK ! here %s %d: %d %d %d\n",          // fixme
-        __FILE__, __LINE__, A->p_is_32, A->i_is_32, A->j_is_32) ;   // fixme
-    }
-    GB_assert (!A->p_is_32) ;   // fixme
-    GB_assert (!A->j_is_32) ;   // fixme
-    GB_assert (!A->i_is_32) ;   // fixme
-#endif
 
     return (GrB_SUCCESS) ;
 }

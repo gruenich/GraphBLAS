@@ -269,8 +269,7 @@ GrB_Info GB_mask                // C<M> = Z
                 // The C0 matrix is created as hypersparse.
                 bool Cp_is_32, Cj_is_32, Ci_is_32 ;
                 GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                    Werk->p_control, Werk->j_control, Werk->i_control,
-                    GxB_HYPERSPARSE, 1, vlen, vdim) ;
+                    GxB_HYPERSPARSE, 1, vlen, vdim, Werk) ;
                 GB_CLEAR_STATIC_HEADER (C0, &C0_header) ;
                 GB_OK (GB_new_bix (&C0, // sparse or hyper, existing header
                     C_result->type, vlen, vdim, GB_ph_calloc, R_is_csc,

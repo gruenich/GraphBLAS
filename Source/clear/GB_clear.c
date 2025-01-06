@@ -84,8 +84,7 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
 
     // determine the p_is_32 and i_is_32 settings for the cleared matrix
     GB_determine_pji_is_32 (&(A->p_is_32), &(A->j_is_32), &(A->i_is_32),
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim) ;
+        GxB_AUTO_SPARSITY, 1, A->vlen, A->vdim, Werk) ;
 
     size_t apsize = (A->p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t ajsize = (A->j_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;

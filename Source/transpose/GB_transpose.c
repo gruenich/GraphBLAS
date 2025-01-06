@@ -254,10 +254,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         //----------------------------------------------------------------------
 
         // T is created using the requested integers of C.
-
         GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-            Werk->p_control, Werk->j_control, Werk->i_control,
-            GxB_HYPERSPARSE, 0, avdim, avlen) ;
+            GxB_HYPERSPARSE, 0, avdim, avlen, Werk) ;
 
         // create a new empty matrix T, with the new type and dimensions.
         GB_OK (GB_new_bix (&T, // hyper, existing header
@@ -784,8 +782,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             // T is created using the requested integers of C.
             GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-                Werk->p_control, Werk->j_control, Werk->i_control,
-                GxB_HYPERSPARSE, anz, avdim, avlen) ;
+                GxB_HYPERSPARSE, anz, avdim, avlen, Werk) ;
 
             // initialize the header of T, with no content,
             // and initialize the type and dimension of T.
@@ -955,10 +952,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     // In case T was created using the integers of A, it must be converted to
     // the requested integers of C.  This does nothing if T was already created
     // in that form.
-
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GB_sparsity (C), anz, avdim, avlen) ;
+        GB_sparsity (C), anz, avdim, avlen, Werk) ;
 
     GB_OK (GB_convert_int (T, Cp_is_32, Cj_is_32, Ci_is_32, true)) ;
 

@@ -55,8 +55,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
 
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        Werk->p_control, Werk->j_control, Werk->i_control,
-        GxB_AUTO_SPARSITY, anzmax, A->vlen, avdim) ;
+        GxB_AUTO_SPARSITY, anzmax, A->vlen, avdim, Werk) ;
 
     size_t psize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t isize = Ci_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
