@@ -157,8 +157,8 @@ logstat ('test268'    ,t, J40  , F10  ) ; % C<M>=Z sparse masker
 logstat ('test207'    ,t, J4   , F1   ) ; % iso subref
 logstat ('test211'    ,t, J40  , F10  ) ; % iso assign
 logstat ('test183'    ,s, J4   , F1   ) ; % eWiseMult w/hypersparse mask
-logstat ('test212'    ,t, J40  , F10 ) ; % iso mask all zero
-logstat ('test219'    ,s, J40  , F10 ) ; % reduce to scalar (1 thread)
+logstat ('test212'    ,t, J40  , F10  ) ; % iso mask all zero
+logstat ('test219'    ,s, J40  , F10  ) ; % reduce to scalar (1 thread)
 
 % < 1 second: debug_on
 set_malloc_debug (mdebug, 1) ;
@@ -276,7 +276,6 @@ logstat ('test196'    ,t, J4   , F1   ) ; % hypersparse concat
 logstat ('test250'    ,t, J44  , F10  ) ; % JIT tests, set/get, other tests
 logstat ('test145'    ,t, J42  , F11  ) ; % dot4 for C += A'*B
 logstat ('test229'    ,t, J4   , F1   ) ; % setElement
-
 logstat ('test209'    ,t, J4   , F1   ) ; % iso build
 logstat ('test224'    ,t, J4   , F1   ) ; % unpack/pack
 
@@ -300,7 +299,6 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 set_malloc_debug (mdebug, 0) ;
 logstat ('test230'    ,t, J40  , F10  ) ; % apply with idxunops
 logstat ('test18'     ,t, J40  , F10  ) ; % GrB_eWiseAdd and eWiseMult
-
 logstat ('testc7(0)'  ,t, J40  , F10  ) ; % assign, builtin complex
 logstat ('test193'    ,t, J4   , F1   ) ; % GxB_Matrix_diag
 logstat ('test127'    ,t, J0   , F1   ) ; % eWiseAdd, eWiseMult

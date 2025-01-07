@@ -85,7 +85,7 @@ clear ctrl
 ctrl.p_control = p_control ;
 ctrl.j_control = j_control ;
 ctrl.i_control = i_control ;
-ctrl = GB_mex_control (ctrl)
+ctrl = GB_mex_control (ctrl) ;
 
 for control_trial = 1:length (jit_controls)
     for trial = 1:length (threads)
