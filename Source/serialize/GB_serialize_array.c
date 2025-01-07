@@ -73,7 +73,7 @@ GrB_Info GB_serialize_array
     (*compressed_size) = 0 ;
     if (X == NULL || len == 0)
     { 
-        // input array is empty
+        // input array is empty; nothing to write to the blob
         return (GrB_SUCCESS) ;
     }
 

@@ -32,7 +32,6 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
     size_t blob_size                // size of the blob
 )
 {
-printf ("NOW DESERIALIZE\n") ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -52,7 +51,6 @@ printf ("NOW DESERIALIZE\n") ;
     if (blob_size < GB_BLOB_HEADER_SIZE)
     { 
         // blob is invalid
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
         return (GrB_INVALID_OBJECT)  ;
     }
 
@@ -66,8 +64,6 @@ printf ("NOW DESERIALIZE\n") ;
     uint32_t Cj_is_32 = GB_RSHIFT (encoding,  8, 4) ; // C->j_is_32
     uint32_t Ci_is_32 = GB_RSHIFT (encoding,  4, 4) ; // C->i_is_32
     uint32_t typecode = GB_RSHIFT (encoding,  0, 4) ; // 4 bit typecode
-printf ("DE_serialize (%d, %d, %d) typecode %d\n",  // FIXME
-        Cp_is_32, Cj_is_32, Ci_is_32, (int) typecode) ;
 
     // GrB 10.0.0 reserves 4 bits each for Cp_is_32, Cj_is_32, and Ci_is_32,
     // for future expansion.  This way, if a future GraphBLAS version needs
@@ -87,62 +83,39 @@ printf ("DE_serialize (%d, %d, %d) typecode %d\n",  // FIXME
         || (Cp_is_32 > 1) || (Cj_is_32 > 1) || (Ci_is_32 > 1))
     { 
         // blob is invalid
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
         return (GrB_INVALID_OBJECT)  ;
     }
 
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (version, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (vlen, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (vdim, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (nvec, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (nvec_nonempty, int64_t) ;     ASSERT (nvec_nonempty >= 0) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (nvals, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (typesize, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Cp_len, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Ch_len, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Cb_len, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Ci_len, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Cx_len, int64_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (hyper_switch, float) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (bitmap_switch, float) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
 // was in v9.4.2 and earlier::
 //  GB_BLOB_READ (sparsity_control, int32_t) ;
 // now in GrB v10.0.0:
     GB_BLOB_READ (control_encoding, uint32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     uint32_t p_control        = GB_RSHIFT (control_encoding, 16, 4) ;
     uint32_t j_control        = GB_RSHIFT (control_encoding, 12, 4) ;
     uint32_t i_control        = GB_RSHIFT (control_encoding,  8, 4) ;
     uint32_t sparsity_control = GB_RSHIFT (control_encoding,  0, 8) ;
 
     GB_BLOB_READ (sparsity_iso_csc, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Cp_nblocks, int32_t) ; GB_BLOB_READ (Cp_method, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Ch_nblocks, int32_t) ; GB_BLOB_READ (Ch_method, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Cb_nblocks, int32_t) ; GB_BLOB_READ (Cb_method, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Ci_nblocks, int32_t) ; GB_BLOB_READ (Ci_method, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READ (Cx_nblocks, int32_t) ; GB_BLOB_READ (Cx_method, int32_t) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
     int32_t sparsity = sparsity_iso_csc / 4 ;
     bool iso = ((sparsity_iso_csc & 2) == 2) ;
@@ -159,11 +132,8 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
     if (ctype == NULL || ctype->size != typesize)
     { 
         // blob is invalid; type is missing or the wrong size
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
         return (GrB_DOMAIN_MISMATCH) ;
     }
-
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
     if (ccode == GB_UDT_code)
     {
@@ -174,7 +144,6 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
             GxB_MAX_NAME_LEN) != 0)
         { 
             // blob is invalid
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
             return (GrB_DOMAIN_MISMATCH) ;
         }
         s += GxB_MAX_NAME_LEN ;
@@ -183,7 +152,6 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
     { 
         // built-in type must match type_expected
         // blob is invalid
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
         return (GrB_DOMAIN_MISMATCH) ;
     }
 
@@ -191,20 +159,11 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
     // get the compressed block sizes from the blob for each array
     //--------------------------------------------------------------------------
 
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
-printf ("s at %lu before read of Cp_Sblocks \n", (uint64_t) s) ;
     GB_BLOB_READS (Cp_Sblocks, Cp_nblocks) ;
-printf ("s at %lu after  read of Cp_Sblocks \n", (uint64_t) s) ;
-printf ("Cp_nblocks %d\n", Cp_nblocks) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READS (Ch_Sblocks, Ch_nblocks) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READS (Cb_Sblocks, Cb_nblocks) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READS (Ci_Sblocks, Ci_nblocks) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     GB_BLOB_READS (Cx_Sblocks, Cx_nblocks) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -215,7 +174,6 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
         ctype, vlen, vdim, GB_ph_null, is_csc,
         sparsity, hyper_switch, nvec, Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     C->nvec = nvec ;
     C->nvec_nonempty = nvec_nonempty ;
     C->nvals = nvals ;      // revised below if version <= 7.2.0
@@ -239,36 +197,29 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
     {
         case GxB_HYPERSPARSE : 
             // decompress Cp, Ch, and Ci
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->p), &(C->p_size),
                 Cp_len, blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
                 &s)) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->h), &(C->h_size),
                 Ch_len, blob, blob_size, Ch_Sblocks, Ch_nblocks, Ch_method,
                 &s)) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->i), &(C->i_size),
                 Ci_len, blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
                 &s)) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
             break ;
 
         case GxB_SPARSE : 
 
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
             // decompress Cp and Ci
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->p), &(C->p_size),
                 Cp_len, blob, blob_size, Cp_Sblocks, Cp_nblocks, Cp_method,
                 &s)) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
             GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->i), &(C->i_size),
                 Ci_len, blob, blob_size, Ci_Sblocks, Ci_nblocks, Ci_method,
                 &s)) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
             break ;
 
         case GxB_BITMAP : 
@@ -284,11 +235,9 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
         default: ;
     }
 
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     // decompress Cx
     GB_OK (GB_deserialize_from_blob ((GB_void **) &(C->x), &(C->x_size), Cx_len,
         blob, blob_size, Cx_Sblocks, Cx_nblocks, Cx_method, &s)) ;
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
 
     if (C->p != NULL && version <= GxB_VERSION (7,2,0))
     { 
@@ -345,11 +294,8 @@ printf ("Here %s %d\n", __FILE__, __LINE__) ;
     // return result
     //--------------------------------------------------------------------------
 
-printf ("Here %s %d\n", __FILE__, __LINE__) ;
     (*Chandle) = C ;
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
-    ASSERT_MATRIX_OK (*Chandle, "Final result from deserialize", GB2) ;
-        printf ("Here %s %d\n", __FILE__, __LINE__) ;
+    ASSERT_MATRIX_OK (*Chandle, "Final result from deserialize", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

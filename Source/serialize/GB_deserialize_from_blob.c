@@ -44,7 +44,6 @@ GrB_Info GB_deserialize_from_blob
     // check inputs
     //--------------------------------------------------------------------------
 
-//  GrB_Info info ;
     ASSERT (blob != NULL) ;
     ASSERT (s_handle != NULL) ;
     ASSERT (X_handle != NULL) ;
@@ -64,7 +63,18 @@ GrB_Info GB_deserialize_from_blob
     //--------------------------------------------------------------------------
 
     size_t X_size = 0 ;
-    GB_void *X = GB_MALLOC (X_len, GB_void, &X_size) ;  // OK
+    GB_void *X = NULL ;
+    if (nblocks == 0)
+    {
+        // allocate an "empty" block (of 8 bytes) and set it zero
+        X = GB_CALLOC (X_len, GB_void, &X_size) ;  // OK
+    }
+    else
+    {
+        // allocate a block that is filled below
+        X = GB_MALLOC (X_len, GB_void, &X_size) ;  // OK
+    }
+
     if (X == NULL)
     { 
         // out of memory
@@ -84,23 +94,23 @@ GrB_Info GB_deserialize_from_blob
     size_t s = (*s_handle) ;
     bool ok = true ;
 
-    if (algo == GxB_COMPRESSION_NONE)
+    if (nblocks == 0)
+    {
+
+        // nothing else to do for this array
+        ;
+
+    }
+    else if (algo == GxB_COMPRESSION_NONE)
     {
 
         //----------------------------------------------------------------------
         // no compression; the array is held in a single block
         //----------------------------------------------------------------------
 
-        if (nblocks > 1 || Sblocks [0] != X_len || s + X_len > blob_size)
+        if (nblocks != 1 || Sblocks [0] != X_len || s + X_len > blob_size)
         { 
             // blob is invalid: guard against an unsafe memcpy
-printf ("nblocks %d\n", nblocks) ;
-printf ("Sblocks [0] %lu\n", Sblocks [0]) ;
-printf ("X_len %lu\n", (uint64_t) X_len) ;
-printf ("s %lu\n", (uint64_t) s) ;
-printf ("s + X_len %lu\n", (uint64_t) (s + X_len)) ;
-printf ("blob_size %lu\n", (uint64_t) blob_size) ;
-printf ("bad here %s %d\n", __FILE__, __LINE__) ;
             ok = false ;
         }
         else
@@ -118,12 +128,10 @@ printf ("bad here %s %d\n", __FILE__, __LINE__) ;
         // LZ4, LZ4HC, or ZSTD compression
         //----------------------------------------------------------------------
 
-//      int nthreads = GB_IMIN (nthreads_max, nblocks) ;
+        int nthreads = GB_IMIN (nthreads_max, nblocks) ;
         int32_t blockid ;
-#if 0
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
             reduction(&&:ok)
-#endif
         for (blockid = 0 ; blockid < nblocks ; blockid++)
         {
             // get the start and end of the compressed and uncompressed blocks
@@ -141,7 +149,6 @@ printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                 kstart > X_len || kend > X_len || d_size > INT32_MAX)
             { 
                 // blob is invalid
-printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                 ok = false ;
             }
             else
@@ -160,7 +167,6 @@ printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                     if (u != d_size)
                     {
                         // blob is invalid
-printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                         ok = false ;
                     }
                 }
@@ -173,7 +179,6 @@ printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                     if (u != dst_size)
                     {
                         // blob is invalid
-printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                         ok = false ;
                     }
                 }
@@ -185,7 +190,6 @@ printf ("bad here %s %d\n", __FILE__, __LINE__) ;
     { 
         // decompression failure; blob is invalid
         GB_FREE_ALL ;
-printf ("FAIL decompression, blob invalid\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 

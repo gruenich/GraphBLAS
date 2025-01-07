@@ -64,7 +64,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 
     GrB_Info info ;
     ASSERT (blob_size_handle != NULL) ;
-    ASSERT_MATRIX_OK (A, "A for serialize", GB2) ;
+    ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
 
     int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
     int Aj_is_32 = (A->j_is_32) ? 1 : 0 ;
@@ -360,8 +360,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
         GB_LSHIFT (Ai_is_32,  4) |  // bits 4 to 7:   Ai_is_32 (3 bits unused)
         GB_LSHIFT (typecode,  0) ;  // bits 0 to 3:   typecode
     GB_BLOB_WRITE (encoding, uint32_t) ;
-printf ("SERIALIZE: (%d %d %d) typecode %d\n", // FIXME
-    (int) Ap_is_32, (int) Aj_is_32, (int) Ai_is_32, (int) typecode) ;
 
     GB_BLOB_WRITE (version, int32_t) ;
     GB_BLOB_WRITE (vlen, int64_t) ;
@@ -419,20 +417,11 @@ printf ("SERIALIZE: (%d %d %d) typecode %d\n", // FIXME
     //--------------------------------------------------------------------------
 
     // 8 * (# blocks for Ap, Ah, Ab, Ai, Ax)
-printf ("s at %lu before write to Ap_Sblocks \n", (uint64_t) s) ;
     GB_BLOB_WRITES (Ap_Sblocks, Ap_nblocks) ;
-printf ("s at %lu after write to Ap_Sblocks \n", (uint64_t) s) ;
     GB_BLOB_WRITES (Ah_Sblocks, Ah_nblocks) ;
     GB_BLOB_WRITES (Ab_Sblocks, Ab_nblocks) ;
     GB_BLOB_WRITES (Ai_Sblocks, Ai_nblocks) ;
     GB_BLOB_WRITES (Ax_Sblocks, Ax_nblocks) ;
-
-printf ("SERIALIZE Ap_Sblocks %p\n", (void *) Ap_Sblocks) ;
-printf ("SERIALIZE Ap_nblocks %d\n", Ap_nblocks) ;
-if (Ap_Sblocks != NULL)
-{
-    printf ("SERIALIZE Ap_Sblocks [0] %lu\n", Ap_Sblocks [0]) ;
-}
 
     GB_serialize_to_blob (blob, &s, Ap_Blocks, Ap_Sblocks+1, Ap_nblocks,
         nthreads_max) ;

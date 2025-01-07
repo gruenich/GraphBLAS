@@ -117,12 +117,13 @@ GrB_Info GB_deserialize_from_blob
     memcpy (blob + s, &(x), sizeof (type)) ;                                \
     s += sizeof (type) ;
 
-// write an int64_t array to the blob
+// write a uint64_t array Sblocks[1:n] to the blob, of size n+1, but do not
+// write the first entry (so only n words are written)
 #define GB_BLOB_WRITES(S,n) \
     if (n > 0)                                                              \
     {                                                                       \
-        memcpy (((GB_void *) blob) + s, S + 1, n * sizeof (int64_t)) ;      \
-        s += n * sizeof (int64_t) ;                                         \
+        memcpy (((GB_void *) blob) + s, S + 1, n * sizeof (uint64_t)) ;     \
+        s += n * sizeof (uint64_t) ;                                        \
     }
 
 // read a scalar from the blob
@@ -131,7 +132,7 @@ GrB_Info GB_deserialize_from_blob
     memcpy (&x, ((GB_void *) blob) + s, sizeof (type)) ;                    \
     s += sizeof (type) ;
 
-// get an uint64_t pointer to an array in the blob
+// get a uint64_t pointer to an array in the blob, of size n
 #define GB_BLOB_READS(S,n)                                                  \
     uint64_t *S = (uint64_t *) (blob + s) ;                                 \
     s += n * sizeof (uint64_t) ;
