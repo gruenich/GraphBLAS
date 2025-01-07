@@ -77,6 +77,16 @@ catch
     n = 0 ;
 end
 
+%% HACK: do this on a per-test basis, not for all tests
+for p_control = [32 64]
+for j_control = [32 64]
+for i_control = [32 64]
+clear ctrl
+ctrl.p_control = p_control ;
+ctrl.j_control = j_control ;
+ctrl.i_control = i_control ;
+ctrl = GB_mex_control (ctrl)
+
 for control_trial = 1:length (jit_controls)
     for trial = 1:length (threads)
 
@@ -90,8 +100,8 @@ for control_trial = 1:length (jit_controls)
             factory_control = 1 ;
         end
         GB_mex_factory_control (factory_control) ;
-        fprintf ('\nTrial: jit: %d factory: %d\n', ...
-            jit_control, factory_control) ;
+        fprintf ('\nTrial: jit: %d factory: %d pji: (%d,%d,%d)\n', ...
+            jit_control, factory_control, p_control, j_control, i_control) ;
 
         clast = grb_get_coverage ;
 
@@ -203,6 +213,10 @@ for control_trial = 1:length (jit_controls)
         fprintf (f, '\n') ;
         fclose (f) ;
     end
+end
+
+end
+end
 end
 
 % f = fopen ('log.txt', 'a') ;

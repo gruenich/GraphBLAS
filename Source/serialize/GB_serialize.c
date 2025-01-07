@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 // A parallel compression method for a GrB_Matrix.  The input matrix may have
 // shallow components; the output is unaffected by this.  The output blob is

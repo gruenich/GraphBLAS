@@ -27,6 +27,7 @@ for k1 = 1:length (types)
             assert (GB_spok (A.pattern) == 1) ;
 
             for k2 = 1:length (types)
+                fprintf ('.') ;
                 ctype = types {k2} ;
                 % typecast to type of C
 
@@ -43,9 +44,7 @@ for k1 = 1:length (types)
                     C2 = GB_mex_dup (A, ctype, 1) ;
                     C2_matrix = full (C2.matrix) ;
                     C2_pattern = full (GB_spones_mex (C2.matrix)) ;
-                    C
-                    C2
-                    assert (isequal (C, C2))  ;
+                    assert (GB_isequal_ignore_32 (C, C2))  ;
                     assert (GB_spok (1*C2.matrix) == 1) ;
                 end
 
@@ -76,5 +75,5 @@ end
 format
 
 GB_builtin_complex_set (true) ;
-fprintf ('test02: all typecast and copy tests passed\n') ;
+fprintf ('\ntest02: all typecast and copy tests passed\n') ;
 

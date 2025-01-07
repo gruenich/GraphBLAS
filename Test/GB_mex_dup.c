@@ -172,8 +172,6 @@ void mexFunction
         GrB_STORAGE_ORIENTATION_HINT) ;
 
     // return C as a struct and free the GraphBLAS C
-    GxB_print (A, 5) ;
-    GxB_print (C, 5) ;
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
 
     FREE_ALL ;

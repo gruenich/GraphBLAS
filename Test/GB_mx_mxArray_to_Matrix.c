@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mx_mxArray_to_Matrix
+// GB_mx_mxArray_to_Matrix: convert a MATLAB matrix or struct to a GrB_Matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -8,14 +8,13 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
-// Convert a MATLAB sparse or full matrix, or a struct to a GraphBLAS sparse
-// matrix, to a GrB_Matrix.  The mxArray is either a struct containing two
-// terms: a sparse or full matrix or vector, and type (a string, "logical",
-// "double", etc), or it is just a plain sparse or full matrix.  If A.class is
-// present, it is used to typecast the MATLAB matrix into the corresponding
-// type in GraphBLAS.
+// Convert a MATLAB sparse or full matrix, or a struct with the contents of a
+// GraphBLAS matrix, to a GrB_Matrix.  The mxArray is either a struct
+// containing two terms: a sparse or full matrix or vector, and type (a string,
+// "logical", "double", etc), or it is just a plain sparse or full matrix.  If
+// A.class is present, it is used to typecast the MATLAB matrix into the
+// corresponding type in GraphBLAS.
 
 // That is: A = sparse (...) ;   % a sparse double or logical GraphBLAS matrix
 
