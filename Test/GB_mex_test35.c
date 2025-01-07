@@ -187,6 +187,7 @@ void mexFunction
     // free the blob and recreate it
     mxFree (blob) ; blob = NULL ; blob_size = 0 ;
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+    GxB_print (A, 3) ;
 
     OK (GxB_Serialized_get_INT32_(blob, &i, GrB_STORAGE_ORIENTATION_HINT,
         blob_size)) ;

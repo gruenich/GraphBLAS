@@ -8,16 +8,17 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
-// Convert a GraphBLAS sparse or full matrix to a built-in struct C containing
+// Convert a GraphBLAS sparse or full matrix to a MATLAB struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.
 
 // This could be done using only user-callable GraphBLAS functions, by
-// extracting the tuples and converting them into a built-in sparse matrix.  But
+// extracting the tuples and converting them into a MATLAB sparse matrix.  But
 // that would be much slower and take more memory.  Instead, most of the work
 // can be done by pointers, and directly accessing the internal contents of C.
 // If C has type GB_BOOL_code or GB_FP64_code, then C can be converted to a
-// built-in matrix in constant time with essentially no extra memory allocated.
+// MATLAB matrix in constant time with essentially no extra memory allocated.
 // This is faster, but it means that this Test interface will only work with
 // this specific implementation of GraphBLAS.
 
@@ -46,7 +47,7 @@ static const char *MatrixFields [ ] = {
     "i_is_32",      // 6
     "values" } ;    // 7
 
-mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
+mxArray *GB_mx_object_to_mxArray    // returns the MATLAB mxArray
 (
     GrB_Matrix *handle,             // handle of GraphBLAS matrix to convert
     const char *name,
@@ -54,20 +55,23 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 )
 {
 
+    //--------------------------------------------------------------------------
     // get the inputs
+    //--------------------------------------------------------------------------
+
     mxArray *A, *Astruct, *X = NULL ;
     GrB_Matrix C = *handle ;
     GrB_Type ctype = C->type ;
+    ASSERT_MATRIX_OK (C, "C for conversion to MATLAB matrix or struct", GB0) ;
 
     //--------------------------------------------------------------------------
-    // ensure the matrix is 64/64/64 bit
+    // save the integer status of the matrix
     //--------------------------------------------------------------------------
 
     bool is_csc = C->is_csc ;
     bool Cp_is_32 = C->p_is_32 ;
     bool Cj_is_32 = C->j_is_32 ;
     bool Ci_is_32 = C->i_is_32 ;
-    GB_convert_int (C, false, false, false, false) ; // OK: for MATLAB mxArray
 
     //--------------------------------------------------------------------------
     // check matrix
@@ -143,7 +147,14 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
         ASSERT_MATRIX_OK (C, "TO mxArray, non-iso non-hyper CSC", GB0) ;
     }
 
-    // empty built-in matrices don't want NULL pointers
+    // convert to all-64-bit
+    GB_convert_int (C, false, false, false, false) ; // OK: for MATLAB mxArray
+    ASSERT_MATRIX_OK (C, "C converted to all-64", GB0) ;
+    ASSERT (!C->p_is_32) ;
+    ASSERT (!C->j_is_32) ;
+    ASSERT (!C->i_is_32) ;
+
+    // empty MATLAB matrices don't want NULL pointers
     if (C->x == NULL)
     {
         ASSERT (cnz == 0) ;
@@ -156,28 +167,28 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     bool C_is_full = (sparsity == GxB_FULL) ;
     if (!C_is_full)
     {
-        // empty built-in sparse matrices don't want NULL pointers
+        // empty MATLAB sparse matrices don't want NULL pointers
         if (C->i == NULL)
         {
             ASSERT (cnz == 0) ;
-            C->i = (int64_t *) GB_malloc_memory (1, sizeof (int64_t),
+            C->i = (int64_t *) GB_malloc_memory (1, sizeof (uint64_t),
                 &(C->i_size)) ;
-            int64_t *Ci = C->i ;
+            uint64_t *Ci = C->i ;
             Ci [0] = 0 ;
             C->i_shallow = false ;
         }
         if (C->p == NULL)
         {
             ASSERT (cnz == 0) ;
-            C->p = (int64_t *) GB_malloc_memory (C->vdim + 1, 
-                sizeof (int64_t), &(C->p_size)) ;
+            C->p = (int64_t *) GB_malloc_memory (C->vdim + 1, sizeof (uint64_t),
+                &(C->p_size)) ;
             memset (C->p, 0, (C->vdim + 1) * sizeof (int64_t)) ;
             C->p_shallow = false ;
         }
     }
 
     //--------------------------------------------------------------------------
-    // create the built-in matrix A and link in the numerical values of C
+    // create the MATLAB matrix A and link in the numerical values of C
     //--------------------------------------------------------------------------
 
     if (C_is_full)
@@ -259,31 +270,31 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 
         mexMakeMemoryPersistent (C->x) ;
         C->x_shallow = false ;
-        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in built-in C
+        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in MATLAB C
 
     }
     else if (C->type == GrB_BOOL)
     {
-        // C is boolean, which is the same as a built-in logical sparse matrix
+        // C is boolean, which is the same as a MATLAB logical sparse matrix
         A = mxCreateSparseLogicalMatrix (0, 0, 0) ;
         mexMakeMemoryPersistent (C->x) ;
         mxSetData (A, (bool *) C->x) ;
         C->x_shallow = false ;
 
         // C->x is treated as if it was freed
-        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in built-in C
+        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; now in MATLAB C
 
     }
     else if (C->type == GrB_FP64)
     {
-        // C is double, which is the same as a built-in double sparse matrix
+        // C is double, which is the same as a MATLAB double sparse matrix
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
         mexMakeMemoryPersistent (C->x) ;
         mxSetData (A, C->x) ;
         C->x_shallow = false ;
 
         // C->x is treated as if it was freed
-        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; in built-in C
+        GB_AS_IF_FREE (C->x) ;   // unlink C->x from C; in MATLAB C
 
     }
     else if (C->type == Complex || C->type == GxB_FC64)
@@ -307,7 +318,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     else
     {
 
-        // otherwise C is cast into a built-in double sparse matrix
+        // otherwise C is cast into a MATLAB double sparse matrix
         A = mxCreateSparse (0, 0, 0, mxREAL) ;
         size_t Sx_size ;
         double *Sx = (double *) GB_malloc_memory (cnz+1, sizeof (double),
@@ -342,6 +353,9 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
 
     if (!C_is_full)
     {
+        ASSERT (!C->p_is_32) ;
+        ASSERT (!C->j_is_32) ;
+        ASSERT (!C->i_is_32) ;
         mxFree (mxGetJc (A)) ;
         mxFree (mxGetIr (A)) ;
         mexMakeMemoryPersistent (C->p) ;
@@ -362,7 +376,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the built-in mxArray
     //--------------------------------------------------------------------------
 
     // free C, but leave any shallow components untouched
-    // since these have been transplanted into the built-in matrix.
+    // since these have been transplanted into the MATLAB matrix.
     GrB_Matrix_free_(handle) ;
 
     //--------------------------------------------------------------------------

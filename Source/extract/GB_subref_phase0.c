@@ -568,7 +568,7 @@ GrB_Info GB_subref_phase0
                 { 
                     // find jA using binary search
                     int64_t kright = anvec-1 ;
-                    found = GB_binary_search (jA, Ah, false, &kA, &kright) ;
+                    found = GB_binary_search (jA, Ah, Aj_is_32, &kA, &kright) ;
                 }
                 if (found)
                 { 

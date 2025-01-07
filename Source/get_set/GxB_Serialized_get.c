@@ -27,6 +27,13 @@ static GrB_Info GB_blob_header_get
     int32_t *storage,           // GrB_COLMAJOR or GrB_ROWMAJOR
     char **user_name,           // GrB_NAME of the blob
     char **eltype_string,       // GrB_EL_TYPE_STRING of the type of the blob
+    bool *is_csc,
+    bool *p_is_32,              // if true, A->p is 32 bit; else 64
+    bool *j_is_32,              // if true, A->h and A->Y are 32 bit; else 64
+    bool *i_is_32,              // if true, A->i is 32 bit; else 64
+    int8_t *p_control,
+    int8_t *j_control,
+    int8_t *i_control,
 
     // input, not modified:
     const GB_void *blob,        // the blob
@@ -47,13 +54,32 @@ static GrB_Info GB_blob_header_get
     }
 
     GB_BLOB_READ (blob_size2, uint64_t) ;
-    GB_BLOB_READ (typecode, int32_t) ;
+
+// was in v9.4.2 and earlier::
+//  GB_BLOB_READ (typecode, int32_t) ;
+// now in GrB v10.0.0:
+    GB_BLOB_READ (encoding, uint32_t) ;
+    uint32_t Cp_is_32 = GB_RSHIFT (encoding, 12, 4) ; // C->p_is_32
+    uint32_t Cj_is_32 = GB_RSHIFT (encoding,  8, 4) ; // C->j_is_32
+    uint32_t Ci_is_32 = GB_RSHIFT (encoding,  4, 4) ; // C->i_is_32
+    uint32_t typecode = GB_RSHIFT (encoding,  0, 4) ; // 4 bit typecode
+
+    // GrB 10.0.0 reserves 4 bits each for Cp_is_32, Cj_is_32, and Ci_is_32,
+    // for future expansion.  This way, if a future GraphBLAS version needs
+    // more bits to create a serialized blob, then GrB 10.0.0 will gracefully
+    // fail if it attempts to deserialize the blob.
+
     uint64_t blob_size1 = (uint64_t) blob_size ;
 
+    // GrB v9.4.2 has the same test below, so it will safely declare the blob
+    // invalid if it sees any encoding with a 1 in bit position 4 or 5.
     if (blob_size1 != blob_size2
         || typecode < GB_BOOL_code || typecode > GB_UDT_code
         || (typecode == GB_UDT_code &&
-            blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN))
+            blob_size < GB_BLOB_HEADER_SIZE + GxB_MAX_NAME_LEN)
+        // GrB v10.0.0 adds the following check, since it only supports the
+        // values of 0 and 1, denoting 64-bit and 32-bit integers respectively:
+        || (Cp_is_32 > 1) || (Cj_is_32 > 1) || (Ci_is_32 > 1))
     { 
         // blob is invalid
         return (GrB_INVALID_OBJECT)  ;
@@ -73,7 +99,16 @@ static GrB_Info GB_blob_header_get
     GB_BLOB_READ (Cx_len, int64_t) ;
     GB_BLOB_READ (hyper_switch, float) ;
     GB_BLOB_READ (bitmap_switch, float) ;
-    GB_BLOB_READ (sparsity_control, int32_t) ;
+
+// was in v9.4.2 and earlier::
+//  GB_BLOB_READ (sparsity_control, int32_t) ;
+// now in GrB v10.0.0:
+    GB_BLOB_READ (control_encoding, uint32_t) ;
+    (*p_control) = GB_RSHIFT (control_encoding, 16, 4) ;
+    (*j_control) = GB_RSHIFT (control_encoding, 12, 4) ;
+    (*i_control) = GB_RSHIFT (control_encoding,  8, 4) ;
+    uint32_t sparsity_control = GB_RSHIFT (control_encoding,  0, 8) ;
+
     GB_BLOB_READ (sparsity_iso_csc, int32_t) ;
     GB_BLOB_READ (Cp_nblocks, int32_t) ; GB_BLOB_READ (Cp_method, int32_t) ;
     GB_BLOB_READ (Ch_nblocks, int32_t) ; GB_BLOB_READ (Ch_method, int32_t) ;
@@ -83,11 +118,17 @@ static GrB_Info GB_blob_header_get
 
     (*sparsity_status) = sparsity_iso_csc / 4 ;
 //  bool iso = ((sparsity_iso_csc & 2) == 2) ;
-    bool is_csc = ((sparsity_iso_csc & 1) == 1) ;
+    (*is_csc) = ((sparsity_iso_csc & 1) == 1) ;
+
+    //--------------------------------------------------------------------------
+
     (*sparsity_ctrl) = sparsity_control ;
     (*hyper_sw)  = (double) hyper_switch ;
     (*bitmap_sw) = (double) bitmap_switch ;
-    (*storage) = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
+    (*storage) = (*is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
+    (*p_is_32) = Cp_is_32 ;
+    (*j_is_32) = Cj_is_32 ;
+    (*i_is_32) = Ci_is_32 ;
 
     //--------------------------------------------------------------------------
     // determine the matrix type_code and C type_name
@@ -227,10 +268,13 @@ GrB_Info GxB_Serialized_get_Scalar
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
+    bool is_csc, p_is_32, j_is_32, i_is_32 ;
+    int8_t p_control, j_control, i_control ;
 
-    info = GB_blob_header_get (type_name, &type_code, &sparsity_status,
-        &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, blob, blob_size) ;
+    info = GB_blob_header_get (type_name, &type_code,
+        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
+        &p_control, &j_control, &i_control, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -267,6 +311,36 @@ GrB_Info GxB_Serialized_get_Scalar
             case GxB_FORMAT : 
 
                 ivalue = (storage == GrB_COLMAJOR) ? GxB_BY_COL : GxB_BY_ROW ;
+                break ;
+
+            case GxB_OFFSET_INTEGER_HINT : 
+
+                ivalue = p_control ;
+                break ;
+
+            case GxB_OFFSET_INTEGER_BITS : 
+
+                ivalue = (p_is_32) ? 32 : 64 ;
+                break ;
+
+            case GxB_COLINDEX_INTEGER_HINT : 
+
+                ivalue = (is_csc) ? j_control : i_control ;
+                break ;
+
+            case GxB_COLINDEX_INTEGER_BITS : 
+
+                ivalue = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
+                break ;
+
+            case GxB_ROWINDEX_INTEGER_HINT : 
+
+                ivalue = (is_csc) ? i_control : j_control ;
+                break ;
+
+            case GxB_ROWINDEX_INTEGER_BITS : 
+
+                ivalue = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
                 break ;
 
             case GxB_HYPER_SWITCH : 
@@ -318,6 +392,7 @@ GrB_Info GxB_Serialized_get_String
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
@@ -329,10 +404,13 @@ GrB_Info GxB_Serialized_get_String
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
+    bool is_csc, p_is_32, j_is_32, i_is_32 ;
+    int8_t p_control, j_control, i_control ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code,
+    info = GB_blob_header_get (type_name, &type_code,
         &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, blob, blob_size) ;
+        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
+        &p_control, &j_control, &i_control, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -389,6 +467,7 @@ GrB_Info GxB_Serialized_get_INT32
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
@@ -400,10 +479,13 @@ GrB_Info GxB_Serialized_get_INT32
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
+    bool is_csc, p_is_32, j_is_32, i_is_32 ;
+    int8_t p_control, j_control, i_control ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code,
+    info = GB_blob_header_get (type_name, &type_code,
         &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, blob, blob_size) ;
+        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
+        &p_control, &j_control, &i_control, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field
@@ -438,6 +520,37 @@ GrB_Info GxB_Serialized_get_INT32
                 (*value) = (storage == GrB_COLMAJOR) ? GxB_BY_COL : GxB_BY_ROW ;
                 break ;
 
+            case GxB_OFFSET_INTEGER_HINT : 
+
+                (*value) = p_control ;
+                break ;
+
+            case GxB_OFFSET_INTEGER_BITS : 
+
+                (*value) = (p_is_32) ? 32 : 64 ;
+                break ;
+
+            case GxB_COLINDEX_INTEGER_HINT : 
+
+                (*value) = (is_csc) ? j_control : i_control ;
+                break ;
+
+            case GxB_COLINDEX_INTEGER_BITS : 
+
+                (*value) = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
+                break ;
+
+            case GxB_ROWINDEX_INTEGER_HINT : 
+
+                (*value) = (is_csc) ? i_control : j_control ;
+                break ;
+
+            case GxB_ROWINDEX_INTEGER_BITS : 
+
+                (*value) = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
+                break ;
+
+
             default : 
                 return (GrB_INVALID_VALUE) ;
         }
@@ -464,6 +577,7 @@ GrB_Info GxB_Serialized_get_SIZE
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
@@ -475,10 +589,13 @@ GrB_Info GxB_Serialized_get_SIZE
     char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
     int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
     double hyper_sw, bitmap_sw ;
+    bool is_csc, p_is_32, j_is_32, i_is_32 ;
+    int8_t p_control, j_control, i_control ;
 
-    GrB_Info info = GB_blob_header_get (type_name, &type_code,
+    info = GB_blob_header_get (type_name, &type_code,
         &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, blob, blob_size) ;
+        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
+        &p_control, &j_control, &i_control, blob, blob_size) ;
 
     //--------------------------------------------------------------------------
     // get the field

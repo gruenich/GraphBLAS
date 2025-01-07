@@ -353,9 +353,9 @@ GB_CALLBACK_SUBASSIGN_ONE_SLICE_PROTO (GB_subassign_one_slice)
 
                         pleft = pC_start ;
                         pright = pC_end - 1 ;
-                        found = GB_split_binary_search_zombie (iC_end,
-                            Ci, Ci_is_32, &pleft, &pright, may_see_zombies,
-                            &is_zombie) ;
+                        found =
+                        GB_split_binary_search_zombie (iC_end, Ci, Ci_is_32,
+                            &pleft, &pright, may_see_zombies, &is_zombie) ;
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }
 
