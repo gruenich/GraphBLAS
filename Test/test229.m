@@ -31,7 +31,7 @@ for k = 1:length (types)
                 C3 = GB_mex_setElement (A, I0, J0, X, true, true) ;
                 C4 = GB_mex_setElement (A, I0, J0, X, true, true) ;
 
-                assert (isequal (C1, C2)) ;
+                assert (GB_isequal_ignore_32 (C1, C2)) ;
                 assert (isequal (C1, C3)) ;
                 assert (isequal (C1, C4)) ;
 

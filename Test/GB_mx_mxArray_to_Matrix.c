@@ -303,11 +303,11 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
         }
     }
 
-    // can only do a deep copy if the resulting GrB_Matrix is all-64
+    // can only do a shallow copy if the resulting GrB_Matrix is all-64
     deep_copy = deep_copy || p_is_32 || j_is_32 || i_is_32 ;
 
-    GB_Type_code apcode = (p_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    GB_Type_code aicode = (i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    GB_Type_code apcode = (p_is_32) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code aicode = (i_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
     //--------------------------------------------------------------------------
     // get the pattern of A

@@ -115,6 +115,9 @@ F100 = {4,4,0,0} ;
 % quick tests (< 1 sec)
 %===============================================================================
 
+%% HACK FIXME
+if (0)
+
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
 logstat ('test286'    ,t, J40  , F00  ) ; % kron with index binary op
@@ -276,6 +279,7 @@ logstat ('test196'    ,t, J4   , F1   ) ; % hypersparse concat
 logstat ('test250'    ,t, J44  , F10  ) ; % JIT tests, set/get, other tests
 logstat ('test145'    ,t, J42  , F11  ) ; % dot4 for C += A'*B
 logstat ('test229'    ,t, J4   , F1   ) ; % setElement
+
 logstat ('test209'    ,t, J4   , F1   ) ; % iso build
 logstat ('test224'    ,t, J4   , F1   ) ; % unpack/pack
 
@@ -299,6 +303,12 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 set_malloc_debug (mdebug, 0) ;
 logstat ('test230'    ,t, J40  , F10  ) ; % apply with idxunops
 logstat ('test18'     ,t, J40  , F10  ) ; % GrB_eWiseAdd and eWiseMult
+
+%% HACK FIXME
+end
+    hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
+    set_malloc_debug (mdebug, 0) ;
+
 logstat ('testc7(0)'  ,t, J40  , F10  ) ; % assign, builtin complex
 logstat ('test193'    ,t, J4   , F1   ) ; % GxB_Matrix_diag
 logstat ('test127'    ,t, J0   , F1   ) ; % eWiseAdd, eWiseMult

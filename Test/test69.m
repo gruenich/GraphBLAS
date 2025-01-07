@@ -1,4 +1,4 @@
-function test69
+% function test69 FIXME
 %TEST69 test GrB_assign with aliased inputs, C<C>(:,:) = accum(C(:,:),C)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
@@ -44,7 +44,7 @@ for m = [1 5 10 100]
             J = uint64 (randperm (n) - 1) ;
             C1 = GB_mex_assign_alias (C, 'plus', I, J, [ ]) ;
             C2 = GB_mex_assign (C, [ ], 'plus', C, I, J, [ ], 0) ;
-            assert (isequal (C1, C2)) ;
+            assert (GB_isequal_ignore_32 (C1, C2)) ;
 
             % C<C,replace> += C
             C1 = GB_mex_subassign_alias (C, 'plus', desc) ;
@@ -54,7 +54,7 @@ for m = [1 5 10 100]
             % C<C,replace> = C
             C1 = GB_mex_subassign_alias (C, [ ], desc) ;
             C2 = GB_mex_subassign (C, C, [ ], C, [ ], [ ], desc) ;
-            assert (isequal (C1, C2)) ;
+            assert (GB_isequal_ignore_32 (C1, C2)) ;
 
             % C(:,:) = 0
             Z = GB_mex_expand (sparse (1), 0) ;
