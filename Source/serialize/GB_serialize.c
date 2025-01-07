@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 // A parallel compression method for a GrB_Matrix.  The input matrix may have
 // shallow components; the output is unaffected by this.  The output blob is
@@ -63,7 +64,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 
     GrB_Info info ;
     ASSERT (blob_size_handle != NULL) ;
-    ASSERT_MATRIX_OK (A, "A for serialize", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for serialize", GB2) ;
 
     int Ap_is_32 = (A->p_is_32) ? 1 : 0 ;
     int Aj_is_32 = (A->j_is_32) ? 1 : 0 ;
@@ -354,11 +355,13 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 //  now in GrB v10.0.0:
     typecode &= 0xF ;
     uint32_t encoding =
-        GB_LSHIFT (Ap_is_32, 12) |  // bits 8 to 11: Ap_is_32 (3 bits unused)
-        GB_LSHIFT (Aj_is_32,  8) |  // bits 8 to 11: Aj_is_32 (3 bits unused)
-        GB_LSHIFT (Ai_is_32,  4) |  // bits 4 to 7:  Ai_is_32 (3 bits unused)
-        GB_LSHIFT (typecode,  0) ;  // bits 0 to 3:  typecode
+        GB_LSHIFT (Ap_is_32, 12) |  // bits 12 to 15: Ap_is_32 (3 bits unused)
+        GB_LSHIFT (Aj_is_32,  8) |  // bits 8 to 11:  Aj_is_32 (3 bits unused)
+        GB_LSHIFT (Ai_is_32,  4) |  // bits 4 to 7:   Ai_is_32 (3 bits unused)
+        GB_LSHIFT (typecode,  0) ;  // bits 0 to 3:   typecode
     GB_BLOB_WRITE (encoding, uint32_t) ;
+printf ("SERIALIZE: (%d %d %d) typecode %d\n", // FIXME
+    (int) Ap_is_32, (int) Aj_is_32, (int) Ai_is_32, (int) typecode) ;
 
     GB_BLOB_WRITE (version, int32_t) ;
     GB_BLOB_WRITE (vlen, int64_t) ;
@@ -380,10 +383,12 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 // now in GrB v10.0.0, with 8 bits reserved for sparsity_control, in case new
 // sparsity formats are added in the future:
     uint32_t p_control = (A->p_control) & 0xF ;
+    uint32_t j_control = (A->j_control) & 0xF ;
     uint32_t i_control = (A->i_control) & 0xF ;
     sparsity_control &= 0xFF ;
     uint32_t control_encoding =
-        GB_LSHIFT (p_control       , 12) | // 4 bits
+        GB_LSHIFT (p_control       , 16) | // 4 bits
+        GB_LSHIFT (j_control       , 12) | // 4 bits
         GB_LSHIFT (i_control       ,  8) | // 4 bits
         GB_LSHIFT (sparsity_control,  0) ; // 8 bits (only 4 needed for now)
     GB_BLOB_WRITE (control_encoding, uint32_t) ;
@@ -414,11 +419,20 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
 
     // 8 * (# blocks for Ap, Ah, Ab, Ai, Ax)
+printf ("s at %lu before write to Ap_Sblocks \n", (uint64_t) s) ;
     GB_BLOB_WRITES (Ap_Sblocks, Ap_nblocks) ;
+printf ("s at %lu after write to Ap_Sblocks \n", (uint64_t) s) ;
     GB_BLOB_WRITES (Ah_Sblocks, Ah_nblocks) ;
     GB_BLOB_WRITES (Ab_Sblocks, Ab_nblocks) ;
     GB_BLOB_WRITES (Ai_Sblocks, Ai_nblocks) ;
     GB_BLOB_WRITES (Ax_Sblocks, Ax_nblocks) ;
+
+printf ("SERIALIZE Ap_Sblocks %p\n", (void *) Ap_Sblocks) ;
+printf ("SERIALIZE Ap_nblocks %d\n", Ap_nblocks) ;
+if (Ap_Sblocks != NULL)
+{
+    printf ("SERIALIZE Ap_Sblocks [0] %lu\n", Ap_Sblocks [0]) ;
+}
 
     GB_serialize_to_blob (blob, &s, Ap_Blocks, Ap_Sblocks+1, Ap_nblocks,
         nthreads_max) ;

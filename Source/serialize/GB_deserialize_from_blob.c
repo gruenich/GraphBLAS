@@ -94,6 +94,13 @@ GrB_Info GB_deserialize_from_blob
         if (nblocks > 1 || Sblocks [0] != X_len || s + X_len > blob_size)
         { 
             // blob is invalid: guard against an unsafe memcpy
+printf ("nblocks %d\n", nblocks) ;
+printf ("Sblocks [0] %lu\n", Sblocks [0]) ;
+printf ("X_len %lu\n", (uint64_t) X_len) ;
+printf ("s %lu\n", (uint64_t) s) ;
+printf ("s + X_len %lu\n", (uint64_t) (s + X_len)) ;
+printf ("blob_size %lu\n", (uint64_t) blob_size) ;
+printf ("bad here %s %d\n", __FILE__, __LINE__) ;
             ok = false ;
         }
         else
@@ -111,10 +118,12 @@ GrB_Info GB_deserialize_from_blob
         // LZ4, LZ4HC, or ZSTD compression
         //----------------------------------------------------------------------
 
-        int nthreads = GB_IMIN (nthreads_max, nblocks) ;
+//      int nthreads = GB_IMIN (nthreads_max, nblocks) ;
         int32_t blockid ;
+#if 0
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic) \
             reduction(&&:ok)
+#endif
         for (blockid = 0 ; blockid < nblocks ; blockid++)
         {
             // get the start and end of the compressed and uncompressed blocks
@@ -132,6 +141,7 @@ GrB_Info GB_deserialize_from_blob
                 kstart > X_len || kend > X_len || d_size > INT32_MAX)
             { 
                 // blob is invalid
+printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                 ok = false ;
             }
             else
@@ -150,6 +160,7 @@ GrB_Info GB_deserialize_from_blob
                     if (u != d_size)
                     {
                         // blob is invalid
+printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                         ok = false ;
                     }
                 }
@@ -162,6 +173,7 @@ GrB_Info GB_deserialize_from_blob
                     if (u != dst_size)
                     {
                         // blob is invalid
+printf ("bad here %s %d\n", __FILE__, __LINE__) ;
                         ok = false ;
                     }
                 }
@@ -173,6 +185,7 @@ GrB_Info GB_deserialize_from_blob
     { 
         // decompression failure; blob is invalid
         GB_FREE_ALL ;
+printf ("FAIL decompression, blob invalid\n") ;
         return (GrB_INVALID_OBJECT) ;
     }
 
