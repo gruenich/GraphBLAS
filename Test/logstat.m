@@ -81,11 +81,13 @@ end
 
 try
     n = grblines ;  % total # of lines in the test coverage
-    fprintf (   'total blocks: %d\n', n) ;
-    fprintf (f, 'total blocks: %d\n', n) ;
 catch
     n = 0 ;
 end
+fprintf (   'total blocks: %d\n', n) ;
+f = fopen ('log.txt', 'a') ;
+fprintf (f, 'total blocks: %d\n', n) ;
+fclose (f) ;
 
 for pji_control_trials = 1:length(pji_controls)
 
