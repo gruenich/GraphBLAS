@@ -240,6 +240,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 
     if (C->p != NULL && version <= GxB_VERSION (7,2,0))
     { 
+GB_GOTCHA ;
         // C is sparse or hypersparse.  v7.2.1 and later have the new C->nvals
         // value inside the blob already.  The blob prior to v7.2.1 had nvals
         // of zero for sparse and hypersparse matrices.  Set it here to the

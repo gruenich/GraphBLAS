@@ -1,4 +1,4 @@
-function logstat (testscript, threads, jit_controls, factory_controls)
+function logstat (testscript, threads, jit_controls, factory_controls, pji_controls)
 %LOGSTAT run a GraphBLAS test and log the results to log.txt 
 %
 % logstat (testscript, threads, jit_controls, factory_controls)
@@ -14,6 +14,9 @@ function logstat (testscript, threads, jit_controls, factory_controls)
 %
 % factory_controls: 1 to enable the factory kernels, 0 to disable them.
 % If empty, default is enabled.
+%
+% pji_controls: a list of integers in the range 0 to 7, where each integer
+% is a 3-bit number with [pji]_control.  Defaults to [0]
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
@@ -48,6 +51,11 @@ if (isempty (factory_controls))
 %   factory_controls {3} = 0 ;  % factory off
 end
 
+% default pji_controls
+if (nargin < 5)
+    pji_controls = [ 0 ] ;
+end
+
 if (0)
     jall = {4,3,2,1,0,4,3,2,1,0} ;
     fall = {1,1,1,1,1,0,0,0,0,0} ;
@@ -73,15 +81,19 @@ end
 
 try
     n = grblines ;  % total # of lines in the test coverage
+    fprintf (   'total blocks: %d\n', n) ;
+    fprintf (f, 'total blocks: %d\n', n) ;
 catch
     n = 0 ;
 end
 
-%% HACK: do this on a per-test basis, not for all tests
-for p_control = [32 64]
-for j_control = [32 64]
-for i_control = [32 64]
+for pji_control_trials = 1:length(pji_controls)
+
 clear ctrl
+pji_control = pji_controls (pji_control_trials) ;
+p_control = 32 * (bitand (pji_control, 4) ~= 0) + 32 ;
+j_control = 32 * (bitand (pji_control, 2) ~= 0) + 32 ;
+i_control = 32 * (bitand (pji_control, 1) ~= 0) + 32 ;
 ctrl.p_control = p_control ;
 ctrl.j_control = j_control ;
 ctrl.i_control = i_control ;
@@ -159,8 +171,10 @@ for control_trial = 1:length (jit_controls)
         % trim the year from the date
         s = s ([1:6 12:end]) ;
 
-        fprintf (   '%s %-11s %7.1f sec ', s, testscript, t) ;
-        fprintf (f, '%s %-11s %7.1f sec ', s, testscript, t) ;
+        fprintf (   '%s %-11s (%d,%d,%d) %7.1f sec ', s, testscript, ...
+            p_control, j_control, i_control, t) ;
+        fprintf (f, '%s %-11s (%d,%d,%d) %7.1f sec ', s, testscript, ...
+            p_control, j_control, i_control, t) ;
 
         if (test_coverage)
 
@@ -178,21 +192,19 @@ for control_trial = 1:length (jit_controls)
                 c = sum (GraphBLAS_grbcov > 0) ;
                 if (c == n)
                     % full coverage reached with this test
-                    fprintf (   '%5d:   all %5d full 100%% %8.2f/s', ...
-                        c - clast, n, (c-clast) / t) ;
-                    fprintf (f, '%5d:   all %5d full 100%% %8.2f/s', ...
-                        c - clast, n, (c-clast) / t) ;
+                    fprintf (   '%5d:   all  100%% %7.1f/s', ...
+                        c - clast, (c-clast) / t) ;
+                    fprintf (f, '%5d:   all  100%% %7.1f/s', ...
+                        c - clast, (c-clast) / t) ;
                 elseif (c == clast)
                     % no new coverage at all with this test
-                    fprintf (   '     : %5d of %5d %5.1f%%', ...
-                        n-c, n, 100 * (c/n)) ;
-                    fprintf (f, '     : %5d of %5d %5.1f%%', ...
-                        n-c, n, 100 * (c/n)) ;
+                    fprintf (   '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
+                    fprintf (f, '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
                 else
-                    fprintf (   '%5d: %5d of %5d %5.1f%% %8.2f/s', ...
-                        c - clast, n-c, n, 100 * (c/n), (c-clast) / t) ;
-                    fprintf (f, '%5d: %5d of %5d %5.1f%% %8.2f/s', ...
-                        c - clast, n-c, n, 100 * (c/n), (c-clast) / t) ;
+                    fprintf (   '%5d: %5d %4.1f%% %7.1f/s', ...
+                        c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
+                    fprintf (f, '%5d: %5d %4.1f%% %7.1f/s', ...
+                        c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
                 end
                 if (debug)
                     fprintf (' [debug]') ;
@@ -215,8 +227,6 @@ for control_trial = 1:length (jit_controls)
     end
 end
 
-end
-end
 end
 
 % f = fopen ('log.txt', 'a') ;

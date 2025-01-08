@@ -12,6 +12,7 @@
 // GrB_Matrix_serialize and GrB_Matrix_deserialize
 // GxB_Vector_serialize and GxB_Vector_deserialize
 // GrB_Vector_serialize and GrB_Vector_deserialize
+#define GB_DEBUG
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
@@ -133,6 +134,7 @@ void mexFunction
     GxB_Matrix_type_name (type_name1, C) ;
     GxB_Matrix_type_name (type_name2, A) ;
     GxB_deserialize_type_name (type_name3, blob, blob_size) ;
+//  printf ("\n[%s]\n[%s]\n[%s]\n", type_name1, type_name2, type_name3) ;
     CHECK (MATCH (type_name1, type_name2)) ;
     CHECK (MATCH (type_name1, type_name3)) ;
 

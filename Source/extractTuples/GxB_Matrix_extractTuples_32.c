@@ -72,6 +72,7 @@ GrB_Info GxB_Matrix_extractTuples_32_UDT
     const GrB_Matrix A      // matrix to extract tuples from
 )
 { 
+GB_GOTCHA ;
     GB_WHERE_1 (A, "GxB_Matrix_extractTuples_32_UDT (I, J, X, nvals, A)") ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL (p_nvals) ;
@@ -79,6 +80,7 @@ GrB_Info GxB_Matrix_extractTuples_32_UDT
 
     if (A->type->code != GB_UDT_code)
     { 
+GB_GOTCHA ;
         // A must have a user-defined type
         return (GrB_DOMAIN_MISMATCH) ;
     }

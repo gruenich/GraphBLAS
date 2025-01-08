@@ -55,7 +55,6 @@ for C_replace = [false true]
         A = Z ;
         fprintf ('C3 <no mask complement:%d replace:%d> = C + A'' :\n', ...
             Mask_comp, C_replace) ;
-D
         C3 = GB_spec_transpose (C, [ ], 'plus', A, D) ;
         C5 = GB_mex_transpose  (sparse(C), [ ], 'plus', sparse(A), D);
         assert (isequal (C3.matrix, C5.matrix))

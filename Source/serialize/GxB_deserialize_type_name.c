@@ -52,7 +52,8 @@ GrB_Info GxB_deserialize_type_name  // return the type name of a blob
 
     size_t s = 0 ;
     GB_BLOB_READ (blob_size2, uint64_t) ;
-    GB_BLOB_READ (typecode, int32_t) ;
+    GB_BLOB_READ (encoding, int32_t) ;
+    int typecode = encoding & 0xF ;
 
     if (blob_size2 != blob_size)
     { 

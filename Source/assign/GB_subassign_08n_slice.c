@@ -205,43 +205,13 @@ GB_CALLBACK_SUBASSIGN_08N_SLICE_PROTO (GB_subassign_08n_slice)
             int64_t k = kfirst ;
             int64_t j = GBh (Zh_shallow, k) ;
 
-            int64_t pA = -1, pA_end = -1 ;
-            if (fine_task)
-            {
-                // A fine task operates on a slice of A(:,k)
-                pA     = TaskList [taskid].pA ;
-                pA_end = TaskList [taskid].pA_end ;
-            }
-            else
-            { 
-                // vectors are never sliced for a coarse task
-                int64_t kA = (Zh_shallow == Ah) ? k :
-                    ((Z_to_A == NULL) ? j : Z_to_A [k]) ;
-                if (kA >= 0)
-                { 
-                    pA     = GBp_A (Ap, kA, Avlen) ;
-                    pA_end = GBp_A (Ap, kA+1, Avlen) ;
-                }
-            }
+            // A fine task operates on a slice of A(:,k)
+            int64_t pA     = TaskList [taskid].pA ;
+            int64_t pA_end = TaskList [taskid].pA_end ;
 
-            int64_t pM = -1, pM_end = -1 ;
-            if (fine_task)
-            {
-                // A fine task operates on a slice of M(:,k)
-                pM     = TaskList [taskid].pB ;
-                pM_end = TaskList [taskid].pB_end ;
-            }
-            else
-            { 
-                // vectors are never sliced for a coarse task
-                int64_t kM = (Zh_shallow == Mh) ? k :
-                    ((Z_to_M == NULL) ? j : Z_to_M [k]) ;
-                if (kM >= 0)
-                { 
-                    pM     = GBp_M (Mp, kM, Mvlen) ;
-                    pM_end = GBp_M (Mp, kM+1, Mvlen) ;
-                }
-            }
+            // A fine task operates on a slice of M(:,k)
+            int64_t pM     = TaskList [taskid].pB ;
+            int64_t pM_end = TaskList [taskid].pB_end ;
 
             //------------------------------------------------------------------
             // quick checks for empty intersection of A(:,j) and M(:,j)

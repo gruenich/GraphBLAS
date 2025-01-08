@@ -145,6 +145,7 @@
                 #if defined ( GB_ANALYSIS_PHASE )
                 if (fine_task)
                 { 
+GB_GOTCHA ;
                     // this fine task has no entries in A(:,kC) to access
                     TaskList [taskid].pC = 0 ;
                 }

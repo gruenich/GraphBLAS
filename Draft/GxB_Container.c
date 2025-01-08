@@ -173,22 +173,25 @@ struct GxB_Container_struct
 // primary matrix content
 //------------------------------------------------------------------------------
 
-// 16 words of uint64_t:
+// 16 words of uint64_t / int64_t:
 uint64_t nrows ;            // # of rows of the matrix, or length of the vector
 uint64_t ncols ;            // # of cols of the matrix; 1 for a vector
-uint64_t nrows_nonempty ;   // the number of non-empty rows for CSR, CSC,
+int64_t nrows_nonempty ;    // the number of non-empty rows for CSR, CSC,
                             // HyperCSR, or HyperCSC matrices, or 
-                            // UINT64_MAX if not known.
-uint64_t ncols_nonempty ;   // the number of non-empty columns for CSR, CSC,
+                            // -1 if not known.
+int64_t ncols_nonempty ;    // the number of non-empty columns for CSR, CSC,
                             // HyperCSR, or Hyper CSC matrices.
-                            // UINT64_MAX if not known; 1 for a vector
+                            // -1 if not known; 1 for a vector
 uint64_t nvals ;            // nvals(A)
-uint64_t u64_future [11] ;  // for future expansion.
+uint64_t nheld ;            // # of entries A->x and A->b can hold; equal to
+                            // nvals for all formats, except for bitmap where
+                            // nheld=nrows*ncols
+uint64_t u64_future [10] ;  // for future expansion.
 
 // 16 words of uint32_t:
 int32_t format ;            // GxB_SPARSE, GxB_SPARSE, GxB_BITMAP, or GxB_FULL
 int32_t orientation ;       // GrB_ROWMAJOR or GrB_COLMAJOR
-int32_t i32_future [15] ;   // for future expansion.
+int32_t i32_future [14] ;   // for future expansion.
 
 // 16 GrB_Vector objects:
 
@@ -200,19 +203,18 @@ GrB_Vector p ;  // pointers: vector of length plen+1 for CSR, CSC, HyperCSR,
                 // and HyperCSC.  Length 0 for bitmap/full.  plen = nrows or
                 // ncols if A is CSR/CSC respectively, or the # of rows/cols
                 // present in a HyperCSR/HyperCSC matrix, respectively.
-                // For CSR/CSC matrices, plen=1.
 
 GrB_Vector h ;  // non-empty vector list for the hyperlist, of length plen,
                 // for HyperCSR and HyperCSC.
                 // Length 0 for CSR, CSC, bitmap, and full matrices.
 
-GrB_Vector b ;  // bitmap: vector of length nrows*ncols for bitmap matrices.
-                // Length 0 for all other formats.
+GrB_Vector b ;  // bitmap: vector of length nheld = nrows*ncols for bitmap
+                // matrices.  Length 0 for all other formats.
 
 GrB_Vector i ;  // indices: vector of length nvals for CSR, CSC, HyperCSR,
                 // and HyperCSC formats.  Length 0 for bitmap and full.
 
-GrB_Vector x ;  // values: length nvals, or length 1 if A is iso.
+GrB_Vector x ;  // values: length nheld, or length 1 if A is iso.
 
 GrB_Vector vector_future [11] ;     // for future expansion
 
@@ -320,7 +322,25 @@ bool iso ;              // true if all entries have the same value
 bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
                         // matrices are never jumbled.
 
-bool bool_future [14] ; // for future expansion
+//------------------------------------------------------------------------------
+// to flag shallow components
+//------------------------------------------------------------------------------
+
+bool p_shallow ;
+bool h_shallow ;
+bool b_shallow ;
+bool i_shallow ;
+bool x_shallow ;
+bool Y_shallow ;
+
+bool bool_future [24] ; // for future expansion
+
+//------------------------------------------------------------------------------
+// future expansion
+//------------------------------------------------------------------------------
+
+// 16 (void *) pointers for future expansion
+void * void_future [16] ;
 
 //------------------------------------------------------------------------------
 // iterating through a matrix
@@ -333,12 +353,6 @@ bool bool_future [14] ; // for future expansion
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
-// for reference:
-#define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
-#define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-#define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
-#define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
-
     // A->vdim: the vector dimension of A (ncols(A))
     // A->nvec: # of vectors that appear in A.  For the hypersparse case,
     //          these are the number of column indices in Ah [0..nvec-1], since
@@ -350,14 +364,14 @@ bool bool_future [14] ; // for future expansion
         int64_t vlen = A->vlen ;
         for (k = 0 ; k < A->nvec ; k++)
         {
-            j = k ;
+            uint64_t j = k ;
             // operate on column A(:,j)
             int64_t pA_start = k * vlen ;
             int64_t pA_end   = (k+1) * vlen ;
             for (p = pA_start ; p < pA_end ; p++)
             {
                 // entry A(i,j) with row index i and value aij
-                int64_t i = (p % vlen) ;
+                uint64_t i = (p % vlen) ;
                 double aij = Ax [A->iso ? 0 : p] ;
             }
         }
@@ -422,7 +436,13 @@ bool bool_future [14] ; // for future expansion
         }
 
     //--------------------
-    // generic: for any matrix
+    // generic: for any matrix, with any integer types
+
+    // for reference:
+    #define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
+    #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
+    #define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
+    #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 
         int64_t vlen = A->vlen ;
         for (k = 0 ; k < A->nvec ; k++)

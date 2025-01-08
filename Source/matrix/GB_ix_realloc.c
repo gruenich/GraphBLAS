@@ -68,6 +68,7 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
 
     if (!GB_valid_p_is_32 (A->p_is_32, nzmax_new))
     { 
+GB_GOTCHA ;
         // convert A->p to 64-bit; do not change A->j_is_32 or A->i_is_32; note
         // that GB_convert_int does not validate the new integer settings,
         // since the # of entries in A is changing.

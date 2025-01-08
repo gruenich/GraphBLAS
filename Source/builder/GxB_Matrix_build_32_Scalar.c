@@ -27,6 +27,7 @@ GrB_Info GxB_Matrix_build_32_Scalar
     uint64_t nvals                  // number of tuples
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -41,6 +42,7 @@ GrB_Info GxB_Matrix_build_32_Scalar
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 

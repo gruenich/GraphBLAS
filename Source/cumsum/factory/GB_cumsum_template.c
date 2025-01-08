@@ -48,6 +48,7 @@
             #if GB_CHECK_OVERFLOW
             if (s > UINT32_MAX)
             { 
+GB_GOTCHA ;
                 return (false) ;
             }
             #endif
@@ -101,6 +102,7 @@
                 }
                 if (total > UINT32_MAX)
                 { 
+GB_GOTCHA ;
                     return (false) ;
                 }
             }
@@ -192,14 +194,17 @@
 
             #if GB_CHECK_OVERFLOW
             {
+GB_GOTCHA ;
                 // for uint32_t case only
                 uint64_t total = 0 ;
                 for (tid = 0 ; tid < nthreads ; tid++)
                 { 
+GB_GOTCHA ;
                     total += ws [tid] ;
                 }
                 if (total > UINT32_MAX)
                 { 
+GB_GOTCHA ;
                     return (false) ;
                 }
             }

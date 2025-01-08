@@ -53,15 +53,18 @@ static GrB_Info GB_set_p_control
     GrB_Info info ;
     if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
     { 
+GB_GOTCHA ;
         return (GrB_INVALID_VALUE) ;
     }
     if (ivalue == 32 && !A->p_is_32)
     { 
+GB_GOTCHA ;
         // A->p is currently 64-bit; convert to 32-bit if possible
         GB_OK (GB_convert_int (A, true, A->j_is_32, A->i_is_32, true)) ;
     }
     else if (ivalue == 64 && A->i_is_32)
     { 
+GB_GOTCHA ;
         // A->p is currently 32-bit; convert to 64-bit
         GB_OK (GB_convert_int (A, false, A->j_is_32, A->i_is_32, true)) ;
     }
@@ -82,15 +85,18 @@ static GrB_Info GB_set_j_control
     GrB_Info info ;
     if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
     { 
+GB_GOTCHA ;
         return (GrB_INVALID_VALUE) ;
     }
     if (ivalue == 32 && !A->j_is_32)
     { 
+GB_GOTCHA ;
         // A->h is currently 64-bit; convert to 32-bit if possible
         GB_OK (GB_convert_int (A, A->p_is_32, true, A->i_is_32, true)) ;
     }
     else if (ivalue == 64 && A->j_is_32)
     { 
+GB_GOTCHA ;
         // A->h is currently 32-bit; convert to 64-bit
         GB_OK (GB_convert_int (A, A->p_is_32, false, A->j_is_32, true)) ;
     }
@@ -111,15 +117,18 @@ static GrB_Info GB_set_i_control
     GrB_Info info ;
     if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
     { 
+GB_GOTCHA ;
         return (GrB_INVALID_VALUE) ;
     }
     if (ivalue == 32 && !A->i_is_32)
     { 
+GB_GOTCHA ;
         // A->i is currently 64-bit; convert to 32-bit if possible
         GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, true, true)) ;
     }
     else if (ivalue == 64 && A->i_is_32)
     { 
+GB_GOTCHA ;
         // A->i is currently 32-bit; convert to 64-bit
         GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, false, true)) ;
     }
@@ -186,15 +195,18 @@ GrB_Info GB_matvec_set
 
         case GxB_OFFSET_INTEGER_HINT : 
 
+GB_GOTCHA ;
             return (GB_set_p_control (A, ivalue)) ;
 
         case GxB_COLINDEX_INTEGER_HINT : 
 
+GB_GOTCHA ;
             return (A->is_csc ? GB_set_j_control (A, ivalue) :
                                 GB_set_i_control (A, ivalue)) ;
 
         case GxB_ROWINDEX_INTEGER_HINT : 
 
+GB_GOTCHA ;
             return (A->is_csc ? GB_set_i_control (A, ivalue) :
                                 GB_set_j_control (A, ivalue)) ;
 

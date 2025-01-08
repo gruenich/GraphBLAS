@@ -1,4 +1,4 @@
-% function test69 FIXME
+function test69
 %TEST69 test GrB_assign with aliased inputs, C<C>(:,:) = accum(C(:,:),C)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.

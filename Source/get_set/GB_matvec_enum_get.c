@@ -47,31 +47,37 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
 
         case GxB_OFFSET_INTEGER_HINT : 
 
+GB_GOTCHA ;
             (*value) = A->p_control ;
             break ;
 
         case GxB_OFFSET_INTEGER_BITS : 
 
+GB_GOTCHA ;
             (*value) = (A->p_is_32) ? 32 : 64 ;
             break ;
 
         case GxB_COLINDEX_INTEGER_HINT : 
 
+GB_GOTCHA ;
             (*value) = (A->is_csc) ? A->j_control : A->i_control ;
             break ;
 
         case GxB_COLINDEX_INTEGER_BITS : 
 
+GB_GOTCHA ;
             (*value) = ((A->is_csc) ? A->j_is_32 : A->i_is_32) ? 32 : 64 ;
             break ;
 
         case GxB_ROWINDEX_INTEGER_HINT : 
 
+GB_GOTCHA ;
             (*value) = (A->is_csc) ? A->i_control : A->j_control ;
             break ;
 
         case GxB_ROWINDEX_INTEGER_BITS : 
 
+GB_GOTCHA ;
             (*value) = ((A->is_csc) ? A->i_is_32 : A->j_is_32) ? 32 : 64 ;
             break ;
 

@@ -401,6 +401,7 @@ GrB_Info GB_wait                // finish all pending computations
                     }
                     if (!my_hsame)
                     { 
+GB_GOTCHA ;
                         // tell other tasks to exit early
                         GB_ATOMIC_WRITE
                         hsame = false ;

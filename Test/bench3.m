@@ -1,5 +1,5 @@
-function test44(longtests)
-%TEST44 test qsort
+function bench3(longtests)
+%BENCH3 test and benchmark qsort and msort
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0

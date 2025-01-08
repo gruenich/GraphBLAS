@@ -315,30 +315,36 @@ GrB_Info GxB_Serialized_get_Scalar
 
             case GxB_OFFSET_INTEGER_HINT : 
 
+GB_GOTCHA ;
                 ivalue = p_control ;
                 break ;
 
             case GxB_OFFSET_INTEGER_BITS : 
+GB_GOTCHA ;
 
                 ivalue = (p_is_32) ? 32 : 64 ;
                 break ;
 
             case GxB_COLINDEX_INTEGER_HINT : 
+GB_GOTCHA ;
 
                 ivalue = (is_csc) ? j_control : i_control ;
                 break ;
 
             case GxB_COLINDEX_INTEGER_BITS : 
+GB_GOTCHA ;
 
                 ivalue = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
                 break ;
 
             case GxB_ROWINDEX_INTEGER_HINT : 
+GB_GOTCHA ;
 
                 ivalue = (is_csc) ? i_control : j_control ;
                 break ;
 
             case GxB_ROWINDEX_INTEGER_BITS : 
+GB_GOTCHA ;
 
                 ivalue = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
                 break ;
@@ -521,31 +527,37 @@ GrB_Info GxB_Serialized_get_INT32
                 break ;
 
             case GxB_OFFSET_INTEGER_HINT : 
+GB_GOTCHA ;
 
                 (*value) = p_control ;
                 break ;
 
             case GxB_OFFSET_INTEGER_BITS : 
+GB_GOTCHA ;
 
                 (*value) = (p_is_32) ? 32 : 64 ;
                 break ;
 
             case GxB_COLINDEX_INTEGER_HINT : 
+GB_GOTCHA ;
 
                 (*value) = (is_csc) ? j_control : i_control ;
                 break ;
 
             case GxB_COLINDEX_INTEGER_BITS : 
+GB_GOTCHA ;
 
                 (*value) = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
                 break ;
 
             case GxB_ROWINDEX_INTEGER_HINT : 
+GB_GOTCHA ;
 
                 (*value) = (is_csc) ? i_control : j_control ;
                 break ;
 
             case GxB_ROWINDEX_INTEGER_BITS : 
+GB_GOTCHA ;
 
                 (*value) = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
                 break ;

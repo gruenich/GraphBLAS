@@ -41,6 +41,7 @@ static inline bool GB_determine_p_is_32
 {
     if (p_is_32 && nvals_max >= UINT32_MAX)
     { 
+// GB_GOTCHA ;
         // A->p is requested too small; make it 64-bit
         p_is_32 = false ;
     }
@@ -198,6 +199,7 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     if (!GB_valid_pji_is_32 (A->p_is_32, A->j_is_32, A->i_is_32,
         A->nvals, A->vlen, A->vdim))
     { 
+// GB_GOTCHA ;
         return (GrB_INVALID_OBJECT) ;
     }
 

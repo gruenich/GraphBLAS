@@ -512,6 +512,7 @@ GrB_Info GB_assign_prep
                         GB_UNJUMBLE (C) ;
                         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
                         { 
+GB_GOTCHA ;
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GBURBLE ("C(i,:)=zombie ") ;
@@ -548,6 +549,7 @@ GrB_Info GB_assign_prep
                     { 
                         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
                         { 
+GB_GOTCHA ;
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GBURBLE ("C(:,j)=zombie ") ;
@@ -604,6 +606,7 @@ GrB_Info GB_assign_prep
                         GBURBLE ("C(I,J)=zombie ") ;
                         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
                         { 
+GB_GOTCHA ;
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GB_OK (GB_subassign_zombie (C,

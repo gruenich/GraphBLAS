@@ -36,6 +36,8 @@ end
 
 if (nargin >= 6)
     A.is_csc = is_csc ;
+else
+    is_csc = true ;
 end
 
 if (nargin >= 7 && ~isempty (is_hyper))
@@ -49,7 +51,12 @@ end
 if (isinf (d))
     A.matrix = scale * sparse (rand (m, n)) ;
 else
-    A.matrix = scale * sprandn (m, n, d) ;
+    A1 = sprandn (m, n, d) ;
+    A.matrix = scale * A1 ;
+    [i,j,x] = find (A1, 1, 'first') ;
+    if (~isempty (x))
+        A = GB_spec_random_32 (A, x) ;
+    end
 end
 
 if (test_contains (type, 'complex'))

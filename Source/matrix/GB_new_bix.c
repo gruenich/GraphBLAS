@@ -63,6 +63,7 @@ GrB_Info GB_new_bix             // create a new matrix, incl. A->b, A->i, A->x
     if ((!(sparsity == GxB_FULL || sparsity == GxB_BITMAP)) &&
         !GB_valid_pji_is_32 (p_is_32, j_is_32, i_is_32, nzmax, vlen, vdim))
     { 
+GB_GOTCHA ;
         // sparse/hyper matrix is too large for its requested integer settings
         return (GrB_INVALID_VALUE) ;
     }

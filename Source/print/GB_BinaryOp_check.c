@@ -85,6 +85,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
     else if (op_is_second && op->ztype->code == GB_UDT_code)
     { 
+GB_GOTCHA ;
         // SECOND_UDT binary operator created by GB_wait or GB_builder
         GBPR0 ("(generated 2nd): z=%s(x,y)\n", op_name) ;
     }

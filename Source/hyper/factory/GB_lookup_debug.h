@@ -73,13 +73,13 @@ static inline bool GB_lookup_debug  // find j = Ah [k]
     if (Ap_is_32)
     {
         if (Aj_is_32)
-        { 
+        {
             // Ap is 32-bit; Ah is 32 bit
             return (GB_lookup_debug_32_32 (A_is_hyper, Ah, Ap, avlen,
                 pleft, pright, j, pstart, pend)) ;
         }
         else
-        { 
+        {
             // Ap is 32-bit; Ah is 64-bit
             return (GB_lookup_debug_32_64 (A_is_hyper, Ah, Ap, avlen,
                 pleft, pright, j, pstart, pend)) ;
@@ -88,13 +88,13 @@ static inline bool GB_lookup_debug  // find j = Ah [k]
     else
     {
         if (Aj_is_32)
-        { 
+        {
             // Ap is 64-bit; Ah is 32-bit
             return (GB_lookup_debug_64_32 (A_is_hyper, Ah, Ap, avlen,
                 pleft, pright, j, pstart, pend)) ;
         }
         else
-        { 
+        {
             // Ap is 64-bit; Ah is 64-bit
             return (GB_lookup_debug_64_64 (A_is_hyper, Ah, Ap, avlen,
                 pleft, pright, j, pstart, pend)) ;

@@ -90,6 +90,7 @@ void GB_qsort_3_32_32_64 // sort A of size 3-by-n, A0: 32bit, A1: 32bit, A2: 64
     const int64_t n
 )
 { 
+GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -150,6 +151,7 @@ void GB_qsort_3_32_64_64 // sort A of size 3-by-n, A0: 32bit, A1: 64, A2: 64
     const int64_t n
 )
 { 
+GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -210,6 +212,7 @@ void GB_qsort_3_64_32_64 // sort A of size 3-by-n, A0: 64bit, A1: 32bit, A2: 64
     const int64_t n
 )
 { 
+GB_GOTCHA ;
     uint64_t seed = n ;
     GB_quicksort (GB_arg (A), n, &seed) ;
 }
@@ -300,6 +303,7 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             }
             else
             { 
+GB_GOTCHA ;
                 // A0: uint32_t, A1: uint32_t, A2: uint64_t
                 GB_qsort_3_32_32_64 (A_0, A_1, A_2, n) ;
             }
@@ -313,6 +317,7 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             }
             else
             { 
+GB_GOTCHA ;
                 // A0: uint32_t, A1: uint64_t, A2: uint64_t
                 GB_qsort_3_32_64_64 (A_0, A_1, A_2, n) ;
             }
@@ -329,6 +334,7 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
             }
             else
             { 
+GB_GOTCHA ;
                 // A0: uint64_t, A1: uint32_t, A2: uint64_t
                 GB_qsort_3_64_32_64 (A_0, A_1, A_2, n) ;
             }
