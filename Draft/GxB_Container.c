@@ -1,11 +1,16 @@
 //------------------------------------------------------------------------------
-// GxB_Container: non-opaque, unpacked content of a GrB_Matrix and GrB_Vector
+// GxB_Container: NON-OPAQUE, unpacked content of a GrB_Matrix and GrB_Vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+
+// The Container is NON-opaque, but the GrB_* objects it contains are still
+// themselves opaque.  So this definition of this struct is given to the
+// user.  Just not the contents of a GrB_Vector or GrB_Matrix, which remain
+// opaque.
 
 typedef struct GxB_Container_struct *GxB_Container ;
 
@@ -189,7 +194,7 @@ uint64_t nheld ;            // # of entries A->x and A->b can hold; equal to
 uint64_t u64_future [10] ;  // for future expansion.
 
 // 16 words of uint32_t:
-int32_t format ;            // GxB_SPARSE, GxB_SPARSE, GxB_BITMAP, or GxB_FULL
+int32_t format ;   // GxB_SPARSE, GxB_HYPERSPARSE, GxB_BITMAP, or GxB_FULL
 int32_t orientation ;       // GrB_ROWMAJOR or GrB_COLMAJOR
 int32_t i32_future [14] ;   // for future expansion.
 
@@ -293,7 +298,7 @@ GrB_Matrix Y ;      // Y is a matrix that represents the inverse of A->h.
                     // hypersparse matrices need the A->Y matrix.  It is
                     // constructed whenever it is needed.
 
-GrB_Vector matrix_future [15] ;     // for future expansion
+GrB_Matrix matrix_future [15] ;     // for future expansion
 
 //------------------------------------------------------------------------------
 // iso and jumbled matrices
@@ -326,6 +331,17 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 // to flag shallow components
 //------------------------------------------------------------------------------
 
+// These flags may be useful for the SparseBLAS, where the end user wants to
+// KEEP ownership of their C arrays, but want me to put a SparseBLAS /GraphBLAS
+// wrapper around their data.  The idea here is that the GrB_Vector 
+// Container->x may contain "shallow" data, where the numerical values are
+// given to GraphBLAS to use, but GraphBLAS does not own them.  GraphBLAS
+// must treat that component as read-only, and it must not free it if
+// the GrB_Matrix is freed.
+
+// I haven't worked out all the details here.  It might be better to attach
+// these bools to the individal GrB_Vectors themselves.
+
 bool p_shallow ;
 bool h_shallow ;
 bool b_shallow ;
@@ -345,6 +361,8 @@ void * void_future [16] ;
 //------------------------------------------------------------------------------
 // iterating through a matrix
 //------------------------------------------------------------------------------
+
+// I need to clean this up since the following assumes all-64-bit integers.
 
 // The matrix can be held in 8 formats: (hypersparse, sparse, bitmap, full) x
 // (CSR, CSC).  Each of these can also be iso.  The comments below
