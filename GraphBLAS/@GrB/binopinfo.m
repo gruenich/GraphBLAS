@@ -95,12 +95,12 @@ function binopinfo (op, optype)
 % atan2, hypot, fmod, remainder, copysign, ldxep (also called 'pow2').
 % All produce the same type as the input, on output.
 %
-%   atan2(x,y)     arc tangent; see 'help atan2'
+%   atan2(x,y)     arctan(x/y); arc tangent; see 'help atan2'
 %   hypot(x,y)     sqrt(x^2+y^0); see 'help hypot'
 %   fmod(x,y)      floating-point remainder of x/y
 %   remainder(x,y) remainder of x/y, rounded to nearest integer
 %   copysign(x,y)  abs(x)*sign(y)
-%   ldexp(x,y)     same as pow2(x,y) in MATLAB; see 'help pow2'
+%   ldexp(x,y)     x*2^y, same as pow2(x,y) in MATLAB; see 'help pow2'
 %
 % z = cmplx(x,y) = x+sqrt(-1)*y can be computed for x and y as single and
 % double; z is single complex or double complex, respectively.
