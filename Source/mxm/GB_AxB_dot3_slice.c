@@ -89,19 +89,6 @@ GrB_Info GB_AxB_dot3_slice
     const int64_t cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
 
-//  if (Cp_is_32)
-//  {
-//      const uint32_t *Cp32 = C->p ;
-//      for (int kk = 0 ; kk <= C->nvec ; kk++) printf ("Cp [%d] %d\n",
-//          kk, Cp32 [kk]) ;
-//  }
-//  else
-//  {
-//      const uint64_t *Cp64 = C->p ;
-//      for (int kk = 0 ; kk <= C->nvec ; kk++) printf ("Cp [%d] %ld\n",
-//          kk, Cp64 [kk]) ;
-//  }
-
     //--------------------------------------------------------------------------
     // compute the cumulative sum of the work
     //--------------------------------------------------------------------------
@@ -109,8 +96,6 @@ GrB_Info GB_AxB_dot3_slice
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
     GB_cumsum_float (Cwork, cnz, nthreads, Werk) ;
     double total_work = (double) Cwork [cnz] ;
-
-// printf ("tot work %g\n", total_work) ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
@@ -124,8 +109,6 @@ GrB_Info GB_AxB_dot3_slice
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;
     GB_REALLOC_TASK_WORK (TaskList, ntasks0, max_ntasks) ;
-
-// printf (" ntasks0 %d cnz %ld\n", ntasks0, cnz) ;
 
     //--------------------------------------------------------------------------
     // check for quick return for a single task

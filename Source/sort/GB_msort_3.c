@@ -223,7 +223,7 @@ GrB_Info GB_msort_3     // sort array A of size 3-by-n
             }
             else
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // msort 3_32_32_64
                 return (GB_msort_3_32_32_64 (A_0, A_1, A_2, n, nthreads)) ;
             }
         }
@@ -235,7 +235,7 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // msort 3_32_64_64
                 return (GB_msort_3_32_64_64 (A_0, A_1, A_2, n, nthreads)) ;
             }
         }
@@ -250,7 +250,7 @@ GB_GOTCHA ;
             }
             else
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // msort 3_64_32_64
                 return (GB_msort_3_64_32_64 (A_0, A_1, A_2, n, nthreads)) ;
             }
         }

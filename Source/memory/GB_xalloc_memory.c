@@ -23,7 +23,7 @@ void *GB_xalloc_memory      // return the newly-allocated space
     void *p ;
     n = GB_IMAX (n, 1) ;
     #ifdef GB_MEMDUMP
-    printf ("xalloc : ") ;
+    printf ("xalloc : ") ;  // MEMDUMP
     #endif
     if (iso)
     { 

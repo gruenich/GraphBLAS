@@ -349,7 +349,7 @@ GrB_Info GB_wait                // finish all pending computations
     if (GB_IS_HYPERSPARSE (A) && GB_IS_HYPERSPARSE (S) && A->Y != NULL
         && S->Y == NULL && !A->Y_shallow && !GB_is_shallow (A->Y)
         && Aj_is_32 == S->j_is_32 && S->nvec == anvec)
-    {
+    { 
         // A and S are both hypersparse, and the old A->Y exists and is not
         // shallow.  Check if S->h and A->h are identical.  If so, remove A->Y
         // from A and save it.  Then after the transplant of S into A, below,
@@ -400,8 +400,7 @@ GrB_Info GB_wait                // finish all pending computations
                             (kend - kstart) * sizeof (uint64_t)) == 0) ;
                     }
                     if (!my_hsame)
-                    { 
-GB_GOTCHA ;
+                    {
                         // tell other tasks to exit early
                         GB_ATOMIC_WRITE
                         hsame = false ;

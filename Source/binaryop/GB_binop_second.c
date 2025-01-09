@@ -55,12 +55,20 @@ GrB_BinaryOp GB_binop_second    // return SECOND operator, or NULL on error
             #ifdef GB_DEBUG
             GrB_Info info =
             #endif
-            GB_binop_new (op, NULL, // op->binop_function is NULL for SECOND_UDT
+            GB_binop_new (op, NULL, // op->binop_function NULL for 2nd
                 type, type, type,   // type is user-defined
                 type->name,         // same name as type
                 NULL,               // no op->defn for the SECOND_UDT operator
                 GB_SECOND_binop_code) ; // using a built-in opcode
             ASSERT (info == GrB_SUCCESS) ;
+            if (GB_Global_burble_get ( ))
+            { 
+                #ifdef GB_DEBUG
+                info =
+                #endif
+                GB_BinaryOp_check (op, "2nd_UDT", GxB_COMPLETE, NULL) ;
+                ASSERT (info == GrB_SUCCESS) ;
+            }
             ASSERT_BINARYOP_OK (op, "2nd_UDT", GB0) ;
             return (op) ;
         }

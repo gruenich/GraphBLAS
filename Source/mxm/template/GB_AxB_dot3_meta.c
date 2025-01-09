@@ -163,7 +163,6 @@
 
     #ifdef GB_JIT_KERNEL
     {
-// printf ("JIT dot3\n") ;
         GB_DECLARE_TERMINAL_CONST (zterminal) ;
         #define GB_META16
         #include "include/GB_meta16_definitions.h"
@@ -171,7 +170,6 @@
     }
     #else
     {
-// printf ("factory\n") ;
         const bool M_is_sparse = GB_IS_SPARSE (M) ;
         ASSERT (M_is_sparse || GB_IS_HYPERSPARSE (M)) ;
         if (M_is_sparse && Mask_struct && A_is_sparse && B_is_sparse)

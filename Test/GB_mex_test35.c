@@ -237,6 +237,7 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
     ERR (GxB_Serialized_get_INT32_(blob, &i, 0, blob_size)) ;
     ERR (GxB_Serialized_get_SIZE_(blob, &size, 0, blob_size)) ;
+    ERR (GxB_Serialized_get_INT32_(blob, &i, GxB_JIT_C_NAME, blob_size)) ;
 
     fvalue = -1 ;
     OK (GxB_Serialized_get_Scalar_(blob, s_fp32, GxB_BITMAP_SWITCH,
@@ -399,6 +400,10 @@ void mexFunction
     OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
     printf ("name [%s]\n", name) ;
     CHECK (MATCH (name, "A hyper")) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Serialized_get_String_(blob, name, GrB_EL_TYPE_CODE, blob_size)) ;
+    ERR (GxB_Serialized_get_SIZE_(blob, &size, GrB_EL_TYPE_CODE, blob_size)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

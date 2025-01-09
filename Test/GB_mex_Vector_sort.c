@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 
 #define USAGE \
-    "[C,P] = GB_mex_Vector_sort (op, A, desc)"
+    "[C,P] = GB_mex_Vector_sort (op, A, desc, ptype)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -36,7 +36,7 @@ void mexFunction
     GrB_Descriptor desc = NULL ;
 
     // check inputs
-    if (nargout > 2 || nargin < 2 || nargin > 3)
+    if (nargout > 2 || nargin < 2 || nargin > 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -66,6 +66,9 @@ void mexFunction
         mexErrMsgTxt ("desc failed") ;
     }
 
+    // get ptype; defaults to GrB_INT64
+    GrB_Type ptype = GB_mx_string_to_Type (PARGIN (3), GrB_INT64) ;
+
     // create C and P
     uint64_t nrows, ncols ;
     GrB_Matrix_nrows (&nrows, A) ;
@@ -89,7 +92,7 @@ void mexFunction
         GrB_Vector_new (&C, A->type, nrows) ;           \
         if (nargout > 1)                                \
         {                                               \
-            GrB_Vector_new (&P, GrB_INT64, nrows) ;     \
+            GrB_Vector_new (&P, ptype, nrows) ;         \
         }
 
     // [C,P] = sort(op,A,desc)

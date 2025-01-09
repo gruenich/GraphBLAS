@@ -178,7 +178,7 @@ GrB_Info GB_bitmap_subref       // C = A(I,J): either symbolic or numeric
         }
         else
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // C=A(I,J) symbolic (64-bit) with A and C full
             // C=A(I,J) symbolic (64-bit) with A and C full
             uint64_t *restrict Cx = (uint64_t *) C->x ;
             #define GB_NO_CNVALS

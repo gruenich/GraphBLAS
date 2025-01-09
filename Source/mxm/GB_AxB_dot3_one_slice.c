@@ -264,7 +264,6 @@ GrB_Info GB_AxB_dot3_one_slice
     }
 
     ASSERT (ntasks <= max_ntasks) ;
-// printf ("dot3 one slice: ntasks %d\n", ntasks) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

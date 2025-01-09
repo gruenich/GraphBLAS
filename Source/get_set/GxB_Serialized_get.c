@@ -450,7 +450,7 @@ GrB_Info GxB_Serialized_get_String
     int field,
     size_t blob_size
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -473,12 +473,12 @@ GrB_Info GxB_Serialized_get_String
         &is_double, &is_char, blob_size)) ;
 
     if (is_char)
-    {
+    { 
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
     else
-    {
+    { 
         return (GrB_INVALID_VALUE) ;
     }
 }
@@ -494,7 +494,7 @@ GrB_Info GxB_Serialized_get_INT32
     int field,
     size_t blob_size
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -521,7 +521,7 @@ GrB_Info GxB_Serialized_get_INT32
         return (GrB_INVALID_VALUE) ;
     }
     else
-    {
+    { 
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -538,7 +538,7 @@ GrB_Info GxB_Serialized_get_SIZE
     int field,
     size_t blob_size
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -562,13 +562,13 @@ GrB_Info GxB_Serialized_get_SIZE
         &is_double, &is_char, blob_size)) ;
 
     if (is_char)
-    {
+    { 
         (*value) = strlen (cvalue) + 1 ;
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
     else
-    {
+    { 
         return (GrB_INVALID_VALUE) ;
     }
 }

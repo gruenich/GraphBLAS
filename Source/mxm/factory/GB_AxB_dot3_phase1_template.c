@@ -133,7 +133,6 @@
                         const int64_t pA_end = GB_IGET (Ap, i+1) ;
                         const int64_t ainz = pA_end - pA ;
                         work += GB_IMIN (ainz, bjnz) ;
-//                  printf ("Cwork %ld = %g,  C(%ld,%ld)\n", pM, work, i,j);
                         #else
                         // A is bitmap or full
                         work += bjnz ;

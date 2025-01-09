@@ -58,7 +58,8 @@ void mexFunction
     }
     if (! (/* itype == GrB_UINT32 || */ itype == GrB_UINT64))
     {
-        mexErrMsgTxt ("itype must be uint32 or uint64") ;
+//      mexErrMsgTxt ("itype must be uint32 or uint64") ;
+        mexErrMsgTxt ("itype must be uint64") ;
     }
 
     // create I

@@ -43,7 +43,6 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
 
     if (A == NULL || A->magic != GB_MAGIC)
     { 
-GB_GOTCHA ;
         // nothing to convert 
         return (GrB_SUCCESS) ;
     }
@@ -93,7 +92,7 @@ GB_GOTCHA ;
     // simply remove A->Y if it is entirely shallow
     if (A->Y_shallow)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // A->Y_shallow
         A->Y = NULL ;
         A->Y_shallow = false ;
     }
@@ -167,7 +166,7 @@ GB_GOTCHA ;
         }
         if (Y != NULL)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // convert Y
             // allocate new space for Y->[phi]; matches A->j_is_32
             Yp_new = GB_MALLOC_MEMORY (yplen+1, jsize_new, &Yp_new_size) ;
             Yi_new = GB_MALLOC_MEMORY (ynz,     jsize_new, &Yi_new_size) ;
@@ -176,7 +175,6 @@ GB_GOTCHA ;
         }
         if (has_Pending_j)
         { 
-GB_GOTCHA ;
             // allocate new space for Pending->j; matches A->j_is_32
             Pending_j_new = GB_MALLOC_MEMORY (nmax_pending, jsize_new,
                 &Pending_j_new_size) ;
@@ -258,7 +256,6 @@ GB_GOTCHA ;
 
         if (has_Pending_i)
         { 
-GB_GOTCHA ;
             GB_cast_int (Pending_i_new, ucode_new, Pending->i, ucode, npending,
                 nthreads_max) ;
             GB_FREE (&(Pending->i), Pending->i_size) ;
@@ -301,7 +298,7 @@ GB_GOTCHA ;
 
         if (Y != NULL)
         { 
-GB_GOTCHA ;
+GB_GOTCHA ; // convert Y
             // A is hypersparse, and the integers of Y match A->i_is_32
             ASSERT (A_is_hyper) ;
             ASSERT (Y->p_is_32 == i_is_32) ;
@@ -314,7 +311,7 @@ GB_GOTCHA ;
             GB_cast_int (Yp_new, ucode_new, Y->p, ucode, yplen+1, nthreads_max);
             if (!Y->p_shallow)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // convert Y->p
                 GB_FREE (&(Y->p), Y->p_size) ;
             }
             Y->p = Ap_new ;
@@ -329,7 +326,7 @@ GB_GOTCHA ;
             GB_cast_int (Yi_new, ucode_new, Y->i, ucode, ynz, nthreads_max) ;
             if (!Y->i_shallow)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // convert Y->i
                 GB_FREE (&(Y->i), Y->i_size) ;
             }
             Y->i = Yi_new ;
@@ -344,7 +341,7 @@ GB_GOTCHA ;
             GB_cast_int (Yx_new, ucode_new, Y->x, ucode, ynz, nthreads_max) ;
             if (!Y->x_shallow)
             { 
-GB_GOTCHA ;
+GB_GOTCHA ; // convert Y->x
                 GB_FREE (&(Y->x), Y->x_size) ;
             }
             Y->x = Yx_new ;
@@ -359,7 +356,6 @@ GB_GOTCHA ;
 
         if (has_Pending_j)
         { 
-GB_GOTCHA ;
             GB_cast_int (Pending_j_new, ucode_new, Pending->j, ucode, npending,
                 nthreads_max) ;
             GB_FREE (&(Pending->j), Pending->j_size) ;

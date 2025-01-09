@@ -695,7 +695,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             int64_t col = A->is_csc ? j : i ;
             if (i < 0 || i >= A->vlen)
             { 
-GB_GOTCHA ;
                 GBPR0 ("  index (" GBd "," GBd ") out of range\n",
                     row+offset, col+offset) ;
                 return (GrB_INVALID_OBJECT) ;

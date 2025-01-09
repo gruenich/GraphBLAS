@@ -30,9 +30,6 @@
         int64_t pC_last  = TaskList [tid].pC_end ;
         int64_t task_nzombies = 0 ;     // # of zombies found by this task
 
-// printf ("task %d, kifrst %ld klask %ld, pc first %ld pc last %ld\n",
-//     tid, kfirst, klast, pC_first, pC_last) ;
-
         //----------------------------------------------------------------------
         // compute all vectors in this task
         //----------------------------------------------------------------------
@@ -54,7 +51,6 @@
 
             int64_t pC_start = GB_IGET (Cp, k) ;
             int64_t pC_end   = GB_IGET (Cp, k+1) ;
-// printf ("\n--------------- k %ld pC %ld %ld\n", k, pC_start, pC_end) ;
             if (k == kfirst)
             { 
                 // First vector for task; may only be partially owned.
@@ -70,7 +66,6 @@
             { 
                 // task completely owns this vector C(:,k).
             }
-// printf ("\n   k %ld pC %ld %ld\n", k, pC_start, pC_end) ;
 
             //------------------------------------------------------------------
             // get B(:,j)
@@ -93,7 +88,6 @@
 
             #if (GB_B_IS_SPARSE || GB_B_IS_HYPER)
                 const int64_t bjnz = pB_end - pB_start ;
-// printf ("do %ld: %ld\n", j, bjnz) ;
                 if (bjnz == 0)
                 {
                     // no work to do if B(:,j) is empty, except for zombies
@@ -118,8 +112,6 @@
             // C(:,j)<M(:,j)> = A(:,i)'*B(:,j)
             //------------------------------------------------------------------
 
-// printf ("pC %ld %ld\n", pC_start, pC_end) ;
-
             for (int64_t pC = pC_start ; pC < pC_end ; pC++)
             {
 
@@ -132,13 +124,11 @@
 
                 // get the value of M(i,j)
                 int64_t i = GB_IGET (Mi, pC) ;
-// printf ("got %ld: \n", i) ;
                 #if !defined ( GB_MASK_SPARSE_STRUCTURAL_AND_NOT_COMPLEMENTED )
                 // if M is structural, no need to check its values
                 if (GB_MCAST (Mx, pC, msize))
                 #endif
                 { 
-// printf ("do %ld: \n", i) ;
 
                     //----------------------------------------------------------
                     // the mask allows C(i,j) to be computed
@@ -163,7 +153,6 @@
                     const int64_t pA = i * vlen ;
                     #endif
                     { 
-// printf ("dot3 for (%ld,%ld)\n", i, j) ;
                         // C(i,j) = A(:,i)'*B(:,j)
                         #include "template/GB_AxB_dot_cij.c"
                     }

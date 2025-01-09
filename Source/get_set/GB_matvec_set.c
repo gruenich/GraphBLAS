@@ -50,7 +50,6 @@ static GrB_Info GB_set_p_control
     int ivalue
 )
 {
-    printf ("set p_control to %d, A->p_is_32 %d\n", ivalue, A->p_is_32) ;
     GrB_Info info ;
     if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
     { 
@@ -81,7 +80,6 @@ static GrB_Info GB_set_j_control
 )
 {
     GrB_Info info ;
-    printf ("set j_control to %d, A->j_is_32 is %d\n", ivalue, A->j_is_32) ;
     if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
     { 
         return (GrB_INVALID_VALUE) ;
@@ -110,7 +108,6 @@ static GrB_Info GB_set_i_control
     int ivalue
 )
 {
-    printf ("set i_control to %d, A->i_is_32 is %d\n", ivalue, A->i_is_32) ;
     GrB_Info info ;
     if (!(ivalue == 0 || ivalue == 32 || ivalue == 64))
     { 
@@ -124,7 +121,6 @@ static GrB_Info GB_set_i_control
     else if (ivalue == 64 && A->i_is_32)
     { 
         // A->i is currently 32-bit; convert to 64-bit
-        printf ("A->i: converting 32 to 64\n") ;
         GB_OK (GB_convert_int (A, A->p_is_32, A->j_is_32, false, true)) ;
     }
     A->i_control = ivalue ;

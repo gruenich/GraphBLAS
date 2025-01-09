@@ -510,9 +510,9 @@ GrB_Info GB_assign_prep
                     else
                     { 
                         GB_UNJUMBLE (C) ;
+                        // ensure C is sparse; wait(C) may change it
                         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
-                        { 
-GB_GOTCHA ;
+                        {
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GBURBLE ("C(i,:)=zombie ") ;
@@ -547,9 +547,9 @@ GB_GOTCHA ;
                     }
                     else
                     { 
+                        // ensure C is sparse; wait(C) may change it
                         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
-                        { 
-GB_GOTCHA ;
+                        {
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GBURBLE ("C(:,j)=zombie ") ;
@@ -604,9 +604,9 @@ GB_GOTCHA ;
                     { 
                         // Method 00: C(I,J) = empty, using S
                         GBURBLE ("C(I,J)=zombie ") ;
+                        // ensure C is sparse; wait(C) may change it
                         if (GB_IS_BITMAP (C) || GB_IS_FULL (C))
-                        { 
-GB_GOTCHA ;
+                        {
                             GB_OK (GB_convert_any_to_sparse (C, Werk)) ;
                         }
                         GB_OK (GB_subassign_zombie (C,

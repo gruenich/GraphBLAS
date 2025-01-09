@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
+#define GB_DEBUG
 
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"
@@ -364,19 +365,11 @@ GrB_Info GB_sort
         int64_t nmax = -1 ;
         switch (ptype->code)
         {
-            case GB_INT32_code  : nmax =  INT32_MAX ;
-GB_GOTCHA ;
-                break ;
-            case GB_UINT32_code : nmax = UINT32_MAX ;
-GB_GOTCHA ;
-                break ;
+            case GB_INT32_code  : nmax =  INT32_MAX ; break ;
+            case GB_UINT32_code : nmax = UINT32_MAX ; break ;
             case GB_INT64_code  : nmax =  INT64_MAX ; break ;
-            case GB_UINT64_code : nmax =  INT64_MAX ;
-GB_GOTCHA ;
-                break ;
-            default             : nmax = -1         ;
-GB_GOTCHA ;
-                break ;
+            case GB_UINT64_code : nmax =  INT64_MAX ; break ;
+            default             : nmax = -1         ; break ;
         }
         ptype_ok = (n <= nmax) ;
     }
@@ -408,7 +401,6 @@ GB_GOTCHA ;
     // free any prior content of C and P
     if (A == P)
     { 
-GB_GOTCHA ;
         // A and P cannot be aliased
         return (GrB_NOT_IMPLEMENTED) ;
     }

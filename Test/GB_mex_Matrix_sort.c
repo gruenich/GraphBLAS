@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 
 #define USAGE \
-    "[C,P] = GB_mex_Matrix_sort (op, A, desc, arg1)"
+    "[C,P] = GB_mex_Matrix_sort (op, A, desc, arg1, ptype)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -40,7 +40,7 @@ void mexFunction
     GrB_BinaryOp lt = NULL ;
 
     // check inputs
-    if (nargout > 2 || nargin < 2 || nargin > 4)
+    if (nargout > 2 || nargin < 2 || nargin > 5)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -72,7 +72,6 @@ void mexFunction
 
     // get arg1
     int GET_SCALAR (3, int, arg1, false) ;
-
     if (arg1 < 0 && op == GrB_LT_FP64)
     { 
         // use a user-defined "<" op instead of GrB_LT_FP64
@@ -81,6 +80,9 @@ void mexFunction
             my_lt_double, GrB_BOOL, GrB_FP64, GrB_FP64) ;
         op = lt ;
     }
+
+    // get ptype; defaults to GrB_INT64
+    GrB_Type ptype = GB_mx_string_to_Type (PARGIN (4), GrB_INT64) ;
 
     // create C and P
     uint64_t nrows, ncols ;
@@ -98,7 +100,7 @@ void mexFunction
             #undef  FREE_DEEP_COPY
             #define FREE_DEEP_COPY GrB_Matrix_free (&P) ;
             #undef  GET_DEEP_COPY
-            #define GET_DEEP_COPY  GrB_Matrix_new (&P, GrB_INT64, nrows, ncols);
+            #define GET_DEEP_COPY  GrB_Matrix_new (&P, ptype, nrows, ncols) ;
             GET_DEEP_COPY ;
             METHOD (GxB_Matrix_sort (NULL, P, op, A, desc)) ;
         }
@@ -123,7 +125,7 @@ void mexFunction
         #undef  GET_DEEP_COPY
         #define GET_DEEP_COPY   \
             GrB_Matrix_new (&C, A->type, nrows, ncols) ;    \
-            GrB_Matrix_new (&P, GrB_INT64, nrows, ncols) ;
+            GrB_Matrix_new (&P, ptype, nrows, ncols) ;
         GET_DEEP_COPY ;
         METHOD (GxB_Matrix_sort (C, P, op, A, desc)) ;
     }

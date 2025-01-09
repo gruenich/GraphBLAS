@@ -41,7 +41,6 @@ static inline bool GB_determine_p_is_32
 {
     if (p_is_32 && nvals_max >= UINT32_MAX)
     { 
-// GB_GOTCHA ;
         // A->p is requested too small; make it 64-bit
         p_is_32 = false ;
     }
@@ -95,12 +94,12 @@ static inline int8_t GB_pji_control
 )
 {
     if (matrix_pji_control == 0)
-    {
+    { 
         // default: matrix control defers to the global control
         return (global_pji_control) ;
     }
     else
-    {
+    { 
         // use the matrix-specific cisontrol
         return (matrix_pji_control) ;
     }
@@ -118,7 +117,7 @@ static inline bool GB_valid_p_is_32
     bool p_is_32,   // if true, A->p is 32-bit; else 64-bit
     int64_t nvals   // # of entries in the matrix
 )
-{
+{ 
     // matrix is valid if A->p is 64 bit, or nvals is small enough
     return (!p_is_32 || nvals < UINT32_MAX) ;
 }
@@ -128,7 +127,7 @@ static inline bool GB_valid_j_is_32
     bool j_is_32,   // if true, A->h and A->Y are 32-bit; else 64-bit
     int64_t vdim    // matrix dimension (# of vectors)
 )
-{
+{ 
     // matrix is valid if A->h and A->Y are 64 bit, or vdim is small enough
     return (!j_is_32 || vdim <= GB_NMAX32) ;
 }
@@ -138,7 +137,7 @@ static inline bool GB_valid_i_is_32
     bool i_is_32,   // if true, A->i is 32-bit; else 64-bit
     int64_t vlen    // matrix dimension (length of each vector)
 )
-{
+{ 
     // matrix is valid if A->i is 64 bit, or vlen is small enough
     return (!i_is_32 || vlen <= GB_NMAX32) ;
 }
@@ -152,7 +151,7 @@ static inline bool GB_valid_pji_is_32
     int64_t vlen,   // matrix dimensions
     int64_t vdim
 )
-{
+{ 
     // matrix is valid if A->p is 64 bit, or nvals is small enough, and
     // if A->i is 64 bit, or the dimensions are small enough.
     return (GB_valid_p_is_32 (p_is_32, nvals) &&
@@ -180,18 +179,18 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     if (A->magic != GB_MAGIC)
     { 
         if (A->magic == GB_MAGIC2)
-        {
+        { 
             return (GrB_INVALID_OBJECT) ;
         }
         else
-        {
+        { 
             return (GrB_UNINITIALIZED_OBJECT) ;
         }
     }
 
     // a full or bitmap matrix has no integers
     if (A->p == NULL && A->h == NULL && A->i == NULL && A->Y == NULL)
-    {
+    { 
         return (GrB_SUCCESS) ;
     }
 
@@ -199,7 +198,6 @@ static inline GrB_Info GB_valid_matrix // returns GrB_SUCCESS, or error
     if (!GB_valid_pji_is_32 (A->p_is_32, A->j_is_32, A->i_is_32,
         A->nvals, A->vlen, A->vdim))
     { 
-// GB_GOTCHA ;
         return (GrB_INVALID_OBJECT) ;
     }
 

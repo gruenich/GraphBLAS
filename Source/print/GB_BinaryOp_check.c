@@ -74,7 +74,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
         GBPR0 ("(user-defined): z=%s(x,y)\n", op_name) ;
     }
     else if (opcode == GB_USER_idxbinop_code)
-    {
+    { 
         GBPR0 ("(user-defined index):\n    z=%s(x,ix,iy,y,iy,yj,theta)\n",
             op_name) ;
     }
@@ -85,7 +85,6 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     }
     else if (op_is_second && op->ztype->code == GB_UDT_code)
     { 
-GB_GOTCHA ;
         // SECOND_UDT binary operator created by GB_wait or GB_builder
         GBPR0 ("(generated 2nd): z=%s(x,y)\n", op_name) ;
     }

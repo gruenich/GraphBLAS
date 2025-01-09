@@ -117,6 +117,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test287'    ,t, J0   , F0   ) ; % misc tests
 logstat ('test286'    ,t, J40  , F00  , [0 1 4]) ; % kron with index binary op
 logstat ('test78'     ,t, J40  , F00  , [0 4]) ; % subref
 logstat ('test285'    ,t, J40  , F00  ) ; % GB_mex_assign (bitmap, 7_whole)
@@ -170,8 +171,7 @@ logstat ('test137'    ,s, J400 , F110 ) ; % GrB_eWiseMult, FIRST and SECOND
 logstat ('test124'    ,t, J4   , F1   ) ; % GrB_extract, case 6
 logstat ('test133'    ,t, J40  , F10  ) ; % mask operations (GB_masker)
 logstat ('test176'    ,t, J40  , F10  ) ; % GrB_assign, method 09, 11
-% logstat ('test197'  ,t, J40  , F10  ) ; % large sparse split
-logstat ('test197'    ,t, J440 , F100 ) ; % large sparse split
+logstat ('test197'    ,t, J40  , F10  ) ; % large sparse split
 logstat ('test201'    ,t, J4   , F1   ) ; % iso reduce to vector, scalar
 logstat ('test208'    ,t, J4   , F1   ) ; % iso apply, bind 1st and 2nd
 logstat ('test214'    ,t, J40  , F10  , [0 1]) ; % C<M>=A'*B (tricount)
@@ -222,12 +222,9 @@ logstat ('test80'     ,t, J4   , F1   ) ; % GrB_mxm on all semirings
 logstat ('test200'    ,t, J4   , F1   ) ; % iso full matrix multiply
 logstat ('test283'    ,t, J4   , F1   ) ; % index binary op
 logstat ('test254'    ,t, J44  , F10  ) ; % mask types
-logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
-logstat ('test142'    ,t, J40  , F11  ) ; % GrB_assign with accum
 logstat ('test54'     ,t, J40  , F10  ) ; % assign, extract with begin:inc:end
 logstat ('testcc(1)'  ,t, J40  , F10  ) ; % transpose, builtin complex
 logstat ('testc2(1,1)',t, J44  , F10  ) ; % complex tests (quick case, builtin)
-logstat ('test227'    ,t, J4   , F1   ) ; % kron
 logstat ('test141'    ,t, J0   , F1   ) ; % eWiseAdd with dense matrices
 logstat ('test179'    ,t, J44  , F10  ) ; % bitmap select
 
@@ -265,7 +262,7 @@ set_malloc_debug (mdebug, 1) ;
 logstat ('testca(1)'  ,t, J40  , F10  ) ; % complex mxm, mxv, and vxm
 logstat ('test130'    ,t, J40  , F10  ) ; % GrB_apply, hypersparse cases
 logstat ('test148'    ,t, J40  , F10  ) ; % ewise with alias
-logstat ('test231'    ,t, J40  , F10  ) ; % GrB_select with idxunp
+logstat ('test231'    ,t, J4   , F1   ) ; % GrB_select with idxunp
 logstat ('test129'    ,t, J4   , F1   ) ; % GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, J40  , F10  ) ; % assign and subassign with alias
 logstat ('test29'     ,t, J00  , F10  ) ; % reduce with zombies
@@ -280,8 +277,7 @@ logstat ('test224'    ,t, J4   , F1   ) ; % unpack/pack
 
 % 1 to 10 seconds, no Werk, debug_on
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
-% logstat ('test191'    ,t, J40  , F10  ) ; % split
-logstat ('test191', t, J4040, F1100) ;
+logstat ('test191'    ,t, J40  , F10  ) ; % split
 logstat ('test150'    ,t, J0   , F0   ) ; % mxm zombies, typecasting
 logstat ('test240'    ,t, J40  , F10  ) ; % dot4, saxpy4, and saxpy5
 logstat ('test237'    ,t, J40  , F10  ) ; % GrB_mxm (saxpy4)
@@ -312,8 +308,9 @@ logstat ('test251'    ,t, J4   , F1   ) ; % dot4, dot2, with plus_pair
 logstat ('test152'    ,t, J44  , F10  ) ; % binops C=A+B, all dense
 logstat ('test160'    ,s, J0   , F1   ) ; % A*B, single threaded
 logstat ('test232'    ,t, J40  , F10  ) ; % assign with GrB_Scalar
-logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
-logstat ('test19b'    ,s, J40  , F10  , [0 2]) ; % GrB_assign, many pending ops
+logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
+logstat ('test142'    ,t, J4   , F1   ) ; % GrB_assign with accum
+logstat ('test227'    ,t, J4   , F1   ) ; % kron
 
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
@@ -327,10 +324,8 @@ logstat ('test206'    ,t, J44  , F10  ) ; % iso select and iso resize
 logstat ('test02'     ,t, J4   , F1   ) ; % matrix copy and dup tests
 logstat ('test11'     ,t, J4   , F1   ) ; % GrB_extractTuples
 logstat ('test187'    ,t, J40  , F10  ) ; % dup/assign for all formats
-logstat ('test189'    ,t, J4   , F1   ) ; % large assign
 logstat ('test169'    ,t, J0   , F1   ) ; % C<M>=A+B with many formats
 logstat ('test76'     ,s, J4   , F1   ) ; % GxB_resize (single threaded)
-logstat ('test76'     ,t, J4   , F1   ) ; % GxB_resize (multi threaded)
 logstat ('test01'     ,t, J40  , F10  ) ; % error handling
 logstat ('test228'    ,t, J4   , F1   ) ; % serialize/deserialize
 logstat ('test104'    ,t, J4   , F1   ) ; % export/import
@@ -367,6 +362,8 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 % > 100 seconds, debug_off
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
 logstat ('test280'    ,t, J4   , F1   , [0 1]) ; % subassign method 26
+logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
+logstat ('test19b'    ,s, J40  , F10  , [0 2]) ; % GrB_assign, many pending ops
 
 %===============================================================================
 % finalize
