@@ -311,22 +311,6 @@
 #define GxB_Vector_extractTuples_FC64_(...)         GrB_Vector_extractTuples (__VA_ARGS__)
 #define GrB_Vector_extractTuples_UDT_(...)          GrB_Vector_extractTuples (__VA_ARGS__)
 
-// GrB_Vector_extractTuples_32:
-#define GxB_Vector_extractTuples_32_BOOL_(...)      GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT8_(...)      GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT16_(...)     GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT32_(...)     GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT64_(...)     GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT8_(...)     GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT16_(...)    GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT32_(...)    GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT64_(...)    GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FP32_(...)      GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FP64_(...)      GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FC32_(...)      GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FC64_(...)      GrB_Vector_extractTuples (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UDT_(...)       GrB_Vector_extractTuples (__VA_ARGS__)
-
 // GrB_Matrix_build:
 #define GrB_Matrix_build_BOOL_(...)                 GrB_Matrix_build (__VA_ARGS__)
 #define GrB_Matrix_build_INT8_(...)                 GrB_Matrix_build (__VA_ARGS__)
@@ -424,22 +408,6 @@
 #define GxB_Matrix_extractTuples_FC32_(...)         GrB_Matrix_extractTuples (__VA_ARGS__)
 #define GxB_Matrix_extractTuples_FC64_(...)         GrB_Matrix_extractTuples (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_UDT_(...)          GrB_Matrix_extractTuples (__VA_ARGS__)
-
-// GrB_Matrix_extractTuples_32:
-#define GxB_Matrix_extractTuples_32_BOOL_(...)      GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT8_(...)      GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT16_(...)     GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT32_(...)     GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT64_(...)     GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT8_(...)     GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT16_(...)    GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT32_(...)    GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT64_(...)    GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FP32_(...)      GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FP64_(...)      GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FC32_(...)      GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FC64_(...)      GrB_Matrix_extractTuples (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UDT_(...)       GrB_Matrix_extractTuples (__VA_ARGS__)
 
 // GxB_set:
 #define GxB_Global_Option_set_(...)                 GxB_set (__VA_ARGS__)
@@ -1060,22 +1028,6 @@
 #define GxB_Vector_extractTuples_FC64_(...)         GxB_Vector_extractTuples_FC64 (__VA_ARGS__)
 #define GrB_Vector_extractTuples_UDT_(...)          GrB_Vector_extractTuples_UDT (__VA_ARGS__)
 
-// GrB_Vector_extractTuples_32:
-#define GxB_Vector_extractTuples_32_BOOL_(...)      GxB_Vector_extractTuples_32_BOOL (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT8_(...)      GxB_Vector_extractTuples_32_INT8 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT16_(...)     GxB_Vector_extractTuples_32_INT16 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT32_(...)     GxB_Vector_extractTuples_32_INT32 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_INT64_(...)     GxB_Vector_extractTuples_32_INT64 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT8_(...)     GxB_Vector_extractTuples_32_UINT8 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT16_(...)    GxB_Vector_extractTuples_32_UINT16 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT32_(...)    GxB_Vector_extractTuples_32_UINT32 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UINT64_(...)    GxB_Vector_extractTuples_32_UINT64 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FP32_(...)      GxB_Vector_extractTuples_32_FP32 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FP64_(...)      GxB_Vector_extractTuples_32_FP64 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FC32_(...)      GxB_Vector_extractTuples_32_FC32 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_FC64_(...)      GxB_Vector_extractTuples_32_FC64 (__VA_ARGS__)
-#define GxB_Vector_extractTuples_32_UDT_(...)       GxB_Vector_extractTuples_32_UDT (__VA_ARGS__)
-
 // GrB_Matrix_build:
 #define GrB_Matrix_build_BOOL_(...)                 GrB_Matrix_build_BOOL (__VA_ARGS__)
 #define GrB_Matrix_build_INT8_(...)                 GrB_Matrix_build_INT8 (__VA_ARGS__)
@@ -1173,22 +1125,6 @@
 #define GxB_Matrix_extractTuples_FC32_(...)         GxB_Matrix_extractTuples_FC32 (__VA_ARGS__)
 #define GxB_Matrix_extractTuples_FC64_(...)         GxB_Matrix_extractTuples_FC64 (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_UDT_(...)          GrB_Matrix_extractTuples_UDT (__VA_ARGS__)
-
-// GrB_Matrix_extractTuples_32:
-#define GxB_Matrix_extractTuples_32_BOOL_(...)      GxB_Matrix_extractTuples_32_BOOL (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT8_(...)      GxB_Matrix_extractTuples_32_INT8 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT16_(...)     GxB_Matrix_extractTuples_32_INT16 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT32_(...)     GxB_Matrix_extractTuples_32_INT32 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_INT64_(...)     GxB_Matrix_extractTuples_32_INT64 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT8_(...)     GxB_Matrix_extractTuples_32_UINT8 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT16_(...)    GxB_Matrix_extractTuples_32_UINT16 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT32_(...)    GxB_Matrix_extractTuples_32_UINT32 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UINT64_(...)    GxB_Matrix_extractTuples_32_UINT64 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FP32_(...)      GxB_Matrix_extractTuples_32_FP32 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FP64_(...)      GxB_Matrix_extractTuples_32_FP64 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FC32_(...)      GxB_Matrix_extractTuples_32_FC32 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_FC64_(...)      GxB_Matrix_extractTuples_32_FC64 (__VA_ARGS__)
-#define GxB_Matrix_extractTuples_32_UDT_(...)       GxB_Matrix_extractTuples_32_UDT (__VA_ARGS__)
 
 // GxB_Desc_set:
 #define GxB_Global_Option_set_(...)                 GxB_Global_Option_set (__VA_ARGS__)

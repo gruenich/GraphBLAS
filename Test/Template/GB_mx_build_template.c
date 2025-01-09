@@ -172,6 +172,7 @@ static GrB_Info builder
                 OK1 (GxB_Vector_build ## ibits ## _Scalar (C, (i_t *) I,    scalar, ni)) ;
         #endif
 
+#if 0
         if (I_is_32)
         {
 
@@ -197,6 +198,7 @@ static GrB_Info builder
 
         }
         else
+#endif
         {
 
             switch (xtype->code)
@@ -236,6 +238,7 @@ static GrB_Info builder
                 (C, (i_t *) I,    (const type *) X, ni, dup))
         #endif
 
+#if 0
         if (I_is_32)
         {
 
@@ -261,6 +264,7 @@ static GrB_Info builder
 
         }
         else
+#endif
         {
 
             switch (xtype->code)
@@ -335,6 +339,10 @@ void mexFunction
     {
         mexErrMsgTxt ("I is invalid; must be a list") ;
     }
+    if (I_is_32)
+    {
+        mexErrMsgTxt ("I 32-bit, not yet supported") ;
+    }
 
     #ifdef MATRIX
     // get J for a matrix
@@ -348,6 +356,10 @@ void mexFunction
     if (!is_list)
     {
         mexErrMsgTxt ("J is invalid; must be a list") ;
+    }
+    if (J_is_32)
+    {
+        mexErrMsgTxt ("I 32-bit, not yet supported") ;
     }
     if (I_is_32 != J_is_32)
     { 
@@ -395,6 +407,7 @@ void mexFunction
     }
     else
     {
+        #if 0
         if (I_is_32)
         {
             uint32_t *I32 = I ;
@@ -404,6 +417,7 @@ void mexFunction
             }
         }
         else
+        #endif
         {
             uint64_t *I64 = I ;
             for (int64_t k = 0 ; k < ni ; k++)
@@ -424,6 +438,7 @@ void mexFunction
     else
     {
         ncols = 0 ;
+        #if 0
         if (J_is_32)
         { 
             uint32_t *J32 = J ;
@@ -433,6 +448,7 @@ void mexFunction
             }
         }
         else
+        #endif
         {
             uint64_t *J64 = J ;
             for (int64_t k = 0 ; k < ni ; k++)

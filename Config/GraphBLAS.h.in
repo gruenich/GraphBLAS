@@ -336,10 +336,6 @@ extern "C"
 
 typedef uint64_t GrB_Index ;
 
-// GxB_Index32: row or column index, or matrix dimension, for 32-bit integer
-// indices.
-typedef uint32_t GxB_Index32 ;
-
 // GrB_INDEX_MAX is the largest permissible index value.  The largest valid
 // matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in SuiteSparse:GrB.
 #define GrB_INDEX_MAX ((uint64_t) (1ULL << 60) - 1)
@@ -3123,7 +3119,7 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 //  GrB_Info GrB_Vector_build   // build a vector from (I,X) tuples
 //  (
 //      GrB_Vector w,           // vector to build
-//      const <itype> *I,       // array of row indices of tuples
+//      const uint64_t *I,      // array of row indices of tuples
 //      const <type> *X,        // array of values of tuples
 //      GrB_Index nvals,        // number of tuples
 //      const GrB_BinaryOp dup  // binary function to assemble duplicates
@@ -3132,8 +3128,6 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_build(w,I_,X,nvals,dup)                                    \
     _Generic ((I_),                                                           \
-          GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Vector_build_32)),   \
-    const GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Vector_build_32)),   \
           GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Vector_build)),      \
     const GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Vector_build)))      \
     (w, I_, ((const void *) (X)), nvals, dup)
@@ -3151,30 +3145,10 @@ GrB_Info prefix ## Vector_build ## suffix   /* build a vector from tuples */  \
 ) ;
 GB_DECLARE_14 (GrB_, void)
 
-#undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                        \
-GrB_Info GxB_Vector_build_32 ## suffix   /* build a vector from tuples */     \
-(                                                                             \
-    GrB_Vector w,               /* vector to build */                         \
-    const GxB_Index32 *I_,      /* array of row indices of tuples */          \
-    const type *X,              /* array of values of tuples */               \
-    GrB_Index nvals,            /* number of tuples */                        \
-    const GrB_BinaryOp dup      /* binary function to assemble duplicates */  \
-) ;
-GB_DECLARE_14 (GxB_, void)
-
 GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 (
     GrB_Vector w,                   // vector to build
     const GrB_Index *I_,            // array of row indices of tuples
-    GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
-) ;
-
-GrB_Info GxB_Vector_build_32_Scalar // build a vector from (i,scalar) tuples
-(
-    GrB_Vector w,                   // vector to build
-    const GxB_Index32 *I_,          // array of row indices of tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
@@ -3296,19 +3270,15 @@ GrB_Info GrB_Vector_removeElement
 //
 //  GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
 //  (
-//      <itype> *I,         // array for returning row indices of tuples
+//      uint64_t *I,        // array for returning row indices of tuples
 //      <type> *X,          // array for returning values of tuples
 //      GrB_Index *nvals,   // I, X size on input; # tuples on output
 //      const GrB_Vector v  // vector to extract tuples from
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractTuples(I_,X,nvals,v)                                \
-    _Generic ((I_),                                                           \
-    GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Vector_extractTuples_32)), \
-    void *        : _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)),    \
-    GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)))    \
-    (I_, X, nvals, v)
+#define GrB_Vector_extractTuples(Ilist,X,nvals,v)       \
+    _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)) (Ilist, X, nvals, v)
 #endif
 
 #undef  GB_DECLARE
@@ -3321,17 +3291,6 @@ GrB_Info prefix ## Vector_extractTuples ## suffix   /* [I,~,X = find (v) */   \
     const GrB_Vector v      /* vector to extract tuples from */               \
 ) ;
 GB_DECLARE_14 (GrB_, void)
-
-#undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                        \
-GrB_Info prefix ## Vector_extractTuples_32 ## suffix   /* [I,~,X = find (v) */\
-(                                                                             \
-    GxB_Index32 *I_,        /* array for returning row indices of tuples */   \
-    type *X,                /* array for returning values of tuples */        \
-    GrB_Index *nvals,       /* I, X size on input; # tuples on output */      \
-    const GrB_Vector v      /* vector to extract tuples from */               \
-) ;
-GB_DECLARE_14 (GxB_, void)
 
 //==============================================================================
 // GrB_Matrix: a GraphBLAS matrix
@@ -3410,8 +3369,6 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_build(C,I_,J,X,nvals,dup)                                  \
     _Generic ((I_),                                                           \
-          GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Matrix_build_32)),   \
-    const GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Matrix_build_32)),   \
           GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_build)),      \
     const GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_build)))      \
     (C, I_, J, ((const void *) (X)), nvals, dup)
@@ -3430,33 +3387,11 @@ GrB_Info prefix ## Matrix_build ## suffix   /* build a matrix from tuples */  \
 ) ;
 GB_DECLARE_14 (GrB_, void)
 
-#undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                        \
-GrB_Info GxB_Matrix_build_32 ## suffix      /* build a matrix from tuples */  \
-(                                                                             \
-    GrB_Matrix C,               /* matrix to build */                         \
-    const GxB_Index32 *I_,      /* array of row indices of tuples */          \
-    const GxB_Index32 *J,       /* array of column indices of tuples */       \
-    const type *X,              /* array of values of tuples */               \
-    GrB_Index nvals,            /* number of tuples */                        \
-    const GrB_BinaryOp dup      /* binary function to assemble duplicates */  \
-) ;
-GB_DECLARE_14 (GxB_, void)
-
 GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
 (
     GrB_Matrix C,                   // matrix to build
     const GrB_Index *I_,            // array of row indices of tuples
     const GrB_Index *J,             // array of column indices of tuples
-    GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
-) ;
-
-GrB_Info GxB_Matrix_build_32_Scalar // build a matrix from (I,J,scalar) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GxB_Index32 *I_,          // array of row indices of tuples
-    const GxB_Index32 *J,           // array of column indices of tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
@@ -3588,15 +3523,9 @@ GrB_Info GrB_Matrix_removeElement
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractTuples(I_,J,X,nvals,A)                              \
-_Generic ((I_),                                                               \
-  GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Matrix_extractTuples_32)),   \
-  GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)),      \
-  void *        : _Generic ((J),                                              \
-    GxB_Index32 * : _Generic ((X), GB_PCASES (GxB, Matrix_extractTuples_32)), \
-    GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)),    \
-    void *        : _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples))))   \
-(I_, J, X, nvals, A)
+#define GrB_Matrix_extractTuples(Ilist,J,X,nvals,A)         \
+    _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples))   \
+    (Ilist, J, X, nvals, A)
 #endif
 
 #undef  GB_DECLARE
@@ -3610,18 +3539,6 @@ GrB_Info prefix ## Matrix_extractTuples ## suffix   /* [I,J,X = find (A) */ \
     const GrB_Matrix A      /* matrix to extract tuples from */             \
 ) ;
 GB_DECLARE_14 (GrB_, void)
-
-#undef  GB_DECLARE
-#define GB_DECLARE(prefix,suffix,type)                                      \
-GrB_Info prefix ## Matrix_extractTuples_32 ## suffix /* [I,J,X = find (A) */\
-(                                                                           \
-    GxB_Index32 *I_,        /* array for returning row indices of tuples */ \
-    GxB_Index32 *J,         /* array for returning col indices of tuples */ \
-    type *X,                /* array for returning values of tuples */      \
-    GrB_Index *nvals,       /* I,J,X size on input; # tuples on output */   \
-    const GrB_Matrix A      /* matrix to extract tuples from */             \
-) ;
-GB_DECLARE_14 (GxB_, void)
 
 //------------------------------------------------------------------------------
 // GxB_Matrix_concat and GxB_Matrix_split
@@ -4454,17 +4371,6 @@ GrB_Info GrB_Vector_extract         // w<mask> = accum (w, u(I))
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
-GrB_Info GxB_Vector_extract_32      // w<mask> = accum (w, u(I))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Vector u,             // first input:  vector u
-    const uint32_t *I_,             // row indices (32-bit)
-    uint64_t ni,                    // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
 GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -4474,19 +4380,6 @@ GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
     const uint64_t *I_,             // row indices (64-bit)
     uint64_t ni,                    // number of row indices
     const uint64_t *J,              // column indices (64-bit)
-    uint64_t nj,                    // number of column indices
-    const GrB_Descriptor desc       // descriptor for C, M, and A
-) ;
-
-GrB_Info GxB_Matrix_extract_32      // C<M> = accum (C, A(I,J))
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_Matrix A,             // first input:  matrix A
-    const uint32_t *I_,             // row indices
-    uint64_t ni,                    // number of row indices
-    const uint32_t *J,              // column indices
     uint64_t nj,                    // number of column indices
     const GrB_Descriptor desc       // descriptor for C, M, and A
 ) ;
@@ -4503,51 +4396,21 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
-GrB_Info GxB_Col_extract_32         // w<mask> = accum (w, A(I,j))
-(
-    GrB_Vector w,                   // input/output matrix for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Matrix A,             // first input:  matrix A
-    const uint32_t *I_,             // row indices (32-bit)
-    uint64_t ni,                    // number of row indices
-    uint64_t j,                     // column index
-    const GrB_Descriptor desc       // descriptor for w, mask, and A
-) ;
-
 // GrB_extract is a generic interface to the following functions:
 //
 // GrB_Vector_extract    (w,mask,acc,u,I,ni,d)      // w<m>    = acc (w, u(I))
-// GxB_Vector_extract_32 (w,mask,acc,u,I,ni,d)      // w<m>    = acc (w, u(I))
 // GrB_Col_extract       (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
-// GxB_Col_extract_32    (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
 // GrB_Matrix_extract    (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
-// GxB_Matrix_extract_32 (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_extract(C,Mask,accum,A,I,...)                           \
-    _Generic ((C),                                                  \
-        GrB_Vector :                                                \
-            _Generic ((A),                                          \
-                GrB_Vector :                                        \
-                    _Generic ((I),                                  \
-                        const uint64_t * : GrB_Vector_extract,      \
-                              uint64_t * : GrB_Vector_extract,      \
-                        const uint32_t * : GxB_Vector_extract_32,   \
-                              uint32_t * : GxB_Vector_extract_32),  \
-                GrB_Matrix :                                        \
-                    _Generic ((I),                                  \
-                        const uint64_t * : GrB_Col_extract,         \
-                              uint64_t * : GrB_Col_extract,         \
-                        const uint32_t * : GxB_Col_extract_32,      \
-                              uint32_t * : GxB_Col_extract_32)),    \
-        GrB_Matrix :                                                \
-            _Generic ((I),                                          \
-                const uint64_t * : GrB_Matrix_extract,              \
-                      uint64_t * : GrB_Matrix_extract,              \
-                const uint32_t * : GxB_Matrix_extract_32,           \
-                      uint32_t * : GxB_Matrix_extract_32))          \
-    (C, Mask, accum, A, I, __VA_ARGS__)
+#define GrB_extract(C,Mask,accum,A,...)             \
+    _Generic ((C),                                  \
+        GrB_Vector :                                \
+            _Generic ((A),                          \
+                GrB_Vector : GrB_Vector_extract ,   \
+                GrB_Matrix : GrB_Col_extract),      \
+        GrB_Matrix : GrB_Matrix_extract)            \
+    (C, Mask, accum, A, __VA_ARGS__)
 #endif
 
 //==============================================================================

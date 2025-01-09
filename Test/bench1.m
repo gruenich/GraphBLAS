@@ -4,6 +4,8 @@ function bench1
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% FIXME: does not use 32-bits
+
 GrB.burble (1) ;
 s = maxNumCompThreads (32) ;
 save = nthreads_set (32)  ;

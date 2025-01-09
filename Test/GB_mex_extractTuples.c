@@ -56,7 +56,7 @@ void mexFunction
     {
         itype = GB_mx_string_to_Type (pargin [2], GrB_UINT64) ;
     }
-    if (! (itype == GrB_UINT32 || itype == GrB_UINT64))
+    if (! (/* itype == GrB_UINT32 || */ itype == GrB_UINT64))
     {
         mexErrMsgTxt ("itype must be uint32 or uint64") ;
     }
@@ -83,6 +83,7 @@ void mexFunction
     }
 
     // [I,J,X] = find (A)
+#if 0
     if (itype == GrB_UINT32)
     {
         uint32_t *I = (uint32_t *) I_output ;
@@ -139,6 +140,7 @@ void mexFunction
 
     }
     else
+#endif
     {
         uint64_t *I = (uint64_t *) I_output ;
         uint64_t *J = (uint64_t *) J_output ;
