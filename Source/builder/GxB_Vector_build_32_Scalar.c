@@ -26,7 +26,7 @@ GrB_Info GxB_Vector_build_32_Scalar  // build a vector from (i,scalar) tuples
     uint64_t nvals                  // number of tuples
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -41,7 +41,7 @@ GB_GOTCHA ;
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
         GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 

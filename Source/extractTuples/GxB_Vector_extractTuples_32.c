@@ -72,7 +72,7 @@ GrB_Info GxB_Vector_extractTuples_32_UDT
     const GrB_Vector v      // vector to extract tuples from
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
     GB_WHERE_1 (v, "GxB_Vector_extractTuples_32_UDT (I, X, nvals, v)") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL (p_nvals) ;
@@ -81,7 +81,7 @@ GB_GOTCHA ;
     ASSERT (GB_VECTOR_OK (v)) ;
     if (v->type->code != GB_UDT_code)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
         // v must have a user-defined type
         return (GrB_DOMAIN_MISMATCH) ;
     }

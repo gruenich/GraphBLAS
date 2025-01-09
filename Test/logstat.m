@@ -84,7 +84,7 @@ try
 catch
     n = 0 ;
 end
-if (n > 1)
+if (nargin == 0)
     fprintf (   'total blocks: %d\n', n) ;
     f = fopen ('log.txt', 'a') ;
     fprintf (f, 'total blocks: %d\n', n) ;

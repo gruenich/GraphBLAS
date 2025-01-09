@@ -29,7 +29,7 @@ GrB_Info GxB_Col_extract_32         // w<mask> = accum (w, A(I,j))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -54,7 +54,7 @@ GB_GOTCHA ;
     uint64_t ancols = (A_transpose ? GB_NROWS (A) : GB_NCOLS (A)) ;
     if (j >= ancols)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
         GB_ERROR (GrB_INVALID_INDEX,
             "Column index j=" GBu " out of bounds; must be < " GBu ,
             j, ancols) ;

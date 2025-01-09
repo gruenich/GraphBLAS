@@ -25,7 +25,7 @@ GrB_Info GxB_Matrix_extract_32      // C<M> = accum (C, A(I,J))
     const GrB_Descriptor desc       // descriptor for C, M, and A
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // this method will be deleted
 
     //--------------------------------------------------------------------------
     // check inputs
