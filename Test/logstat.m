@@ -84,10 +84,12 @@ try
 catch
     n = 0 ;
 end
-fprintf (   'total blocks: %d\n', n) ;
-f = fopen ('log.txt', 'a') ;
-fprintf (f, 'total blocks: %d\n', n) ;
-fclose (f) ;
+if (n > 1)
+    fprintf (   'total blocks: %d\n', n) ;
+    f = fopen ('log.txt', 'a') ;
+    fprintf (f, 'total blocks: %d\n', n) ;
+    fclose (f) ;
+end
 
 for pji_control_trials = 1:length(pji_controls)
 
