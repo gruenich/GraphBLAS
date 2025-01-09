@@ -52,57 +52,150 @@ void mexFunction
     OK (GrB_Scalar_new (&s_int32, GrB_INT32)) ;
 
     //--------------------------------------------------------------------------
-    // GxB_Serialized_get
+    // create a test matrix
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_new (&A, GrB_FP32, 5, 5)) ;
     OK (GrB_Matrix_setElement (A, 0, 0, 1)) ;
     OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
-    OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
+    OK (GrB_set (A, GxB_HYPERSPARSE, GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_set (A, 64, GxB_OFFSET_INTEGER_HINT)) ;
+    OK (GrB_set (A, 64, GxB_ROWINDEX_INTEGER_HINT)) ;
+    OK (GrB_set (A, 64, GxB_COLINDEX_INTEGER_HINT)) ;
 
     expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Serialized_get_VOID_(blob, nothing, 0, blob_size)) ;
+    ERR (GrB_set (GrB_GLOBAL, 0, GxB_OFFSET_INTEGER_HINT)) ;
+    ERR (GrB_set (GrB_GLOBAL, 0, GxB_ROWINDEX_INTEGER_HINT)) ;
+    ERR (GrB_set (GrB_GLOBAL, 0, GxB_COLINDEX_INTEGER_HINT)) ;
 
-    OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_EL_TYPE_STRING, blob_size)) ;
-    CHECK (size == strlen ("GrB_FP32") + 1) ;
-    OK (GxB_Serialized_get_String_(blob, name, GrB_EL_TYPE_STRING, blob_size)) ;
-    CHECK (MATCH (name, "GrB_FP32")) ;
+    //--------------------------------------------------------------------------
+    // test GxB_Serialized_get
+    //--------------------------------------------------------------------------
 
-    OK (GxB_Serialized_get_SIZE_(blob, &size, GxB_JIT_C_NAME, blob_size)) ;
-    CHECK (size == strlen ("float") + 1) ;
-    OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
-    CHECK (MATCH (name, "float")) ;
+    for (int p_control = 0 ; p_control <= 64 ; p_control += 32)
+    for (int r_control = 0 ; r_control <= 64 ; r_control += 32)
+    for (int c_control = 0 ; c_control <= 64 ; c_control += 32)
+    {
+        printf ("\n-----------------controls: (%d %d %d)\n",
+            p_control, r_control, c_control) ;
+        OK (GrB_set (A, p_control, GxB_OFFSET_INTEGER_HINT)) ;
+        OK (GrB_set (A, r_control, GxB_ROWINDEX_INTEGER_HINT)) ;
+        OK (GrB_set (A, c_control, GxB_COLINDEX_INTEGER_HINT)) ;
+        OK (GxB_print (A, 5)) ;
 
-    OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
-    CHECK (MATCH (name, "")) ;
+        expected = GrB_INVALID_VALUE ;
+        ERR (GrB_set (A, 1, GxB_OFFSET_INTEGER_HINT)) ;
+        ERR (GrB_set (A, 1, GxB_ROWINDEX_INTEGER_HINT)) ;
+        ERR (GrB_set (A, 1, GxB_COLINDEX_INTEGER_HINT)) ;
 
-    OK (GxB_Serialized_get_String_(blob, name, GrB_EL_TYPE_STRING, blob_size)) ;
-    CHECK (MATCH (name, "GrB_FP32")) ;
+        // create the blob
+        OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
-    OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_EL_TYPE_STRING, blob_size)) ;
-    CHECK (size == strlen ("GrB_FP32") + 1) ;
+        i = 911 ;
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_OFFSET_INTEGER_HINT, blob_size)) ;
+        CHECK (i == p_control) ;
 
-    OK (GxB_Serialized_get_INT32_(blob, &code, GrB_EL_TYPE_CODE, blob_size)) ;
-    CHECK (code == GrB_FP32_CODE) ;
+        i = 911 ;
+        OK (GrB_Matrix_get_INT32_(A, &i, GxB_OFFSET_INTEGER_HINT)) ;
+        CHECK (i == p_control) ;
 
-    i = -1 ;
-    OK (GxB_Serialized_get_Scalar_(blob, s_int32, GrB_EL_TYPE_CODE, blob_size)) ;
-    OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
-    CHECK (i == GrB_FP32_CODE) ;
+        i = 911 ;
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_ROWINDEX_INTEGER_HINT, blob_size)) ;
+        CHECK (i == r_control) ;
 
-    OK (GxB_Serialized_get_INT32_(blob, &i, GrB_STORAGE_ORIENTATION_HINT,
-        blob_size)) ;
-    printf ("blob storage: %d\n", i) ;
-    CHECK (i == GrB_COLMAJOR) ;
+        i = 911 ;
+        OK (GrB_Matrix_get_INT32_(A, &i, GxB_ROWINDEX_INTEGER_HINT)) ;
+        CHECK (i == r_control) ;
 
-    OK (GxB_Serialized_get_INT32_(blob, &i, GxB_FORMAT, blob_size)) ;
-    printf ("blob storage: %d\n", i) ;
-    CHECK (i == GxB_BY_COL) ;
+        i = 911 ;
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_COLINDEX_INTEGER_HINT, blob_size)) ;
+        CHECK (i == c_control) ;
 
-    OK (GxB_Serialized_get_INT32_(blob, &i, GxB_SPARSITY_CONTROL, blob_size)) ;
-    printf ("blob sparsity control: %d\n", i) ;
-    CHECK (i == GxB_AUTO_SPARSITY) ;
+        i = 911 ;
+        OK (GrB_Matrix_get_INT32_(A, &i, GxB_COLINDEX_INTEGER_HINT)) ;
+        CHECK (i == c_control) ;
 
+        i = 911 ;
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_OFFSET_INTEGER_BITS, blob_size)) ;
+        if (p_control != 0) CHECK (i == p_control) ;
+        CHECK (i == 32 || i == 64) ;
+
+        i = 911 ;
+        OK (GrB_Matrix_get_INT32_(A, &i, GxB_OFFSET_INTEGER_BITS)) ;
+        if (p_control != 0) CHECK (i == p_control) ;
+        CHECK (i == 32 || i == 64) ;
+
+        i = 911 ;
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_ROWINDEX_INTEGER_BITS, blob_size)) ;
+        if (r_control != 0) CHECK (i == r_control) ;
+        CHECK (i == 32 || i == 64) ;
+
+        i = 911 ;
+        OK (GrB_Matrix_get_INT32_(A, &i, GxB_ROWINDEX_INTEGER_BITS)) ;
+        if (r_control != 0) CHECK (i == r_control) ;
+        CHECK (i == 32 || i == 64) ;
+
+        i = 911 ;
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_COLINDEX_INTEGER_BITS, blob_size)) ;
+        if (c_control != 0) CHECK (i == c_control) ;
+        CHECK (i == 32 || i == 64) ;
+
+        i = 911 ;
+        OK (GrB_Matrix_get_INT32_(A, &i, GxB_COLINDEX_INTEGER_BITS)) ;
+        if (c_control != 0) CHECK (i == c_control) ;
+        CHECK (i == 32 || i == 64) ;
+
+        ERR (GxB_Serialized_get_VOID_(blob, nothing, 0, blob_size)) ;
+
+        OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_EL_TYPE_STRING, blob_size)) ;
+        CHECK (size == strlen ("GrB_FP32") + 1) ;
+        OK (GxB_Serialized_get_String_(blob, name, GrB_EL_TYPE_STRING, blob_size)) ;
+        CHECK (MATCH (name, "GrB_FP32")) ;
+
+        OK (GxB_Serialized_get_SIZE_(blob, &size, GxB_JIT_C_NAME, blob_size)) ;
+        CHECK (size == strlen ("float") + 1) ;
+        OK (GxB_Serialized_get_String_(blob, name, GxB_JIT_C_NAME, blob_size)) ;
+        CHECK (MATCH (name, "float")) ;
+
+        OK (GxB_Serialized_get_String_(blob, name, GrB_NAME, blob_size)) ;
+        CHECK (MATCH (name, "")) ;
+
+        OK (GxB_Serialized_get_String_(blob, name, GrB_EL_TYPE_STRING, blob_size)) ;
+        CHECK (MATCH (name, "GrB_FP32")) ;
+
+        OK (GxB_Serialized_get_SIZE_(blob, &size, GrB_EL_TYPE_STRING, blob_size)) ;
+        CHECK (size == strlen ("GrB_FP32") + 1) ;
+
+        OK (GxB_Serialized_get_INT32_(blob, &code, GrB_EL_TYPE_CODE, blob_size)) ;
+        CHECK (code == GrB_FP32_CODE) ;
+
+        i = -1 ;
+        OK (GxB_Serialized_get_Scalar_(blob, s_int32, GrB_EL_TYPE_CODE, blob_size)) ;
+        OK (GrB_Scalar_extractElement_INT32_(&i, s_int32)) ;
+        CHECK (i == GrB_FP32_CODE) ;
+
+        OK (GxB_Serialized_get_INT32_(blob, &i, GrB_STORAGE_ORIENTATION_HINT,
+            blob_size)) ;
+        printf ("blob storage: %d\n", i) ;
+        CHECK (i == GrB_COLMAJOR) ;
+
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_FORMAT, blob_size)) ;
+        printf ("blob storage: %d\n", i) ;
+        CHECK (i == GxB_BY_COL) ;
+
+        OK (GxB_Serialized_get_INT32_(blob, &i, GxB_SPARSITY_CONTROL, blob_size)) ;
+        printf ("blob sparsity control: %d\n", i) ;
+        CHECK (i == GxB_HYPERSPARSE) ;
+
+        // free the blob
+        mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+    }
+
+    //--------------------------------------------------------------------------
+    // change the matrix to dense
+    //--------------------------------------------------------------------------
+
+    OK (GrB_set (A, GxB_AUTO_SPARSITY, GxB_SPARSITY_CONTROL)) ;
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 5, GrB_ALL, 5, NULL)) ;
     OK (GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
 
@@ -118,8 +211,7 @@ void mexFunction
     OK (GrB_Matrix_get_String_(A, name, GrB_NAME)) ;
     CHECK (MATCH (name, "A matrix")) ;
 
-    // free the blob and recreate it
-    mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+    // create the blob
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
     OK (GxB_Serialized_get_INT32_(blob, &i, GxB_SPARSITY_STATUS, blob_size)) ;
@@ -153,10 +245,19 @@ void mexFunction
     printf ("blob bitmap switch: %g\n", fvalue) ;
     CHECK (fabs (fvalue - 0.08) < 1e-6) ;
 
+    // free the blob
+    mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+
+    //--------------------------------------------------------------------------
+    // change the matrix to bitmap
+    //--------------------------------------------------------------------------
+
     OK (GrB_Matrix_set_INT32_(A, GxB_BITMAP, GxB_SPARSITY_CONTROL)) ;
 
-    // free the blob and recreate it
-    mxFree (blob) ; blob = NULL ; blob_size = 0 ;
+    //--------------------------------------------------------------------------
+    // create the blob
+    //--------------------------------------------------------------------------
+
     OK (GxB_Matrix_serialize (&blob, &blob_size, A, NULL)) ;
 
     OK (GxB_Serialized_get_String_(A, name, GxB_JIT_C_NAME)) ;

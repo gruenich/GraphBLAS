@@ -137,5 +137,27 @@ GrB_Info GB_deserialize_from_blob
     uint64_t *S = (uint64_t *) (blob + s) ;                                 \
     s += n * sizeof (uint64_t) ;
 
+static inline uint32_t GB_pji_control_encoding (int8_t control)
+{
+    switch (control)
+    {
+        default:
+        case 0  : return (0) ;
+        case 32 : return (1) ;
+        case 64 : return (2) ;
+    }
+}
+
+static inline int8_t GB_pji_control_decoding (uint32_t encoding)
+{
+    switch (encoding)
+    {
+        default:
+        case 0  : return (0) ;
+        case 1  : return (32) ;
+        case 2  : return (64) ;
+    }
+}
+
 #endif
 

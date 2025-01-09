@@ -9,6 +9,7 @@
 
 #include "get_set/GB_get_set.h"
 #include "serialize/GB_serialize.h"
+#define GB_FREE_ALL ;
 
 //------------------------------------------------------------------------------
 // GB_blob_header_get: get all properties of the blob
@@ -104,9 +105,12 @@ static GrB_Info GB_blob_header_get
 //  GB_BLOB_READ (sparsity_control, int32_t) ;
 // now in GrB v10.0.0:
     GB_BLOB_READ (control_encoding, uint32_t) ;
-    (*p_control) = GB_RSHIFT (control_encoding, 16, 4) ;
-    (*j_control) = GB_RSHIFT (control_encoding, 12, 4) ;
-    (*i_control) = GB_RSHIFT (control_encoding,  8, 4) ;
+    uint32_t p_encoding = GB_RSHIFT (control_encoding, 16, 4) ;
+    uint32_t j_encoding = GB_RSHIFT (control_encoding, 12, 4) ;
+    uint32_t i_encoding = GB_RSHIFT (control_encoding,  8, 4) ;
+    (*p_control) = GB_pji_control_decoding (p_encoding) ;
+    (*j_control) = GB_pji_control_decoding (j_encoding) ;
+    (*i_control) = GB_pji_control_decoding (i_encoding) ;
     uint32_t sparsity_control = GB_RSHIFT (control_encoding,  0, 8) ;
 
     GB_BLOB_READ (sparsity_iso_csc, int32_t) ;
@@ -240,6 +244,150 @@ static GrB_Info GB_blob_header_get
 }
 
 //------------------------------------------------------------------------------
+// GB_Serialized_get: get an int, double, or string from a serialized blob
+//------------------------------------------------------------------------------
+
+static GrB_Info GB_Serialized_get
+(
+    const void * blob,
+    int field,
+    int32_t *ivalue,
+    double *dvalue,
+    char *cvalue,
+    bool *is_double,
+    bool *is_char,
+    size_t blob_size
+)
+{
+
+    //--------------------------------------------------------------------------
+    // read the blob
+    //--------------------------------------------------------------------------
+
+    GrB_Info info ;
+    (*ivalue) = 0 ;
+    (*dvalue) = 0 ;
+    (*cvalue) = '\0' ;
+    (*is_double) = false ;
+    (*is_char) = false ;
+
+    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
+    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
+    double hyper_sw, bitmap_sw ;
+    bool is_csc, p_is_32, j_is_32, i_is_32 ;
+    int8_t p_control, j_control, i_control ;
+
+    GB_OK (GB_blob_header_get (type_name, &type_code,
+        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
+        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
+        &p_control, &j_control, &i_control, blob, blob_size)) ;
+
+    //--------------------------------------------------------------------------
+    // get the field
+    //--------------------------------------------------------------------------
+
+    switch ((int) field)
+    {
+        case GrB_STORAGE_ORIENTATION_HINT : 
+
+            (*ivalue) = storage ;
+            break ;
+
+        case GrB_EL_TYPE_CODE : 
+
+            (*ivalue) = type_code ;
+            break ;
+
+        case GxB_SPARSITY_CONTROL : 
+
+            (*ivalue) = sparsity_ctrl ;
+            break ;
+
+        case GxB_SPARSITY_STATUS : 
+
+            (*ivalue) = sparsity_status ;
+            break ;
+
+        case GxB_FORMAT : 
+
+            (*ivalue) = (storage == GrB_COLMAJOR) ? GxB_BY_COL : GxB_BY_ROW ;
+            break ;
+
+        case GxB_OFFSET_INTEGER_HINT : 
+
+            (*ivalue) = p_control ;
+            break ;
+
+        case GxB_OFFSET_INTEGER_BITS : 
+
+            (*ivalue) = (p_is_32) ? 32 : 64 ;
+            break ;
+
+        case GxB_COLINDEX_INTEGER_HINT : 
+
+            (*ivalue) = (is_csc) ? j_control : i_control ;
+            break ;
+
+        case GxB_COLINDEX_INTEGER_BITS : 
+
+            (*ivalue) = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
+            break ;
+
+        case GxB_ROWINDEX_INTEGER_HINT : 
+
+            (*ivalue) = (is_csc) ? i_control : j_control ;
+            break ;
+
+        case GxB_ROWINDEX_INTEGER_BITS : 
+
+            (*ivalue) = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
+            break ;
+
+        case GxB_HYPER_SWITCH : 
+
+            (*dvalue) = hyper_sw ;
+            (*is_double) = true ;
+            break ;
+
+        case GxB_BITMAP_SWITCH : 
+
+            (*dvalue) = bitmap_sw ;
+            (*is_double) = true ;
+            break ;
+
+        case GrB_NAME : 
+
+            if (user_name != NULL)
+            { 
+                strcpy (cvalue, user_name) ;
+            }
+            (*is_char) = true ;
+            break ;
+
+        case GxB_JIT_C_NAME : 
+
+            strcpy (cvalue, type_name) ;
+            (*is_char) = true ;
+            break ;
+
+        case GrB_EL_TYPE_STRING : 
+
+            if (eltype_string != NULL)
+            { 
+                strcpy (cvalue, eltype_string) ;
+            }
+            (*is_char) = true ;
+            break ;
+
+        default : 
+
+            return (GrB_INVALID_VALUE) ;
+    }
+
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
 // GxB_Serialized_get_Scalar
 //------------------------------------------------------------------------------
 
@@ -265,120 +413,30 @@ GrB_Info GxB_Serialized_get_Scalar
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
-    double hyper_sw, bitmap_sw ;
-    bool is_csc, p_is_32, j_is_32, i_is_32 ;
-    int8_t p_control, j_control, i_control ;
+    int32_t ivalue ;
+    double dvalue ;
+    char cvalue [GxB_MAX_NAME_LEN] ;
+    bool is_double, is_char ;
 
-    info = GB_blob_header_get (type_name, &type_code,
-        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
-        &p_control, &j_control, &i_control, blob, blob_size) ;
+    GB_OK (GB_Serialized_get (blob, field, &ivalue, &dvalue, cvalue,
+        &is_double, &is_char, blob_size)) ;
 
-    //--------------------------------------------------------------------------
-    // get the field
-    //--------------------------------------------------------------------------
-
-    double dvalue = 0 ;
-    int32_t ivalue = 0 ;
-    bool is_double = false ;
-
-    if (info == GrB_SUCCESS)
-    {
-        switch ((int) field)
-        {
-            case GrB_STORAGE_ORIENTATION_HINT : 
-
-                ivalue = storage ;
-                break ;
-
-            case GrB_EL_TYPE_CODE : 
-
-                ivalue = type_code ;
-                break ;
-
-            case GxB_SPARSITY_CONTROL : 
-
-                ivalue = sparsity_ctrl ;
-                break ;
-
-            case GxB_SPARSITY_STATUS : 
-
-                ivalue = sparsity_status ;
-                break ;
-
-            case GxB_FORMAT : 
-
-                ivalue = (storage == GrB_COLMAJOR) ? GxB_BY_COL : GxB_BY_ROW ;
-                break ;
-
-            case GxB_OFFSET_INTEGER_HINT : 
-
-GB_GOTCHA ;
-                ivalue = p_control ;
-                break ;
-
-            case GxB_OFFSET_INTEGER_BITS : 
-GB_GOTCHA ;
-
-                ivalue = (p_is_32) ? 32 : 64 ;
-                break ;
-
-            case GxB_COLINDEX_INTEGER_HINT : 
-GB_GOTCHA ;
-
-                ivalue = (is_csc) ? j_control : i_control ;
-                break ;
-
-            case GxB_COLINDEX_INTEGER_BITS : 
-GB_GOTCHA ;
-
-                ivalue = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
-                break ;
-
-            case GxB_ROWINDEX_INTEGER_HINT : 
-GB_GOTCHA ;
-
-                ivalue = (is_csc) ? i_control : j_control ;
-                break ;
-
-            case GxB_ROWINDEX_INTEGER_BITS : 
-GB_GOTCHA ;
-
-                ivalue = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
-                break ;
-
-            case GxB_HYPER_SWITCH : 
-                dvalue = hyper_sw ;
-                is_double = true ;
-                break ;
-
-            case GxB_BITMAP_SWITCH : 
-                dvalue = bitmap_sw ;
-                is_double = true ;
-                break ;
-
-            default : 
-                return (GrB_INVALID_VALUE) ;
-        }
-
-        if (is_double)
-        { 
-            // field specifies a double: assign it to the scalar
-            info = GB_setElement ((GrB_Matrix) scalar, NULL, &dvalue, 0, 0,
-                GB_FP64_code, Werk) ;
-        }
-        else
-        { 
-            // field specifies an int32_t: assign it to the scalar
-            info = GB_setElement ((GrB_Matrix) scalar, NULL, &ivalue, 0, 0,
-                GB_INT32_code, Werk) ;
-        }
+    if (is_char)
+    { 
+        return (GrB_INVALID_VALUE) ;
     }
-
-    #pragma omp flush
-    return (info) ;
+    else if (is_double)
+    { 
+        // field specifies a double: assign it to the scalar
+        return (GB_setElement ((GrB_Matrix) scalar, NULL, &dvalue, 0, 0,
+            GB_FP64_code, Werk)) ;
+    }
+    else
+    { 
+        // field specifies an int32_t: assign it to the scalar
+        return (GB_setElement ((GrB_Matrix) scalar, NULL, &ivalue, 0, 0,
+            GB_INT32_code, Werk)) ;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -407,53 +465,22 @@ GrB_Info GxB_Serialized_get_String
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
-    double hyper_sw, bitmap_sw ;
-    bool is_csc, p_is_32, j_is_32, i_is_32 ;
-    int8_t p_control, j_control, i_control ;
+    int32_t ivalue ;
+    double dvalue ;
+    bool is_double, is_char ;
 
-    info = GB_blob_header_get (type_name, &type_code,
-        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
-        &p_control, &j_control, &i_control, blob, blob_size) ;
+    GB_OK (GB_Serialized_get (blob, field, &ivalue, &dvalue, value,
+        &is_double, &is_char, blob_size)) ;
 
-    //--------------------------------------------------------------------------
-    // get the field
-    //--------------------------------------------------------------------------
-
-    (*value) = '\0' ;
-
-    if (info == GrB_SUCCESS)
+    if (is_char)
     {
-        switch (field)
-        {
-
-            case GrB_NAME : 
-                if (user_name != NULL)
-                { 
-                    strcpy (value, user_name) ;
-                }
-                break ;
-
-            case GxB_JIT_C_NAME : 
-                strcpy (value, type_name) ;
-                break ;
-
-            case GrB_EL_TYPE_STRING : 
-                if (eltype_string != NULL)
-                {
-                    strcpy (value, eltype_string) ;
-                }
-                break ;
-
-            default : 
-                return (GrB_INVALID_VALUE) ;
-        }
+        #pragma omp flush
+        return (GrB_SUCCESS) ;
     }
-
-    #pragma omp flush
-    return (info) ;
+    else
+    {
+        return (GrB_INVALID_VALUE) ;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -474,102 +501,30 @@ GrB_Info GxB_Serialized_get_INT32
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    double dvalue ;
+    bool is_double, is_char ;
+    char cvalue [GxB_MAX_NAME_LEN] ;
+
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
 
     //--------------------------------------------------------------------------
-    // read the blob
+    // read the blob (must be an integer value)
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
-    double hyper_sw, bitmap_sw ;
-    bool is_csc, p_is_32, j_is_32, i_is_32 ;
-    int8_t p_control, j_control, i_control ;
+    GB_OK (GB_Serialized_get (blob, field, value, &dvalue, cvalue,
+        &is_double, &is_char, blob_size)) ;
 
-    info = GB_blob_header_get (type_name, &type_code,
-        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
-        &p_control, &j_control, &i_control, blob, blob_size) ;
-
-    //--------------------------------------------------------------------------
-    // get the field
-    //--------------------------------------------------------------------------
-
-    if (info == GrB_SUCCESS)
-    {
-        switch ((int) field)
-        {
-            case GrB_STORAGE_ORIENTATION_HINT : 
-
-                (*value) = storage ;
-                break ;
-
-            case GrB_EL_TYPE_CODE : 
-
-                (*value) = type_code ;
-                break ;
-
-            case GxB_SPARSITY_CONTROL : 
-
-                (*value) = sparsity_ctrl ;
-                break ;
-
-            case GxB_SPARSITY_STATUS : 
-
-                (*value) = sparsity_status ;
-                break ;
-
-            case GxB_FORMAT : 
-
-                (*value) = (storage == GrB_COLMAJOR) ? GxB_BY_COL : GxB_BY_ROW ;
-                break ;
-
-            case GxB_OFFSET_INTEGER_HINT : 
-GB_GOTCHA ;
-
-                (*value) = p_control ;
-                break ;
-
-            case GxB_OFFSET_INTEGER_BITS : 
-GB_GOTCHA ;
-
-                (*value) = (p_is_32) ? 32 : 64 ;
-                break ;
-
-            case GxB_COLINDEX_INTEGER_HINT : 
-GB_GOTCHA ;
-
-                (*value) = (is_csc) ? j_control : i_control ;
-                break ;
-
-            case GxB_COLINDEX_INTEGER_BITS : 
-GB_GOTCHA ;
-
-                (*value) = ((is_csc) ? j_is_32 : i_is_32) ? 32 : 64 ;
-                break ;
-
-            case GxB_ROWINDEX_INTEGER_HINT : 
-GB_GOTCHA ;
-
-                (*value) = (is_csc) ? i_control : j_control ;
-                break ;
-
-            case GxB_ROWINDEX_INTEGER_BITS : 
-GB_GOTCHA ;
-
-                (*value) = ((is_csc) ? i_is_32 : j_is_32) ? 32 : 64 ;
-                break ;
-
-
-            default : 
-                return (GrB_INVALID_VALUE) ;
-        }
+    if (is_double || is_char)
+    { 
+        return (GrB_INVALID_VALUE) ;
     }
-
-    #pragma omp flush
-    return (info) ;
+    else
+    {
+        #pragma omp flush
+        return (GrB_SUCCESS) ;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -590,6 +545,11 @@ GrB_Info GxB_Serialized_get_SIZE
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    int32_t ivalue ;
+    double dvalue ;
+    bool is_double, is_char ;
+    char cvalue [GxB_MAX_NAME_LEN] ;
+
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL (blob) ;
     GB_RETURN_IF_NULL (value) ;
@@ -598,45 +558,19 @@ GrB_Info GxB_Serialized_get_SIZE
     // read the blob
     //--------------------------------------------------------------------------
 
-    char type_name [GxB_MAX_NAME_LEN], *user_name, *eltype_string ;
-    int32_t sparsity_status, sparsity_ctrl, type_code, storage ;
-    double hyper_sw, bitmap_sw ;
-    bool is_csc, p_is_32, j_is_32, i_is_32 ;
-    int8_t p_control, j_control, i_control ;
+    GB_OK (GB_Serialized_get (blob, field, &ivalue, &dvalue, cvalue,
+        &is_double, &is_char, blob_size)) ;
 
-    info = GB_blob_header_get (type_name, &type_code,
-        &sparsity_status, &sparsity_ctrl, &hyper_sw, &bitmap_sw, &storage,
-        &user_name, &eltype_string, &is_csc, &p_is_32, &j_is_32, &i_is_32,
-        &p_control, &j_control, &i_control, blob, blob_size) ;
-
-    //--------------------------------------------------------------------------
-    // get the field
-    //--------------------------------------------------------------------------
-
-    if (info == GrB_SUCCESS)
+    if (is_char)
     {
-        switch (field)
-        {
-
-            case GrB_NAME :     
-                (*value) = (user_name == NULL) ? 1 : (strlen (user_name) + 1) ;
-                break ;
-
-            case GxB_JIT_C_NAME : 
-                (*value) = strlen (type_name) + 1 ;
-                break ;
-
-            case GrB_EL_TYPE_STRING : 
-                (*value) = (eltype_string == NULL) ?
-                    1 : (strlen (eltype_string) + 1) ;
-                break ;
-
-            default : 
-                return (GrB_INVALID_VALUE) ;
-        }
+        (*value) = strlen (cvalue) + 1 ;
+        #pragma omp flush
+        return (GrB_SUCCESS) ;
     }
-    #pragma omp flush
-    return (info) ;
+    else
+    {
+        return (GrB_INVALID_VALUE) ;
+    }
 }
 
 //------------------------------------------------------------------------------

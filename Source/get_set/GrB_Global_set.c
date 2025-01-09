@@ -47,7 +47,6 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
 
             if (!(value == 32 || value == 64))
             { 
-GB_GOTCHA ;
                 return (GrB_INVALID_VALUE) ;
             }
             GB_Global_p_control_set (value) ;
@@ -57,7 +56,6 @@ GB_GOTCHA ;
 
             if (!(value == 32 || value == 64))
             { 
-GB_GOTCHA ;
                 return (GrB_INVALID_VALUE) ;
             }
             if (GB_Global_is_csc_get ( ))
@@ -74,7 +72,6 @@ GB_GOTCHA ;
 
             if (!(value == 32 || value == 64))
             { 
-GB_GOTCHA ;
                 return (GrB_INVALID_VALUE) ;
             }
             if (GB_Global_is_csc_get ( ))

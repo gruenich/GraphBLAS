@@ -379,16 +379,22 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
 //  GB_BLOB_WRITE (sparsity_control, int32_t) ;
 // now in GrB v10.0.0, with 8 bits reserved for sparsity_control, in case new
 // sparsity formats are added in the future:
-    uint32_t p_control = (A->p_control) & 0xF ;
-    uint32_t j_control = (A->j_control) & 0xF ;
-    uint32_t i_control = (A->i_control) & 0xF ;
+
+    uint32_t p_encoding = GB_pji_control_encoding (A->p_control) ;
+    uint32_t j_encoding = GB_pji_control_encoding (A->j_control) ;
+    uint32_t i_encoding = GB_pji_control_encoding (A->i_control) ;
     sparsity_control &= 0xFF ;
     uint32_t control_encoding =
-        GB_LSHIFT (p_control       , 16) | // 4 bits
-        GB_LSHIFT (j_control       , 12) | // 4 bits
-        GB_LSHIFT (i_control       ,  8) | // 4 bits
-        GB_LSHIFT (sparsity_control,  0) ; // 8 bits (only 4 needed for now)
+        GB_LSHIFT (p_encoding       , 16) | // 4 bits
+        GB_LSHIFT (j_encoding       , 12) | // 4 bits
+        GB_LSHIFT (i_encoding       ,  8) | // 4 bits
+        GB_LSHIFT (sparsity_control,  0) ;  // 8 bits (only 4 needed for now)
     GB_BLOB_WRITE (control_encoding, uint32_t) ;
+    printf ("pji controls %d %d %d, pji_encoding %d %d %d, "
+        "sparsity_control %d, encoding %d\n",
+        A->p_control, A->j_control, A->i_control,
+        p_encoding, j_encoding, i_encoding,
+        sparsity_control, encoding) ;
 
     GB_BLOB_WRITE (sparsity_iso_csc, int32_t);
     GB_BLOB_WRITE (Ap_nblocks, int32_t) ; GB_BLOB_WRITE (Ap_method, int32_t) ;
