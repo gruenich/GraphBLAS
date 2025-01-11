@@ -12,7 +12,6 @@
 // GrB_Matrix_serialize and GrB_Matrix_deserialize
 // GxB_Vector_serialize and GxB_Vector_deserialize
 // GrB_Vector_serialize and GrB_Vector_deserialize
-#define GB_DEBUG
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"

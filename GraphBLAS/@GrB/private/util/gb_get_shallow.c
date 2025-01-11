@@ -49,7 +49,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
 
     int burble ;
     OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
-    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+//  OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // construct the shallow GrB_Matrix
@@ -553,7 +553,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
     //--------------------------------------------------------------------------
 
     OK (GrB_set (GrB_GLOBAL, burble, GxB_BURBLE)) ;
-OK (GB_matvec_check (A, "got_matrix", 0, NULL, "matrix")) ; // FIXME
     return (A) ;
 }
 

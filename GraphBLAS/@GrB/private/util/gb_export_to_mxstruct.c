@@ -43,13 +43,13 @@ static const char *MatrixFields [9] =
     "s",                // 1: all scalar info goes here
     "x",                // 2: array of uint8, size (sizeof(type)*nzmax), or
                         //    just sizeof(type) if the matrix is uniform-valued
-    "p",                // 3: array of int64_t, size plen+1
-    "i",                // 4: array of int64_t, size nzmax
-    "h",                // 5: array of int64_t, size plen if hypersparse
+    "p",                // 3: array of uint32_t or uint64_t, size plen+1
+    "i",                // 4: array of uint32_t or uint64_t, size nzmax
+    "h",                // 5: array of uint32_t or uint64_t, size plen if hyper
     // added for v7.2: for hypersparse matrices only:
-    "Yp",               // 6: Y->p, a uint64_t array of size Y->vdim+1
-    "Yi",               // 7: Y->i, a uint64_t array of size nvec (s[3])
-    "Yx"                // 8: Y->x, an int64_t array of size nvec
+    "Yp",               // 6: Y->p, uint32_t or uint64_t array, size Y->vdim+1
+    "Yi",               // 7: Y->i, uint32_t or uint64_t array, size nvec (s[3])
+    "Yx"                // 8: Y->x, uint32_t or uint64_t array, size nvec
 } ;
 
 // for bitmap matrices only
@@ -88,8 +88,6 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 
     GrB_Matrix A = (*A_handle) ;
     GrB_Matrix Y = NULL ;
-
-OK (GB_matvec_check (A, "export_matrix", 0, NULL, "matrix")) ; // FIXME
 
     //--------------------------------------------------------------------------
     // make sure the matrix is finished, including the creation of A->Y
@@ -144,9 +142,9 @@ OK (GB_matvec_check (A, "export_matrix", 0, NULL, "matrix")) ; // FIXME
     size_t isize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
     GrB_Type ytype = NULL ;
-    uint64_t *Yp = NULL ; uint64_t Yp_size = 0 ;
-    uint64_t *Yi = NULL ; uint64_t Yi_size = 0 ;
-    void     *Yx = NULL ; uint64_t Yx_size = 0 ;
+    void *Yp = NULL ; uint64_t Yp_size = 0 ;
+    void *Yi = NULL ; uint64_t Yi_size = 0 ;
+    void *Yx = NULL ; uint64_t Yx_size = 0 ;
     uint64_t yvdim = 0, yvlen = 0 ;
     if (A->Y != NULL)
     {
