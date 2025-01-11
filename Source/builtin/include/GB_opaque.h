@@ -546,15 +546,15 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 // Accessing the content of a scalar, vector, or matrix
 //------------------------------------------------------------------------------
 
-// A GrB_Matrix has two different types of integers:
+// A GrB_Matrix has three different types of integers:
 //
-// A->p can be uint32_t or uint64_t, as determined by A->p_is_32.
+// (1) A->p can be uint32_t or uint64_t, as determined by A->p_is_32.
 //
-// These types are all determined by A->i_is_32:
+// (2) These types are all determined by A->i_is_32:
 // A->i    can be  int32_t or  int64_t (signed, for flagging zombies: default)
 // A->i    can be uint32_t or uint64_t (unsigned, if no zombies appear)
 //
-// These types are all determined by A->j_is_32:
+// (3) These types are all determined by A->j_is_32:
 // A->h    can be uint32_t or uint64_t
 // A->Y->p can be uint32_t or uint64_t
 // A->Y->i can be uint32_t or uint64_t (never has zombies)

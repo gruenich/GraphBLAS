@@ -319,7 +319,7 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (k = 0 ; k < Cnvec ; k++)
             {
-                int64_t j = GB_IGET (Ch, k) ;
+                int64_t j = GB_IGET (Ch, k) ;   // j = Ch [k]
                 if (A_is_hyper)
                 { 
                     // C_to_A [k] = kA if Ah [kA] == j and A(:,j) is non-empty

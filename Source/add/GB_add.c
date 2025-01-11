@@ -17,16 +17,17 @@
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:
-
 //      C(i,j) = (ctype) op ((xtype) A(i,j), (ytype) B(i,j))
-
 // If just A(i,j) is present but not B(i,j), then:
-
 //      C(i,j) = (ctype) A (i,j)
-
 // If just B(i,j) is present but not A(i,j), then:
-
 //      C(i,j) = (ctype) B (i,j)
+
+// For eWiseUnion, the above is revised to:
+// If just A(i,j) is present but not B(i,j), then:
+//      C(i,j) = (ctype) op ((xtype) A(i,j), (ytype) beta)
+// If just B(i,j) is present but not A(i,j), then:
+//      C(i,j) = (ctype) op ((xtype) alpha, (ytype) B(i,j))
 
 // ctype is the type of matrix C.  The pattern of C is the union of A and B.
 

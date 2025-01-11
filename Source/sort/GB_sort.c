@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // DONE: 32/64 bit
-#define GB_DEBUG
 
 #include "sort/GB_sort.h"
 #include "transpose/GB_transpose.h"

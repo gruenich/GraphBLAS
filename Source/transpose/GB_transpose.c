@@ -953,8 +953,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     // the requested integers of C.  This does nothing if T was already created
     // in that form.
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        GB_sparsity (C), anz, avdim, avlen, Werk) ;
-
+        GB_sparsity (T), anz, avdim, avlen, Werk) ;
     GB_OK (GB_convert_int (T, Cp_is_32, Cj_is_32, Ci_is_32, true)) ;
 
     //==========================================================================
