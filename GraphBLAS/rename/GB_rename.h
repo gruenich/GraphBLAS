@@ -5037,6 +5037,7 @@
 #define GxB_Vector_import_Full GxM_Vector_import_Full
 #define GxB_Vector_iso GxM_Vector_iso
 #define GxB_Vector_isStoredElement GxM_Vector_isStoredElement
+#define GxB_Vector_load GxM_Vector_load
 #define GxB_Vector_memoryUsage GxM_Vector_memoryUsage
 #define GxB_Vector_Option_get_FP64 GxM_Vector_Option_get_FP64
 #define GxB_Vector_Option_get GxM_Vector_Option_get
@@ -5075,6 +5076,7 @@
 #define GxB_Vector_subassign_UINT8 GxM_Vector_subassign_UINT8
 #define GxB_Vector_type GxM_Vector_type
 #define GxB_Vector_type_name GxM_Vector_type_name
+#define GxB_Vector_unload GxM_Vector_unload
 #define GxB_Vector_unpack_Bitmap GxM_Vector_unpack_Bitmap
 #define GxB_Vector_unpack_CSC GxM_Vector_unpack_CSC
 #define GxB_Vector_unpack_Full GxM_Vector_unpack_Full

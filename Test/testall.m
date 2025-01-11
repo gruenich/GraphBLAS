@@ -163,6 +163,7 @@ logstat ('test219'    ,s, J40  , F10  ) ; % reduce to scalar (1 thread)
 
 % < 1 second: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test288'    ,t, J0   , F0   ) ; % load/unload tests
 logstat ('test244'    ,t, J4   , F1   , [0 1]) ; % GxB_Matrix_reshape*
 logstat ('test194'    ,t, J4   , F1   ) ; % GxB_Vector_diag
 logstat ('test09'     ,t, J40  , F10  ) ; % duplicate I,J in GB_mex_subassign

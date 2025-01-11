@@ -43,18 +43,6 @@ void GB_unop_iso            // Cx [0] = unop (A), binop (s,A) or binop (A,s)
     GrB_Scalar scalar       // input scalar
 ) ;
 
-GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
-(
-    GrB_Matrix A,           // input/output matrix
-    bool initialize         // if true, copy the iso value to all of A->x
-) ;
-
-GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
-(
-    GrB_Matrix A,           // input/output matrix
-    GB_void *scalar         // scalar value, of size A->type->size, or NULL
-) ;
-
 GrB_Info GB_iso_expand      // expand an iso scalar into an entire array
 (
     void *restrict X,       // output array to expand into

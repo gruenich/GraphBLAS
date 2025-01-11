@@ -167,6 +167,18 @@ GrB_Info GB_convert_to_nonfull      // ensure a matrix is not full
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_convert_any_to_non_iso // convert iso matrix to non-iso
+(
+    GrB_Matrix A,           // input/output matrix
+    bool initialize         // if true, copy the iso value to all of A->x
+) ;
+
+GrB_Info GB_convert_any_to_iso // convert non-iso matrix to iso
+(
+    GrB_Matrix A,           // input/output matrix
+    GB_void *scalar         // scalar value, of size A->type->size, or NULL
+) ;
+
 //------------------------------------------------------------------------------
 // GB_is_dense
 //------------------------------------------------------------------------------
