@@ -1,7 +1,6 @@
 
 
-
-// keep:
+// existing:
     GrB_Matrix_build_TYPE (GrB_Matrix A,
         uint64_t *I,
         uint64_t *J,
@@ -34,6 +33,7 @@
     GrB_extract(C, Mask, accum, A, I, ni, J, nj, desc)
 
 
+// existing:
 GrB_Info GrB_Matrix_assign          // C<Mask>(I,J) = accum (C(I,J),A)
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -47,6 +47,7 @@ GrB_Info GrB_Matrix_assign          // C<Mask>(I,J) = accum (C(I,J),A)
     const GrB_Descriptor desc       // descriptor for C, Mask, and A
 ) ;
 
+// new:
 GrB_Info GxB_Matrix_assign          // C<Mask>(I,J) = accum (C(I,J),A)
 (
     GrB_Matrix C,                   // input/output matrix for results
@@ -68,7 +69,7 @@ GrB_Info GxB_Matrix_assign          // C<Mask>(I,J) = accum (C(I,J),A)
 //      const GrB_Matrix A      // matrix to extract tuples from
 //  ) ;
 
-    GxB_Matrix_extractTuples
+    GxB_Matrix_extractTuples (
         GrB_Vector I,
         GrB_Vector J,
         GrB_Vector X,

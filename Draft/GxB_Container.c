@@ -328,30 +328,6 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
                         // matrices are never jumbled.
 
 //------------------------------------------------------------------------------
-// to flag shallow components
-//------------------------------------------------------------------------------
-
-// These flags may be useful for the SparseBLAS, where the end user wants to
-// KEEP ownership of their C arrays, but want me to put a SparseBLAS /GraphBLAS
-// wrapper around their data.  The idea here is that the GrB_Vector 
-// Container->x may contain "shallow" data, where the numerical values are
-// given to GraphBLAS to use, but GraphBLAS does not own them.  GraphBLAS
-// must treat that component as read-only, and it must not free it if
-// the GrB_Matrix is freed.
-
-// I haven't worked out all the details here.  It might be better to attach
-// these bools to the individal GrB_Vectors themselves.
-
-bool p_shallow ;
-bool h_shallow ;
-bool b_shallow ;
-bool i_shallow ;
-bool x_shallow ;
-bool Y_shallow ;
-
-bool bool_future [24] ; // for future expansion
-
-//------------------------------------------------------------------------------
 // future expansion
 //------------------------------------------------------------------------------
 
