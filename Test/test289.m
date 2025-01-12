@@ -1,0 +1,32 @@
+function test289
+%TEST289 test the Container for all sparsity formats
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+% SPDX-License-Identifier: Apache-2.0
+
+fprintf ('test289 ----------- C = A using load/unload of a Container\n') ;
+
+[~, ~, ~, types, ~, ~] = GB_spec_opsall ;
+types = types.all ;
+GB_mex_burble (0) ;
+
+rng ('default') ;
+
+for k1 = 1:length (types)
+    atype = types {k1} ;
+    fprintf ('\n%s', atype) ;
+    for d = [0.5 inf]
+        A = GB_spec_random (10, 10, d, 128, atype) ;
+        for A_sparsity = 0:15
+            fprintf ('.') ;
+            A.sparsity = A_sparsity ;
+            C = GB_mex_container (A) ;
+            GB_spec_compare (A, C) ;
+        end
+    end
+end
+
+fprintf ('\n') ;
+GB_mex_burble (0) ;
+fprintf ('test289: all tests passed\n') ;
+

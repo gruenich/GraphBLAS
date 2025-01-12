@@ -163,6 +163,7 @@ logstat ('test219'    ,s, J40  , F10  ) ; % reduce to scalar (1 thread)
 
 % < 1 second: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test289'    ,t, J0   , F0   ) ; % container tests
 logstat ('test288'    ,t, J0   , F0   ) ; % load/unload tests
 logstat ('test244'    ,t, J4   , F1   , [0 1]) ; % GxB_Matrix_reshape*
 logstat ('test194'    ,t, J4   , F1   ) ; % GxB_Vector_diag
@@ -215,9 +216,7 @@ logstat ('testc4(0)'  ,t, J4   , F1   ) ; % extractElement, setElement, udt
 logstat ('test157'    ,t, J40  , F10  ) ; % sparsity formats
 logstat ('test182'    ,s, J40  , F10  ) ; % for internal wait
 logstat ('test195'    ,t, J4   , F1   ) ; % saxpy3 slice_balanced
-logstat ('test173'    ,t, J40  , F10  , [0 2]) ; % GrB_assign C<A>=A
 logstat ('test135'    ,t, J4   , F1   ) ; % reduce to scalar
-logstat ('test84'     ,t, J40  , F10  ) ; % GrB_assign (row/col w/ C CSR/CSC)
 logstat ('test215'    ,t, J4   , F1   ) ; % C<M>=A'*B (dot2, ANY_PAIR)
 logstat ('test80'     ,t, J4   , F1   ) ; % GrB_mxm on all semirings
 logstat ('test200'    ,t, J4   , F1   ) ; % iso full matrix multiply
@@ -261,7 +260,6 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 % 1 to 10 seconds: debug_on
 set_malloc_debug (mdebug, 1) ;
 logstat ('testca(1)'  ,t, J40  , F10  ) ; % complex mxm, mxv, and vxm
-logstat ('test130'    ,t, J40  , F10  ) ; % GrB_apply, hypersparse cases
 logstat ('test148'    ,t, J40  , F10  ) ; % ewise with alias
 logstat ('test231'    ,t, J4   , F1   ) ; % GrB_select with idxunp
 logstat ('test129'    ,t, J4   , F1   ) ; % GxB_select (tril, nonz, hyper)
@@ -293,6 +291,8 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test84'     ,t, J40  , F10  ) ; % GrB_assign (row/col w/ C CSR/CSC)
+logstat ('test173'    ,t, J40  , F10  , [0 2]) ; % GrB_assign C<A>=A
 logstat ('test230'    ,t, J40  , F10  ) ; % apply with idxunops
 logstat ('test18'     ,t, J40  , F10  ) ; % GrB_eWiseAdd and eWiseMult
 logstat ('testc7(0)'  ,t, J40  , F10  ) ; % assign, builtin complex
@@ -321,6 +321,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_on
 set_malloc_debug (mdebug, 1) ;
+logstat ('test130'    ,t, J40  , F10  ) ; % GrB_apply, hypersparse cases
 logstat ('test206'    ,t, J44  , F10  ) ; % iso select and iso resize
 logstat ('test02'     ,t, J4   , F1   ) ; % matrix copy and dup tests
 logstat ('test11'     ,t, J4   , F1   ) ; % GrB_extractTuples

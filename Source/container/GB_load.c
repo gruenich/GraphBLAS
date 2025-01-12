@@ -29,7 +29,6 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     GB_CHECK_INIT ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL (Container) ;
-//  GB_WHERE_1 (A, "GxB_load_from_Container") ;
     ASSERT_MATRIX_OK (A, "A to load from Container", GB0) ;
     ASSERT_VECTOR_OK (Container->p, "Container->p before load", GB0) ;
     ASSERT_VECTOR_OK (Container->h, "Container->h before load", GB0) ;
@@ -63,7 +62,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
         Container->ncols_nonempty : Container->nrows_nonempty ;
     A->iso = Container->iso ;
     A->jumbled = Container->jumbled ;
-    uint64_t plen1, plen, nvals, nheld, nx ;
+    uint64_t plen1 = 0, plen, nvals, nheld, nx ;
     GrB_Type Ap_type = NULL, Ah_type = NULL, Ab_type = NULL, Ai_type = NULL ;
 
     switch (Container->format)
