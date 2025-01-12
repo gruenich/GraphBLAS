@@ -10,8 +10,10 @@
 // This method is guaranteed to take O(1) time and space, if on input V is a
 // non-iso vector in the full data format.
 
-// On input, V is a GrB_Vector with nvals(V) == length (V), in any data format.
-// That is, all entries of V must be present.
+// On input, V is a GrB_Vector with nvals(V) == length(V), in any data format.
+// That is, all entries of V must be present.  If this condition does not hold,
+// the method returns an error code, GrB_INVALID_OBJECT, indicating that the
+// vector is not a valid input for this method.
 
 // V is returned as valid full vector of length 0 with no content (V->x ==
 // NULL).  It type is not changed.  If on input V was in the full data format,
@@ -35,6 +37,7 @@ GrB_Info GxB_Vector_unload
     // input/output:
     GrB_Vector V,           // vector to unload
     void **X,               // numerical array to unload from V
+    // output:
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
     GrB_Type *type,         // type of X
@@ -59,6 +62,10 @@ GrB_Info GxB_Vector_unload
     // finish any pending work and ensure V is not iso
     //--------------------------------------------------------------------------
 
+    // This will do nothing (and take O(1) time) if the GrB_Vector V is a
+    // component of a Container obtained by unloading a GrB_Matrix or
+    // GrB_Vector into the Container.
+
     if (GB_ANY_PENDING_WORK (V))
     { 
         GB_WHERE0 ("GxB_Vector_unload") ;
@@ -67,7 +74,7 @@ GrB_Info GxB_Vector_unload
     if (!GB_is_dense ((GrB_Matrix) V))
     { 
         // V must be dense with all entries present
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_INVALID_OBJECT) ;
     }
     GB_OK (GB_convert_any_to_non_iso ((GrB_Matrix) V, true)) ;
     ASSERT_VECTOR_OK (V, "V ready to unload", GB0) ;
@@ -83,6 +90,7 @@ GrB_Info GxB_Vector_unload
     (*read_only) = V->x_shallow ;
     V->x = NULL ;
     V->x_size = 0 ;
+    V->x_shallow = false ;
 
     //--------------------------------------------------------------------------
     // clear prior content of V and load X, making V a dense GrB_Vector

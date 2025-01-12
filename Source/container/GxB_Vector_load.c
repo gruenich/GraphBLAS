@@ -19,9 +19,16 @@
 
 // V is returned as a non-iso vector of length n, in the full data format.
 
+// if read_only is true, *X is returned unchanged.  Otherwise, it is returned
+// as NULL to indicate that it has been moved into V.
+
+// FIXME: if a matrix/vector/scalar with any shallow content is passed to a
+// GrB* or GxB* method as the output matrix/vector/scalar, return an error
+// code, such as GxB_OUTPUT_IS_READ_ONLY.
+
 #define GB_DEBUG
 
-#include "GB.h"
+#include "GB_container.h"
 
 GrB_Info GxB_Vector_load
 (
@@ -60,37 +67,7 @@ GrB_Info GxB_Vector_load
     // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
     // that V->sparsity_control is revised to allow V to become a full vector.
 
-    GB_phybix_free ((GrB_Matrix) V) ;
-    V->type = type ;
-    V->plen = -1 ;
-    V->vlen = n ;
-    V->vdim = 1 ;
-    V->nvec = 1 ;
-    V->nvec_nonempty = 1 ;
-    V->nvals = n ;
-    V->sparsity_control = V->sparsity_control | GxB_FULL ;
-    V->is_csc = true ;
-    V->jumbled = false ;
-    V->iso = false ;
-    V->p_is_32 = false ;
-    V->j_is_32 = false ;
-    V->i_is_32 = false ;
-
-    //--------------------------------------------------------------------------
-    // load the content into V
-    //--------------------------------------------------------------------------
-
-    V->x = (*X) ;
-    V->x_shallow = read_only ;
-    V->x_size = X_size ;
-    if (!read_only)
-    { 
-        // tell the caller that X has been moved into V
-        (*X) = NULL ;
-    }
-
-    // V is now a valid GrB_Vector of length n, in the full format
-    V->magic = GB_MAGIC ;
+    GB_vector_load (V, X, n, X_size, type, read_only) ;
 
     //--------------------------------------------------------------------------
     // return result

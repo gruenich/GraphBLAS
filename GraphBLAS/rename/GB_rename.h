@@ -941,6 +941,7 @@
 #define GB_kroner GM_kroner
 #define GB_kroner_jit GM_kroner_jit
 #define GB_kron GM_kron
+#define GB_load GM_load
 #define GB_LZ4_attach_dictionary GM_LZ4_attach_dictionary
 #define GB_LZ4_attach_HC_dictionary GM_LZ4_attach_HC_dictionary
 #define GB_LZ4_calloc GM_LZ4_calloc
@@ -1297,6 +1298,7 @@
 #define GB_union_jit GM_union_jit
 #define GB_unjumble GM_unjumble
 #define GB_unjumble_jit GM_unjumble_jit
+#define GB_unload GM_unload
 #define GB_unop_code_iso GM_unop_code_iso
 #define GB_unop_identity GM_unop_identity
 #define GB_unop_iso GM_unop_iso
@@ -1307,6 +1309,7 @@
 #define GB_user_type_jit GM_user_type_jit
 #define GB_Vector_check GM_Vector_check
 #define GB_Vector_diag GM_Vector_diag
+#define GB_vector_load GM_vector_load
 #define GB_Vector_removeElement GM_Vector_removeElement
 #define GB_wait GM_wait
 #define GB_werk_pop GM_werk_pop
@@ -3165,6 +3168,8 @@
 #define GxB_Col_subassign GxM_Col_subassign
 #define GxB_CONJ_FC32 GxM_CONJ_FC32
 #define GxB_CONJ_FC64 GxM_CONJ_FC64
+#define GxB_Container_free GxM_Container_free
+#define GxB_Container_new GxM_Container_new
 #define GxB_Context_disengage GxM_Context_disengage
 #define GxB_Context_engage GxM_Context_engage
 #define GxB_Context_error GxM_Context_error
@@ -3555,6 +3560,8 @@
 #define GxB_LNOT_UINT32 GxM_LNOT_UINT32
 #define GxB_LNOT_UINT64 GxM_LNOT_UINT64
 #define GxB_LNOT_UINT8 GxM_LNOT_UINT8
+#define GxB_load_Matrix_from_Container GxM_load_Matrix_from_Container
+#define GxB_load_Vector_from_Container GxM_load_Vector_from_Container
 #define GxB_LOG10_FC32 GxM_LOG10_FC32
 #define GxB_LOG10_FC64 GxM_LOG10_FC64
 #define GxB_LOG10_FP32 GxM_LOG10_FP32
@@ -5003,6 +5010,8 @@
 #define GxB_UnaryOp_xtype_name GxM_UnaryOp_xtype_name
 #define GxB_UnaryOp_ztype GxM_UnaryOp_ztype
 #define GxB_UnaryOp_ztype_name GxM_UnaryOp_ztype_name
+#define GxB_unload_Matrix_into_Container GxM_unload_Matrix_into_Container
+#define GxB_unload_Vector_into_Container GxM_unload_Vector_into_Container
 #define GxB_unpack_HyperHash GxM_unpack_HyperHash
 #define GxB_VALUEEQ_FC32 GxM_VALUEEQ_FC32
 #define GxB_VALUEEQ_FC64 GxM_VALUEEQ_FC64

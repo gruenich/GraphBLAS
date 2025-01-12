@@ -5525,6 +5525,82 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 // GxB_Container methods
 //==============================================================================
 
+struct GxB_Container_struct
+{
+
+    // 32 words of uint64_t / int64_t:
+    uint64_t header_size ;          // size of this struct as allocated
+    uint64_t nrows ;
+    uint64_t ncols ;
+    int64_t nrows_nonempty ;
+    int64_t ncols_nonempty ;
+    uint64_t nvals ;
+    uint64_t nheld ;
+    uint64_t nvec ;
+    uint64_t u64_future [24] ;       // for future expansion
+
+    // 16 words of uint32_t / int32_t:
+    int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP,
+                                    // or GxB_FULL
+    int32_t orientation ;           // GrB_ROWMAJOR or GrB_COLMAJOR
+    uint32_t u32_future [14] ;      // for future expansion
+
+    // 16 GrB_Vector objects:
+    GrB_Vector p ;
+    GrB_Vector h ;
+    GrB_Vector b ;
+    GrB_Vector i ;
+    GrB_Vector x ;
+    GrB_Vector vector_future [11] ; // for future expansion
+
+    // 16 GrB_Matrix objects:
+    GrB_Matrix Y ;
+    GrB_Matrix matrix_future [15] ; // for future expansion
+
+    // 32 bool values
+    bool iso ;
+    bool jumbled ;
+    bool bool_future [30] ;         // for future expansion
+
+    // 16 (void *) pointers
+    void *void_future [16] ;        // for future expansion
+} ;
+
+typedef struct GxB_Container_struct *GxB_Container ;
+
+GrB_Info GxB_Container_new (GxB_Container *Container) ;
+
+GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
+(
+    GrB_Matrix A,               // matrix to load from the Container.  On input,
+                                // A is a matrix of any size or type; on output
+                                // any prior size, type, or contents is freed
+                                // and overwritten with the Container.
+    GxB_Container Container,    // Container with contents to load into A
+    const GrB_Descriptor desc   // currently unused
+) ;
+
+GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
+(
+    GrB_Vector A,               // GrB_Vector to load from the Container
+    GxB_Container Container,    // Container with contents to load into A
+    const GrB_Descriptor desc   // currently unused
+) ;
+
+GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
+(
+    GrB_Matrix A,               // matrix to unload into the Container
+    GxB_Container Container,    // Container to hold the contents of A
+    const GrB_Descriptor desc   // currently unused
+) ;
+
+GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
+(
+    GrB_Vector V,               // vector to unload into the Container
+    GxB_Container Container,    // Container to hold the contents of V
+    const GrB_Descriptor desc   // currently unused
+) ;
+
 GrB_Info GxB_Vector_load
 (
     // input/output:
@@ -5543,6 +5619,7 @@ GrB_Info GxB_Vector_unload
     // input/output:
     GrB_Vector V,           // vector to unload
     void **X,               // numerical array to unload from V
+    // output:
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
     GrB_Type *type,         // type of X
@@ -7560,7 +7637,7 @@ void       GxB_Iterator_get_UDT    (GxB_Iterator iterator, void *value) ;
 // GrB_free: free any GraphBLAS object
 //==============================================================================
 
-// GrB_free (&object) frees any of the 13 allocatable GraphBLAS objects.
+// GrB_free (&object) frees any of the 14 allocatable GraphBLAS objects.
 // The GrB_Global object cannot be freed.
 
 #undef  GB_DECLARE
@@ -7577,6 +7654,7 @@ GB_DECLARE (GrB_Scalar       )
 GB_DECLARE (GrB_Vector       )
 GB_DECLARE (GrB_Matrix       )
 GB_DECLARE (GxB_Context      )
+GB_DECLARE (GxB_Container    )
 GB_DECLARE (GxB_Iterator     )
 
 #if GxB_STDC_VERSION >= 201112L
@@ -7594,6 +7672,7 @@ GB_DECLARE (GxB_Iterator     )
         GrB_Matrix       *: GrB_Matrix_free       , \
         GrB_Descriptor   *: GrB_Descriptor_free   , \
         GxB_Context      *: GxB_Context_free      , \
+        GxB_Container    *: GxB_Container_free    , \
         GxB_Iterator     *: GxB_Iterator_free)      \
     (object)
 #endif

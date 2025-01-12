@@ -16,7 +16,9 @@
     GB_FREE (&X4, X4_size) ;            \
     if (X2 != NULL) mxFree (X2) ;       \
     X2 = NULL ;                         \
-    GrB_Matrix_free (&V) ;              \
+    GxB_Container_free (&Container) ;   \
+    GrB_Vector_free (&V) ;              \
+    GrB_Vector_free (&A) ;              \
 }
 
 void mexFunction
@@ -33,7 +35,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GrB_Matrix V = NULL ;
+    GrB_Vector V = NULL ;
+    GrB_Matrix A = NULL ;
+    GxB_Container Container = NULL ;
     uint32_t *X = NULL, *X2 = NULL, *X3 = NULL, *X4 = NULL ;
     bool malloc_debug = GB_mx_get_global (true) ;
     uint64_t n = 10, n2 = 999, X_size, X_size2 = 911, n4 = 0, X4_size = 0 ;
@@ -101,6 +105,27 @@ void mexFunction
     {
         CHECK (X4 [i] == 2*i) ;
     }
+
+    //--------------------------------------------------------------------------
+    // test the Container
+    //--------------------------------------------------------------------------
+
+    printf ("\n------------------- testing Container unload:\n") ;
+    OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
+    for (int i = 0 ; i < n ; i++)
+    {
+        double x = 2*i + 0.1 ;
+        OK (GrB_Matrix_setElement_FP64 (A, x, i, i)) ;
+    }
+    OK (GxB_print (A, 5)) ;
+
+    OK (GxB_Container_new (&Container)) ;
+    OK (GxB_unload_Matrix_into_Container (A, Container, NULL)) ;
+    OK (GxB_print (A, 5)) ;
+
+    printf ("\n------------------- testing Container load:\n") ;
+    OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
+    OK (GxB_print (A, 5)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

@@ -147,7 +147,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     void *Yx = NULL ; uint64_t Yx_size = 0 ;
     uint64_t yvdim = 0, yvlen = 0 ;
     if (A->Y != NULL)
-    {
+    { 
         Yp = A->Y->p ; A->Y->p = NULL ;
         Yi = A->Y->i ; A->Y->i = NULL ;
         Yx = A->Y->x ; A->Y->x = NULL ;
