@@ -31,8 +31,8 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
-    uint64_t *I = NULL, ni = 0, I_range [3] ;       // FIXME: allow 32
-    uint64_t *J = NULL, nj = 0, J_range [3] ;       // FIXME: allow 32
+    uint64_t *I = NULL, ni = 0, I_range [3] ;
+    uint64_t *J = NULL, nj = 0, J_range [3] ;
     bool ignore ;
 
     // check inputs
@@ -54,16 +54,14 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [1], &ni,
-        I_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (pargin [1], &I, &ni, I_range, &ignore, NULL))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
     }
 
     // get J
-    if (!GB_mx_mxArray_to_indices ((void **) &J, NULL, pargin [2], &nj,
-        J_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (pargin [2], &J, &nj, J_range, &ignore, NULL))
     {
         FREE_ALL ;
         mexErrMsgTxt ("J failed") ;

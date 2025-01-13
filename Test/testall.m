@@ -14,7 +14,7 @@ function testall (threads, mdebug)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-GrB.init ;
+GrB.init ;          %% FIXME: remove this
 GB_mex_init ;
 testall_time = tic ;
 

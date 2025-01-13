@@ -76,7 +76,7 @@ end
 assert (ok) ;
 
 assert (isequal (A1, A2)) ;
-fprintf ('builtin %g GrB %g CSparse %g\n', t0, t1, t2) ;
+fprintf ('builtin %g GB %g CSparse %g\n', t0, t1, t2) ;
 
 n = size (A,1) ;
 

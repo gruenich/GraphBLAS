@@ -6,7 +6,7 @@ function bench1
 
 % FIXME: does not use 32-bits
 
-GrB.burble (1) ;
+GB_mex_burble (1) ;
 s = maxNumCompThreads (32) ;
 save = nthreads_set (32)  ;
 
@@ -116,5 +116,5 @@ end
 
 maxNumCompThreads (s) ;
 nthreads_set (save)  ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 

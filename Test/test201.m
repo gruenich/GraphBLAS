@@ -24,7 +24,6 @@ assert (abs (c2-c3) < 1e-12) ;
 % reduce a huge iso full matrix to a scalar
 m = 2^40 ;
 n = 2^48 ;
-% s = sum (pi * GrB.ones (m, n), 'all')
 s = GB_mex_test36 ;
 % expected result:
 t = pi * m * n ;

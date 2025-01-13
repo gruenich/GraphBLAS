@@ -13,6 +13,8 @@
 // bitmap input matrix A.  If A is iso or Cx_new is NULL then no values are
 // extracted.  The iso case is handled by the caller.
 
+// Ci, Cj, and Cx_new may be NULL.
+
 // FIXME: make a separate function for constructing triplets
 
 #include "GB.h"

@@ -34,7 +34,7 @@ void mexFunction
     GrB_Vector mask = NULL ;
     GrB_Vector u = NULL ;
     GrB_Descriptor desc = NULL ;
-    uint64_t *I = NULL, ni = 0, I_range [3] ;       // FIXME: allow 32
+    uint64_t *I = NULL, ni = 0, I_range [3] ;
     bool ignore ;
 
     // check inputs
@@ -82,8 +82,7 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [4], &ni,
-        I_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (pargin [4], &I, &ni, I_range, &ignore, NULL))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;

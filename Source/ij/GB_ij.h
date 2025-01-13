@@ -48,10 +48,13 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
 GrB_Info GB_ijsort
 (
+    // input:
     const void *I,              // size ni, where ni > 1 always holds
     const bool I_is_32,
-    int64_t imax,               // maximum value in I 
-    int64_t *p_ni,              // : size of I, output: # of indices in I2
+    const int64_t ni,           // length I
+    const int64_t imax,         // maximum value in I 
+    // output:
+    int64_t *p_ni2,             // # of indices in I2
     void **p_I2,                // size ni2, where I2 [0..ni2-1] contains the
                                 // sorted indices with duplicates removed.
     bool *I2_is_32_handle,      // if I2_is_32 true, I2 is 32 bits; else 64 bits
@@ -60,6 +63,25 @@ GrB_Info GB_ijsort
     bool *I2k_is_32_handle,     // if I2k_is_32 true, I2 is 32 bits; else 64
     size_t *I2k_size_handle,
     GB_Werk Werk
+) ;
+
+GrB_Info GB_ijvector
+(
+    // input:
+    GrB_Vector List,        // defines the list of integers, either from
+                            // List->x or List-i.  If List is NULL, it defines
+                            // I = GrB_ALL.
+    bool List_values,       // if true, I is determined by List->x;
+                            // otherwise, I is determined by List->i.
+    bool need_copy,         // if true, I must be allocated
+    // output:
+    void **I_handle,        // the list I; may be GrB_ALL
+    bool *I_is_32_handle,   // if true, I is 32-bit; else 64-bit
+    int64_t *ni_handle,     // the length of I, or special (GxB_RANGE)
+    size_t *I_size_handle,  // if > 0, I has been allocated by this
+                            // method.  Otherwise, it is a shallow pointer into
+                            // List->x or List->i.
+    GB_Werk Werk                            
 ) ;
 
 //------------------------------------------------------------------------------

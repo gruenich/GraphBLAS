@@ -559,16 +559,14 @@ struct GB_IndexUnaryOp_opaque GB_OPAQUE (NONZOMBIE) =
 GrB_IndexUnaryOp GxB_NONZOMBIE = & GB_OPAQUE (NONZOMBIE) ;
 
 //------------------------------------------------------------------------------
-// GrB_ALL and GxB_ALL32
+// GrB_ALL
 //------------------------------------------------------------------------------
 
-// The GrB_ALL and GxB_ALL32 pointers are never dereferenced.  They are passed
-// in as an argument to indicate that all indices are to be used, as in the
-// colon in C = A(:,j).
+// The GrB_ALL pointer is never dereferenced.  It is passed in as an argument
+// to indicate that all indices are to be used, as in the colon in C = A(:,j).
 
 uint64_t GB_OPAQUE (ALL) = 0 ;
 const uint64_t *GrB_ALL = & GB_OPAQUE (ALL) ;
-const uint32_t *GxB_ALL32 = (uint32_t *) (& GB_OPAQUE (ALL)) ;
 
 // the default hyper_switch is defined in GB_defaults.h
 const double GxB_HYPER_DEFAULT = GB_HYPER_SWITCH_DEFAULT ;

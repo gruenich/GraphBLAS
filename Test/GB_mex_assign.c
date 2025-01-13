@@ -47,8 +47,8 @@ GrB_Matrix Mask = NULL ;
 GrB_Matrix A = NULL ;
 GrB_Descriptor desc = NULL ;
 GrB_BinaryOp accum = NULL ;
-uint64_t *I = NULL, ni = 0, I_range [3] ;       // FIXME: allow 32
-uint64_t *J = NULL, nj = 0, J_range [3] ;       // FIXME: allow 32
+uint64_t *I = NULL, ni = 0, I_range [3] ;
+uint64_t *J = NULL, nj = 0, J_range [3] ;
 bool ignore ;
 bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
@@ -353,8 +353,7 @@ GrB_Info many_assign
 
         // get I
         p = mxGetFieldByNumber (pargin [1], k, fI) ;
-        if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, p, &ni, I_range,
-            &ignore))
+        if (!GB_mx_mxArray_to_indices (p, &I, &ni, I_range, &ignore, NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
@@ -362,8 +361,7 @@ GrB_Info many_assign
 
         // get J
         p = mxGetFieldByNumber (pargin [1], k, fJ) ;
-        if (!GB_mx_mxArray_to_indices ((void **) &J, NULL, p, &nj, J_range,
-            &ignore))
+        if (!GB_mx_mxArray_to_indices (p, &J, &nj, J_range, &ignore, NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;
@@ -565,16 +563,16 @@ void mexFunction
         }
 
         // get I
-        if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [4], &ni,
-            I_range, &ignore))
+        if (!GB_mx_mxArray_to_indices (pargin [4], &I, &ni, I_range, &ignore,
+            NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
         }
 
         // get J
-        if (!GB_mx_mxArray_to_indices ((void **) &J, NULL, pargin [5], &nj,
-            J_range, &ignore))
+        if (!GB_mx_mxArray_to_indices (pargin [5], &J, &nj, J_range, &ignore,
+            NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;

@@ -55,5 +55,5 @@ fprintf ('\nbench2: all tests passed\n') ;
 
 maxNumCompThreads (s) ;
 nthreads_set (save)  ;
-GrB.burble (0) ;
+GB_mex_burble (0) ;
 

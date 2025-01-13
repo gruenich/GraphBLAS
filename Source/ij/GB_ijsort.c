@@ -40,10 +40,10 @@ GrB_Info GB_ijsort
     // input:
     const void *I,              // size ni, where ni > 1 always holds
     const bool I_is_32,
-    int64_t imax,               // maximum value in I
+    const int64_t ni,           // length I
+    const int64_t imax,         // maximum value in I 
     // output:
-    int64_t *p_ni,              // on input: size of I,
-                                // on output: # of indices in I2
+    int64_t *p_ni2,             // # of indices in I2 and I2k
     void **p_I2,                // size ni2, where I2 [0..ni2-1] contains the
                                 // sorted indices with duplicates removed.
     bool *I2_is_32_handle,      // if I2_is_32 true, I2 is 32 bits; else 64 bits
@@ -79,7 +79,6 @@ GrB_Info GB_ijsort
     GB_MDECL (I1k, , u) ; size_t I1k_size = 0 ;
     GB_WERK_DECLARE (W, uint64_t) ;
 
-    int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
     int ntasks = 0 ;
 
@@ -105,8 +104,8 @@ GrB_Info GB_ijsort
 
     GB_WERK_PUSH (W, ntasks+1, uint64_t) ;
 
-    bool I1_is_32  = (imax < UINT32_MAX) ;
-    bool I1k_is_32 = (ni < UINT32_MAX) ;
+    bool I1_is_32  = (imax <= UINT32_MAX) ;
+    bool I1k_is_32 = (ni <= UINT32_MAX) ;
     size_t i1size  = (I1_is_32 ) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t i1ksize = (I1k_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     I1  = GB_MALLOC_MEMORY (ni, i1size , &I1_size) ;
@@ -250,7 +249,7 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    (*p_ni )            = ni2 ;
+    (*p_ni2)            = ni2 ;
     (*p_I2 )            = I2  ;
     (*I2_size_handle )  = I2_size ;
     (*I2_is_32_handle)  = I2_is_32 ;

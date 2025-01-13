@@ -833,18 +833,21 @@ GrB_Info GB_assign_prep
         { 
             // I2 = sort I and remove duplicates
             bool I2_is_32 ;
+            int64_t ni2 ;
             ASSERT (Ikind == GB_LIST) ;
-            GB_OK (GB_ijsort (I, I_is_32, imax, &ni,
-                &I2 , &I2_is_32 , &I2_size,
-                &I2k, &I2k_is_32, &I2k_size, Werk)) ;
+            GB_OK (GB_ijsort (I, I_is_32, ni, imax,
+                &ni2, &I2 , &I2_is_32 , &I2_size,
+                      &I2k, &I2k_is_32, &I2k_size, Werk)) ;
             // Recheck the length and properties of the new I2.  This may
             // convert I2 to GB_ALL or GB_RANGE, after I2 has been sorted.
-            GB_ijlength (I2, I2_is_32, ni, C->vlen, &nI, &Ikind, Icolon) ;
-            GB_OK (GB_ijproperties (I2, I2_is_32, ni, nI, C->vlen, &Ikind,
+            GB_ijlength (I2, I2_is_32, ni2, C->vlen, &nI, &Ikind, Icolon) ;
+            GB_OK (GB_ijproperties (I2, I2_is_32, ni2, nI, C->vlen, &Ikind,
                 Icolon, &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax,
                 Werk)) ;
             ASSERT (! (I_unsorted || I_has_dupl)) ;
+            // replace I with I2
             I = I2 ;
+            ni = ni2 ;
             I_is_32 = I2_is_32 ;
         }
 
@@ -852,18 +855,21 @@ GrB_Info GB_assign_prep
         { 
             // J2 = sort J and remove duplicates
             bool J2_is_32 ;
+            int64_t nj2 ;
             ASSERT (Jkind == GB_LIST) ;
-            GB_OK (GB_ijsort (J, J_is_32, jmax, &nj,
-                &J2 , &J2_is_32 , &J2_size,
-                &J2k, &J2k_is_32, &J2k_size, Werk)) ;
+            GB_OK (GB_ijsort (J, J_is_32, nj, jmax,
+                &nj2, &J2 , &J2_is_32 , &J2_size,
+                      &J2k, &J2k_is_32, &J2k_size, Werk)) ;
             // Recheck the length and properties of the new J2.  This may
             // convert J2 to GB_ALL or GB_RANGE, after J2 has been sorted.
-            GB_ijlength (J2, J2_is_32, nj, C->vdim, &nJ, &Jkind, Jcolon) ;
-            GB_OK (GB_ijproperties (J2, J2_is_32, nj, nJ, C->vdim, &Jkind,
+            GB_ijlength (J2, J2_is_32, nj2, C->vdim, &nJ, &Jkind, Jcolon) ;
+            GB_OK (GB_ijproperties (J2, J2_is_32, nj2, nJ, C->vdim, &Jkind,
                 Jcolon, &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax,
                 Werk)) ;
             ASSERT (! (J_unsorted || J_has_dupl)) ;
+            // replace J with J2
             J = J2 ;
+            nj = nj2 ;
             J_is_32 = J2_is_32 ;
         }
 

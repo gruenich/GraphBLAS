@@ -52,14 +52,15 @@ void mexFunction
     }
 
     // get I
-    if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [1], &ni,
-        I_range, &is_list))
+    if (!GB_mx_mxArray_to_indices (pargin [1], &I, &ni, I_range, &is_list,
+        NULL))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
     }
     if (!is_list)
     {
+        FREE_ALL ;
         mexErrMsgTxt ("I must be a list") ;
     }
 

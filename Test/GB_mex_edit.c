@@ -77,16 +77,14 @@ void mexFunction
     bool is_vector = (fmt == GxB_BY_COL && !is_hyper && ncols == 1) ;
 
     // get I
-    if (!GB_mx_mxArray_to_indices ((void **) &I, NULL, pargin [1], &ni,
-        I_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (pargin [1], &I, &ni, I_range, &ignore, NULL))
     {
         FREE_ALL ;
         mexErrMsgTxt ("I failed") ;
     }
 
     // get J
-    if (!GB_mx_mxArray_to_indices ((void **) &J, NULL, pargin [2], &nj,
-        J_range, &ignore))
+    if (!GB_mx_mxArray_to_indices (pargin [2], &J, &nj, J_range, &ignore, NULL))
     {
         FREE_ALL ;
         mexErrMsgTxt ("J failed") ;

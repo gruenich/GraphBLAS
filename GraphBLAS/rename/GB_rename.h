@@ -518,6 +518,7 @@
 #define GB_ijlength GM_ijlength
 #define GB_ijproperties GM_ijproperties
 #define GB_ijsort GM_ijsort
+#define GB_ijvector GM_ijvector
 #define GB_import GM_import
 #define GB_IndexBinaryOp_check GM_IndexBinaryOp_check
 #define GB_IndexUnaryOp_check GM_IndexUnaryOp_check
@@ -1070,6 +1071,7 @@
 #define GB_masker_phase2_jit GM_masker_phase2_jit
 #define GB_masker_sparsity GM_masker_sparsity
 #define GB_mask GM_mask
+#define GB_Matrix_assign_scalar GM_Matrix_assign_scalar
 #define GB_Matrix_check GM_Matrix_check
 #define GB_Matrix_diag GM_Matrix_diag
 #define GB_Matrix_free GM_Matrix_free
@@ -1307,6 +1309,7 @@
 #define GB_user_name_set GM_user_name_set
 #define GB_user_op_jit GM_user_op_jit
 #define GB_user_type_jit GM_user_type_jit
+#define GB_Vector_assign_scalar GM_Vector_assign_scalar
 #define GB_Vector_check GM_Vector_check
 #define GB_Vector_diag GM_Vector_diag
 #define GB_vector_load GM_vector_load
@@ -2681,7 +2684,6 @@
 #define GxB_ACOSH_FP64 GxM_ACOSH_FP64
 #define GxB_AINV_FC32 GxM_AINV_FC32
 #define GxB_AINV_FC64 GxM_AINV_FC64
-#define GxB_ALL32 GxM_ALL32
 #define GxB_ALWAYS_HYPER GxM_ALWAYS_HYPER
 #define GxB_ANY_BOOL GxM_ANY_BOOL
 #define GxB_ANY_BOOL_MONOID GxM_ANY_BOOL_MONOID
@@ -3757,6 +3759,8 @@
 #define GxB_Matrix_apply_IndexOp_FC64 GxM_Matrix_apply_IndexOp_FC64
 #define GxB_Matrix_assign_FC32 GxM_Matrix_assign_FC32
 #define GxB_Matrix_assign_FC64 GxM_Matrix_assign_FC64
+#define GxB_Matrix_assign_Scalar_Vector GxM_Matrix_assign_Scalar_Vector
+#define GxB_Matrix_assign_Vector GxM_Matrix_assign_Vector
 #define GxB_Matrix_build_FC32 GxM_Matrix_build_FC32
 #define GxB_Matrix_build_FC64 GxM_Matrix_build_FC64
 #define GxB_Matrix_build_Scalar GxM_Matrix_build_Scalar
@@ -5027,6 +5031,8 @@
 #define GxB_Vector_apply_IndexOp_FC64 GxM_Vector_apply_IndexOp_FC64
 #define GxB_Vector_assign_FC32 GxM_Vector_assign_FC32
 #define GxB_Vector_assign_FC64 GxM_Vector_assign_FC64
+#define GxB_Vector_assign_Scalar_Vector GxM_Vector_assign_Scalar_Vector
+#define GxB_Vector_assign_Vector GxM_Vector_assign_Vector
 #define GxB_Vector_build_FC32 GxM_Vector_build_FC32
 #define GxB_Vector_build_FC64 GxM_Vector_build_FC64
 #define GxB_Vector_build_Scalar GxM_Vector_build_Scalar

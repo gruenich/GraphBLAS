@@ -223,10 +223,8 @@ mex -g -R2018a GB_spones_mex.c
 % load the library
 if (ispc)
     cd ../build/Release
-    GrB (1)
+    GrB (1) ;   % FIXME: remove this; use GB_mex_init instead
     cd ../../Test
     pwd
 end
-
-
 

@@ -83,7 +83,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
     GrB_Matrix C,                   // input/output matrix for results
     const GrB_Matrix M_in,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
-    GrB_Scalar scalar,              // scalar to assign to C(I,J)
+    const GrB_Scalar scalar,        // scalar to assign to C(I,J)
     const uint64_t *I,              // row indices
     uint64_t ni,                    // number of row indices
     const uint64_t *J,              // column indices
