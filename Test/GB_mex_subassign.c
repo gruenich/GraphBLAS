@@ -48,6 +48,8 @@
     GrB_Matrix_free_(&C) ;              \
     if (C_is_M) M = NULL ;              \
     GrB_Matrix_free_(&M) ;              \
+    GrB_Vector_free_(&I_vector) ;       \
+    GrB_Vector_free_(&J_vector) ;       \
     GrB_Descriptor_free_(&desc) ;       \
     if (!user_complex) GrB_Monoid_free_(&reduce) ;                \
     GB_mx_put_global (true) ;           \
@@ -83,8 +85,9 @@ GrB_Matrix A = NULL ;
 GrB_Matrix mask = NULL, u = NULL ;
 GrB_Descriptor desc = NULL ;
 GrB_BinaryOp accum = NULL ;
-uint64_t *I = NULL, ni = 0, I_range [3] ;
-uint64_t *J = NULL, nj = 0, J_range [3] ;
+uint64_t *I = NULL, ni = 0, I_range [3] ; GrB_Vector I_vector = NULL ;
+uint64_t *J = NULL, nj = 0, J_range [3] ; GrB_Vector J_vector = NULL ;
+int kind = 0 ;
 bool ignore ;
 bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
@@ -139,9 +142,32 @@ GrB_Info assign (void)
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for mex assign", pr) ;
     ASSERT_MATRIX_OK (A, "A for mex assign", pr) ;
 
-    if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && use_GrB_Scalar)
+    if (kind == 3)
     {
+
+        //----------------------------------------------------------------------
+        // test GxB_*_subassign_Vector, with GrB_Vectors as I and J
+        //----------------------------------------------------------------------
+
+        if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
+        {
+            OK (GxB_Vector_subassign_Vector ((GrB_Vector) C, (GrB_Vector) M,
+                accum, (GrB_Vector) A, I_vector, desc)) ;
+        }
+        else
+        {
+            OK (GxB_Matrix_subassign_Vector ((GrB_Matrix) C, (GrB_Matrix) M,
+                accum, A, I_vector, J_vector, desc)) ;
+        }
+
+    }
+    else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && use_GrB_Scalar)
+    {
+
+        //----------------------------------------------------------------------
         // use GxB_Matrix_subassign_Scalar or GxB_Vector_subassign_Scalar
+        //----------------------------------------------------------------------
+
         GrB_Scalar S = (GrB_Scalar) A ;
         if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
         {
@@ -157,14 +183,19 @@ GrB_Info assign (void)
     }
     else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
     {
+
         GB_void *Ax = A->x ; // OK: A is a scalar with exactly one entry
 
         if (ni == 1 && nj == 1 && M == NULL && I != GrB_ALL && J != GrB_ALL
             && GB_op_is_second (accum, C->type) && A->type->code <= GB_FC64_code
             && desc == NULL)
         {
-            if (ph) printf ("setElement\n") ;
+
+            //------------------------------------------------------------------
             // test GrB_Matrix_setElement
+            //------------------------------------------------------------------
+
+            if (ph) printf ("setElement\n") ;
             #define ASSIGN(prefix,suffix,type)                          \
             {                                                           \
                 type x = ((type *) Ax) [0] ;                            \
@@ -199,7 +230,10 @@ GrB_Info assign (void)
         else if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
         {
 
+            //------------------------------------------------------------------
             // test GxB_Vector_subassign_scalar functions
+            //------------------------------------------------------------------
+
             if (ph) printf ("scalar assign to vector\n") ;
             #define ASSIGN(suffix,type)                 \
             {                                           \
@@ -243,7 +277,10 @@ GrB_Info assign (void)
         else
         {
 
+            //------------------------------------------------------------------
             // test Matrix_subassign_scalar functions
+            //------------------------------------------------------------------
+
             if (ph) printf ("scalar assign to matrix\n") ;
             #define ASSIGN(suffix,type)                     \
             {                                               \
@@ -281,29 +318,43 @@ GrB_Info assign (void)
                     mexErrMsgTxt ("unsupported type") ;
             }
             #undef ASSIGN
-
         }
+
     }
     else if (GB_VECTOR_OK (C) && GB_VECTOR_OK (A) &&
         (M == NULL || GB_VECTOR_OK (M)) && !at)
     {
+
+        //----------------------------------------------------------------------
         // test GxB_Vector_subassign
+        //----------------------------------------------------------------------
+
         if (ph) printf ("vector assign\n") ;
         OK (GxB_Vector_subassign_((GrB_Vector) C, (GrB_Vector) M, accum,
             (GrB_Vector) A, I, ni, desc)) ;
+
     }
     else if (GB_VECTOR_OK (A) && nj == 1 &&
         (M == NULL || GB_VECTOR_OK (M)) && !at)
     {
+
+        //----------------------------------------------------------------------
         // test GxB_Col_subassign
+        //----------------------------------------------------------------------
+
         if (ph) printf ("col assign\n") ;
         OK (GxB_Col_subassign_(C, (GrB_Vector) M, accum, (GrB_Vector) A,
             I, ni, J [0], desc)) ;
+
     }
     else if (A->vlen == 1 && ni == 1 && nj > 0 &&
         (M == NULL || M->vlen == 1) && !at)
     {
+
+        //----------------------------------------------------------------------
         // test GxB_Row_subassign; this is not meant to be efficient,
+        //----------------------------------------------------------------------
+
         // just for testing
         if (ph) printf ("row assign\n") ;
         if (M != NULL)
@@ -329,10 +380,15 @@ GrB_Info assign (void)
             I [0], J, nj, desc)) ;
         GrB_Matrix_free_(&mask) ;
         GrB_Matrix_free_(&u) ;
+
     }
     else
     {
+
+        //----------------------------------------------------------------------
         // standard submatrix assignment
+        //----------------------------------------------------------------------
+
         if (ph) printf ("submatrix assign\n") ;
         OK (GxB_Matrix_subassign_(C, M, accum, A, I, ni, J, nj, desc)) ;
     }
@@ -524,7 +580,7 @@ void mexFunction
     reduce = NULL ;
 
     if (!((nargout == 1 && (nargin == 2 || nargin == 3 ||
-            nargin == 6 || nargin == 7)) ||
+            nargin == 6 || nargin == 7 || nargin == 8)) ||
           ((nargout == 2 || nargout == 3) && nargin == 8)))
     {
         GB_mx_put_global (true) ;
@@ -640,17 +696,24 @@ void mexFunction
             mexErrMsgTxt ("accum failed") ;
         }
 
-        // get I
+        // get kind (3: matrix/vector with I and J as GrB_Vectors)
+        kind = 0 ;
+        if (nargin > 7)
+        {
+            kind = (int) mxGetScalar (pargin [7]) ;
+        }
+
+        // get I: may be a GrB_Vector
         if (!GB_mx_mxArray_to_indices (pargin [4], &I, &ni, I_range, &ignore,
-            NULL))
+            (kind == 3) ? (&I_vector) : NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
         }
 
-        // get J
+        // get J: may be a GrB_Vector
         if (!GB_mx_mxArray_to_indices (pargin [5], &J, &nj, J_range, &ignore,
-            NULL))
+            (kind == 3) ? (&J_vector) : NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;

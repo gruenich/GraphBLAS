@@ -68,7 +68,7 @@ GB_ASSIGN_SCALAR (GrB, void *    , UDT    ,  )
 //  GrB_Vector_assign (w, M, accum, A, I, ni, desc) ;
 //  GrB_Vector_free (&A) ;
 
-GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
+GrB_Info GrB_Vector_assign_Scalar   // w(I)<mask> = accum (w(I),s)
 (
     GrB_Vector w,                   // input/output matrix for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -76,9 +76,9 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     const GrB_Scalar scalar,        // scalar to assign to w(I)
     const uint64_t *I,              // row indices
     uint64_t ni,                    // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and Mask
+    const GrB_Descriptor desc       // descriptor for w and mask
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -100,6 +100,6 @@ GrB_Info GrB_Vector_assign_Scalar   // w<Mask>(I) = accum (w(I),s)
     //--------------------------------------------------------------------------
 
     GB_BURBLE_END ;
-    return (info) ;
+    return (GrB_SUCCESS) ;
 }
 

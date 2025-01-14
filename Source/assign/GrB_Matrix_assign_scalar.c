@@ -87,7 +87,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),s)
     uint64_t nj,                    // number of column indices
     const GrB_Descriptor desc       // descriptor for C and Mask
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

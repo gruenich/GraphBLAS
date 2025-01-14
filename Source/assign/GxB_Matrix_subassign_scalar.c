@@ -21,8 +21,6 @@
 
 #define GB_FREE_ALL ;
 #include "assign/GB_subassign.h"
-#include "ij/GB_ij.h"
-#include "mask/GB_get_mask.h"
 
 #define GB_ASSIGN_SCALAR(type,T,ampersand)                                  \
 GrB_Info GB_EVAL2 (GXB (Matrix_subassign_), T) /* C(Rows,Cols)<M> += x   */ \
@@ -75,13 +73,10 @@ GB_ASSIGN_SCALAR (void *    , UDT    ,  )
 //  GxB_Matrix_subassign (C, M, accum, A, Rows, nRows, Cols, nCols, desc) ;
 //  GrB_Matrix_free (&A) ;
 
-#undef  GB_FREE_ALL
-#define GB_FREE_ALL GB_Matrix_free (&A) ;
-
 GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
     const GrB_Scalar scalar,        // scalar to assign to C(I,J)
     const uint64_t *I,              // row indices
@@ -90,126 +85,29 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<M> = accum (C(I,J),s)
     uint64_t nj,                    // number of column indices
     const GrB_Descriptor desc       // descriptor for C and Mask
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (C, M_in, scalar,
+    GB_WHERE3 (C, Mask, scalar,
         "GxB_Matrix_subassign_Scalar (C, M, accum, s, Rows, nRows, Cols, nCols,"
         " desc)") ;
-    GB_RETURN_IF_NULL (C) ;
-    GB_RETURN_IF_NULL (scalar) ;
-    GB_RETURN_IF_NULL (I) ;
-    GB_RETURN_IF_NULL (J) ;
     GB_BURBLE_START ("GxB_subassign") ;
 
-    GrB_Matrix A = NULL ;
-
-    // if C has a user-defined type, its type must match the scalar type
-    if (C->type->code == GB_UDT_code && C->type != scalar->type)
-    { 
-        GB_ERROR (GrB_DOMAIN_MISMATCH, "Input of type [%s]\n"
-            "cannot be typecast to output of type [%s]",
-            scalar->type->name, C->type->name) ;
-    }
-
-    // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
-        xx1, xx2, xx3, xx7) ;
-
-    // get the mask
-    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
-
     //--------------------------------------------------------------------------
-    // C(Rows,Cols)<M> = accum (C(Rows,Cols), scalar)
+    // C(I,J)<M> = accum (C(I,J), scalar)
     //--------------------------------------------------------------------------
 
-    uint64_t nvals ;
-    GB_OK (GB_nvals (&nvals, (GrB_Matrix) scalar, Werk)) ;
+    GB_OK (GB_Matrix_subassign_scalar (C, Mask, accum, scalar,
+        I, false, ni, J, false, nj, desc, Werk)) ;
 
-    if (M == NULL && !Mask_comp && ni == 1 && nj == 1 && !C_replace)
-    {
-
-        //----------------------------------------------------------------------
-        // scalar assignment
-        //----------------------------------------------------------------------
-
-        const uint64_t row = I [0] ;
-        const uint64_t col = J [0] ;
-        if (nvals == 1)
-        { 
-            // set the element: C(row,col) += scalar or C(row,col) = scalar
-            info = GB_setElement (C, accum, scalar->x, row, col,
-                scalar->type->code, Werk) ;
-        }
-        else if (accum == NULL)
-        { 
-            // delete the C(row,col) element
-            info = GB_Matrix_removeElement (C, row, col, Werk) ;
-        }
-
-    }
-    else if (nvals == 1)
-    { 
-
-        //----------------------------------------------------------------------
-        // the opaque GrB_Scalar has a single entry
-        //----------------------------------------------------------------------
-
-        // This is identical to non-opaque scalar subassignment
-
-        info = GB_subassign (
-            C, C_replace,               // C matrix and its descriptor
-            M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
-            false,                      // do not transpose the mask
-            accum,                      // for accum (C(Rows,Cols),scalar)
-            NULL, false,                // no explicit matrix A
-            I, false, ni,               // row indices
-            J, false, nj,               // column indices
-            true,                       // do scalar expansion
-            scalar->x,                  // scalar to assign, expands to become A
-            scalar->type->code,         // type code of scalar to expand
-            Werk) ;
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // the opaque GrB_Scalar has no entry
-        //----------------------------------------------------------------------
-
-        // determine the properites of the I and J index lists
-        int64_t nRows, nCols, RowColon [3], ColColon [3] ;
-        int RowsKind, ColsKind ;
-        GB_ijlength (I, false, ni, GB_NROWS (C), &nRows, &RowsKind, RowColon) ;
-        GB_ijlength (J, false, nj, GB_NCOLS (C), &nCols, &ColsKind, ColColon) ;
-
-        // create an empty matrix A of the right size, and use matrix assign
-        struct GB_Matrix_opaque A_header ;
-        GB_CLEAR_STATIC_HEADER (A, &A_header) ;
-        bool is_csc = C->is_csc ;
-        int64_t vlen = is_csc ? nRows : nCols ;
-        int64_t vdim = is_csc ? nCols : nRows ;
-        GB_OK (GB_new (&A, // existing header
-            scalar->type, vlen, vdim, GB_ph_calloc, is_csc, GxB_AUTO_SPARSITY,
-            GB_HYPER_SWITCH_DEFAULT, 1, /* OK: */ false, false, false)) ;
-        info = GB_subassign (
-            C, C_replace,                   // C matrix and its descriptor
-            M, Mask_comp, Mask_struct,      // mask matrix and its descriptor
-            false,                          // do not transpose the mask
-            accum,                          // for accum (C(Rows,Cols),A)
-            A, false,                       // A matrix and its descriptor
-            I, false, ni,                   // row indices
-            J, false, nj,                   // column indices
-            false, NULL, GB_ignore_code,    // no scalar expansion
-            Werk) ;
-        GB_FREE_ALL ;
-    }
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
 
     GB_BURBLE_END ;
-    return (info) ;
+    return (GrB_SUCCESS) ;
 }
 

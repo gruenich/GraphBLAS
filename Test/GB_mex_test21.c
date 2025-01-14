@@ -114,7 +114,7 @@ void mexFunction
     fprintf (fp, "GB_assign_describe\n") ;
     printf ("GB_assign_describe\n") ;
     char str [2048] ;
-    GB_assign_describe (str, 2048, false, GB_ALL, GB_ALL, 
+    GB_assign_describe (str, 2048, false, GB_ALL, GB_ALL,
         /* M_is_null: */ true, /* M_sparsity: */ GxB_SPARSE,
         /* Mask_comp: */ true, /* Mask_struct: */ true,
         /* accum: */ NULL, /* A_is_null: */ false, GB_ASSIGN) ;

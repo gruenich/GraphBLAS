@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_assign_Scalar_Vector: assign scalar to vector
+// GxB_Vector_subassign_Scalar_Vector: assign scalar to vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,16 +9,16 @@
 
 // DONE: 32/64 bit
 
-// Assigns a single scalar to a vector, w<M>(Rows) = accum(w(Rows),x)
+// Assigns a single scalar to a vector, w(I)<M> = accum(w(I),x)
 // The scalar x is implicitly expanded into a vector u of size ni-by-1,
 // with each entry in u equal to x.
 
-#include "assign/GB_assign.h"
+#include "assign/GB_subassign.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
     if (I_size > 0) GB_FREE (&I, I_size) ;
 
-GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
+GrB_Info GxB_Vector_subassign_Scalar_Vector   // w(I)<mask> = accum (w(I),x)
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
@@ -34,8 +34,8 @@ GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
     //--------------------------------------------------------------------------
 
     GB_WHERE3 (w, mask, scalar,
-        "GxB_Vector_assign_Scalar_Vector (w, M, accum, s, I, desc)") ;
-    GB_BURBLE_START ("GxB_Vector_assign_Scalar_Vector") ;
+        "GxB_Vector_subassign_Scalar_Vector (w, M, accum, s, I, desc)") ;
+    GB_BURBLE_START ("GxB_Vector_subassign_Scalar_Vector") ;
 
     //--------------------------------------------------------------------------
     // get the index vectors
@@ -52,7 +52,7 @@ GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
     // w<M>(I) = accum (w(I), scalar)
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_Vector_assign_scalar (w, mask, accum, scalar,
+    GB_OK (GB_Vector_subassign_scalar (w, mask, accum, scalar,
         I, I_is_32, ni, desc, Werk)) ;
 
     //--------------------------------------------------------------------------

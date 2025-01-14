@@ -54,6 +54,35 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
     GB_Werk Werk
 ) ;
 
+GrB_Info GB_Matrix_subassign_scalar   // C(I,J)<M> = accum (C(I,J),s)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    const GrB_Scalar scalar,        // scalar to assign to C(I,J)
+    const uint64_t *I,              // row indices
+    const bool I_is_32,
+    uint64_t ni,                    // number of row indices
+    const uint64_t *J,              // column indices
+    const bool J_is_32,
+    uint64_t nj,                    // number of column indices
+    const GrB_Descriptor desc,      // descriptor for C and Mask
+    GB_Werk Werk
+) ;
+
+GrB_Info GB_Vector_subassign_scalar // w(I)><Mask> = accum (w(I),s)
+(
+    GrB_Vector w,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    const GrB_Scalar scalar,        // scalar to assign to w(I)
+    const uint64_t *I,              // row indices
+    const bool I_is_32,
+    uint64_t ni,                    // number of row indices
+    const GrB_Descriptor desc,      // descriptor for w and Mask
+    GB_Werk Werk
+) ;
+
 int GB_subassigner_method           // return method to use in GB_subassigner
 (
     // outputs

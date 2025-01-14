@@ -65,12 +65,6 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
         GB_ASSIGN,
         Werk) ;
 
-    if (info == GrB_SUCCESS)
-    {
-        ASSERT_MATRIX_OK ((GrB_Matrix) w, "w result, GrB_Vector_assign", GB0) ;
-        GB_OK (GB_valid_matrix ((GrB_Matrix) w)) ;
-    }
-
     GB_BURBLE_END ;
     return (info) ;
 }

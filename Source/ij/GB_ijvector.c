@@ -9,6 +9,7 @@
 
 // The input vector List describes a list of integers to be used by GrB_assign,
 // GxB_subassign, or GrB_extract.
+#define GB_DEBUG
 
 #include "GB_ij.h"
 #include "matrix/include/GB_static_header.h"
@@ -50,7 +51,7 @@ GrB_Info GB_ijvector
     ASSERT (I_handle != NULL) ;
     ASSERT (I_is_32_handle != NULL) ;
     ASSERT (ni_handle != NULL) ;
-    ASSERT (I_allocated_handle != NULL) ;
+    ASSERT (I_size_handle != NULL) ;
     ASSERT_VECTOR_OK_OR_NULL (List, "List of integers", GB0) ;
 
     (*I_handle) = NULL ;

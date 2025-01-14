@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_assign_Vector: C<M>(I,J) = accum (C(I,J),A) or A'
+// GxB_Matrix_subassign_Vector: C(I,J)<M> = accum (C(I,J),A) or A'
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,23 +9,24 @@
 
 // DONE: 32/64 bit
 
-#include "assign/GB_assign.h"
-#include "assign/GB_bitmap_assign.h"
+// Compare with GrB_Matrix_assign, which uses M and C_replace differently
+
+#include "assign/GB_subassign.h"
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
     if (I_size > 0) GB_FREE (&I, I_size) ;      \
     if (J_size > 0) GB_FREE (&J, J_size) ;
 
-GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
+GrB_Info GxB_Matrix_subassign_Vector // C(I,J)<M> = accum (C(I,J),A)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),T)
+    const GrB_Matrix Mask,          // mask for C(I,J), unused if NULL
+    const GrB_BinaryOp accum,       // accum for Z=accum(C(I,J),T)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Vector I_vector,      // row indices
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C, Mask, and A
+    const GrB_Descriptor desc       // descriptor for C(I,J), M, and A
 )
 { 
 
@@ -34,10 +35,10 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
     //--------------------------------------------------------------------------
 
     GB_WHERE3 (C, Mask, A,
-        "GxB_Matrix_assign_Vector (C, M, accum, A, I, J, desc)") ;
+        "GxB_Matrix_subassign_Vector (C, M, accum, A, I, J desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
-    GB_BURBLE_START ("GxB_Matrix_assign_Vector") ;
+    GB_BURBLE_START ("GxB_Matrix_subassign_Vector") ;
 
     void *I = NULL, *J = NULL ;
     size_t I_size = 0, J_size = 0 ;
@@ -63,10 +64,10 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
         Werk)) ;
 
     //--------------------------------------------------------------------------
-    // C<M>(I,J) = accum (C(I,J), A) and variations
+    // C(I,J)<M> = accum (C(I,J), A) and variations
     //--------------------------------------------------------------------------
 
-    info = GB_assign (
+    info = GB_subassign (
         C, C_replace,                   // C matrix and its descriptor
         M, Mask_comp, Mask_struct,      // mask matrix and its descriptor
         false,                          // do not transpose the mask
@@ -75,7 +76,6 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
         I, I_is_32, ni,                 // row indices
         J, J_is_32, nj,                 // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
-        GB_ASSIGN,
         Werk) ;
 
     //--------------------------------------------------------------------------

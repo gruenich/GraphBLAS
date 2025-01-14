@@ -1077,6 +1077,7 @@
 #define GB_Matrix_free GM_Matrix_free
 #define GB_Matrix_new GM_Matrix_new
 #define GB_Matrix_removeElement GM_Matrix_removeElement
+#define GB_Matrix_subassign_scalar GM_Matrix_subassign_scalar
 #define GB_matvec_check GM_matvec_check
 #define GB_matvec_enum_get GM_matvec_enum_get
 #define GB_matvec_name_get GM_matvec_name_get
@@ -1314,6 +1315,7 @@
 #define GB_Vector_diag GM_Vector_diag
 #define GB_vector_load GM_vector_load
 #define GB_Vector_removeElement GM_Vector_removeElement
+#define GB_Vector_subassign_scalar GM_Vector_subassign_scalar
 #define GB_wait GM_wait
 #define GB_werk_pop GM_werk_pop
 #define GB_werk_push GM_werk_push
@@ -3834,11 +3836,13 @@
 #define GxB_Matrix_subassign_INT64 GxM_Matrix_subassign_INT64
 #define GxB_Matrix_subassign_INT8 GxM_Matrix_subassign_INT8
 #define GxB_Matrix_subassign_Scalar GxM_Matrix_subassign_Scalar
+#define GxB_Matrix_subassign_Scalar_Vector GxM_Matrix_subassign_Scalar_Vector
 #define GxB_Matrix_subassign_UDT GxM_Matrix_subassign_UDT
 #define GxB_Matrix_subassign_UINT16 GxM_Matrix_subassign_UINT16
 #define GxB_Matrix_subassign_UINT32 GxM_Matrix_subassign_UINT32
 #define GxB_Matrix_subassign_UINT64 GxM_Matrix_subassign_UINT64
 #define GxB_Matrix_subassign_UINT8 GxM_Matrix_subassign_UINT8
+#define GxB_Matrix_subassign_Vector GxM_Matrix_subassign_Vector
 #define GxB_Matrix_type GxM_Matrix_type
 #define GxB_Matrix_type_name GxM_Matrix_type_name
 #define GxB_Matrix_unpack_BitmapC GxM_Matrix_unpack_BitmapC
@@ -5084,11 +5088,13 @@
 #define GxB_Vector_subassign_INT64 GxM_Vector_subassign_INT64
 #define GxB_Vector_subassign_INT8 GxM_Vector_subassign_INT8
 #define GxB_Vector_subassign_Scalar GxM_Vector_subassign_Scalar
+#define GxB_Vector_subassign_Scalar_Vector GxM_Vector_subassign_Scalar_Vector
 #define GxB_Vector_subassign_UDT GxM_Vector_subassign_UDT
 #define GxB_Vector_subassign_UINT16 GxM_Vector_subassign_UINT16
 #define GxB_Vector_subassign_UINT32 GxM_Vector_subassign_UINT32
 #define GxB_Vector_subassign_UINT64 GxM_Vector_subassign_UINT64
 #define GxB_Vector_subassign_UINT8 GxM_Vector_subassign_UINT8
+#define GxB_Vector_subassign_Vector GxM_Vector_subassign_Vector
 #define GxB_Vector_type GxM_Vector_type
 #define GxB_Vector_type_name GxM_Vector_type_name
 #define GxB_Vector_unload GxM_Vector_unload
