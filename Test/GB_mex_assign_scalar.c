@@ -153,12 +153,12 @@ void mexFunction
     GrB_Scalar S = (GrB_Scalar) A ;
     if (GB_VECTOR_OK (C) && (Mask == NULL || GB_VECTOR_OK (Mask)))
     {
-        METHOD (GrB_Vector_assign_Scalar ((GrB_Vector) C, (GrB_Vector) Mask,
+        METHOD (GrB_Vector_assign_Scalar_((GrB_Vector) C, (GrB_Vector) Mask,
             accum, S, I, ni, desc)) ;
     }
     else
     {
-        METHOD (GrB_Matrix_assign_Scalar ((GrB_Matrix) C, (GrB_Matrix) Mask,
+        METHOD (GrB_Matrix_assign_Scalar_((GrB_Matrix) C, (GrB_Matrix) Mask,
             accum, S, I, ni, J, nj, desc)) ;
     }
 

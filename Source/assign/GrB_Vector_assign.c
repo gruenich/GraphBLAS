@@ -50,7 +50,7 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
     GrB_Matrix M = GB_get_mask ((GrB_Matrix) M_in, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
-    // w(Rows)<M> = accum (w(Rows), u) and variations
+    // w(Rows)<M> = accum (w(Rows), u)
     //--------------------------------------------------------------------------
 
     info = GB_assign (

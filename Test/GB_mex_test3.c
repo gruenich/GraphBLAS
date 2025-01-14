@@ -499,7 +499,7 @@ void mexFunction
     OK (GrB_Matrix_assign_FP32 (A, NULL, NULL, 1, GrB_ALL, 4, GrB_ALL, 4,
         NULL)) ;
     OK (GxB_Matrix_fprint (A, "A iso", GxB_SHORT, NULL)) ;
-    OK (GrB_Matrix_assign (C, NULL, NULL, A, I, 4, I, 4, NULL)) ;
+    OK (GrB_Matrix_assign_(C, NULL, NULL, A, I, 4, I, 4, NULL)) ;
     OK (GxB_Matrix_fprint (C, "C iso with pending", GxB_SHORT, NULL)) ;
     GrB_Matrix_free_(&A) ;
 
@@ -509,7 +509,7 @@ void mexFunction
     OK (GrB_Matrix_setElement_FP32 (A, 2.1, 1, 0)) ;
     OK (GrB_Matrix_setElement_FP32 (A, 2.2, 1, 1)) ;
     OK (GxB_Matrix_fprint (A, "A non-iso", GxB_SHORT, NULL)) ;
-    OK (GrB_Matrix_assign (C, NULL, NULL, A, I, 2, I, 2, NULL)) ;
+    OK (GrB_Matrix_assign_(C, NULL, NULL, A, I, 2, I, 2, NULL)) ;
     OK (GxB_Matrix_fprint (C, "C non-iso", GxB_SHORT, NULL)) ;
 
     GrB_Matrix_free_(&A) ;

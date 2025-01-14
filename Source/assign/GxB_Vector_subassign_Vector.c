@@ -42,11 +42,6 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
-    void *I = NULL ;
-    size_t I_size = 0 ;
-    int64_t ni = 0 ;
-    bool I_is_32 = false ;
-
     // FIXME: get Row_values from the descriptor
 
     // get the descriptor
@@ -60,14 +55,18 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
     // get the index vector
     //--------------------------------------------------------------------------
 
+    void *I = NULL ;
+    size_t I_size = 0 ;
+    int64_t ni = 0 ;
+    bool I_is_32 = false ;
     GB_OK (GB_ijvector (I_vector, true, (w == I_vector),
         &I, &I_is_32, &ni, &I_size, Werk)) ;
 
     //--------------------------------------------------------------------------
-    // w(I)<M> = accum (w(I), u) and variations
+    // w(I)<M> = accum (w(I), u)
     //--------------------------------------------------------------------------
 
-    info = GB_subassign (
+    GB_OK (GB_subassign (
         (GrB_Matrix) w, C_replace,      // w vector and its descriptor
         M, Mask_comp, Mask_struct,      // mask and its descriptor
         false,                          // do not transpose the mask
@@ -76,7 +75,7 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
         I, I_is_32, ni,                 // row indices
         GrB_ALL, false, 1,              // all column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
-        Werk) ;
+        Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -84,6 +83,6 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
 
     GB_FREE_ALL ;
     GB_BURBLE_END ;
-    return (info) ;
+    return (GrB_SUCCESS) ;
 }
 

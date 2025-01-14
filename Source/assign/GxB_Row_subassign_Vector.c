@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_assign_Vector: w<M>(I) = accum (w(I),u)
+// GxB_Row_subassign_Vector: C(i,J)<M'> = accum (C(i,J),u')
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,24 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
-// Compare with GxB_Vector_subassign, which uses M and C_replace differently
-
-#include "assign/GB_assign.h"
+#include "assign/GB_subassign.h"
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
-    if (I_size > 0) GB_FREE (&I, I_size) ;
+    if (J_size > 0) GB_FREE (&J, J_size) ;
 
-GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
+GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
 (
-    GrB_Vector w,                   // input/output matrix for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector I_vector,      // row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for C(i,J), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C(i,J),t)
+    const GrB_Vector u,             // input vector
+    uint64_t i,                     // row index
+    const GrB_Vector J_vector,      // column indices
+    const GrB_Descriptor desc       // descriptor for C(i,J) and mask
 )
 { 
 
@@ -32,17 +29,16 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, mask, u,
-        "GxB_Vector_assign_Vector (w, M, accum, u, I, desc)") ;
-    GB_RETURN_IF_NULL (w) ;
+    GB_WHERE3 (C, mask, u,
+        "GxB_Row_subassign_Vector (C, M, accum, u, i, J, desc)") ;
+    GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (u) ;
-    GB_BURBLE_START ("GxB_Vector_assign_Vector") ;
+    GB_BURBLE_START ("GxB_Row_subassign_Vector") ;
 
-    ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
-    // FIXME: get Row_values from the descriptor
+    // FIXME: get from descriptor
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -55,27 +51,30 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     // get the index vector
     //--------------------------------------------------------------------------
 
-    void *I = NULL ;
-    size_t I_size = 0 ;
-    int64_t ni = 0 ;
-    bool I_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, true, (w == I_vector),
-        &I, &I_is_32, &ni, &I_size, Werk)) ;
+    void *J = NULL ;
+    size_t J_size = 0 ;
+    int64_t nj = 0 ;
+    bool J_is_32 = false ;
+    GB_OK (GB_ijvector (J_vector, true, false, &J, &J_is_32, &nj, &J_size,
+        Werk)) ;
 
     //--------------------------------------------------------------------------
-    // w(I)<M> = accum (w(I), u)
+    // C(i,J)<M'> = accum (C(i,J), u')
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_assign (
-        (GrB_Matrix) w, C_replace,      // w vector and its descriptor
+    // construct the index list I = [ i ] of length ni = 1
+    uint64_t I [1] ;
+    I [0] = i ;
+
+    GB_OK (GB_subassign (
+        C, C_replace,                   // C matrix and its descriptor
         M, Mask_comp, Mask_struct,      // mask and its descriptor
-        false,                          // do not transpose the mask
-        accum,                          // for accum (C(I,:),A)
-        (GrB_Matrix) u, false,          // u as a matrix; never transposed
-        I, I_is_32, ni,                 // row indices
-        GrB_ALL, false, 1,              // all column indices
+        true,                           // transpose the mask
+        accum,                          // for accum (C(i,J),u)
+        (GrB_Matrix) u, true,           // u as a matrix; always transposed
+        I, false, 1,                    // a single row index
+        J, J_is_32, nj,                 // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
-        GB_ASSIGN,
         Werk)) ;
 
     //--------------------------------------------------------------------------

@@ -151,12 +151,12 @@ GrB_Info assign (void)
 
         if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
         {
-            OK (GxB_Vector_subassign_Vector ((GrB_Vector) C, (GrB_Vector) M,
+            OK (GxB_Vector_subassign_Vector_((GrB_Vector) C, (GrB_Vector) M,
                 accum, (GrB_Vector) A, I_vector, desc)) ;
         }
         else
         {
-            OK (GxB_Matrix_subassign_Vector ((GrB_Matrix) C, (GrB_Matrix) M,
+            OK (GxB_Matrix_subassign_Vector_((GrB_Matrix) C, (GrB_Matrix) M,
                 accum, A, I_vector, J_vector, desc)) ;
         }
 
@@ -171,12 +171,12 @@ GrB_Info assign (void)
         GrB_Scalar S = (GrB_Scalar) A ;
         if (GB_VECTOR_OK (C) && GB_VECTOR_OK (M))
         {
-            OK (GxB_Vector_subassign_Scalar ((GrB_Vector) C, (GrB_Vector) M,
+            OK (GxB_Vector_subassign_Scalar_((GrB_Vector) C, (GrB_Vector) M,
                 accum, S, I, ni, desc)) ;
         }
         else
         {
-            OK (GxB_Matrix_subassign_Scalar ((GrB_Matrix) C, (GrB_Matrix) M,
+            OK (GxB_Matrix_subassign_Scalar_((GrB_Matrix) C, (GrB_Matrix) M,
                 accum, S, I, ni, J, nj, desc)) ;
         }
 

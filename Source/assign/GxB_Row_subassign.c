@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Row_subassign: C(row,Cols)<M'> = accum (C(row,Cols),u')
+// GxB_Row_subassign: C(i,J)<M'> = accum (C(i,J),u')
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,23 +7,19 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
-// Compare with GrB_Row_assign, which uses the M and C_replace differently
-
 #include "assign/GB_subassign.h"
 #include "mask/GB_get_mask.h"
 
-GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'
+GrB_Info GxB_Row_subassign          // C(i,J)<mask'> = accum (C(i,J),u')
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Vector mask,          // mask for C(row,Cols), unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(C(row,Cols),t)
+    const GrB_Vector mask,          // optional mask for C(i,J), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C(i,J),t)
     const GrB_Vector u,             // input vector
-    uint64_t row,                   // row index
-    const uint64_t *Cols,           // column indices
-    uint64_t nCols,                 // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(row,Cols) and M
+    uint64_t i,                     // row index
+    const uint64_t *J,              // column indices
+    uint64_t nj,                    // number of column indices
+    const GrB_Descriptor desc       // descriptor for C(i,J) and mask
 )
 { 
 
@@ -32,7 +28,7 @@ GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'
     //--------------------------------------------------------------------------
 
     GB_WHERE3 (C, mask, u,
-        "GxB_Row_subassign (C, M, accum, u, row, Cols, nCols, desc)") ;
+        "GxB_Row_subassign (C, M, accum, u, i, J, nj, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (u) ;
     GB_BURBLE_START ("GxB_subassign") ;
@@ -48,21 +44,21 @@ GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'
     GrB_Matrix M = GB_get_mask ((GrB_Matrix) mask, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
-    // C(row,Cols)<M'> = accum (C(row,Cols), u')
+    // C(i,J)<M'> = accum (C(i,J), u')
     //--------------------------------------------------------------------------
 
-    // construct the row index list Rows = [ row ] of length nRows = 1
-    uint64_t Rows [1] ;
-    Rows [0] = row ;
+    // construct the index list I = [ i ] of length ni = 1
+    uint64_t I [1] ;
+    I [0] = i ;
 
     info = GB_subassign (
         C, C_replace,                   // C matrix and its descriptor
         M, Mask_comp, Mask_struct,      // mask and its descriptor
         true,                           // transpose the mask
-        accum,                          // for accum (C(Rows,col),u)
+        accum,                          // for accum (C(i,J),u)
         (GrB_Matrix) u, true,           // u as a matrix; always transposed
-        Rows, false, 1,                 // a single row index
-        Cols, false, nCols,             // column indices
+        I, false, 1,                    // a single row index
+        J, false, nj,                   // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         Werk) ;
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_grow: MATLAB version of GraphBLAS/Demo/Programgrow_demo.c
+// GB_mex_grow: MATLAB version of GraphBLAS/Demo/Program/grow_demo.c
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
@@ -167,7 +167,7 @@ void mexFunction
 
         // C (i,:) = w
         t = WALLCLOCK ;
-        OK (GrB_Row_assign (C, NULL, NULL, w, i, GrB_ALL, ancols, NULL)) ;
+        OK (GrB_Row_assign_(C, NULL, NULL, w, i, GrB_ALL, ancols, NULL)) ;
         tt [2] += (WALLCLOCK - t) ;
 
         // ensure C is finished
@@ -236,8 +236,8 @@ void mexFunction
 
         // C (i1:i2,:) = W
         t = WALLCLOCK ;
-        OK (GrB_assign (C, NULL, NULL, W, Icolon, GxB_RANGE, GrB_ALL, ancols,
-            NULL)) ;
+        OK (GrB_Matrix_assign_(C, NULL, NULL, W, Icolon, GxB_RANGE,
+            GrB_ALL, ancols, NULL)) ;
         t2 [2] += (WALLCLOCK - t) ;
 
         // ensure C is finished

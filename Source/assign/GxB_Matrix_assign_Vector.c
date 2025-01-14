@@ -7,10 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "assign/GB_assign.h"
-#include "assign/GB_bitmap_assign.h"
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
@@ -39,12 +36,7 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_Matrix_assign_Vector") ;
 
-    void *I = NULL, *J = NULL ;
-    size_t I_size = 0, J_size = 0 ;
-    int64_t ni = 0, nj = 0 ;
-    bool I_is_32 = false, J_is_32 = false ;
-
-    // FIXME: get Row_values, Col_values from the descriptor
+    // FIXME: get from the descriptor
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -57,16 +49,20 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
     // get the index vectors
     //--------------------------------------------------------------------------
 
+    void *I = NULL, *J = NULL ;
+    size_t I_size = 0, J_size = 0 ;
+    int64_t ni = 0, nj = 0 ;
+    bool I_is_32 = false, J_is_32 = false ;
     GB_OK (GB_ijvector (I_vector, true, false, &I, &I_is_32, &ni, &I_size,
         Werk)) ;
     GB_OK (GB_ijvector (J_vector, true, false, &J, &J_is_32, &nj, &J_size,
         Werk)) ;
 
     //--------------------------------------------------------------------------
-    // C<M>(I,J) = accum (C(I,J), A) and variations
+    // C<M>(I,J) = accum (C(I,J), A)
     //--------------------------------------------------------------------------
 
-    info = GB_assign (
+    GB_OK (GB_assign (
         C, C_replace,                   // C matrix and its descriptor
         M, Mask_comp, Mask_struct,      // mask matrix and its descriptor
         false,                          // do not transpose the mask
@@ -76,7 +72,7 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
         J, J_is_32, nj,                 // column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         GB_ASSIGN,
-        Werk) ;
+        Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -84,6 +80,6 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
 
     GB_FREE_ALL ;
     GB_BURBLE_END ;
-    return (info) ;
+    return (GrB_SUCCESS) ;
 }
 

@@ -9,6 +9,45 @@
 
 // The input vector List describes a list of integers to be used by GrB_assign,
 // GxB_subassign, or GrB_extract.
+
+// Descriptor settings: for Row and Col lists passed to GrB_assign,
+// GxB_subassign and GrB_extract:
+//
+//  default:        use List->x as GxB_LIST of indices
+//  use indices:    use List->i as GxB_LIST of indices
+//  stride:         use List->x for Icolon [3] (signed integers);
+//                  List->x must have exactly 3 entries (lo:inc:hi),
+//                  and is typecast to Icolon of type int64_t.
+//                  becomes GxB_STRIDE.
+//
+// If the List vector is NULL: treat as GrB_ALL; no need for descriptor.  No
+// need for GxB_RANGE (inc=1) or GxB_BACKWARDS (List->x can have signed
+// integers).
+
+// Descriptor fields to add:
+//
+//      GxB_ROWINDEX_LIST
+//      GxB_COLINDEX_LIST
+//
+// values to set it to
+//
+//      GxB_DEFAULT (0)             use List->x
+//      GxB_USE_VALUES (0)          use List->x (same as GxB_DEFAULT)
+//      GxB_USE_INDICES (7060)      use List->i
+//      GxB_IS_STRIDE (7061)        use List->x, size 3, for Icolon
+//
+// This gets passed to this method as a single int, List_Descriptor,
+// which must take on one of three values: 0, 7060, or 7061.
+
+// GrB_build will not use all of these settings, at most:
+//      GxB_DEFAULT (0)             use List->x
+//      GxB_USE_VALUES (0)          use List->x (same as GxB_DEFAULT)
+//      GxB_USE_INDICES (7060)      use List->i
+// It will not use GxB_IS_STRIDE.
+
+// GrB_extractTuples, with indices returned in GrB_Vectors I and J,
+// will use none of these settings.
+
 #define GB_DEBUG
 
 #include "GB_ij.h"

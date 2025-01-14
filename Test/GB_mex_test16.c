@@ -158,8 +158,8 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 2*n, 2*n)) ;
     OK (GxB_set (A, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
     OK (GxB_set (C, GxB_SPARSITY_CONTROL, GxB_BITMAP)) ;
-    OK (GrB_Row_assign (A, NULL, NULL, v, 0, GrB_ALL, n, NULL)) ;
-    OK (GrB_Col_assign (A, NULL, NULL, v, GrB_ALL, n, 0, NULL)) ;
+    OK (GrB_Row_assign_(A, NULL, NULL, v, 0, GrB_ALL, n, NULL)) ;
+    OK (GrB_Col_assign_(A, NULL, NULL, v, GrB_ALL, n, 0, NULL)) ;
     uint64_t I [4] = {0,1,2,3} ;    // OK
     OK (GrB_assign (C, NULL, NULL, A, I, 4, I, 4, NULL)) ;
     OK (GxB_subassign (C, NULL, NULL, A, I, 4, I, 4, NULL)) ;

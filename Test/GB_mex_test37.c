@@ -262,7 +262,7 @@ GrB_Info ewise
     {
         // C<M> = T
         OK (GrB_Matrix_new (&C, GrB_FP64, n, n)) ;
-        OK (GrB_Matrix_assign (C, M, NULL, T, GrB_ALL, n, GrB_ALL, n,
+        OK (GrB_Matrix_assign_(C, M, NULL, T, GrB_ALL, n, GrB_ALL, n,
             GrB_DESC_R)) ;
     }
     else

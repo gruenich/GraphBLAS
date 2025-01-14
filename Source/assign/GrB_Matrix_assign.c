@@ -44,7 +44,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(I,J) += A or A'
     GrB_Matrix M = GB_get_mask (Mask, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
-    // C<M>(I,J) = accum (C(I,J), A) and variations
+    // C<M>(I,J) = accum (C(I,J), A)
     //--------------------------------------------------------------------------
 
     info = GB_assign (

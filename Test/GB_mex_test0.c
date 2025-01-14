@@ -2872,11 +2872,11 @@ void mexFunction
     OK (GxB_Matrix_fprint_(A, GxB_COMPLETE, ff)) ;
     OK (GxB_Matrix_subassign_(A, NULL, GrB_PLUS_FP64, C, I3, 3, J3, 2, NULL)) ;
 
-    OK (GxB_Matrix_subassign (C, C, GrB_PLUS_FP64, C, I3, 3, J3, 2, NULL)) ;
+    OK (GxB_Matrix_subassign_(C, C, GrB_PLUS_FP64, C, I3, 3, J3, 2, NULL)) ;
 
     J3 [0] = 999 ;
     OK (GrB_Matrix_dup (&C4, C)) ;
-    ERR1 (C4, GxB_Matrix_subassign (C4, C4, GrB_PLUS_FP64, C4, I3, 3, J3, 2, NULL)) ;
+    ERR1 (C4, GxB_Matrix_subassign_(C4, C4, GrB_PLUS_FP64, C4, I3, 3, J3, 2, NULL)) ;
     OK (GrB_Matrix_free_(&C4)) ;
 
     expected = GrB_INVALID_INDEX ;
@@ -4299,7 +4299,7 @@ void mexFunction
     OK (GrB_Matrix_new (&Empty1, GrB_FP64, 1, 1)) ;
     I [0] = 0 ;
     J [0] = 0 ;
-    OK (GxB_Matrix_subassign (A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
+    OK (GxB_Matrix_subassign_(A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
     OK (GB_Matrix_check (A, "valid zombie", G3, NULL)) ;
     OK (GrB_Matrix_setElement_INT32 (A, 99099, 0, 0)) ;
     OK (GB_Matrix_check (A, "no more zombie", G3, NULL)) ;
@@ -4307,7 +4307,7 @@ void mexFunction
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
     CHECK (nvals == 5) ;
 
-    OK (GxB_Matrix_subassign (A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
+    OK (GxB_Matrix_subassign_(A, NULL, NULL, Empty1, I, 1, J, 1, NULL)) ;
     OK (GB_Matrix_check (A, "valid zombie", G3, NULL)) ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     OK (GrB_Matrix_wait_(A, GrB_MATERIALIZE)) ;
@@ -5121,8 +5121,8 @@ void mexFunction
         //----------------------------------------------------------------------
 
         OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GxB_Matrix_subassign (B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
-        OK (GxB_Matrix_subassign (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
+        OK (GxB_Matrix_subassign_(B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
+        OK (GxB_Matrix_subassign_(A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
 
         GB_wait (A, "A", Werk) ;
         GB_wait (B, "B", Werk) ;
@@ -5130,24 +5130,24 @@ void mexFunction
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
-        OK (GxB_Matrix_subassign (B, Amask, NULL, A, ilist, n, jlist, n, NULL));
-        OK (GxB_Matrix_subassign (A, Amask, NULL, A, ilist, n, jlist, n, NULL));
+        OK (GxB_Matrix_subassign_(B, Amask, NULL, A, ilist, n, jlist, n, NULL));
+        OK (GxB_Matrix_subassign_(A, Amask, NULL, A, ilist, n, jlist, n, NULL));
         GB_wait (A, "A", Werk) ;
         GB_wait (B, "B", Werk) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_Matrix_free_(&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
-        OK (GxB_Vector_subassign (v, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        OK (GxB_Vector_subassign (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
+        OK (GxB_Vector_subassign_(v, umask, NULL, u, GrB_ALL, n, NULL)) ;
+        OK (GxB_Vector_subassign_(u, umask, NULL, u, GrB_ALL, n, NULL)) ;
         GB_wait ((GrB_Matrix) u, "u", Werk) ;
         GB_wait ((GrB_Matrix) v, "v", Werk) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_Vector_free_(&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
-        OK (GxB_Vector_subassign (v, umask, NULL, u, ilist, n, NULL)) ;
-        OK (GxB_Vector_subassign (u, umask, NULL, u, ilist, n, NULL)) ;
+        OK (GxB_Vector_subassign_(v, umask, NULL, u, ilist, n, NULL)) ;
+        OK (GxB_Vector_subassign_(u, umask, NULL, u, ilist, n, NULL)) ;
         GB_wait ((GrB_Matrix) v, "v", Werk) ;
         GB_wait ((GrB_Matrix) u, "u", Werk) ;
 

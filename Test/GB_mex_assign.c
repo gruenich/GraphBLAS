@@ -143,12 +143,12 @@ GrB_Info assign ( )
 
         if (GB_VECTOR_OK (C) && GB_VECTOR_OK (Mask))
         {
-            OK (GxB_Vector_assign_Vector ((GrB_Vector) C, (GrB_Vector) Mask,
+            OK (GxB_Vector_assign_Vector_((GrB_Vector) C, (GrB_Vector) Mask,
                 accum, (GrB_Vector) A, I_vector, desc)) ;
         }
         else
         {
-            OK (GxB_Matrix_assign_Vector ((GrB_Matrix) C, (GrB_Matrix) Mask,
+            OK (GxB_Matrix_assign_Vector_((GrB_Matrix) C, (GrB_Matrix) Mask,
                 accum, A, I_vector, J_vector, desc)) ;
         }
 
@@ -164,12 +164,12 @@ GrB_Info assign ( )
 
         if (GB_VECTOR_OK (C) && GB_VECTOR_OK (Mask))
         {
-            OK (GrB_Vector_assign_Scalar ((GrB_Vector) C, (GrB_Vector) Mask,
+            OK (GrB_Vector_assign_Scalar_((GrB_Vector) C, (GrB_Vector) Mask,
                 accum, S, I, ni, desc)) ;
         }
         else
         {
-            OK (GrB_Matrix_assign_Scalar ((GrB_Matrix) C, (GrB_Matrix) Mask,
+            OK (GrB_Matrix_assign_Scalar_((GrB_Matrix) C, (GrB_Matrix) Mask,
                 accum, S, I, ni, J, nj, desc)) ;
         }
 

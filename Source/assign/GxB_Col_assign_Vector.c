@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_assign_Vector: w<M>(I) = accum (w(I),u)
+// GxB_Col_assign_Vector: C<M>(I,j) = accum (C(I,j),u)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,24 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
-// Compare with GxB_Vector_subassign, which uses M and C_replace differently
-
 #include "assign/GB_assign.h"
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
     if (I_size > 0) GB_FREE (&I, I_size) ;
 
-GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
+GrB_Info GxB_Col_assign_Vector      // C<M>(I,j) = accum (C(I,j),u)
 (
-    GrB_Vector w,                   // input/output matrix for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
-    const GrB_Vector u,             // first input:  vector u
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for C(:,j), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C(I,j),t)
+    const GrB_Vector u,             // input vector
     const GrB_Vector I_vector,      // row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    uint64_t j,                     // column index
+    const GrB_Descriptor desc       // descriptor for C(:,j) and mask
 )
 { 
 
@@ -32,17 +29,16 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, mask, u,
-        "GxB_Vector_assign_Vector (w, M, accum, u, I, desc)") ;
-    GB_RETURN_IF_NULL (w) ;
+    GB_WHERE3 (C, mask, u,
+        "GxB_Col_assign_Vector (C, M, accum, u, I, j, desc)") ;
+    GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (u) ;
-    GB_BURBLE_START ("GxB_Vector_assign_Vector") ;
+    GB_BURBLE_START ("GrB_assign") ;
 
-    ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
-    // FIXME: get Row_values from the descriptor
+    // FIXME: get from the descriptor
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
@@ -59,23 +55,27 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     size_t I_size = 0 ;
     int64_t ni = 0 ;
     bool I_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, true, (w == I_vector),
-        &I, &I_is_32, &ni, &I_size, Werk)) ;
+    GB_OK (GB_ijvector (I_vector, true, false, &I, &I_is_32, &ni, &I_size,
+        Werk)) ;
 
     //--------------------------------------------------------------------------
-    // w(I)<M> = accum (w(I), u)
+    // C(I,j)<M> = accum (C(I,j), u)
     //--------------------------------------------------------------------------
+
+    // construct the index list J = [ j ] of length nj = 1
+    uint64_t J [1] ;
+    J [0] = j ;
 
     GB_OK (GB_assign (
-        (GrB_Matrix) w, C_replace,      // w vector and its descriptor
+        C, C_replace,                   // C matrix and its descriptor
         M, Mask_comp, Mask_struct,      // mask and its descriptor
         false,                          // do not transpose the mask
-        accum,                          // for accum (C(I,:),A)
+        accum,                          // for accum (C(I,j),u)
         (GrB_Matrix) u, false,          // u as a matrix; never transposed
         I, I_is_32, ni,                 // row indices
-        GrB_ALL, false, 1,              // all column indices
+        J, false, 1,                    // a single column index
         false, NULL, GB_ignore_code,    // no scalar expansion
-        GB_ASSIGN,
+        GB_COL_ASSIGN,
         Werk)) ;
 
     //--------------------------------------------------------------------------

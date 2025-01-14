@@ -3169,7 +3169,9 @@
 #define GxB_CIMAG_FC64 GxM_CIMAG_FC64
 #define GxB_CMPLX_FP32 GxM_CMPLX_FP32
 #define GxB_CMPLX_FP64 GxM_CMPLX_FP64
+#define GxB_Col_assign_Vector GxM_Col_assign_Vector
 #define GxB_Col_subassign GxM_Col_subassign
+#define GxB_Col_subassign_Vector GxM_Col_subassign_Vector
 #define GxB_CONJ_FC32 GxM_CONJ_FC32
 #define GxB_CONJ_FC64 GxM_CONJ_FC64
 #define GxB_Container_free GxM_Container_free
@@ -4666,7 +4668,9 @@
 #define GxB_ROUND_FC64 GxM_ROUND_FC64
 #define GxB_ROUND_FP32 GxM_ROUND_FP32
 #define GxB_ROUND_FP64 GxM_ROUND_FP64
+#define GxB_Row_assign_Vector GxM_Row_assign_Vector
 #define GxB_Row_subassign GxM_Row_subassign
+#define GxB_Row_subassign_Vector GxM_Row_subassign_Vector
 #define GxB_Scalar_clear GxM_Scalar_clear
 #define GxB_Scalar_dup GxM_Scalar_dup
 #define GxB_Scalar_error GxM_Scalar_error
