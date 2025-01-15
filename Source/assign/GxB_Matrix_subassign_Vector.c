@@ -40,8 +40,6 @@ GrB_Info GxB_Matrix_subassign_Vector // C(I,J)<M> = accum (C(I,J),A)
     GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_Matrix_subassign_Vector") ;
 
-    // FIXME: get from the descriptor
-
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         A_transpose, xx1, xx2, xx7) ;

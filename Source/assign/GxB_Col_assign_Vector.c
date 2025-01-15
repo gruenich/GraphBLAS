@@ -38,8 +38,6 @@ GrB_Info GxB_Col_assign_Vector      // C<M>(I,j) = accum (C(I,j),u)
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
     ASSERT (GB_VECTOR_OK (u)) ;
 
-    // FIXME: get from the descriptor
-
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
         xx1, xx2, xx3, xx7) ;
