@@ -59,7 +59,7 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
     size_t I_size = 0 ;
     int64_t ni = 0 ;
     bool I_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, true, (w == I_vector),
+    GB_OK (GB_ijvector (I_vector, (w == I_vector), 0, desc,
         &I, &I_is_32, &ni, &I_size, Werk)) ;
 
     //--------------------------------------------------------------------------

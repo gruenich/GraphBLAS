@@ -197,7 +197,7 @@ GrB_Info GrB_Global_get_Scalar
         else
         { 
             double x ;
-            int64_t i64 ; 
+            int64_t i64 ;
             switch ((int) field)
             {
 

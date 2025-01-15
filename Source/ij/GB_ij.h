@@ -71,9 +71,9 @@ GrB_Info GB_ijvector
     GrB_Vector List,        // defines the list of integers, either from
                             // List->x or List-i.  If List is NULL, it defines
                             // I = GrB_ALL.
-    bool List_values,       // if true, I is determined by List->x;
-                            // otherwise, I is determined by List->i.
     bool need_copy,         // if true, I must be allocated
+    int which,              // 0: row list, 1: col list
+    const GrB_Descriptor desc,      // with row_list and col_list descriptors
     // output:
     void **I_handle,        // the list I; may be GrB_ALL
     bool *I_is_32_handle,   // if true, I is 32-bit; else 64-bit

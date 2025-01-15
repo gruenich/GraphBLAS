@@ -127,6 +127,36 @@ static GrB_Info GB_desc_set
                 (value == GrB_DEFAULT) ? GxB_FAST_IMPORT : GxB_SECURE_IMPORT ;
             break ;
 
+        case GxB_ROWINDEX_LIST : 
+
+            if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
+                || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
+            {
+                GB_ERROR (GrB_INVALID_VALUE,
+                    "invalid descriptor value [%d] for GxB_ROWINDEX_LIST "
+                    "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"
+                    "GxB_USE_INDICES [%d], or GxB_IS_STRIDE [%d]",
+                    (int) value, (int) GrB_DEFAULT, (int) GxB_USE_VALUES,
+                    (int) GxB_USE_INDICES, (int) GxB_IS_STRIDE) ;
+            }
+            desc->row_list = (int) value ;
+            break ;
+
+        case GxB_COLINDEX_LIST : 
+
+            if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
+                || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
+            {
+                GB_ERROR (GrB_INVALID_VALUE,
+                    "invalid descriptor value [%d] for GxB_COLINDEX_LIST "
+                    "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"
+                    "GxB_USE_INDICES [%d], or GxB_IS_STRIDE [%d]",
+                    (int) value, (int) GrB_DEFAULT, (int) GxB_USE_VALUES,
+                    (int) GxB_USE_INDICES, (int) GxB_IS_STRIDE) ;
+            }
+            desc->col_list = (int) value ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

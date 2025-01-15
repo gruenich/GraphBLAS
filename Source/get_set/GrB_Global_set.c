@@ -40,7 +40,7 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
             { 
                 return (GrB_INVALID_VALUE) ;
             }
-            GB_Global_is_csc_set (value != (int) GxB_BY_ROW) ; 
+            GB_Global_is_csc_set (value != (int) GxB_BY_ROW) ;
             break ;
 
         case GxB_OFFSET_INTEGER_HINT : 

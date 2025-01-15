@@ -64,6 +64,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     A->jumbled = Container->jumbled ;
     uint64_t plen1 = 0, plen, nvals, nheld, nx ;
     GrB_Type Ap_type = NULL, Ah_type = NULL, Ab_type = NULL, Ai_type = NULL ;
+    uint64_t Ah_size = 0, Ap_size = 0, Ai_size = 0, Ab_size = 0, Ax_size = 0 ;
 
     switch (Container->format)
     {
@@ -74,24 +75,28 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             Container->Y = NULL ;
 
             GB_OK (GxB_Vector_unload (Container->h, &(A->h), &plen,
-                &(A->h_size), &Ah_type, &(A->h_shallow), NULL)) ;
+                &Ah_size, &Ah_type, &(A->h_shallow), NULL)) ;
+            A->h_size = (size_t) Ah_size ;
 
             // fall through to the sparse case
 
         case GxB_SPARSE : 
 
             GB_OK (GxB_Vector_unload (Container->p, &(A->p), &plen1,
-                &(A->p_size), &Ap_type, &(A->p_shallow), NULL)) ;
+                &Ap_size, &Ap_type, &(A->p_shallow), NULL)) ;
+            A->p_size = (size_t) Ap_size ;
 
             GB_OK (GxB_Vector_unload (Container->i, &(A->i), &nvals,
-                &(A->i_size), &Ai_type, &(A->i_shallow), NULL)) ;
+                &Ai_size, &Ai_type, &(A->i_shallow), NULL)) ;
+            A->i_size = (size_t) Ai_size ;
 
             break ;
 
         case GxB_BITMAP : 
 
             GB_OK (GxB_Vector_unload (Container->b, &(A->b), &nheld,
-                &(A->b_size), &Ab_type, &(A->b_shallow), NULL)) ;
+                &Ab_size, &Ab_type, &(A->b_shallow), NULL)) ;
+            A->b_size = (size_t) Ab_size ;
             break ;
 
         case GxB_FULL : 
@@ -100,8 +105,9 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             break ;
     }
 
-    GB_OK (GxB_Vector_unload (Container->x, &(A->x), &nx, &(A->x_size),
-        &(A->type), &(A->x_shallow), NULL)) ;
+    GB_OK (GxB_Vector_unload (Container->x, &(A->x), &nx,
+        &Ax_size, &(A->type), &(A->x_shallow), NULL)) ;
+    A->x_size = (size_t) Ax_size ;
 
     //--------------------------------------------------------------------------
     // change the type and dimensions of A to match content from Container

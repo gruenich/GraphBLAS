@@ -57,9 +57,9 @@ GrB_Info GxB_Matrix_subassign_Vector // C(I,J)<M> = accum (C(I,J),A)
     size_t I_size = 0, J_size = 0 ;
     int64_t ni = 0, nj = 0 ;
     bool I_is_32 = false, J_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, true, false, &I, &I_is_32, &ni, &I_size,
+    GB_OK (GB_ijvector (I_vector, false, 0, desc, &I, &I_is_32, &ni, &I_size,
         Werk)) ;
-    GB_OK (GB_ijvector (J_vector, true, false, &J, &J_is_32, &nj, &J_size,
+    GB_OK (GB_ijvector (J_vector, false, 1, desc, &J, &J_is_32, &nj, &J_size,
         Werk)) ;
 
     //--------------------------------------------------------------------------

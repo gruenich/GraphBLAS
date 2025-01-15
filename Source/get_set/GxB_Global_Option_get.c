@@ -518,7 +518,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 int *nthreads_max = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (nthreads_max) ;
-                (*nthreads_max) = GB_Context_nthreads_max_get (NULL) ; 
+                (*nthreads_max) = GB_Context_nthreads_max_get (NULL) ;
             }
             break ;
 
@@ -529,7 +529,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 int *value = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (value) ;
-                (*value) = GB_Context_gpu_id_get (NULL) ; 
+                (*value) = GB_Context_gpu_id_get (NULL) ;
             }
             break ;
 
@@ -683,7 +683,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 int *api_version = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (api_version) ;
-                api_version [0] = GxB_SPEC_MAJOR ; 
+                api_version [0] = GxB_SPEC_MAJOR ;
                 api_version [1] = GxB_SPEC_MINOR ;
                 api_version [2] = GxB_SPEC_SUB ;
             }
@@ -733,7 +733,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 int *compiler_version = va_arg (ap, int *) ;
                 va_end (ap) ;
                 GB_RETURN_IF_NULL (compiler_version) ;
-                compiler_version [0] = GB_COMPILER_MAJOR ; 
+                compiler_version [0] = GB_COMPILER_MAJOR ;
                 compiler_version [1] = GB_COMPILER_MINOR ;
                 compiler_version [2] = GB_COMPILER_SUB ;
             }

@@ -101,7 +101,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
 
         case GxB_BITMAP : 
 
-            GB_vector_load (Container->b, &(A->b), nheld, A->b_size,
+            GB_vector_load (Container->b, (void **) &(A->b), nheld, A->b_size,
                 GrB_INT8, A->b_shallow) ;
 
         case GxB_FULL : 

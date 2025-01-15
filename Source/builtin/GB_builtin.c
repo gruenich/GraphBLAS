@@ -79,7 +79,8 @@ GB_TYPEDEF (GxB, FC64  , GxB_FC64_t, "GxB_FC64_t") ;
         o,                          /* default: axb */                      \
         0,                          /* default compression */               \
         0,                          /* no sort */                           \
-        0                           /* import */                            \
+        0,                          /* import */                            \
+        0, 0                        /* row_list, col_list */                \
     } ;                                                                     \
     GrB_Descriptor GRB (DESC_ ## name) = & GB_OPAQUE (desc_ ## name) ;
 

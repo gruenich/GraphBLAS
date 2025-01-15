@@ -1512,6 +1512,13 @@ typedef enum    // GxB_Option_Field ;
 
     GxB_SPARSITY_CONTROL = 7036,    // sparsity control: 0 to 15; see below
 
+    //------------------------------------------------------------
+    // GrB_get/GrB_set for GrB_Descriptor:
+    //------------------------------------------------------------
+
+    GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted
+    GxB_COLINDEX_LIST = 7063,       // how GrB_Vector J is intrepretted
+
 } GxB_Option_Field ;
 
 // for GxB_JIT_C_CONTROL:
@@ -1635,6 +1642,11 @@ typedef enum    // GrB_Orientation
     GrB_UNKNOWN  = 3,
 }
 GrB_Orientation ;
+
+// settings for GxB_ROWINDEX_LIST and GxB_COLINDEX_LIST:
+#define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
+#define GxB_USE_INDICES (7060)  /* use the indices of the vector */
+#define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
 
 typedef enum    // GrB_Type_Code
 {

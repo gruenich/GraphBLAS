@@ -66,13 +66,25 @@ static GrB_Info GB_desc_get
         case GxB_COMPRESSION : 
 
             (*value) = (int32_t) ((desc == NULL) ?
-                GrB_DEFAULT : desc->compression) ; 
+                GrB_DEFAULT : desc->compression) ;
             break ;
 
         case GxB_IMPORT : 
 
             (*value) = (int32_t) ((desc == NULL) ? GrB_DEFAULT : desc->import) ;
             if ((*value) != GrB_DEFAULT) (*value) = GxB_SECURE_IMPORT ;
+            break ;
+
+        case GxB_ROWINDEX_LIST : 
+
+            (*value) = (int32_t) ((desc == NULL) ?
+                GrB_DEFAULT : desc->row_list) ;
+            break ;
+
+        case GxB_COLINDEX_LIST : 
+
+            (*value) = (int32_t) ((desc == NULL) ?
+                GrB_DEFAULT : desc->col_list) ;
             break ;
 
         default : 

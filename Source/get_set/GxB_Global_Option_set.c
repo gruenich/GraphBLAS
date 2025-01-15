@@ -51,7 +51,7 @@ GrB_Info GxB_Global_Option_set_INT32      // set a global default option
             { 
                 return (GrB_INVALID_VALUE) ;
             }
-            GB_Global_is_csc_set (value != (int) GxB_BY_ROW) ; 
+            GB_Global_is_csc_set (value != (int) GxB_BY_ROW) ;
             break ;
 
         case GxB_GLOBAL_NTHREADS :          // same as GxB_NTHREADS
@@ -401,7 +401,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 { 
                     return (GrB_INVALID_VALUE) ;
                 }
-                GB_Global_is_csc_set (format != (int) GxB_BY_ROW) ; 
+                GB_Global_is_csc_set (format != (int) GxB_BY_ROW) ;
             }
             break ;
 

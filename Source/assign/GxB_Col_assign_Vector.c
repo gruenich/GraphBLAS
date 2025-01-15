@@ -55,7 +55,7 @@ GrB_Info GxB_Col_assign_Vector      // C<M>(I,j) = accum (C(I,j),u)
     size_t I_size = 0 ;
     int64_t ni = 0 ;
     bool I_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, true, false, &I, &I_is_32, &ni, &I_size,
+    GB_OK (GB_ijvector (I_vector, false, 0, desc, &I, &I_is_32, &ni, &I_size,
         Werk)) ;
 
     //--------------------------------------------------------------------------

@@ -55,7 +55,7 @@ GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
     size_t J_size = 0 ;
     int64_t nj = 0 ;
     bool J_is_32 = false ;
-    GB_OK (GB_ijvector (J_vector, true, false, &J, &J_is_32, &nj, &J_size,
+    GB_OK (GB_ijvector (J_vector, false, 1, desc, &J, &J_is_32, &nj, &J_size,
         Werk)) ;
 
     //--------------------------------------------------------------------------

@@ -75,13 +75,25 @@ GrB_Info GxB_Desc_get_INT32     // get a parameter from a descriptor
         case GxB_COMPRESSION : 
 
             (*value) = (int32_t) ((desc == NULL) ?
-                GxB_DEFAULT : desc->compression) ; 
+                GxB_DEFAULT : desc->compression) ;
             break ;
 
         case GxB_IMPORT : 
 
             (*value) = (int32_t) ((desc == NULL) ? GxB_DEFAULT : desc->import) ;
             if ((*value) != GxB_DEFAULT) (*value) = GxB_SECURE_IMPORT ;
+            break ;
+
+        case GxB_ROWINDEX_LIST : 
+
+            (*value) = (int32_t) ((desc == NULL) ?
+                GrB_DEFAULT : desc->row_list) ;
+            break ;
+
+        case GxB_COLINDEX_LIST : 
+
+            (*value) = (int32_t) ((desc == NULL) ?
+                GrB_DEFAULT : desc->col_list) ;
             break ;
 
         default : 
@@ -224,6 +236,28 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
                 int s = (desc == NULL) ? GxB_DEFAULT : desc->import ;
                 if (s != GxB_DEFAULT) s = GxB_SECURE_IMPORT ;
                 (*method) = s ;
+            }
+            break ;
+
+        case GxB_ROWINDEX_LIST : 
+
+            {
+                va_start (ap, field) ;
+                int *value = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (value) ;
+                (*value) = (desc == NULL) ? GxB_DEFAULT : desc->row_list ;
+            }
+            break ;
+
+        case GxB_COLINDEX_LIST : 
+
+            {
+                va_start (ap, field) ;
+                int *value = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (value) ;
+                (*value) = (desc == NULL) ? GxB_DEFAULT : desc->col_list ;
             }
             break ;
 
