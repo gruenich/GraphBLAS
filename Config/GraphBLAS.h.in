@@ -342,8 +342,8 @@ typedef uint64_t GrB_Index ;
 
 // GxB_INDEX32_MAX is the largest permissible index value when using
 // 32-bit row/column indices.  The largest valid matrix dimension is
-// GxB_INDEX32_MAX+1, or 2^30, when using 32-bit row/column indices.
-#define GxB_INDEX32_MAX ((uint64_t) (1ULL << 30) - 1)
+// GxB_INDEX32_MAX+1, or 2^31, when using 32-bit row/column indices.
+#define GxB_INDEX32_MAX ((uint64_t) INT32_MAX)
 
 //==============================================================================
 // GraphBLAS error and informational codes
@@ -573,6 +573,11 @@ GrB_Desc_Value ;
 
 // default for GxB pack is to trust the input data
 #define GxB_FAST_IMPORT ((int) GrB_DEFAULT)
+
+// descriptor settings for GxB_ROWINDEX_LIST and GxB_COLINDEX_LIST:
+#define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
+#define GxB_USE_INDICES (7060)  /* use the indices of the vector */
+#define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
 
 // Predefined descriptors and their values:
 
@@ -1643,11 +1648,6 @@ typedef enum    // GrB_Orientation
 }
 GrB_Orientation ;
 
-// settings for GxB_ROWINDEX_LIST and GxB_COLINDEX_LIST:
-#define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
-#define GxB_USE_INDICES (7060)  /* use the indices of the vector */
-#define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
-
 typedef enum    // GrB_Type_Code
 {
     GrB_UDT_CODE    = 0,        // user-defined type
@@ -1690,7 +1690,9 @@ typedef enum    // GrB_WaitMode
 GB_GLOBAL const uint64_t *GrB_ALL ;
 
 // These special values of ni and nj can be used for GrB_assign,
-// GrB_extract, and GxB_subassign.
+// GrB_extract, and GxB_subassign, when I and J are uint64_t * arrays.
+// For GrB_Vector inputs, use the GxB_ROWINDEX_LIST and GxB_COLINDEX_LIST
+// descriptor settings instead.
 #define GxB_RANGE       (INT64_MAX)
 #define GxB_STRIDE      (INT64_MAX-1)
 #define GxB_BACKWARDS   (INT64_MAX-2)
@@ -4493,7 +4495,7 @@ GrB_Info GxB_Vector_subassign       // w(I)<mask> = accum (w(I),u)
     const GrB_Vector u,             // first input:  vector u
     const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
@@ -4503,7 +4505,7 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector I_vector,      // row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Matrix_subassign       // C(I,J)<Mask> = accum (C(I,J),A)
@@ -4516,7 +4518,7 @@ GrB_Info GxB_Matrix_subassign       // C(I,J)<Mask> = accum (C(I,J),A)
     GrB_Index ni,                   // number of row indices
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J), Mask, and A
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Matrix_subassign_Vector // C(I,J)<M> = accum (C(I,J),A)
@@ -4527,7 +4529,7 @@ GrB_Info GxB_Matrix_subassign_Vector // C(I,J)<M> = accum (C(I,J),A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Vector I_vector,      // row indices
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J), M, and A
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Col_subassign          // C(I,j)<M> = accum (C(I,j),u)
@@ -4539,7 +4541,7 @@ GrB_Info GxB_Col_subassign          // C(I,j)<M> = accum (C(I,j),u)
     const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
     GrB_Index j,                    // column index
-    const GrB_Descriptor desc       // descriptor for C(I,j) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Col_subassign_Vector   // C(I,j)<M> = accum (C(I,j),u)
@@ -4550,7 +4552,7 @@ GrB_Info GxB_Col_subassign_Vector   // C(I,j)<M> = accum (C(I,j),u)
     const GrB_Vector u,             // input vector
     const GrB_Vector I_vector,      // row indices
     GrB_Index j,                    // column index
-    const GrB_Descriptor desc       // descriptor for C(I,j) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Row_subassign          // C(i,J)<mask'> = accum (C(i,J),u')
@@ -4562,7 +4564,7 @@ GrB_Info GxB_Row_subassign          // C(i,J)<mask'> = accum (C(i,J),u')
     GrB_Index i,                    // row index
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(i,J) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
@@ -4573,7 +4575,7 @@ GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
     const GrB_Vector u,             // input vector
     GrB_Index i,                    // row index
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C(i,J) and mask
+    const GrB_Descriptor desc
 ) ;
 
 //------------------------------------------------------------------------------
@@ -4592,7 +4594,7 @@ GrB_Info GxB_Vector_subassign_Scalar   // w(I)<mask> = accum (w(I),x)
     const GrB_Scalar x,             // scalar to assign to w(I)
     const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w(I) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Vector_subassign_Scalar_Vector   // w(I)<mask> = accum (w(I),x)
@@ -4602,7 +4604,7 @@ GrB_Info GxB_Vector_subassign_Scalar_Vector   // w(I)<mask> = accum (w(I),x)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
     const GrB_Scalar scalar,        // scalar to assign to w(I)
     const GrB_Vector I_vector,      // row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc
 ) ;
 
 // The following methods do not accept a GrB_Vector I parameter:
@@ -4616,7 +4618,7 @@ GrB_Info GxB_Vector_subassign ## suffix /* w(I)<mask> = accum (w(I),x) */    \
     type x,                     /* scalar to assign to w(I) */               \
     const GrB_Index *I_,        /* row indices */                            \
     GrB_Index ni,               /* number of row indices */                  \
-    const GrB_Descriptor desc   /* descriptor for w(I) and mask */           \
+    const GrB_Descriptor desc                                                \
 ) ;
 GB_DECLARE_14 (GxB_, void *)
 
@@ -4638,7 +4640,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
     GrB_Index ni,                   // number of row indices
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Matrix_subassign_Scalar_Vector   // C(I,J)<Mask> = accum (C(I,J),x)
@@ -4649,7 +4651,7 @@ GrB_Info GxB_Matrix_subassign_Scalar_Vector   // C(I,J)<Mask> = accum (C(I,J),x)
     const GrB_Scalar scalar,        // scalar to assign to C(I,J)
     const GrB_Vector I_vector,      // row indices
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C(I,J) and Mask
+    const GrB_Descriptor desc
 ) ;
 
 // The following methods do not accept GrB_Vector I,J parameters:
@@ -4665,7 +4667,7 @@ GrB_Info GxB_Matrix_subassign ## suffix /* C(I,J)<mask> = accum (C(I,J),x) */ \
     GrB_Index ni,               /* number of row indices */                   \
     const GrB_Index *J,         /* column indices */                          \
     GrB_Index nj,               /* number of column indices */                \
-    const GrB_Descriptor desc   /* descriptor for C(I,J) and Mask */          \
+    const GrB_Descriptor desc                                                 \
 ) ;
 GB_DECLARE_14 (GxB_, void *)
 
@@ -4747,7 +4749,7 @@ GrB_Info GrB_Vector_assign          // w<mask>(I) = accum (w(I),u)
     const GrB_Vector u,             // first input:  vector u
     const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
@@ -4757,7 +4759,7 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector I_vector,      // row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GrB_Matrix_assign          // C<Mask>(I,J) = accum (C(I,J),A)
@@ -4770,7 +4772,7 @@ GrB_Info GrB_Matrix_assign          // C<Mask>(I,J) = accum (C(I,J),A)
     GrB_Index ni,                   // number of row indices
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C, Mask, and A
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
@@ -4781,7 +4783,7 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Vector I_vector,      // row indices
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C, Mask, and A
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GrB_Col_assign             // C<mask>(I,j) = accum (C(I,j),u)
@@ -4793,7 +4795,7 @@ GrB_Info GrB_Col_assign             // C<mask>(I,j) = accum (C(I,j),u)
     const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
     GrB_Index j,                    // column index
-    const GrB_Descriptor desc       // descriptor for C(:,j) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Col_assign_Vector      // C<M>(I,j) = accum (C(I,j),u)
@@ -4804,7 +4806,7 @@ GrB_Info GxB_Col_assign_Vector      // C<M>(I,j) = accum (C(I,j),u)
     const GrB_Vector u,             // input vector
     const GrB_Vector I_vector,      // row indices
     GrB_Index j,                    // column index
-    const GrB_Descriptor desc       // descriptor for C(:,j) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GrB_Row_assign             // C<mask'>(i,J) = accum (C(i,J),u')
@@ -4816,7 +4818,7 @@ GrB_Info GrB_Row_assign             // C<mask'>(i,J) = accum (C(i,J),u')
     GrB_Index i,                    // row index
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C(i,:) and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
@@ -4827,7 +4829,7 @@ GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
     const GrB_Vector u,             // input vector
     GrB_Index i,                    // row index
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C(i,:) and mask
+    const GrB_Descriptor desc
 ) ;
 
 //------------------------------------------------------------------------------
@@ -4846,7 +4848,7 @@ GrB_Info GrB_Vector_assign_Scalar   // w<mask>(I) = accum (w(I),x)
     const GrB_Scalar x,             // scalar to assign to w(I)
     const GrB_Index *I_,            // row indices
     GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
@@ -4856,7 +4858,7 @@ GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
     const GrB_Scalar x,             // scalar to assign to w(I)
     const GrB_Vector I_vector,      // row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc
 ) ;
 
 // The following methods do not accept a GrB_Vector I parameter:
@@ -4870,7 +4872,7 @@ GrB_Info prefix ## Vector_assign ## suffix /* w<mask>(I) = accum (w(I),x) */ \
     type x,                     /* scalar to assign to w(I) */               \
     const GrB_Index *I_,        /* row indices */                            \
     GrB_Index ni,               /* number of row indices */                  \
-    const GrB_Descriptor desc   /* descriptor for w and mask */              \
+    const GrB_Descriptor desc                                                \
 ) ;
 GB_DECLARE_14 (GrB_, void *)
 
@@ -4892,7 +4894,7 @@ GrB_Info GrB_Matrix_assign_Scalar   // C<Mask>(I,J) = accum (C(I,J),x)
     GrB_Index ni,                   // number of row indices
     const GrB_Index *J,             // column indices
     GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
+    const GrB_Descriptor desc
 ) ;
 
 GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
@@ -4903,7 +4905,7 @@ GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
     const GrB_Scalar x,             // scalar to assign to C(I,J)
     const GrB_Vector I_vector,      // row indices
     const GrB_Vector J_vector,      // column indices
-    const GrB_Descriptor desc       // descriptor for C and Mask
+    const GrB_Descriptor desc
 ) ;
 
 // The following methods do not accept GrB_Vector I,J parameters:
@@ -4919,7 +4921,7 @@ GrB_Info prefix ## Matrix_assign ## suffix /* C<Mask>(I,J) = accum(C(I,J),x)*/\
     GrB_Index ni,               /* number of row indices */                   \
     const GrB_Index *J,         /* column indices */                          \
     GrB_Index nj,               /* number of column indices */                \
-    const GrB_Descriptor desc   /* descriptor for C and Mask */               \
+    const GrB_Descriptor desc                                                 \
 ) ;
 GB_DECLARE_14 (GrB_, void *)
 
@@ -5744,7 +5746,7 @@ struct GxB_Container_struct
     int64_t ncols_nonempty ;
     uint64_t nvals ;
     uint64_t nheld ;
-    uint64_t nvec ;
+    uint64_t nhyper ;
     uint64_t u64_future [24] ;       // for future expansion
 
     // 16 words of uint32_t / int32_t:
@@ -5790,7 +5792,7 @@ GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
 
 GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
 (
-    GrB_Vector A,               // GrB_Vector to load from the Container
+    GrB_Vector V,               // GrB_Vector to load from the Container
     GxB_Container Container,    // Container with contents to load into A
     const GrB_Descriptor desc   // currently unused
 ) ;
@@ -5833,661 +5835,6 @@ GrB_Info GxB_Vector_unload
     GrB_Type *type,         // type of X
     bool *read_only,        // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
-) ;
-
-//==============================================================================
-// GxB_pack/GxB_unpack: Matrix and vector pack/unpack
-//==============================================================================
-
-// FIXME: declare pack/unpack historical
-
-// The pack/unpack functions allow the user application to create a GrB_Matrix
-// or GrB_Vector object, and to extract its contents, faster and with less
-// memory overhead than the GrB_*_build and GrB_*_extractTuples functions.
-
-// The semantics of pack/unpack are the same as the "move constructor" in C++.
-// On pack, the user provides a set of arrays that have been previously
-// allocated via the ANSI C malloc function.  The arrays define the content of
-// the matrix or vector.  Unlike GrB_*_build, the GraphBLAS library then takes
-// ownership of the user's input arrays and may either (a) incorporate them
-// into its internal data structure for the new GrB_Matrix or GrB_Vector,
-// potentially creating the GrB_Matrix or GrB_Vector in constant time with no
-// memory copying performed, or (b) if the library does not support the format
-// directly, then it may convert the input to its internal format, and then
-// free the user's input arrays.  GraphBLAS may also choose to use a mix of the
-// two strategies.  In either case, the input arrays are no longer "owned" by
-// the user application.  If A is a GrB_Matrix created by a pack, the user
-// input arrays are freed no later than GrB_free (&A), and may be freed
-// earlier, at the discretion of the GraphBLAS library.  The data structure of
-// the GrB_Matrix and GrB_Vector remain opaque.
-
-// The unpack of a GrB_Matrix or GrB_Vector is symmetric with the pack
-// operation.  The GrB_Matrix or GrB_Vector exists after an unpack operation,
-// just with no entries.  For unpack, the user is returned several arrays that
-// contain the matrix or vector in the requested format.  Ownership of these
-// arrays is given to the user application, which is then responsible for
-// freeing them via the ANSI C free function.  If the output format is
-// supported by the GraphBLAS library, then these arrays may be returned to the
-// user application in O(1) time and with no memory copying performed.
-// Otherwise, the GraphBLAS library will create the output arrays for the user
-// (via the ANSI C malloc function), fill them with the GrB_Matrix or
-// GrB_Vector data, and then return the newly allocated arrays to the user.
-
-// Eight different formats are provided for pack/unpack.  For each format, the
-// Ax array has a C-type <type> corresponding to one of the 13 built-in types
-// in GraphBLAS (bool, int*_t, uint*_t, float, double, float complex, or double
-// complex), or a user-defined type.
-
-// On pack, the required user arrays Ah, Ap, Ab, Ai, Aj, and/or Ax must be
-// non-NULL pointers to memory space allocated by the ANSI C malloc (or calloc,
-// or realloc), unless nzmax is zero (in which case the Ab, Ai, Aj, Ax, vb, vi,
-// and vx arrays may all be NULL).  For the pack, A (or GrB_Vector v) is
-// undefined on input, just like GrB_*_new, the GrB_Matrix.  If the pack is
-// successful, the GrB_Matrix A or GrB_Vector v is created, and the pointers to
-// the user input arrays have been set to NULL.  These user arrays have either
-// been incorporated directly into the GrB_Matrix A or GrB_Vector v, in which
-// case the user input arrays will eventually be freed by GrB_free (&A), or
-// their contents have been copied and the arrays freed.  This decision is made
-// by the GraphBLAS library itself, and the user application has no control
-// over this decision.
-
-// If any of the arrays Ab, Aj, Ai, Ax, vb, vi, or vx have zero size (with
-// nzmax of zero), they are allowed to be be NULL pointers on input.
-
-// A matrix or vector may be "iso", where all entries present in the pattern
-// have the same value.  In this case, the boolean iso flag is true, and the
-// corresponding numerical array (Ax for matrices, vx for vectors, below) need
-// be only large enough to hold a single value.
-
-// No error checking is performed on the content of the user input arrays.  If
-// the user input arrays do not conform to the precise specifications above,
-// results are undefined.  No typecasting of the values of the matrix or vector
-// entries is performed on pack/unpack
-
-// SuiteSparse:GraphBLAS supports all eight formats natively (CSR, CSC,
-// HyperCSR, and HyperCSC, BitmapR, BitmapC, FullR, FullC).  For vectors, only
-// CSC, BitmapC, and FullC formats are used.  On pack, the all eight formats
-// take O(1) time and memory to pack.  On unpack, if the GrB_Matrix or
-// GrB_Vector is already in this particular format, then the unpack takes O(1)
-// time and no memory copying is performed.
-
-// If the input data is untrusted, use the following descriptor setting for
-// GxB_Matrix_pack*.  The pack will be slower, but secure.  GrB_Matrix_import
-// uses the slow, secure method, since it has no descriptor input.
-//
-//      GxB_set (desc, GxB_IMPORT, GxB_SECURE_IMPORT) ;
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_CSR: pack a CSR matrix
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    bool jumbled,       // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-    // CSR:  an nrows-by-ncols matrix with nvals entries in CSR format consists
-    // of 3 arrays, where nvals = Ap [nrows]:
-    //
-    //          GrB_Index Ap [nrows+1], Aj [nvals] ; <type> Ax [nvals] ;
-    //
-    //      The column indices of entries in the ith row of the matrix are held
-    //      in Aj [Ap [i] to Ap[i+1]-1], and the corresponding values are held
-    //      in the same positions in Ax.  Column indices must be in the range 0
-    //      to ncols-1.  If jumbled is false, the column indices must appear in
-    //      sorted order within each row.  No duplicate column indices may
-    //      appear in any row.  Ap [0] must equal zero, and Ap [nrows] must
-    //      equal nvals.  The Ap array must be of size nrows+1 (or larger), and
-    //      the Aj and Ax arrays must have size at least nvals.  If nvals is
-    //      zero, then the Aj and Ax arrays need not be present and can be
-    //      NULL.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_CSC: pack a CSC matrix
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    bool jumbled,       // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-    // CSC:  an nrows-by-ncols matrix with nvals entries in CSC format consists
-    // of 3 arrays, where nvals = Ap [ncols]:
-    //
-    //          GrB_Index Ap [ncols+1], Ai [nvals] ; <type> Ax [nvals] ;
-    //
-    //      The row indices of entries in the jth column of the matrix are held
-    //      in Ai [Ap [j] to Ap[j+1]-1], and the corresponding values are held
-    //      in the same positions in Ax.  Row indices must be in the range 0 to
-    //      nrows-1.  If jumbled is false, the row indices must appear in
-    //      sorted order within each column.  No duplicate row indices may
-    //      appear in any column.  Ap [0] must equal zero, and Ap [ncols] must
-    //      equal nvals.  The Ap array must be of size ncols+1 (or larger), and
-    //      the Ai and Ax arrays must have size at least nvals.  If nvals is
-    //      zero, then the Ai and Ax arrays need not be present and can be
-    //      NULL.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_HyperCSR: pack a hypersparse CSR matrix
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // row indices, Ah_size >= nvec*sizeof(int64_t)
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of rows that appear in Ah
-    bool jumbled,       // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-    // HyperCSR: an nrows-by-ncols matrix with nvals entries and nvec
-    // rows that may have entries in HyperCSR format consists of 4 arrays,
-    // where nvals = Ap [nvec]:
-    //
-    //          GrB_Index Ah [nvec], Ap [nvec+1], Aj [nvals] ;
-    //          <type> Ax [nvals] ;
-    //
-    //      The Aj and Ax arrays are the same for a matrix in CSR or HyperCSR
-    //      format.  Only Ap and Ah differ.
-    //
-    //      The Ah array is a list of the row indices of rows that appear in
-    //      the matrix.  It
-    //      must appear in sorted order, and no duplicates may appear.  If i =
-    //      Ah [k] is the kth row, then the column indices of the ith
-    //      row appear in Aj [Ap [k] to Ap [k+1]-1], and the corresponding
-    //      values appear in the same locations in Ax.  Column indices must be
-    //      in the range 0 to ncols-1, and must appear in sorted order within
-    //      each row.  No duplicate column indices may appear in any row.  nvec
-    //      may be zero, to denote an array with no entries.  The Ah array must
-    //      be of size at least nvec, Ap must be of size at least nvec+1, and
-    //      Aj and Ax must be at least of size nvals.  If nvals is zero, then
-    //      the Aj and Ax arrays need not be present and can be NULL.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_HyperCSC: pack a hypersparse CSC matrix
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (nvec+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // column indices, Ah_size >= nvec*sizeof(int64_t)
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of columns that appear in Ah
-    bool jumbled,       // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-    // HyperCSC: an nrows-by-ncols matrix with nvals entries and nvec
-    // columns that may have entries in HyperCSC format consists of 4 arrays,
-    // where nvals = Ap [nvec]:
-    //
-    //
-    //          GrB_Index Ah [nvec], Ap [nvec+1], Ai [nvals] ;
-    //          <type> Ax [nvals] ;
-    //
-    //      The Ai and Ax arrays are the same for a matrix in CSC or HyperCSC
-    //      format.  Only Ap and Ah differ.
-    //
-    //      The Ah array is a list of the column indices of non-empty columns.
-    //      It must appear in sorted order, and no duplicates may appear.  If j
-    //      = Ah [k] is the kth non-empty column, then the row indices of the
-    //      jth column appear in Ai [Ap [k] to Ap [k+1]-1], and the
-    //      corresponding values appear in the same locations in Ax.  Row
-    //      indices must be in the range 0 to nrows-1, and must appear in
-    //      sorted order within each column.  No duplicate row indices may
-    //      appear in any column.  nvec may be zero, to denote an array with no
-    //      entries.  The Ah array must be of size at least nvec, Ap must be of
-    //      size at least nvec+1, and Ai and Ax must be at least of size nvals.
-    //      If nvals is zero, then the Ai and Ax arrays need not be present and
-    //      can be NULL.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_BitmapR: pack a bitmap matrix, held by row
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-    // BitmapR: a dense format, but able to represent sparsity structure of A.
-    //
-    //          int8_t Ab [nrows*ncols] ;
-    //          <type> Ax [nrows*ncols] ;
-    //
-    //      Ab and Ax are both of size nrows*ncols.  Ab [i*ncols+j] = 1 if the
-    //      A(i,j) entry is present with value Ax [i*ncols+j], or 0 if A(i,j)
-    //      is not present.  nvals must equal the number of 1's in the Ab
-    //      array.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_BitmapC: pack a bitmap matrix, held by column
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-    // BitmapC: a dense format, but able to represent sparsity structure of A.
-    //
-    //          int8_t Ab [nrows*ncols] ;
-    //          <type> Ax [nrows*ncols] ;
-    //
-    //      Ab and Ax are both of size nrows*ncols.  Ab [i+j*nrows] = 1 if the
-    //      A(i,j) entry is present with value Ax [i+j*nrows], or 0 if A(i,j)
-    //      is not present.  nvals must equal the number of 1's in the Ab
-    //      array.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_FullR:  pack a full matrix, held by row
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
-    // FullR: an nrows-by-ncols full matrix held in row-major order:
-    //
-    //  <type> Ax [nrows*ncols] ;
-    //
-    //      Ax is an array of size nrows*ncols, where A(i,j) is held in
-    //      Ax [i*ncols+j].  All entries in A are present.
-
-//------------------------------------------------------------------------------
-// GxB_Matrix_pack_FullC: pack a full matrix, held by column
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
-    // FullC: an nrows-by-ncols full matrix held in column-major order:
-    //
-    //  <type> Ax [nrows*ncols] ;
-    //
-    //      Ax is an array of size nrows*ncols, where A(i,j) is held in
-    //      Ax [i+j*nrows].  All entries in A are present.
-
-//------------------------------------------------------------------------------
-// GxB_Vector_pack_CSC: pack a vector in CSC format
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
-(
-    GrB_Vector v,       // vector to create (type and length unchanged)
-    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
-    void **vx,          // values, vx_size >= nvals(v) * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vi_size,  // size of vi in bytes
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in vector
-    bool jumbled,       // if true, indices may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-    // The GrB_Vector is treated as if it was a single column of an n-by-1
-    // matrix in CSC format, except that no vp array is required.  If nvals is
-    // zero, then the vi and vx arrays need not be present and can be NULL.
-
-//------------------------------------------------------------------------------
-// GxB_Vector_pack_Bitmap: pack a vector in bitmap format
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
-(
-    GrB_Vector v,       // vector to create (type and length unchanged)
-    int8_t **vb,        // bitmap, vb_size >= n
-    void **vx,          // values, vx_size >= n * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vb_size,  // size of vb in bytes
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-    // The GrB_Vector is treated as if it was a single column of an n-by-1
-    // matrix in BitmapC format.
-
-//------------------------------------------------------------------------------
-// GxB_Vector_pack_Full: pack a vector in full format
-//------------------------------------------------------------------------------
-
-GrB_Info GxB_Vector_pack_Full // pack a full vector
-(
-    GrB_Vector v,       // vector to create (type and length unchanged)
-    void **vx,          // values, vx_size >= nvals(v) * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    const GrB_Descriptor desc
-) ;
-
-    // The GrB_Vector is treated as if it was a single column of an n-by-1
-    // matrix in FullC format.
-
-//------------------------------------------------------------------------------
-// GxB unpack
-//------------------------------------------------------------------------------
-
-// The GxB_*_unpack functions are symmetric with the GxB_*_pack functions.  The
-// unpack functions force completion of any pending operations, prior to the
-// unpack, except if the only pending operation is to unjumble the matrix.
-//
-// If there are no entries in the matrix or vector, then the index arrays (Ai,
-// Aj, or vi) and value arrays (Ax or vx) are returned as NULL.  This is not an
-// error condition.
-//
-// A GrB_Matrix may be unpacked in any one of four different formats.
-//
-// If jumbled is NULL on input, this indicates to GxB_*unpack* that the
-// unpacked matrix cannot be returned in a jumbled format.  In this case, if
-// the matrix is jumbled, it is sorted before unpacking it to the caller.
-//
-// If iso is NULL on input, this indicates to the unpack methods that the
-// unpacked matrix cannot be returned in a iso format, with an Ax array with
-// just one entry.  In this case, if the matrix is iso, it is expanded before
-// unpacking it to the caller.
-//
-// For the unpack*Full* methods, all entries in the matrix or must be present.
-// That is, GrB_*_nvals must report nvals equal to nrows*ncols or a matrix.  If
-// this condition does not hold, the matrix/vector is not unpack, and
-// GrB_INVALID_VALUE is returned.
-//
-// If the unpack is not successful, the unpack functions do not modify matrix
-// or vector and the user arrays are returned as NULL.
-
-GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Aj,     // column indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    bool *jumbled,      // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ai,     // row indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Ah,     // row indices
-    GrB_Index **Aj,     // column indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of rows that appear in Ah
-    bool *jumbled,      // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ah,     // column indices
-    GrB_Index **Ai,     // row indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of columns that appear in Ah
-    bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap
-    void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap
-    void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
-(
-    GrB_Vector v,       // vector to unpack (type and length unchanged)
-    GrB_Index **vi,     // indices
-    void **vx,          // values
-    GrB_Index *vi_size, // size of vi in bytes
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    GrB_Index *nvals,   // # of entries in vector
-    bool *jumbled,      // if true, indices may be unsorted
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
-(
-    GrB_Vector v,       // vector to unpack (type and length unchanged)
-    int8_t **vb,        // bitmap
-    void **vx,          // values
-    GrB_Index *vb_size, // size of vb in bytes
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    GrB_Index *nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-
-GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
-(
-    GrB_Vector v,       // vector to unpack (type and length unchanged)
-    void **vx,          // values
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    const GrB_Descriptor desc
-) ;
-
-//------------------------------------------------------------------------------
-// GxB hyper_hash pack/unpack
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS v7.3.0 adds a new internal component to the
-// hypersparse matrix format: the hyper_hash GrB_Matrix A->Y.  The matrix
-// provides a fast lookup into the hyperlist Ah.
-
-// GxB_unpack_HyperHash unpacks the hyper_hash from the hypersparse matrix A.
-// Normally, this method is called immediately before calling one of the four
-// methods GxB_Matrix_unpack_Hyper(CSR/CSC).  For example, to unpack
-// then pack a hypersparse CSC matrix:
-
-//      GrB_Matrix Y = NULL ;
-//
-//      // to unpack all of A:
-//      GxB_unpack_HyperHash (A, &Y, desc) ;    // first unpack A->Y into Y
-//      GxB_Matrix_unpack_HyperCSC (A,          // then unpack the rest of A
-//          &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
-//          &iso, &nvec, &jumbled, descriptor) ;
-//
-//      // use the unpacked contents of A here, but do not change Ah or nvec.
-//
-//      // to pack the data back into A:
-//      GxB_Matrix_pack_HyperCSC (A, etc) ;     // pack most of A, except A->Y
-//      GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y
-
-// The same process is used with GxB_Matrix_unpack_HyperCSR.
-
-// If A is not hypersparse on input to GxB_unpack_HyperHash, or if A is
-// hypersparse but does yet not have a hyper_hash, then Y is returned as NULL.
-// This is not an error condition, and GrB_SUCCESS is returned.  The hyper_hash
-// of a hypersparse matrix A is a matrix that provides quick access to the
-// inverse of Ah.  It is not always needed and may not be present.  It is left
-// as pending work to be computed when needed.  GrB_Matrix_wait (A) will ensure
-// that the hyper_hash is constructed, if A is hypersparse.
-
-// If Y is moved from A and returned as non-NULL to the caller, then it is
-// the responsibility of the user application to free it, or to re-pack it back
-// into A via GxB_pack_HyperHash, as shown in the example above.
-
-// If this method is called to remove the hyper_hash Y from the hypersparse
-// matrix A, and then GrB_Matrix_wait (A) is called, a new hyper_hash matrix is
-// constructed for A.
-
-GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
-(
-    GrB_Matrix A,                   // matrix to modify
-    GrB_Matrix *Y,                  // hyper_hash matrix to move from A
-    const GrB_Descriptor desc       // unused
-) ;
-
-// GxB_pack_HyperHash assigns the input Y matrix as the A->Y hyper_hash of the
-// hypersparse matrix A.  Normally, this method is called immediately after
-// calling one of the four methods GxB_Matrix_pack_Hyper(CSR/CSC).
-
-// If A is not hypersparse on input to GxB_pack_HyperHash, or if A already has
-// a hyper_hash matrix, or if Y is NULL on input, then nothing happens and Y is
-// unchanged.  This is not an error condition and this method returns
-// GrB_SUCCESS.  In this case, if Y is non-NULL after calling this method, it
-// owned by the user application and freeing it is the responsibility of the
-// user application.
-
-// Basic checks are perfomed on Y: Y must have the right dimensions:  if A is
-// HyperCSR and m-by-n with nvec vectors present in Ah, then Y must be n-by-v
-// where v is a power of 2; if A is HyperCSR and m-by-n, then Y must be m-by-v.
-// nvals(Y) must equal nvec.  Y must be sparse, held by column, and have type
-// int64.  It cannot have any pending work.  It cannot have a hyper_hash
-// of its own.  If any of these conditions hold, GrB_INVALID is returned and
-// A and Y are unchanged.
-
-// If Y is moved into A as its hyper_hash, then the caller's Y is set to NULL
-// to indicate that it has been moved into A.  It is no longer owned by the
-// caller, but is instead an opaque component of the A matrix.  It will be
-// freed by SuiteSparse:GraphBLAS if A is modified or freed.
-
-// Results are undefined if the input Y was not created by GxB_unpack_HyperHash
-// (see the example above) or if the Ah contents or nvec of the matrix A are
-// modified after they were unpacked by
-// GxB_Matrix_unpack_Hyper(CSR/CSC).
-
-GrB_Info GxB_pack_HyperHash         // move Y into A->Y
-(
-    GrB_Matrix A,                   // matrix to modify
-    GrB_Matrix *Y,                  // hyper_hash matrix to pack into A
-    const GrB_Descriptor desc       // unused
 ) ;
 
 //==============================================================================
@@ -8250,6 +7597,58 @@ GB_GLOBAL GxB_SelectOp GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
     GxB_EQ_ZERO, GxB_GT_ZERO, GxB_GE_ZERO, GxB_LT_ZERO, GxB_LE_ZERO,
     GxB_NE_THUNK, GxB_EQ_THUNK, GxB_GT_THUNK, GxB_GE_THUNK, GxB_LT_THUNK,
     GxB_LE_THUNK ;
+
+// pack/unpack: use the GxB_Container methods instead
+GrB_Info GxB_Matrix_pack_CSR (GrB_Matrix, uint64_t **, uint64_t **, void **,
+    uint64_t, uint64_t, uint64_t, bool, bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_CSC (GrB_Matrix, uint64_t **, uint64_t **, void **,
+    uint64_t, uint64_t, uint64_t, bool, bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_HyperCSR (GrB_Matrix, uint64_t **, uint64_t **,
+    uint64_t **, void **, uint64_t, uint64_t, uint64_t, uint64_t, bool,
+    uint64_t, bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_HyperCSC (GrB_Matrix, uint64_t **, uint64_t **,
+    uint64_t **, void **, uint64_t, uint64_t, uint64_t, uint64_t, bool,
+    uint64_t, bool, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_BitmapR (GrB_Matrix, int8_t **, void **, uint64_t,
+    uint64_t, bool, uint64_t, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_BitmapC (GrB_Matrix, int8_t **, void **, uint64_t,
+    uint64_t, bool, uint64_t, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_FullR (GrB_Matrix, void **, uint64_t, bool,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_pack_FullC (GrB_Matrix, void **, uint64_t, bool,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Vector_pack_CSC (GrB_Vector, uint64_t **, void **, uint64_t,
+    uint64_t, bool, uint64_t, bool, const GrB_Descriptor) ;
+GrB_Info GxB_Vector_pack_Bitmap (GrB_Vector, int8_t **, void **, uint64_t,
+    uint64_t, bool, uint64_t, const GrB_Descriptor) ;
+GrB_Info GxB_Vector_pack_Full (GrB_Vector, void **, uint64_t, bool,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_CSR (GrB_Matrix, uint64_t **, uint64_t **, void **,
+    uint64_t *, uint64_t *, uint64_t *, bool *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_CSC (GrB_Matrix, uint64_t **, uint64_t **, void **,
+    uint64_t *, uint64_t *, uint64_t *, bool *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_HyperCSR (GrB_Matrix, uint64_t **, uint64_t **,
+    uint64_t **, void **, uint64_t *, uint64_t *, uint64_t *, uint64_t *,
+    bool *, uint64_t *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_HyperCSC (GrB_Matrix, uint64_t **, uint64_t **,
+    uint64_t **, void **, uint64_t *, uint64_t *, uint64_t *, uint64_t *,
+    bool *, uint64_t *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_BitmapR (GrB_Matrix, int8_t **, void **, uint64_t *,
+    uint64_t *, bool *, uint64_t *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_BitmapC (GrB_Matrix, int8_t **, void **, uint64_t *,
+    uint64_t *, bool *, uint64_t *, const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_FullR (GrB_Matrix, void **, uint64_t *, bool *,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Matrix_unpack_FullC (GrB_Matrix, void **, uint64_t *, bool *,
+    const GrB_Descriptor) ;
+GrB_Info GxB_Vector_unpack_CSC (GrB_Vector, uint64_t **, void **, uint64_t *,
+    uint64_t *, bool *, uint64_t *, bool *, const GrB_Descriptor) ;
+GrB_Info GxB_Vector_unpack_Bitmap (GrB_Vector, int8_t **, void **, uint64_t *,
+    uint64_t *, bool *, uint64_t *, const GrB_Descriptor) ;
+GrB_Info GxB_Vector_unpack_Full (GrB_Vector, void **, uint64_t *, bool *,
+    const GrB_Descriptor) ;
+GrB_Info GxB_unpack_HyperHash (GrB_Matrix, GrB_Matrix *, const GrB_Descriptor) ;
+GrB_Info GxB_pack_HyperHash (GrB_Matrix, GrB_Matrix *, const GrB_Descriptor) ;
 
 #endif
 

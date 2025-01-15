@@ -16,14 +16,6 @@
 // maximum matrix or vector dimension
 //------------------------------------------------------------------------------
 
-#ifndef GrB_INDEX_MAX
-#define GrB_INDEX_MAX ((uint64_t) (1ULL << 60) - 1)
-#endif
-
-#ifndef GxB_INDEX32_MAX
-#define GxB_INDEX32_MAX ((uint64_t) (1ULL << 30) - 1)
-#endif
-
 // GB_NMAX:   max dimension when A->i or A->h are 64-bit
 // GB_NMAX32: max dimension when A->i or A->h are 32-bit
 #define GB_NMAX   ((uint64_t) (1ULL << 60))
@@ -39,7 +31,7 @@ static inline bool GB_determine_p_is_32
     int64_t nvals_max   // max # of entries in the matrix
 )
 {
-    if (p_is_32 && nvals_max >= UINT32_MAX)
+    if (p_is_32 && nvals_max > UINT32_MAX)
     { 
         // A->p is requested too small; make it 64-bit
         p_is_32 = false ;

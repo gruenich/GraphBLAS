@@ -57,7 +57,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     A->is_csc = (Container->orientation == GrB_COLMAJOR) ;
     A->vlen = (A->is_csc) ? Container->nrows : Container->ncols ;
     A->vdim = (A->is_csc) ? Container->ncols : Container->nrows ;
-    A->nvec = Container->nvec ;
+    A->nvec = Container->nhyper ;
     A->nvec_nonempty = (A->is_csc) ?
         Container->ncols_nonempty : Container->nrows_nonempty ;
     A->iso = Container->iso ;

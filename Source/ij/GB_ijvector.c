@@ -9,7 +9,7 @@
 
 // The input vector List describes a list of integers to be used by GrB_assign,
 // GxB_subassign, or GrB_extract.
-
+//
 // Descriptor settings: for Row and Col lists passed to GrB_assign,
 // GxB_subassign and GrB_extract:
 //
@@ -20,33 +20,32 @@
 //                  and is typecast to Icolon of type int64_t.
 //                  becomes GxB_STRIDE.
 //
-// If the List vector is NULL: treat as GrB_ALL; no need for descriptor.  No
-// need for GxB_RANGE (inc=1) or GxB_BACKWARDS (List->x can have signed
-// integers).
-
-// Descriptor fields to add:
+// If the List vector is NULL, it is treated as GrB_ALL; no need for
+// descriptor.  Since the List vector can contain signed integers, there is no
+// need for a RANGE or BACKWARDS descriptor.
 //
-//      GxB_ROWINDEX_LIST
-//      GxB_COLINDEX_LIST
+// Descriptor fields that control the interpretation of the List:
 //
-// values to set it to
+//      GxB_ROWINDEX_LIST       how to interpret the GrB_Vector I
+//      GxB_COLINDEX_LIST       how to interpret the GrB_Vector J
+//
+// values they can be set to:
 //
 //      GrB_DEFAULT (0)             use List->x
 //      GxB_USE_VALUES (0)          use List->x (same as GrB_DEFAULT)
 //      GxB_USE_INDICES (7060)      use List->i
 //      GxB_IS_STRIDE (7061)        use List->x, size 3, for Icolon
-//
-// This gets passed to this method as a single int, List_Descriptor,
-// which must take on one of three values: 0, 7060, or 7061.
 
 // GrB_build will not use all of these settings, at most:
+//
 //      GrB_DEFAULT (0)             use List->x
 //      GxB_USE_VALUES (0)          use List->x (same as GrB_DEFAULT)
 //      GxB_USE_INDICES (7060)      use List->i
+//
 // It will not use GxB_IS_STRIDE.
 
-// GrB_extractTuples, with indices returned in GrB_Vectors I and J,
-// will use none of these settings.
+// GrB_extractTuples, with indices returned in GrB_Vectors I and J, will use
+// none of these settings.  It will always return its results in List->x.
 
 #define GB_DEBUG
 
@@ -67,7 +66,7 @@
 // GB_stride: create a stride, I = begin:inc:end
 //------------------------------------------------------------------------------
 
-// assign, subassign, and extract all expect list of unsigned integers for
+// assign, subassign, and extract all expect a list of unsigned integers for
 // their list I.  The stride can be negative, which is handled by setting ni
 // to one of 3 special values:
 //
@@ -87,31 +86,33 @@ static inline GrB_Info GB_stride
     size_t *I_size_handle   // if > 0, I has been allocated by this
 )
 {
-    if ((*I_handle) == NULL)
-    { 
-        (*I_handle) = GB_CALLOC_MEMORY (3, sizeof (uint64_t), I_size_handle) ;
-    }
+    ASSERT ((*I_handle) == NULL) ;
+    ASSERT ((*I_size_handle) == 0) ;
+    (*I_handle) = GB_CALLOC_MEMORY (3, sizeof (uint64_t), I_size_handle) ;
     if ((*I_handle) == NULL)
     { 
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
     uint64_t *U64 = (uint64_t *) (*I_handle) ;
-    U64 [GxB_BEGIN] = stride_begin ;
-    U64 [GxB_END  ] = stride_end ;
+    U64 [GxB_BEGIN] = (uint64_t) stride_begin ;
+    U64 [GxB_END  ] = (uint64_t) stride_end ;
     if (stride_inc == 1)
     { 
+        // in MATLAB notation: begin:1:end
         U64 [GxB_INC] = 1 ;
         (*ni_handle) = GxB_RANGE ;
     }
     else if (stride_inc < 0)
     { 
-        U64 [GxB_INC] = -stride_inc ;
+        // in MATLAB notation: begin:stride:end, where stride < 0
+        U64 [GxB_INC] = (uint64_t) (-stride_inc) ;
         (*ni_handle) = GxB_BACKWARDS ;
     }
     else
     { 
-        U64 [GxB_INC] = stride_inc ;
+        // in MATLAB notation: begin:stride:end, where stride > 1
+        U64 [GxB_INC] = (uint64_t) stride_inc ;
         (*ni_handle) = GxB_STRIDE ;
     }
     return (GrB_SUCCESS) ;
@@ -168,7 +169,7 @@ GrB_Info GB_ijvector
 
     if (List == NULL)
     { 
-        // List of NULL denotes GrB_ALL, or ":"
+        // List of NULL denotes GrB_ALL, or ":"; descriptor is ignored
         (*I_handle) = (uint64_t *) GrB_ALL ;
         return (GrB_SUCCESS) ;
     }
@@ -183,10 +184,10 @@ GrB_Info GB_ijvector
     // get the descriptor
     //--------------------------------------------------------------------------
 
-    //      GrB_DEFAULT (0)             use List->x
-    //      GxB_USE_VALUES (0)          use List->x (same as GrB_DEFAULT)
-    //      GxB_USE_INDICES (7060)      use List->i
-    //      GxB_IS_STRIDE (7061)        use List->x, size 3, for Icolon
+    // GrB_DEFAULT (0)             use List->x
+    // GxB_USE_VALUES (0)          use List->x (same as GrB_DEFAULT)
+    // GxB_USE_INDICES (7060)      use List->i
+    // GxB_IS_STRIDE (7061)        use List->x, size 3, for Icolon
 
     int list_descriptor = GrB_DEFAULT ;
     if (desc != NULL)
@@ -343,7 +344,7 @@ GrB_Info GB_ijvector
     }
 
     //--------------------------------------------------------------------------
-    // copy/typecast the indices if needed
+    // determine the final output type for I
     //--------------------------------------------------------------------------
 
     GrB_Type I_target_type = NULL ;
@@ -365,10 +366,13 @@ GrB_Info GB_ijvector
         I_target_type = GrB_UINT64 ;
     }
 
+    //--------------------------------------------------------------------------
+    // copy/typecast the indices if needed
+    //--------------------------------------------------------------------------
+
     if (need_copy || I_type != I_target_type)
     { 
         // Create an ni-by-1 matrix T containing the values of I
-        int64_t n = (iso) ? 1 : ni ;
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
         GB_OK (GB_new (&T, // static header
             I_type, ni, 1, GB_ph_null, true, GxB_FULL, 0, 0,
