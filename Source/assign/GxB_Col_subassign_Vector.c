@@ -52,9 +52,10 @@ GrB_Info GxB_Col_subassign_Vector   // C(I,j)<M> = accum (C(I,j),u)
     void *I = NULL ;
     size_t I_size = 0 ;
     int64_t ni = 0 ;
-    bool I_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, false, 0, desc, &I, &I_is_32, &ni, &I_size,
-        Werk)) ;
+    GrB_Type I_type = NULL ;
+    GB_OK (GB_ijvector (I_vector, false, 0, desc, false,
+        &I, &ni, &I_size, &I_type, Werk)) ;
+    bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------
     // C(I,j)<M> = accum (C(I,j), u)

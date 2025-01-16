@@ -72,15 +72,20 @@ GrB_Info GB_ijvector
                             // List->x or List-i.  If List is NULL, it defines
                             // I = GrB_ALL.
     bool need_copy,         // if true, I must be allocated
-    int which,              // 0: row list, 1: col list
+    int which,              // 0: I list, 1: J list, 2: X list
     const GrB_Descriptor desc,      // with row_list and col_list descriptors
+    bool is_build,          // if true, method is GrB_build; otherwise, it is
+                            // assign, subassign, or extract
     // output:
     void **I_handle,        // the list I; may be GrB_ALL
-    bool *I_is_32_handle,   // if true, I is 32-bit; else 64-bit
     int64_t *ni_handle,     // the length of I, or special (GxB_RANGE)
     size_t *I_size_handle,  // if > 0, I has been allocated by this
                             // method.  Otherwise, it is a shallow pointer into
                             // List->x or List->i.
+    GrB_Type *I_type_handle,    // the type of I: GrB_UINT32 or GrB_UINT64 for
+                            // assign, subassign, extract, or for build with
+                            // the descriptor uses the indices.  For build,
+                            // this is List->type when using the values.
     GB_Werk Werk                            
 ) ;
 

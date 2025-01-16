@@ -52,9 +52,10 @@ GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
     void *J = NULL ;
     size_t J_size = 0 ;
     int64_t nj = 0 ;
-    bool J_is_32 = false ;
-    GB_OK (GB_ijvector (J_vector, false, 1, desc, &J, &J_is_32, &nj, &J_size,
-        Werk)) ;
+    GrB_Type J_type = NULL ;
+    GB_OK (GB_ijvector (J_vector, false, 1, desc, false,
+        &J, &nj, &J_size, &J_type, Werk)) ;
+    bool J_is_32 = (J_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------
     // C<M'>(i,J) = accum (C(i,J), u')

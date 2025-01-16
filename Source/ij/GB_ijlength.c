@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Determine the length of I, and process the colon notation I = begin:inc:end.
 // No error checking is done.
 

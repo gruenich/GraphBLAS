@@ -10,8 +10,8 @@
 // The input vector List describes a list of integers to be used by GrB_assign,
 // GxB_subassign, or GrB_extract.
 //
-// Descriptor settings: for Row and Col lists passed to GrB_assign,
-// GxB_subassign and GrB_extract:
+// Descriptor settings: for I and J  lists passed to GrB_assign,
+// GxB_subassign and GrB_extract, and for I,J,X lists passed to GrB_build:
 //
 //  default:        use List->x as GxB_LIST of indices
 //  use indices:    use List->i as GxB_LIST of indices
@@ -20,7 +20,7 @@
 //                  and is typecast to Icolon of type int64_t.
 //                  becomes GxB_STRIDE.
 //
-// If the List vector is NULL, it is treated as GrB_ALL; no need for
+// If the List vector is NULL, it is treated as GrB_ALL; no need for the
 // descriptor.  Since the List vector can contain signed integers, there is no
 // need for a RANGE or BACKWARDS descriptor.
 //
@@ -28,24 +28,20 @@
 //
 //      GxB_ROWINDEX_LIST       how to interpret the GrB_Vector I
 //      GxB_COLINDEX_LIST       how to interpret the GrB_Vector J
+//      GxB_VALUE_LIST          how to interpret the GrB_Vector X for GrB_build
 //
 // values they can be set to:
 //
-//      GrB_DEFAULT (0)             use List->x
-//      GxB_USE_VALUES (0)          use List->x (same as GrB_DEFAULT)
-//      GxB_USE_INDICES (7060)      use List->i
-//      GxB_IS_STRIDE (7061)        use List->x, size 3, for Icolon
-
-// GrB_build will not use all of these settings, at most:
+//      GrB_DEFAULT (0)         use List->x
+//      GxB_USE_VALUES (0)      use List->x (same as GrB_DEFAULT)
+//      GxB_USE_INDICES (7060)  use List->i
+//      GxB_IS_STRIDE (7061)    use List->x, size 3, for Icolon
 //
-//      GrB_DEFAULT (0)             use List->x
-//      GxB_USE_VALUES (0)          use List->x (same as GrB_DEFAULT)
-//      GxB_USE_INDICES (7060)      use List->i
+// GrB_build does not allow GxB_IS_STRIDE for I, J, or X.
 //
-// It will not use GxB_IS_STRIDE.
-
-// GrB_extractTuples, with indices returned in GrB_Vectors I and J, will use
-// none of these settings.  It will always return its results in List->x.
+// GrB_extractTuples, with indices returned in GrB_Vectors I, J, and X will use
+// none of these settings.  It will always return its results in List->x.  It
+// does not use this method and ignores the descriptor settings above.
 
 #define GB_DEBUG
 
@@ -83,7 +79,8 @@ static inline GrB_Info GB_stride
     // output:
     void **I_handle,        // the list I; may be GrB_ALL
     int64_t *ni_handle,     // the length of I, or special (GxB_RANGE)
-    size_t *I_size_handle   // if > 0, I has been allocated by this
+    size_t *I_size_handle,  // if > 0, I has been allocated by this
+    GrB_Type *I_type_handle // the type of I: always GrB_UINT64
 )
 {
     ASSERT ((*I_handle) == NULL) ;
@@ -115,6 +112,7 @@ static inline GrB_Info GB_stride
         U64 [GxB_INC] = (uint64_t) stride_inc ;
         (*ni_handle) = GxB_STRIDE ;
     }
+    (*I_type_handle) = GrB_UINT64 ;
     return (GrB_SUCCESS) ;
 }
 
@@ -129,15 +127,20 @@ GrB_Info GB_ijvector
                             // List->x or List-i.  If List is NULL, it defines
                             // I = GrB_ALL.
     bool need_copy,         // if true, I must be allocated
-    int which,              // 0: row list, 1: col list
+    int which,              // 0: I list, 1: J list, 2: X list
     const GrB_Descriptor desc,      // with row_list and col_list descriptors
+    bool is_build,          // if true, method is GrB_build; otherwise, it is
+                            // assign, subassign, or extract
     // output:
     void **I_handle,        // the list I; may be GrB_ALL
-    bool *I_is_32_handle,   // if true, I is 32-bit; else 64-bit
     int64_t *ni_handle,     // the length of I, or special (GxB_RANGE)
     size_t *I_size_handle,  // if > 0, I has been allocated by this
                             // method.  Otherwise, it is a shallow pointer into
                             // List->x or List->i.
+    GrB_Type *I_type_handle,    // the type of I: GrB_UINT32 or GrB_UINT64 for
+                            // assign, subassign, extract, or for build with
+                            // the descriptor uses the indices.  For build,
+                            // this is List->type when using the values.
     GB_Werk Werk                            
 )
 {
@@ -148,15 +151,15 @@ GrB_Info GB_ijvector
 
     GrB_Info info ;
     ASSERT (I_handle != NULL) ;
-    ASSERT (I_is_32_handle != NULL) ;
     ASSERT (ni_handle != NULL) ;
     ASSERT (I_size_handle != NULL) ;
+    ASSERT (I_type_handle != NULL) ;
     ASSERT_VECTOR_OK_OR_NULL (List, "List of integers", GB0) ;
 
     (*I_handle) = NULL ;
-    (*I_is_32_handle) = false ;
     (*ni_handle) = 0 ;
     (*I_size_handle) = 0 ;
+    (*I_type_handle) = NULL ;
 
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
@@ -169,8 +172,11 @@ GrB_Info GB_ijvector
 
     if (List == NULL)
     { 
+        // GrB_build will not call this method with List == NULL
+        ASSERT (!is_build) ;
         // List of NULL denotes GrB_ALL, or ":"; descriptor is ignored
         (*I_handle) = (uint64_t *) GrB_ALL ;
+        (*I_type_handle) = GrB_UINT64 ;
         return (GrB_SUCCESS) ;
     }
 
@@ -197,9 +203,11 @@ GrB_Info GB_ijvector
 
     bool list_is_stride = (list_descriptor == GxB_IS_STRIDE) ;
     int64_t ni = List->nvals ;
-    if (list_is_stride && ni != 3)
+    if (list_is_stride && (ni != 3 || is_build))
     { 
-        // the List must have exactly 3 items (lo,hi,stride) for GxB_IS_STRIDE
+        // List must have exactly 3 items (lo,hi,stride) for GxB_IS_STRIDE
+        // for assign, subassign, and extract.  GrB_build does not allow
+        // GxB_IS_STRIDE.
         return (GrB_INVALID_VALUE) ;
     }
 
@@ -217,6 +225,7 @@ GrB_Info GB_ijvector
         { 
             return (GrB_OUT_OF_MEMORY) ;
         }
+        (*I_type_handle) = GrB_UINT64 ;
         return (GrB_SUCCESS) ;
     }
 
@@ -311,8 +320,50 @@ GrB_Info GB_ijvector
         else
         { 
             // create I = 0:1:(length(List)-1) with quick return
-            return (GB_stride (0, 1, List->vlen-1,
-                I_handle, ni_handle, I_size_handle)) ;
+            int64_t n = List->vlen ;
+            if (is_build)
+            { 
+                // build an explicit list for GrB_build
+                I_type = (n <= UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
+                (*I_handle) = GB_MALLOC_MEMORY (n, I_type->size, I_size_handle);
+                if ((*I_handle) == NULL)
+                { 
+                    // out of memory
+                    return (GrB_OUT_OF_MEMORY) ;
+                }
+                int nthreads_max = GB_Context_nthreads_max ( ) ;
+                double chunk = GB_Context_chunk ( ) ;
+                int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
+                if (I_type == GrB_UINT32)
+                { 
+                    uint32_t *I = (uint32_t *) (*I_handle) ;
+                    #pragma omp parallel for num_threads(nthreads) \
+                        schedule(static)
+                    for (int64_t k = 0 ; k < n ; k++)
+                    {
+                        I [k] = k ;
+                    }
+                }
+                else
+                { 
+                    uint64_t *I = (uint64_t *) (*I_handle) ;
+                    #pragma omp parallel for num_threads(nthreads) \
+                        schedule(static)
+                    for (int64_t k = 0 ; k < n ; k++)
+                    {
+                        I [k] = k ;
+                    }
+                }
+                (*ni_handle) = n ;
+                (*I_type_handle) = I_type ;
+                return (GrB_SUCCESS) ;
+            }
+            else
+            { 
+                // use I = [0, n-1, 1] and GxB_STRIDE
+                return (GB_stride (0, 1, n-1,
+                    I_handle, ni_handle, I_size_handle, I_type_handle)) ;
+            }
         }
     }
 
@@ -348,7 +399,12 @@ GrB_Info GB_ijvector
     //--------------------------------------------------------------------------
 
     GrB_Type I_target_type = NULL ;
-    if (list_is_stride)
+    if (is_build)
+    { 
+        // List remains as-is
+        I_target_type = I_type ;
+    }
+    else if (list_is_stride)
     { 
         // ensure the List is typecast to int64_t
         I_target_type = GrB_INT64 ;
@@ -370,7 +426,7 @@ GrB_Info GB_ijvector
     // copy/typecast the indices if needed
     //--------------------------------------------------------------------------
 
-    if (need_copy || I_type != I_target_type)
+    if ((need_copy && I_size == 0) || I_type != I_target_type)
     { 
         // Create an ni-by-1 matrix T containing the values of I
         GB_CLEAR_STATIC_HEADER (T, &T_header) ;
@@ -406,6 +462,7 @@ GrB_Info GB_ijvector
     }
 
     ASSERT (I_type == I_target_type) ;
+    ASSERT (GB_IMPLIES (need_copy, I_size > 0)) ;
 
     //--------------------------------------------------------------------------
     // create the stride or return the list I
@@ -414,24 +471,26 @@ GrB_Info GB_ijvector
     if (list_is_stride)
     { 
         // I currently has type int64_t, so it can handle negative strides,
-        // but it must be converted to uint64_t.
+        // but it must be converted to uint64_t to become Icolon.
         ASSERT (I_type == GrB_INT64) ;
+        ASSERT (!is_build) ;
         int64_t *I64 = (int64_t *) I ;
         int64_t stride_begin = I64 [GxB_BEGIN] ;
         int64_t stride_inc   = I64 [GxB_INC  ] ;
         int64_t stride_end   = I64 [GxB_END  ] ;
         // create the stride
         GB_OK (GB_stride (stride_begin, stride_inc, stride_end,
-            I_handle, ni_handle, I_size_handle)) ;
+            I_handle, ni_handle, I_size_handle, I_type_handle)) ;
     }
     else
     { 
-        // return I as the index list
-        ASSERT (I_type == GrB_UINT32 || I_type == GrB_UINT64) ;
+        // return I as-is
+        ASSERT (I_type == GrB_UINT32 || I_type == GrB_UINT64 || 
+            (is_build && I_type == List->type)) ;
         (*I_handle) = I ;
-        (*I_is_32_handle) = (I_type == GrB_UINT32) ;
         (*ni_handle) = ni ;
         (*I_size_handle) = I_size ;
+        (*I_type_handle) = I_type ;
         I = NULL ;
     }
 

@@ -128,10 +128,10 @@ GrB_Info GB_Matrix_subassign_scalar   // C(I,J)<M> = accum (C(I,J),s)
         //----------------------------------------------------------------------
 
         // determine the properites of the I and J index lists
-        int64_t nI, nJ, I_Colon [3], J_Colon [3] ;
+        int64_t nI, nJ, Icolon [3], Jcolon [3] ;
         int I_Kind, J_Kind ;
-        GB_ijlength (I, I_is_32, ni, GB_NROWS (C), &nI, &I_Kind, I_Colon) ;
-        GB_ijlength (J, J_is_32, nj, GB_NCOLS (C), &nJ, &J_Kind, J_Colon) ;
+        GB_ijlength (I, I_is_32, ni, GB_NROWS (C), &nI, &I_Kind, Icolon) ;
+        GB_ijlength (J, J_is_32, nj, GB_NCOLS (C), &nJ, &J_Kind, Jcolon) ;
 
         // create an empty matrix A of the right size, and use matrix assign
         struct GB_Matrix_opaque A_header ;

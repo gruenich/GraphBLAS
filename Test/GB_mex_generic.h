@@ -455,6 +455,9 @@
 #define GrB_Vector_extract_(...)                    GrB_extract (__VA_ARGS__)
 #define GrB_Matrix_extract_(...)                    GrB_extract (__VA_ARGS__)
 #define GrB_Col_extract_(...)                       GrB_extract (__VA_ARGS__)
+#define GxB_Vector_extract_Vector_(...)             GrB_extract (__VA_ARGS__)
+#define GxB_Matrix_extract_Vector_(...)             GrB_extract (__VA_ARGS__)
+#define GxB_Col_extract_Vector_(...)                GrB_extract (__VA_ARGS__)
 
 // GxB_subassign:
 #define GxB_Vector_subassign_(...)                  GxB_subassign (__VA_ARGS__)
@@ -1190,6 +1193,9 @@
 #define GrB_Vector_extract_(...)                    GrB_Vector_extract (__VA_ARGS__)
 #define GrB_Matrix_extract_(...)                    GrB_Matrix_extract (__VA_ARGS__)
 #define GrB_Col_extract_(...)                       GrB_Col_extract (__VA_ARGS__)
+#define GxB_Vector_extract_Vector_(...)             GxB_Vector_extract_Vector (__VA_ARGS__)
+#define GxB_Matrix_extract_Vector_(...)             GxB_Matrix_extract_Vector (__VA_ARGS__)
+#define GxB_Col_extract_Vector_(...)                GxB_Col_extract_Vector (__VA_ARGS__)
 
 // GxB_subassign:
 #define GxB_Vector_subassign_(...)                  GxB_Vector_subassign (__VA_ARGS__)

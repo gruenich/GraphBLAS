@@ -23,7 +23,8 @@ This file will contain an index of the kernels listed above:
 
     GB_prejit.c
 
-These files are created by test145 but are not needed:
+These files are created by test145 but must not be added as PreJIt kernels
+(adding them will reduce test coverage of GB_AxB_dot4.c):
 
     GB_jit__AxB_dot4__0004014bbb0bbbc5.c
     GB_jit__AxB_dot4__0004014bbb0bbbcd.c
@@ -38,8 +39,7 @@ If GraphBLAS is modified, the JIT kernels can be recreated as follows:
     script in the GraphBLAS/Test folder.
 
     (2) Copy the *dot2* and *user* JIT files from ~/.SuiteSparse/GrB*/c/, and
-    place them in GraphBLAS/PreJIT.  Leave the *dot4* files; they are not
-    needed.
+    place them in GraphBLAS/PreJIT.  Leave the *dot4* files.
 
     (3) Rebuild GraphBLAS.
 

@@ -50,11 +50,13 @@ GrB_Info GxB_Matrix_assign_Vector   // C<Mask>(I,J) = accum (C(I,J),A)
     void *I = NULL, *J = NULL ;
     size_t I_size = 0, J_size = 0 ;
     int64_t ni = 0, nj = 0 ;
-    bool I_is_32 = false, J_is_32 = false ;
-    GB_OK (GB_ijvector (I_vector, false, 0, desc, &I, &I_is_32, &ni, &I_size,
-        Werk)) ;
-    GB_OK (GB_ijvector (J_vector, false, 1, desc, &J, &J_is_32, &nj, &J_size,
-        Werk)) ;
+    GrB_Type I_type = NULL, J_type = NULL ;
+    GB_OK (GB_ijvector (I_vector, false, 0, desc, false,
+        &I, &ni, &I_size, &I_type, Werk)) ;
+    GB_OK (GB_ijvector (J_vector, false, 1, desc, false,
+        &J, &nj, &J_size, &J_type, Werk)) ;
+    bool I_is_32 = (I_type == GrB_UINT32) ;
+    bool J_is_32 = (J_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------
     // C<M>(I,J) = accum (C(I,J), A)

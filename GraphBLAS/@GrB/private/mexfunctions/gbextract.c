@@ -161,12 +161,12 @@ void mexFunction
         // T = A(I,J) or AT(I,J) will be extracted.
         // accum must be null
         int I_kind, J_kind ;
-        int64_t I_colon [3], J_colon [3] ;
+        int64_t Icolon [3], Jcolon [3] ;
         uint64_t cnrows, cncols ;
         GB_ijlength (I, I_is_32, ni, anrows, (int64_t *) &cnrows, &I_kind,
-            I_colon) ;
+            Icolon) ;
         GB_ijlength (J, J_is_32, nj, ancols, (int64_t *) &cncols, &J_kind,
-            J_colon) ;
+            Jcolon) ;
         ctype = atype ;
 
         // create the matrix C and set its format and sparsity

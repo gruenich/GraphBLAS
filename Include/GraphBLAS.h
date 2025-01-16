@@ -3132,7 +3132,7 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 //  GrB_Info GrB_Vector_build   // build a vector from (I,X) tuples
 //  (
 //      GrB_Vector w,           // vector to build
-//      const uint64_t *I,      // array of row indices of tuples
+//      const GrB_Index *I,     // array of row indices of tuples
 //      const <type> *X,        // array of values of tuples
 //      GrB_Index nvals,        // number of tuples
 //      const GrB_BinaryOp dup  // binary function to assemble duplicates
@@ -3283,7 +3283,7 @@ GrB_Info GrB_Vector_removeElement
 //
 //  GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
 //  (
-//      uint64_t *I,        // array for returning row indices of tuples
+//      GrB_Index *I,       // array for returning row indices of tuples
 //      <type> *X,          // array for returning values of tuples
 //      GrB_Index *nvals,   // I, X size on input; # tuples on output
 //      const GrB_Vector v  // vector to extract tuples from
@@ -3374,8 +3374,8 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
 //  GrB_Info GrB_Matrix_build       // build a matrix from (I,J,X) tuples
 //  (
 //      GrB_Matrix C,               // matrix to build
-//      const uint64_t *I,          // array of row indices of tuples
-//      const uint64_t *J,          // array of column indices of tuples
+//      const GrB_Index *I,         // array of row indices of tuples
+//      const GrB_Index *J,         // array of column indices of tuples
 //      const <type> *X,            // array of values of tuples
 //      GrB_Index nvals,            // number of tuples
 //      const GrB_BinaryOp dup      // binary function to assemble duplicates
@@ -4377,16 +4377,24 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
 // GrB_extract: extract a submatrix or subvector
 //==============================================================================
 
-// FIXME: 32/64 bit: extract with GrB_Vector I and J
-
 GrB_Info GrB_Vector_extract         // w<mask> = accum (w, u(I))
 (
     GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Vector u,             // first input:  vector u
-    const uint64_t *I_,             // row indices (64-bit)
-    uint64_t ni,                    // number of row indices
+    const GrB_Index *I_,            // row indices (64-bit)
+    GrB_Index ni,                   // number of row indices
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+
+GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Vector I_vector,      // row indices
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -4396,10 +4404,21 @@ GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
     const GrB_Matrix Mask,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Matrix A,             // first input:  matrix A
-    const uint64_t *I_,             // row indices (64-bit)
-    uint64_t ni,                    // number of row indices
-    const uint64_t *J,              // column indices (64-bit)
-    uint64_t nj,                    // number of column indices
+    const GrB_Index *I_,            // row indices (64-bit)
+    GrB_Index ni,                   // number of row indices
+    const GrB_Index *J,             // column indices (64-bit)
+    GrB_Index nj,                   // number of column indices
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+) ;
+
+GrB_Info GxB_Matrix_extract_Vector  // C<M> = accum (C, A(I,J))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Vector J_vector,      // column indices
     const GrB_Descriptor desc       // descriptor for C, M, and A
 ) ;
 
@@ -4409,27 +4428,49 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Matrix A,             // first input:  matrix A
-    const uint64_t *I_,             // row indices (64-bit)
-    uint64_t ni,                    // number of row indices
-    uint64_t j,                     // column index
+    const GrB_Index *I_,            // row indices (64-bit)
+    GrB_Index ni,                   // number of row indices
+    GrB_Index j,                    // column index
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+
+GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
+(
+    GrB_Vector w,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Vector I_vector,      // row indices
+    GrB_Index j,                    // column index
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
 // GrB_extract is a polymorphic interface to the following functions:
 //
-// GrB_Vector_extract    (w,mask,acc,u,I,ni,d)      // w<m>    = acc (w, u(I))
-// GrB_Col_extract       (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
-// GrB_Matrix_extract    (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
-
+// GrB_Vector_extract        (w,m,acc,u,I,ni,d)
+// GxB_Vector_extract_Vector (w,m,acc,u,I,d)          where I is a GrB_Vector
+// GrB_Col_extract           (w,m,acc,A,I,ni,j,d)
+// GxB_Col_extract_Vector    (w,m,acc,A,I,j,d)        where I is a GrB_Vector
+// GrB_Matrix_extract        (C,M,acc,A,I,ni,J,nj,d)
+// GxB_Matrix_extract_Vector (C,M,acc,A,I,ni,J,nj,d)  where I is a GrB_Vector
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_extract(C,Mask,accum,A,...)             \
-    _Generic ((C),                                  \
-        GrB_Vector :                                \
-            _Generic ((A),                          \
-                GrB_Vector : GrB_Vector_extract ,   \
-                GrB_Matrix : GrB_Col_extract),      \
-        GrB_Matrix : GrB_Matrix_extract)            \
-    (C, Mask, accum, A, __VA_ARGS__)
+#define GrB_extract(C,M,accum,A,I,...)                          \
+    _Generic ((C),                                              \
+        GrB_Vector :                                            \
+            _Generic ((A),                                      \
+                GrB_Vector :                                    \
+                    _Generic ((I),                              \
+                        GrB_Vector: GxB_Vector_extract_Vector,  \
+                        default: GrB_Vector_extract),           \
+                GrB_Matrix :                                    \
+                    _Generic ((I),                              \
+                        GrB_Vector: GxB_Col_extract_Vector,     \
+                        default: GrB_Col_extract)),             \
+        GrB_Matrix :                                            \
+            _Generic ((I),                                      \
+                GrB_Vector: GxB_Matrix_extract_Vector,          \
+                default: GrB_Matrix_extract))                   \
+    (C, M, accum, A, I, __VA_ARGS__)
 #endif
 
 //==============================================================================

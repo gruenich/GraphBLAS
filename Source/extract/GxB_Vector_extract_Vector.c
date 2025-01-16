@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_assign_Vector: w<M>(I) = accum (w(I),u)
+// GxB_Vector_extract_Vector: w<M> = accum (w, u(I))
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,21 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
-// Compare with GxB_Vector_subassign, which uses M and C_replace differently
-
-#include "assign/GB_assign.h"
+#include "extract/GB_extract.h"
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
     if (I_size > 0) GB_FREE (&I, I_size) ;
 
-GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
+GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
 (
-    GrB_Vector w,                   // input/output matrix for results
+    GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector I_vector,      // row indices
     const GrB_Descriptor desc       // descriptor for w and mask
@@ -33,10 +29,10 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     //--------------------------------------------------------------------------
 
     GB_WHERE3 (w, mask, u,
-        "GxB_Vector_assign_Vector (w, M, accum, u, I, desc)") ;
+        "GxB_Vector_extract_Vector (w, M, accum, u, I, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
-    GB_BURBLE_START ("GxB_Vector_assign_Vector") ;
+    GB_BURBLE_START ("GrB_extract") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;
@@ -62,19 +58,16 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
     //--------------------------------------------------------------------------
-    // w(I)<M> = accum (w(I), u)
+    // do the work in GB_extract
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_assign (
-        (GrB_Matrix) w, C_replace,      // w vector and its descriptor
+    GB_OK (GB_extract (
+        (GrB_Matrix) w,     C_replace,  // w as a matrix, and its descriptor
         M, Mask_comp, Mask_struct,      // mask and its descriptor
-        false,                          // do not transpose the mask
-        accum,                          // for accum (C(I,:),A)
-        (GrB_Matrix) u, false,          // u as a matrix; never transposed
+        accum,                          // optional accum for z=accum(w,t)
+        (GrB_Matrix) u,     false,      // u as matrix; never transposed
         I, I_is_32, ni,                 // row indices
-        GrB_ALL, false, 1,              // all column indices
-        false, NULL, GB_ignore_code,    // no scalar expansion
-        GB_ASSIGN,
+        GrB_ALL, false, 1,              // all columns (64-bit)
         Werk)) ;
 
     //--------------------------------------------------------------------------
@@ -85,4 +78,5 @@ GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
     GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
+
 

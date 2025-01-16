@@ -128,9 +128,9 @@ GrB_Info GB_Vector_assign_scalar    // w<Mask>(I) = accum (w(I),s)
         //----------------------------------------------------------------------
 
         // determine the properites of the I index list
-        int64_t nI, I_Colon [3] ;
+        int64_t nI, Icolon [3] ;
         int I_Kind ;
-        GB_ijlength (I, I_is_32, ni, GB_NROWS (w), &nI, &I_Kind, I_Colon) ;
+        GB_ijlength (I, I_is_32, ni, GB_NROWS (w), &nI, &I_Kind, Icolon) ;
 
         // create an empty matrix A of the right size, and use matrix assign
         struct GB_Matrix_opaque A_header ;
