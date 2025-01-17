@@ -29,7 +29,7 @@ GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (C, Mask, scalar,
+    GB_WHERE5 (C, Mask, scalar, I_vector, J_vector,
         "GxB_Matrix_assign_Scalar_Vector (C, M, accum, s, I, J, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_assign_Scalar_Vector") ;
 

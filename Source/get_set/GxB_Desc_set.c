@@ -182,6 +182,21 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
             desc->col_list = (int) value ;
             break ;
 
+        case GxB_VALUE_LIST : 
+
+            if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
+                || value == GxB_USE_INDICES))
+            {
+                GB_ERROR (GrB_INVALID_VALUE,
+                    "invalid descriptor value [%d] for GxB_VALUE_LIST "
+                    "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"
+                    "or GxB_USE_INDICES [%d]",
+                    (int) value, (int) GrB_DEFAULT, (int) GxB_USE_VALUES,
+                    (int) GxB_USE_INDICES) ;
+            }
+            desc->val_list = (int) value ;
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

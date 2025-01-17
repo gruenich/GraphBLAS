@@ -574,7 +574,7 @@ GrB_Desc_Value ;
 // default for GxB pack is to trust the input data
 #define GxB_FAST_IMPORT ((int) GrB_DEFAULT)
 
-// descriptor settings for GxB_ROWINDEX_LIST and GxB_COLINDEX_LIST:
+// settings for GxB_ROWINDEX_LIST, GxB_COLINDEX_LIST, and GxB_VALUE_LIST:
 #define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
 #define GxB_USE_INDICES (7060)  /* use the indices of the vector */
 #define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
@@ -1523,6 +1523,7 @@ typedef enum    // GxB_Option_Field ;
 
     GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted
     GxB_COLINDEX_LIST = 7063,       // how GrB_Vector J is intrepretted
+    GxB_VALUE_LIST = 7064,          // how GrB_Vector X is intrepretted
 
 } GxB_Option_Field ;
 
@@ -3123,29 +3124,18 @@ GrB_Info GxB_Vector_iso     // return iso status of a vector
 // GrB_Vector_build
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64 bit: add build with GrB_Vector I, J, and X
-
 // GrB_Vector_build:  w = sparse (I,1,X) in MATLAB notation, but using any
 // associative operator to assemble duplicate entries.  The dup operator cannot
 // be based on a GxB_IndexBinaryOp.
-//
-//  GrB_Info GrB_Vector_build   // build a vector from (I,X) tuples
+
+//  GrB_Info GrB_Vector_build_TYPE  // build a vector from (I,X) tuples
 //  (
-//      GrB_Vector w,           // vector to build
-//      const GrB_Index *I,     // array of row indices of tuples
-//      const <type> *X,        // array of values of tuples
-//      GrB_Index nvals,        // number of tuples
-//      const GrB_BinaryOp dup  // binary function to assemble duplicates
+//      GrB_Vector w,               // vector to build
+//      const GrB_Index *I,         // array of row indices of tuples
+//      const <type> *X,            // array of values of tuples
+//      GrB_Index nvals,            // number of tuples
+//      const GrB_BinaryOp dup      // binary function to assemble duplicates
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_build(w,I_,X,nvals,dup)                                    \
-    _Generic ((I_),                                                           \
-          GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Vector_build)),      \
-    const GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Vector_build)))      \
-    (w, I_, ((const void *) (X)), nvals, dup)
-#endif
-
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
 GrB_Info prefix ## Vector_build ## suffix   /* build a vector from tuples */  \
@@ -3158,13 +3148,55 @@ GrB_Info prefix ## Vector_build ## suffix   /* build a vector from tuples */  \
 ) ;
 GB_DECLARE_14 (GrB_, void)
 
+GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
+(
+    GrB_Vector w,               // vector to build
+    const GrB_Vector I_vector,  // row indices
+    const GrB_Vector X_vector,  // values
+    const GrB_BinaryOp dup,     // binary function to assemble duplicates
+    const GrB_Descriptor desc
+) ;
+
 GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
 (
-    GrB_Vector w,                   // vector to build
-    const GrB_Index *I_,            // array of row indices of tuples
-    GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
+    GrB_Vector w,               // vector to build
+    const GrB_Index *I_,        // array of row indices of tuples
+    const GrB_Scalar scalar,    // value for all tuples
+    GrB_Index nvals             // number of tuples
 ) ;
+
+GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
+(
+    GrB_Vector w,               // vector to build
+    const GrB_Vector I_vector,  // row indices
+    const GrB_Scalar scalar,    // value for all tuples
+    const GrB_Descriptor desc
+) ;
+
+// GrB_Vector_build is a polymorphic method that allows access to all
+// 17 Vector_build methods.
+
+// GrB_Vector_build_TYPE          (w, I, X, nvals, dup)
+// GxB_Vector_build_Scalar        (w, I, s, nvals, dup)
+// GxB_Vector_build_Vector        (w, I, X, dup, desc), where I,X are GrB_Vector
+// GxB_Vector_build_Scalar_Vector (w, I, s, desc ), where I is GrB_Vector
+#if GxB_STDC_VERSION >= 201112L
+#define GB_VECTOR_BUILD_T(X)                                \
+    _Generic ((X),                                          \
+        GB_PCASES (GrB, Vector_build),                      \
+        default: GxB_Vector_build_Scalar)
+#define GB_VECTOR_BUILD(w,I_,X,...)                         \
+    _Generic ((I_),                                         \
+              GrB_Index * : GB_VECTOR_BUILD_T (X),          \
+        const GrB_Index * : GB_VECTOR_BUILD_T (X),          \
+        default:                                            \
+            _Generic ((X),                                  \
+                GrB_Vector : GxB_Vector_build_Vector,       \
+                default: GxB_Vector_build_Scalar_Vector))
+#define GrB_Vector_build(w,...)                             \
+    GB_VECTOR_BUILD (w, __VA_ARGS__)                        \
+    (w, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Vector_setElement
@@ -3290,8 +3322,8 @@ GrB_Info GrB_Vector_removeElement
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractTuples(Ilist,X,nvals,v)       \
-    _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)) (Ilist, X, nvals, v)
+#define GrB_Vector_extractTuples(I_,X,nvals,v)       \
+    _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)) (I_, X, nvals, v)
 #endif
 
 #undef  GB_DECLARE
@@ -3365,13 +3397,11 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
 // GrB_Matrix_build
 //------------------------------------------------------------------------------
 
-// FIXME: Matrix build with GrB_Vector I,J,X
-
 // GrB_Matrix_build:  C = sparse (I,J,X) in MATLAB notation, but using any
 // associative operator to assemble duplicate entries.  The dup operator cannot
 // be based on a GxB_IndexBinaryOp.
-//
-//  GrB_Info GrB_Matrix_build       // build a matrix from (I,J,X) tuples
+
+//  GrB_Info GrB_Matrix_build_TYPE  // build a matrix from (I,J,X) tuples
 //  (
 //      GrB_Matrix C,               // matrix to build
 //      const GrB_Index *I,         // array of row indices of tuples
@@ -3380,15 +3410,6 @@ GrB_Info GxB_Matrix_iso     // return iso status of a matrix
 //      GrB_Index nvals,            // number of tuples
 //      const GrB_BinaryOp dup      // binary function to assemble duplicates
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_build(C,I_,J,X,nvals,dup)                                  \
-    _Generic ((I_),                                                           \
-          GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_build)),      \
-    const GrB_Index   * : _Generic ((X), GB_PCASES (GrB, Matrix_build)))      \
-    (C, I_, J, ((const void *) (X)), nvals, dup)
-#endif
-
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
 GrB_Info prefix ## Matrix_build ## suffix   /* build a matrix from tuples */  \
@@ -3402,6 +3423,16 @@ GrB_Info prefix ## Matrix_build ## suffix   /* build a matrix from tuples */  \
 ) ;
 GB_DECLARE_14 (GrB_, void)
 
+GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,               // matrix to build
+    const GrB_Vector I_vector,  // row indices
+    const GrB_Vector J_vector,  // col indices
+    const GrB_Vector X_vector,  // values
+    const GrB_BinaryOp dup,     // binary function to assemble duplicates
+    const GrB_Descriptor desc
+) ;
+
 GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
 (
     GrB_Matrix C,                   // matrix to build
@@ -3410,6 +3441,40 @@ GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
     GrB_Scalar scalar,              // value for all tuples
     GrB_Index nvals                 // number of tuples
 ) ;
+
+GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,X) tuples
+(
+    GrB_Matrix C,               // matrix to build
+    const GrB_Vector I_vector,  // row indices
+    const GrB_Vector J_vector,  // col indices
+    GrB_Scalar scalar,          // value for all tuples
+    const GrB_Descriptor desc
+) ;
+
+// GrB_Matrix_build is a polymorphic method that allows access to all
+// 17 Matrix_build methods.
+
+// GrB_Matrix_build_TYPE          (C, I, J, X, nvals, dup)
+// GxB_Matrix_build_Scalar        (C, I, J, s, nvals, dup)
+// GxB_Matrix_build_Vector        (C, I, J, X, dup, desc); I,J,X are GrB_Vector
+// GxB_Matrix_build_Scalar_Vector (C, I, J, s, desc ), where I,J are GrB_Vector
+#if GxB_STDC_VERSION >= 201112L
+#define GB_MATRIX_BUILD_T(X)                                \
+    _Generic ((X),                                          \
+        GB_PCASES (GrB, Matrix_build),                      \
+        default: GxB_Matrix_build_Scalar)
+#define GB_MATRIX_BUILD(C,I_,J,X,...)                       \
+    _Generic ((I_),                                         \
+              GrB_Index * : GB_MATRIX_BUILD_T (X),          \
+        const GrB_Index * : GB_MATRIX_BUILD_T (X),          \
+        default:                                            \
+            _Generic ((X),                                  \
+                GrB_Vector : GxB_Matrix_build_Vector,       \
+                default: GxB_Matrix_build_Scalar_Vector))
+#define GrB_Matrix_build(C,...)                             \
+    GB_MATRIX_BUILD (C, __VA_ARGS__)                        \
+    (C, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_setElement
@@ -3532,17 +3597,17 @@ GrB_Info GrB_Matrix_removeElement
 //
 //  GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //  (
-//      <itype> *I,             // array for returning row indices of tuples
-//      <itype> *J,             // array for returning col indices of tuples
+//      uint64_t *I,            // array for returning row indices of tuples
+//      uint64_t *J,            // array for returning col indices of tuples
 //      <type> *X,              // array for returning values of tuples
 //      GrB_Index *nvals,       // I,J,X size on input; # tuples on output
 //      const GrB_Matrix A      // matrix to extract tuples from
 //  ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractTuples(Ilist,J,X,nvals,A)         \
+#define GrB_Matrix_extractTuples(I_,J,X,nvals,A)         \
     _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples))   \
-    (Ilist, J, X, nvals, A)
+    (I_, J, X, nvals, A)
 #endif
 
 #undef  GB_DECLARE
@@ -4452,7 +4517,7 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
 // GrB_Col_extract           (w,m,acc,A,I,ni,j,d)
 // GxB_Col_extract_Vector    (w,m,acc,A,I,j,d)        where I is a GrB_Vector
 // GrB_Matrix_extract        (C,M,acc,A,I,ni,J,nj,d)
-// GxB_Matrix_extract_Vector (C,M,acc,A,I,ni,J,nj,d)  where I is a GrB_Vector
+// GxB_Matrix_extract_Vector (C,M,acc,A,I,ni,J,nj,d)  where I,J are GrB_Vector
 #if GxB_STDC_VERSION >= 201112L
 #define GrB_extract(C,M,accum,A,I,...)                          \
     _Generic ((C),                                              \

@@ -246,6 +246,9 @@
 #define GrB_Scalar_extractElement_UDT_(...)         GrB_Scalar_extractElement (__VA_ARGS__)
 
 // GrB_Vector_build:
+#define GxB_Vector_build_Scalar_(...)               GrB_Vector_build (__VA_ARGS__)
+#define GxB_Vector_build_Vector_(...)               GrB_Vector_build (__VA_ARGS__)
+#define GxB_Vector_build_Scalar_Vector_(...)        GrB_Vector_build (__VA_ARGS__)
 #define GrB_Vector_build_BOOL_(...)                 GrB_Vector_build (__VA_ARGS__)
 #define GrB_Vector_build_INT8_(...)                 GrB_Vector_build (__VA_ARGS__)
 #define GrB_Vector_build_INT16_(...)                GrB_Vector_build (__VA_ARGS__)
@@ -312,6 +315,9 @@
 #define GrB_Vector_extractTuples_UDT_(...)          GrB_Vector_extractTuples (__VA_ARGS__)
 
 // GrB_Matrix_build:
+#define GxB_Matrix_build_Scalar_(...)               GrB_Matrix_build (__VA_ARGS__)
+#define GxB_Matrix_build_Vector_(...)               GrB_Matrix_build (__VA_ARGS__)
+#define GxB_Matrix_build_Scalar_Vector_(...)        GrB_Matrix_build (__VA_ARGS__)
 #define GrB_Matrix_build_BOOL_(...)                 GrB_Matrix_build (__VA_ARGS__)
 #define GrB_Matrix_build_INT8_(...)                 GrB_Matrix_build (__VA_ARGS__)
 #define GrB_Matrix_build_INT16_(...)                GrB_Matrix_build (__VA_ARGS__)
@@ -986,6 +992,9 @@
 #define GrB_Scalar_extractElement_UDT_(...)         GrB_Scalar_extractElement_UDT (__VA_ARGS__)
 
 // GrB_Vector_build:
+#define GxB_Vector_build_Scalar_(...)               GxB_Vector_build_Scalar (__VA_ARGS__)
+#define GxB_Vector_build_Vector_(...)               GrB_Vector_build_Vector (__VA_ARGS__)
+#define GxB_Vector_build_Scalar_Vector_(...)        GrB_Vector_build_Scalar_Vector (__VA_ARGS__)
 #define GrB_Vector_build_BOOL_(...)                 GrB_Vector_build_BOOL (__VA_ARGS__)
 #define GrB_Vector_build_INT8_(...)                 GrB_Vector_build_INT8 (__VA_ARGS__)
 #define GrB_Vector_build_INT16_(...)                GrB_Vector_build_INT16 (__VA_ARGS__)
@@ -1052,6 +1061,9 @@
 #define GrB_Vector_extractTuples_UDT_(...)          GrB_Vector_extractTuples_UDT (__VA_ARGS__)
 
 // GrB_Matrix_build:
+#define GxB_Matrix_build_Scalar_(...)               GxB_Matrix_build_Scalar (__VA_ARGS__)
+#define GxB_Matrix_build_Vector_(...)               GrB_Matrix_build_Vector (__VA_ARGS__)
+#define GxB_Matrix_build_Scalar_Vector_(...)        GrB_Matrix_build_Scalar_Vector (__VA_ARGS__)
 #define GrB_Matrix_build_BOOL_(...)                 GrB_Matrix_build_BOOL (__VA_ARGS__)
 #define GrB_Matrix_build_INT8_(...)                 GrB_Matrix_build_INT8 (__VA_ARGS__)
 #define GrB_Matrix_build_INT16_(...)                GrB_Matrix_build_INT16 (__VA_ARGS__)

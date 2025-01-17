@@ -162,30 +162,30 @@ static GrB_Info builder
 
         // build an iso matrix or vector from the tuples and the scalar
         #ifdef MATRIX
-            #define BUILD(prefix,ibits,i_t,suffix,type) \
+            #define BUILD(prefix,suffix,type) \
                 OK1 (prefix ## Scalar_setElement ## suffix (scalar, * (type *) X)) ;  \
-                OK1 (GxB_Matrix_build ## ibits ## _Scalar (C, (i_t *) I, (i_t *) J, scalar, ni)) ;
+                OK1 (GxB_Matrix_build_Scalar_(C, (uint64_t *) I, (uint64_t *) J, scalar, ni)) ;
         #else
-            #define BUILD(prefix,ibits,i_t,suffix,type) \
+            #define BUILD(prefix,suffix,type) \
                 OK1 (prefix ## Scalar_setElement ## suffix (scalar, * (type *) X)) ;  \
-                OK1 (GxB_Vector_build ## ibits ## _Scalar (C, (i_t *) I,    scalar, ni)) ;
+                OK1 (GxB_Vector_build_Scalar_(C, (uint64_t *) I,    scalar, ni)) ;
         #endif
 
         switch (xtype->code)
         {
-            case GB_BOOL_code    : BUILD (GrB_, , uint64_t, _BOOL,   bool    ) ; break ;
-            case GB_INT8_code    : BUILD (GrB_, , uint64_t, _INT8,   int8_t  ) ; break ;
-            case GB_INT16_code   : BUILD (GrB_, , uint64_t, _INT16,  int16_t ) ; break ;
-            case GB_INT32_code   : BUILD (GrB_, , uint64_t, _INT32,  int32_t ) ; break ;
-            case GB_INT64_code   : BUILD (GrB_, , uint64_t, _INT64,  int64_t ) ; break ;
-            case GB_UINT8_code   : BUILD (GrB_, , uint64_t, _UINT8,  uint8_t ) ; break ;
-            case GB_UINT16_code  : BUILD (GrB_, , uint64_t, _UINT16, uint16_t) ; break ;
-            case GB_UINT32_code  : BUILD (GrB_, , uint64_t, _UINT32, uint32_t) ; break ;
-            case GB_UINT64_code  : BUILD (GrB_, , uint64_t, _UINT64, uint64_t) ; break ;
-            case GB_FP32_code    : BUILD (GrB_, , uint64_t, _FP32,   float   ) ; break ;
-            case GB_FP64_code    : BUILD (GrB_, , uint64_t, _FP64,   double  ) ; break ;
-            case GB_FC32_code    : BUILD (GxB_, , uint64_t, _FC32,   GxB_FC32_t) ; break ;
-            case GB_FC64_code    : BUILD (GxB_, , uint64_t, _FC64,   GxB_FC64_t) ; break ;
+            case GB_BOOL_code    : BUILD (GrB_, _BOOL,   bool    ) ; break ;
+            case GB_INT8_code    : BUILD (GrB_, _INT8,   int8_t  ) ; break ;
+            case GB_INT16_code   : BUILD (GrB_, _INT16,  int16_t ) ; break ;
+            case GB_INT32_code   : BUILD (GrB_, _INT32,  int32_t ) ; break ;
+            case GB_INT64_code   : BUILD (GrB_, _INT64,  int64_t ) ; break ;
+            case GB_UINT8_code   : BUILD (GrB_, _UINT8,  uint8_t ) ; break ;
+            case GB_UINT16_code  : BUILD (GrB_, _UINT16, uint16_t) ; break ;
+            case GB_UINT32_code  : BUILD (GrB_, _UINT32, uint32_t) ; break ;
+            case GB_UINT64_code  : BUILD (GrB_, _UINT64, uint64_t) ; break ;
+            case GB_FP32_code    : BUILD (GrB_, _FP32,   float   ) ; break ;
+            case GB_FP64_code    : BUILD (GrB_, _FP64,   double  ) ; break ;
+            case GB_FC32_code    : BUILD (GxB_, _FC32,   GxB_FC32_t) ; break ;
+            case GB_FC64_code    : BUILD (GxB_, _FC64,   GxB_FC64_t) ; break ;
             default              :
                 FREE_WORK ;
                 mexErrMsgTxt ("xtype not supported")  ;
@@ -198,30 +198,30 @@ static GrB_Info builder
         // build a non-iso matrix or vector from the tuples
         #undef BUILD
         #ifdef MATRIX
-            #define BUILD(prefix,ibits,i_t,suffix,type)               \
-            OK1 (prefix ## Matrix_build ## ibits ## suffix       \
-                (C, (i_t *) I, (i_t *) J, (const type *) X, ni, dup))
+            #define BUILD(prefix,suffix,type)                   \
+            OK1 (prefix ## Matrix_build ## suffix               \
+                (C, (uint64_t *) I, (uint64_t *) J, (const type *) X, ni, dup))
         #else
-            #define BUILD(prefix,ibits,i_t,suffix,type)               \
-            OK1 (prefix ## Vector_build ## ibits ## suffix       \
-                (C, (i_t *) I,    (const type *) X, ni, dup))
+            #define BUILD(prefix,suffix,type)                   \
+            OK1 (prefix ## Vector_build ## suffix               \
+                (C, (uint64_t *) I, (const type *) X, ni, dup))
         #endif
 
         switch (xtype->code)
         {
-            case GB_BOOL_code    : BUILD (GrB_, , uint64_t, _BOOL,   bool    ) ; break ;
-            case GB_INT8_code    : BUILD (GrB_, , uint64_t, _INT8,   int8_t  ) ; break ;
-            case GB_INT16_code   : BUILD (GrB_, , uint64_t, _INT16,  int16_t ) ; break ;
-            case GB_INT32_code   : BUILD (GrB_, , uint64_t, _INT32,  int32_t ) ; break ;
-            case GB_INT64_code   : BUILD (GrB_, , uint64_t, _INT64,  int64_t ) ; break ;
-            case GB_UINT8_code   : BUILD (GrB_, , uint64_t, _UINT8,  uint8_t ) ; break ;
-            case GB_UINT16_code  : BUILD (GrB_, , uint64_t, _UINT16, uint16_t) ; break ;
-            case GB_UINT32_code  : BUILD (GrB_, , uint64_t, _UINT32, uint32_t) ; break ;
-            case GB_UINT64_code  : BUILD (GrB_, , uint64_t, _UINT64, uint64_t) ; break ;
-            case GB_FP32_code    : BUILD (GrB_, , uint64_t, _FP32,   float   ) ; break ;
-            case GB_FP64_code    : BUILD (GrB_, , uint64_t, _FP64,   double  ) ; break ;
-            case GB_FC32_code    : BUILD (GxB_, , uint64_t, _FC32,   GxB_FC32_t) ; break ;
-            case GB_FC64_code    : BUILD (GxB_, , uint64_t, _FC64,   GxB_FC64_t) ; break ;
+            case GB_BOOL_code    : BUILD (GrB_, _BOOL,   bool    ) ; break ;
+            case GB_INT8_code    : BUILD (GrB_, _INT8,   int8_t  ) ; break ;
+            case GB_INT16_code   : BUILD (GrB_, _INT16,  int16_t ) ; break ;
+            case GB_INT32_code   : BUILD (GrB_, _INT32,  int32_t ) ; break ;
+            case GB_INT64_code   : BUILD (GrB_, _INT64,  int64_t ) ; break ;
+            case GB_UINT8_code   : BUILD (GrB_, _UINT8,  uint8_t ) ; break ;
+            case GB_UINT16_code  : BUILD (GrB_, _UINT16, uint16_t) ; break ;
+            case GB_UINT32_code  : BUILD (GrB_, _UINT32, uint32_t) ; break ;
+            case GB_UINT64_code  : BUILD (GrB_, _UINT64, uint64_t) ; break ;
+            case GB_FP32_code    : BUILD (GrB_, _FP32,   float   ) ; break ;
+            case GB_FP64_code    : BUILD (GrB_, _FP64,   double  ) ; break ;
+            case GB_FC32_code    : BUILD (GxB_, _FC32,   GxB_FC32_t) ; break ;
+            case GB_FC64_code    : BUILD (GxB_, _FC64,   GxB_FC64_t) ; break ;
             default              :
                 FREE_WORK ;
                 mexErrMsgTxt ("xtype not supported")  ;

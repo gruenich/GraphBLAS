@@ -55,7 +55,8 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     desc->compression = GxB_DEFAULT ;
     desc->import = GxB_DEFAULT ;   // trust input data in GxB import/deserialize
     desc->row_list = GxB_DEFAULT ; // use List->x of row index vector
-    desc->col_list = GxB_DEFAULT ; // use List->x of row index vector
+    desc->col_list = GxB_DEFAULT ; // use List->x of col index vector
+    desc->val_list = GxB_DEFAULT ; // use List->x of value vector
     return (GrB_SUCCESS) ;
 }
 

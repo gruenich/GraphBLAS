@@ -198,7 +198,13 @@ GrB_Info GB_ijvector
     int list_descriptor = GrB_DEFAULT ;
     if (desc != NULL)
     { 
-        list_descriptor = (which) ? (desc->col_list) : (desc->row_list) ;
+        switch (which)
+        {
+            default:
+            case 0 : list_descriptor = desc->row_list ; break ;
+            case 1 : list_descriptor = desc->col_list ; break ;
+            case 2 : list_descriptor = desc->val_list ; break ;
+        }
     }
 
     bool list_is_stride = (list_descriptor == GxB_IS_STRIDE) ;

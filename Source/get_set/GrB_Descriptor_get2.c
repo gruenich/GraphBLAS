@@ -87,6 +87,12 @@ static GrB_Info GB_desc_get
                 GrB_DEFAULT : desc->col_list) ;
             break ;
 
+        case GxB_VALUE_LIST : 
+
+            (*value) = (int32_t) ((desc == NULL) ?
+                GrB_DEFAULT : desc->val_list) ;
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

@@ -28,7 +28,7 @@ GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, mask, u,
+    GB_WHERE4 (w, mask, u, I_vector,
         "GxB_Vector_extract_Vector (w, M, accum, u, I, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;

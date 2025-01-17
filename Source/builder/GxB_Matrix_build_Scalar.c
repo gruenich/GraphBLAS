@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GxB_Matrix_build_Scalar builds a matrix C whose values in its sparsity
 // pattern are all equal to a value given by a GrB_Scalar.  Unlike the
 // GrB_Matrix_build_* methods, there is no binary dup operator.  Instead, any
@@ -48,7 +46,8 @@ GrB_Info GxB_Matrix_build_Scalar
     //--------------------------------------------------------------------------
 
     info = GB_build (C, I, J, scalar->x, nvals, GxB_IGNORE_DUP, scalar->type,
-        true, true, false, Werk) ;
+        /* is_matrix: */ true, /* X_iso: */ true,
+        /* I,J is 32: */ false, false, Werk) ;
     GB_BURBLE_END ;
     return (info) ;
 }

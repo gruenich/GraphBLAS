@@ -220,11 +220,11 @@ void mexFunction
     OK (GrB_Matrix_new (&C, GrB_FP32, 10, 10)) ;
     OK (GrB_Vector_new (&w, GrB_FP32, 10)) ;
     expected = GrB_EMPTY_OBJECT ;
-    ERR (GxB_Matrix_build_Scalar (C, I, I, scalar, 4)) ;
+    ERR (GxB_Matrix_build_Scalar_(C, I, I, scalar, 4)) ;
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;
 
-    ERR (GxB_Vector_build_Scalar (w, I, scalar, 4)) ;
+    ERR (GxB_Vector_build_Scalar_(w, I, scalar, 4)) ;
     OK (GrB_error (&s, w)) ;
     printf ("expected error: [%s]\n", s) ;
     GrB_Vector_free_(&w) ;
@@ -250,7 +250,7 @@ void mexFunction
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;
 
-    ERR (GxB_Matrix_build_Scalar (C, I, I, scalar, 4)) ;
+    ERR (GxB_Matrix_build_Scalar_(C, I, I, scalar, 4)) ;
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;
     GrB_Matrix_free_(&C) ;

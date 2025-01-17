@@ -464,8 +464,9 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     int compression ;       // compression method for GxB_Matrix_serialize
     bool do_sort ;          // if nonzero, do the sort in GrB_mxm
     int import ;            // if zero (default), trust input data
-    int row_list ;          // how to use the row index list
-    int col_list ;          // how to use the col index list
+    int row_list ;          // how to use the row index list, I
+    int col_list ;          // how to use the col index list, J
+    int val_list ;          // how to use the value list, X
 } ;
 
 struct GB_Context_opaque    // content of GxB_Context

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // If dup is NULL: any duplicates result in an error.
 // If dup is GxB_IGNORE_DUP: duplicates are ignored, which is not an error.
 // If dup is a valid binary operator, it is used to reduce any duplicates to
@@ -30,8 +28,9 @@ GrB_Info function_name          /* build a vector from tuples */              \
     GB_RETURN_IF_NULL (w) ;  /* check now so w->type can be done */           \
     GB_BURBLE_START (GB_STR(function_name)) ;                                 \
     ASSERT (GB_VECTOR_OK (w)) ;                                               \
-    info = GB_build ((GrB_Matrix) w, I, NULL, X, nvals, dup, xtype, false,    \
-        false, false, Werk) ;                                                 \
+    info = GB_build ((GrB_Matrix) w, I, NULL, X, nvals, dup, xtype,           \
+        /* is_matrix: */ false, /* X_iso: */ false,                           \
+        /* I,J is 32: */ false, false, Werk) ;                                \
     GB_BURBLE_END ;                                                           \
     return (info) ;                                                           \
 }

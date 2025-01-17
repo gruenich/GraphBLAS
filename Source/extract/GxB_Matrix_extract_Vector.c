@@ -30,7 +30,7 @@ GrB_Info GxB_Matrix_extract_Vector  // C<M> = accum (C, A(I,J))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (C, Mask, A,
+    GB_WHERE5 (C, Mask, A, I_vector, J_vector,
         "GxB_Matrix_extract_Vector (C, M, accum, A, I, J, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;

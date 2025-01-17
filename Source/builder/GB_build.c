@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit: except converted to 64-bit when done
-
 // CALLED BY: GrB_Matrix_build_*, GrB_Vector_build_*,
 //            GxB_Matrix_build_Scalar, GxB_Vector_build_Scalar
 // CALLS:     GB_builder
@@ -112,7 +110,8 @@ GrB_Info GB_build               // build matrix
     const GrB_Type xtype,       // type of X array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool X_iso,           // if true the C is iso and X has size 1 entry
-    bool I_is_32,               // if true, I and J are 32-bit; else 64-bit
+    bool I_is_32,               // if true, I is 32-bit; else 64-bit
+    bool J_is_32,               // if true, J is 32-bit; else 64-bit
     GB_Werk Werk
 )
 {
@@ -303,8 +302,9 @@ GrB_Info GB_build               // build matrix
         xtype,          // type of the X array
         true,           // burble is OK
         Werk,
-        I_is_32, I_is_32,   // if true, I and J are 32 bit; otherwise 64-bit
-        Tp_is_32, Tj_is_32, Ti_is_32
+        I_is_32,        // if true, I is 32-bit; else 64-bit
+        J_is_32,        // if true, J is 32-bit; else 64-bit
+        Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
     )) ;
 
     double tt = GB_OPENMP_GET_WTIME ;
@@ -363,7 +363,7 @@ GrB_Info GB_build               // build matrix
         tt = GB_OPENMP_GET_WTIME - tt;
         GBURBLE ("(wrapup %s/%s time: %g) ",
             I_is_32 ? "32" : "64",
-            I_is_32 ? "32" : "64", tt) ;
+            J_is_32 ? "32" : "64", tt) ;
     }
 
     return (GrB_SUCCESS) ;

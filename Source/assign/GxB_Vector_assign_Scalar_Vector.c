@@ -33,7 +33,7 @@ GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, mask, scalar,
+    GB_WHERE4 (w, mask, scalar, I_vector,
         "GxB_Vector_assign_Scalar_Vector (w, M, accum, s, I, desc)") ;
     GB_BURBLE_START ("GxB_Vector_assign_Scalar_Vector") ;
 

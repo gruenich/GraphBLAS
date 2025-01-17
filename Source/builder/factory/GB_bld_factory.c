@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This is a generic body of code for creating hard-coded versions of code for
 // 87 combinations of operators and built-in types:
 

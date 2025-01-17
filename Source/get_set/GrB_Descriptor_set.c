@@ -133,7 +133,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 
         case GxB_ROWINDEX_LIST : 
 
-            if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
+            if (! (value == GrB_DEFAULT || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
             {
                 GB_ERROR (GrB_INVALID_VALUE,
@@ -148,7 +148,7 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 
         case GxB_COLINDEX_LIST : 
 
-            if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
+            if (! (value == GrB_DEFAULT || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
             {
                 GB_ERROR (GrB_INVALID_VALUE,
@@ -159,6 +159,21 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
                     (int) GxB_USE_INDICES, (int) GxB_IS_STRIDE) ;
             }
             desc->col_list = (int) value ;
+            break ;
+
+        case GxB_VALUE_LIST : 
+
+            if (! (value == GrB_DEFAULT || value == GxB_USE_VALUES
+                || value == GxB_USE_INDICES))
+            {
+                GB_ERROR (GrB_INVALID_VALUE,
+                    "invalid descriptor value [%d] for GxB_VALUE_LIST "
+                    "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"
+                    "or GxB_USE_INDICES [%d]",
+                    (int) value, (int) GrB_DEFAULT, (int) GxB_USE_VALUES,
+                    (int) GxB_USE_INDICES) ;
+            }
+            desc->val_list = (int) value ;
             break ;
 
         default : 
