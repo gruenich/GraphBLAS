@@ -3,7 +3,7 @@
 
 // All existing methods will continue to work, for backward compatibility.
 
-// Last updated: Jan 16, 2025.
+// Last updated: Jan 17, 2025.
 
 //==============================================================================
 // GrB_Index: the GraphBLAS integer
@@ -564,11 +564,11 @@ GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
 
 // No change to the user API, except to enable them to work with internal
 // 32-bit integers.  These will still pack/unpack their contents into (uint64_t
-// *) arrays.  If the matrix has 32-bit integers, this will require a typecast.
-// Thus, performance will be degraded for existing user codes that expect O(1)
-// time to pack/unpack their matrices/vectors.  The pack/unpack methods will
-// still work but will be declared "historical", which means they will be kept
-// but will no longer be documented.
+// *) user arrays.  If the matrix has 32-bit integers, this will require a
+// typecast.  Thus, performance will be degraded for existing user codes that
+// expect O(1) time to pack/unpack their matrices/vectors.  The pack/unpack
+// methods will still work but will be declared "historical", which means they
+// will be kept but will no longer be documented.
 
 // Rather than extend pack/unpack, new methods using the GxB_Container will
 // be added (see below), to rapidly move data into/out of a GrB_Matrix or
@@ -897,12 +897,14 @@ GxB_Container_free (&Container) ;    // does several O(1)-sized free's
 //      the matrix_handle would be the GrB_Matrix).
 
 //      Alternatively, I could create new GrB_build variants (or variant
-//      behavior) that "ingest" the input GrB_Vectors I,J, and X, and I could
-//      create a GrB_extractTuple variant that moves its data into GrB_Vectors
-//      I,J, and X, returning the GrB_Matrix as empty with no content.  This
-//      could be done via the descriptor, using the new GxB_*_build*_Vector
-//      methods described above.
+//      behavior via the descriptor) that "ingest" the input GrB_Vectors I,J,
+//      and X, and I could create a GrB_extractTuples variant that moves its
+//      data into GrB_Vectors I,J, and X, returning the GrB_Matrix as empty
+//      with no content.  This could be done via the descriptor, using the new
+//      GxB_*_build*_Vector methods described above.
 
-//      Lots to work out for this so I don't expect to add it to GraphBLAS
-//      v10.0.0.
+//      Lots to work out for this, and it's unrelated to the 32/64 bit issue
+//      (except that the introduction of GrB_Vectors I,J,X to GrB_build and
+//      extractTuples makes this feature more feasible).  Thus, I don't expect
+//      to add it to GraphBLAS v10.0.0.
 

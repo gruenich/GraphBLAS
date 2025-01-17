@@ -243,6 +243,11 @@ static inline GrB_Info GB_valid1
     info = GB_valid3 (arg1, arg2, arg3) ;                           \
     GB_WHERE_CHECK_INFO
 
+#define GB_WHERE_4(arg1,arg2,arg3,arg4,where_string)                \
+    GB_WHERE0 (where_string)                                        \
+    info = GB_valid4 (arg1, arg2, arg3, arg4) ;                     \
+    GB_WHERE_CHECK_INFO
+
 // for descriptors
 #define GB_WHERE_DESC(desc,where_string)                            \
     GB_CHECK_INIT                                                   \

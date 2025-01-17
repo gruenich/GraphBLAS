@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // JIT: not needed; factory possible w/ 3 variants (sparse/hyper/full)
 
 // Constructs a list of vector indices for each entry in a matrix.  Creates

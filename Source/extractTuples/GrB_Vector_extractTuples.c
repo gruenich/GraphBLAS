@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Extracts all tuples from a column vector, like [I,~,X] = find (v) in MATLAB.
 // If any parameter I and/or X is NULL, then that component is not extracted.
 // The size of the I and X arrays (those that are not NULL) is given by nvals,

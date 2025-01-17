@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_EXTRACTTUPLES_H
 #define GB_EXTRACTTUPLES_H
 
@@ -35,6 +33,13 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     const GrB_Type xtype,       // type of array X
     const GrB_Matrix A,         // matrix to extract tuples from
     GB_Werk Werk
+) ;
+
+GrB_Info GB_extractTuples_prep
+(
+    GrB_Vector V,               // an output vector for I, J, or X
+    uint64_t nvals,             // # of values V must hold
+    const GrB_Type vtype        // desired type of V
 ) ;
 
 #endif

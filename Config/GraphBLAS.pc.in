@@ -7,8 +7,6 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-# FIXME: Which flags do we need to statically link CUDA?
-
 Name: GraphBLAS
 URL: https://github.com/DrTimothyAldenDavis/SuiteSparse
 Description: Complete implementation of the GraphBLAS standard in SuiteSparse

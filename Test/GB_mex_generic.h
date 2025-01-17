@@ -2,7 +2,7 @@
 // GB_mex_generic.h: testing _Generic methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -299,6 +299,7 @@
 #define GrB_Vector_extractElement_Scalar_(...)      GrB_Vector_extractElement (__VA_ARGS__)
 
 // GrB_Vector_extractTuples:
+#define GxB_Vector_extractTuples_Vector_(...)       GrB_Vector_extractTuples (__VA_ARGS__)
 #define GrB_Vector_extractTuples_BOOL_(...)         GrB_Vector_extractTuples (__VA_ARGS__)
 #define GrB_Vector_extractTuples_INT8_(...)         GrB_Vector_extractTuples (__VA_ARGS__)
 #define GrB_Vector_extractTuples_INT16_(...)        GrB_Vector_extractTuples (__VA_ARGS__)
@@ -400,6 +401,7 @@
 #define GrB_Matrix_extractElement_Scalar_(...)      GrB_Matrix_extractElement (__VA_ARGS__)
 
 // GrB_Matrix_extractTuples:
+#define GxB_Matrix_extractTuples_Vector_(...)       GrB_Matrix_extractTuples (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_BOOL_(...)         GrB_Matrix_extractTuples (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_INT8_(...)         GrB_Matrix_extractTuples (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_INT16_(...)        GrB_Matrix_extractTuples (__VA_ARGS__)
@@ -1045,6 +1047,7 @@
 #define GrB_Vector_extractElement_Scalar_(...)      GrB_Vector_extractElement_Scalar (__VA_ARGS__)
 
 // GrB_Vector_extractTuples:
+#define GxB_Vector_extractTuples_Vector_(...)       GxB_Vector_extractTuples_Vector (__VA_ARGS__)
 #define GrB_Vector_extractTuples_BOOL_(...)         GrB_Vector_extractTuples_BOOL (__VA_ARGS__)
 #define GrB_Vector_extractTuples_INT8_(...)         GrB_Vector_extractTuples_INT8 (__VA_ARGS__)
 #define GrB_Vector_extractTuples_INT16_(...)        GrB_Vector_extractTuples_INT16 (__VA_ARGS__)
@@ -1146,6 +1149,7 @@
 #define GrB_Matrix_extractElement_Scalar_(...)      GrB_Matrix_extractElement_Scalar (__VA_ARGS__)
 
 // GrB_Matrix_extractTuples:
+#define GxB_Matrix_extractTuples_Vector_(...)       GxB_Matrix_extractTuples_Vector (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_BOOL_(...)         GrB_Matrix_extractTuples_BOOL (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_INT8_(...)         GrB_Matrix_extractTuples_INT8 (__VA_ARGS__)
 #define GrB_Matrix_extractTuples_INT16_(...)        GrB_Matrix_extractTuples_INT16 (__VA_ARGS__)

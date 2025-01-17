@@ -81,11 +81,9 @@ a second, while MATLAB takes about 4 to 5 days.
 
 SuiteSparse:GraphBLAS is under the Apache-2.0 license.
 
-Version 8.0 adds several new features, in particular a JIT for compiling
-kernels at run-time, and a new \verb'GxB_Context' object.
-See Sections~\ref{context} and \ref{jit} for details.
-Version 9.0 adds the \verb'GrB_get' and \verb'GrB_set' methods;
-see Section~\ref{options}.
+\begin{note}
+FIXME: add Doc updates for GraphBLAS v10.   %% FIXME
+\end{note}
 
 \end{abstract}
 
@@ -143,7 +141,6 @@ Specification are highlighted in a box like this one, except for \verb'GxB*'
 methods.  They are not highlighted since their name makes it clear that they
 are extensions to the GraphBLAS C API.
 \end{alert}
-
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4638,7 +4635,7 @@ changed with \verb'GrB_set (A, fmt, GrB_STORAGE_ORIENTATION_HINT)'
 with \verb'fmt' equal to \verb'GrB_COLMAJOR' or \verb'GrB_ROWMAJOR'.
 
 \begin{alert}
-{\bf SPEC:} \verb'nrows' and/or \verb'ncols' may be zero,
+{\bf SPEC:} \verb'nrows' and/or \verb'ncols' may be zero.
 as an extension to the specification.
 \end{alert}
 
@@ -4841,9 +4838,8 @@ any duplicates are ignored.  If duplicates appear, the last one in the
 list of tuples is taken and the prior ones ignored.  This is not an error.
 
 \begin{alert}
-{\bf SPEC:} As an extension to the specification,
-results are defined even if \verb'dup'
-is non-associative and/or non-commutative.
+{\bf SPEC:} As an extension to the specification, results are defined even if
+\verb'dup' is non-associative and/or non-commutative.
 \end{alert}
 
 The GraphBLAS API requires \verb'dup' to be associative so
@@ -5145,8 +5141,8 @@ left unchanged.  On output, \verb'nvals' contains the number of tuples
 extracted.
 
 \begin{alert}
-{\bf SPEC:} As an extension to the specification, the arrays \verb'I', \verb'J', and/or
-\verb'X' may be passed in as \verb'NULL' pointers.
+{\bf SPEC:} As an extension to the specification, the arrays \verb'I',
+\verb'J', and/or \verb'X' may be passed in as \verb'NULL' pointers.
 \verb'GrB_Matrix_extractTuples' does not return a component specified as
 \verb'NULL'.  This is not an error condition.
 \end{alert}
@@ -10792,13 +10788,11 @@ You see that the result is \verb'x(0)=7', since the \verb'y(0)=5' entry
 has been ignored because of the duplicate indices in \verb'I'.
 
 \begin{alert}
-{\bf SPEC:} Providing a well-defined behavior for duplicate
-indices with matrix and vector assignment is an extension to the specification.
-The specification only defines the behavior when assigning a scalar into a matrix
-or vector, and states that duplicate indices otherwise lead to undefined
-results.
+{\bf SPEC:} Providing a well-defined behavior for duplicate indices with matrix
+and vector assignment is an extension to the specification.  The specification
+only defines the behavior when assigning a scalar into a matrix or vector, and
+states that duplicate indices otherwise lead to undefined results.
 \end{alert}
-
 
 \newpage
 %===============================================================================
@@ -11715,19 +11709,6 @@ GraphBLAS name          & MATLAB/Octave     & description \\
 The generic function name \verb'GrB_reduce' may be used for all specific
 functions discussed in this section.  When the details of a specific function
 are discussed, the specific name is used for clarity.
-
-\begin{alert}
-{\bf SPEC:}
-All methods below use a monoid for the reduction.  The Specification also
-allows reductions using an associative and commutative binary operator.
-SuiteSparse:GraphBLAS permits the use of a \verb'GrB_BinaryOp' instead of a
-\verb'GrB_Monoid', but only if the binary operator is built-in and corresponds
-to a known built-in monoid.  For example, the binary operator
-\verb'GrB_PLUS_FP64' can be used, since this is the binary operator of the
-built-in \verb'GrB_PLUS_MONOID_FP64'.  For other binary ops (including any
-user-defined ones), \verb'GrB_NOT_IMPLEMENTED' is returned.
-
-\end{alert}
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_reduce\_Monoid} reduce a matrix to a vector}

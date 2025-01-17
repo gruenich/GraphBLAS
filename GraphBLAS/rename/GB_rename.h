@@ -343,6 +343,7 @@
 #define GB_export GM_export
 #define GB_extract GM_extract
 #define GB_extractTuples GM_extractTuples
+#define GB_extractTuples_prep GM_extractTuples_prep
 #define GB_extract_vector_list GM_extract_vector_list
 #define GB_factory_kernels_enabled GM_factory_kernels_enabled
 #define GB_FC32_div GM_FC32_div
@@ -3170,6 +3171,7 @@
 #define GxB_CMPLX_FP32 GxM_CMPLX_FP32
 #define GxB_CMPLX_FP64 GxM_CMPLX_FP64
 #define GxB_Col_assign_Vector GxM_Col_assign_Vector
+#define GxB_Col_extract_Vector GxM_Col_extract_Vector
 #define GxB_Col_subassign GxM_Col_subassign
 #define GxB_Col_subassign_Vector GxM_Col_subassign_Vector
 #define GxB_CONJ_FC32 GxM_CONJ_FC32
@@ -3768,6 +3770,8 @@
 #define GxB_Matrix_build_FC32 GxM_Matrix_build_FC32
 #define GxB_Matrix_build_FC64 GxM_Matrix_build_FC64
 #define GxB_Matrix_build_Scalar GxM_Matrix_build_Scalar
+#define GxB_Matrix_build_Scalar_Vector GxM_Matrix_build_Scalar_Vector
+#define GxB_Matrix_build_Vector GxM_Matrix_build_Vector
 #define GxB_Matrix_concat GxM_Matrix_concat
 #define GxB_Matrix_deserialize GxM_Matrix_deserialize
 #define GxB_Matrix_diag GxM_Matrix_diag
@@ -3786,6 +3790,8 @@
 #define GxB_Matrix_extractElement_FC64 GxM_Matrix_extractElement_FC64
 #define GxB_Matrix_extractTuples_FC32 GxM_Matrix_extractTuples_FC32
 #define GxB_Matrix_extractTuples_FC64 GxM_Matrix_extractTuples_FC64
+#define GxB_Matrix_extractTuples_Vector GxM_Matrix_extractTuples_Vector
+#define GxB_Matrix_extract_Vector GxM_Matrix_extract_Vector
 #define GxB_Matrix_fprint GxM_Matrix_fprint
 #define GxB_Matrix_import_BitmapC GxM_Matrix_import_BitmapC
 #define GxB_Matrix_import_BitmapR GxM_Matrix_import_BitmapR
@@ -5044,6 +5050,8 @@
 #define GxB_Vector_build_FC32 GxM_Vector_build_FC32
 #define GxB_Vector_build_FC64 GxM_Vector_build_FC64
 #define GxB_Vector_build_Scalar GxM_Vector_build_Scalar
+#define GxB_Vector_build_Scalar_Vector GxM_Vector_build_Scalar_Vector
+#define GxB_Vector_build_Vector GxM_Vector_build_Vector
 #define GxB_Vector_deserialize GxM_Vector_deserialize
 #define GxB_Vector_diag GxM_Vector_diag
 #define GxB_Vector_eWiseUnion GxM_Vector_eWiseUnion
@@ -5054,6 +5062,8 @@
 #define GxB_Vector_extractElement_FC64 GxM_Vector_extractElement_FC64
 #define GxB_Vector_extractTuples_FC32 GxM_Vector_extractTuples_FC32
 #define GxB_Vector_extractTuples_FC64 GxM_Vector_extractTuples_FC64
+#define GxB_Vector_extractTuples_Vector GxM_Vector_extractTuples_Vector
+#define GxB_Vector_extract_Vector GxM_Vector_extract_Vector
 #define GxB_Vector_fprint GxM_Vector_fprint
 #define GxB_Vector_import_Bitmap GxM_Vector_import_Bitmap
 #define GxB_Vector_import_CSC GxM_Vector_import_CSC
