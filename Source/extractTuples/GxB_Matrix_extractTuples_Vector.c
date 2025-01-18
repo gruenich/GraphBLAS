@@ -7,14 +7,16 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // Extracts all tuples from a matrix, like [I,J,X] = find (A) in MATLAB.  If
 // any parameter I, J and/or X is NULL, then that component is not extracted.
 // I, J, and X are GrB_Vectors, and on output they are dense vectors of
 // length (nvals (A)), with types revised to match the content of A.
 //
 // X is returned with the same type A.  I is returned as GrB_UINT32 if the # of
-// rows of A is <= UINT32_MAX, or GrB_UINT64 otherwise.  J is returned as
-// GrB_UINT32 if the # of columns of A is <= UINT32_MAX, or GrB_UINT64
+// rows of A is < UINT32_MAX, or GrB_UINT64 otherwise.  J is returned as
+// GrB_UINT32 if the # of columns of A is < UINT32_MAX, or GrB_UINT64
 // otherwise.
 
 // If any parameter I, J, and/or X is NULL, that component is not extracted.
@@ -57,17 +59,17 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
     // prepare the I, J, X vectors
     //--------------------------------------------------------------------------
 
-    uint64_t nvals = A->nvals ;
+    uint64_t nvals = GB_nnz (A) ;
     int64_t nrows = GB_NROWS (A) ;
     int64_t ncols = GB_NCOLS (A) ;
-    bool I_is_32 = (nrows <= UINT32_MAX) ;
-    bool J_is_32 = (ncols <= UINT32_MAX) ;
+    bool I_is_32 = (nrows < UINT32_MAX) ;
+    bool J_is_32 = (ncols < UINT32_MAX) ;
     GrB_Type I_type = (I_is_32) ? GrB_UINT32 : GrB_UINT64 ;
     GrB_Type J_type = (J_is_32) ? GrB_UINT32 : GrB_UINT64 ;
     GrB_Type X_type = A->type ;
 
     GB_OK (GB_extractTuples_prep (I_vector, nvals, I_type)) ;
-    GB_OK (GB_extractTuples_prep (J_vector ,nvals, J_type)) ;
+    GB_OK (GB_extractTuples_prep (J_vector, nvals, J_type)) ;
     GB_OK (GB_extractTuples_prep (X_vector, nvals, X_type)) ;
 
     void *I = (I_vector == NULL) ? NULL : I_vector->x ;

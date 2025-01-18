@@ -2,7 +2,7 @@
 // gbdescriptorinfo: print a GraphBLAS descriptor (for illustration only)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -75,8 +75,8 @@ void mexFunction
     printf ("    d.base     = ") ;
     switch (base)
     {
-        case BASE_0_INT64  : printf ("zero-based\n")    ; break ;
-        case BASE_1_INT64  : printf ("one-based int\n") ; break ;
+        case BASE_0_INT    : printf ("zero-based\n")    ; break ;
+        case BASE_1_INT    : printf ("one-based int\n") ; break ;
         case BASE_1_DOUBLE : printf ("one-based\n")     ; break ;
         case BASE_DEFAULT  :
         default            : printf ("default\n")       ; break ;

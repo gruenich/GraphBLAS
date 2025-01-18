@@ -139,9 +139,9 @@ typedef enum            // type of indices
     BASE_DEFAULT = 0,   // The type is determined automatically.  It is
                         // BASE_1_DOUBLE, unless the dimensions are
                         // too big for a flint (max(size(A)) > flintmax).  In
-                        // that case, BASE_1_INT64 is used.
-    BASE_0_INT64 = 1,   // indices are returned as zero-based int64 values
-    BASE_1_INT64 = 2,   // indices are returned as one-based int64
+                        // that case, BASE_1_INT is used.
+    BASE_0_INT = 1,     // indices are returned as zero-based uint64/uint32
+    BASE_1_INT = 2,     // indices are returned as one-based uint64/uint32
     BASE_1_DOUBLE = 3   // this is the typical default: one-based double
 }
 base_enum_t ;

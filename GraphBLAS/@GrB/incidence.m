@@ -90,10 +90,10 @@ end
 
 % build the incidence matrix
 desc.base = 'zero-based' ;
-[I, J] = gbextracttuples (A, desc) ;
+[I, J] = gbextracttuples (A, desc) ;        % OK: I, J are zero-based
 e = length (I) ;
 I = [I ; J] ;
-J = (int64 (0) : int64 (e-1))' ;
+J = (int64 (0) : int64 (e-1))' ;           %% FIXME: use uint32/uint64
 J = [J ; J] ;
 X = ones (e, 1, type) ;
 X = [-X ; X] ;

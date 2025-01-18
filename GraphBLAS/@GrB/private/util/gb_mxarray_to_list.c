@@ -49,7 +49,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
     //--------------------------------------------------------------------------
 
     (*List_max) = -1 ;
-    bool zerobased = (base == BASE_0_INT64) ;
+    bool zerobased = (base == BASE_0_INT) ;
 
     if (*len == 0)
     { 

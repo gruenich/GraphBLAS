@@ -5907,14 +5907,6 @@ GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
     const GrB_Descriptor desc   // currently unused
 ) ;
 
-#if GxB_STDC_VERSION >= 201112L
-#define GxB_load(A,Container,desc)                      \
-    _Generic ((A),                                      \
-        GrB_Vector : GxB_load_Vector_from_Container,    \
-        GrB_Matrix : GxB_load_Matrix_from_Container)    \
-    (A, Container, desc)
-#endif
-
 GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
 (
     GrB_Matrix A,               // matrix to unload into the Container
@@ -5928,14 +5920,6 @@ GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
     GxB_Container Container,    // Container to hold the contents of V
     const GrB_Descriptor desc   // currently unused
 ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GxB_unload(A,Container,desc)                    \
-    _Generic ((A),                                      \
-        GrB_Vector : GxB_unload_Vector_into_Container,  \
-        GrB_Matrix : GxB_unload_Matrix_into_Container)  \
-    (A, Container, desc)
-#endif
 
 GrB_Info GxB_Vector_load
 (

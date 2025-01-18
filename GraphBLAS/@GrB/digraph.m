@@ -57,8 +57,8 @@ switch (type)
 
         % The digraph(...) function can accept x as single, but not
         % from a sparse matrix.  So extract the tuples of G first.
-        [i, j, x] = gbextracttuples (G) ;
-        DiGraph = digraph (i, j, x, n) ;
+        [i, j, x] = gbextracttuples (G) ;   % FIXME: int ok?
+        DiGraph = digraph (i, j, x, n) ;    % FIXME uint32/64 OK here?
 
     case { 'logical' }
 

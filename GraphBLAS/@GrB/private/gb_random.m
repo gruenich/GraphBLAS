@@ -5,7 +5,7 @@ function C = gb_random (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-%---------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 % parse inputs
 %---------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ if (firstchar == 2)
     if ((symmetric || hermitian) && (m ~= n))
         error ('GrB:error', 'input matrix must be square') ;
     end
-    [I, J] = gbextracttuples (A, desc) ;
+    [I, J] = gbextracttuples (A, desc) ;    % OK: zero-based int
     e = length (I) ;
 
 elseif (firstchar == (4 - (symmetric || hermitian)))

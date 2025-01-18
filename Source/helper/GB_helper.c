@@ -51,56 +51,6 @@ double GB_helper0 (void)
 }
 
 //------------------------------------------------------------------------------
-// GB_helper1: convert 0-based indices to 1-based for gbextracttuples
-//------------------------------------------------------------------------------
-
-// FIXME: let the gbextractuples call GB_extractTuples directly, and
-// pass in the offset of 1.  Then all that is needed is the typecast,
-// which can be done with GrB_apply.  Then this method is not needed.
-
-void GB_helper1              // convert zero-based indices to one-based
-(
-    double *restrict I_double,      // output array
-    const uint64_t *restrict I,     // input array  FIXME
-    int64_t nvals                   // size of input and output arrays
-)
-{
-
-    GB_NTHREADS_HELPER (nvals) ;
-
-    int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (k = 0 ; k < nvals ; k++)
-    {
-        I_double [k] = (double) (I [k] + 1) ;
-    }
-}
-
-//------------------------------------------------------------------------------
-// GB_helper1i: convert 0-based indices to 1-based for gbextracttuples
-//------------------------------------------------------------------------------
-
-// FIXME: let the gbextractuples call GB_extractTuples directly, and
-// pass in the offset of 1.  Then this method is not needed.
-
-void GB_helper1i             // convert zero-based indices to one-based
-(
-    int64_t *restrict I,            // input/output array   FIXME
-    int64_t nvals                   // size of input/output array
-)
-{
-
-    GB_NTHREADS_HELPER (nvals) ;
-
-    int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (k = 0 ; k < nvals ; k++)
-    {
-        I [k] ++ ;
-    }
-}
-
-//------------------------------------------------------------------------------
 // GB_helper3: convert 1-based indices to 0-based for gb_mxarray_to_list
 //------------------------------------------------------------------------------
 

@@ -463,8 +463,6 @@
 #define GB_Global_timing_set GM_Global_timing_set
 #define GB_helper0 GM_helper0
 #define GB_helper10 GM_helper10
-#define GB_helper1 GM_helper1
-#define GB_helper1i GM_helper1i
 #define GB_helper3 GM_helper3
 #define GB_helper3i GM_helper3i
 #define GB_helper4 GM_helper4

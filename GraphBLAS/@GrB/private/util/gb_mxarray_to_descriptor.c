@@ -215,23 +215,18 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
         }
         else if (MATCH (s, "zero-based"))
         { 
-            // zero-based indices are always int64.  This is performance
-            // purposes, internal to GrB methods.  The user may also use this
-            // to speed up GrB.build, GrB.extract, GrB.assign. and
-            // GrB.subassign.
-            (*base) = BASE_0_INT64 ;
+            // zero-based indices are always uint64/uint32.  This is the
+            // fastest option since GraphBLAS uses zero-based indices.
+            (*base) = BASE_0_INT ;
         }
         else if (MATCH (s, "one-based int"))
         { 
-            // one-based indices, but in int64.  These are important for
-            // indexing into matrices with dimension larger than flintmax.
-            (*base) = BASE_1_INT64 ;
+            // one-based indices, but in uint64/uint32
+            (*base) = BASE_1_INT ;
         }
         else if (MATCH (s, "one-based") || MATCH (s, "one-based double"))
         { 
-            // for 'one-based', the caller may change this to BASE_1_INT64,
-            // if I and J are inputs to the function are int64.  This is
-            // the typical default.
+            // one-based indices, always double
             (*base) = BASE_1_DOUBLE ;
         }
 

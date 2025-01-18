@@ -20,19 +20,6 @@
 
 double GB_helper0 (void) ;
 
-void GB_helper1              // convert zero-based indices to one-based
-(
-    double *restrict I_double,   // output array
-    const uint64_t *restrict I,  // input array FIXME
-    int64_t nvals                // size of input and output arrays
-) ;
-
-void GB_helper1i             // convert zero-based indices to one-based
-(
-    int64_t *restrict I,         // input/output array  FIXME
-    int64_t nvals                // size of input/output array
-) ;
-
 bool GB_helper3              // return true if OK, false on error
 (
     int64_t *restrict List,      // size len, output array  FIXME

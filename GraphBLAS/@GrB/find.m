@@ -24,12 +24,9 @@ function [I, J, X] = find (G, k, search)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FUTURE: find (G,k,'first') and find (G,k,'last') are slow.
-% They are currently implemented, all entries are extracted and then the
-% first or last k are selected from the extracted tuples.  It would be
-% faster to use a mexFunction that directly accesses the opaque content
-% of G, instead of using GrB_Matrix_extractTuples_*, which always extracts
-% the entire matrix.
+%% FIXME: find (G,k,'first') and find (G,k,'last') are slow.
+% Use GxB_unload_* to extract the content Container->x, and use that to
+% find the first or last k entries in G.
 
 if (isobject (G))
     G = G.opaque ;
@@ -76,7 +73,7 @@ else
     else
         % extract linear indices from a matrix
         [I, J] = gbextracttuples (G) ;
-        % use the built-in sub2ind to convert the 2D indices to linear indices
+        % use the built-in sub2ind to convert the 2D indices to 1D indices
         I = sub2ind ([m n], I, J) ;
     end
 end

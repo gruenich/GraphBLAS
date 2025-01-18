@@ -15,7 +15,7 @@
 // length (nvals (V)), with types revised to match the content of V.
 //
 // X is returned with the same type V.  I is returned as GrB_UINT32 if the
-// length of V is <= UINT32_MAX, or GrB_UINT64 otherwise.
+// length of V is < UINT32_MAX, or GrB_UINT64 otherwise.
 
 // If any parameter I and/or X is NULL, that component is not extracted.  For
 // example, to extract just the row indices, pass I as non-NULL, and X as NULL.
@@ -64,7 +64,7 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
 
     uint64_t nvals = V->nvals ;
     int64_t nrows = V->vlen ;
-    bool I_is_32 = (nrows <= UINT32_MAX) ;
+    bool I_is_32 = (nrows < UINT32_MAX) ;
     GrB_Type I_type = (I_is_32) ? GrB_UINT32 : GrB_UINT64 ;
     GrB_Type X_type = V->type ;
 

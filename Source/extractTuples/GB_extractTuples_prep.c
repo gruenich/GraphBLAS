@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // GB_extractTuples_prep ensures that an output GrB_Vector for I, J, or X is
 // dense, of size nvals-by-1, and the right type.
 
@@ -39,7 +41,7 @@ GrB_Info GB_extractTuples_prep
     uint64_t required_size = nvals * vtype->size ;
     if (GB_IS_FULL (V) && V->nvals == nvals && V->vlen == nvals &&
         V->type == vtype && !(V->x_shallow) && V->x_size >= required_size)
-    {
+    { 
         // nothing to do; the vector is already in the right format
         return (GrB_SUCCESS) ;
     }
@@ -76,6 +78,7 @@ GrB_Info GB_extractTuples_prep
     //--------------------------------------------------------------------------
 
     GB_vector_load (V, &Vx, nvals, Vx_size, vtype, false) ;
+    ASSERT_VECTOR_OK (V, "V prepped", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -194,7 +194,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         //----------------------------------------------------------------------
 
         if (J != NULL)
-        {
+        { 
             // FIXME: revise GB_extract_vector_list
             GB_OK (GB_extract_vector_list (J, J_is_32, A, Werk)) ;
         }
