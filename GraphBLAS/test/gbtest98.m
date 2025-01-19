@@ -40,8 +40,8 @@ assert (isequal (x1, x2)) ;
 [~ ,~ ,x2] = GrB.extracttuples (A) ;
 assert (isequal (x1, x2)) ;
 
-assert (isequal (class (i1), 'int64')) ;
-assert (isequal (class (j1), 'int64')) ;
+assert (isequal (class (i1), 'uint32') || isequal (class (i1), 'uint64')) ;
+assert (isequal (class (j1), 'uint32') || isequal (class (j1), 'uint64')) ;
 
 G = GrB.random (8, 8, 0.5) ;
 A = double (G) ;

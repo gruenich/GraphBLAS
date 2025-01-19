@@ -6,6 +6,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+#define GB_DEBUG
+
+// FIXME: add a descriptor that allows input I,J to be 1-based
 
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
 
@@ -186,10 +189,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (J_work_size_handle != NULL) ;
     ASSERT (S_work_size_handle != NULL) ;
 
-    bool allow_burble = (nvals > 10000) ;
-    double tt = GB_OPENMP_GET_WTIME ;
-    double t1 = GB_OPENMP_GET_WTIME ;
-
     //--------------------------------------------------------------------------
     // get Sx
     //--------------------------------------------------------------------------
@@ -297,8 +296,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // (I_work,J_work) and check if they are valid, and sorted.   If the input
     // happens to be already sorted, then duplicates are detected and the # of
     // vectors in each slice is counted.
-
-    // double t2 = 0 ;
 
     if (I_work == NULL)
     {
@@ -483,8 +480,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // allocate J_work, if needed
             //------------------------------------------------------------------
 
-            // t2 = GB_OPENMP_GET_WTIME ;
-
             if (vdim > 1 && !known_sorted)
             { 
                 // copy J_input into J_work, so the tuples can be sorted.
@@ -503,7 +498,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     return (GrB_OUT_OF_MEMORY) ;
                 }
                 // J_work = cast (J_input)
-                if (allow_burble)
+                if (do_burble)
                 {
                     GBURBLE ("(cast J %d %d) ", J_is_32_new, J_is_32) ;
                 }
@@ -523,8 +518,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
 
             GB_IPTR (J_work, J_is_32) ;
-
-            // t2 = GB_OPENMP_GET_WTIME - t2 ;
 
         }
         else
@@ -606,13 +599,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // I_input and J_input are now verified and have been copied into I_work
     // and J_work.  They are no longer used below.
 
-    if (allow_burble)
-    {
-        t1 = GB_OPENMP_GET_WTIME - t1 ;
-        GBURBLE ("(step1: %g sec) ", t1) ;
-        t1 = GB_OPENMP_GET_WTIME ;
-    }
-
     //--------------------------------------------------------------------------
     // STEP 2: sort the tuples in ascending order
     //--------------------------------------------------------------------------
@@ -621,8 +607,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // that case, K_work is NULL (not allocated), which implicitly means that
     // K_work [k] = k for all k = 0:nvals-1.  K_work is always NULL if Sx and
     // Tx are iso.
-
-    // t2 = 0 ;
 
     if (!known_sorted)
     {
@@ -654,14 +638,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // where the numerical value of the tuple can be found; it is in
             // Sx[k] for the tuple (i,k) or (j,i,k), regardless of where the
             // tuple appears in the list after it is sorted.
-            // t2 = GB_OPENMP_GET_WTIME ;
             int64_t k ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (k = 0 ; k < nvals ; k++)
             { 
                 GB_ISET (K_work, k, k) ;
             }
-            // t2 = GB_OPENMP_GET_WTIME - t2 ;
         }
 
         //----------------------------------------------------------------------
@@ -737,13 +719,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         }
     }
     #endif
-
-    if (allow_burble)
-    {
-        t1 = GB_OPENMP_GET_WTIME - t1 ;
-        GBURBLE ("(step2: %g sec) ", t1) ;
-        t1 = GB_OPENMP_GET_WTIME ;
-    }
 
     //--------------------------------------------------------------------------
     // STEP 3: count vectors and duplicates in each slice
@@ -949,13 +924,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         }
     }
 
-    if (allow_burble)
-    {
-        t1 = GB_OPENMP_GET_WTIME - t1 ;
-        GBURBLE ("(step3: %g sec) ", t1) ;
-        t1 = GB_OPENMP_GET_WTIME ;
-    }
-
     //--------------------------------------------------------------------------
     // STEP 4: construct the vector pointers and hyperlist for T
     //--------------------------------------------------------------------------
@@ -966,8 +934,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     void *Th = T->h ;
     GB_IDECL (Tp, , u) ; GB_IPTR (Tp, Tp_is_32) ;
     GB_IDECL (Th, , u) ; GB_IPTR (Th, Tj_is_32) ;
-
-    // t2 = GB_OPENMP_GET_WTIME ;
 
     if (vdim <= 1)
     {
@@ -1062,8 +1028,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (T->nvec == T->plen || (T->plen == 1 && T->nvec == 0)) ;
     T->magic = GB_MAGIC ;
 
-    // t2 = GB_OPENMP_GET_WTIME - t2 ;
-
     //--------------------------------------------------------------------------
     // free J_work if it has been allocated
     //--------------------------------------------------------------------------
@@ -1111,7 +1075,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
                 // T->i = cast (I_work), but use uint32/64 for T->i since
                 // I_work has no zombies.
-                if (allow_burble)
+                if (do_burble)
                 { 
                     GBURBLE ("(cast Ti %d %d) ", Ti_is_32, I_is_32) ;
                 }
@@ -1154,13 +1118,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     T->i_is_32 = Ti_is_32 ;
     void *restrict Ti = T->i ;
     GB_IDECL (Ti, , ) ; GB_IPTR (Ti, Ti_is_32) ;
-
-    if (allow_burble)
-    {
-        t1 = GB_OPENMP_GET_WTIME - t1 ;
-        GBURBLE ("(step4: %g sec) ", t1) ;
-        t1 = GB_OPENMP_GET_WTIME ;
-    }
 
     //==========================================================================
     // numerical phase of the build: assemble any duplicates
@@ -1602,13 +1559,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         }
     }
 
-    if (allow_burble)
-    {
-        t1 = GB_OPENMP_GET_WTIME - t1 ;
-        GBURBLE ("(step5: %g sec) ", t1) ;
-        t1 = GB_OPENMP_GET_WTIME ;
-    }
-
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
@@ -1620,11 +1570,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         ASSERT_MATRIX_OK (T, "T built", GB0) ;
         ASSERT (GB_IS_HYPERSPARSE (T)) ;
     }
-    tt = GB_OPENMP_GET_WTIME - tt;
-    GB_BURBLE_MATRIX (T, "(build %s/%s/%s time: %g) ",
-        Tp_is_32 ? "32" : "64",
-        Tj_is_32 ? "32" : "64",
-        Ti_is_32 ? "32" : "64", tt) ;
     return (info) ;
 }
 

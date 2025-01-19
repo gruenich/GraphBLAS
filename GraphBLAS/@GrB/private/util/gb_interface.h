@@ -63,6 +63,8 @@ void gbcov_put (void) ;
     GrB_Info info = method ;                                \
     if (info != GrB_SUCCESS)                                \
     {                                                       \
+/*FIXME*/printf ("error at %s, line %d, info %d\n",         \
+            __FILE__, __LINE__, info) ;                     \
         ERROR (gb_error (info)) ;                           \
     }                                                       \
 }
@@ -72,16 +74,22 @@ void gbcov_put (void) ;
     GrB_Info info = method ;                                \
     if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))     \
     {                                                       \
+/*FIXME*/printf ("error at %s, line %d, info %d\n",         \
+            __FILE__, __LINE__, info) ;                     \
         ERROR (gb_error (info)) ;                           \
     }                                                       \
 }
 
 #define OK1(C,method)                                       \
 {                                                           \
-    if ((method) != GrB_SUCCESS)                            \
+    GrB_Info info = method ;                                \
+    if (info != GrB_SUCCESS)                                \
     {                                                       \
+/*FIXME*/ printf ("error at %s, line %d, info %d\n",        \
+            __FILE__, __LINE__, info) ;                     \
         const char *message ;                               \
         GrB_Matrix_error (&message, C) ;                    \
+        printf ("message [%s]\n", message) ; \
         ERROR (message) ;                                   \
     }                                                       \
 }
@@ -398,6 +406,12 @@ bool gb_mxarray_is_empty    // true if built-in array is NULL, or 2D and 0-by-0
 void gb_mxfree              // mxFree wrapper
 (
     void **p_handle         // handle to pointer to be freed
+) ;
+
+GrB_Vector gb_get_list      // list of indices or values
+(
+    const mxArray *X,       // MATLAB input matrix or struct with GrB content
+    const int base_offset   // 1 or 0
 ) ;
 
 int64_t *gb_mxarray_to_list     // return List of integers

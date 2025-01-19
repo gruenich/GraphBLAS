@@ -70,9 +70,9 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
 
     int64_t ni = 0, nj = 0 ;
     GrB_Type I_type = NULL, J_type = NULL ;
-    GB_OK (GB_ijvector (I_vector, false, 0, desc, true,
+    GB_OK (GB_ijxvector (I_vector, false, 0, desc, true,
         &I, &ni, &I_size, &I_type, Werk)) ;
-    GB_OK (GB_ijvector (J_vector, false, 1, desc, true,
+    GB_OK (GB_ijxvector (J_vector, false, 1, desc, true,
         &J, &nj, &J_size, &J_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
     bool J_is_32 = (J_type == GrB_UINT32) ;

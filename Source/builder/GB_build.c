@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
+
 // CALLED BY: GrB_Matrix_build_*, GrB_Vector_build_*,
 //            GxB_Matrix_build_Scalar, GxB_Vector_build_Scalar
 // CALLS:     GB_builder
@@ -307,8 +309,6 @@ GrB_Info GB_build               // build matrix
         Tp_is_32, Tj_is_32, Ti_is_32    // integer sizes to create T
     )) ;
 
-    double tt = GB_OPENMP_GET_WTIME ;
-
     //--------------------------------------------------------------------------
     // return an error if any duplicates found when they were not expected
     //--------------------------------------------------------------------------
@@ -357,15 +357,6 @@ GrB_Info GB_build               // build matrix
     ASSERT (!GB_JUMBLED (T)) ;
     ASSERT (!GB_PENDING (T)) ;
     GB_OK (GB_transplant_conform (C, C->type, &T, Werk)) ;
-
-    if (nvals > 1000)
-    { 
-        tt = GB_OPENMP_GET_WTIME - tt;
-        GBURBLE ("(wrapup %s/%s time: %g) ",
-            I_is_32 ? "32" : "64",
-            J_is_32 ? "32" : "64", tt) ;
-    }
-
     return (GrB_SUCCESS) ;
 }
 

@@ -59,8 +59,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     ASSERT_MATRIX_OK (B_in, "B_in for kron (A,B)", GB0) ;
     ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
 
-    double tt = GB_OPENMP_GET_WTIME ;
-
     //--------------------------------------------------------------------------
     // finish any pending work
     //--------------------------------------------------------------------------
@@ -344,11 +342,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     GB_FREE_WORKSPACE ;
-    tt = GB_OPENMP_GET_WTIME - tt ;
-    GBURBLE ("(kron %d/%d/%d nthreads: %d time: %g) ",
-        Cp_is_32 ? 32 : 64,
-        Cj_is_32 ? 32 : 64,
-        Ci_is_32 ? 32 : 64, nthreads, tt) ;
     return (info) ;
 }
 

@@ -100,7 +100,7 @@ void mexFunction
     // determine if 1 must be added to the indices
     //--------------------------------------------------------------------------
 
-    int b = (base == BASE_0_INT) ? 0 : 1 ;
+    int base_offset = (base == BASE_0_INT) ? 0 : 1 ;
 
     //--------------------------------------------------------------------------
     // return I to MATLAB
@@ -119,11 +119,12 @@ void mexFunction
         { 
             // I = (double) (I + 1)
             OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
-            OK (GrB_apply (T, NULL, NULL, GrB_PLUS_FP64, I, b, NULL)) ;
+            OK (GrB_apply (T, NULL, NULL, GrB_PLUS_FP64, I, base_offset,
+                NULL)) ;
             OK (GrB_Vector_free (&I)) ;
             I = T ;
         }
-        else if (b != 0)
+        else if (base_offset != 0)
         { 
             // I = I+1, as a uint64 or uint32 vector
             OK (GrB_apply (I, NULL, NULL, GrB_PLUS_UINT64, I, 1, NULL)) ;
@@ -144,11 +145,12 @@ void mexFunction
         { 
             // J = (double) (J + 1)
             OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
-            OK (GrB_apply (T, NULL, NULL, GrB_PLUS_FP64, J, b, NULL)) ;
+            OK (GrB_apply (T, NULL, NULL, GrB_PLUS_FP64, J, base_offset,
+                NULL)) ;
             OK (GrB_Vector_free (&J)) ;
             J = T ;
         }
-        else if (b != 0)
+        else if (base_offset != 0)
         { 
             // J = J+1, as a uint64 or uint32 vector
             OK (GrB_apply (J, NULL, NULL, GrB_PLUS_UINT64, J, 1, NULL)) ;

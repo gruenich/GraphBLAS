@@ -41,9 +41,9 @@ GrB_Info GxB_Matrix_subassign_Scalar_Vector   // C(I,J)<Mask> = accum (C(I,J),x)
     size_t I_size = 0, J_size = 0 ;
     int64_t ni = 0, nj = 0 ;
     GrB_Type I_type = NULL, J_type = NULL ;
-    GB_OK (GB_ijvector (I_vector, false, 0, desc, false,
+    GB_OK (GB_ijxvector (I_vector, false, 0, desc, false,
         &I, &ni, &I_size, &I_type, Werk)) ;
-    GB_OK (GB_ijvector (J_vector, false, 1, desc, false,
+    GB_OK (GB_ijxvector (J_vector, false, 1, desc, false,
         &J, &nj, &J_size, &J_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
     bool J_is_32 = (J_type == GrB_UINT32) ;

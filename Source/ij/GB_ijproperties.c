@@ -7,13 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // check a list of indices I and determine its properties
 
 #include "ij/GB_ij.h"
 
-// FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.
 #define GB_ICHECK(i,limit)                                                  \
 {                                                                           \
     if ((i) < 0 || (i) >= (limit))                                          \

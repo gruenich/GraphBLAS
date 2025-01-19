@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+#define GB_DEBUG
 
 #include "reduce/GB_reduce.h"
 #include "binaryop/GB_binop.h"

@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64
-
-// These functions are only used by the @GrB interface for
+// These functions are only used by the @GrB MATLAB/Octave interface for
 // SuiteSparse:GraphBLAS.
 
 #ifndef GB_HELPER_H
@@ -63,14 +61,6 @@ void GB_helper7              // Kx = uint64 (0:mnz-1)
 (
     uint64_t *restrict Kx,      // array of size mnz    FIXME
     const uint64_t mnz
-) ;
-
-void GB_helper8
-(
-    GB_void *C,         // output array of size nvals * s
-    GB_void *A,         // input scalar of size s
-    uint64_t nvals,     // size of C
-    size_t s            // size of each scalar
 ) ;
 
 double GB_helper10       // norm (x-y,p), or -1 on error

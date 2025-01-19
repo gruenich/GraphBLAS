@@ -48,12 +48,9 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     }
 
     ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
-
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
-
-    double tt = GB_OPENMP_GET_WTIME ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -370,14 +367,6 @@ GB_GOTCHA ; // convert Y->x
     // return result
     //--------------------------------------------------------------------------
 
-    tt = GB_OPENMP_GET_WTIME - tt;
-    GB_BURBLE_MATRIX (A, "(convert ints %s/%s/%s to %s/%s/%s, time: %g) ",
-        p_is_32 ? "32" : "64",
-        j_is_32 ? "32" : "64",
-        i_is_32 ? "32" : "64",
-        p_is_32_new ? "32" : "64",
-        j_is_32_new ? "32" : "64",
-        i_is_32_new ? "32" : "64", tt) ;
     ASSERT_MATRIX_OK (A, "A integers converted", GB0) ;
     return (GrB_SUCCESS) ;
 }

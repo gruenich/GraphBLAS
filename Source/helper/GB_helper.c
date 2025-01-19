@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: 32/64
-
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
 
@@ -265,32 +263,6 @@ void GB_helper7              // Kx = uint64 (0:mnz-1)
     for (k = 0 ; k < mnz ; k++)
     {
         Kx [k] = k ;
-    }
-}
-
-//------------------------------------------------------------------------------
-// GB_helper8: expand a scalar into an array for gbbuild
-//------------------------------------------------------------------------------
-
-// FIXME: use GrB_assign instead
-
-void GB_helper8
-(
-    GB_void *C,         // output array of size nvals * s
-    GB_void *A,         // input scalar of size s
-    uint64_t nvals,     // size of C
-    size_t s            // size of each scalar
-)
-{
-
-    GB_NTHREADS_HELPER (nvals) ;
-
-    int64_t k ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (k = 0 ; k < nvals ; k++)
-    {
-        // C [k] = A [0]
-        memcpy (C + k * s, A, s) ;
     }
 }
 

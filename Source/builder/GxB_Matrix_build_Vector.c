@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+#define GB_DEBUG
 
 // If dup is NULL: any duplicates result in an error.
 // If dup is GxB_IGNORE_DUP: duplicates are ignored, which is not an error.
@@ -40,10 +41,10 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     GB_RETURN_IF_NULL (I_vector) ;
     GB_RETURN_IF_NULL (J_vector) ;
     GB_RETURN_IF_NULL (X_vector) ;
-    GB_BURBLE_START ("GxB_build") ;
-    ASSERT (GB_VECTOR_OK (I_vector)) ;
-    ASSERT (GB_VECTOR_OK (J_vector)) ;
-    ASSERT (GB_VECTOR_OK (X_vector)) ;
+    GB_BURBLE_START ("GxB_Matrix_build_Vector") ;
+    ASSERT_VECTOR_OK (I_vector, "I_vector for build", GB0) ;
+    ASSERT_VECTOR_OK (J_vector, "J_vector for build", GB0) ;
+    ASSERT_VECTOR_OK (X_vector, "X_vector for build", GB0) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work
@@ -70,11 +71,11 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
 
     int64_t ni = 0, nj = 0, nx = 0 ;
     GrB_Type I_type = NULL, J_type = NULL, X_type = NULL ;
-    GB_OK (GB_ijvector (I_vector, false, 0, desc, true,
+    GB_OK (GB_ijxvector (I_vector, false, 0, desc, true,
         &I, &ni, &I_size, &I_type, Werk)) ;
-    GB_OK (GB_ijvector (J_vector, false, 1, desc, true,
+    GB_OK (GB_ijxvector (J_vector, false, 1, desc, true,
         &J, &nj, &J_size, &J_type, Werk)) ;
-    GB_OK (GB_ijvector (X_vector, false, 2, desc, true,
+    GB_OK (GB_ijxvector (X_vector, false, 2, desc, true,
         &X, &nx, &X_size, &X_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
     bool J_is_32 = (J_type == GrB_UINT32) ;

@@ -60,7 +60,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     int64_t ni = 0 ;
     GrB_Type I_type = NULL ;
     bool need_copy = (w == I_vector) ;
-    GB_OK (GB_ijvector (I_vector, need_copy, 0, desc, true,
+    GB_OK (GB_ijxvector (I_vector, need_copy, 0, desc, true,
         &I, &ni, &I_size, &I_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 

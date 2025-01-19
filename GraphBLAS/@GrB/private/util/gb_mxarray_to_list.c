@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: replace this with a method that returns a GrB_Vector,
+// and descriptor settings to use it in assign, subassign, extract, and
+// build.
+
 // The built-in list may be double, int64, or uint64.  If double or 1-based
 // int64, a new integer list is created, and the 1-based input list is
 // converted to the 0-based integer list.

@@ -37,7 +37,7 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (I_vector) ;
     GB_RETURN_IF_NULL (X_vector) ;
-    GB_BURBLE_START ("GxB_build") ;
+    GB_BURBLE_START ("GxB_Vector_build_Vector") ;
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;
     ASSERT (GB_VECTOR_OK (J_vector)) ;
@@ -66,9 +66,9 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     int64_t ni = 0, nx = 0 ;
     GrB_Type I_type = NULL, X_type = NULL ;
     bool need_copy = (w == I_vector || w == X_vector) ;
-    GB_OK (GB_ijvector (I_vector, need_copy, 0, desc, true,
+    GB_OK (GB_ijxvector (I_vector, need_copy, 0, desc, true,
         &I, &ni, &I_size, &I_type, Werk)) ;
-    GB_OK (GB_ijvector (X_vector, need_copy, 2, desc, true,
+    GB_OK (GB_ijxvector (X_vector, need_copy, 2, desc, true,
         &X, &nx, &X_size, &X_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 

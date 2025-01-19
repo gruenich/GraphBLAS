@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_IJ_H
 #define GB_IJ_H
 
@@ -65,7 +63,7 @@ GrB_Info GB_ijsort
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_ijvector
+GrB_Info GB_ijxvector
 (
     // input:
     GrB_Vector List,        // defines the list of integers, either from

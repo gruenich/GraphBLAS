@@ -21,6 +21,8 @@ GrB_Matrix gb_new       // create and empty matrix C
 
     // create the matrix
     GrB_Matrix C = NULL ;
+//  GxB_print (type, 2) ;
+//  printf ("gb_new nrows %ld ncols %ld\n", nrows, ncols) ;
     OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
 
     // get the default format, if needed

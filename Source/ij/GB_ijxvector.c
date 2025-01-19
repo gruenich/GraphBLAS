@@ -1,14 +1,15 @@
 //------------------------------------------------------------------------------
-// GB_ijvector: extract a list of indices from a GrB_Vector
+// GB_ijxvector: extract a list of indices or values from a GrB_Vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+#define GB_DEBUG
 
-// The input vector List describes a list of integers to be used by GrB_assign,
-// GxB_subassign, or GrB_extract.
+// The input vector List describes a list of integers or values to be used by
+// GrB_assign, GxB_subassign, GrB_extract, or GrB_build.
 //
 // Descriptor settings: for I and J  lists passed to GrB_assign,
 // GxB_subassign and GrB_extract, and for I,J,X lists passed to GrB_build:
@@ -43,10 +44,9 @@
 // none of these settings.  It will always return its results in List->x.  It
 // does not use this method and ignores the descriptor settings above.
 
-#define GB_DEBUG
-
 #include "GB_ij.h"
 #include "matrix/include/GB_static_header.h"
+#include "container/GB_container.h"
 
 #define GB_FREE_ALL                 \
 {                                   \
@@ -117,10 +117,10 @@ static inline GrB_Info GB_stride
 }
 
 //------------------------------------------------------------------------------
-// GB_ijvector: intrepret the List
+// GB_ijxvector: intrepret the List
 //------------------------------------------------------------------------------
 
-GrB_Info GB_ijvector
+GrB_Info GB_ijxvector
 (
     // input:
     GrB_Vector List,        // defines the list of integers, either from
@@ -138,9 +138,10 @@ GrB_Info GB_ijvector
                             // method.  Otherwise, it is a shallow pointer into
                             // List->x or List->i.
     GrB_Type *I_type_handle,    // the type of I: GrB_UINT32 or GrB_UINT64 for
-                            // assign, subassign, extract, or for build with
-                            // the descriptor uses the indices.  For build,
-                            // this is List->type when using the values.
+                            // assign, subassign, extract, or for build when
+                            // descriptor is GxB_USE_INDICES.  For build,
+                            // this is List->type when the descriptor is
+                            // GxB_USE_VALUES.
     GB_Werk Werk                            
 )
 {
@@ -154,7 +155,7 @@ GrB_Info GB_ijvector
     ASSERT (ni_handle != NULL) ;
     ASSERT (I_size_handle != NULL) ;
     ASSERT (I_type_handle != NULL) ;
-    ASSERT_VECTOR_OK_OR_NULL (List, "List of integers", GB0) ;
+    ASSERT_VECTOR_OK_OR_NULL (List, "List", GB0) ;
 
     (*I_handle) = NULL ;
     (*ni_handle) = 0 ;
@@ -208,7 +209,7 @@ GrB_Info GB_ijvector
     }
 
     bool list_is_stride = (list_descriptor == GxB_IS_STRIDE) ;
-    int64_t ni = List->nvals ;
+    int64_t ni = GB_nnz (List) ;
     if (list_is_stride && (ni != 3 || is_build))
     { 
         // List must have exactly 3 items (lo,hi,stride) for GxB_IS_STRIDE
@@ -405,9 +406,9 @@ GrB_Info GB_ijvector
     //--------------------------------------------------------------------------
 
     GrB_Type I_target_type = NULL ;
-    if (is_build)
+    if (is_build && which == 2)
     { 
-        // List remains as-is
+        // List remains as-is for the values for build
         I_target_type = I_type ;
     }
     else if (list_is_stride)
@@ -427,6 +428,12 @@ GrB_Info GB_ijvector
         I_type = GrB_UINT64 ;
         I_target_type = GrB_UINT64 ;
     }
+    else
+    { 
+        // I_type is not a 32/64 bit integer; typecast it to GrB_UINT64
+        // FIXME: check max value of I, and use 32-bit int if OK
+        I_target_type = GrB_UINT64 ;
+    }
 
     //--------------------------------------------------------------------------
     // copy/typecast the indices if needed
@@ -439,8 +446,7 @@ GrB_Info GB_ijvector
         GB_OK (GB_new (&T, // static header
             I_type, ni, 1, GB_ph_null, true, GxB_FULL, 0, 0,
             false, false, false)) ;
-        T->x = I ;
-        T->x_shallow = true ;
+        GB_vector_load ((GrB_Vector) T, &I, ni, I_size, I_type, true) ;
         ASSERT_MATRIX_OK (T, "T for typecast to I", GB0) ;
 
         // I2 = (uint64_t) T->x or (int64_t) T->x

@@ -26,6 +26,8 @@
 // because mxGetData works best for Octave, and it works fine for MATLAB
 // since GraphBLAS requires R2018a with the interleaved complex data type.
 
+// FIXME: revise to use the new GxB_Container methods.
+
 #include "gb_interface.h"
 
 #define IF(error,message) \
@@ -49,7 +51,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
 
     int burble ;
     OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
-//  OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+    OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     //--------------------------------------------------------------------------
     // construct the shallow GrB_Matrix

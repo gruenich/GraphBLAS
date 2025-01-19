@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // See GxB_Matrix_reshape for a description of the output matrix c.
 
 // If the input matrix A is nrows-by-ncols, and the size of the newly-created

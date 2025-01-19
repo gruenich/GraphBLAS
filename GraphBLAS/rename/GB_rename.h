@@ -468,7 +468,6 @@
 #define GB_helper4 GM_helper4
 #define GB_helper5 GM_helper5
 #define GB_helper7 GM_helper7
-#define GB_helper8 GM_helper8
 #define GB_HIST_countFast GM_HIST_countFast
 #define GB_HIST_countFast_wksp GM_HIST_countFast_wksp
 #define GB_HIST_count GM_HIST_count
@@ -517,7 +516,7 @@
 #define GB_ijlength GM_ijlength
 #define GB_ijproperties GM_ijproperties
 #define GB_ijsort GM_ijsort
-#define GB_ijvector GM_ijvector
+#define GB_ijxvector GM_ijxvector
 #define GB_import GM_import
 #define GB_IndexBinaryOp_check GM_IndexBinaryOp_check
 #define GB_IndexUnaryOp_check GM_IndexUnaryOp_check
