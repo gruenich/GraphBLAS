@@ -18,13 +18,16 @@ A (huge,1) = 1 ;
 m = huge ;
 A (3,n) = 999 ;
 
-I = [3 4 1] ;
+I = [3 4 1]' ;
 C = A (I,:) ;
 
 I0 = uint64 (I) - 1 ;
 S = sparse (length (I), n) ;
 
 C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I0, [ ], [ ]) ;
+assert (isequal (C, C2.matrix)) ;
+
+C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I0, [ ], [ ], 1) ;
 assert (isequal (C, C2.matrix)) ;
 
 fprintf ('test124: all tests passed\n') ;

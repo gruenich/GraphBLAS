@@ -26,6 +26,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     const GrB_Descriptor desc
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -50,6 +51,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 
@@ -68,10 +70,10 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     // build the vector
     //--------------------------------------------------------------------------
 
-    info = GB_build ((GrB_Matrix) w, I, NULL, scalar->x, ni,
+    GB_OK (GB_build ((GrB_Matrix) w, I, NULL, scalar->x, ni,
         GxB_IGNORE_DUP, scalar->type,
         /* is_matrix: */ false, /* X_iso: */ true,
-        /* I,J is 32: */ I_is_32, false, Werk) ;
+        /* I,J is 32: */ I_is_32, false, Werk)) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

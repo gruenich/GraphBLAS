@@ -153,6 +153,7 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
             break ;
 
         case GxB_ROWINDEX_LIST : 
+GB_GOTCHA ;
 
             if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
@@ -168,6 +169,7 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
             break ;
 
         case GxB_COLINDEX_LIST : 
+GB_GOTCHA ;
 
             if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
@@ -183,6 +185,7 @@ GrB_Info GxB_Desc_set_INT32     // set a parameter in a descriptor
             break ;
 
         case GxB_VALUE_LIST : 
+GB_GOTCHA ;
 
             if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES))

@@ -24,6 +24,7 @@ GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
     const GrB_Descriptor desc       // descriptor for C(i,:) and mask
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

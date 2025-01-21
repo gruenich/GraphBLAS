@@ -26,7 +26,8 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
     const GrB_Descriptor desc
 )
-{
+{ 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -55,6 +56,7 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     int64_t ivals = GB_nnz (I_vector) ;
     if (nvals != ivals)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,X must have the"
             "same number of entries%s", "") ;
     }

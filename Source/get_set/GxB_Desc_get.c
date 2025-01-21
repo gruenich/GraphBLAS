@@ -85,18 +85,21 @@ GrB_Info GxB_Desc_get_INT32     // get a parameter from a descriptor
             break ;
 
         case GxB_ROWINDEX_LIST : 
+GB_GOTCHA ;
 
             (*value) = (int32_t) ((desc == NULL) ?
                 GrB_DEFAULT : desc->row_list) ;
             break ;
 
         case GxB_COLINDEX_LIST : 
+GB_GOTCHA ;
 
             (*value) = (int32_t) ((desc == NULL) ?
                 GrB_DEFAULT : desc->col_list) ;
             break ;
 
         case GxB_VALUE_LIST : 
+GB_GOTCHA ;
 
             (*value) = (int32_t) ((desc == NULL) ?
                 GrB_DEFAULT : desc->val_list) ;
@@ -246,6 +249,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             break ;
 
         case GxB_ROWINDEX_LIST : 
+GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;
@@ -257,6 +261,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             break ;
 
         case GxB_COLINDEX_LIST : 
+GB_GOTCHA ;
 
             {
                 va_start (ap, field) ;

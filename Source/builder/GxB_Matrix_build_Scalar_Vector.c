@@ -28,6 +28,7 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
     const GrB_Descriptor desc
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -51,6 +52,7 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 
@@ -60,6 +62,7 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
     int64_t jvals = GB_nnz (J_vector) ;
     if (nvals != jvals)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,J,X must all have the"
             "same number of entries%s", "") ;
     }

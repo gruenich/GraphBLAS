@@ -71,6 +71,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
 
             if (Container->Y != NULL)
             { 
+GB_GOTCHA ;
                 // free any prior content
                 GB_Matrix_free (&(Container->Y)) ;
             }

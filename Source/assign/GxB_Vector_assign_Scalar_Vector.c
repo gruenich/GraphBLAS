@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Assigns a single scalar to a vector, w<M>(Rows) = accum(w(Rows),x)
 // The scalar x is implicitly expanded into a vector u of size ni-by-1,
 // with each entry in u equal to x.
@@ -28,6 +26,7 @@ GrB_Info GxB_Vector_assign_Scalar_Vector   // w<mask>(I) = accum (w(I),x)
     const GrB_Descriptor desc       // descriptor for w and mask
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

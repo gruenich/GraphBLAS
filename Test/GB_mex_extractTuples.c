@@ -185,7 +185,7 @@ void mexFunction
         if (GB_VECTOR_OK (A))
         {
             GrB_Vector v = (GrB_Vector) A ;
-            METHOD (GxB_Vector_extractTuples_Vector (I_vector, X_vector, v,
+            METHOD (GxB_Vector_extractTuples_Vector_(I_vector, X_vector, v,
                 NULL)) ;
             if (nargout > 1)
             {
@@ -196,7 +196,7 @@ void mexFunction
         }
         else
         {
-            METHOD (GxB_Matrix_extractTuples_Vector (I_vector, J_vector,
+            METHOD (GxB_Matrix_extractTuples_Vector_(I_vector, J_vector,
                 X_vector, A, NULL)) ;
         }
         pargout [0] = GB_mx_Vector_to_mxArray (&I_vector, "I", false) ;

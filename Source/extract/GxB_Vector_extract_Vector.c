@@ -23,6 +23,7 @@ GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
     const GrB_Descriptor desc       // descriptor for w and mask
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs

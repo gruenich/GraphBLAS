@@ -29,6 +29,7 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     const GrB_Descriptor desc
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -60,6 +61,7 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     int64_t jvals = GB_nnz (J_vector) ;
     if (nvals != ivals || nvals != jvals)
     { 
+GB_GOTCHA ;
         GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,J,X must all have the"
             "same number of entries%s", "") ;
     }

@@ -2911,17 +2911,12 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
 // be associative and commutative (but this cannot be checked).  It cannot be
 // based on a GxB_IndexBinaryOp.
 //
-//  GrB_Info GrB_Monoid_new         // create a monoid
+//  GrB_Info GrB_Monoid_new_TYPE    // create a monoid
 //  (
 //      GrB_Monoid *monoid,         // handle of monoid to create
 //      GrB_BinaryOp op,            // binary operator of the monoid
 //      <type> identity             // identity value of the monoid
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Monoid_new(monoid,op,identity) \
-    _Generic ((identity), GB_CASES (GrB, Monoid_new)) (monoid, op, identity)
-#endif
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
@@ -2933,24 +2928,23 @@ GrB_Info prefix ## Monoid_new ## suffix   /* create a new monoid */           \
 ) ;
 GB_DECLARE_14 (GrB_, void *)
 
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Monoid_new(monoid,op,identity) \
+    _Generic ((identity), GB_CASES (GrB, Monoid_new)) (monoid, op, identity)
+#endif
+
 // GxB_Monoid_terminal_new is identical to GrB_Monoid_new, except that a
 // terminal value can be specified.  The terminal may be NULL, which indicates
 // no terminal value (and in this case, it is identical to GrB_Monoid_new).
 // The terminal value, if not NULL, must have the same type as the identity.
 //
-//  GrB_Info GxB_Monoid_terminal_new    // create a terminal monoid
+//  GrB_Info GxB_Monoid_terminal_new_TYPE    // create a terminal monoid
 //  (
 //      GrB_Monoid *monoid,         // handle of monoid to create
 //      GrB_BinaryOp op,            // binary operator of the monoid
 //      <type> identity,            // identity value of the monoid
 //      <type> terminal             // terminal value of the monoid
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
-    _Generic ((identity), GB_CASES (GxB, Monoid_terminal_new))  \
-    (monoid, op, identity, terminal)
-#endif
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
@@ -2962,6 +2956,12 @@ GrB_Info GxB_Monoid_terminal_new ## suffix /* create a new termainal monoid */\
     type terminal                   /* terminal value of the monoid */        \
 ) ;
 GB_DECLARE_14 (GxB_, void *)
+
+#if GxB_STDC_VERSION >= 201112L
+#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
+    _Generic ((identity), GB_CASES (GxB, Monoid_terminal_new))  \
+    (monoid, op, identity, terminal)
+#endif
 
 //==============================================================================
 // GrB_Semiring
@@ -3020,16 +3020,11 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 // Set a single GrB_Scalar s, from a user scalar x: s = x, typecasting from the
 // type of x to the type of w as needed.
 //
-//  GrB_Info GrB_Scalar_setElement      // s = x
+//  GrB_Info GrB_Scalar_setElement_TYPE // s = x
 //  (
 //      GrB_Scalar s,                   // GrB_Scalar to modify
 //      <type> x                        // user scalar to assign to s
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Scalar_setElement(s,x) \
-    _Generic ((x), GB_CASES (GrB, Scalar_setElement)) (s, x)
-#endif
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
@@ -3040,6 +3035,11 @@ GrB_Info prefix ## Scalar_setElement ## suffix   /* s = x  */                 \
 ) ;
 GB_DECLARE_14 (GrB_, void *)
 
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Scalar_setElement(s,x) \
+    _Generic ((x), GB_CASES (GrB, Scalar_setElement)) (s, x)
+#endif
+
 //------------------------------------------------------------------------------
 // GrB_Scalar_extractElement
 //------------------------------------------------------------------------------
@@ -3047,16 +3047,11 @@ GB_DECLARE_14 (GrB_, void *)
 // Extract a single entry from a GrB_Scalar, x = s, typecasting from the type
 // of s to the type of x as needed.
 //
-//  GrB_Info GrB_Scalar_extractElement  // x = s
+//  GrB_Info GrB_Scalar_extractElement_TYPE  // x = s
 //  (
 //      <type> *x,                  // user scalar extracted
 //      const GrB_Scalar s          // GrB_Scalar to extract an entry from
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Scalar_extractElement(x,s) \
-    _Generic ((x), GB_PCASES (GrB, Scalar_extractElement)) (x, s)
-#endif
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                        \
@@ -3066,6 +3061,11 @@ GrB_Info prefix ## Scalar_extractElement ## suffix   /* x = s  */             \
     const GrB_Scalar s              /* GrB_Scalar to extract an entry from */ \
 ) ;
 GB_DECLARE_14 (GrB_, void)
+
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Scalar_extractElement(x,s) \
+    _Generic ((x), GB_PCASES (GrB, Scalar_extractElement)) (x, s)
+#endif
 
 //==============================================================================
 // GrB_Vector: a GraphBLAS vector
@@ -3202,27 +3202,12 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
 // Set a single scalar in a vector, w(i) = x, typecasting from the type of x to
 // the type of w as needed.
 //
-//  GrB_Info GrB_Vector_setElement  // w(i) = x
+//  GrB_Info GrB_Vector_setElement_TYPE  // w(i) = x
 //  (
 //      GrB_Vector w,               // vector to modify
 //      <type> x,                   // scalar to assign to w(i)
 //      GrB_Index i                 // row index
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_setElement(w,x,i)            \
-    _Generic ((x),                              \
-        GB_CASES (GrB, Vector_setElement),      \
-        default:  GrB_Vector_setElement_Scalar) \
-    (w, x, i)
-#endif
-
-GrB_Info GrB_Vector_setElement_Scalar   // w(i) = x
-(
-    GrB_Vector w,                       // vector to modify
-    GrB_Scalar x,                       // scalar to assign to w(i)
-    GrB_Index i                         // row index
-) ;
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                              \
@@ -3234,6 +3219,21 @@ GrB_Info prefix ## Vector_setElement ## suffix   /* w(i) = x */     \
 ) ;
 GB_DECLARE_14 (GrB_, void *)
 
+GrB_Info GrB_Vector_setElement_Scalar   // w(i) = x
+(
+    GrB_Vector w,                       // vector to modify
+    GrB_Scalar x,                       // scalar to assign to w(i)
+    GrB_Index i                         // row index
+) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Vector_setElement(w,x,i)            \
+    _Generic ((x),                              \
+        GB_CASES (GrB, Vector_setElement),      \
+        default:  GrB_Vector_setElement_Scalar) \
+    (w, x, i)
+#endif
+
 //------------------------------------------------------------------------------
 // GrB_Vector_extractElement
 //------------------------------------------------------------------------------
@@ -3241,27 +3241,12 @@ GB_DECLARE_14 (GrB_, void *)
 // Extract a single entry from a vector, x = v(i), typecasting from the type of
 // v to the type of x as needed.
 //
-//  GrB_Info GrB_Vector_extractElement  // x = v(i)
+//  GrB_Info GrB_Vector_extractElement_TYPE  // x = v(i)
 //  (
 //      <type> *x,                      // scalar extracted
 //      const GrB_Vector v,             // vector to extract an entry from
 //      GrB_Index i                     // row index
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractElement(x,v,i)            \
-    _Generic ((x),                                  \
-        GB_PCASES (GrB, Vector_extractElement),     \
-        default:  GrB_Vector_extractElement_Scalar) \
-    (x, v, i)
-#endif
-
-GrB_Info GrB_Vector_extractElement_Scalar   // x = v(i)
-(
-    GrB_Scalar x,                   // scalar extracted
-    const GrB_Vector v,             // vector to extract an entry from
-    GrB_Index i                     // row index
-) ;
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                  \
@@ -3272,6 +3257,21 @@ GrB_Info prefix ## Vector_extractElement ## suffix   /* x = v(i) */     \
     GrB_Index i                 /* row index */                         \
 ) ;
 GB_DECLARE_14 (GrB_, void)
+
+GrB_Info GrB_Vector_extractElement_Scalar   // x = v(i)
+(
+    GrB_Scalar x,                   // scalar extracted
+    const GrB_Vector v,             // vector to extract an entry from
+    GrB_Index i                     // row index
+) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Vector_extractElement(x,v,i)            \
+    _Generic ((x),                                  \
+        GB_PCASES (GrB, Vector_extractElement),     \
+        default:  GrB_Vector_extractElement_Scalar) \
+    (x, v, i)
+#endif
 
 //------------------------------------------------------------------------------
 // GxB_Vector_isStoredElement
@@ -3308,7 +3308,7 @@ GrB_Info GrB_Vector_removeElement
 // example, to extract just the row indices, pass I as non-NULL, and X as NULL.
 // This is like [I,~,~] = find (V) in MATLAB notation.
 //
-//  GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (V)
+//  GrB_Info GrB_Vector_extractTuples_TYPE      // [I,~,X] = find (V)
 //  (
 //      GrB_Index *I,       // array for returning row indices of tuples
 //      <type> *X,          // array for returning values of tuples
@@ -3337,13 +3337,15 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
 
 // GrB_Vector_extractTuples is a polymorphic method that allow access to
 // all of the *Vector_extractTuples* methods:
-// GrB_Vector_extracTuples_TYPE   (I, X, nvals, V)
-// GxB_Vector_extracTuples_Vector (I, X, V, desc) where I,X are GrB_Vector
+// GrB_Vector_extractTuples_TYPE   (I, X, nvals, V)
+// GxB_Vector_extractTuples_Vector (I, X, V, desc) where I,X are GrB_Vector
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Vector_extractTuples(I_,X,arg3,arg4)                            \
-    _Generic ((arg3),                                                       \
-        GrB_Index *: _Generic ((X), GB_PCASES (GrB, Vector_extractTuples)), \
-        default: GxB_Vector_extractTuples_Vector)                           \
+#define GrB_Vector_extractTuples(I_,X,arg3,arg4)        \
+    _Generic ((arg3),                                   \
+        GrB_Vector: GxB_Vector_extractTuples_Vector,    \
+        default: _Generic ((X),                         \
+            GB_PCASES (GrB, Vector_extractTuples),      \
+            default: GxB_Vector_extractTuples_Vector))  \
     (I_, X, arg3, arg4)
 #endif
 
@@ -3493,21 +3495,13 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,X) tuples
 // Set a single entry in a matrix, C(i,j) = x, typecasting from the type of x
 // to the type of C, as needed.
 //
-//  GrB_Info GrB_Matrix_setElement  // C (i,j) = x
+//  GrB_Info GrB_Matrix_setElement_TYPE  // C (i,j) = x
 //  (
 //      GrB_Matrix C,               // matrix to modify
 //      <type> x,                   // scalar to assign to C(i,j)
 //      GrB_Index i,                // row index
 //      GrB_Index j                 // column index
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_setElement(C,x,i,j)          \
-    _Generic ((x),                              \
-        GB_CASES (GrB, Matrix_setElement),      \
-        default:  GrB_Matrix_setElement_Scalar) \
-    (C, x, i, j)
-#endif
 
 GrB_Info GrB_Matrix_setElement_Scalar   // C (i,j) = x
 (
@@ -3528,6 +3522,14 @@ GrB_Info prefix ## Matrix_setElement ## suffix  /* C(i,j) = x */        \
 ) ;
 GB_DECLARE_14 (GrB_, void *)
 
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_setElement(C,x,i,j)          \
+    _Generic ((x),                              \
+        GB_CASES (GrB, Matrix_setElement),      \
+        default:  GrB_Matrix_setElement_Scalar) \
+    (C, x, i, j)
+#endif
+
 //------------------------------------------------------------------------------
 // GrB_Matrix_extractElement
 //------------------------------------------------------------------------------
@@ -3535,29 +3537,13 @@ GB_DECLARE_14 (GrB_, void *)
 // Extract a single entry from a matrix, x = A(i,j), typecasting from the type
 // of A to the type of x, as needed.
 //
-//  GrB_Info GrB_Matrix_extractElement  // x = A(i,j)
+//  GrB_Info GrB_Matrix_extractElement_TYPE  // x = A(i,j)
 //  (
 //      <type> *x,                      // extracted scalar
 //      const GrB_Matrix A,             // matrix to extract a scalar from
 //      GrB_Index i,                    // row index
 //      GrB_Index j                     // column index
 //  ) ;
-
-#if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractElement(x,A,i,j)              \
-    _Generic ((x),                                      \
-        GB_PCASES (GrB, Matrix_extractElement),         \
-        default:  GrB_Matrix_extractElement_Scalar)     \
-    (x, A, i, j)
-#endif
-
-GrB_Info GrB_Matrix_extractElement_Scalar   // x = A(i,j)
-(
-    GrB_Scalar x,                       // extracted scalar
-    const GrB_Matrix A,                 // matrix to extract a scalar from
-    GrB_Index i,                        // row index
-    GrB_Index j                         // column index
-) ;
 
 #undef  GB_DECLARE
 #define GB_DECLARE(prefix,suffix,type)                                      \
@@ -3569,6 +3555,26 @@ GrB_Info prefix ## Matrix_extractElement ## suffix   /* x = A(i,j) */       \
     GrB_Index j                     /* column index */                      \
 ) ;
 GB_DECLARE_14 (GrB_, void)
+
+GrB_Info GrB_Matrix_extractElement_Scalar   // x = A(i,j)
+(
+    GrB_Scalar x,                       // extracted scalar
+    const GrB_Matrix A,                 // matrix to extract a scalar from
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
+) ;
+
+#if GxB_STDC_VERSION >= 201112L
+#define GrB_Matrix_extractElement(x,A,i,j)              \
+    _Generic ((x),                                      \
+        GB_PCASES (GrB, Matrix_extractElement),         \
+        default:  GrB_Matrix_extractElement_Scalar)     \
+    (x, A, i, j)
+#endif
+
+//------------------------------------------------------------------------------
+// GxB_Matrix_isStoredElement
+//------------------------------------------------------------------------------
 
 // GxB_Matrix_isStoredElement determines if A(i,j) is present in the structure
 // of the matrix A, as a stored element.  It does not return the value.  It
@@ -3635,13 +3641,15 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
 
 // GrB_Matrix_extractTuples is a polymorphic method that allow access to
 // all of the *Matrix_extractTuples* methods:
-// GrB_Matrix_extracTuples_TYPE   (I, J, X, nvals, A)
-// GxB_Matrix_extracTuples_Vector (I, J, X, A, desc) where I,J,X are GrB_Vector
+// GrB_Matrix_extractTuples_TYPE   (I, J, X, nvals, A)
+// GxB_Matrix_extractTuples_Vector (I, J, X, A, desc) where I,J,X are GrB_Vector
 #if GxB_STDC_VERSION >= 201112L
-#define GrB_Matrix_extractTuples(I_,J,X,arg4,arg5)                          \
-    _Generic ((arg4),                                                       \
-        GrB_Index *: _Generic ((X), GB_PCASES (GrB, Matrix_extractTuples)), \
-        default: GxB_Matrix_extractTuples_Vector)                           \
+#define GrB_Matrix_extractTuples(I_,J,X,arg4,arg5)  \
+    _Generic ((arg4),                                   \
+        GrB_Matrix: GxB_Matrix_extractTuples_Vector,    \
+        default: _Generic ((X),                         \
+            GB_PCASES (GrB, Matrix_extractTuples),      \
+            default: GxB_Matrix_extractTuples_Vector))  \
     (I_, J, X, arg4, arg5)
 #endif
 
@@ -5820,25 +5828,21 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 ) ;
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_fprint(object,pr,f)                                 \
-    _Generic                                                    \
-    (                                                           \
-        (object),                                               \
-                  GrB_Type         : GxB_Type_fprint         ,  \
-                  GrB_UnaryOp      : GxB_UnaryOp_fprint      ,  \
-                  GrB_BinaryOp     : GxB_BinaryOp_fprint     ,  \
-                  GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,  \
-                  GxB_IndexBinaryOp: GxB_IndexBinaryOp_fprint,  \
-                  GrB_Monoid       : GxB_Monoid_fprint       ,  \
-                  GrB_Semiring     : GxB_Semiring_fprint     ,  \
-                  GrB_Scalar       : GxB_Scalar_fprint       ,  \
-                  GrB_Vector       : GxB_Vector_fprint       ,  \
-                  GrB_Matrix       : GxB_Matrix_fprint       ,  \
-                  GrB_Descriptor   : GxB_Descriptor_fprint   ,  \
-                  GxB_Context      : GxB_Context_fprint         \
-    )                                                           \
+#define GxB_fprint(object,pr,f)                         \
+    _Generic ((object),                                 \
+        GrB_Type         : GxB_Type_fprint         ,    \
+        GrB_UnaryOp      : GxB_UnaryOp_fprint      ,    \
+        GrB_BinaryOp     : GxB_BinaryOp_fprint     ,    \
+        GrB_IndexUnaryOp : GxB_IndexUnaryOp_fprint ,    \
+        GxB_IndexBinaryOp: GxB_IndexBinaryOp_fprint,    \
+        GrB_Monoid       : GxB_Monoid_fprint       ,    \
+        GrB_Semiring     : GxB_Semiring_fprint     ,    \
+        GrB_Scalar       : GxB_Scalar_fprint       ,    \
+        GrB_Vector       : GxB_Vector_fprint       ,    \
+        GrB_Matrix       : GxB_Matrix_fprint       ,    \
+        GrB_Descriptor   : GxB_Descriptor_fprint   ,    \
+        GxB_Context      : GxB_Context_fprint)          \
     (object, GB_STR(object), pr, f)
-
 #define GxB_print(object,pr) GxB_fprint(object,pr,NULL)
 #endif
 

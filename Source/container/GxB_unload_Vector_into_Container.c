@@ -19,6 +19,7 @@ GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
     const GrB_Descriptor desc   // currently unused
 )
 { 
+GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
