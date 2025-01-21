@@ -153,7 +153,7 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,X) tuples
 // GrB_extractTuples:
 //==============================================================================
 
-// 28 EXISTING methods for each of the 14 built-in data types
+// 28 EXISTING methods for each of the 14 built-in data types:
 
 GrB_Info GrB_Vector_extractTuples_TYPE      // [I,~,X] = find (v)
 GrB_Info GrB_Matrix_extractTuples_TYPE      // [I,J,X] = find (A)
@@ -469,7 +469,7 @@ GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
 // data for a GrB_Matrix or GrB_Vector.  It will have some GrB_Vector and
 // GrB_Matrix components but they will be opaque since the GrB_Matrix and
 // GrB_Vector objects remain opaque.  Since the GxB_Container struct is visible
-// to the end user, it will have some extra compenents for future expansion, in
+// to the end user, it will have some extra components for future expansion, in
 // case I add new data formats.
 
 // I still need to document each of these components in the Container struct:
@@ -748,7 +748,7 @@ GxB_Container_free (&Container) ;    // does several O(1)-sized free's
 // refuse to deserialize them.
 
 // If GraphBLAS v10 serializes a matrix with all-64-bit integers, then
-// GraphBLAS v9.x is able to deserialize it.  The user application can direct
+// GraphBLAS v9.x is able to deserialize it.  The user application can tell
 // GrB v10 to use all-64-bits and then serialize it, so it would be able to
 // create a backward-compatible serialized blob, if that is desired.
 
