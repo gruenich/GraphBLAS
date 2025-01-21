@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // GB_extractTuples_prep ensures that an output GrB_Vector for I, J, or X is
 // dense, of size nvals-by-1, and the right type.
 

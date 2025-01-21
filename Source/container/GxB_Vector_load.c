@@ -26,8 +26,6 @@
 // GrB* or GxB* method as the output matrix/vector/scalar, return an error
 // code, such as GxB_OUTPUT_IS_READ_ONLY.
 
-#define GB_DEBUG
-
 #include "GB_container.h"
 
 GrB_Info GxB_Vector_load

@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
 
 // FIXME: add a descriptor that allows input I,J to be 1-based
 

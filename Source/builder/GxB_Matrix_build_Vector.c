@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
 
 // If dup is NULL: any duplicates result in an error.
 // If dup is GxB_IGNORE_DUP: duplicates are ignored, which is not an error.

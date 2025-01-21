@@ -39,10 +39,11 @@ void mexFunction
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     int burble ;
-    if (nrows <= 1 && ncols <= 1)
+    bool disable_burble = (nrows <= 1 && ncols <= 1) ;
+    if (disable_burble)
     {
-        OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
-        OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
+        OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
     }
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     GrB_Type xtype ;
@@ -52,6 +53,8 @@ void mexFunction
     //--------------------------------------------------------------------------
     // extract the tuples
     //--------------------------------------------------------------------------
+
+    // FIXME: use _Vector version, then unload into X
 
     if (xtype == GrB_BOOL)
     { 
@@ -142,6 +145,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_free (&A)) ;
+    if (disable_burble)
+    { 
+        OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
+    }
     GB_WRAPUP ;
 }
 

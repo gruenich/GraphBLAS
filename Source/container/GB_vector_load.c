@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "GB_container.h"
 
 void GB_vector_load

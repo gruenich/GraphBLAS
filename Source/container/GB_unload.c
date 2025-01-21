@@ -6,9 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
-
-// DONE: 32/64 bit
 
 // This method takes O(1) time and performs no mallocs at all, unless A has
 // pending work that must be finished.  It typically will perform no frees,

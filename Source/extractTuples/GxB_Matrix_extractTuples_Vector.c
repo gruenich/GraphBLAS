@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // Extracts all tuples from a matrix, like [I,J,X] = find (A) in MATLAB.  If
 // any parameter I, J and/or X is NULL, then that component is not extracted.
 // I, J, and X are GrB_Vectors, and on output they are dense vectors of

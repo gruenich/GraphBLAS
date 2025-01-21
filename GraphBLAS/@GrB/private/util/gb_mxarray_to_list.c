@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 #include "gb_interface.h"
 
 //------------------------------------------------------------------------------
@@ -51,7 +49,8 @@ static GrB_Vector gb_subtract_base
         OK (GrB_Vector_new (&V, type, n)) ;
         ASSERT_VECTOR_OK (V, "V result, before apply", GB0) ;
         ASSERT_VECTOR_OK (*S, "S before apply", GB0) ;
-        OK (GrB_apply (V, NULL, NULL, minus, *S, 1, NULL)) ;
+        OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (V, NULL, NULL, minus, *S, 1,
+            NULL)) ;
         ASSERT_VECTOR_OK (V, "V result, after apply", GB0) ;
         GrB_Matrix_free (S) ;
     }
@@ -100,8 +99,8 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     }
 
     int sparsity, fmt ;
-    OK (GrB_get (S, &fmt, GxB_FORMAT)) ;
-    OK (GrB_get (S, &sparsity, GxB_SPARSITY_STATUS)) ;
+    OK (GrB_Matrix_get_INT32 (S, &fmt, GxB_FORMAT)) ;
+    OK (GrB_Matrix_get_INT32 (S, &sparsity, GxB_SPARSITY_STATUS)) ;
     bool quick = false ;
 
     if (ncols == 1 && sparsity != GxB_HYPERSPARSE && fmt == GxB_BY_COL)
@@ -142,8 +141,9 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     GrB_Matrix_free (&S) ;
 
     // ensure C is not hypersparse, and is stored by column
-    OK (GrB_set (C, GxB_SPARSE + GxB_BITMAP + GxB_FULL, GxB_SPARSITY_CONTROL)) ;
-    OK (GrB_set (C, GxB_BY_COL, GxB_FORMAT)) ;
+    OK (GrB_Matrix_set_INT32 (C, GxB_SPARSE + GxB_BITMAP + GxB_FULL,
+        GxB_SPARSITY_CONTROL)) ;
+    OK (GrB_Matrix_set_INT32 (C, GxB_BY_COL, GxB_FORMAT)) ;
 
     // C is now a valid vector
     ASSERT_VECTOR_OK ((GrB_Vector) C, "C as vector", GB0) ;

@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
 
 // The input vector List describes a list of integers or values to be used by
 // GrB_assign, GxB_subassign, GrB_extract, or GrB_build.

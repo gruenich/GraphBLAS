@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 // CALLED BY: GrB_Matrix_build_*, GrB_Vector_build_*,
 //            GxB_Matrix_build_Scalar, GxB_Vector_build_Scalar
 // CALLS:     GB_builder

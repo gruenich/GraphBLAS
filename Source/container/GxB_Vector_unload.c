@@ -27,8 +27,6 @@
 // On output, *X is a pointer to the numerical contents of V.  If V had length
 // zero on input, *X may be returned as a NULL pointer (which is not an error).
 
-#define GB_DEBUG
-
 #include "GB.h"
 #define GB_FREE_ALL ;
 

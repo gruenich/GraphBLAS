@@ -64,10 +64,11 @@ void mexFunction
     OK (GrB_Matrix_nrows (&nrows, A)) ;
     OK (GrB_Matrix_ncols (&ncols, A)) ;
     int burble ;
-    if (nrows <= 1 && ncols <= 1)
+    bool disable_burble = (nrows <= 1 && ncols <= 1) ;
+    if (disable_burble)
     { 
-        OK (GrB_get (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
-        OK (GrB_set (GrB_GLOBAL, false, GxB_BURBLE)) ;
+        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
+        OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
     }
     OK (GrB_Matrix_nvals (&nvals, A)) ;
     GrB_Type xtype ;
@@ -119,15 +120,16 @@ void mexFunction
         { 
             // I = (double) (I + 1)
             OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
-            OK (GrB_apply (T, NULL, NULL, GrB_PLUS_FP64, I, base_offset,
-                NULL)) ;
+            OK (GrB_Vector_apply_BinaryOp2nd_FP64 (T, NULL, NULL,
+                GrB_PLUS_FP64, I, base_offset, NULL)) ;
             OK (GrB_Vector_free (&I)) ;
             I = T ;
         }
         else if (base_offset != 0)
         { 
             // I = I+1, as a uint64 or uint32 vector
-            OK (GrB_apply (I, NULL, NULL, GrB_PLUS_UINT64, I, 1, NULL)) ;
+            OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (I, NULL, NULL,
+                GrB_PLUS_UINT64, I, 1, NULL)) ;
         }
         OK (GxB_Vector_unload (I, &x, &nvals, &size, &type, &ignore, NULL));
         pargout [0] = gb_export_to_mxfull (&x, nvals, 1, type) ;
@@ -145,15 +147,16 @@ void mexFunction
         { 
             // J = (double) (J + 1)
             OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
-            OK (GrB_apply (T, NULL, NULL, GrB_PLUS_FP64, J, base_offset,
-                NULL)) ;
+            OK (GrB_Vector_apply_BinaryOp2nd_FP64 (T, NULL, NULL,
+                GrB_PLUS_FP64, J, base_offset, NULL)) ;
             OK (GrB_Vector_free (&J)) ;
             J = T ;
         }
         else if (base_offset != 0)
         { 
             // J = J+1, as a uint64 or uint32 vector
-            OK (GrB_apply (J, NULL, NULL, GrB_PLUS_UINT64, J, 1, NULL)) ;
+            OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (J, NULL, NULL,
+                GrB_PLUS_UINT64, J, 1, NULL)) ;
         }
         OK (GxB_Vector_unload (J, &x, &nvals, &size, &type, &ignore, NULL));
         pargout [1] = gb_export_to_mxfull (&x, nvals, 1, type) ;
@@ -175,9 +178,9 @@ void mexFunction
     // restore burble and return result
     //--------------------------------------------------------------------------
 
-    if (nrows <= 1 && ncols <= 1)
+    if (disable_burble)
     { 
-        OK (GrB_set (GrB_GLOBAL, burble, GxB_BURBLE)) ;
+        OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     }
     GB_WRAPUP ;
 }

@@ -6,9 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
-
-// DONE: 32/64 bit
 
 // V is returned as a length-0 vector in full data format, with no content.
 

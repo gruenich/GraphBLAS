@@ -4816,6 +4816,7 @@ GB_DECLARE_14 (GxB_, void *)
 // GxB_Vector_subassign_Scalar        (w,m,acc,s,I,ni,d)
 // GxB_Vector_subassign_Vector        (w,m,acc,u,I,d)      I is a GrB_Vector
 // GxB_Vector_subassign               (w,m,acc,u,I,ni,d)
+#if GxB_STDC_VERSION >= 201112L
 #define GB_VECTOR_SUBASSIGN(w,mask,accum,arg4,arg5,...)             \
     _Generic ((arg4),                                               \
         GB_CASES (GxB, Vector_subassign),                           \
@@ -4865,6 +4866,7 @@ GB_DECLARE_14 (GxB_, void *)
         GrB_Vector : GB_VECTOR_SUBASSIGN (C, __VA_ARGS__),          \
         GrB_Matrix : GB_MATRIX_SUBASSIGN (C, __VA_ARGS__))          \
     (C, __VA_ARGS__)
+#endif
 
 //==============================================================================
 // GrB_assign: matrix and vector assign: C<Mask>(I,J) = accum (C(I,J), A)
@@ -5070,6 +5072,7 @@ GB_DECLARE_14 (GrB_, void *)
 // GrB_Vector_assign_Scalar        (w,m,acc,s,I,ni,d)
 // GxB_Vector_assign_Vector        (w,m,acc,u,I,d)      where I is a GrB_Vector
 // GrB_Vector_assign               (w,m,acc,u,I,ni,d)
+#if GxB_STDC_VERSION >= 201112L
 #define GB_VECTOR_ASSIGN(w,mask,accum,arg4,arg5,...)            \
     _Generic ((arg4),                                           \
         GB_CASES (GrB, Vector_assign),                          \
@@ -5119,6 +5122,7 @@ GB_DECLARE_14 (GrB_, void *)
         GrB_Vector : GB_VECTOR_ASSIGN (C, __VA_ARGS__),         \
         GrB_Matrix : GB_MATRIX_ASSIGN (C, __VA_ARGS__))         \
     (C, __VA_ARGS__)
+#endif
 
 //==============================================================================
 // GrB_apply: matrix and vector apply

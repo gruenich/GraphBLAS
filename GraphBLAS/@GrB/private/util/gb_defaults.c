@@ -9,6 +9,8 @@
 
 #include "gb_interface.h"
 
+// FIXME: use GrB_Global_Option_set, not GxB
+
 void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
 {
     // for debug only
@@ -31,7 +33,7 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
 
     // burble is off
-    OK (GxB_Global_Option_set (GxB_BURBLE, false)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     // default # of threads from omp_get_max_threads
     OK (GxB_Global_Option_set (GxB_NTHREADS, GB_omp_get_max_threads ( ))) ;

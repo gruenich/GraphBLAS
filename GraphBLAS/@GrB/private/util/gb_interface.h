@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_interface.h: definitions the SuiteSparse:GraphBLAS interface
+// gb_interface.h: the SuiteSparse:GraphBLAS MATLAB/Octave interface
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -63,8 +63,6 @@ void gbcov_put (void) ;
     GrB_Info info = method ;                                \
     if (info != GrB_SUCCESS)                                \
     {                                                       \
-/*FIXME*/printf ("error at %s, line %d, info %d\n",         \
-            __FILE__, __LINE__, info) ;                     \
         ERROR (gb_error (info)) ;                           \
     }                                                       \
 }
@@ -74,8 +72,6 @@ void gbcov_put (void) ;
     GrB_Info info = method ;                                \
     if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))     \
     {                                                       \
-/*FIXME*/printf ("error at %s, line %d, info %d\n",         \
-            __FILE__, __LINE__, info) ;                     \
         ERROR (gb_error (info)) ;                           \
     }                                                       \
 }
@@ -85,11 +81,8 @@ void gbcov_put (void) ;
     GrB_Info info = method ;                                \
     if (info != GrB_SUCCESS)                                \
     {                                                       \
-/*FIXME*/ printf ("error at %s, line %d, info %d\n",        \
-            __FILE__, __LINE__, info) ;                     \
         const char *message ;                               \
         GrB_Matrix_error (&message, C) ;                    \
-        printf ("message [%s]\n", message) ; \
         ERROR (message) ;                                   \
     }                                                       \
 }
@@ -574,6 +567,52 @@ mxArray *gb_mxclass_to_mxstring (mxClassID class, bool is_complex) ;
 void gb_defaults (void) ;   // set global GraphBLAS defaults for MATLAB
 
 void gb_at_exit ( void ) ;  // call GrB_finalize
+
+//------------------------------------------------------------------------------
+// GraphBLAS polymorphic methods
+//------------------------------------------------------------------------------
+
+// The @GrB MATLAB interface does not use these macros since they require a
+// C11, and thus they cannot be used for MATLAB on Windows.
+
+#undef GrB_Monoid_new
+#undef GxB_Monoid_terminal_new
+#undef GrB_Scalar_setElement
+#undef GrB_Scalar_extractElement
+#undef GrB_Vector_build
+#undef GrB_Vector_setElement
+#undef GrB_Vector_extractElement
+#undef GrB_Vector_extractTuples
+#undef GrB_Matrix_build
+#undef GrB_Matrix_setElement
+#undef GrB_Matrix_extractElement
+#undef GrB_Matrix_extractTuples
+#undef GrB_get
+#undef GrB_set
+#undef GrB_wait
+#undef GrB_error
+#undef GrB_eWiseMult
+#undef GrB_eWiseAdd
+#undef GxB_eWiseUnion
+#undef GrB_extract
+#undef GxB_subassign
+#undef GrB_assign
+#undef GrB_apply
+#undef GrB_select
+#undef GrB_reduce
+#undef GrB_kronecker
+#undef GxB_resize
+#undef GxB_fprint
+#undef GxB_print
+#undef GrB_Matrix_import
+#undef GrB_Matrix_export
+#undef GxB_sort
+#undef GrB_free
+#undef GxB_Scalar_setElement
+#undef GxB_Scalar_extractElement
+#undef GxB_set
+#undef GxB_get
+#undef GxB_select
 
 #endif
 
