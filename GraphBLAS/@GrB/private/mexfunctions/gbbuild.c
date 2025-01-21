@@ -55,10 +55,7 @@ static GrB_Scalar gb_get_scalar (GrB_Vector V, GrB_Type type)
     GrB_Vector T ;
     OK (GrB_Scalar_new (&x, type)) ;
     OK (GrB_Vector_new (&T, type, 0)) ;
-//  printf ("get first entry\n") ;
-//  GxB_print (V, 2) ;
     OK (GxB_Vector_extractTuples_Vector (NULL, T, V, NULL)) ;
-//  GxB_print (T, 2) ;
     OK (GrB_Vector_extractElement_Scalar (x, T, 0)) ;
     OK (GrB_Vector_free (&T)) ;
     return (x) ;
@@ -93,7 +90,6 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -125,12 +121,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Vector I = gb_get_list (pargin [0], base_offset) ;
-//  GxB_print (I,2) ;
     GrB_Vector J = gb_get_list (pargin [1], base_offset) ;
-//  GxB_print (J,2) ;
     GrB_Vector X = gb_get_list (pargin [2], 0) ;
-//  GxB_print (X,2) ;
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     uint64_t ni, nj, nx ;
     OK (GrB_Vector_nvals (&ni, I)) ;
@@ -139,10 +131,8 @@ void mexFunction
 
     GrB_Type xtype ;
     OK (GxB_Matrix_type (&xtype, X)) ;
-//  GxB_print (xtype, 2) ;
 
     uint64_t Imax = UINT64_MAX, Jmax = UINT64_MAX ;
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     //--------------------------------------------------------------------------
     // check the sizes of I, J, and X, and the type of X
@@ -168,22 +158,18 @@ void mexFunction
     { 
         if (Imax == UINT64_MAX)
         {
-// printf ("here, expand I\n") ; GxB_print (I,2) ;
             OK (GrB_Vector_reduce_UINT64 (&Imax, NULL, max, I, NULL)) ;
         }
         gb_expand (&I, (Imax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals) ;
-// printf ("Imax %ld\n", Imax) ;
     }
 
     if (nj == 1 && nj < nvals)
     { 
         if (Jmax == UINT64_MAX)
         {
-// printf ("here, expand J\n") ; GxB_print (I,2) ;
             OK (GrB_Vector_reduce_UINT64 (&Jmax, NULL, max, J, NULL)) ;
         }
         gb_expand (&J, (Jmax < UINT32_MAX) ? GrB_UINT32 : GrB_UINT64, nvals) ;
-// printf ("Jmax %ld\n", Jmax) ;
     }
 
     //--------------------------------------------------------------------------
@@ -197,10 +183,8 @@ void mexFunction
         // nrows = max entry in I + 1
         if (Imax == UINT64_MAX)
         {
-// printf ("here, find Imax\n") ; GxB_print (I,2) ;
             OK (GrB_Vector_reduce_UINT64 (&Imax, NULL, max, I, NULL)) ;
         }
-// printf ("here, got Imax %ld\n", Imax) ;
         nrows = Imax + 1 ;
     }
     else
@@ -214,11 +198,9 @@ void mexFunction
         // ncols = max entry in J + 1
         if (Jmax == UINT64_MAX)
         {
-// printf ("here, find Jmax\n") ; GxB_print (I,2) ;
             OK (GrB_Vector_reduce_UINT64 (&Jmax, NULL, max, J, NULL)) ;
         }
         ncols = Jmax + 1 ;
-// printf ("here, got Jmax %ld\n", Jmax) ;
     }
     else
     { 
@@ -348,13 +330,9 @@ void mexFunction
     // build the matrix
     //--------------------------------------------------------------------------
 
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
-//  printf ("nrows %ld ncols %ld\n", nrows, ncols) ;
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
     sparsity = gb_get_sparsity (NULL, NULL, sparsity) ;
-//  printf ("fmt %d, sparsity %d\n", fmt, sparsity) ;
     GrB_Matrix A = gb_new (type, nrows, ncols, fmt, sparsity) ;
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     if (nvals > 0)
     {
@@ -375,16 +353,9 @@ void mexFunction
                 // expand X from a scalar to a vector of length nvals
                 gb_expand (&X, xtype, nvals) ;
             }
-// GxB_print (A,2) ;
-// GxB_print (I,2) ;
-// GxB_print (J,2) ;
-// GxB_print (X,2) ;
-// GxB_print (dup,2) ;
             OK1 (A, GxB_Matrix_build_Vector (A, I, J, X, dup, NULL)) ;
-// GxB_print (A,2) ;
         }
     }
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     //--------------------------------------------------------------------------
     // free workspace

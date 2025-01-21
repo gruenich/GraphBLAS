@@ -86,8 +86,8 @@ elseif (firstchar == (4 - (symmetric || hermitian)))
     else
         % construct a sparse random matrix with about e entries
         e = round (m * n * d) ;
-        I = int64 (floor (rand (e, 1) * m)) ;
-        J = int64 (floor (rand (e, 1) * n)) ;
+        I = int64 (floor (rand (e, 1) * double (m))) ;
+        J = int64 (floor (rand (e, 1) * double (n))) ;
     end
 
 else

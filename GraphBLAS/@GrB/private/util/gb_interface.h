@@ -408,6 +408,7 @@ void gb_mxfree              // mxFree wrapper
     void **p_handle         // handle to pointer to be freed
 ) ;
 
+// FIXME: rename to gb_mxarray_to_list
 GrB_Vector gb_get_list      // list of indices or values
 (
     const mxArray *X,       // MATLAB input matrix or struct with GrB content
@@ -423,25 +424,6 @@ GrB_Vector gb_mxcell_to_list    // return index list I
     // output
     uint64_t *nI,               // # of items in the list
     int64_t *I_max              // largest item in the list
-) ;
-
-int64_t *gb_mxarray_to_list     // DELETE THIS
-(
-    const mxArray *mxList,      // list to extract
-    base_enum_t base,           // input is zero-based or one-based
-    bool *allocated,            // true if output list was allocated
-    int64_t *len,               // length of list
-    int64_t *List_max           // max entry in the list, if computed
-) ;
-
-GrB_Index *gb_mxcell_to_index   // DELETE THIS
-(
-    const mxArray *I_cell,      // built-in cell array
-    base_enum_t base,           // I is one-based or zero-based
-    const GrB_Index n,          // dimension of matrix being indexed
-    bool *I_allocated,          // true if output array I is allocated
-    GrB_Index *ni,              // length (I)
-    int64_t *I_max              // max (I) is computed if I_max is not NULL
 ) ;
 
 GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator

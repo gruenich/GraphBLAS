@@ -13,6 +13,57 @@
 
 #include "gb_interface.h"
 
+//------------------------------------------------------------------------------
+// gb_subtract_base:  V = S, or V = S-1
+//------------------------------------------------------------------------------
+
+static GrB_Vector gb_subtract_base
+(
+    GrB_Vector *S,              // input, returned as V or freed for V=S-1
+    const int base_offset       // 1 or 0
+)
+{
+    GrB_Vector V = NULL ;
+    if (base_offset == 0)
+    { 
+        // V = S, with no change of type
+        V = (GrB_Vector) (*S) ;
+        (*S) = NULL ;
+    }
+    else
+    { 
+        // V = S-1, but typecast to uint32 or uint64 to avoid roundoff errors
+        GrB_Type type ;
+        OK (GxB_Matrix_type (&type, *S)) ;
+        GrB_BinaryOp minus ;
+        if (type == GrB_BOOL   || type == GrB_INT8  || type == GrB_INT16  ||
+            type == GrB_INT32  || type == GrB_UINT8 || type == GrB_UINT16 ||
+            type == GrB_UINT32 || type == GrB_FP32  || type == GxB_FC32)
+        { 
+            type = GrB_UINT32 ;
+            minus = GrB_MINUS_UINT32 ;
+        }
+        else
+        { 
+            type = GrB_UINT64 ;
+            minus = GrB_MINUS_UINT64 ;
+        }
+        uint64_t n ;
+        OK (GrB_Vector_size (&n, *S)) ;
+        OK (GrB_Vector_new (&V, type, n)) ;
+        ASSERT_VECTOR_OK (V, "V result, before apply", GB0) ;
+        ASSERT_VECTOR_OK (*S, "S before apply", GB0) ;
+        OK (GrB_apply (V, NULL, NULL, minus, *S, 1, NULL)) ;
+        ASSERT_VECTOR_OK (V, "V result, after apply", GB0) ;
+        GrB_Matrix_free (S) ;
+    }
+    return (V) ;
+}
+
+//------------------------------------------------------------------------------
+// gb_get_list
+//------------------------------------------------------------------------------
+
 GrB_Vector gb_get_list      // list of indices or values
 (
     const mxArray *X,       // MATLAB input matrix or struct with GrB content
@@ -32,11 +83,9 @@ GrB_Vector gb_get_list      // list of indices or values
     // get the properties of S
     //--------------------------------------------------------------------------
 
-    GrB_Type type ;
     uint64_t ncols, nrows, n ;
     OK (GrB_Matrix_nrows (&nrows, S)) ;
     OK (GrB_Matrix_ncols (&ncols, S)) ;
-    OK (GxB_Matrix_type (&type, S)) ;
 
     //--------------------------------------------------------------------------
     // check for quick return
@@ -45,6 +94,8 @@ GrB_Vector gb_get_list      // list of indices or values
     if (ncols == 0 || nrows == 0)
     { 
         // return a zero-length vector
+        GrB_Type type ;
+        OK (GxB_Matrix_type (&type, S)) ;
         OK (GrB_Vector_new (&V, type, 0)) ;
         ASSERT_VECTOR_OK (V, "V result, empty", GB0) ;
         return (V) ;
@@ -59,37 +110,22 @@ GrB_Vector gb_get_list      // list of indices or values
     { 
         // return S as a shallow GrB_Vector
         quick = true ;
-        n = nrows ;
     }
 
     if (nrows == 1 && sparsity != GxB_HYPERSPARSE && fmt == GxB_BY_ROW)
     { 
         // quick in-place transpose, by converting it to by-column
         quick = true ;
-        n = ncols ;
         S->is_csc = true ;
     }
 
     if (quick)
-    {
+    { 
         // return S as a shallow GrB_Vector, but subtract the base if needed
         ASSERT (GB_VECTOR_OK (S)) ;
         ASSERT_VECTOR_OK ((GrB_Vector) S, "S as vector", GB0) ;
-        if (base_offset == 0)
-        {
-            V = (GrB_Vector) S ;
-        }
-        else
-        { 
-            // V = S - 1
-            OK (GrB_Vector_new (&V, type, n)) ;
-            ASSERT_VECTOR_OK (V, "V result, before apply", GB0) ;
-            ASSERT_VECTOR_OK (S, "S before apply", GB0) ;
-            OK (GrB_apply (V, NULL, NULL, GrB_MINUS_UINT64, (GrB_Vector) S, 1,
-                NULL)) ;
-            ASSERT_VECTOR_OK (V, "V result, after apply", GB0) ;
-            GrB_Matrix_free (&S) ;
-        }
+        // V = S - base_offset
+        V = gb_subtract_base ((GrB_Vector *) &S, base_offset) ;
         ASSERT_VECTOR_OK (V, "V result, quick", GB0) ;
         return (V) ;
     }
@@ -98,12 +134,12 @@ GrB_Vector gb_get_list      // list of indices or values
     // reshape S into (nrows*ncols)-by-1 and return it as a GrB_Vector
     //--------------------------------------------------------------------------
 
+    // C = S (:)
     bool ok = GB_uint64_multiply (&n, nrows, ncols) ;
     if (!ok)
     { 
         ERROR ("input matrix dimensions are too large") ;
     }
-
     OK (GxB_Matrix_reshapeDup (&C, S, true, n, 1, NULL)) ;
     GrB_Matrix_free (&S) ;
 
@@ -112,14 +148,10 @@ GrB_Vector gb_get_list      // list of indices or values
     OK (GrB_set (C, GxB_BY_COL, GxB_FORMAT)) ;
 
     // C is now a valid vector
-    V = (GrB_Vector) C ;
-    ASSERT (GB_VECTOR_OK (V)) ;
-    ASSERT_VECTOR_OK (V, "C as vector", GB0) ;
+    ASSERT_VECTOR_OK ((GrB_Vector) C, "C as vector", GB0) ;
 
-    if (base_offset != 0)
-    { 
-        OK (GrB_apply (V, NULL, NULL, GrB_MINUS_UINT64, V, 1, NULL)) ;
-    }
+    // V = C - base_offset
+    V = gb_subtract_base ((GrB_Vector *) &C, base_offset) ;
 
     // V is now a valid GrB_Vector (no longer shallow)
     ASSERT_VECTOR_OK (V, "V result, slow", GB0) ;

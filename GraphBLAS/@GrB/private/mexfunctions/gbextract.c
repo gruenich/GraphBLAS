@@ -132,7 +132,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Vector I = NULL, J = NULL ;
-    uint64_t cnrows = anrows, cncols = ancols;
+    uint64_t cnrows = anrows, cncols = ancols ;
     int icells = 0, jcells = 0 ;
     int base_offset = (base == BASE_0_INT) ? 0 : 1 ;
 

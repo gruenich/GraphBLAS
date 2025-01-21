@@ -64,10 +64,19 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     CHECK_ERROR (nmatrices < 2 || nmatrices > 3 || nstrings > 1, usage) ;
 
     //--------------------------------------------------------------------------
+    // create the descriptor, if not present
+    //--------------------------------------------------------------------------
+
+    if (desc == NULL)
+    { 
+        OK (GrB_Descriptor_new (&desc)) ;
+    }
+
+    //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
-    GrB_Type atype, ctype ;
+    GrB_Type ctype ;
     GrB_Matrix C, M = NULL, A ;
 
     if (nmatrices == 2)
@@ -82,7 +91,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         A = gb_get_shallow (Matrix [2]) ;
     }
 
-    OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
 
     //--------------------------------------------------------------------------
@@ -108,11 +116,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // get I and J
     //--------------------------------------------------------------------------
 
-    uint64_t *I = (uint64_t *) GrB_ALL ;
-    uint64_t *J = (uint64_t *) GrB_ALL ;
-    uint64_t ni = cnrows, nj = cncols ;
-    bool I_allocated = false, J_allocated = false ;
+    GrB_Vector I = NULL, J = NULL ;
+    int icells = 0, jcells = 0 ;
+    int base_offset = (base == BASE_0_INT) ? 0 : 1 ;
     int64_t I_max = -1, J_max = -1 ;
+    uint64_t nI, nJ ;
 
     if (cnrows > 1 && cncols > 1 && ncells == 1)
     {
@@ -122,22 +130,34 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     if (cnrows == 1 && ncells == 1)
     { 
         // only J is present
-        J = gb_mxcell_to_index (Cell [0], base, cncols, &J_allocated, &nj,
-            &J_max) ;
+        J = gb_mxcell_to_list (Cell [0], base_offset, cncols, &nJ, &J_max) ;
+        jcells = mxGetNumberOfElements (Cell [0]) ;
     }
     else if (ncells == 1)
     { 
         // only I is present
-        I = gb_mxcell_to_index (Cell [0], base, cnrows, &I_allocated, &ni,
-            &I_max) ;
+        I = gb_mxcell_to_list (Cell [0], base_offset, cnrows, &nI, &I_max) ;
+        icells = mxGetNumberOfElements (Cell [0]) ;
     }
     else if (ncells == 2)
     { 
         // both I and J are present
-        I = gb_mxcell_to_index (Cell [0], base, cnrows, &I_allocated, &ni,
-            &I_max) ;
-        J = gb_mxcell_to_index (Cell [1], base, cncols, &J_allocated, &nj,
-            &J_max) ;
+        I = gb_mxcell_to_list (Cell [0], base_offset, cnrows, &nI, &I_max) ;
+        J = gb_mxcell_to_list (Cell [1], base_offset, cncols, &nJ, &J_max) ;
+        icells = mxGetNumberOfElements (Cell [0]) ;
+        jcells = mxGetNumberOfElements (Cell [1]) ;
+    }
+
+    if (icells > 1)
+    { 
+        // I is a 3-element vector containing a stride
+        OK (GrB_Descriptor_set_INT32 (desc, GxB_IS_STRIDE, GxB_ROWINDEX_LIST)) ;
+    }
+
+    if (jcells > 1)
+    { 
+        // J is a 3-element vector containing a stride
+        OK (GrB_Descriptor_set_INT32 (desc, GxB_IS_STRIDE, GxB_COLINDEX_LIST)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -171,14 +191,14 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         if (do_subassign)
         {
             // C(I,J)<M> += scalar
-            OK1 (C, GxB_Matrix_subassign_Scalar (C, M, accum, (GrB_Scalar) A,
-                I, ni, J, nj, desc)) ;
+            OK1 (C, GxB_Matrix_subassign_Scalar_Vector (C, M, accum,
+                (GrB_Scalar) A, I, J, desc)) ;
         }
         else
         {
             // C<M>(I,J) += scalar
-            OK1 (C, GrB_Matrix_assign_Scalar (C, M, accum, (GrB_Scalar) A,
-                I, ni, J, nj, desc)) ;
+            OK1 (C, GxB_Matrix_assign_Scalar_Vector (C, M, accum,
+                (GrB_Scalar) A, I, J, desc)) ;
         }
     }
     else
@@ -186,24 +206,24 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         if (do_subassign)
         { 
             // C(I,J)<M> += A
-            OK1 (C, GxB_Matrix_subassign (C, M, accum, A, I, ni, J, nj, desc)) ;
+            OK1 (C, GxB_Matrix_subassign_Vector (C, M, accum, A, I, J, desc)) ;
         }
         else
         { 
             // C<M>(I,J) += A
-            OK1 (C, GrB_Matrix_assign (C, M, accum, A, I, ni, J, nj, desc)) ;
+            OK1 (C, GxB_Matrix_assign_Vector (C, M, accum, A, I, J, desc)) ;
         }
     }
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free shallow copies and workspace
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_free (&M)) ;
     OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Vector_free (&I)) ;
+    OK (GrB_Vector_free (&J)) ;
     OK (GrB_Descriptor_free (&desc)) ;
-    if (I_allocated) gb_mxfree ((void **) (&I)) ;
-    if (J_allocated) gb_mxfree ((void **) (&J)) ;
 
     //--------------------------------------------------------------------------
     // export the output matrix C
