@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: add _Vector cases
+
 // This is not a stand-alone function; it is #include'd in
 // GB_mex_Matrix_build.c and GB_mex_Vector_build.c.
 

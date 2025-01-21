@@ -1,38 +1,11 @@
 // Changes to the API to support 32/64 bit integers inside GrB_Matrix &
 // GrB_Vector objects.
 
-// All existing methods will continue to work, for backward compatibility.
+// All existing methods will continue to work, for backward compatibility,
+// but some GxB methods will be declared "historical" (kept in the library,
+// and still working, but no longer documented).
 
-// Last updated: Jan 17, 2025.
-
-//==============================================================================
-// GrB_Index: the GraphBLAS integer
-//==============================================================================
-
-// EXISTING:
-
-    // GrB_Index: row or column index, or matrix dimension.  This typedef is
-    // used for row and column indices, or matrix and vector dimensions.
-
-    typedef uint64_t GrB_Index ;
-
-    // GrB_INDEX_MAX is the largest permissible index value.  The largest valid
-    // matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in
-    // SuiteSparse:GrB.
-    #define GrB_INDEX_MAX ((uint64_t) (1ULL << 60) - 1)
-
-    // All scalar input/outputs of type GrB_Index or (GrB_Index *) will not
-    // change, even if the internal data structure uses 32-bit integers.
-
-// NEW:
-
-    // I will try to increase GrB_INDEX_MAX to 2^62-1 in v10.0.0, allowing
-    // matrix dimensions of up to 2^62 when using 64-bit integers.
-
-    // GxB_INDEX32_MAX is the largest permissible index value when using
-    // 32-bit row/column indices.  The largest valid matrix dimension is
-    // GxB_INDEX32_MAX+1, or 2^31, when using 32-bit row/column indices.
-    #define GxB_INDEX32_MAX ((uint64_t) INT32_MAX)
+// Last updated: Jan 21, 2025.
 
 //==============================================================================
 // get/set
@@ -125,42 +98,6 @@
 // _FC*; these methods will not be extended to use GrB_Vectors for I and J.
 // Instead, new methods that use all GrB_Vectors for I,J,X will be added.
 
-GrB_Info GrB_Vector_build_TYPE  // build a vector from (I,X) tuples
-(
-    GrB_Vector w,               // vector to build
-    const GrB_Index *I,         // array of row indices of tuples
-    const <type> *X,            // array of values of tuples
-    GrB_Index nvals,            // number of tuples
-    const GrB_BinaryOp dup      // binary function to assemble duplicates
-) ;
-
-GrB_Info GrB_Matrix_build_TYPE  // build a matrix from (I,J,X) tuples
-(
-    GrB_Matrix C,               // matrix to build
-    const GrB_Index *I,         // array of row indices of tuples
-    const GrB_Index *J,         // array of column indices of tuples
-    const <type> *X,            // array of values of tuples
-    GrB_Index nvals,            // number of tuples
-    const GrB_BinaryOp dup      // binary function to assemble duplicates
-) ;
-
-GrB_Info GxB_Vector_build_Scalar    // build a vector from (i,scalar) tuples
-(
-    GrB_Vector w,               // vector to build
-    const GrB_Index *I,         // array of row indices of tuples
-    const GrB_Scalar scalar,    // value for all tuples
-    GrB_Index nvals             // number of tuples
-) ;
-
-GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
-(
-    GrB_Matrix C,                   // matrix to build
-    const GrB_Index *I,             // array of row indices of tuples
-    const GrB_Index *J,             // array of column indices of tuples
-    GrB_Scalar scalar,              // value for all tuples
-    GrB_Index nvals                 // number of tuples
-) ;
-
 // 4 NEW methods: these use GrB_Vectors for all lists: I, J, and X,
 // with a suffix "_Vector" added to the name:
 
@@ -212,32 +149,14 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,X) tuples
 // GxB_Matrix_build_Vector        (C, I, J, Xv, dup, desc): I,J,X are GrB_Vector
 // GxB_Matrix_build_Scalar_Vector (C, I, J, s , desc ): I,J are GrB_Vector
 
-// I can also create a single polymorphic GrB_build or GxB_build that includes
-// all 34 build methods, but this is not essential.  Note that a similar
-// GrB_extractTuples CANNOT be created; see below.
-
 //==============================================================================
 // GrB_extractTuples:
 //==============================================================================
 
-// 28 EXISTING methods for each of the 14 built-in data types:
+// 28 EXISTING methods for each of the 14 built-in data types
 
 GrB_Info GrB_Vector_extractTuples_TYPE      // [I,~,X] = find (v)
-(
-    GrB_Index *I,       // array for returning row indices of tuples
-    <type> *X,          // array for returning values of tuples
-    GrB_Index *nvals,   // I, X size on input; # tuples on output
-    const GrB_Vector v  // vector to extract tuples from
-) ;
-
 GrB_Info GrB_Matrix_extractTuples_TYPE      // [I,J,X] = find (A)
-(
-    GrB_Index *I,           // array for returning row indices of tuples
-    GrB_Index *J,           // array for returning col indices of tuples
-    <type> *X,              // array for returning values of tuples
-    GrB_Index *nvals,       // I,J,X size on input; # tuples on output
-    const GrB_Matrix A      // matrix to extract tuples from
-) ;
 
 // 2 NEW methods:  all I,J,X are GrB_Vectors.  On output, they are dense
 // vectors with nvals(I)=nvals(J)=nvals(X) = length(I)=length(J)=length(X).
@@ -262,19 +181,14 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
 
-// I CANNOT create a single GrB_extractTuples that includes all methods; the
-// signatures are problematic.  The _Generic((A),...) test must be done on the
-// last parameter of GrB_Matrix_extractTuples_TYPE, but it does not exist in
-// the Vector_extractTuples methods.
+// The new GxB_*_extractTuples_Vector methods are added to the existing
+// polymorphic GrB_Vector_extractTuples and GrB_Matrix_extractTuples:
 
-// However, I can add these new GxB_*_extractTuples_Vector methods to the
-// existing polymorphic GrB_Vector_extractTuples and GrB_Matrix_extractTuples:
-
-// GrB_Vector_extractTuple can encompass:
+// GrB_Vector_extractTuple includes:
 // GrB_Vector_extractTuples_TYPE   (I, X, nvals, V) where I,X are (uint64_t *)
 // GxB_Vector_extractTuples_Vector (I, X, V, d), where I,X are all GrB_Vector
 
-// GrB_Matrix_extractTuple can encompass:
+// GrB_Matrix_extractTuple includes:
 // GrB_Matrix_extractTuples_TYPE   (I, J, X, nvals, A); I,J,X are (uint64_t *)
 // GxB_Matrix_extractTuples_Vector (I, J, X, A, d), where I,J,X are GrB_Vector
 
@@ -285,40 +199,8 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
 // 3 EXISTING methods, all use (uint64_t *) for I and J:
 
 GrB_Info GrB_Vector_extract         // w<mask> = accum (w, u(I))
-(
-    GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Vector u,             // first input:  vector u
-    const GrB_Index *I,             // row indices (64-bit)
-    GrB_Index ni,                   // number of row indices
-    const GrB_Descriptor desc       // descriptor for w and mask
-) ;
-
 GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
-(
-    GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Index *I,             // row indices (64-bit)
-    GrB_Index ni,                   // number of row indices
-    const GrB_Index *J,             // column indices (64-bit)
-    GrB_Index nj,                   // number of column indices
-    const GrB_Descriptor desc       // descriptor for C, M, and A
-) ;
-
 GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
-(
-    GrB_Vector w,                   // input/output matrix for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Index *I,             // row indices (64-bit)
-    GrB_Index ni,                   // number of row indices
-    GrB_Index j,                    // column index
-    const GrB_Descriptor desc       // descriptor for w, mask, and A
-) ;
 
 // 3 NEW methods, using all GrB_Vectors for I and J, with the suffix "_Vector"
 // added to the name:
@@ -857,54 +739,20 @@ GxB_Container_free (&Container) ;    // does several O(1)-sized free's
 // serialize/deserialize:
 //==============================================================================
 
-// No change.  The new serialized object will exploit any 32-bit integers in
-// the matrix being serialized.  If such an object is passed to GraphBLAS 9.x
-// or earlier, then those older versions of GraphBLAS will safely return an
-// error and refuse to deserialize them.
+// No change to user-visible API.  The serialized blobs created by GrB v10.0.0
+// will be smaller.
+
+// The new serialized blobs will exploit any 32-bit integers in the matrix
+// being serialized.  If such a blob is passed to GraphBLAS 9.x or earlier,
+// then those older versions of GraphBLAS will safely return an error and
+// refuse to deserialize them.
 
 // If GraphBLAS v10 serializes a matrix with all-64-bit integers, then
-// GraphBLAS 9.x is able to deserialize it.
+// GraphBLAS v9.x is able to deserialize it.  The user application can direct
+// GrB v10 to use all-64-bits and then serialize it, so it would be able to
+// create a backward-compatible serialized blob, if that is desired.
 
 // All serialized blobs created by any prior GraphBLAS version can be
 // deserialized by GraphBLAS v10.  Such matrices will necessarily use
 // all-64-bit integers, but they will work just fine in GraphBLAS v10.
-
-//==============================================================================
-// possible additional future features:
-//==============================================================================
-
-// Support for COO / Tuple formats:
-
-//      The Container method could be extended to the COO / Tuples format.  It
-//      would be like GrB_Matrix_build when moving the tuples to a matrix, but
-//      the method would be faster than GrB_Matrix_build /
-//      GrB_Matrix_extractTuples.  The row indices, column indices, and values
-//      in the Container could be moved into the matrix, saving time and space.
-//      I already have this capability in my internal methods but there is no
-//      user interface for it.
-
-//      The Container could include a binary operator, which would be used to
-//      combine duplicate entries.
-
-//      The COO -> Container -> GrB_Matrix construction would not take O(1)
-//      time and space, but it would be faster and take less memory than
-//      the existing GrB_Matrix_build.
-
-//      I think this option would be important for the SparseBLAS, to allow for
-//      fast load/unload of COO matrices into/from a GrB_Matrix or GrB_Vector.
-//      They anticipate supportng a COO matrix format, with the option of
-//      creating a corresponding matrix_handle for the data (for GraphBLAS,
-//      the matrix_handle would be the GrB_Matrix).
-
-//      Alternatively, I could create new GrB_build variants (or variant
-//      behavior via the descriptor) that "ingest" the input GrB_Vectors I,J,
-//      and X, and I could create a GrB_extractTuples variant that moves its
-//      data into GrB_Vectors I,J, and X, returning the GrB_Matrix as empty
-//      with no content.  This could be done via the descriptor, using the new
-//      GxB_*_build*_Vector methods described above.
-
-//      Lots to work out for this, and it's unrelated to the 32/64 bit issue
-//      (except that the introduction of GrB_Vectors I,J,X to GrB_build and
-//      extractTuples makes this feature more feasible).  Thus, I don't expect
-//      to add it to GraphBLAS v10.0.0.
 
