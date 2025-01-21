@@ -4,16 +4,12 @@ function test11
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: 32-bit case
-
 [~, ~, ~, types, ~, ~] = GB_spec_opsall ;
 types = types.all ;
 
 fprintf ('\n------------ testing GrB_extractTuples') ;
 
 rng ('default') ;
-% itypes = { 'uint32', 'uint64' } ;
-itypes = { 'uint64' } ;
 
 % type of the output X
 for k1 = 1:length (types)
@@ -34,8 +30,13 @@ for k1 = 1:length (types)
                 clear B
                 B = GB_spec_random (m*n, 1, 0.1, 32, atype) ;
 
-                for i = 1:length(itypes)
-                    itype = itypes {i} ;
+                for method = 0:1
+
+                    if (method == 1)
+                        xtyp = atype ;
+                    else
+                        xtyp = xtype ;
+                    end
 
                     for A_is_hyper = 0:1
                     for A_is_csc   = 0:1
@@ -43,8 +44,8 @@ for k1 = 1:length (types)
                         A.is_hyper = A_is_hyper ;
                         A.is_csc   = A_is_csc   ;
 
-                        [I1, J1, X1] = GB_mex_extractTuples  (A, xtype, itype) ;
-                        [I2, J2, X2] = GB_spec_extractTuples (A, xtype, itype) ;
+                        [I1, J1, X1] = GB_mex_extractTuples  (A, xtyp, method);
+                        [I2, J2, X2] = GB_spec_extractTuples (A, xtyp, method);
 
                         % If A is CSR, the extraction returns tuples in row
                         % major order, but GB_spec_extractTuples always returns
@@ -68,13 +69,16 @@ for k1 = 1:length (types)
                     end
                     end
 
-                    [I1, J1, X1] = GB_mex_extractTuples  (B, xtype, itype) ;
-                    [I2, J2, X2] = GB_spec_extractTuples (B, xtype, itype) ;
+                    [I1, J1, X1] = GB_mex_extractTuples  (B, xtyp, method) ;
+                    [I2, J2, X2] = GB_spec_extractTuples (B, xtyp, method) ;
 
                     assert (isequal (I1, I2)) ;
                     assert (isequal (J1, J2)) ;
                     assert (isequal (X1, X2)) ;
 
+                    clear I1
+                    [I1] = GB_mex_extractTuples (B, xtyp, method) ;
+                    assert (isequal (I1, I2)) ;
                 end
             end
         end
@@ -86,10 +90,9 @@ clear A
 A.matrix = pi * sparse (rand (5) > 0.5) ;
 A.iso = true ;
 A.sparsity = 4 ;
-for i = 1:length(itypes)
-    itype = itypes {i} ;
-    [I1, J1, X1] = GB_mex_extractTuples  (A, 'double', itype) ;
-    [I2, J2, X2] = GB_spec_extractTuples (A, 'double', itype) ;
+for method = 0:1
+    [I1, J1, X1] = GB_mex_extractTuples  (A, 'double', method) ;
+    [I2, J2, X2] = GB_spec_extractTuples (A, 'double', method) ;
     assert (isequal (I1, I2)) ;
     assert (isequal (J1, J2)) ;
     assert (isequal (X1, X2)) ;

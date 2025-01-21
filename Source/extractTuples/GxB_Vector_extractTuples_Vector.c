@@ -44,9 +44,10 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
     GB_BURBLE_START ("GxB_Vector_extractTuples_Vector") ;
     ASSERT_VECTOR_OK (V, "V for GxB_Vector_extractTuples_Vector", GB0) ;
 
-    if (V == I_vector || V == X_vector)
+    if (V == I_vector || V == X_vector ||
+        (I_vector != NULL && I_vector == X_vector))
     { 
-        // V cannot be aliased with I or X
+        // vector parameters cannot be aliased
         return (GrB_NOT_IMPLEMENTED) ;
     }
 

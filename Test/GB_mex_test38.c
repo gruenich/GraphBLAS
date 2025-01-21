@@ -15,6 +15,7 @@
 #define FREE_ALL                        \
 {                                       \
     mxFree (W) ; W = NULL ;             \
+    GrB_Vector_free (&V) ;              \
     GrB_Matrix_free (&A) ;              \
 }
 
@@ -36,6 +37,7 @@ void mexFunction
 
     GrB_Info info ;
     GrB_Matrix A = NULL, B = NULL ;
+    GrB_Vector V = NULL ;
     uint32_t *W = NULL ;
     bool malloc_debug = GB_mx_get_global (true) ;
     GB_WERK ("GB_mex_test38") ;
@@ -147,6 +149,14 @@ void mexFunction
     GrB_Matrix_free (&A) ;
     OK (GrB_Matrix_new (&A, GrB_INT64, 10, 10)) ;
     ERR (GxB_Matrix_sort (NULL, A, GrB_LT_FP64, A, NULL)) ;
+
+    //--------------------------------------------------------------------------
+    // test GxB_*_extractTuples_Vector with I == A (not supported)
+    //--------------------------------------------------------------------------
+
+    OK (GrB_Vector_new (&V, GrB_INT64, 10)) ;
+    ERR (GxB_Vector_extractTuples_Vector (V, V, V, NULL)) ;
+    ERR (GxB_Matrix_extractTuples_Vector (V, V, V, A, NULL)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS
