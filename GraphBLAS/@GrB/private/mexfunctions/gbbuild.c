@@ -120,9 +120,9 @@ void mexFunction
     // get I, J, and X and their properties
     //--------------------------------------------------------------------------
 
-    GrB_Vector I = gb_get_list (pargin [0], base_offset) ;
-    GrB_Vector J = gb_get_list (pargin [1], base_offset) ;
-    GrB_Vector X = gb_get_list (pargin [2], 0) ;
+    GrB_Vector I = gb_mxarray_to_list (pargin [0], base_offset) ;
+    GrB_Vector J = gb_mxarray_to_list (pargin [1], base_offset) ;
+    GrB_Vector X = gb_mxarray_to_list (pargin [2], 0) ;
 
     uint64_t ni, nj, nx ;
     OK (GrB_Vector_nvals (&ni, I)) ;

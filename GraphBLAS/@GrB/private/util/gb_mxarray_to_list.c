@@ -1,13 +1,11 @@
 //------------------------------------------------------------------------------
-// gb_get_list: return GrB_Vector for assign, subassign, extract, and build
+// gb_mxarray_to_list: return GrB_Vector for assign, subassign, extract, build
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// FIXME: rename this to gb_mxarray_to_list, when done
 
 #define GB_DEBUG
 
@@ -61,10 +59,10 @@ static GrB_Vector gb_subtract_base
 }
 
 //------------------------------------------------------------------------------
-// gb_get_list
+// gb_mxarray_to_list
 //------------------------------------------------------------------------------
 
-GrB_Vector gb_get_list      // list of indices or values
+GrB_Vector gb_mxarray_to_list      // list of indices or values
 (
     const mxArray *X,       // MATLAB input matrix or struct with GrB content
     const int base_offset   // 1 or 0

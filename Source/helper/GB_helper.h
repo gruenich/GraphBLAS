@@ -18,29 +18,6 @@
 
 double GB_helper0 (void) ;
 
-bool GB_helper3              // return true if OK, false on error
-(
-    int64_t *restrict List,      // size len, output array  FIXME
-    const double *restrict List_double, // size len, input array
-    int64_t len,
-    int64_t *List_max            // also compute the max entry in the list
-) ;
-
-bool GB_helper3i             // return true if OK, false on error
-(
-    int64_t *restrict List,      // size len, output array  FIXME
-    const int64_t *restrict List_int64, // size len, input array    FIXME
-    int64_t len,
-    int64_t *List_max            // also compute the max entry in the list
-) ;
-
-bool GB_helper4              // return true if OK, false on error
-(
-    const uint64_t *restrict I,  // array of size len   FIXME
-    const int64_t len,
-    uint64_t *List_max           // find max (I) + 1
-) ;
-
 void GB_helper5             // construct pattern of S
 (
     // output:

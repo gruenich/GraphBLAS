@@ -408,8 +408,7 @@ void gb_mxfree              // mxFree wrapper
     void **p_handle         // handle to pointer to be freed
 ) ;
 
-// FIXME: rename to gb_mxarray_to_list
-GrB_Vector gb_get_list      // list of indices or values
+GrB_Vector gb_mxarray_to_list   // list of indices or values
 (
     const mxArray *X,       // MATLAB input matrix or struct with GrB content
     const int base_offset   // 1 or 0

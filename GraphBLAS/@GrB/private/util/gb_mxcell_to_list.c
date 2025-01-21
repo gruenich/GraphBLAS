@@ -77,7 +77,7 @@ GrB_Vector gb_mxcell_to_list    // return index list I
         // I = { list }
         //----------------------------------------------------------------------
 
-        I = gb_get_list (mxGetCell (Cell, 0), base_offset) ;
+        I = gb_mxarray_to_list (mxGetCell (Cell, 0), base_offset) ;
         if (I_max != NULL)
         { 
             // I_max = max (list)
@@ -104,8 +104,8 @@ GrB_Vector gb_mxcell_to_list    // return index list I
             CHECK_ERROR (!gb_mxarray_is_scalar (cell0)
                       || !gb_mxarray_is_scalar (cell1),
                 "cell entries must be scalars for start:fini") ;
-            Start = gb_get_list (cell0, 0) ;
-            Fini  = gb_get_list (cell1, 0) ;
+            Start = gb_mxarray_to_list (cell0, 0) ;
+            Fini  = gb_mxarray_to_list (cell1, 0) ;
         }
         else // if (len == 3)
         { 
@@ -116,9 +116,9 @@ GrB_Vector gb_mxcell_to_list    // return index list I
                       || !gb_mxarray_is_scalar (cell1)
                       || !gb_mxarray_is_scalar (cell2),
                 "cell entries must be scalars for start:inc:fini") ;
-            Start = gb_get_list (cell0, 0) ;
-            Inc   = gb_get_list (cell1, 0) ;
-            Fini  = gb_get_list (cell2, 0) ;
+            Start = gb_mxarray_to_list (cell0, 0) ;
+            Inc   = gb_mxarray_to_list (cell1, 0) ;
+            Fini  = gb_mxarray_to_list (cell2, 0) ;
         }
 
         // get ibegin, iend, and iinc
