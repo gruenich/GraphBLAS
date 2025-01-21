@@ -206,36 +206,6 @@ catch expected_error
 end
 assert (ok) ;
 
-%{
-% FIXME: delete this; GrB now typecasts to uint64, so this is now OK
-try
-    I = GrB (1.5) ;
-    C = G (I,I)
-    ok = false ;
-catch expected_error
-    expected_error
-    s = expected_error.stack ;
-    for k = 1:length (s)
-        disp (s (k)) ;
-    end
-end
-assert (ok) ;
-%}
-
-%% FIXME: delete this too, when gb_index1.m is removed:
-try
-    I = GrB (1.5, 'double complex') ;
-    C = G (I,I)
-    ok = false ;
-catch expected_error
-    expected_error
-    s = expected_error.stack ;
-    for k = 1:length (s)
-        disp (s (k)) ;
-    end
-end
-assert (ok) ;
-
 try
     C = GrB.empty ([1 2 3 0]) ;
     ok = false ;
