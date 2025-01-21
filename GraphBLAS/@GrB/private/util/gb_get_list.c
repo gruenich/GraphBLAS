@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: rename this to gb_mxarray_to_list, when done
+
 #define GB_DEBUG
 
 #include "gb_interface.h"
@@ -52,7 +54,6 @@ GrB_Vector gb_get_list      // list of indices or values
     OK (GrB_get (S, &fmt, GxB_FORMAT)) ;
     OK (GrB_get (S, &sparsity, GxB_SPARSITY_STATUS)) ;
     bool quick = false ;
-//  printf ("here in %s %d : %d\n", __FILE__, __LINE__, base_offset) ;
 
     if (ncols == 1 && sparsity != GxB_HYPERSPARSE && fmt == GxB_BY_COL)
     { 
@@ -89,12 +90,9 @@ GrB_Vector gb_get_list      // list of indices or values
             ASSERT_VECTOR_OK (V, "V result, after apply", GB0) ;
             GrB_Matrix_free (&S) ;
         }
-//      printf ("here in %s %d\n", __FILE__, __LINE__) ;
         ASSERT_VECTOR_OK (V, "V result, quick", GB0) ;
-//      printf ("here in %s %d\n", __FILE__, __LINE__) ;
         return (V) ;
     }
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     //--------------------------------------------------------------------------
     // reshape S into (nrows*ncols)-by-1 and return it as a GrB_Vector
@@ -105,11 +103,9 @@ GrB_Vector gb_get_list      // list of indices or values
     { 
         ERROR ("input matrix dimensions are too large") ;
     }
-//  printf ("nrows %ld ncols %ld n %ld\n", nrows, ncols, n) ;
 
     OK (GxB_Matrix_reshapeDup (&C, S, true, n, 1, NULL)) ;
     GrB_Matrix_free (&S) ;
-//  printf ("here in %s %d\n", __FILE__, __LINE__) ;
 
     // ensure C is not hypersparse, and is stored by column
     OK (GrB_set (C, GxB_SPARSE + GxB_BITMAP + GxB_FULL, GxB_SPARSITY_CONTROL)) ;
@@ -129,5 +125,4 @@ GrB_Vector gb_get_list      // list of indices or values
     ASSERT_VECTOR_OK (V, "V result, slow", GB0) ;
     return (V) ;
 }
-
 

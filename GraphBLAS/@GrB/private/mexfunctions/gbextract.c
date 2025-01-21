@@ -56,6 +56,15 @@ void mexFunction
     CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings > 1, USAGE) ;
 
     //--------------------------------------------------------------------------
+    // create the descriptor, if not present
+    //--------------------------------------------------------------------------
+
+    if (desc == NULL)
+    { 
+        OK (GrB_Descriptor_new (&desc)) ;
+    }
+
+    //--------------------------------------------------------------------------
     // get the matrices
     //--------------------------------------------------------------------------
 
@@ -102,7 +111,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     int in0 ;
-    OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
+    OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
     uint64_t anrows, ancols ;
     bool A_transpose = (in0 == GrB_TRAN) ;
     if (A_transpose)
@@ -122,74 +131,74 @@ void mexFunction
     // get I and J
     //--------------------------------------------------------------------------
 
-    uint64_t *I = (uint64_t *) GrB_ALL ;
-    uint64_t *J = (uint64_t *) GrB_ALL ;
-    uint64_t ni = anrows, nj = ancols ;
-    bool I_allocated = false, J_allocated = false ;
+    GrB_Vector I = NULL, J = NULL ;
+    uint64_t cnrows = anrows, cncols = ancols;
+    int icells = 0, jcells = 0 ;
+    int base_offset = (base == BASE_0_INT) ? 0 : 1 ;
 
     if (anrows == 1 && ncells == 1)
     { 
         // only J is present
-        J = gb_mxcell_to_index (Cell [0], base, ancols, &J_allocated, &nj,
-            NULL) ;
+        J = gb_mxcell_to_list (Cell [0], base_offset, ancols, &cncols, NULL) ;
+        jcells = mxGetNumberOfElements (Cell [0]) ;
     }
     else if (ncells == 1)
     { 
         // only I is present
-        I = gb_mxcell_to_index (Cell [0], base, anrows, &I_allocated, &ni,
-            NULL) ;
+        I = gb_mxcell_to_list (Cell [0], base_offset, anrows, &cnrows, NULL) ;
+        icells = mxGetNumberOfElements (Cell [0]) ;
     }
     else if (ncells == 2)
     { 
         // both I and J are present
-        I = gb_mxcell_to_index (Cell [0], base, anrows, &I_allocated, &ni,
-            NULL) ;
-        J = gb_mxcell_to_index (Cell [1], base, ancols, &J_allocated, &nj,
-            NULL) ;
+        I = gb_mxcell_to_list (Cell [0], base_offset, anrows, &cnrows, NULL) ;
+        J = gb_mxcell_to_list (Cell [1], base_offset, ancols, &cncols, NULL) ;
+        icells = mxGetNumberOfElements (Cell [0]) ;
+        jcells = mxGetNumberOfElements (Cell [1]) ;
+    }
+
+    if (icells > 1)
+    { 
+        // I is a 3-element vector containing a stride
+        OK (GrB_Descriptor_set_INT32 (desc, GxB_IS_STRIDE, GxB_ROWINDEX_LIST)) ;
+    }
+
+    if (jcells > 1)
+    { 
+        // J is a 3-element vector containing a stride
+        OK (GrB_Descriptor_set_INT32 (desc, GxB_IS_STRIDE, GxB_COLINDEX_LIST)) ;
     }
 
     //--------------------------------------------------------------------------
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
-    const bool I_is_32 = false ;
-    const bool J_is_32 = false ;
-
     if (C == NULL)
     { 
         // Cin is not present: determine its size, same type as A.
-        // T = A(I,J) or AT(I,J) will be extracted.
-        // accum must be null
-        int I_kind, J_kind ;
-        int64_t Icolon [3], Jcolon [3] ;
-        uint64_t cnrows, cncols ;
-        GB_ijlength (I, I_is_32, ni, anrows, (int64_t *) &cnrows, &I_kind,
-            Icolon) ;
-        GB_ijlength (J, J_is_32, nj, ancols, (int64_t *) &cncols, &J_kind,
-            Jcolon) ;
-        ctype = atype ;
-
+        // T = A(I,J) or AT(I,J) will be extracted; accum must be null.
         // create the matrix C and set its format and sparsity
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
         sparsity = gb_get_sparsity (A, NULL, sparsity) ;
+        ctype = atype ;
         C = gb_new (ctype, cnrows, cncols, fmt, sparsity) ;
     }
 
     //--------------------------------------------------------------------------
-    // compute C<M> += A(I,J) or AT(I,J)
+    // C<M> += A(I,J) or AT(I,J)
     //--------------------------------------------------------------------------
 
-    OK1 (C, GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)) ;
+    OK1 (C, GxB_Matrix_extract_Vector (C, M, accum, A, I, J, desc)) ;
 
     //--------------------------------------------------------------------------
-    // free shallow copies
+    // free shallow copies and workspace
     //--------------------------------------------------------------------------
 
     OK (GrB_Matrix_free (&M)) ;
     OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Vector_free (&I)) ;
+    OK (GrB_Vector_free (&J)) ;
     OK (GrB_Descriptor_free (&desc)) ;
-    if (I_allocated) gb_mxfree ((void **) (&I)) ;
-    if (J_allocated) gb_mxfree ((void **) (&J)) ;
 
     //--------------------------------------------------------------------------
     // export the output matrix C

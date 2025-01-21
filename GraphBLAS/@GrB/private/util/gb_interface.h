@@ -414,7 +414,18 @@ GrB_Vector gb_get_list      // list of indices or values
     const int base_offset   // 1 or 0
 ) ;
 
-int64_t *gb_mxarray_to_list     // return List of integers
+GrB_Vector gb_mxcell_to_list    // return index list I
+(
+    // input
+    const mxArray *Cell,        // built-in MATLAB cell array
+    const int base_offset,      // 1 or 0
+    const uint64_t n,           // dimension of the matrix
+    // output
+    uint64_t *nI,               // # of items in the list
+    int64_t *I_max              // largest item in the list
+) ;
+
+int64_t *gb_mxarray_to_list     // DELETE THIS
 (
     const mxArray *mxList,      // list to extract
     base_enum_t base,           // input is zero-based or one-based
@@ -423,7 +434,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
     int64_t *List_max           // max entry in the list, if computed
 ) ;
 
-GrB_Index *gb_mxcell_to_index   // return index list I
+GrB_Index *gb_mxcell_to_index   // DELETE THIS
 (
     const mxArray *I_cell,      // built-in cell array
     base_enum_t base,           // I is one-based or zero-based

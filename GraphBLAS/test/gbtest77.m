@@ -206,6 +206,8 @@ catch expected_error
 end
 assert (ok) ;
 
+%{
+% FIXME: delete this; GrB now typecasts to uint64, so this is now OK
 try
     I = GrB (1.5) ;
     C = G (I,I)
@@ -218,7 +220,9 @@ catch expected_error
     end
 end
 assert (ok) ;
+%}
 
+%% FIXME: delete this too, when gb_index1.m is removed:
 try
     I = GrB (1.5, 'double complex') ;
     C = G (I,I)
