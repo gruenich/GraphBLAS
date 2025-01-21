@@ -2,12 +2,10 @@
 // GB_mex_test7: still more basic tests
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// DONE: 32/64 bit
 
 // Test lots of random stuff.  The function otherwise serves no purpose.
 
@@ -167,10 +165,7 @@ void mexFunction
 
     int64_t n = 1024*1024 ;
     OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
-    OK (GrB_Matrix_new (&C1, GrB_FP64, n, n)) ;
-    OK (GrB_Matrix_new (&C2, GrB_FP64, n, n)) ;
-    OK (GxB_Matrix_Option_set (C1, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-    OK (GxB_Matrix_Option_set (C2, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+
     OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE)) ;
     OK (GxB_Matrix_Option_set (A, GxB_FORMAT, GxB_BY_ROW)) ;
 
@@ -262,16 +257,45 @@ void mexFunction
     GB_IPTR (A_Yp, A->Y->p_is_32) ;
     CHECK (GB_IGET (A_Yp, 1) == 257) ;
 
-    OK (GrB_mxm (C1, A, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A,
-        GrB_DESC_T0)) ;
-    OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
-    OK (GrB_mxm (C2, A, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A,
-        GrB_DESC_T0)) ;
-    OK (GxB_Matrix_fprint (C1, "C<A>=A'*A", 2, NULL)) ;
-    CHECK (GB_mx_isequal (C1, C2, 0)) ;
+    for (int shallow = 0 ; shallow <= 1 ; shallow++)
+    {
+        for (int j_is_32 = 0 ; j_is_32 <= 1 ; j_is_32++)
+        {
+            OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL,
+                GxB_HYPERSPARSE)) ;
+            GrB_Matrix Y = NULL ;
+            if (shallow)
+            {
+                A->Y_shallow = true ;
+                Y = A->Y ;
+            }
+            OK (GB_convert_int (A, false, j_is_32, false, true)) ;
+            if (shallow)
+            {
+                CHECK (A->Y == NULL) ;
+                CHECK (A->Y_shallow == false) ;
+                OK (GrB_Matrix_free (&Y)) ;
+            }
+            OK (GxB_Matrix_fprint (A, "hyper A for hyper_hash test", 2, NULL)) ;
+            OK (GrB_Matrix_new (&C1, GrB_FP64, n, n)) ;
+            OK (GrB_Matrix_new (&C2, GrB_FP64, n, n)) ;
+            OK (GxB_Matrix_Option_set (C1, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+            OK (GxB_Matrix_Option_set (C2, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+            OK (GrB_mxm (C1, A, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A,
+                GrB_DESC_T0)) ;
+            OK (GxB_Matrix_fprint (C1, "C1<A>=A'*A", 2, NULL)) ;
+            OK (GxB_Matrix_Option_set (A, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+            OK (GxB_Matrix_fprint (A, "sparse A for hyper_hash test", 2,
+                NULL)) ;
+            OK (GrB_mxm (C2, A, NULL, GrB_PLUS_TIMES_SEMIRING_FP64, A, A,
+                GrB_DESC_T0)) ;
+            OK (GxB_Matrix_fprint (C2, "C2<A>=A'*A", 2, NULL)) ;
+            CHECK (GB_mx_isequal (C1, C2, 0)) ;
+            OK (GrB_Matrix_free (&C1)) ;
+            OK (GrB_Matrix_free (&C2)) ;
+        }
+    }
     OK (GrB_Matrix_free (&A)) ;
-    OK (GrB_Matrix_free (&C1)) ;
-    OK (GrB_Matrix_free (&C2)) ;
 
     //--------------------------------------------------------------------------
     // axv2 and avx512f

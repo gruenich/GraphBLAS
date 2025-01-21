@@ -117,6 +117,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test290'    ,t, J0   , F0   ) ; % large symbolic bitmap_subref
 logstat ('test287'    ,t, J0   , F0   ) ; % misc tests
 logstat ('test286'    ,t, J40  , F00  , [0 1 4]) ; % kron with index binary op
 logstat ('test78'     ,t, J40  , F00  , [0 4]) ; % subref

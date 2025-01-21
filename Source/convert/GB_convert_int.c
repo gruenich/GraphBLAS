@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The integer arrays A->[phi] and A->Y in the matrix A are converted to match
 // the requested p_is_32_new, j_is_32_new, and i_is_32_new.  If converted,
 // A->[phi] are no longer shallow.  If A->Y is entirely shallow, it is simply
@@ -47,7 +45,6 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         return (GrB_SUCCESS) ;
     }
 
-    ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (GB_JUMBLED_OK (A)) ;
     ASSERT (GB_PENDING_OK (A)) ;
@@ -66,9 +63,9 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     if (determine)
     {
         ASSERT_MATRIX_OK (A, "A converting integers", GB0) ;
-        p_is_32_new = GB_determine_p_is_32 (p_is_32_new, anz) ;     //OK
-        j_is_32_new = GB_determine_j_is_32 (j_is_32_new, A->vdim) ; //OK
-        i_is_32_new = GB_determine_i_is_32 (i_is_32_new, A->vlen) ; //OK
+        p_is_32_new = GB_determine_p_is_32 (p_is_32_new, anz) ;
+        j_is_32_new = GB_determine_j_is_32 (j_is_32_new, A->vdim) ;
+        i_is_32_new = GB_determine_i_is_32 (i_is_32_new, A->vlen) ;
     }
     bool p_is_32 = A->p_is_32 ;
     bool j_is_32 = A->j_is_32 ;
@@ -89,7 +86,6 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     // simply remove A->Y if it is entirely shallow
     if (A->Y_shallow)
     { 
-GB_GOTCHA ; // A->Y_shallow
         A->Y = NULL ;
         A->Y_shallow = false ;
     }
@@ -163,7 +159,6 @@ GB_GOTCHA ; // A->Y_shallow
         }
         if (Y != NULL)
         { 
-GB_GOTCHA ; // convert Y
             // allocate new space for Y->[phi]; matches A->j_is_32
             Yp_new = GB_MALLOC_MEMORY (yplen+1, jsize_new, &Yp_new_size) ;
             Yi_new = GB_MALLOC_MEMORY (ynz,     jsize_new, &Yi_new_size) ;
@@ -295,11 +290,12 @@ GB_GOTCHA ; // convert Y
 
         if (Y != NULL)
         { 
-GB_GOTCHA ; // convert Y
-            // A is hypersparse, and the integers of Y match A->i_is_32
+            // A is hypersparse, and the integers of Y match A->j_is_32
             ASSERT (A_is_hyper) ;
-            ASSERT (Y->p_is_32 == i_is_32) ;
-            ASSERT (Y->i_is_32 == i_is_32) ;
+            ASSERT (Y->p_is_32 == j_is_32) ;
+            ASSERT (Y->j_is_32 == j_is_32) ;
+            ASSERT (Y->i_is_32 == j_is_32) ;
+            ASSERT_MATRIX_OK (Y, "Y converting integers", GB0) ;
 
             //------------------------------------------------------------------
             // convert Y->p
@@ -308,13 +304,12 @@ GB_GOTCHA ; // convert Y
             GB_cast_int (Yp_new, ucode_new, Y->p, ucode, yplen+1, nthreads_max);
             if (!Y->p_shallow)
             { 
-GB_GOTCHA ; // convert Y->p
                 GB_FREE (&(Y->p), Y->p_size) ;
             }
-            Y->p = Ap_new ;
+            Y->p = Yp_new ;
             Y->p_size = Ap_new_size ;
             Y->p_shallow = false ;
-            Y->p_is_32 = i_is_32_new ;
+            Y->p_is_32 = j_is_32_new ;
 
             //------------------------------------------------------------------
             // convert Y->i
@@ -323,13 +318,12 @@ GB_GOTCHA ; // convert Y->p
             GB_cast_int (Yi_new, ucode_new, Y->i, ucode, ynz, nthreads_max) ;
             if (!Y->i_shallow)
             { 
-GB_GOTCHA ; // convert Y->i
                 GB_FREE (&(Y->i), Y->i_size) ;
             }
             Y->i = Yi_new ;
             Y->i_size = Yi_new_size ;
             Y->i_shallow = false ;
-            Y->i_is_32 = i_is_32_new ;
+            Y->i_is_32 = j_is_32_new ;
 
             //------------------------------------------------------------------
             // convert Y->x
@@ -338,13 +332,19 @@ GB_GOTCHA ; // convert Y->i
             GB_cast_int (Yx_new, ucode_new, Y->x, ucode, ynz, nthreads_max) ;
             if (!Y->x_shallow)
             { 
-GB_GOTCHA ; // convert Y->x
                 GB_FREE (&(Y->x), Y->x_size) ;
             }
             Y->x = Yx_new ;
             Y->x_size = Yx_new_size ;
             Y->x_shallow = false ;
-            Y->type = i_is_32_new ? GrB_UINT32 : GrB_UINT64 ;
+            Y->type = j_is_32_new ? GrB_UINT32 : GrB_UINT64 ;
+
+            //------------------------------------------------------------------
+            // revise Y->j_is_32
+            //------------------------------------------------------------------
+
+            Y->j_is_32 = j_is_32_new ;
+            ASSERT_MATRIX_OK (Y, "Y converted integers", GB0) ;
         }
 
         //----------------------------------------------------------------------
