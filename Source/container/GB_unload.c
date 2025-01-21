@@ -69,21 +69,15 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
 
         case GxB_HYPERSPARSE : 
 
-            if (Container->Y != NULL)
-            { 
-GB_GOTCHA ;
-                // free any prior content
-                GB_Matrix_free (&(Container->Y)) ;
-            }
-
             // unload A->Y into the Container unless it is entirely shallow
+            GB_Matrix_free (&(Container->Y)) ;
             if (!A->Y_shallow)
             { 
                 // A->Y may still have shallow components, which is OK
                 Container->Y = A->Y ;
                 A->Y = NULL ;
             }
-
+            // unload A->h into the Container
             GB_vector_load (Container->h, &(A->h), A->plen, A->h_size,
                 A->j_is_32 ? GrB_UINT32 : GrB_UINT64, A->h_shallow) ;
 
@@ -91,6 +85,7 @@ GB_GOTCHA ;
 
         case GxB_SPARSE : 
 
+            // unload A->p and A->i into the Container
             GB_vector_load (Container->p, &(A->p), A->plen+1, A->p_size,
                 A->p_is_32 ? GrB_UINT32 : GrB_UINT64, A->p_shallow) ;
             GB_vector_load (Container->i, &(A->i), nvals, A->i_size,
@@ -99,6 +94,7 @@ GB_GOTCHA ;
 
         case GxB_BITMAP : 
 
+            // unload A->b into the Container
             GB_vector_load (Container->b, (void **) &(A->b), nheld, A->b_size,
                 GrB_INT8, A->b_shallow) ;
 
@@ -107,6 +103,7 @@ GB_GOTCHA ;
             break ;
     }
 
+    // unload A->x into the Container
     GB_vector_load (Container->x, &(A->x), iso ? 1 : nheld, A->x_size,
         A->type, A->x_shallow) ;
 

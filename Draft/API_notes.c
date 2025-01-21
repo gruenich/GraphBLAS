@@ -61,7 +61,7 @@
 
 // Options for GrB_get/set for GrB_Descriptor only:
 
-    GxB_ROWINDEX_LIST   // defines how the row index list is intepretted
+    GxB_ROWINDEX_LIST   // defines how the row index list is interpretted
     GxB_COLINDEX_LIST   // defines how the col index list is interpretted
     GxB_VALUE_LIST      // defines how the values list is interpretted
                         // for GrB_build

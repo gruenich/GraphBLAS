@@ -29,7 +29,6 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 )
 { 
-GB_GOTCHA ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -54,7 +53,6 @@ GB_GOTCHA ;
     uint64_t ancols = (A_transpose ? GB_NROWS (A) : GB_NCOLS (A)) ;
     if (j >= ancols)
     { 
-GB_GOTCHA ;
         GB_ERROR (GrB_INVALID_INDEX,
             "Column index j=" GBu " out of bounds; must be < " GBu ,
             j, ancols) ;

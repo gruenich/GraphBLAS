@@ -24,7 +24,7 @@ GrB_Info GxB_Col_subassign_Vector   // C(I,j)<M> = accum (C(I,j),u)
     const GrB_Descriptor desc       // descriptor for C(I,j) and mask
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GxB_Col_subassign_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs

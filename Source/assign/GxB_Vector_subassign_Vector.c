@@ -27,7 +27,7 @@ GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
     const GrB_Descriptor desc       // descriptor for w(I) and mask
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GxB_Vector_subassign_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -272,6 +272,18 @@ GB_GOTCHA ;
             }
             break ;
 
+        case GxB_VALUE_LIST : 
+GB_GOTCHA ;
+
+            {
+                va_start (ap, field) ;
+                int *value = va_arg (ap, int *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (value) ;
+                (*value) = (desc == NULL) ? GxB_DEFAULT : desc->val_list ;
+            }
+            break ;
+
         default : 
 
             return (GrB_INVALID_VALUE) ;

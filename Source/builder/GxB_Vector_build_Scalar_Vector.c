@@ -26,7 +26,7 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ;
+GB_GOTCHA ; // GxB_Vector_build_Scalar_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -51,7 +51,7 @@ GB_GOTCHA ;
     GB_MATRIX_WAIT (scalar) ;
     if (GB_nnz ((GrB_Matrix) scalar) != 1)
     { 
-GB_GOTCHA ;
+GB_GOTCHA ; // scalar is empty
         GB_ERROR (GrB_EMPTY_OBJECT, "Scalar value is %s", "missing") ;
     }
 

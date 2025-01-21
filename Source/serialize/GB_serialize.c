@@ -341,7 +341,7 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     // can safely read the blob, since both versions support all-64-bit integer
     // matrices.  GrB v10.0.0 can also read any blob written by earlier
     // versions; they will have zeros in those 2 nibbles, which will be
-    // intepretted correctly that the blob contains 64-bit integers for A->p,
+    // interpretted correctly that the blob contains 64-bit integers for A->p,
     // A->h, and A->i.
 
     // If GrB v10.0.0 writes a nonzero value to either nibble, and then GrB

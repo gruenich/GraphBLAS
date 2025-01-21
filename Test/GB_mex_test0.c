@@ -2476,6 +2476,8 @@ void mexFunction
     OK  (GrB_Col_extract_(h, NULL, NULL, A, I, 1,   0, d0)) ;  // column extract
 
     ERR1 (h, GrB_Col_extract_(h, NULL, NULL, A, I, 1, 911, d0)) ;  // column extract
+    GrB_Vector II = NULL ;
+    ERR1 (h, GxB_Col_extract_Vector_(h, NULL, NULL, A, II, 911, d0)) ;  // column extract
 
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
 
