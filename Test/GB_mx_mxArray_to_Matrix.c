@@ -500,6 +500,8 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             // only if A->x is large enough to hold at least 1 entry.
             A->iso = (A->x_size >= atype_out->size) ;
         }
+
+        ASSERT_MATRIX_OK (A, "got iso A from MATLAB", GB0) ;
     }
 
     ASSERT_MATRIX_OK (A, "got natural A from MATLAB", GB0) ;

@@ -307,7 +307,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
                 GB_FREE (&(Y->p), Y->p_size) ;
             }
             Y->p = Yp_new ;
-            Y->p_size = Ap_new_size ;
+            Y->p_size = Yp_new_size ;
             Y->p_shallow = false ;
             Y->p_is_32 = j_is_32_new ;
 

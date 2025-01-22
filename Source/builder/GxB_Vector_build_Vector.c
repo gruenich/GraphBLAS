@@ -55,9 +55,9 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     int64_t ivals = GB_nnz (I_vector) ;
     if (nvals != ivals)
     { 
-GB_GOTCHA ; // nvals(I) != nvals(X)
-        GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,X must have the"
-            "same number of entries%s", "") ;
+        GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,X must have the "
+            "same number of entries; nvals(I) = " GBd ", nvals(X) = " GBd,
+            ivals, nvals) ;
     }
 
     //--------------------------------------------------------------------------

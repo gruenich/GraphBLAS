@@ -55,10 +55,14 @@ end
 if (nargin < 5)
     pji_controls = [ 0 ] ;
 end
-%% FIXME: hacked pji_controls
-pji_controls = 0:7 ;    % HACK FIXME
 
 if (0)
+    % enable this to run with all pji_controls
+    pji_controls = 0:7 ;
+end
+
+if (0)
+    % enable this to run with all JIT / factory controls
     jall = {4,3,2,1,0,4,3,2,1,0} ;
     fall = {1,1,1,1,1,0,0,0,0,0} ;
     jit_controls    = jall ;

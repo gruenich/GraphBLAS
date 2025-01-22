@@ -227,13 +227,59 @@ void mexFunction
     ERR (GxB_Vector_build_Scalar_(w, I, scalar, 4)) ;
     OK (GrB_error (&s, w)) ;
     printf ("expected error: [%s]\n", s) ;
+
+    GrB_Vector I_vector = NULL, J_vector = NULL, X_vector = NULL ;
+    OK (GrB_Vector_new (&I_vector, GrB_UINT32, 4)) ;
+    OK (GrB_Vector_new (&J_vector, GrB_UINT32, 5)) ;
+    OK (GrB_Vector_new (&X_vector, GrB_UINT32, 6)) ;
+    for (int k = 0 ; k < 4 ; k++)
+    {
+        OK (GrB_Vector_setElement_UINT32 (I_vector, I [k], k)) ;
+    }
+    for (int k = 0 ; k < 5 ; k++)
+    {
+        OK (GrB_Vector_setElement_UINT32 (J_vector, k, k)) ;
+    }
+    for (int k = 0 ; k < 6 ; k++)
+    {
+        OK (GrB_Vector_setElement_UINT32 (X_vector, 2*k+1, k)) ;
+    }
+
+    ERR (GxB_Matrix_build_Scalar_Vector_(C, I_vector, I_vector, scalar, NULL)) ;
+    OK (GrB_error (&s, C)) ;
+    printf ("expected error: [%s]\n", s) ;
+
+    ERR (GxB_Matrix_build_Scalar_Vector_(C, I_vector, I_vector, scalar, NULL)) ;
+    OK (GrB_error (&s, C)) ;
+    printf ("expected error: [%s]\n", s) ;
+
+    OK (GrB_Scalar_setElement_FP32 (scalar, 3.0)) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_Matrix_build_Scalar_Vector_(C, I_vector, J_vector, scalar, NULL)) ;
+    OK (GrB_error (&s, C)) ;
+    printf ("expected error: [%s]\n", s) ;
+
+    ERR (GxB_Matrix_build_Vector_(C, I_vector, J_vector, X_vector,
+        GrB_PLUS_UINT32, NULL)) ;
+    OK (GrB_error (&s, C)) ;
+    printf ("expected error: [%s]\n", s) ;
+
+    ERR (GxB_Vector_build_Vector_(w, I_vector, X_vector,
+        GrB_PLUS_UINT32, NULL)) ;
+    OK (GrB_error (&s, w)) ;
+    printf ("expected error: [%s]\n", s) ;
+
+    GrB_Vector_free_(&I_vector) ;
+    GrB_Vector_free_(&J_vector) ;
+    GrB_Vector_free_(&X_vector) ;
     GrB_Vector_free_(&w) ;
+    GrB_Matrix_free_(&C) ;
 
     //--------------------------------------------------------------------------
     // build error handling
     //--------------------------------------------------------------------------
 
-    GrB_Matrix_free_(&C) ;
     OK (GrB_Type_new (&myint, sizeof (int))) ;
     OK (GrB_Matrix_new (&C, myint, 10, 10)) ;
     OK (GrB_Scalar_setElement_FP32 (scalar, 3.0)) ;

@@ -60,9 +60,9 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     int64_t jvals = GB_nnz (J_vector) ;
     if (nvals != ivals || nvals != jvals)
     { 
-GB_GOTCHA ; // nvals(X) != nvals(I) != nvals(J)
-        GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,J,X must all have the"
-            "same number of entries%s", "") ;
+        GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,J must have the "
+            "same number of entries; nvals(I) = " GBd ", nvals(J) = " GBd
+            " nvals(X) = " GBd, ivals, jvals, nvals) ;
     }
 
     //--------------------------------------------------------------------------

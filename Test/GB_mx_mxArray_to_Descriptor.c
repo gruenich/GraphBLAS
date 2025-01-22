@@ -129,8 +129,6 @@ static bool get_descriptor
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG
-
 bool GB_mx_mxArray_to_Descriptor   // true if successful, false otherwise
 (
     GrB_Descriptor *handle,         // descriptor to return

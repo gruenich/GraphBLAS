@@ -6,6 +6,7 @@ function testall (threads, mdebug)
 % testall ;             % runs just the shorter tests
 % testall(threads) ;    % run with specific list of threads and chunk sizes
 % testall(threads,1) ;  % runs with malloc debugging enabled
+% testall([ ],1) ;      % default # threads, with malloc debugging enabled
 %
 % threads is a cell array. Each entry is 2-by-1, with the first value being
 % the # of threads to use and the 2nd being the chunk size.  The default is
@@ -32,6 +33,9 @@ end
 
 % single thread
 s {1} = [1 1] ;
+
+% all pji_controls
+o = 0:7 ;
 
 % clear the statement coverage counts
 clear global GraphBLAS_grbcov
@@ -271,7 +275,7 @@ logstat ('test196'    ,t, J4   , F1   ) ; % hypersparse concat
 logstat ('test250'    ,t, J44  , F10  ) ; % JIT tests, set/get, other tests
 logstat ('test145'    ,t, J42  , F11  ) ; % dot4 for C += A'*B
 logstat ('test229'    ,t, J4   , F1   ) ; % setElement
-logstat ('test209'    ,t, J4   , F1   , [0 1]) ; % iso build
+logstat ('test209'    ,t, J4   , F1   , [0 1]) ; % iso/non-iso build
 logstat ('test224'    ,t, J4   , F1   ) ; % unpack/pack
 
 % 1 to 10 seconds, no Werk, debug_on
@@ -295,7 +299,6 @@ logstat ('test84'     ,t, J40  , F10  , [0 2]) ; % GrB_assign (row/col)
 logstat ('test173'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test230'    ,t, J40  , F10  ) ; % apply with idxunops
 logstat ('test18'     ,t, J40  , F10  ) ; % GrB_eWiseAdd and eWiseMult
-% HERE
 logstat ('testc7(0)'  ,t, J40  , F10  ) ; % assign, builtin complex
 logstat ('test193'    ,t, J4   , F1   ) ; % GxB_Matrix_diag
 logstat ('test127'    ,t, J0   , F1   ) ; % eWiseAdd, eWiseMult
@@ -313,6 +316,7 @@ logstat ('test232'    ,t, J40  , F10  ) ; % assign with GrB_Scalar
 logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
 logstat ('test142'    ,t, J4   , F1   ) ; % GrB_assign with accum
 logstat ('test227'    ,t, J4   , F1   ) ; % kron
+logstat ('test292'    ,t, J4   , F1   ) ; % build_Vector with large vector
 
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
@@ -358,14 +362,15 @@ logstat ('test234'    ,t, J4   , F1   ) ; % GxB_eWiseUnion
 % > 100 seconds, no Werk, debug_on
 set_malloc_debug (mdebug, 1) ;
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
-logstat ('test154b'   ,t, J0   , F1   ) ; % apply with binop and scalar binding
-logstat ('test154'    ,t, J4   , F1   ) ; % apply with binop and scalar binding
+logstat ('test154b'   ,t, J0   , F1   ) ; % apply binop and scalar binding
+logstat ('test154'    ,t, J4   , F1   ) ; % apply binop and scalar binding
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % > 100 seconds, debug_off
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
 logstat ('test280'    ,t, J4   , F1   , [0 1]) ; % subassign method 26
 logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
+logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops
 logstat ('test19b'    ,s, J40  , F10  , [0 2]) ; % GrB_assign, many pending ops
 
 %===============================================================================

@@ -44,7 +44,7 @@
 #ifdef MATRIX
 #define MAX_NARGIN 9
 #define MIN_NARGIN 3
-#define USAGE "GB_mex_Matrix_build (I,J,X,nrows,ncols,dup,type,csc,method)"
+#define USAGE "GB_mex_Matrix_build (I,J,X,nrows,ncols,dup,type,csc,desc)"
 #define I_ARG 0
 #define J_ARG 1
 #define X_ARG 2
@@ -53,7 +53,7 @@
 #define DUP_ARG 5
 #define TYPE_ARG 6
 #define CSC_ARG 7
-#define METHOD_ARG 8
+#define DESC_ARG 8
 #define FREE_WORK                   \
 {                                   \
     GrB_Scalar_free_(&scalar) ;     \
@@ -62,13 +62,13 @@
 #else
 #define MAX_NARGIN 6
 #define MIN_NARGIN 2
-#define USAGE "GB_mex_Vector_build (I,X,nrows,dup,type,method)"
+#define USAGE "GB_mex_Vector_build (I,X,nrows,dup,type,desc)"
 #define I_ARG 0
 #define X_ARG 1
 #define NROWS_ARG 2
 #define DUP_ARG 3
 #define TYPE_ARG 4
-#define METHOD_ARG 5
+#define DESC_ARG 5
 #define FREE_WORK                   \
 {                                   \
     GrB_Scalar_free_(&scalar) ;     \
@@ -82,6 +82,7 @@
     GrB_Vector_free_(&I_vector) ;   \
     GrB_Vector_free_(&J_vector) ;   \
     GrB_Vector_free_(&X_vector) ;   \
+    GrB_Descriptor_free_(&desc) ;   \
     GB_mx_put_global (true) ;       \
 }
 
@@ -122,7 +123,7 @@ static GrB_Info builder
     GrB_Vector I_vector,
     GrB_Vector J_vector,
     GrB_Vector X_vector,
-    int method
+    GrB_Descriptor desc
 )
 {
 
@@ -162,13 +163,11 @@ static GrB_Info builder
     ASSERT_TYPE_OK (ctype, "ctype for build", GB0) ;
     ASSERT_BINARYOP_OK (dup, "dup for build", GB0) ;
 
-    // double t = omp_get_wtime ( ) ;
-
     if (scalar_build)
     {
 
         // build an iso matrix or vector from the tuples and the scalar
-        if (method == 0)
+        if (desc == NULL)
         {
             OK1 (GrB_Scalar_new (&scalar, xtype)) ;
             #ifdef MATRIX
@@ -205,9 +204,9 @@ static GrB_Info builder
         {
             GrB_Scalar x = (GrB_Scalar) X_vector ;
             #ifdef MATRIX
-            OK1 (GxB_Matrix_build_Scalar_Vector_(C, I_vector, J_vector, x, NULL)) ;
+            OK1 (GxB_Matrix_build_Scalar_Vector_(C, I_vector, J_vector, x, desc)) ;
             #else
-            OK1 (GxB_Vector_build_Scalar_Vector_(C, I_vector, x, NULL)) ;
+            OK1 (GxB_Vector_build_Scalar_Vector_(C, I_vector, x, desc)) ;
             #endif
         }
 
@@ -216,7 +215,7 @@ static GrB_Info builder
     {
 
         // build a non-iso matrix or vector from the tuples
-        if (method == 0)
+        if (desc == NULL)
         {
             #undef BUILD
             #ifdef MATRIX
@@ -251,15 +250,12 @@ static GrB_Info builder
         else
         {
             #ifdef MATRIX
-            OK1 (GxB_Matrix_build_Vector_(C, I_vector, J_vector, X_vector, dup, NULL)) ;
+            OK1 (GxB_Matrix_build_Vector_(C, I_vector, J_vector, X_vector, dup, desc)) ;
             #else
-            OK1 (GxB_Vector_build_Vector_(C, I_vector, X_vector, dup, NULL)) ;
+            OK1 (GxB_Vector_build_Vector_(C, I_vector, X_vector, dup, desc)) ;
             #endif
         }
     }
-
-    // t = omp_get_wtime ( ) - t ;
-    // printf ("build time %g\n", t) ;
 
     return (GrB_SUCCESS) ;
 }
@@ -292,6 +288,7 @@ void mexFunction
     GrB_Type xtype = NULL ;
     bool scalar_build = false ;
     GrB_Vector I_vector = NULL, J_vector = NULL, X_vector = NULL ;
+    GrB_Descriptor desc = NULL ;
 
     // check inputs
     if (nargout > 1 || nargin < MIN_NARGIN || nargin > MAX_NARGIN)
@@ -299,10 +296,17 @@ void mexFunction
         mexErrMsgTxt ("Usage: C = " USAGE) ;
     }
 
-    // get the method:  0: use (uint64_t *), 1: use GrB_Vector for I,J
-    int GET_SCALAR (METHOD_ARG, int, method, 0) ;
+    // get the descriptor
+    if (nargin > DESC_ARG)
+    {
+        if (!GB_mx_mxArray_to_Descriptor (&desc, pargin [DESC_ARG], "desc"))
+        {
+            FREE_ALL ;
+            mexErrMsgTxt ("desc failed") ;
+        }
+    }
 
-    if (method == 0)
+    if (desc == NULL)
     {
 
         // get I
@@ -389,7 +393,7 @@ void mexFunction
     }
     else
     {
-        if (method == 0)
+        if (desc == NULL)
         {
             uint64_t *I64 = I ;
             for (int64_t k = 0 ; k < ni ; k++)
@@ -415,7 +419,7 @@ void mexFunction
     else
     {
         ncols = 0 ;
-        if (method == 0)
+        if (desc == NULL)
         {
             uint64_t *J64 = J ;
             for (int64_t k = 0 ; k < ni ; k++)
@@ -478,7 +482,7 @@ void mexFunction
 
     METHOD (builder (&C, ctype, nrows, ncols, I, J,
         X, scalar_build, ni, dup, C_is_csc, xtype,
-        I_vector, J_vector, X_vector, method)) ;
+        I_vector, J_vector, X_vector, desc)) ;
 
     // return C as a struct and free the GraphBLAS C
     #ifdef MATRIX

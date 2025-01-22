@@ -204,9 +204,7 @@ GrB_Info GB_ijxvector
             default:
             case 0 : list_descriptor = desc->row_list ; break ;
             case 1 : list_descriptor = desc->col_list ; break ;
-            case 2 : list_descriptor = desc->val_list ;
-                GB_GOTCHA ; // descriptor val_list
-                break ;
+            case 2 : list_descriptor = desc->val_list ; break ;
         }
     }
 
@@ -263,7 +261,6 @@ GB_GOTCHA ; // List is empty, out of memory
         }
         else
         { 
-GB_GOTCHA ; // List is sparse, use indices
             I = List->i ;
             I_type = (List->i_is_32) ? GrB_UINT32 : GrB_UINT64 ;
         }
@@ -281,7 +278,6 @@ GB_GOTCHA ; // List is sparse, use indices
         { 
             if (List->iso)
             { 
-GB_GOTCHA ; // List is bitmap, use values, iso
                 // get the iso value; it is expanded below
                 I = List->x ;
                 iso = true ;
@@ -302,13 +298,11 @@ GB_GOTCHA ; // List is bitmap, use values, iso
         }
         else
         { 
-GB_GOTCHA ; // List is bitmap, use indices
             // extract the indices from the bitmap vector
             I_type = (ni <= UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
             I = GB_MALLOC_MEMORY (ni, I_type->size, &I_size) ;
             if (I == NULL)
             { 
-GB_GOTCHA ; // List is bitmap, use indices, out of memory
                 // out of memory
                 return (GrB_OUT_OF_MEMORY) ;
             }
@@ -334,18 +328,15 @@ GB_GOTCHA ; // List is bitmap, use indices, out of memory
         }
         else
         { 
-GB_GOTCHA ; // List is full, use indices
             // create I = 0:1:(length(List)-1) with quick return
             int64_t n = List->vlen ;
             if (is_build)
             { 
-GB_GOTCHA ; // List is full, use indices, for build
                 // build an explicit list for GrB_build
                 I_type = (n <= UINT32_MAX) ? GrB_UINT32 : GrB_UINT64 ;
                 (*I_handle) = GB_MALLOC_MEMORY (n, I_type->size, I_size_handle);
                 if ((*I_handle) == NULL)
                 { 
-GB_GOTCHA ; // List is full, use indices, for build, out of memory
                     // out of memory
                     return (GrB_OUT_OF_MEMORY) ;
                 }
@@ -354,7 +345,6 @@ GB_GOTCHA ; // List is full, use indices, for build, out of memory
                 int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
                 if (I_type == GrB_UINT32)
                 { 
-GB_GOTCHA ; // List is full, use indices, for build, uint32
                     uint32_t *I = (uint32_t *) (*I_handle) ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
@@ -365,7 +355,6 @@ GB_GOTCHA ; // List is full, use indices, for build, uint32
                 }
                 else
                 { 
-GB_GOTCHA ; // List is full, use indices, for build, uint64
                     uint64_t *I = (uint64_t *) (*I_handle) ;
                     #pragma omp parallel for num_threads(nthreads) \
                         schedule(static)
@@ -394,22 +383,18 @@ GB_GOTCHA ; // List is full, use indices, not for build
 
     if (iso)
     { 
-GB_GOTCHA ; // List is iso: expand
+        // I has not been allocted; it is a shallow copy of List->x
+        ASSERT (I == List->x) ;
+        ASSERT (I_size == 0) ;
         I2 = GB_MALLOC_MEMORY (ni, I_type->size, &I2_size) ;
         if (I2 == NULL)
         { 
-GB_GOTCHA ; // List is iso: expand, out of memory
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         GB_OK (GB_iso_expand (I2, ni, I, I_type)) ;
-        // free the old I and replace it with I2
-        if (I_size > 0)
-        { 
-GB_GOTCHA ; // List is iso: expand, free prior I
-            GB_FREE (&I, I_size) ;
-        }
+        // replace I with the newly-allocated and expanded I2
         I = I2 ;
         I_size = I2_size ;
         I2 = NULL ;

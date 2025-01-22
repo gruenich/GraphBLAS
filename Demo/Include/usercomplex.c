@@ -20,6 +20,7 @@
         info = method ;                                                     \
         if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                \
         {                                                                   \
+            printf ("%s, line %d, info %d\n", __FILE__, __LINE__, info) ;   \
             mexErrMsgTxt ("GraphBLAS error!") ;                             \
         }                                                                   \
     }
