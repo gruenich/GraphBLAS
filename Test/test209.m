@@ -45,9 +45,17 @@ for k = 1:ntypes
     C2 = GB_spec_build (I, J, X, m, n, op) ;
     GB_spec_compare (C1, C2) ;
 
+    % non-iso matrix build, using _Vector method
+    C1 = GB_mex_Matrix_build (I, J, X, m, n, op, type, 1, 1) ;
+    GB_spec_compare (C1, C2) ;
+
     % iso matrix build
     C1 = GB_mex_Matrix_build (I, J, Z, m, n, op, type) ;
     C2 = GB_spec_build (I, J, X, m, n, op) ;
+    GB_spec_compare (C1, C2) ;
+
+    % iso matrix build, using _Vector method
+    C1 = GB_mex_Matrix_build (I, J, Z, m, n, op, type, 1, 1) ;
     GB_spec_compare (C1, C2) ;
 
     % non-iso vector build
@@ -55,9 +63,17 @@ for k = 1:ntypes
     C2 = GB_spec_build (I, [ ], X, m, 1, op) ;
     GB_spec_compare (C1, C2) ;
 
+    % non-iso vector build, using _Vector method
+    C1 = GB_mex_Vector_build (I, X, m, op, type, 1) ;
+    GB_spec_compare (C1, C2) ;
+
     % iso vector build
     C1 = GB_mex_Vector_build (I, Z, m, op, type) ;
     C2 = GB_spec_build (I, [ ], X, m, 1, op) ;
+    GB_spec_compare (C1, C2) ;
+
+    % iso vector build, using _Vector method
+    C1 = GB_mex_Vector_build (I, Z, m, op, type, 1) ;
     GB_spec_compare (C1, C2) ;
 
 end

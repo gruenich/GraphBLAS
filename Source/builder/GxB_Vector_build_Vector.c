@@ -27,7 +27,6 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ; // GxB_Vector_build_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs

@@ -8,5 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mex.h"
+#include "GB_mex_errors.h"
 #include "GB_mx_build_template.c"
 

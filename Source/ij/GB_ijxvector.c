@@ -8,9 +8,9 @@
 //------------------------------------------------------------------------------
 
 // The input vector List describes a list of integers or values to be used by
-// GrB_assign, GxB_subassign, GrB_extract, or GrB_build.
+// GrB_assign, GxB_subassign, GrB_extract, or GrB_build, as I, J, or X.
 //
-// Descriptor settings: for I and J  lists passed to GrB_assign,
+// Descriptor settings: for I and J lists passed to GrB_assign,
 // GxB_subassign and GrB_extract, and for I,J,X lists passed to GrB_build:
 //
 //  default:        use List->x as GxB_LIST of indices
@@ -61,13 +61,15 @@
 // GB_stride: create a stride, I = begin:inc:end
 //------------------------------------------------------------------------------
 
-// assign, subassign, and extract all expect a list of unsigned integers for
-// their list I.  The stride can be negative, which is handled by setting ni
-// to one of 3 special values:
+// GrB_assign, GxB_subassign, and GrB_extract all expect a list of unsigned
+// integers for their list I.  The stride can be negative, which is handled by
+// setting ni to one of 3 special values:
 //
 //      GxB_RANGE       I = [begin, end, 1]
 //      GxB_BACKWARDS   I = [begin, end, -stride]
 //      GxB_STRIDE      I = [begin, end, +stride]
+//
+// Tyis method is not used for GrB_build.
 
 static inline GrB_Info GB_stride
 (
@@ -122,9 +124,8 @@ static inline GrB_Info GB_stride
 GrB_Info GB_ijxvector
 (
     // input:
-    GrB_Vector List,        // defines the list of integers, either from
-                            // List->x or List-i.  If List is NULL, it defines
-                            // I = GrB_ALL.
+    GrB_Vector List,        // defines the list, either from List->x or List-i.
+                            // If List is NULL, it defines I = GrB_ALL.
     bool need_copy,         // if true, I must be allocated
     int which,              // 0: I list, 1: J list, 2: X list
     const GrB_Descriptor desc,  // row_list, col_list, val_list descriptors
@@ -135,7 +136,7 @@ GrB_Info GB_ijxvector
     int64_t *ni_handle,     // the length of I, or special (GxB_RANGE)
     size_t *I_size_handle,  // if > 0, I has been allocated by this
                             // method.  Otherwise, it is a shallow pointer into
-                            // List->x or List->i.
+                            // List->x or List->i, or is equal to GrB_ALL.
     GrB_Type *I_type_handle,    // the type of I: GrB_UINT32 or GrB_UINT64 for
                             // assign, subassign, extract, or for build when
                             // descriptor is GxB_USE_INDICES.  For build,
@@ -424,7 +425,6 @@ GB_GOTCHA ; // List is iso: expand, free prior I
     GrB_Type I_target_type = NULL ;
     if (is_build && which == 2)
     { 
-GB_GOTCHA ; // List for build (values)
         // List remains as-is for the values for build
         I_target_type = I_type ;
     }

@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mex.h"
+#include "GB_mex_errors.h"
 #define MATRIX
 #include "GB_mx_build_template.c"
 

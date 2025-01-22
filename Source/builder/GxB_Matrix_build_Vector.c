@@ -29,7 +29,6 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     const GrB_Descriptor desc
 )
 { 
-GB_GOTCHA ; // GxB_Matrix_build_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs
