@@ -283,7 +283,7 @@ logstat ('test240'    ,t, J40  , F10  ) ; % dot4, saxpy4, and saxpy5
 logstat ('test237'    ,t, J40  , F10  ) ; % GrB_mxm (saxpy4)
 logstat ('test237'    ,s, J40  , F10  ) ; % GrB_mxm (saxpy4) (1 task)
 logstat ('test184'    ,t, J4   , F1   , [0 1]) ; % mxm, transp, build
-logstat ('test236'    ,t, J4   , F1   , [0 1]) ; % GxB_*_sort
+logstat ('test236'    ,t, J4   , F1   ) ; % GxB_*_sort
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 %===============================================================================

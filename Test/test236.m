@@ -50,26 +50,25 @@ for k = 1:length (types)
 
             P1 = GB_mex_Matrix_sort  (lt, A, [ ], 1, 'int32') ;
             assert (isequal (P1.class, 'int32')) ;
-            P1.class = 'int64'
+            P1.class = 'int64' ;
             GB_spec_compare (P1, P2) ;
 
             P1 = GB_mex_Matrix_sort  (lt, A, [ ], 1, 'uint32') ;
             assert (isequal (P1.class, 'uint32')) ;
-            P1.class = 'int64'
+            P1.class = 'int64' ;
             GB_spec_compare (P1, P2) ;
 
             try
                 P1 = GB_mex_Matrix_sort  (lt, A, [ ], 1, 'double') ;
                 ok = 0 ;
             catch me
-                me
                 ok = 1 ;
             end
             assert (ok) ;
 
             P1 = GB_mex_Matrix_sort  (lt, A, [ ], 1, 'uint64') ;
             assert (isequal (P1.class, 'uint64')) ;
-            P1.class = 'int64'
+            P1.class = 'int64' ;
             GB_spec_compare (P1, P2) ;
 
             C1 = GB_mex_Matrix_sort  (gt, A) ;

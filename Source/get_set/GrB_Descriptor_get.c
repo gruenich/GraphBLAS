@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Descriptor_get_*: get a field in a descriptor
+// GrB_Descriptor_get*: get a field in a descriptor
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -166,7 +166,7 @@ GrB_Info GrB_Descriptor_get_String
     (*value) = '\0' ;
     const char *dname = GB_desc_name_get (desc) ;
     if (dname != NULL)
-    {
+    { 
         strcpy (value, dname) ;
     }
 
@@ -234,7 +234,7 @@ GrB_Info GrB_Descriptor_get_SIZE
         (*value) = desc->user_name_size ;
     }
     else
-    {
+    { 
         (*value) = GxB_MAX_NAME_LEN ;
     }
     return (GrB_SUCCESS) ;

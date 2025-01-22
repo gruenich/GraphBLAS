@@ -1765,16 +1765,25 @@ void mexFunction
 
     GrB_Descriptor dnull = NULL ;
 
+    expected = GrB_INVALID_VALUE ;
     ERRD (dnull, GxB_Desc_set (dnull, 0, 0)) ;
+
+    expected = GrB_NULL_POINTER ;
     ERR (GxB_Desc_get (dnull, 0, NULL)) ;
 
+    expected = GrB_INVALID_VALUE ;
     ERRD (dnull, GxB_Desc_set_INT32 (dnull, 0, 0)) ;
+
+    expected = GrB_NULL_POINTER ;
     ERR (GxB_Desc_get_INT32 (dnull, 0, NULL)) ;
 
 //  ERRD (dnull, GxB_Desc_set_FP64 (dnull, 0, 0)) ;
 //  ERR (GxB_Desc_get_FP64 (dnull, 0, NULL)) ;
 
+    expected = GrB_INVALID_VALUE ;
     ERRD (dnull, GrB_Descriptor_set (dnull, 0, 0)) ;
+
+    expected = GrB_NULL_POINTER ;
     ERR (GxB_Descriptor_get (NULL, dnull, 0)) ;
 
     expected = GrB_UNINITIALIZED_OBJECT ;

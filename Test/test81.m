@@ -1,7 +1,7 @@
 function test81
 %TEST81 test GrB_Matrix_extract with index range, stride, & backwards
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('test81:  GrB_Matrix_extract with index range, stride, backwards\n') ;
@@ -22,7 +22,6 @@ end
 
 for ilo = 1 % 1:2:n
     for ihi = 4 % 1:2:n
-%       fprintf ('\n#') ;
         for i_inc = [-10 2 inf] % [-n:n inf]
             clear I
             I.begin = ilo-1 ;
@@ -33,14 +32,13 @@ for ilo = 1 % 1:2:n
             else
                 iinc = 1 ;
             end
+            Ivec = [I.begin, I.end, iinc]' ;
 
-%           fprintf (':') ;
             for jlen = [1:2:n]
                 clear J
-%               J = randperm (n) ;
                 J = JJ {jlen} ;
                 J = J (1:jlen) ;
-                J0 = uint64 (J) - 1 ;
+                J0 = (uint64 (J) - 1)' ;
                 C1 = A (ilo:iinc:ihi, J) ;
                 [sm sn] = size (C1) ;
                 S = sparse (sm, sn) ;
@@ -49,9 +47,13 @@ for ilo = 1 % 1:2:n
                 C3 = GB_mex_Matrix_extract (S, [ ], [ ], ...
                     Ahyper, I, J0, [ ]) ;
                 assert (isequal (C1, C3.matrix)) ;
+
+                clear desc
+                desc.rowindex_list = 'is_stride' ;
+                C4 = GB_mex_Matrix_extract (S, [ ], [ ], A, Ivec, J0, desc, 1) ;
+                assert (isequal (C1, C4.matrix)) ;
             end
 
-%           fprintf ('.') ;
             for jlo = 1:2:n
                 for jhi = 1:2:n
                     for j_inc = [-n:n inf]
@@ -65,6 +67,7 @@ for ilo = 1 % 1:2:n
                         else
                             jinc = 1 ;
                         end
+                        Jvec = [J.begin, J.end, jinc]' ;
 
                         C1 = A (ilo:iinc:ihi, jlo:jinc:jhi) ;
                         [sm sn] = size (C1) ;
@@ -76,6 +79,13 @@ for ilo = 1 % 1:2:n
                         C3 = GB_mex_Matrix_extract (S, [ ], [ ], ...
                             Ahyper, I, J, [ ]) ;
                         assert (isequal (C1, C3.matrix)) ;
+
+                        clear desc
+                        desc.rowindex_list = 'is_stride' ;
+                        desc.colindex_list = 'is_stride' ;
+                        C4 = GB_mex_Matrix_extract (S, [ ], [ ], A, ...
+                            Ivec, Jvec, desc, 1) ;
+                        assert (isequal (C1, C4.matrix)) ;
 
                     end
                 end

@@ -7377,7 +7377,7 @@ GrB_Info GrB_getVersion (unsigned int *, unsigned int *) ;
 
 // GxB_Desc*get/set and GrB_Descriptor_set: use GrB_get/set instead.
 GrB_Info GrB_Descriptor_set (GrB_Descriptor, int, int) ;
-GrB_Info GxB_Descriptor_get (int *, GrB_Descriptor, int) ;
+GrB_Info GxB_Descriptor_get (int32_t *, GrB_Descriptor, int) ;
 GrB_Info GxB_Desc_set       (GrB_Descriptor, int, ...) ;
 GrB_Info GxB_Desc_set_INT32 (GrB_Descriptor, int, int32_t) ;
 GrB_Info GxB_Desc_set_FP64  (GrB_Descriptor, int, double) ;

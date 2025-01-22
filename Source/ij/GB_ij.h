@@ -71,7 +71,7 @@ GrB_Info GB_ijxvector
                             // I = GrB_ALL.
     bool need_copy,         // if true, I must be allocated
     int which,              // 0: I list, 1: J list, 2: X list
-    const GrB_Descriptor desc,      // with row_list and col_list descriptors
+    const GrB_Descriptor desc,  // row_list, col_list, val_list descriptors
     bool is_build,          // if true, method is GrB_build; otherwise, it is
                             // assign, subassign, or extract
     // output:
