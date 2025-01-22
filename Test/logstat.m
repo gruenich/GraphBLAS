@@ -1,7 +1,7 @@
 function logstat (testscript, threads, jit_controls, factory_controls, pji_controls)
 %LOGSTAT run a GraphBLAS test and log the results to log.txt 
 %
-% logstat (testscript, threads, jit_controls, factory_controls)
+% logstat (testscript, threads, jit_controls, factory_controls, pji_controls)
 %
 % threads: defaults to threads{1} = [4 1], which uses 4 threads and a tiny
 % chunk size of 1.
@@ -55,6 +55,8 @@ end
 if (nargin < 5)
     pji_controls = [ 0 ] ;
 end
+%% FIXME: hacked pji_controls
+pji_controls = 0:7 ;    % HACK FIXME
 
 if (0)
     jall = {4,3,2,1,0,4,3,2,1,0} ;
@@ -91,149 +93,141 @@ if (nargin == 0)
     fclose (f) ;
 end
 
+f = fopen ('log.txt', 'a') ;
+fprintf (f, '\n') ;
+
 for pji_control_trials = 1:length(pji_controls)
 
-clear ctrl
-pji_control = pji_controls (pji_control_trials) ;
-p_control = 32 * (bitand (pji_control, 4) ~= 0) + 32 ;
-j_control = 32 * (bitand (pji_control, 2) ~= 0) + 32 ;
-i_control = 32 * (bitand (pji_control, 1) ~= 0) + 32 ;
-ctrl.p_control = p_control ;
-ctrl.j_control = j_control ;
-ctrl.i_control = i_control ;
-ctrl = GB_mex_control (ctrl) ;
+    clear ctrl
+    pji_control = pji_controls (pji_control_trials) ;
+    p_control = 32 * (bitand (pji_control, 4) ~= 0) + 32 ;
+    j_control = 32 * (bitand (pji_control, 2) ~= 0) + 32 ;
+    i_control = 32 * (bitand (pji_control, 1) ~= 0) + 32 ;
+    ctrl.p_control = p_control ;
+    ctrl.j_control = j_control ;
+    ctrl.i_control = i_control ;
+    ctrl = GB_mex_control (ctrl) ;
 
-for control_trial = 1:length (jit_controls)
-    for trial = 1:length (threads)
+    for control_trial = 1:length (jit_controls)
+        for trial = 1:length (threads)
 
-        GB_mex_finalize ;
-        jit_control = jit_controls {control_trial} ;
-        factory_control = factory_controls {control_trial} ;
-        if (~isempty (jit_control))
-            GB_mex_jit_control (jit_control) ;
-        end
-        if (isempty (factory_control))
-            factory_control = 1 ;
-        end
-        GB_mex_factory_control (factory_control) ;
-        fprintf ('\nTrial: jit: %d factory: %d pji: (%d,%d,%d)\n', ...
-            jit_control, factory_control, p_control, j_control, i_control) ;
-
-        clast = grb_get_coverage ;
-
-        nthreads_and_chunk = threads {trial} ;
-        nthreads = nthreads_and_chunk (1) ;
-        chunk    = nthreads_and_chunk (2) ;
-        nthreads_set (nthreads, chunk) ;
-
-        if (nargin == 0)
-            f = fopen ('log.txt', 'a') ;
-            fprintf (f, '\n----------------------------------------------') ;
-            if (debug)
-                fprintf (f, ' [debug]') ;
+            GB_mex_finalize ;
+            jit_control = jit_controls {control_trial} ;
+            factory_control = factory_controls {control_trial} ;
+            if (~isempty (jit_control))
+                GB_mex_jit_control (jit_control) ;
             end
-            if (compact)
-                fprintf (f, ' [compact]') ;
+            if (isempty (factory_control))
+                factory_control = 1 ;
             end
-            if (malloc)
-                fprintf (f, ' [malloc]') ;
-            end
-            if (covered)
-                fprintf (f, ' [cover]') ;
-            end
-            fprintf (f, '\n') ;
-            fclose (f) ;
-            return
-        end
+            GB_mex_factory_control (factory_control) ;
+            fprintf ('\nTrial: jit: %d factory: %d pji: %d(%d,%d,%d)\n', ...
+                jit_control, factory_control, pji_control, ...
+                p_control, j_control, i_control) ;
 
-        fprintf ('\n======== test: %-10s ', testscript) ;
+            clast = grb_get_coverage ;
 
-        if (debug)
-            fprintf (' [debug]') ;
-        end
-        if (compact)
-            fprintf (' [compact]') ;
-        end
-        if (malloc)
-            fprintf (' [malloc]') ;
-        end
-        if (covered)
-            fprintf (' [cover]') ;
-        end
-        fprintf (' [nthreads: %d chunk: %g]', nthreads, chunk) ;
-        fprintf (' jit: %d', GB_mex_jit_control) ;
-        fprintf (' factory: %d\n', GB_mex_factory_control) ;
+            nthreads_and_chunk = threads {trial} ;
+            nthreads = nthreads_and_chunk (1) ;
+            chunk    = nthreads_and_chunk (2) ;
+            nthreads_set (nthreads, chunk) ;
 
-        t1 = tic ;
-        runtest (testscript)
-        t = toc (t1) ;
-
-        f = fopen ('log.txt', 'a') ;
-
-        s = datestr (now) ;
-
-        % trim the year from the date
-        s = s ([1:6 12:end]) ;
-
-        fprintf (   '%s %-11s (%d,%d,%d) %7.1f sec ', s, testscript, ...
-            p_control, j_control, i_control, t) ;
-        fprintf (f, '%s %-11s (%d,%d,%d) %7.1f sec ', s, testscript, ...
-            p_control, j_control, i_control, t) ;
-
-        if (test_coverage)
-
-%           GraphBLAS_grbcovs {end+1} = GraphBLAS_grbcov (1:n) ;
-%           GraphBLAS_scripts {end+1} = sprintf ('%s.%d.%d.%d', testscript, ...
-%               jit_control, factory_control, trial) ;
-%           GraphBLAS_times   {end+1} = t ;
-%           save grbstat GraphBLAS_debug GraphBLAS_grbcov
-%               GraphBLAS_grbcovs GraphBLAS_scripts GraphBLAS_times
-
-            if (isempty (GraphBLAS_debug))
-                GraphBLAS_debug = false ;
-            end
-            if (~isempty (GraphBLAS_grbcov))
-                c = sum (GraphBLAS_grbcov > 0) ;
-                if (c == n)
-                    % full coverage reached with this test
-                    fprintf (   '%5d:   all  100%% %7.1f/s', ...
-                        c - clast, (c-clast) / t) ;
-                    fprintf (f, '%5d:   all  100%% %7.1f/s', ...
-                        c - clast, (c-clast) / t) ;
-                elseif (c == clast)
-                    % no new coverage at all with this test
-                    fprintf (   '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
-                    fprintf (f, '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
-                else
-                    fprintf (   '%5d: %5d %4.1f%% %7.1f/s', ...
-                        c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
-                    fprintf (f, '%5d: %5d %4.1f%% %7.1f/s', ...
-                        c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
-                end
+            if (nargin == 0)
+                f = fopen ('log.txt', 'a') ;
+                fprintf (f, '\n----------------------------------------------');
                 if (debug)
-                    fprintf (' [debug]') ;
+                    fprintf (f, ' [debug]') ;
                 end
                 if (compact)
-                    fprintf (' [compact]') ;
+                    fprintf (f, ' [compact]') ;
                 end
                 if (malloc)
-                    fprintf (' [malloc]') ;
+                    fprintf (f, ' [malloc]') ;
                 end
                 if (covered)
-                    fprintf (' [cover]') ;
+                    fprintf (f, ' [cover]') ;
+                end
+                fprintf (f, '\n') ;
+                fclose (f) ;
+                return
+            end
+
+            fprintf ('\n======== test: %-10s ', testscript) ;
+
+            if (debug)
+                fprintf (' [debug]') ;
+            end
+            if (compact)
+                fprintf (' [compact]') ;
+            end
+            if (malloc)
+                fprintf (' [malloc]') ;
+            end
+            if (covered)
+                fprintf (' [cover]') ;
+            end
+            fprintf (' [nthreads: %d chunk: %g]', nthreads, chunk) ;
+            fprintf (' jit: %d', GB_mex_jit_control) ;
+            fprintf (' factory: %d\n', GB_mex_factory_control) ;
+
+            t1 = tic ;
+            runtest (testscript)
+            t = toc (t1) ;
+
+            f = fopen ('log.txt', 'a') ;
+
+            s = datestr (now) ;
+
+            % trim the year from the date
+            s = s ([1:6 12:end]) ;
+
+            fprintf (   '%s %-11s (%d,%d,%d) %7.1f sec ', s, testscript, ...
+                p_control, j_control, i_control, t) ;
+            fprintf (f, '%s %-11s (%d,%d,%d) %7.1f sec %d', s, testscript, ...
+                p_control, j_control, i_control, t, pji_control) ;
+
+            if (test_coverage)
+
+                if (isempty (GraphBLAS_debug))
+                    GraphBLAS_debug = false ;
+                end
+                if (~isempty (GraphBLAS_grbcov))
+                    c = sum (GraphBLAS_grbcov > 0) ;
+                    if (c == n)
+                        % full coverage reached with this test
+                        fprintf (   '%5d:   all  100%% %7.1f/s', ...
+                            c - clast, (c-clast) / t) ;
+                        fprintf (f, '%5d:   all  100%% %7.1f/s', ...
+                            c - clast, (c-clast) / t) ;
+                    elseif (c == clast)
+                        % no new coverage at all with this test
+                        fprintf (   '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
+                        fprintf (f, '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
+                    else
+                        fprintf (   '%5d: %5d %4.1f%% %7.1f/s', ...
+                            c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
+                        fprintf (f, '%5d: %5d %4.1f%% %7.1f/s', ...
+                            c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
+                    end
+                    if (debug)
+                        fprintf (' [debug]') ;
+                    end
+                    if (compact)
+                        fprintf (' [compact]') ;
+                    end
+                    if (malloc)
+                        fprintf (' [malloc]') ;
+                    end
+                    if (covered)
+                        fprintf (' [cover]') ;
+                    end
                 end
             end
-        end
 
-        fprintf (   '\n') ;
-        fprintf (f, '\n') ;
-        fclose (f) ;
+            fprintf (   '\n') ;
+            fprintf (f, '\n') ;
+            fclose (f) ;
+        end
     end
 end
-
-end
-
-% f = fopen ('log.txt', 'a') ;
-% fprintf (f,'\n') ;
-% fclose (f) ;
 

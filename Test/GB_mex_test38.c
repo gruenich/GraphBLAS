@@ -113,10 +113,19 @@ void mexFunction
     int64_t save = A->vlen ;
     A->vlen = GrB_INDEX_MAX ;
 
-    // matrix is too large for 32-bit integers:
-    expected = GrB_INVALID_OBJECT ;
-    ERR (GB_valid_matrix (A)) ;
-    ERR (GxB_print (A, 5)) ;
+    if (A->i_is_32)
+    {
+        // matrix is too large for 32-bit integers:
+        expected = GrB_INVALID_OBJECT ;
+        ERR (GB_valid_matrix (A)) ;
+        ERR (GxB_print (A, 5)) ;
+    }
+    else
+    {
+        // matrix is OK with 64-bit integers
+        OK (GB_valid_matrix (A)) ;
+        OK (GxB_print (A, 5)) ;
+    }
 
     A->vlen = save ;
     OK (GB_valid_matrix (A)) ;
@@ -126,6 +135,7 @@ void mexFunction
     uint32_t *Ai = A->i ;
     save = Ai [0] ;
     Ai [0] = 1000 ;
+    expected = GrB_INVALID_OBJECT ;
     ERR (GxB_print (A, 5)) ;
     Ai [0] = save ;
     OK (GxB_print (A, 5)) ;

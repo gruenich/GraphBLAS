@@ -1,7 +1,7 @@
 function test184
 %TEST184 test special cases for mxm, transpose, and build
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 rng ('default') ;
@@ -16,7 +16,7 @@ A = sprand (0, 10, 1) ;
 B = sprand (0, 10, 1) ;
 Cin = sparse (10, 10) ;
 C1 = A'*B ;
-C2 = GB_mex_mxm (Cin, [ ], [ ], semiring, A, B, dtn) 
+C2 = GB_mex_mxm (Cin, [ ], [ ], semiring, A, B, dtn) ;
 
 %----------------------------------------------------------------------
 

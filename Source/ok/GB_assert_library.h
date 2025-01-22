@@ -50,6 +50,7 @@
 {                                                                       \
     fprintf (stderr, "\nGotcha: " __FILE__ " line: %d\n", __LINE__) ;   \
     GBDUMP ("\nGotcha: " __FILE__ " line: %d\n", __LINE__) ;            \
+    GB_Global_abort ( ) ;    /* FIXME: remove this */                   \
 }
 #else
 #define GB_GOTCHA                                                       \
