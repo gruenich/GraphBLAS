@@ -20,8 +20,8 @@ for jlen = 1:2:n
     JJ {jlen} = randperm (n) ;
 end
 
-for ilo = 1 % 1:2:n
-    for ihi = 4 % 1:2:n
+for ilo = 1:2 % 1:2:n
+    for ihi = [4 8] % 1:2:n
         for i_inc = [-10 2 inf] % [-n:n inf]
             clear I
             I.begin = ilo-1 ;
@@ -32,7 +32,17 @@ for ilo = 1 % 1:2:n
             else
                 iinc = 1 ;
             end
-            Ivec = [I.begin, I.end, iinc]' ;
+            clear Ivec
+            I_vec = [I.begin, I.end, iinc]' ;
+            Ivec.sparsity = 8 ;         % full
+            if (nnz (I_vec) == 3)
+                I_vec = sparse (I_vec) ;
+                Ivec.sparsity = 2 ;     % sparse
+            end
+            Ivec.matrix = I_vec ;
+            if (ihi == 8)
+                Ivec.sparsity = 4 ;     % bitmap
+            end
 
             for jlen = [1:2:n]
                 clear J
@@ -52,6 +62,17 @@ for ilo = 1 % 1:2:n
                 desc.rowindex_list = 'is_stride' ;
                 C4 = GB_mex_Matrix_extract (S, [ ], [ ], A, Ivec, J0, desc, 1) ;
                 assert (isequal (C1, C4.matrix)) ;
+
+                Iv = [1 2]' ;
+                try
+                    C4 = GB_mex_Matrix_extract (S, [ ], [ ], A, Iv, J0, ...
+                        desc, 1) ;
+                    ok = 0 ;
+                catch me
+                    ok = 1 ;
+                end
+                assert (ok) ;
+
             end
 
             for jlo = 1:2:n

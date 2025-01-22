@@ -132,7 +132,6 @@ static GrB_Info GB_desc_set
             if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
             { 
-GB_GOTCHA ; // rowindex_list, invalid value
                 GB_ERROR (GrB_INVALID_VALUE,
                     "invalid descriptor value [%d] for GxB_ROWINDEX_LIST "
                     "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"
@@ -148,7 +147,6 @@ GB_GOTCHA ; // rowindex_list, invalid value
             if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES || value == GxB_IS_STRIDE))
             { 
-GB_GOTCHA ; // rowindex_list, invalid value
                 GB_ERROR (GrB_INVALID_VALUE,
                     "invalid descriptor value [%d] for GxB_COLINDEX_LIST "
                     "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"
@@ -160,12 +158,10 @@ GB_GOTCHA ; // rowindex_list, invalid value
             break ;
 
         case GxB_VALUE_LIST : 
-GB_GOTCHA ; // value_list
 
             if (! (value == GrB_DEFAULT  || value == GxB_USE_VALUES
                 || value == GxB_USE_INDICES))
             { 
-GB_GOTCHA ; // rowindex_list, invalid value
                 GB_ERROR (GrB_INVALID_VALUE,
                     "invalid descriptor value [%d] for GxB_VALUE_LIST "
                     "field;\nmust be GrB_DEFAULT [%d], GxB_USE_VALUES [%d]\n"

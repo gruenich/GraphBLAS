@@ -87,7 +87,6 @@ static inline GrB_Info GB_stride
     (*I_handle) = GB_CALLOC_MEMORY (3, sizeof (uint64_t), I_size_handle) ;
     if ((*I_handle) == NULL)
     { 
-GB_GOTCHA ; // List is stride, out of memory
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
@@ -214,7 +213,6 @@ GrB_Info GB_ijxvector
     int64_t ni = GB_nnz (List) ;
     if (list_is_stride && (ni != 3 || is_build))
     { 
-GB_GOTCHA ; // error: list is stride but wrong size, or for build
         // List must have exactly 3 items (lo,hi,stride) for GxB_IS_STRIDE
         // for assign, subassign, and extract.  GrB_build does not allow
         // GxB_IS_STRIDE.
@@ -251,7 +249,6 @@ GB_GOTCHA ; // List is empty, out of memory
 
     if (List_sparsity == GxB_SPARSE)
     { 
-GB_GOTCHA ; // List is sparse
 
         //----------------------------------------------------------------------
         // List is sparse
@@ -259,7 +256,6 @@ GB_GOTCHA ; // List is sparse
 
         if (use_values)
         { 
-GB_GOTCHA ; // List is sparse, use values
             I = List->x ;
             I_type = List->type ;
             iso = List->iso ;
@@ -274,7 +270,6 @@ GB_GOTCHA ; // List is sparse, use indices
     }
     else if (List_sparsity == GxB_BITMAP)
     { 
-GB_GOTCHA ; // List is bitmap
 
         //----------------------------------------------------------------------
         // List is bitmap
@@ -283,7 +278,6 @@ GB_GOTCHA ; // List is bitmap
         uint64_t Cp [2] ;
         if (use_values)
         { 
-GB_GOTCHA ; // List is bitmap, use values
             if (List->iso)
             { 
 GB_GOTCHA ; // List is bitmap, use values, iso
@@ -293,12 +287,10 @@ GB_GOTCHA ; // List is bitmap, use values, iso
             }
             else
             { 
-GB_GOTCHA ; // List is bitmap, use values, non-iso
                 // extract the values from the bitmap vector
                 I = GB_MALLOC_MEMORY (ni, List->type->size, &I_size) ;
                 if (I == NULL)
                 { 
-GB_GOTCHA ; // List is bitmap, use values, non-iso, out of memory
                     // out of memory
                     return (GrB_OUT_OF_MEMORY) ;
                 }
@@ -479,7 +471,6 @@ GB_GOTCHA ; // List is other
         I2 = GB_MALLOC_MEMORY (ni, sizeof (uint64_t), &I2_size) ;
         if (I2 == NULL)
         { 
-GB_GOTCHA ; // create copy, out of memory
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -491,7 +482,6 @@ GB_GOTCHA ; // create copy, out of memory
         // free the old I and replace it with I2
         if (I_size > 0)
         { 
-GB_GOTCHA ; // need copy, free prior I
             GB_FREE (&I, I_size) ;
         }
         I = I2 ;

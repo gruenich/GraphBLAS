@@ -76,21 +76,18 @@ static GrB_Info GB_desc_get
             break ;
 
         case GxB_ROWINDEX_LIST : 
-GB_GOTCHA ;
 
             (*value) = (int32_t) ((desc == NULL) ?
                 GrB_DEFAULT : desc->row_list) ;
             break ;
 
         case GxB_COLINDEX_LIST : 
-GB_GOTCHA ;
 
             (*value) = (int32_t) ((desc == NULL) ?
                 GrB_DEFAULT : desc->col_list) ;
             break ;
 
         case GxB_VALUE_LIST : 
-GB_GOTCHA ;
 
             (*value) = (int32_t) ((desc == NULL) ?
                 GrB_DEFAULT : desc->val_list) ;

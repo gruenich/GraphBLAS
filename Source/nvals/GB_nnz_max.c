@@ -30,7 +30,8 @@ int64_t GB_nnz_max
     if (A->p != NULL)
     {
         // A is sparse (p,i,x) or hypersparse (p,h,i,x):
-        nnz_max = (A->i == NULL) ? 0 : (A->i_size / sizeof (int64_t)) ;
+        size_t isize = (A->i_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
+        nnz_max = (A->i == NULL) ? 0 : (A->i_size / isize) ;
         if (!A->iso)
         { 
             nnz_max = GB_IMIN (nnz_max, xmax) ;

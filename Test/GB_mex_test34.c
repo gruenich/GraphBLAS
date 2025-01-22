@@ -394,6 +394,20 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     DSET (desc, GxB_SECURE_IMPORT   , GxB_IMPORT) ;
     DSET (desc, GrB_DEFAULT         , GxB_IMPORT) ;
 
+    DSET (desc, GxB_DEFAULT         , GxB_ROWINDEX_LIST) ;
+    DSET (desc, GxB_USE_VALUES      , GxB_ROWINDEX_LIST) ;
+    DSET (desc, GxB_USE_INDICES     , GxB_ROWINDEX_LIST) ;
+    DSET (desc, GxB_IS_STRIDE       , GxB_ROWINDEX_LIST) ;
+
+    DSET (desc, GxB_DEFAULT         , GxB_COLINDEX_LIST) ;
+    DSET (desc, GxB_USE_VALUES      , GxB_COLINDEX_LIST) ;
+    DSET (desc, GxB_USE_INDICES     , GxB_COLINDEX_LIST) ;
+    DSET (desc, GxB_IS_STRIDE       , GxB_COLINDEX_LIST) ;
+
+    DSET (desc, GxB_DEFAULT         , GxB_VALUE_LIST) ;
+    DSET (desc, GxB_USE_VALUES      , GxB_VALUE_LIST) ;
+    DSET (desc, GxB_USE_INDICES     , GxB_VALUE_LIST) ;
+
     OK (GrB_Descriptor_get_String_ (desc, name, GrB_NAME)) ;
     CHECK (MATCH (name, "")) ;
     OK (GrB_Descriptor_set_String_ (desc, "user_name", GrB_NAME)) ;
@@ -448,6 +462,18 @@ GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
     printf ("error: %s\n\n", err) ;
 
     ERR (GrB_Descriptor_set_INT32_ (desc, 995, GxB_AxB_METHOD)) ;
+    OK (GrB_Descriptor_error (&err, desc)) ;
+    printf ("error: %s\n\n", err) ;
+
+    ERR (GrB_Descriptor_set_INT32_ (desc, 995, GxB_ROWINDEX_LIST)) ;
+    OK (GrB_Descriptor_error (&err, desc)) ;
+    printf ("error: %s\n\n", err) ;
+
+    ERR (GrB_Descriptor_set_INT32_ (desc, 995, GxB_COLINDEX_LIST)) ;
+    OK (GrB_Descriptor_error (&err, desc)) ;
+    printf ("error: %s\n\n", err) ;
+
+    ERR (GrB_Descriptor_set_INT32_ (desc, 995, GxB_VALUE_LIST)) ;
     OK (GrB_Descriptor_error (&err, desc)) ;
     printf ("error: %s\n\n", err) ;
 

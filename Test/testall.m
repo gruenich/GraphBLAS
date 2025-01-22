@@ -117,6 +117,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test291'    ,t, J0   , F0   ) ; % GB_ix_realloc
 logstat ('test290'    ,t, J0   , F0   ) ; % large symbolic bitmap_subref
 logstat ('test287'    ,t, J0   , F0   ) ; % misc tests
 logstat ('test286'    ,t, J40  , F00  , [0 1 4]) ; % kron with index binary op
@@ -200,6 +201,7 @@ logstat ('test258'    ,t, J40  , F00  , [0 1]) ; % reduce-to-vector for UDT
 logstat ('test136'    ,s, J40  , F10  ) ; % subassignment special cases
 logstat ('test128'    ,t, J40  , F10  ) ; % eWiseMult, eWiseAdd, eWiseUnion
 logstat ('test144'    ,t, J4   , F1   ) ; % cumsum
+logstat ('test81'     ,t, J4   , F1   ) ; % extract stride, range, backwards
 
 %===============================================================================
 % 1 to 10 seconds
@@ -207,7 +209,6 @@ logstat ('test144'    ,t, J4   , F1   ) ; % cumsum
 
 % 1 to 10 seconds: debug_off
 set_malloc_debug (mdebug, 0) ;
-logstat ('test81'     ,t, J4   , F1   ) ; % extract stride, range, backwards
 logstat ('testc2(0,0)',t, J0   , F1   ) ; % A'*B, A+B, A*B, user-defn complex
 logstat ('test239'    ,t, J44  , F10  ) ; % GxB_eWiseUnion
 logstat ('test245'    ,t, J40  , F11  ) ; % complex row/col scale
