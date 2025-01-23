@@ -97,8 +97,8 @@ if (nargin == 0)
     fclose (f) ;
 end
 
-f = fopen ('log.txt', 'a') ;
-fprintf (f, '\n') ;
+% f = fopen ('log.txt', 'a') ;
+% fprintf (f, '\n') ;
 
 for pji_control_trials = 1:length(pji_controls)
 
@@ -125,7 +125,7 @@ for pji_control_trials = 1:length(pji_controls)
                 factory_control = 1 ;
             end
             GB_mex_factory_control (factory_control) ;
-            fprintf ('\nTrial: jit: %d factory: %d pji: %d(%d,%d,%d)\n', ...
+            fprintf ('\nTrial: jit: %d factory: %d pji: %d:(%d,%d,%d)\n', ...
                 jit_control, factory_control, pji_control, ...
                 p_control, j_control, i_control) ;
 
@@ -185,10 +185,10 @@ for pji_control_trials = 1:length(pji_controls)
             % trim the year from the date
             s = s ([1:6 12:end]) ;
 
-            fprintf (   '%s %-11s (%d,%d,%d) %7.1f sec ', s, testscript, ...
-                p_control, j_control, i_control, t) ;
-            fprintf (f, '%s %-11s (%d,%d,%d) %7.1f sec %d', s, testscript, ...
-                p_control, j_control, i_control, t, pji_control) ;
+            fprintf (   '%s %-11s %d:(%d,%d,%d) %7.1f sec', s, testscript, ...
+                pji_control, p_control, j_control, i_control, t) ;
+            fprintf (f, '%s %-11s %d:(%d,%d,%d) %7.1f sec', s, testscript, ...
+                pji_control, p_control, j_control, i_control, t) ;
 
             if (test_coverage)
 

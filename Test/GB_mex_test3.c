@@ -253,6 +253,10 @@ void mexFunction
     OK (GrB_error (&s, C)) ;
     printf ("expected error: [%s]\n", s) ;
 
+    ERR (GxB_Vector_build_Scalar_Vector_(w, I_vector, scalar, NULL)) ;
+    OK (GrB_error (&s, w)) ;
+    printf ("expected error: [%s]\n", s) ;
+
     OK (GrB_Scalar_setElement_FP32 (scalar, 3.0)) ;
 
     expected = GrB_INVALID_VALUE ;
