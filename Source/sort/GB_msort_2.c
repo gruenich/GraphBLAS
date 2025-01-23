@@ -124,7 +124,6 @@ GrB_Info GB_msort_2     // sort array A of size 2-by-n
         }
         else
         { 
-GB_GOTCHA ; // GB_msort_2_32_64
             return (GB_msort_2_32_64 (A_0, A_1, n, nthreads)) ;
         }
     }

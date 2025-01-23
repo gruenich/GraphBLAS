@@ -121,6 +121,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test293'    ,t, J0   , F0   ) ; % msort/qsort: all int variants
 logstat ('test291'    ,t, J0   , F0   , [0 1 2 4]) ; % GB_ix_realloc
 logstat ('test290'    ,t, J0   , F0   ) ; % large symbolic bitmap_subref
 logstat ('test287'    ,t, J0   , F0   , [0 4]) ; % misc tests
@@ -177,7 +178,7 @@ logstat ('test09'     ,t, J40  , F10  ) ; % duplicate I,J in GB_mex_subassign
 logstat ('test108'    ,t, J40  , F10  ) ; % boolean monoids
 logstat ('test137'    ,s, J400 , F110 ) ; % GrB_eWiseMult, FIRST and SECOND
 logstat ('test124'    ,t, J4   , F1   ) ; % GrB_extract, case 6
-logstat ('test133'    ,t, J40  , F10  , [0 3 4]) ; % mask operations (GB_masker)
+logstat ('test133'    ,t, J40  , F10  ) ; % mask operations (GB_masker)
 logstat ('test176'    ,t, J40  , F10  ) ; % GrB_assign, method 09, 11
 logstat ('test197'    ,t, J40  , F10  ) ; % large sparse split
 logstat ('test201'    ,t, J4   , F1   ) ; % iso reduce to vector, scalar
@@ -368,10 +369,13 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % > 100 seconds, debug_on
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
-logstat ('test280'    ,t, J4   , F1   , [0 1]) ; % subassign method 26
 logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
 logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops
-logstat ('test19b'    ,s, J40  , F10  , [0 2]) ; % GrB_assign, many pending ops
+logstat ('test19b'    ,s, J4   , F1   , 2) ; % GrB_assign, many pending ops
+
+% > 100 seconds, debug_off
+set_malloc_debug (mdebug, 0) ;
+logstat ('test280'    ,t, J4   , F1   , 0) ; % subassign method 26
 
 %===============================================================================
 % finalize
