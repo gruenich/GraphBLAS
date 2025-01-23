@@ -21,6 +21,11 @@
 // When kind=3, the indices I and J are passed into GxB_Matrix_assign_Vector
 // as GrB_Vectors, not plain uint64_t * arrays.
 
+// kind=4: GxB_Col_assign_Vector
+// kind=5: GxB_Row_assign_Vector
+// kind=6: GxB_Matrix_assign_Scalar_Vector or GxB_Vector_assign_Scalar_Vector
+// kind=7: GxB_Vector_assign_Vector or GxB_Matrix_assign_Vector
+
 //------------------------------------------------------------------------------
 
 #include "GB_mex.h"
@@ -118,6 +123,22 @@ GrB_Info assign ( )
             I, ni, J [0], desc)) ;
 
     }
+    else if (kind == 4)
+    {
+
+        //----------------------------------------------------------------------
+        // test GxB_Col_assign_Vector
+        //----------------------------------------------------------------------
+
+        uint64_t j0 = 0 ;
+        OK (GrB_Vector_extractElement_UINT64_(&j0, J_vector, 0)) ;
+
+        ASSERT (GB_VECTOR_OK (A)) ;
+        ASSERT (Mask == NULL || GB_VECTOR_OK (Mask)) ;
+        OK (GxB_Col_assign_Vector(C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
+            I_vector, j0, desc)) ;
+
+    }
     else if (kind == 2)
     {
 
@@ -132,6 +153,25 @@ GrB_Info assign ( )
 
         OK (GrB_Row_assign_(C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
             I [0], J, nj, desc)) ;
+
+    }
+    else if (kind == 5)
+    {
+
+        //----------------------------------------------------------------------
+        // test GxB_Row_assign_Vector
+        //----------------------------------------------------------------------
+
+        uint64_t i0 = 0 ;
+        OK (GrB_Vector_extractElement_UINT64_(&i0, I_vector, 0)) ;
+
+        ASSERT (GB_VECTOR_OK (A)) ;
+        ASSERT (Mask == NULL || GB_VECTOR_OK (Mask)) ;
+        ASSERT_VECTOR_OK_OR_NULL ((GrB_Vector) Mask, "row mask", GB0) ;
+        ASSERT_VECTOR_OK ((GrB_Vector) A, "row u", GB0) ;
+
+        OK (GxB_Row_assign_Vector_(C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
+            i0, J_vector, desc)) ;
 
     }
     else if (kind == 3)
@@ -162,19 +202,39 @@ GrB_Info assign ( )
 
         GrB_Scalar S = (GrB_Scalar) A ;
 
-        if (GB_VECTOR_OK (C) && GB_VECTOR_OK (Mask))
+        // OK but not used; see GB_mex_assign_scalar.c instead
+        if (kind == 6)
         {
-            OK (GrB_Vector_assign_Scalar_((GrB_Vector) C, (GrB_Vector) Mask,
-                accum, S, I, ni, desc)) ;
+            // test _Vector variant
+            if (GB_VECTOR_OK (C) && GB_VECTOR_OK (Mask))
+            {
+                OK (GxB_Vector_assign_Scalar_Vector_((GrB_Vector) C,
+                    (GrB_Vector) Mask, accum, S, I_vector, desc)) ;
+            }
+            else
+            {
+                OK (GxB_Matrix_assign_Scalar_Vector_((GrB_Matrix) C,
+                    (GrB_Matrix) Mask, accum, S, I_vector, J_vector, desc)) ;
+            }
         }
         else
         {
-            OK (GrB_Matrix_assign_Scalar_((GrB_Matrix) C, (GrB_Matrix) Mask,
-                accum, S, I, ni, J, nj, desc)) ;
+            // test original variants with (uint64_t *) arrays I and J
+            if (GB_VECTOR_OK (C) && GB_VECTOR_OK (Mask))
+            {
+                OK (GrB_Vector_assign_Scalar_((GrB_Vector) C, (GrB_Vector) Mask,
+                    accum, S, I, ni, desc)) ;
+            }
+            else
+            {
+                OK (GrB_Matrix_assign_Scalar_((GrB_Matrix) C, (GrB_Matrix) Mask,
+                    accum, S, I, ni, J, nj, desc)) ;
+            }
         }
 
     }
-    else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1)
+    else if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_nnz (A) == 1
+        && kind == 0)
     {
 
         //----------------------------------------------------------------------
@@ -314,11 +374,19 @@ GrB_Info assign ( )
     {
 
         //----------------------------------------------------------------------
-        // test GrB_Vector_assign
+        // test GrB_Vector_assign and GxB_Vector_assign_Vector
         //----------------------------------------------------------------------
 
-        OK (GrB_Vector_assign_((GrB_Vector) C, (GrB_Vector) Mask, accum,
-            (GrB_Vector) A, I, ni, desc)) ;
+        if (kind == 7)
+        {
+            OK (GxB_Vector_assign_Vector_((GrB_Vector) C, (GrB_Vector) Mask,
+                accum, (GrB_Vector) A, I_vector, desc)) ;
+        }
+        else
+        {
+            OK (GrB_Vector_assign_((GrB_Vector) C, (GrB_Vector) Mask, accum,
+                (GrB_Vector) A, I, ni, desc)) ;
+        }
     }
     else
     {
@@ -327,7 +395,15 @@ GrB_Info assign ( )
         // standard submatrix assignment
         //----------------------------------------------------------------------
 
-        OK (GrB_Matrix_assign_(C, Mask, accum, A, I, ni, J, nj, desc)) ;
+        if (kind == 7)
+        {
+            OK (GxB_Matrix_assign_Vector_(C, Mask, accum, A, I_vector,
+                J_vector, desc)) ;
+        }
+        else
+        {
+            OK (GrB_Matrix_assign_(C, Mask, accum, A, I, ni, J, nj, desc)) ;
+        }
     }
 
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
@@ -415,7 +491,7 @@ GrB_Info many_assign
         }
 
         // get kind (0: matrix/vector, 1: col_assign, 2: row_assign,
-        // 3: matrix/vector with I and J as GrB_Vectors)
+        // 3 or more: matrix/vector with I and J as GrB_Vectors)
         kind = 0 ;
         if (fkind > 0)
         {
@@ -426,7 +502,7 @@ GrB_Info many_assign
         // get I: may be a GrB_Vector
         p = mxGetFieldByNumber (pargin [1], k, fI) ;
         if (!GB_mx_mxArray_to_indices (p, &I, &ni, I_range, &ignore,
-            (kind == 3) ? (&I_vector) : NULL))
+            (kind >= 3) ? (&I_vector) : NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
@@ -435,7 +511,7 @@ GrB_Info many_assign
         // get J: may be a GrB_Vector
         p = mxGetFieldByNumber (pargin [1], k, fJ) ;
         if (!GB_mx_mxArray_to_indices (p, &J, &nj, J_range, &ignore,
-            (kind == 3) ? (&J_vector) : NULL))
+            (kind >= 3) ? (&J_vector) : NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;
@@ -513,6 +589,8 @@ void mexFunction
     C_sparsity_control = GxB_AUTO_SPARSITY ;
     M_sparsity_control = GxB_AUTO_SPARSITY ;
     have_sparsity_control = false ;
+    I_vector = NULL ;
+    J_vector = NULL ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -527,7 +605,7 @@ void mexFunction
     // check inputs
     if (nargout > 1 || !
         (nargin == 2 || nargin == 3 || nargin == 6 || nargin == 7 ||
-         nargin == 8))
+         nargin == 8 || nargin == 9))
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -631,7 +709,7 @@ void mexFunction
         }
 
         // get kind (0: matrix/vector, 1: col_assign, 2: row_assign,
-        // 3: matrix/vector with I and J as GrB_Vectors)
+        // 3 or more: matrix/vector with I and J as GrB_Vectors)
         kind = 0 ;
         if (nargin > 7)
         {
@@ -640,7 +718,7 @@ void mexFunction
 
         // get I: may be a GrB_Vector
         if (!GB_mx_mxArray_to_indices (pargin [4], &I, &ni, I_range, &ignore,
-            (kind == 3) ? (&I_vector) : NULL))
+            (kind >= 3) ? (&I_vector) : NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("I failed") ;
@@ -648,7 +726,7 @@ void mexFunction
 
         // get J: may be a GrB_Vector
         if (!GB_mx_mxArray_to_indices (pargin [5], &J, &nj, J_range, &ignore,
-            (kind == 3) ? (&J_vector) : NULL))
+            (kind >= 3) ? (&J_vector) : NULL))
         {
             FREE_ALL ;
             mexErrMsgTxt ("J failed") ;

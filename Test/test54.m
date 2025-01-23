@@ -46,8 +46,12 @@ for ilo = 1:m
         C0 = C ;
         C0 (ilo:ihi,:) = S ;
 
-        I1 = uint64 (ilo:ihi) - 1 ;
+        I1 = (uint64 (ilo:ihi) - 1)' ;
         C1 = GB_mex_subassign (C, [ ], [ ], S, I1, [ ], [ ]) ;
+        assert (isequal (C0, C1.matrix)) ;
+
+        % with GrB_Vector:
+        C1 = GB_mex_subassign (C, [ ], [ ], S, I1, [ ], [ ], 5) ;
         assert (isequal (C0, C1.matrix)) ;
 
         C1b = GB_mex_assign (C, [ ], [ ], S, I1, [ ], [ ]) ;
@@ -69,6 +73,10 @@ for ilo = 1:m
         C1 = GB_mex_subassign (C, [ ], [ ], S, [ ], I1, [ ]) ;
         assert (isequal (C0, C1.matrix)) ;
 
+        % with GrB_Vector:
+        C1 = GB_mex_subassign (C, [ ], [ ], S, [ ], I1, [ ], 5) ;
+        assert (isequal (C0, C1.matrix)) ;
+
         C1b = GB_mex_assign (C, [ ], [ ], S, [ ], I1, [ ]) ;
         assert (isequal (C0, C1b.matrix)) ;
 
@@ -88,9 +96,13 @@ for ilo = 1:m
                 C0 = C ;
                 C0 (ilo:ihi,jlo:jhi) = S ;
 
-                I1 = uint64 (ilo:ihi) - 1 ;
-                J1 = uint64 (jlo:jhi) - 1 ;
+                I1 = (uint64 (ilo:ihi) - 1)' ;
+                J1 = (uint64 (jlo:jhi) - 1)' ;
                 C1 = GB_mex_subassign (C, [ ], [ ], S, I1, J1, [ ]) ;
+                assert (isequal (C0, C1.matrix)) ;
+
+                % with GrB_Vector
+                C1 = GB_mex_subassign (C, [ ], [ ], S, I1, J1, [ ], 5) ;
                 assert (isequal (C0, C1.matrix)) ;
 
                 C1b = GB_mex_assign (C, [ ], [ ], S, I1, J1, [ ]) ;

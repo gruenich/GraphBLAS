@@ -52,7 +52,6 @@ GrB_Info GxB_Vector_load
     GB_RETURN_IF_NULL (*X) ;
     if (X_size < n * type->size)
     { 
-GB_GOTCHA ; // X is too small
         // X is too small
         return (GrB_INVALID_VALUE) ;
     }

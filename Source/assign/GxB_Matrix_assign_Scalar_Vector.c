@@ -24,7 +24,6 @@ GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
     const GrB_Descriptor desc       // descriptor for C and Mask
 )
 { 
-GB_GOTCHA ; // GxB_Matrix_assign_Scalar_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs

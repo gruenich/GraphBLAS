@@ -43,6 +43,7 @@ for ilo = 1:2 % 1:2:n
             if (ihi == 8)
                 Ivec.sparsity = 4 ;     % bitmap
             end
+            Ivec.class = 'double' ;
 
             for jlen = [1:2:n]
                 clear J
@@ -60,8 +61,23 @@ for ilo = 1:2 % 1:2:n
 
                 clear desc
                 desc.rowindex_list = 'is_stride' ;
-                C4 = GB_mex_Matrix_extract (S, [ ], [ ], A, Ivec, J0, desc, 1) ;
+                J0_double = double (J0) ;
+                C4 = GB_mex_Matrix_extract (S, [ ], [ ], A, Ivec, J0_double, desc, 1) ;
                 assert (isequal (C1, C4.matrix)) ;
+
+                clear Jvec
+                C6 = A (ilo:iinc:ihi, 1:4) ;
+                Jvec.matrix = [2 3 4 1]' ;
+                Jvec.sparsity = 8 ;
+                Jvec.class = 'double' ;
+                desc.colindex_list = 'use_indices' ;
+%               Jvec
+%               Jvec.matrix
+                S = sparse (sm, 4) ;
+                C5 = GB_mex_Matrix_extract (S, [ ], [ ], A, Ivec, Jvec, desc, 1) ;
+%               C6
+%               C5.matrix
+                assert (isequal (C6, C5.matrix)) ;
 
                 Iv = [1 2]' ;
                 try

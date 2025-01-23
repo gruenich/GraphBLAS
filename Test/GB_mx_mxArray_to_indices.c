@@ -134,8 +134,8 @@ bool GB_mx_mxArray_to_indices       // true if successful, false otherwise
         // I could be a GrB_Vector held as a struct or MATLAB matrix
         //----------------------------------------------------------------------
 
-        (*I_vector) = GB_mx_mxArray_to_Vector (I_builtin,
-            "I_vector", true, true) ;
+        (*I_vector) = GB_mx_mxArray_to_Vector (I_builtin, "I_vector",
+            true, true) ;
         if ((*I_vector) == NULL)
         {
             mexWarnMsgIdAndTxt ("GB:warn", "indices invalid") ;

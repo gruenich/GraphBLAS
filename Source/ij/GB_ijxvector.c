@@ -226,12 +226,10 @@ GrB_Info GB_ijxvector
 
     if (ni == 0)
     { 
-GB_GOTCHA ; // List is empty
-        // List is empty
+        // List is not NULL, but has no entries (nvals (List) == 0)
         (*I_handle) = GB_CALLOC_MEMORY (1, sizeof (uint64_t), I_size_handle) ;
         if ((*I_handle) == NULL)
         { 
-GB_GOTCHA ; // List is empty, out of memory
             return (GrB_OUT_OF_MEMORY) ;
         }
         (*I_type_handle) = GrB_UINT64 ;
@@ -369,7 +367,6 @@ GB_GOTCHA ; // List is empty, out of memory
             }
             else
             { 
-GB_GOTCHA ; // List is full, use indices, not for build
                 // use I = [0, n-1, 1] and GxB_STRIDE
                 return (GB_stride (0, 1, n-1,
                     I_handle, ni_handle, I_size_handle, I_type_handle)) ;
@@ -432,7 +429,6 @@ GB_GOTCHA ; // List is full, use indices, not for build
     }
     else
     { 
-GB_GOTCHA ; // List is other
         // I_type is not a 32/64 bit integer; typecast it to GrB_UINT64
         // FIXME: check max value of I, and use 32-bit int if OK
         I_target_type = GrB_UINT64 ;

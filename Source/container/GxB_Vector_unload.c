@@ -71,7 +71,6 @@ GrB_Info GxB_Vector_unload
     }
     if (!GB_is_dense ((GrB_Matrix) V))
     { 
-GB_GOTCHA ; // V is not dense
         // V must be dense with all entries present
         return (GrB_INVALID_OBJECT) ;
     }

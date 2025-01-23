@@ -28,7 +28,6 @@ GrB_Info GxB_Vector_subassign_Scalar_Vector   // w(I)<mask> = accum (w(I),x)
     const GrB_Descriptor desc       // descriptor for w and mask
 )
 { 
-GB_GOTCHA ; // GxB_Vector_subassign_Scalar_Vector: entire method
 
     //--------------------------------------------------------------------------
     // check inputs

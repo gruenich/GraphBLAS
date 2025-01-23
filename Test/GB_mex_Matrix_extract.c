@@ -89,29 +89,19 @@ void mexFunction
     // get the method:  0: use (uint64_t *), 1: use GrB_Vector for I,J
     int GET_SCALAR (7, int, method, 0) ;
 
-    if (method == 0)
+    // get I
+    if (!GB_mx_mxArray_to_indices (pargin [4], &I, &ni, I_range, &ignore,
+        (method == 0) ? NULL : &I_vector))
     {
-        // get I
-        if (!GB_mx_mxArray_to_indices (pargin [4], &I, &ni, I_range, &ignore,
-            NULL))
-        {
-            FREE_ALL ;
-            mexErrMsgTxt ("I failed") ;
-        }
-        // get J
-        if (!GB_mx_mxArray_to_indices (pargin [5], &J, &nj, J_range, &ignore,
-            NULL))
-        {
-            FREE_ALL ;
-            mexErrMsgTxt ("J failed") ;
-        }
+        FREE_ALL ;
+        mexErrMsgTxt ("I failed") ;
     }
-    else
+    // get J
+    if (!GB_mx_mxArray_to_indices (pargin [5], &J, &nj, J_range, &ignore,
+        (method == 0) ? NULL : &J_vector))
     {
-        // get I_vector
-        I_vector = GB_mx_mxArray_to_Vector (pargin [4], "I", false, false) ;
-        // get J_vector
-        J_vector = GB_mx_mxArray_to_Vector (pargin [5], "J", false, false) ;
+        FREE_ALL ;
+        mexErrMsgTxt ("J failed") ;
     }
 
     // get desc
