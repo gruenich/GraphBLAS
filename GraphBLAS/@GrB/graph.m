@@ -72,8 +72,8 @@ switch (type)
 
         % The graph(...) function can accept x as single, but not
         % from a built-in sparse matrix.  So extract the tuples of G first.
-        [i, j, x] = gbextracttuples (G) ;   % FIXME: int ok?
-        Graph = graph (i, j, x, n) ;    % FIXME uint32/64 OK here?
+        [i, j, x] = gbextracttuples (G) ;
+        Graph = graph (i, j, x, n) ;
 
     case { 'logical' }
 

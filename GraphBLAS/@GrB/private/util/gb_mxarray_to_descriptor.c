@@ -207,26 +207,23 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
         gb_mxstring_to_string (s, LEN, mxbase, "base") ;
         if (MATCH (s, "default"))
         { 
-            // The indices are one-based by default.  The type is determined
-            // automatically:  if I and J are outputs, then the type is double
-            // (BASE_1_DOUBLE) unless the indices can exceed flintmax (in which
-            // case BASE_1_INT64 is used)
+            // The indices are one-based integer by default.
             (*base) = BASE_DEFAULT ;
         }
-        else if (MATCH (s, "zero-based"))
+        else if (MATCH (s, "zero-based") || MATCH (s, "zero-based int"))
         { 
             // zero-based indices are always uint64/uint32.  This is the
             // fastest option since GraphBLAS uses zero-based indices.
             (*base) = BASE_0_INT ;
         }
-        else if (MATCH (s, "one-based int"))
+        else if (MATCH (s, "one-based") || MATCH (s, "one-based int"))
         { 
-            // one-based indices, but in uint64/uint32
+            // one-based indices, but in uint64/uint32 (the default)
             (*base) = BASE_1_INT ;
         }
-        else if (MATCH (s, "one-based") || MATCH (s, "one-based double"))
+        else if (MATCH (s, "double") || MATCH (s, "one-based double"))
         { 
-            // one-based indices, always double
+            // one-based double indices
             (*base) = BASE_1_DOUBLE ;
         }
 

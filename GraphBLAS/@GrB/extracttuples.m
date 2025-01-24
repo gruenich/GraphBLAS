@@ -13,19 +13,18 @@ function [I,J,X] = extracttuples (A, desc)
 % The descriptor is optional.  desc.base is a string, either 'default',
 % 'zero-based', 'one-based int', or 'one-based'.  This parameter
 % determines the type of output for I and J.  The default is one-based,
-% so that I and J are returned as double vectors, with one-based indices.
-% If the size of A is > flintmax, however, I and/or J are returned as
-% one-based integers, since a double would be too small.  One-based
-% indices in I are in the range 1 to m, and the indices in J are in the
-% range 1 to n, if A is m-by-n.  This is identical to [I,J,X] = find (A)
-% for a built-in sparse or full matrix.
+% so that I and J are returned as int32 or int64 vectors, with one-based
+% indices.  For 'double', or 'one-based double', then I and J are returned
+% as double, unless the dimensions are > flintmax, in which case they are
+% returned as int64.  One-based % indices in I are in the range 1 to m,
+% and the indices in J are in the range 1 to n, if A is m-by-n.  This is
+% identical to [I,J,X] = find (A) for a built-in sparse or full MATLAB
+% matrix, except that the MATLAB find returns I and J as double.
 %
-% If 'zero-based', I and J are returned as uint32 or uint64 arrays, with
+% If 'zero-based', I and J are returned as int32 or int64 arrays, with
 % zero-based indices.  The entries in I and J are in the range 0 to m-1
 % and 0 to n-1, respectively, if [m n] = size (A).  This usage is not the
 % conventional 1-based indexing, but it is the fastest method.
-%
-%% FIXME:  make the default one-based int?
 %
 % The overloaded [I,J,X] = find (A) method for a GraphBLAS matrix A uses
 % desc.base of 'default', and always removes explicit zeros.

@@ -127,23 +127,24 @@ kind_enum_t ;
 //
 // desc.base can be one of several strings:
 //
-//      'default'           the default is used
-//      'zero-based'        the type is always int64
-//      'one-based'         the type is inferred from the inputs I and J
-//      'one-based int'     the type is int64, and one-based
+//      'default'           the default is used (one-based int)
+//      'zero-based'        zero-based uint32/uint64
+//      'zero-based int'    zero-based uint32/uint64
+//      'one-based'         one-based uint32/uint64
+//      'one-based int'     one-based uint32/uint64
 //      'one-based double'  the type is double, and one-based
+//      'double'            the type is double, and one-based
 //
 // Note that there is no option for zero-based double.
 
 typedef enum            // type of indices
 {
-    BASE_DEFAULT = 0,   // The type is determined automatically.  It is
-                        // BASE_1_DOUBLE, unless the dimensions are
-                        // too big for a flint (max(size(A)) > flintmax).  In
-                        // that case, BASE_1_INT is used.
-    BASE_0_INT = 1,     // indices are returned as zero-based uint64/uint32
-    BASE_1_INT = 2,     // indices are returned as one-based uint64/uint32
-    BASE_1_DOUBLE = 3   // this is the typical default: one-based double
+    BASE_DEFAULT = 0,   // one-based integers (int32/int64)
+    BASE_0_INT = 1,     // indices are returned as zero-based int32/int64
+    BASE_1_INT = 2,     // indices are returned as one-based int32/int64
+    BASE_1_DOUBLE = 3   // one-based double, unless the dimensions are too big
+                        // for a flint (max(size(A)) > flintmax).  In that
+                        // case, BASE_1_INT is used.
 }
 base_enum_t ;
 

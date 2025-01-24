@@ -17,8 +17,9 @@
 // desc.base = 'zero-based':    I and J are returned as 0-based integer indices
 // desc.base = 'one-based int': I and J are returned as 1-based integer indices
 // desc.base = 'one-based':     I and J are returned as 1-based double indices
-// desc.base = 'default':       'one-based', unless max(size(A)) > flintmax,
-//                              in which case 'one-based int' is used.
+// desc.base = 'one-based double' one-based double unless max(size(A)) >
+//                              flintmax, in which case 'one-based int' is used.
+// desc.base = 'default':       'one-based int'
 
 #include "gb_interface.h"
 
@@ -115,8 +116,7 @@ void mexFunction
 
     if (extract_I)
     { 
-        if ((base == BASE_DEFAULT && nrows <= FLINTMAX) ||
-            (base == BASE_1_DOUBLE))
+        if (base == BASE_1_DOUBLE && nrows <= FLINTMAX)
         { 
             // I = (double) (I + 1)
             OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
@@ -127,11 +127,13 @@ void mexFunction
         }
         else if (base_offset != 0)
         { 
-            // I = I+1, as a uint64 or uint32 vector
+            // I = I+1, as a int64 or int32 vector
             OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (I, NULL, NULL,
                 GrB_PLUS_UINT64, I, 1, NULL)) ;
         }
         OK (GxB_Vector_unload (I, &x, &nvals, &size, &type, &ignore, NULL));
+        if (type == GrB_UINT32) type = GrB_INT32 ;
+        if (type == GrB_UINT64) type = GrB_INT64 ;
         pargout [0] = gb_export_to_mxfull (&x, nvals, 1, type) ;
         OK (GrB_Vector_free (&I)) ;
     }
@@ -142,8 +144,7 @@ void mexFunction
 
     if (extract_J)
     { 
-        if ((base == BASE_DEFAULT && ncols <= FLINTMAX) ||
-            (base == BASE_1_DOUBLE))
+        if (base == BASE_1_DOUBLE && ncols <= FLINTMAX)
         { 
             // J = (double) (J + 1)
             OK (GrB_Vector_new (&T, GrB_FP64, nvals)) ;
@@ -154,11 +155,13 @@ void mexFunction
         }
         else if (base_offset != 0)
         { 
-            // J = J+1, as a uint64 or uint32 vector
+            // J = J+1, as a int64 or int32 vector
             OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (J, NULL, NULL,
                 GrB_PLUS_UINT64, J, 1, NULL)) ;
         }
         OK (GxB_Vector_unload (J, &x, &nvals, &size, &type, &ignore, NULL));
+        if (type == GrB_UINT32) type = GrB_INT32 ;
+        if (type == GrB_UINT64) type = GrB_INT64 ;
         pargout [1] = gb_export_to_mxfull (&x, nvals, 1, type) ;
         OK (GrB_Vector_free (&J)) ;
     }
