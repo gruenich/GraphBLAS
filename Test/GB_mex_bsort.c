@@ -2,7 +2,7 @@
 // GB_mex_bsort: sort IJK using a struct qsort
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -31,43 +31,43 @@ GB_bsort_64_64_64_t ;
 #define GB_lt_1(A, a, B, b) (A [a].k < B [b].k)
 
 #undef  GB_lt_2
-#define GB_lt_2(A, a, B, b)                                                 \
-(                                                                           \
-    (A [a].j < B [b].j) ?                                                   \
-    (                                                                       \
-        true                                                                \
-    )                                                                       \
-    :                                                                       \
-    (                                                                       \
-        (A [a].j == B [b].j) ?                                              \
-        (                                                                   \
-            GB_lt_1 (A, a, B, b)                              \
-        )                                                                   \
-        :                                                                   \
-        (                                                                   \
-            false                                                           \
-        )                                                                   \
-    )                                                                       \
+#define GB_lt_2(A, a, B, b)         \
+(                                   \
+    (A [a].j < B [b].j) ?           \
+    (                               \
+        true                        \
+    )                               \
+    :                               \
+    (                               \
+        (A [a].j == B [b].j) ?      \
+        (                           \
+            GB_lt_1 (A, a, B, b)    \
+        )                           \
+        :                           \
+        (                           \
+            false                   \
+        )                           \
+    )                               \
 )
 
 #undef  GB_lt_3
-#define GB_lt_3(A, a, B, b)                                                 \
-(                                                                           \
-    (A [a].i < B [b].i) ?                                                   \
-    (                                                                       \
-        true                                                                \
-    )                                                                       \
-    :                                                                       \
-    (                                                                       \
-        (A [a].i == B [b].i) ?                                              \
-        (                                                                   \
-            GB_lt_2 (A, a, B, b)                              \
-        )                                                                   \
-        :                                                                   \
-        (                                                                   \
-            false                                                           \
-        )                                                                   \
-    )                                                                       \
+#define GB_lt_3(A, a, B, b)         \
+(                                   \
+    (A [a].i < B [b].i) ?           \
+    (                               \
+        true                        \
+    )                               \
+    :                               \
+    (                               \
+        (A [a].i == B [b].i) ?      \
+        (                           \
+            GB_lt_2 (A, a, B, b)    \
+        )                           \
+        :                           \
+        (                           \
+            false                   \
+        )                           \
+    )                               \
 )
 
 #undef  GB_lt
@@ -75,11 +75,11 @@ GB_bsort_64_64_64_t ;
 
 // swap A [a] and A [b]
 #undef  GB_swap
-#define GB_swap(A,a,b)                                                        \
-{                                                                             \
-    GB_BSORT_T t = A [a] ;  \
-    A [a] = A [b] ; \
-    A [b] = t ; \
+#define GB_swap(A,a,b)              \
+{                                   \
+    GB_BSORT_T t = A [a] ;          \
+    A [a] = A [b] ;                 \
+    A [b] = t ;                     \
 }
 
 #define GB_BSORT_T GB_bsort_32_32_32_t
@@ -95,8 +95,6 @@ GB_bsort_64_64_64_t ;
 #define GB_partition GB_partition_64_64_64
 #define GB_quicksort GB_quicksort_64_64_64
 #include "factory/GB_bsort_template.c"
-
-
 
 void mexFunction
 (

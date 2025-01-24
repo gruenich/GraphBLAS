@@ -18,7 +18,7 @@ function logstat (testscript, threads, jit_controls, factory_controls, pji_contr
 % pji_controls: a list of integers in the range 0 to 7, where each integer
 % is a 3-bit number with [pji]_control.  Defaults to [0]
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 GB_mex_finalize ;

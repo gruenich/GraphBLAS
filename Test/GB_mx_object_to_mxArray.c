@@ -2,12 +2,10 @@
 // GB_mx_object_to_mxArray: convert a GrB_Matrix to MATLAB struct
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// DONE: 32/64 bit
 
 // Convert a GraphBLAS GrB_Matrix to a MATLAB struct C containing
 // C.matrix and a string C.class.  The GraphBLAS matrix is destroyed.

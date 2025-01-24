@@ -2,12 +2,10 @@
 // GB_mex_test2: more basic tests
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// DONE: 32/64 bit
 
 // Test lots of random stuff.  The function otherwise serves no purpose.
 

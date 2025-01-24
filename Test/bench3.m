@@ -1,7 +1,7 @@
 function bench3(longtests)
 %BENCH3 test and benchmark qsort and msort
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
 fprintf ('\ntest44\n------------------------------------- qsort tests\n') ;

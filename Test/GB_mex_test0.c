@@ -2,12 +2,10 @@
 // GB_mex_test0: test error handling
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2023, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// DONE: 32/64 bit
 
 // This mexFunction intentionally creates many errors for GraphBLAS, to test
 // error-handling.  Many error messages are printed.  If the test ends with
