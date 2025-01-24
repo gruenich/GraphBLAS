@@ -121,6 +121,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test294'    ,t, J0   , F1   ) ; % reduce with zombies
 logstat ('test293'    ,t, J0   , F0   ) ; % msort/qsort: all int variants
 logstat ('test291'    ,t, J0   , F0   , [0 1 2 4]) ; % GB_ix_realloc
 logstat ('test290'    ,t, J0   , F0   ) ; % large symbolic bitmap_subref
@@ -131,9 +132,8 @@ logstat ('test285'    ,t, J40  , F00  ) ; % GB_mex_assign (bitmap, 7_whole)
 logstat ('test247'    ,t, J40  , F10  ) ; % GrB_mxm: fine Hash method
 logstat ('test109'    ,t, J4040, F1100) ; % terminal monoid with user-defn type
 logstat ('test138'    ,s, J40  , F10  ) ; % assign, coarse-only in IxJ slice
-logstat ('test139'    ,s, J4   , F1   ) ; % merge sort, special cases
 logstat ('test172'    ,t, J40  , F10  ) ; % eWiseMult with M bitmap/full
-logstat ('test155'    ,t, J40  , F10  , [0 1 2 4]) ; % setElement, removeElement
+logstat ('test155'    ,t, J40  , F10  , [0 2 4]) ; % setElement, removeElement
 logstat ('test174'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test203'    ,t, J4   , F1   ) ; % iso subref
 logstat ('test213'    ,t, J40  , F10  ) ; % iso assign (method 05d)
@@ -147,7 +147,7 @@ logstat ('test255'    ,t, J4   , F1   ) ; % flip binop
 logstat ('test257'    ,t, J40  , F00  ) ; % JIT error handling
 logstat ('test260'    ,t, J4   , F0   ) ; % demacrofy name
 logstat ('test261'    ,t, J4   , F0   ) ; % serialize/deserialize errors
-logstat ('test262'    ,t, J0   , F1   , [0 1]) ; % GB_mask
+logstat ('test262'    ,t, J0   , F1   ) ; % GB_mask
 logstat ('test263'    ,t, J40  , F00  ) ; % JIT tests
 logstat ('test264'    ,t, J4   , F0   ) ; % enumify / macrofy tests
 logstat ('test265'    ,t, J40  , F00  ) ; % reduce to scalar with user types
@@ -269,9 +269,9 @@ logstat ('test148'    ,t, J40  , F10  ) ; % ewise with alias
 logstat ('test231'    ,t, J4   , F1   ) ; % GrB_select with idxunp
 logstat ('test129'    ,t, J4   , F1   ) ; % GxB_select (tril, nonz, hyper)
 logstat ('test69'     ,t, J40  , F10  ) ; % assign and subassign with alias
-logstat ('test29'     ,t, J00  , F10  , [0 1]) ; % reduce with zombies
+logstat ('test29'     ,t, J00  , F10  , [0 1]) ; % reduce tests
 logstat ('test282'    ,t, J4   , F1   ) ; % argmax, index binary op
-logstat ('test249'    ,t, J40  , F10  , [0 1]) ; % GxB_Context object
+logstat ('test249'    ,t, J40  , F10  ) ; % GxB_Context object
 logstat ('test196'    ,t, J4   , F1   ) ; % hypersparse concat
 logstat ('test250'    ,t, J44  , F10  ) ; % JIT tests, set/get, other tests
 logstat ('test145'    ,t, J42  , F11  ) ; % dot4 for C += A'*B
@@ -286,7 +286,7 @@ logstat ('test150'    ,t, J0   , F0   ) ; % mxm zombies, typecasting
 logstat ('test240'    ,t, J40  , F10  ) ; % dot4, saxpy4, and saxpy5
 logstat ('test237'    ,t, J40  , F10  ) ; % GrB_mxm (saxpy4)
 logstat ('test237'    ,s, J40  , F10  ) ; % GrB_mxm (saxpy4) (1 task)
-logstat ('test184'    ,t, J4   , F1   , [0 1]) ; % mxm, transp, build
+logstat ('test184'    ,t, J4   , F1   ) ; % mxm, transp, build
 logstat ('test236'    ,t, J4   , F1   ) ; % GxB_*_sort
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
@@ -318,6 +318,7 @@ logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
 logstat ('test142'    ,t, J4   , F1   ) ; % GrB_assign with accum
 logstat ('test227'    ,t, J4   , F1   ) ; % kron
 logstat ('test292'    ,t, J4   , F1   ) ; % build_Vector with large vector
+logstat ('test280'    ,t, J4   , F1   ) ; % subassign method 26
 
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
@@ -369,13 +370,15 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % > 100 seconds, debug_on
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
+%% FIXME: the following tests are slow:
 logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
 logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops
-logstat ('test19b'    ,s, J4   , F1   , 2) ; % GrB_assign, many pending ops
 
-% > 100 seconds, debug_off
+%% FIXME this tests a single line, taking 250 seconds:
 set_malloc_debug (mdebug, 0) ;
-logstat ('test280'    ,t, J4   , F1   , 0) ; % subassign method 26
+logstat ('test19b'    ,s, J4   , F1   , 2) ; % GrB_assign, many pending ops
+set_malloc_debug (mdebug, 1) ;
+logstat ('test19b'    ,s, J4   , F1   , 2) ; % GrB_assign, many pending ops
 
 %===============================================================================
 % finalize

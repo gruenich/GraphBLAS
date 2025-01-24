@@ -61,7 +61,6 @@
             // skip if the entry is a zombie or if not in the bitmap
             if (A_has_zombies)
             { 
-// GB_GOTCHA ; reduce with zombies; tested by LAGraph
                 int64_t i = GB_IGET (Ai, p) ;
                 if (GB_IS_ZOMBIE (i)) continue ;
             }
@@ -102,7 +101,6 @@
                     // skip if the entry is a zombie or if not in the bitmap
                     if (A_has_zombies)
                     { 
-// GB_GOTCHA ; reduce with zombies; tested by LAGraph
                         int64_t i = GB_IGET (Ai, p) ;
                         if (GB_IS_ZOMBIE (i)) continue ;
                     }

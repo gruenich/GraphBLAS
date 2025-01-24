@@ -1,6 +1,8 @@
 % GraphBLAS Test/ folder: test GraphBLAS
 % See the README.txt file for more details.
 
+% FIXME update this Contents.m file
+
 % Primary functiuns
 
 %   testmake                      - compiles the test interface to GraphBLAS
@@ -301,6 +303,6 @@
 %   grblines           - total # of lines in the test coverage
 %   set_malloc_debug   - Turn on/off malloc debugging and mark the log.txt 
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
