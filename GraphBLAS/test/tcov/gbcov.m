@@ -15,7 +15,10 @@ end
 
 gbcovmake
 addpath ('..') ;            % add the test folder to the path
-rmpath ('../..') ;          % remove the regular @GrB class
+try
+    rmpath ('../..') ;      % remove the regular @GrB class
+catch
+end
 addpath ('tmp') ;           % add the modified @GrB class
 
 % run the tests

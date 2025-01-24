@@ -92,7 +92,21 @@ if (~ismac && isunix)
     flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
 
-inc = [ inc '-I. -I../util -I../../../../../../Include -I../../../../../../Source -I../../../../../../Source/include -I../../../../../../cpu_features/include ' ] ;
+% inc = [ inc '-I. -I../util -I../../../../../../Include -I../../../../../../Source -I../../../../../../Source/include -I../../../../../../cpu_features/include ' ] ;
+
+inc = [inc '-I. -I../util '] ;
+    inc = [inc '-I../../../../../.. ' ] ;
+    inc = [inc '-I../../../../../../Include ']
+    inc = [inc '-I../../../../../../Source ' ] ;
+    inc = [inc '-I../../../../../../Source/include '] ;
+    inc = [inc '-I../../../../../../Source/ij ' ] ;
+    inc = [inc '-I../../../../../../Source/math ' ] ;
+    inc = [inc '-I../../../../../../Source/cast ' ] ;
+    inc = [inc '-I../../../../../../Source/binaryop ' ] ;
+    inc = [inc '-I../../../../../../Source/transpose ' ] ;
+    inc = [inc '-I../../../../../../Source/helper ' ] ;
+    inc = [inc '-I../../../../../../Source/builtin ' ] ;
+    inc = [inc '-I../../../../../../Source/hyper ' ] ;
 
 cd tmp/@GrB/private
 try
