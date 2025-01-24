@@ -158,7 +158,7 @@ void mexFunction
             {
                 if (nouter <= nmat)
                 {
-                    double t = GB_OPENMP_GET_WTIME ;
+                    double t = GB_omp_get_wtime ( ) ;
                     #pragma omp parallel for num_threads (nouter) \
                         schedule (dynamic, 1)
                     for (int k = 0 ; k < nmat ; k++)
@@ -184,7 +184,7 @@ void mexFunction
                         OK (GxB_Context_free (&Context)) ;
                     }
 
-                    t = GB_OPENMP_GET_WTIME - t ;
+                    t = GB_omp_get_wtime ( ) - t ;
                     if (nouter == 1 && ninner == 1) t1 = t ;
 
                     printf ("   threads (%4d,%4d): %4d "

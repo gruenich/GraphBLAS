@@ -206,36 +206,32 @@ void GB_assign_describe
 #if defined ( _OPENMP )
 
     // burble with timing
-    #define GB_BURBLE_START(func)                       \
-    double t_burble = 0 ;                               \
-    {                                                   \
-        GB_NVTX                                         \
-        if (GB_Global_burble_get ( ))                   \
-        {                                               \
-            GBURBLE (" [ " func " ") ;                  \
-            t_burble = GB_OPENMP_GET_WTIME ;            \
-        }                                               \
+    #define GB_BURBLE_START(func)                           \
+    double t_burble = 0 ;                                   \
+    {                                                       \
+        GB_NVTX                                             \
+        if (GB_Global_burble_get ( ))                       \
+        {                                                   \
+            GBURBLE (" [ " func " ") ;                      \
+            t_burble = GB_omp_get_wtime ( ) ;               \
+        }                                                   \
     }
 
-    #define GB_BURBLE_END                               \
-    {                                                   \
-        GB_NVTX                                         \
-        if (GB_Global_burble_get ( ))                   \
-        {                                               \
-            t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
-            GBURBLE ("\n   %.3g sec ]\n", t_burble) ;   \
-        }                                               \
+    #define GB_BURBLE_END                                   \
+    {                                                       \
+        GB_NVTX                                             \
+        if (GB_Global_burble_get ( ))                       \
+        {                                                   \
+            t_burble = GB_omp_get_wtime ( ) - t_burble ;    \
+            GBURBLE ("\n   %.3g sec ]\n", t_burble) ;       \
+        }                                                   \
     }
 
 #else
 
     // burble with no timing
-
-    #define GB_BURBLE_START(func)                       \
-        GBURBLE (" [ " func " ")
-
-    #define GB_BURBLE_END                               \
-        GBURBLE ("]\n")
+    #define GB_BURBLE_START(func) GBURBLE (" [ " func " ")
+    #define GB_BURBLE_END         GBURBLE ("]\n")
 
 #endif
 

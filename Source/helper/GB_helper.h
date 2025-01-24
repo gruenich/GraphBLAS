@@ -16,8 +16,6 @@
 #include "GB.h"
 #include "math/GB_math.h"
 
-double GB_helper0 (void) ;
-
 void GB_helper5             // construct pattern of S
 (
     // output:

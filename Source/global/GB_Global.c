@@ -1096,12 +1096,3 @@ double GB_Global_timing_get (int k)
     return (GB_Global.timing [k]) ;
 }
 
-//------------------------------------------------------------------------------
-// get_wtime: return current wallclock time
-//------------------------------------------------------------------------------
-
-double GB_Global_get_wtime (void)
-{ 
-    return (GB_OPENMP_GET_WTIME) ;
-}
-

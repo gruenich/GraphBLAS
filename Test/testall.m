@@ -296,6 +296,7 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % 10 to 100 seconds: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test84'     ,s, J40  , F10  , [0 2]) ; % GrB_assign (row/col)
 logstat ('test84'     ,t, J40  , F10  , [0 2]) ; % GrB_assign (row/col)
 logstat ('test173'    ,t, J40  , F10  ) ; % GrB_assign C<A>=A
 logstat ('test230'    ,t, J40  , F10  ) ; % apply with idxunops
@@ -370,15 +371,11 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
 % > 100 seconds, debug_on
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
-%% FIXME: the following tests are slow:
-logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
 logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops
 
-%% FIXME this tests a single line, taking 250 seconds:
+% > 100 seconds, debug_off
 set_malloc_debug (mdebug, 0) ;
-logstat ('test19b'    ,s, J4   , F1   , 2) ; % GrB_assign, many pending ops
-set_malloc_debug (mdebug, 1) ;
-logstat ('test19b'    ,s, J4   , F1   , 2) ; % GrB_assign, many pending ops
+logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
 
 %===============================================================================
 % finalize

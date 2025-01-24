@@ -47,8 +47,8 @@ void mexFunction
     void *Iout = mxGetData (pargout [0]) ;
     memcpy (Iout, I, n * (I_is_32 ? sizeof (uint32_t) : sizeof (uint64_t))) ;
 
-//  double t = omp_get_wtime ( ) ;
+//  double t = GB_omp_get_wtime ( ) ;
     GB_qsort_1 (Iout, I_is_32, n) ;
-//  printf ("qsort_1 time %g\n", omp_get_wtime ( ) - t) ;
+//  printf ("qsort_1 time %g\n", GB_omp_get_wtime ( ) - t) ;
 }
 

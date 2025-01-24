@@ -40,15 +40,6 @@ bool GB_factory_kernels_enabled = true ;
     GB_FREE_WORK (&Work, Work_size) ;
 
 //------------------------------------------------------------------------------
-// GB_helper0: get the current wall-clock time from OpenMP
-//------------------------------------------------------------------------------
-
-double GB_helper0 (void)
-{
-    return (GB_OPENMP_GET_WTIME) ;
-}
-
-//------------------------------------------------------------------------------
 // GB_helper5: construct pattern of S for gblogassign
 //------------------------------------------------------------------------------
 

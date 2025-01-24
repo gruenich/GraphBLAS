@@ -35,7 +35,7 @@ void mexFunction
 
     bool malloc_debug = GB_mx_get_global (true) ;
     int expected = GrB_SUCCESS ;
-    double wtime = GB_Global_get_wtime ( ) ;
+    double wtime = GB_omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // pack/unpack
@@ -258,7 +258,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GB_mx_put_global (true) ;   
-    wtime = GB_Global_get_wtime ( ) - wtime ;
+    wtime = GB_omp_get_wtime ( ) - wtime ;
     printf ("\nGB_mex_test4: all tests passed, time: %g\n\n", wtime) ;
 }
 

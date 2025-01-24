@@ -123,8 +123,6 @@ void     GB_Global_printf_set (GB_printf_function_t p) ;
 GB_flush_function_t GB_Global_flush_get (void) ;
 void     GB_Global_flush_set (GB_flush_function_t p) ;
 
-double   GB_Global_get_wtime (void) ;
-
 void  *  GB_Global_malloc_function_get (void) ;
 void  *  GB_Global_calloc_function_get (void) ;
 void  *  GB_Global_realloc_function_get (void) ;
