@@ -11,8 +11,6 @@ function X = nonzeros (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% FIXME: return X as a GrB dense vector
-
 G = G.opaque ;
 X = gbextractvalues (gbselect ('nonzero', G)) ;
 

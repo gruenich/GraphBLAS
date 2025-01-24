@@ -57,8 +57,7 @@ switch (type)
 
         % The digraph(...) function can accept x as single, but not
         % from a sparse matrix.  So extract the tuples of G first.
-        desc.base = 'one-based int' ;
-        [i, j, x] = gbextracttuples (G, desc) ;
+        [i, j, x] = gbextracttuples (G) ;
         DiGraph = digraph (i, j, x, n) ;
 
     case { 'logical' }

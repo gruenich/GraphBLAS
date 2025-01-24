@@ -52,10 +52,6 @@ else
             % J = GrB.entries (A, 'col', 'list')
             desc.base = 'one-based int' ;
             result = gbextracttuples (gbselect (result, 'nonzero'), desc) ;
-            % FIXME: temporary workaround
-            if (isequal (class (result), 'uint32'))
-                result = uint64 (result) ;
-            end
         % case 'degree'
             % degree of all rows/cols
             % d = GrB.entries (A, 'row', 'degree')

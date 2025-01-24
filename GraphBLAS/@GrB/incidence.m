@@ -93,7 +93,11 @@ desc.base = 'zero-based' ;
 [I, J] = gbextracttuples (A, desc) ;        % OK: I, J are zero-based
 e = length (I) ;
 I = [I ; J] ;
-J = (int64 (0) : int64 (e-1))' ;           %% FIXME: use uint32/uint64
+if (e > intmax ('uint32'))
+    J = (uint64 (0) : uint64 (e-1))' ;
+else
+    J = (uint32 (0) : uint32 (e-1))' ;
+end
 J = [J ; J] ;
 X = ones (e, 1, type) ;
 X = [-X ; X] ;

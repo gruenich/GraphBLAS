@@ -254,7 +254,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         mxArray *Ah_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
         if (Ah_size > nvec * jsize)
         {
-            // FIXME: is this necessary?
+            // clear the space beyond the end of the data
             memset (Ah + nvec, 0, Ah_size - nvec * jsize) ;
         }
         if (Ah_size > 0)
