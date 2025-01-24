@@ -2,7 +2,7 @@
 // grb_jitpackage: package GraphBLAS source code for the JIT
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ int main (int argc, char **argv)
         "// GB_JITpackage.c: packaged GraphBLAS source code for the JIT\n"
         "//------------------------------------------------------------------------------\n"
         "\n"
-        "// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.\n"
+        "// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.\n"
         "// SPDX-License-Identifier: Apache-2.0\n"
         "\n"
         "//------------------------------------------------------------------------------\n"

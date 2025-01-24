@@ -2,8 +2,8 @@
 // GraphBLAS/CUDA/GB_cuda_AxB_dot3: compute C<M> = A'*B on GPU(s)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2024, All Rights Reserved.
-// This file: Copyright (c) 2024, NVIDIA CORPORATION. All rights reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
+// This file: Copyright (c) 2024-2025, NVIDIA CORPORATION. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
