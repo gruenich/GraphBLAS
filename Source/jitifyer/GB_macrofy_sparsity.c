@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: remove GB[PHIB]_* macros
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

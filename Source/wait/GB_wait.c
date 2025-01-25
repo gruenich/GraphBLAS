@@ -361,7 +361,6 @@ GrB_Info GB_wait                // finish all pending computations
         if (nthreads == 1)
         { 
             // compare Ah and Sh with a single thread
-            // FIXME: make this an inline function like GB_binary_search
             if (Aj_is_32)
             { 
                 hsame = (memcmp (Ah32, Sh32, anvec * sizeof (uint32_t)) == 0) ;
