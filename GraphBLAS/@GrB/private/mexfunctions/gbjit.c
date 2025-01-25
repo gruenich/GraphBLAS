@@ -7,14 +7,17 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: test GrB.jit
+
 // Usage:
 
-// [s,path] = gbjit
-// [s,path] = gbjit (jit)
+// [status,path] = gbjit
+// [status,path] = gbjit (status)
+// [status,path] = gbjit (status,path)
 
 #include "gb_interface.h"
 
-#define USAGE "usage: [s,path] = GrB.jit (s,path) ;"
+#define USAGE "usage: [status,path] = GrB.jit (status,path) ;"
 
 void mexFunction
 (
@@ -35,22 +38,46 @@ void mexFunction
     // set the JIT control, if requested
     //--------------------------------------------------------------------------
 
-    #define LEN 2048
-    char s [LEN] ;
-
     if (nargin > 0)
     { 
         // set the JIT control
-        #define JIT(c) { OK (GxB_Global_Option_set (GxB_JIT_C_CONTROL, c)) ; }
-        gb_mxstring_to_string (s, LEN, pargin [0], "s") ; 
-        if      (MATCH (s, ""     )) { /* do nothing */ ; }
-        else if (MATCH (s, "off"  )) JIT (GxB_JIT_OFF)
-        else if (MATCH (s, "pause")) JIT (GxB_JIT_PAUSE)
-        else if (MATCH (s, "run"  )) JIT (GxB_JIT_RUN)
-        else if (MATCH (s, "load" )) JIT (GxB_JIT_LOAD)
-        else if (MATCH (s, "on"   )) JIT (GxB_JIT_ON)
-        else if (MATCH (s, "flush")) { JIT (GxB_JIT_OFF) ; JIT (GxB_JIT_ON) ; }
-        else ERROR2 ("unknown option: %s", s) ;
+        #define JIT(c) \
+            OK (GrB_Global_set_INT32 (GrB_GLOBAL, c, GxB_JIT_C_CONTROL)) ;
+        char *status = gb_mxstring_to_string2 (pargin [0], "status", true) ;
+        if      (MATCH (status, ""     ))
+        { 
+            /* do nothing */ ;
+        }
+        else if (MATCH (status, "off"  ))
+        { 
+            JIT (GxB_JIT_OFF) ;
+        }
+        else if (MATCH (status, "pause"))
+        { 
+            JIT (GxB_JIT_PAUSE) ;
+        }
+        else if (MATCH (status, "run"  ))
+        { 
+            JIT (GxB_JIT_RUN) ;
+        }
+        else if (MATCH (status, "load" ))
+        { 
+            JIT (GxB_JIT_LOAD) ;
+        }
+        else if (MATCH (status, "on"   ))
+        { 
+            JIT (GxB_JIT_ON) ;
+        }
+        else if (MATCH (status, "flush"))
+        { 
+            JIT (GxB_JIT_OFF) ;
+            JIT (GxB_JIT_ON) ;
+        }
+        else
+        { 
+            ERROR2 ("unknown option: %s", status) ;
+        }
+        mxFree (status) ;
     }
 
     //--------------------------------------------------------------------------
@@ -60,8 +87,9 @@ void mexFunction
     if (nargin > 1)
     { 
         // set the JIT cache path
-        gb_mxstring_to_string (s, LEN, pargin [1], "path") ; 
-        OK (GxB_Global_Option_set (GxB_JIT_CACHE_PATH, s)) ;
+        char *path = gb_mxstring_to_string2 (pargin [1], "path", false) ;
+        OK (GrB_Global_set_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
+        mxFree (path) ;
     }
 
     //--------------------------------------------------------------------------
@@ -71,7 +99,7 @@ void mexFunction
     if (nargout > 0)
     { 
         int c ;
-        OK (GxB_Global_Option_get (GxB_JIT_C_CONTROL, &c)) ;
+        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &c, GxB_JIT_C_CONTROL)) ;
         switch (c)
         {
             case GxB_JIT_OFF  : pargout [0] = mxCreateString ("off"  ) ; break ;
@@ -91,8 +119,12 @@ void mexFunction
     if (nargout > 1)
     { 
         char *path = NULL ;
-        OK (GxB_Global_Option_get (GxB_JIT_CACHE_PATH, &path)) ;
+        size_t len = 0 ;
+        OK (GrB_Global_get_SIZE (GrB_GLOBAL, &len, GxB_JIT_CACHE_PATH)) ;
+        path = mxMalloc (len + 2) ;
+        OK (GrB_Global_get_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
         pargout [1] = mxCreateString (path) ;
+        mxFree (path) ;
     }
 
     //--------------------------------------------------------------------------

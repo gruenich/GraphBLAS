@@ -101,7 +101,7 @@ void mexFunction
                     // get a shallow copy and then typecast it to type.
                     // use the same format as A
                     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
-                    OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
+                    OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
                     C = gb_typecast (A, type, fmt, 0) ;
                     OK (GrB_Matrix_free (&A)) ;
                 }

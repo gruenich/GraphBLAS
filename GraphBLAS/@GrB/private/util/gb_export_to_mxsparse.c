@@ -34,7 +34,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, *A_handle)) ;
     int fmt ;
-    OK (GxB_Matrix_Option_get (*A_handle, GxB_FORMAT, &fmt)) ;
+    OK (GrB_Matrix_get_INT32 (*A_handle, &fmt, GxB_FORMAT)) ;
 
     if (fmt == GxB_BY_COL &&
         (type == GrB_BOOL || type == GrB_FP64 || type == GxB_FC64))

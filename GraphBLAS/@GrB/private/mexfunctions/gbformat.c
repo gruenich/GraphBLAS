@@ -50,7 +50,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // get the global format
-        OK (GxB_Global_Option_get (GxB_FORMAT, &fmt)) ;
+        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &fmt, GxB_FORMAT)) ;
 
     }
     else // if (nargin == 1)
@@ -69,7 +69,7 @@ void mexFunction
             bool ok = gb_mxstring_to_format (pargin [0], &fmt, &ignore) ;
             CHECK_ERROR (!ok, "invalid format") ;
             // set the global format
-            OK (GxB_Global_Option_set (GxB_FORMAT, fmt)) ;
+            OK (GrB_Global_set_INT32 (GrB_GLOBAL, fmt, GxB_FORMAT)) ;
 
         }
         else if (mxIsStruct (pargin [0]))

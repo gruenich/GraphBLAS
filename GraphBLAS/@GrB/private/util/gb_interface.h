@@ -181,6 +181,13 @@ void gb_mxstring_to_string  // copy a built-in string into a C string
     const char *name        // name of the mxArray
 ) ;
 
+char *gb_mxstring_to_string2    // copy a built-in string into a C string
+(
+    const mxArray *S,       // built-in mxArray containing a string
+    const char *name,       // name of the mxArray
+    bool to_lower           // if true, convert to lower case
+) ;
+
 GrB_Matrix gb_get_shallow   // return a shallow copy of built-in sparse matrix
 (
     const mxArray *X

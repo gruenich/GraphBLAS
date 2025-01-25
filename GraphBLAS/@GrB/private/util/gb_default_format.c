@@ -30,7 +30,7 @@ int gb_default_format      // GxB_BY_ROW or GxB_BY_COL
     else
     { 
         // get the default format
-        OK (GxB_Global_Option_get (GxB_FORMAT, &fmt)) ;
+        OK (GrB_Global_get_INT32 (GrB_GLOBAL, &fmt, GxB_FORMAT)) ;
     }
     return (fmt) ;
 }

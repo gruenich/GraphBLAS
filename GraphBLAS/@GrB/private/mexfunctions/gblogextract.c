@@ -123,8 +123,6 @@ void mexFunction
     // make M boolean, stored by column, and drop explicit zeros
     GrB_Matrix M_input = gb_get_shallow (pargin [1]) ;
     GrB_Matrix M = gb_new (GrB_BOOL, nrows, ncols, GxB_BY_COL, not_bitmap) ;
-//  OK1 (M, GxB_Matrix_select (M, NULL, NULL, GxB_NONZERO, M_input,
-//      NULL, NULL)) ;
     OK1 (M, GrB_Matrix_select_BOOL (M, NULL, NULL, GrB_VALUENE_BOOL, M_input,
         0, NULL)) ;
     OK (GrB_Matrix_free (&M_input)) ;
@@ -132,7 +130,7 @@ void mexFunction
     GrB_Index mnz ;
     OK (GrB_Matrix_nvals (&mnz, M)) ;
     int sparsity ;
-    OK (GxB_Matrix_Option_get (M, GxB_SPARSITY_STATUS, &sparsity)) ;
+    OK (GrB_Matrix_get_INT32 (M, &sparsity, GxB_SPARSITY_STATUS)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 5") ;
     CHECK_ERROR (!M->iso, "internal error 42")  ;            	
 
@@ -157,7 +155,7 @@ void mexFunction
     GrB_Index gnvals ;
     OK1 (G, GrB_Matrix_wait (G, GrB_MATERIALIZE)) ;
     OK (GrB_Matrix_nvals (&gnvals, G)) ;
-    OK (GxB_Matrix_Option_get (G, GxB_SPARSITY_STATUS, &sparsity)) ;
+    OK (GrB_Matrix_get_INT32 (G, &sparsity, GxB_SPARSITY_STATUS)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 0") ;
 
     // Remove G->x from G
@@ -191,7 +189,7 @@ void mexFunction
     GrB_Matrix K = GB_clear_static_header (&K_header) ;
 
     OK (GB_shallow_copy (K, GxB_BY_COL, M, NULL)) ;
-    OK (GxB_Matrix_Option_get (K, GxB_SPARSITY_STATUS, &sparsity)) ;
+    OK (GrB_Matrix_get_INT32 (K, &sparsity, GxB_SPARSITY_STATUS)) ;
     CHECK_ERROR (sparsity == GxB_BITMAP, "internal error 10") ;
 
     // Kx = uint64 (0:mnz-1)
@@ -246,7 +244,7 @@ void mexFunction
 
     GrB_Vector V ;
     OK (GrB_Vector_new (&V, type, mnz)) ;
-    OK (GxB_Vector_Option_set (V, GxB_SPARSITY_CONTROL, GxB_SPARSE)) ;
+    OK (GrB_Vector_set_INT32 (V, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
     #ifdef GB_MEMDUMP
     printf ("remove V->i from memtable: %p\n", V->i) ;

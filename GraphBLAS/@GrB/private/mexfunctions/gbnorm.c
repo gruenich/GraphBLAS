@@ -41,7 +41,7 @@ void mexFunction
     OK (GrB_Matrix_ncols (&ancols, A)) ;
 
     int sparsity ;
-    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &sparsity)) ;
+    OK (GrB_Matrix_get_INT32 (A, &sparsity, GxB_SPARSITY_STATUS)) ;
 
     //--------------------------------------------------------------------------
     // s = norm (A,kind)

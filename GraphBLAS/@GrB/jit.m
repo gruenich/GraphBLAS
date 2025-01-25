@@ -1,15 +1,15 @@
-function [s,path] = jit (s,path)
+function [status,path] = jit (status,path)
 %GRB.JIT controls the GraphBLAS JIT
 %
-%   s = GrB.jit ;      % get the current status of the JIT
-%   s = GrB.jit (s) ;  % control the JIT and get its status
+%   status = GrB.jit ;      % get the current status of the JIT
+%   status = GrB.jit (status) ;  % control the JIT and get its status
 %
 % The GraphBLAS JIT allows GraphBLAS to compile new kernels at run-time
 % that are specifically tuned for the particular operators, types, and
 % matrix formats.  Without the JIT, only a selected combination of these
 % options are computed with high-performance kernels.
 %
-% GrB.jit controls the GraphBLAS JIT.  Its input/ouput s is a string:
+% GrB.jit controls the GraphBLAS JIT.  Its input/ouput status is a string:
 %
 %   ''          leave the JIT control unchanged.
 %   'off'       do not use the JIT, and free any loaded JIT kernels.
@@ -35,8 +35,8 @@ function [s,path] = jit (s,path)
 %
 % Example:
 %
-%   [s,path] = GrB.jit
-%   [s,path] = GrB.jit ('on', '/home/me/myothercache')
+%   [status,path] = GrB.jit
+%   [status,path] = GrB.jit ('on', '/home/me/myothercache')
 %
 % See also GrB.threads, GrB.clear.
 
@@ -44,10 +44,10 @@ function [s,path] = jit (s,path)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
-    [s, path] = gbjit ;
+    [status, path] = gbjit ;
 elseif (nargin == 1)
-    [s, path] = gbjit (s) ;
+    [status, path] = gbjit (status) ;
 elseif (nargin == 2)
-    [s, path] = gbjit (s, path) ;
+    [status, path] = gbjit (status, path) ;
 end
 

@@ -100,7 +100,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     int sparsity_status ;
-    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS,  &sparsity_status)) ;
+    OK (GrB_Matrix_get_INT32 (A, &sparsity_status, GxB_SPARSITY_STATUS)) ;
     int sparsity_control = A->sparsity_control ;
 
     int64_t nzmax = GB_nnz_max (A) ;

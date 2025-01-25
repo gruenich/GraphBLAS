@@ -9,7 +9,7 @@
 
 #include "gb_interface.h"
 
-// FIXME: use GrB_Global_Option_set, not GxB
+typedef void (*function_pointer) (void) ;
 
 void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
 {
@@ -20,23 +20,27 @@ void gb_defaults (void)     // set global GraphBLAS defaults for MATLAB
     GB_Global_malloc_is_thread_safe_set (false) ;
 
     // must use mexPrintf to print to Command Window
-    OK (GxB_Global_Option_set (GxB_PRINTF, mexPrintf)) ;
-    OK (GxB_Global_Option_set (GxB_FLUSH, gb_flush)) ;
+    OK (GrB_Global_set_VOID (GrB_GLOBAL, (void *) mexPrintf, GxB_PRINTF,
+        sizeof (function_pointer))) ;
+    OK (GrB_Global_set_VOID (GrB_GLOBAL, (void *) gb_flush, GxB_FLUSH,
+        sizeof (function_pointer))) ;
 
     // enable the JIT
-    OK (GxB_Global_Option_set (GxB_JIT_C_CONTROL, GxB_JIT_ON)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, GxB_JIT_ON, GxB_JIT_C_CONTROL)) ;
 
     // built-in matrices are stored by column
-    OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL,
+        GrB_COLMAJOR, GrB_STORAGE_ORIENTATION_HINT)) ;
 
     // print 1-based indices
-    OK (GxB_Global_Option_set (GxB_PRINT_1BASED, true)) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_PRINT_1BASED)) ;
 
     // burble is off
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
 
     // default # of threads from omp_get_max_threads
-    OK (GxB_Global_Option_set (GxB_NTHREADS, GB_omp_get_max_threads ( ))) ;
+    int nthreads = GB_omp_get_max_threads ( ) ;
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, nthreads, GxB_NTHREADS)) ;
 
     // default chunk
     GrB_Scalar chunk_default = NULL ;

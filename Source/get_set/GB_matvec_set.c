@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 matrix get/set
-
 #include "get_set/GB_get_set.h"
 #include "transpose/GB_transpose.h"
 #define GB_FREE_ALL ;

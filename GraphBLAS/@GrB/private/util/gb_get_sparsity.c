@@ -52,7 +52,7 @@ int gb_get_sparsity         // 0 to 15
         if (nrows > 1 || ncols > 1)
         {
             // A is a vector or matrix, not a scalar
-            OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_CONTROL, &A_sparsity)) ;
+            OK (GrB_Matrix_get_INT32 (A, &A_sparsity, GxB_SPARSITY_CONTROL)) ;
         }
     }
 
@@ -63,7 +63,7 @@ int gb_get_sparsity         // 0 to 15
         if (nrows > 1 || ncols > 1)
         {
             // B is a vector or matrix, not a scalar
-            OK (GxB_Matrix_Option_get (B, GxB_SPARSITY_CONTROL, &B_sparsity)) ;
+            OK (GrB_Matrix_get_INT32 (B, &B_sparsity, GxB_SPARSITY_CONTROL)) ;
         }
     }
 

@@ -123,8 +123,8 @@ void mexFunction
     OK (GrB_Matrix_ncols (&ancols, A)) ;
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GrB_Matrix_nvals (&anz, A)) ;
-    OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
-    OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &A_sparsity)) ;
+    OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
+    OK (GrB_Matrix_get_INT32 (A, &A_sparsity, GxB_SPARSITY_STATUS)) ;
 
     GrB_Matrix A_copy = NULL ;
     GrB_Matrix A_copy2 = NULL ;
@@ -133,8 +133,8 @@ void mexFunction
     if (A_sparsity == GxB_BITMAP)
     {
         OK (GrB_Matrix_dup (&A_copy2, A)) ;
-        OK1 (A_copy2, GxB_Matrix_Option_set (A_copy2, GxB_SPARSITY_CONTROL,
-            GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL)) ;
+        OK1 (A_copy2, GrB_Matrix_set_INT32 (A_copy2,
+            GxB_SPARSE + GxB_HYPERSPARSE + GxB_FULL, GxB_SPARSITY_CONTROL)) ;
         A = A_copy2 ;
     }
 

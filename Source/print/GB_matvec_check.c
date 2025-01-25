@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // for code development only:
 #ifdef GRAPHBLAS_HAS_CUDA
 // when CUDA kernels enabled:
@@ -17,9 +15,6 @@
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
 #endif
-
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"

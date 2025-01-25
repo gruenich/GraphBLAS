@@ -17,7 +17,7 @@ GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a built-in X
 
     GrB_Matrix S = gb_get_shallow (X) ;
     int fmt ;
-    OK (GxB_Matrix_Option_get (S, GxB_FORMAT, &fmt)) ;
+    OK (GrB_Matrix_get_INT32 (S, &fmt, GxB_FORMAT)) ;
     GrB_Matrix A = gb_typecast (S, NULL, fmt, 0) ;
     OK (GrB_Matrix_free (&S)) ;
     return (A) ;

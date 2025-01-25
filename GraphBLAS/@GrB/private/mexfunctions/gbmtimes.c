@@ -183,8 +183,8 @@ void mexFunction
         //----------------------------------------------------------------------
 
         int A_sparsity, B_sparsity ;
-        OK (GxB_Matrix_Option_get (A, GxB_SPARSITY_STATUS, &A_sparsity)) ;
-        OK (GxB_Matrix_Option_get (B, GxB_SPARSITY_STATUS, &B_sparsity)) ;
+        OK (GrB_Matrix_get_INT32 (A, &A_sparsity, GxB_SPARSITY_STATUS)) ;
+        OK (GrB_Matrix_get_INT32 (B, &B_sparsity, GxB_SPARSITY_STATUS)) ;
 
         bool A_full = (A_sparsity == GxB_FULL) ;
         bool A_sparse = (A_sparsity == GxB_BITMAP || A_sparsity == GxB_SPARSE) ;
@@ -200,7 +200,7 @@ void mexFunction
 
             // ensure C can be held as a full matrix
             sparsity = sparsity | GxB_FULL ;
-            OK (GxB_Matrix_Option_set (C, GxB_SPARSITY_CONTROL, sparsity)) ;
+            OK (GrB_Matrix_set_INT32 (C, sparsity, GxB_SPARSITY_CONTROL)) ;
             // C = 0
             // zero = (ctype) 0
             OK (GrB_Scalar_new (&zero, ctype)) ;

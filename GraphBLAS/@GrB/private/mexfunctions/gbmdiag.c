@@ -57,7 +57,7 @@ void mexFunction
     CHECK_ERROR (ncols != 1, "v must be a column vector") ;
 
     int s ;
-    OK (GxB_Matrix_Option_get (V, GxB_SPARSITY_STATUS, &s)) ;
+    OK (GrB_Matrix_get_INT32 (V, &s, GxB_SPARSITY_STATUS)) ;
     CHECK_ERROR (s == GxB_HYPERSPARSE, "v cannot be hypersparse") ;
 
     if (nargin > 1)

@@ -67,7 +67,7 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     //--------------------------------------------------------------------------
 
     int fmt ;
-    OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
+    OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
     int sparsity = gb_get_sparsity (A, B, 0) ;
     GrB_Matrix C = gb_new (GrB_BOOL, nrows1, ncols1, fmt, sparsity) ;
     OK1 (C, GrB_Matrix_eWiseMult_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;

@@ -2526,7 +2526,7 @@ void mexFunction
     GrB_Type A_type ;
     OK (GxB_Matrix_type (&A_type, A)) ;
     int fmt ;
-    OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
+    OK (GrB_Matrix_get_INT32 (A, &fmt, GxB_FORMAT)) ;
 
     //--------------------------------------------------------------------------
     // types, ops, and semirings for argmin and argmax
