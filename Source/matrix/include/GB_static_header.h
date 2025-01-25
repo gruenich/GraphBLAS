@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // FIXME  XX->static_header can be inferred from XX->header_size.
 // assert (XX->static_header == (XX->header_size == 0))
 // Remove the static_header bool from the matrix struct. 

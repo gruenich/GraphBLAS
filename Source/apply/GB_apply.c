@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C<M> = accum (C, op(A)) or accum (C, op(A)')
 
 // GB_apply does the work for GrB_*_apply, including the binary op variants.

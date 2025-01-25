@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The new vector is n-by-1, with no entries in it.
 // A->p is size 2 and all zero.  Contents A->x and A->i are NULL.
 // If this method fails, *v is set to NULL.  Vectors are not hypersparse,

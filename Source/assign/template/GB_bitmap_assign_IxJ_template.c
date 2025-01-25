@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Iterate over all positions in the IxJ Cartesian product.  This is all
 // entries C(i,j) where i is in the list I and j is in the list J.  This
 // traversal occurs whether or not C(i,j) is an entry present in C.

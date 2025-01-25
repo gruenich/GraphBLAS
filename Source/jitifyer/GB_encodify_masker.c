@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // FUTURE: allow the types of R, C, and Z to differ.
 
 #include "GB.h"

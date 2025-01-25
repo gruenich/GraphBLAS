@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // WORK_I and WORK_J are macro arguments, either uint32_t or uint64_t arrays.
 
 {

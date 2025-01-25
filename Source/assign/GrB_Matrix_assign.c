@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "assign/GB_assign.h"
 #include "mask/GB_get_mask.h"
 

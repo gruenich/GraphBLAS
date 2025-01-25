@@ -7,10 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
-// DEPRECATED: use GrB_Vector_select instead.
-
 #define GB_FREE_ALL             \
 {                               \
     GrB_Scalar_free (&Thunk) ;  \

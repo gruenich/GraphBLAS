@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Reallocates A->x and A->i to the requested size, preserving the existing
 // content of A->x and A->i.  Preserves pending tuples and zombies, if any.
 // A->j_is_32 and A->i_is_32 are unchanged since the matrix dimensions do not

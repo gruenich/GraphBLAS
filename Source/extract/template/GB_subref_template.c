@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_subref_template extracts a submatrix, C = A(I,J).  The method is done in
 // three phases.  Phase 1 and 2 are symbolic, and phase 3 (this phase)
 // constructs the pattern and values of C.  There are 3 kinds of subref:

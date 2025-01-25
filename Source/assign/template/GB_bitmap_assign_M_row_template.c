@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // M is a 1-by-(C->vdim) hypersparse or sparse matrix, not a vector, for
 // GrB_Row_assign (if C is CSC) or GrB_Col_assign (if C is CSR).
 

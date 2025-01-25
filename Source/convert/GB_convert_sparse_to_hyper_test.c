@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Returns true if a sparse matrix should be converted to hypersparse.
 // Returns false if the matrix should stay sparse.
 

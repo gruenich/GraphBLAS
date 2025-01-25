@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The input matrix must be sparse or hypersparse, and it may be left as-is,
 // or converted to sparse/hypersparse.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB.h"
 
 GrB_Info GB_Iterator_rc_bitmap_next (GxB_Iterator iterator)

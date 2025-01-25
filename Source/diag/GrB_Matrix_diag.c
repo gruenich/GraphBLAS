@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Similar to GxB_Matrix_diag (C, v, k, NULL), except that C is constructed
 // as a new matrix, like GrB_Matrix_new.  C has the same type as v.
 

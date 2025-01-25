@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_emult_08_phase2 computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B.  It is
 // preceded first by GB_emult_08_phase0, which finds the list of vectors of
 // C to compute (Ch, either NULL, or a shallow copy of A->h, B->h, or M->h) and

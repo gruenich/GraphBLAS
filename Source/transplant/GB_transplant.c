@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Transplant A into C, and then free A.  If any part of A is shallow, or if A
 // must be typecasted, a deep copy is made into C.  Prior content of C is
 // ignored.  Then A is freed, except for any shallow components of A which are

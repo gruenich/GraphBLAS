@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 //  macros:
 //  GB_SORT (func)      defined as GB_sort_func_TYPE_ascend or _descend,
 //                      GB_sort_ISO_ascend or _descend, or GB_sort_func_UDT

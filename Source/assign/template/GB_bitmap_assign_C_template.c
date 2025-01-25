@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The #include'ing file defines a GB_CIJ_WORK macro for the body of the loop,
 // which operates on the entry C(iC,jC) at position Cx [pC] and Cb [pC].  The C
 // matrix held in bitmap form.  If the mask matrix is also a bitmap matrix or

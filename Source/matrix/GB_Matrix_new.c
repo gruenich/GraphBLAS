@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit (but disabled). Notes for get/set
-
 // The new matrix is nrows-by-ncols, with no entries in it.  Default format for
 // an empty matrix is hypersparse CSC: A->p is size 2 and all zero, A->h is
 // size 1, A->plen is 1, and contents A->x and A->i are NULL.  If this method

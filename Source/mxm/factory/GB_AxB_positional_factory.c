@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // the additive operator is a monoid, where all types of x,y,z are int64_t or
 // int32_t
 

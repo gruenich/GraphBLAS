@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This method always constructs C as bitmap or full; it then converts C to
 // sparse or hyper if A or B are hypersparse.  The C<M>=A'*B dot product when C
 // is sparse is computed by GB_AxB_dot3.  This method handles the case when C

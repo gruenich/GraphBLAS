@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Cp is never NULL.  C is created as sparse or hypersparse.
 
 #include "GB.h"

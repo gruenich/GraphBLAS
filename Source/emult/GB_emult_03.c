@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C = A.*B where B is sparse/hyper and A is bitmap/full constructs C with
 // the same sparsity structure as B.
 

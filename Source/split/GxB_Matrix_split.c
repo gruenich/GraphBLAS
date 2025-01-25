@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The input matrix A is split into a 2D array of size m-by-n.  The Tile{i,j}
 // matrix has dimension Tile_nrows[i]-by-Tile_ncols[j].
 

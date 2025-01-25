@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 {
     int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)

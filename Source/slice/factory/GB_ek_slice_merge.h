@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_EK_SLICE_MERGE_H
 #define GB_EK_SLICE_MERGE_H
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, except workspace could be revised
-
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 

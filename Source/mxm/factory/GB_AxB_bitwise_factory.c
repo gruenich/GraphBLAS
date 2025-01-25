@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A template file #include'd in GB_AxB_factory.c, which calls up to 16
 // bitwise semirings.  The multiply operators are bor, band, bxor, or bxnor,
 // as defined by GB_MNAME.

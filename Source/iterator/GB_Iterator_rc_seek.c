@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Seek a row iterator to A(j,:), a col iterator to A(:,j).  If jth_vector is
 // true, seek to the jth vector instead.  For sparse, bitmap, or full matrices,
 // this is the same as A(j,:) for a row iterator or A(:,j) for a col iterator.

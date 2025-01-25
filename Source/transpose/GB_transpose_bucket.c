@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C = A' or op(A').  Optionally typecasts from A->type to the new type ctype,
 // and/or optionally applies a unary operator.
 

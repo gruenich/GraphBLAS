@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit; only 64-bit export is supported
-
 // No conversion is done, except to convert to non-iso if requested, and all
 // integers are converted to 64-bits.  The matrix is exported in its current
 // sparsity structure and by-row/by-col format.

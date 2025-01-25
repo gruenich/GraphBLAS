@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Work [0..n] is an array with monotonically increasing entries, of type
 // uint32_t, uint64_t, or float.  This function slices Work so that each chunk
 // has the same number of total values of its entries.  Work can be A->p for a

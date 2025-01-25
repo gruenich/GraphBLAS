@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // I is a large list relative to the vector length, avlen, and it is not
 // contiguous.  Scatter I into the I inverse buckets (Ihead and Inext) for quick
 // lookup.

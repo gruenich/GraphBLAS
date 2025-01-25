@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Slice IxJ for a scalar assignment method and for bitmap assignments.
 
 // Construct a set of tasks to compute C(I,J)<...> = x or += x, for a subassign

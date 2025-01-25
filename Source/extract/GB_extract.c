@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Not user-callable.  Implements the user-callable GrB_*_extract functions.
 //
 //      C<M> = accum (C, A (Rows,Cols)) or

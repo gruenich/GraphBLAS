@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Free the A->p, A->h, and A->Y content of a matrix.  The matrix becomes
 // invalid, and would generate a GrB_INVALID_OBJECT error if passed to a
 // user-callable GraphBLAS function.

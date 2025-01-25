@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // On input, the matrix may have shallow A->p content; it is safely removed.
 // On output, the matrix is always hypersparse (even if out of memory).  If the
 // input matrix is non-hypersparse, it is given new A->p and A->h that are not

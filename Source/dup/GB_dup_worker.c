@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C = A, making a deep copy.  The header for C may already exist.
 
 // if numeric is false, C->x is allocated but not initialized.

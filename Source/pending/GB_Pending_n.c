@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "pending/GB_Pending.h"
 
 int64_t GB_Pending_n        // return # of pending tuples in A

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "import_export/GB_export.h"
 
 GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector

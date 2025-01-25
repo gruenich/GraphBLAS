@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "select/GB_select.h"
 #include "scalar/GB_Scalar_wrap.h"
 #include "resize/GB_resize.h"

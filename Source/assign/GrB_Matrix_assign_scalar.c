@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Assigns a single scalar to a matrix:
 
 // C<M>(Rows,Cols) = accum(C(Rows,Cols),x)

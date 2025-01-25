@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C and M are both sparse or both hyper, and C->h is a copy of M->h.
 // M is present, and not complemented.  It may be valued or structural.
 

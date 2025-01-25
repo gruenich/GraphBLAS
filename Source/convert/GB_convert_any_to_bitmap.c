@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The input matrix may be jumbled and have zombies, and can still be converted
 // to a bitmap.
 

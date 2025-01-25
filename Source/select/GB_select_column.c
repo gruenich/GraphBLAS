@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64-bit
-
 // The column selectors can be done in a single pass.
 // C->iso and A->iso are identical.
 

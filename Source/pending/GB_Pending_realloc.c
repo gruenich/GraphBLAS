@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Reallocate a list of pending tuples.  If it fails, the list is freed.
 
 #include "pending/GB_Pending.h"

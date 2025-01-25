@@ -395,7 +395,6 @@
 #define GB_Global_free_function_get GM_Global_free_function_get
 #define GB_Global_free_function GM_Global_free_function
 #define GB_Global_free_function_set GM_Global_free_function_set
-#define GB_Global_get_wtime GM_Global_get_wtime
 #define GB_Global_gpu_count_get GM_Global_gpu_count_get
 #define GB_Global_gpu_count_set GM_Global_gpu_count_set
 #define GB_Global_gpu_device_max_pool_size_set GM_Global_gpu_device_max_pool_size_set
@@ -461,7 +460,6 @@
 #define GB_Global_timing_clear GM_Global_timing_clear
 #define GB_Global_timing_get GM_Global_timing_get
 #define GB_Global_timing_set GM_Global_timing_set
-#define GB_helper0 GM_helper0
 #define GB_helper10 GM_helper10
 #define GB_helper5 GM_helper5
 #define GB_helper7 GM_helper7

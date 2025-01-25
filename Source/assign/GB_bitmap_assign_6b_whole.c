@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C = A, C is bitmap, A is sparse/hyper
 
 #include "assign/GB_bitmap_assign_methods.h"

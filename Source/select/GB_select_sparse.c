@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64-bit
-
 #include "select/GB_select.h"
 #ifndef GBCOMPACT
 #include "FactoryKernels/GB_sel__include.h"

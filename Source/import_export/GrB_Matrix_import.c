@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit; only 64-bit import is supported
-
 // No typecasting is done.  The type of entries in the Ax array must match
 // the GrB_Type type parameter.
 

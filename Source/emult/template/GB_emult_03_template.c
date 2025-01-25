@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C is sparse, with the same sparsity structure as B.  No mask is present, or
 // M is bitmap/full.  A is bitmap/full, and B is sparse/hyper.
 

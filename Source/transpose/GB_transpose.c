@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // CALLS:     GB_builder
 
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or

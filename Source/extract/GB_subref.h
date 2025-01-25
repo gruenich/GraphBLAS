@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_SUBREF_H
 #define GB_SUBREF_H
 #include "ij/GB_ij.h"

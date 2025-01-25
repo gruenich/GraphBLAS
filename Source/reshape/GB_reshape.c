@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // If the input matrix is nrows-by-ncols, and the size of the newly-created
 // matrix C is nrows_new-by-ncols_new, then nrows*ncols must equal
 // nrows_new*ncols_new.

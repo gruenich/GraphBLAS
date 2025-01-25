@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Slice the entries of a matrix or vector into A_ntasks slices.
 
 // The function is called GB_ek_slice because it first partitions the e entries

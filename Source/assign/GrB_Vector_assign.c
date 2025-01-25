@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Compare with GxB_Vector_subassign, which uses M and C_replace differently
 
 #include "assign/GB_assign.h"

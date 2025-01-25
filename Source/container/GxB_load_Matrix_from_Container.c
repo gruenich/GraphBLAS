@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB_container.h"
 
 GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container

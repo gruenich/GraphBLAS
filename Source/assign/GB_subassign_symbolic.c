@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "assign/GB_subassign_methods.h"
 #include "extract/GB_subref.h"
 #define GB_GENERIC

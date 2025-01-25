@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "pending/GB_Pending.h"
 
 void GB_Pending_free        // free a list of pending tuples

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_AxB_saxpy3 method uses a mix of Gustavson's method and the Hash method,
 // combining the two for any given C=A*B computation.
 

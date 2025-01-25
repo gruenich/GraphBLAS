@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // CALLS:     GB_builder
 
 // The matrix A has zombies and/or pending tuples placed there by

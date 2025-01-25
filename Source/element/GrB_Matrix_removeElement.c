@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Removes a single entry, C (row,col), from the matrix C.
 
 #include "GB.h"

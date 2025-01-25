@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // On input C must exist but the content of the C header is uninitialized
 // except for C->static_header and C->header_size.  No memory is allocated to
 // construct C as the hyper_shallow version of A.  C is purely shallow.  If A

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // M is sparse or hypersparse, not bitmap or full.  C<M>(I,J) = ... is being
 // computed (or !M), and all entries in M are traversed.  For a given entry
 // M (iM,jM) in the mask, the entry C(iM,jM) is accessed at location pC.

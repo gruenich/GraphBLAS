@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C is bitmap.
 // M is sparse/hyper and complemented.
 // A and B can have any format, except at least one is bitmap/full.

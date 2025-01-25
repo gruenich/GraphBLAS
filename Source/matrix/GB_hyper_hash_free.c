@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Free the A->Y hyper_hash of a matrix.  The matrix remains valid since
 // the hyper_hash can be reconstructed by any method that requires it,
 // via GB_hyper_hash_build.

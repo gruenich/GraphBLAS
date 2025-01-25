@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // submatrix assignment: C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
 
 // All GxB_*_subassign operations rely on this function.

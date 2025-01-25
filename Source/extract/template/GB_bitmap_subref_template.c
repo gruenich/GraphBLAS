@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C=A(I,J), where C and A are bitmap/full, numeric and non-iso
 
 {

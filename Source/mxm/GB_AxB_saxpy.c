@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "mxm/GB_mxm.h"
 #include "mxm/GB_AxB_saxpy.h"
 #include "jitifyer/GB_stringify.h"

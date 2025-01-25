@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // All Global storage is declared, initialized, and accessed here.  The
 // contents of the GB_Global struct are only accessible to functions in this
 // file.  Global storage is used to keep track of the GraphBLAS mode (blocking

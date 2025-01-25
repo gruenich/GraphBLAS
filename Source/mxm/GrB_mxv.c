@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // w<M> = accum (w,t) where t = A*u or A'*u (u is never transposed)
 
 // The input matrix A is optionally transposed, as determined by the

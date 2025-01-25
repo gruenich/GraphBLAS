@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This is a generic switch factory for creating 169 workers that operate on
 // two built-in data types (13 types each), to be #include'd in another file.
 // GB_WORKER(op,zname,ztype,xname,xtype) is a macro defined in the #including

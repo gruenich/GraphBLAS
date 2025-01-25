@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C is bitmap. A is hyper/sparse, B is bitmap/full.  M is anything. If M is
 // sparse or hypersparse, it has been scattered into the bitmap of C.
 

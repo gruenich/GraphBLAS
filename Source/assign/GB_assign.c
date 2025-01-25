@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // submatrix assignment: C<M>(Rows,Cols) = accum (C(Rows,Cols),A)
 
 // All GrB_*_assign operations rely on this function.

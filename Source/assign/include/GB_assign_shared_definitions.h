@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // macros for the construction of the GB_subassign kernels
 
 #include "include/GB_kernel_shared_definitions.h"

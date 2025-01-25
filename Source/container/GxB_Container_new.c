@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB_container.h"
 #define GB_FREE_ALL GxB_Container_free (Container) ;
 

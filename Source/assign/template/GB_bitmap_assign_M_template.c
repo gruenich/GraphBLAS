@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This template traverses over all the entries of the mask matrix M, and
 // operates on C(i,j) if the mask M(i,j) == 1, via the GB_MASK_WORK macro,
 // where C(i,j) is at Cx [pC] and Cb [pC].  M is hypersparse or sparse.

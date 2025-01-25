@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C<M>= A.*B, M sparse/hyper, A and B bitmap/full.  C has the same sparsity
 // structure as M, and its pattern is a subset of M.  M is not complemented.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // For debugging only.
 
 static inline bool GB_lookup_debug_T // find j = Ah [k]

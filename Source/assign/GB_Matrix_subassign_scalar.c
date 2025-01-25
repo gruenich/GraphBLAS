@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Assigns a single scalar to a submatrix:
 
 // C(I,J)<M> = accum(C(I,J),x)

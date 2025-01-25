@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
 // used for all three cases: C=A'*B, C<M>=A'*B, and C<!M>=A'*B in dot2 when C
 // is bitmap, and for C<M>=A'*B when C and M are sparse or hyper in dot3.

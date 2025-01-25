@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // All entries in C are now present.  Either set all of C->b to 1, or free it
 // and make C full.
 

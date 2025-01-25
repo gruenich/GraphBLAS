@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A and C are sparse or hypersparse
 
 #include "select/GB_select.h"

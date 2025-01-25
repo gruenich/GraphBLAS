@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // On input, the matrix has any one of four sparsity structures: hypersparse,
 // sparse, bitmap, or full.  A bitmap or full matrix never has pending work.  A
 // sparse or hypersparse matrix may have pending work (zombies, jumbled, and/or

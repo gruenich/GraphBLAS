@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // User-defined types cannot be used as a valued mask.  They can be used
 // as structural masks.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // create a single task for C=A*B, for a single thread.
 
 #include "mxm/GB_AxB_saxpy3.h"

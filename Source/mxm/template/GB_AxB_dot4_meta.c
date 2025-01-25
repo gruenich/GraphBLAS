@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C+=A'*B where C is a dense matrix and computed in-place.  The monoid of the
 // semiring matches the accum operator, and the type of C matches the ztype of
 // accum.  That is, no typecasting can be done with C.

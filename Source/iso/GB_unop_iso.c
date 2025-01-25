@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The input matrix A need not be entirely valid.  GB_transpose can be
 // transposing the matrix in place, which case the contents of A have already
 // been transplanted into T, and only A->x remains.

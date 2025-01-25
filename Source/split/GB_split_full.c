@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Each output tile is first created in full form, and then conformed to its
 // desired sparsity format.
 

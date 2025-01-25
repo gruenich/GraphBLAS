@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A hypersparse matrix A can use a hyper_hash matrix A->Y to speed up access
 // to its hyper list, A->h.  For extremely sparse matrices, building the
 // hyper_hash can be costly, however.

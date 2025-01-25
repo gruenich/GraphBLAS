@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The GxB_SelectOp is historical, and part of its functionality is now
 // deprecated.  In particular, user-defined GxB_SelectOps are not supported.
 // The GxB_EQ* and GxB_NE* operators are not supported for user-defined types.

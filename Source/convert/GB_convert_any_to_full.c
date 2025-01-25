@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // All entries in A must be present, with no pending work; GB_as_if_full (A)
 // must be true on input, or A must be iso.  A may be hypersparse, sparse,
 // bitmap, or full on input. A is full on output.  If A is iso, it remains so

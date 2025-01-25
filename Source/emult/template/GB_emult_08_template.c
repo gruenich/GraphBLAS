@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Computes C=A.*B, C<M>=A.*B, or C<!M>=A.*B, where C is sparse/hypersparse.
 
 // M, A, and B can have any sparsity structure.  If both A and B are full, then

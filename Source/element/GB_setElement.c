@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Sets the value of single scalar, C(row,col) = scalar, or C(row,col)+=scalar,
 // typecasting from the type of scalar to the type of C, as needed.  Not
 // user-callable; does the work for all GrB_*_setElement* functions, and for

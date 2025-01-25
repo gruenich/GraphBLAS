@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_emult_generic handles the generic case for eWiseMult, when no built-in
 // worker in the switch factory can handle this case.  This occurs for
 // user-defined operators, when typecasting occurs, or for FIRST[IJ]* and

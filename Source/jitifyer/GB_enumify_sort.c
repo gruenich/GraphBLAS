@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C is sparse or hypersparse, but the algorithm doesn't access C->h, and works
 // identically for both cases.  So the JIT kernel can treat C as if sparse.
 

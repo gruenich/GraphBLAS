@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // cij = op (aij)
 #define GB_COPY(pC,pA) GB_UNOP (Cx, pC, Ax, pA, false, i, j, y)
 

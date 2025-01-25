@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Computes C<M>=Z or C<!M>=Z, returning the result in R.  The input matrix C
 // is not modified.  Effectively, this computes R=C and then R<M>=Z or R<!M>=Z.
 // If the C_replace descriptor is enabled, then C has already been cleared, and

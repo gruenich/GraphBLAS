@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "pending/GB_Pending.h"
 
 // create or reallocate a list of pending tuples

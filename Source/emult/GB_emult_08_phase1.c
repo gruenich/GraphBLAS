@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_emult_08_phase1 counts the number of entries in each vector of C, for
 // C=A.*B, C<M>=A.*B, or C<!M>=A.*B and then does a cumulative sum to find Cp.
 // GB_emult_08_phase1 is preceded by GB_emult_08_phase0, which finds the

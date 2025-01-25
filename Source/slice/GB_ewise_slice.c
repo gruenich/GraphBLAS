@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // JIT: possible: could use variants for sparsity formats.
 
 // Constructs a set of tasks to compute C, for an element-wise operation that

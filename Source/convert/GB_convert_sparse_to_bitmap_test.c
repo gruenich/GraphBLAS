@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Returns true if a sparse or hypersparse matrix should be converted to bitmap
 // (or full if all entries are present, but in that case, this function is not
 // called).  Returns false if the matrix should stay hypersparse/sparse.

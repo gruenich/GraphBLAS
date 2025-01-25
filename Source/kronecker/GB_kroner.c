@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C = kron(A,B) where op determines the binary multiplier to use.  The type of
 // C is the ztype of the operator.  C is hypersparse if either A or B are
 // hypersparse, full if both A and B are full, or sparse otherwise.  C is never

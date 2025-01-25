@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit; only 64-bit import is supported
-
 // This method takes O(1) time and memory, unless secure is true (used
 // when the input data is not trusted).
 

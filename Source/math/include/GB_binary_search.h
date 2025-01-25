@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_BINARY_SEARCH_H
 #define GB_BINARY_SEARCH_H
 

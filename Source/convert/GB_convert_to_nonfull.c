@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The matrix A must be converted from full to any other sparsity structure.
 // The full sparsity structure cannot tolerate the deletion of any entry but
 // the other three can.

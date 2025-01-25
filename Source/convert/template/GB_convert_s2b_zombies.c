@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A is sparse or hypersparse.  Cx and Cb have the same type as A,
 // and represent a bitmap format.
 

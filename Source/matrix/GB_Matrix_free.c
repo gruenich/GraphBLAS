@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Free all the content of a matrix.  After GB_Matrix_free (&A), the header A
 // is freed and set to NULL if the header of A was originally dynamically
 // allocated.  Otherwise, A is not freed.

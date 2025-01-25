@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB.h"
 
 // C = A, C = unop(A), C = binop(A,scalar), or C = binop(scalar,A) is being

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The new GrB_Scalar has no entry.  Internally, it is identical to a
 // GrB_Vector of length 1.  If this method fails, *s is set to NULL.
 

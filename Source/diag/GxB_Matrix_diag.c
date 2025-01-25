@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "diag/GB_diag.h"
 
 GrB_Info GxB_Matrix_diag        // build a diagonal matrix from a vector

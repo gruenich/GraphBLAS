@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // The new matrix is nrows-by-ncols, with no entries in it.
 
 #include "GB.h"

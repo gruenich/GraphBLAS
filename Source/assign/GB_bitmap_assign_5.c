@@ -19,8 +19,6 @@
 // C(I,J)<!,repl> += A      subassign: just clear C(I,J) of all entries
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C:           bitmap
 // M:           none
 // Mask_comp:   true or false

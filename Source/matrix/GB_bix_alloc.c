@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, but decide on error could if integers too small
-
 // Does not modify A->p or A->h.  Frees A->b, A->x, and A->i and reallocates
 // them to the requested size.  Frees any pending tuples and deletes all
 // entries (including zombies, if any).  If numeric is false, then A->x is

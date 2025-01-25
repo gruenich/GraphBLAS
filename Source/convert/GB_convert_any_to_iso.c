@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // If the matrix is not iso, it is changed to iso with the scalar value
 // provided or with A->x [0] if the scalar is NULL on input.  The A->x array is
 // optionally compacted to be exactly large enough to hold the single scalar.

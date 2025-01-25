@@ -19,8 +19,6 @@
 // C(I,J)<!M,repl> = A       subassign
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C:           bitmap
 // M:           present, bitmap or full (not hypersparse or sparse)
 // Mask_comp:   true or false

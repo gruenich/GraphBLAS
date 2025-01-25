@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This is a templatized method where _TYPE is 32 or 64 for uint32_t and
 // uint64_t, or float.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Extract a single entry, x = s, typecasting from the type of s to the type of
 // x, as needed.
 

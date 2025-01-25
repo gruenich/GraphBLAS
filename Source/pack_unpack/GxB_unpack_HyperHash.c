@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit; only all-64-bit is supported
-
 // GxB_unpack_HyperHash unpacks the hyper_hash from the hypersparse matrix A.
 // Normally, this method is called immediately before calling one of the four
 // methods GxB_Matrix_(export/unpack)_Hyper(CSR/CSC).  For example, to unpack

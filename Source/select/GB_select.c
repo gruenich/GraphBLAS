@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C<M> = accum (C, select(A,Thunk)) or select(A,Thunk)')
 
 #define GB_FREE_ALL         \

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This is used by GB_AxB_saxpy3.c and GB_AxB_dot[234].c to create the built-in
 // versions of sparse matrix-matrix multiplication.  The #include'ing file
 // defines the GB_AxB_WORKER macro, and mult_binop_code, add_binop_code, xcode,

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #define GB_FREE_WORKSPACE                   \
     GB_WERK_POP (Tile_cols, int64_t) ;      \
     GB_WERK_POP (Tile_rows, int64_t) ;

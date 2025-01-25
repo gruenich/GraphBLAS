@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB.h"
 
 GrB_Info GrB_Matrix_nrows   // get the number of rows of a matrix

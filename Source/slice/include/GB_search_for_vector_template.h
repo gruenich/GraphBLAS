@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Given an index p, find k so that Ap [k] <= p && p < Ap [k+1].  The search is
 // limited to k in the range Ap [kleft ... anvec].
 

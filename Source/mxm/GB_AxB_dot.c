@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Parallel matrix-matrix multiply, A'*B, with optional mask M.  This method is
 // used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of the latter two methods,
 // B on input will be an nrows-by-1 column vxector.

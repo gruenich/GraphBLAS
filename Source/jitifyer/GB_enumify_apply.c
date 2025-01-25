@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Enumify an apply or transpose/apply operation.  No accum or mask.  The iso
 // cases for C is not handled.  The op is either unary or index unary, not
 // binary (that is handled as an ewise enumify).

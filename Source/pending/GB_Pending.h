@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_PENDING_H
 #define GB_PENDING_H
 #include "GB.h"

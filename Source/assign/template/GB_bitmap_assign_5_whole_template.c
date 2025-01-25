@@ -19,8 +19,6 @@
 // C<!,repl> += A      subassign: just clear C of all entries, not done here
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C:           bitmap
 // M:           none
 // Mask_comp:   true or false

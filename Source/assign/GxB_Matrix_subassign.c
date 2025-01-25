@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Compare with GrB_Matrix_assign, which uses M and C_replace differently
 
 #include "assign/GB_subassign.h"

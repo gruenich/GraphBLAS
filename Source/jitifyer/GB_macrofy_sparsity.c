@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit, but need remove GB[PHIB]_* macros when done
+// FIXME: remove GB[PHIB]_* macros
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"

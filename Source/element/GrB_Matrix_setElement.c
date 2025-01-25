@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Set a single entry in a matrix, C(row,col) = x,
 // typecasting from the type of x to the type of C, as needed.
 

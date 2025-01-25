@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C<M> = accum (C,A*B) and variations.
 
 // This function is not user-callable.  It does the work for user-callable

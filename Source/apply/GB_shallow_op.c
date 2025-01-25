@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C = op (A), called only by GB_apply.
 
 // Create a shallow copy of a matrix, applying an operator to the entries.

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "extract/GB_extract.h"
 #include "mask/GB_get_mask.h"
 

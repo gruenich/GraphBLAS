@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // DEPRECATED: use GrB_Matrix_select instead.
 
 #define GB_FREE_ALL             \

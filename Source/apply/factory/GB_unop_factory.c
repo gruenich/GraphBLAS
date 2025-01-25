@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Switch factory for applying a non-positional unary operator.  This file is
 // #include'd into GB_apply_op.c and GB_transpose_op.c, which must define the
 // GrB_UnaryOp op and the GrB_Type Atype.  This factory does not handle

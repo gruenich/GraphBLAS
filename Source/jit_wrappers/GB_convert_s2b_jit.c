@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Currently, the kernel does not do any typecasting or apply an operator
 // (except for identity), but this could be revised in the future.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A and B matrices have any format: hypersparse, sparse, bitmap, or full.
 // C can be sparse, hypersparse, or bitmap, but not full.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Reduce a matrix to a scalar, with typecasting and generic operators.
 // No panel is used.  The workspace W always has the same type as the ztype
 // of the monoid, GB_Z_TYPE.

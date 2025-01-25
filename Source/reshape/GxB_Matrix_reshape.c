@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GxB_Matrix_reshape changes the dimensions of a matrix, reshaping the entries
 // by row or by column.
 

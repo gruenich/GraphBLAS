@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Removes a single entry, V (i), from the vector V.
 
 #include "GB.h"

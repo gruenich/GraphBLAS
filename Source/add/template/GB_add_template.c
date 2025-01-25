@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Computes C=A+B, C<M>=A+B, or C<!M>=A+B, for eWiseAdd or eWiseUnion.
 
 // phase1: does not compute C itself, but just counts the # of entries in each

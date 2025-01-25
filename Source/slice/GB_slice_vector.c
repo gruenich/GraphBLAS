@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A(:,kA) and B(:,kB) are two long vectors that will be added with GB_add,
 // GB_emult, or GB_mask, and the work to compute them needs to be split into
 // multiple tasks.  They represent the same vector index j, for:

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #ifndef GB_SUBASSIGN_H
 #define GB_SUBASSIGN_H
 #include "ij/GB_ij.h"

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit; only all-64-bit is supported
-
 // GxB_pack_HyperHash assigns the input Y matrix as the A->Y hyper_hash of the
 // hypersparse matrix A.  Normally, this method is called immediately after
 // calling one of the four methods GxB_Matrix_(import/pack)_Hyper(CSR/CSC).

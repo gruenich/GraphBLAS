@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This template traverses over all the entries of the matrix A and operates on
 // the corresponding entry in C(i,j), using the GB_AIJ_WORK macro.  A can be
 // hypersparse, sparse, bitmap, or full.  It is not a scalar.  The matrix

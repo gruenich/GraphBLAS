@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Method 05: C(I,J)<M> = scalar ; no S
 
 // No entries can be deleted (no new zombies), but entries can be inserted.

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A and B are sparse, bitmap, or full; never hypersparse.  If the input
 // matrices A and/or B are hypersparse, they are converted into hyper_shallow
 // sparse matrices, and C is converted from bitmap to sparse/hypersparse when

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB.h"
 
 int GB_sparsity_control     // revised sparsity_control

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_AxB_saxpy3_template.c computes C=A*B for any semiring and matrix types,
 // where C is sparse or hypersparse.
 

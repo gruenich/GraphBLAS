@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Returns true if A is a square diagonal matrix, with all diagonal entries
 // present.  All pending tuples are ignored.  Zombies are treated as entries.
 

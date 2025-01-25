@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "sort/GB_sort.h"
 #include "unaryop/GB_unop.h"
 #include "jitifyer/GB_stringify.h"

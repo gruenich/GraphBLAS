@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C<M> = accum (C,T)
 
 // The primary computation of a GraphBLAS operations is done, and the results

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB.h"
 
 GrB_Info GB_convert_full_to_bitmap      // convert matrix from full to bitmap

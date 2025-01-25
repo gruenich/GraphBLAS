@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // A is sparse, hypersparse, or full (just for DIAG case)
 
 {

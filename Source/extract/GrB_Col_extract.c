@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Extract a single row or column from a matrix.  Note that in the
 // GraphBLAS spec, row and column vectors are indistinguishable.  In this
 // implementation, both are the same as an n-by-1 GrB_Matrix, except with

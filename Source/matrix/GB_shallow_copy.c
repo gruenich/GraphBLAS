@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Create a purely shallow copy C of a matrix A.  No typecasting is done.  If A
 // has zombies or pending tuples, those are finished first.
 

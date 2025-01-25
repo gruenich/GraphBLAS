@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // GB_AxB_saxpy5 computes C+=A*B where C is full, A is bitmap/full, and B is
 // sparse/hypersparse.  No mask is present, C_replace is false, and the accum
 // matches the monoid.

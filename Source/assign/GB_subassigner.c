@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Submatrix assignment: C(I,J)<M> = A, or accum (C (I,J), A), no transpose
 
 // All assignment operations rely on this function, including the GrB_*_assign

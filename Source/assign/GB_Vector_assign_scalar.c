@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Assigns a single scalar to a vector, w<M>(I) = accum(w(I),x)
 // The scalar x is implicitly expanded into a vector u of size nI-by-1,
 // with each entry in u equal to x.

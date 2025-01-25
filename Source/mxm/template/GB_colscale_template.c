@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // This template is not used If C is iso, since all that is needed is to create
 // C as a shallow-copy of the pattern of A.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // On input, A->p and A->h may be shallow.  If modified, new arrays A->p and
 // A->h are created, which are not shallow, and any existing hyper hash is
 // freed.  If these arrays are not modified, and are shallow on input, then

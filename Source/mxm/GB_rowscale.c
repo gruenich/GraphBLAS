@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "mxm/GB_mxm.h"
 #include "binaryop/GB_binop.h"
 #include "apply/GB_apply.h"

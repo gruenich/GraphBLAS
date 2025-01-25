@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Assigns a single scalar to a subvector, w(I)<M> = accum(w(I),x)
 // The scalar x is implicitly expanded into a vector u of size ni-by-1,
 // with each entry in u equal to x.
@@ -25,7 +23,7 @@ GrB_Info GB_EVAL2 (GXB (Vector_subassign_), T) /* w(I)<M> = accum (w(I),x)*/\
     const GrB_Vector M,             /* optional mask for w(I)            */ \
     const GrB_BinaryOp accum,       /* opt. accum for Z=accum(w(I),x)    */ \
     type x,                         /* scalar to assign to w(I)          */ \
-    const uint64_t *I,           /* row indices                          */ \
+    const uint64_t *I,              /* row indices                       */ \
     uint64_t ni,                    /* number of row indices             */ \
     const GrB_Descriptor desc       /* descriptor for w(I) and M         */ \
 )                                                                           \

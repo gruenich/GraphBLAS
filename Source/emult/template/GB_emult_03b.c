@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C is sparse, with the same sparsity structure as B.  No mask is present.
 // A is full, and B is sparse/hyper.
 

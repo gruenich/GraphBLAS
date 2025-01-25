@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // JIT: possible: 96 variants. Could use one for each mask type (6: 1, 2,
 // 4, 8, 16 bytes and structural), for each matrix type (4: bitmap/full/sparse/
 // hyper), mask comp (2), C sparsity (2: sparse/hyper): 6*4*2*2 = 96 variants,

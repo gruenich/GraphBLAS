@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C and M are both sparse/hyper.  M is not complemented.
 // A and B can have any format, except at least one is sparse/hyper.
 

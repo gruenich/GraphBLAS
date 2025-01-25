@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C is sparse, with the same sparsity structure as M.
 // A and B are both bitmap/full.
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
 #include "select/GB_select.h"

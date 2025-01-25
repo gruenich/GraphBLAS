@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 #include "GB.h"
 
 // On input, the prior call to GxB_*Iterator_*seek*, or GxB_*Iterator_*next*

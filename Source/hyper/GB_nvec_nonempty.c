@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // All pending tuples are ignored.  If a vector has all zombies it is still
 // counted as non-empty.
 

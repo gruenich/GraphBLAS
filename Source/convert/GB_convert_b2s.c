@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// DONE: 32/64 bit
-
 // Constructs a triplet or CSC/CSR form (in Cp, Ci, Cj, and Cx_new) from the
 // bitmap input matrix A.  If A is iso or Cx_new is NULL then no values are
 // extracted.  The iso case is handled by the caller.
