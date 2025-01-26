@@ -329,8 +329,8 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAKE_FP64 \
    "void make_fp64 (tuple_fp64 *z,                      \n" \
-   "    const double *x, uint64_t ix, uint64_t jx,    \n" \
-   "    const void   *y, uint64_t iy, uint64_t jy,    \n" \
+   "    const double *x, uint64_t ix, uint64_t jx,      \n" \
+   "    const void   *y, uint64_t iy, uint64_t jy,      \n" \
    "    const void *theta)                              \n" \
    "{                                                   \n" \
    "    z->k = (int64_t) jx + 1 ;                       \n" \
@@ -928,18 +928,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_BOOL \
    "void max_bool (tuple_bool *z, const tuple_bool *x, const tuple_bool *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_int8 (tuple_int8 *z, const tuple_int8 *x, const tuple_int8 *y) ;
     void max_int8 (tuple_int8 *z, const tuple_int8 *x, const tuple_int8 *y)
@@ -958,18 +958,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_INT8 \
    "void max_int8 (tuple_int8 *z, const tuple_int8 *x, const tuple_int8 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_int16 (tuple_int16 *z, const tuple_int16 *x, const tuple_int16 *y);
     void max_int16 (tuple_int16 *z, const tuple_int16 *x, const tuple_int16 *y)
@@ -988,18 +988,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_INT16 \
    "void max_int16 (tuple_int16 *z, const tuple_int16 *x, const tuple_int16 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_int32 (tuple_int32 *z, const tuple_int32 *x, const tuple_int32 *y);
     void max_int32 (tuple_int32 *z, const tuple_int32 *x, const tuple_int32 *y)
@@ -1018,18 +1018,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_INT32 \
    "void max_int32 (tuple_int32 *z, const tuple_int32 *x, const tuple_int32 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_int64 (tuple_int64 *z, const tuple_int64 *x, const tuple_int64 *y);
     void max_int64 (tuple_int64 *z, const tuple_int64 *x, const tuple_int64 *y)
@@ -1048,18 +1048,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_INT64 \
    "void max_int64 (tuple_int64 *z, const tuple_int64 *x, const tuple_int64 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_uint8 (tuple_uint8 *z, const tuple_uint8 *x, const tuple_uint8 *y);
     void max_uint8 (tuple_uint8 *z, const tuple_uint8 *x, const tuple_uint8 *y)
@@ -1078,18 +1078,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_UINT8 \
    "void max_uint8 (tuple_uint8 *z, const tuple_uint8 *x, const tuple_uint8 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_uint16 (tuple_uint16 *z, const tuple_uint16 *x, const tuple_uint16 *y) ;
     void max_uint16 (tuple_uint16 *z, const tuple_uint16 *x, const tuple_uint16 *y)
@@ -1108,18 +1108,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_UINT16 \
    "void max_uint16 (tuple_uint16 *z, const tuple_uint16 *x, const tuple_uint16 *y) \n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))\n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_uint32 (tuple_uint32 *z, const tuple_uint32 *x, const tuple_uint32 *y) ;
     void max_uint32 (tuple_uint32 *z, const tuple_uint32 *x, const tuple_uint32 *y)
@@ -1138,18 +1138,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_UINT32 \
    "void max_uint32 (tuple_uint32 *z, const tuple_uint32 *x, const tuple_uint32 *y) \n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_uint64 (tuple_uint64 *z, const tuple_uint64 *x, const tuple_uint64 *y) ;
     void max_uint64 (tuple_uint64 *z, const tuple_uint64 *x, const tuple_uint64 *y)
@@ -1168,18 +1168,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_UINT64 \
    "void max_uint64 (tuple_uint64 *z, const tuple_uint64 *x, const tuple_uint64 *y) \n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_fp32 (tuple_fp32 *z, const tuple_fp32 *x, const tuple_fp32 *y) ;
     void max_fp32 (tuple_fp32 *z, const tuple_fp32 *x, const tuple_fp32 *y)
@@ -1198,18 +1198,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_FP32 \
    "void max_fp32 (tuple_fp32 *z, const tuple_fp32 *x, const tuple_fp32 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void max_fp64 (tuple_fp64 *z, const tuple_fp64 *x, const tuple_fp64 *y) ;
     void max_fp64 (tuple_fp64 *z, const tuple_fp64 *x, const tuple_fp64 *y)
@@ -1228,18 +1228,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MAX_FP64 \
    "void max_fp64 (tuple_fp64 *z, const tuple_fp64 *x, const tuple_fp64 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v > y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
 //------------------------------------------------------------------------------
 // min_* functions:
@@ -1266,18 +1266,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_BOOL \
    "void min_bool (tuple_bool *z, const tuple_bool *x, const tuple_bool *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_int8 (tuple_int8 *z, const tuple_int8 *x, const tuple_int8 *y) ;
     void min_int8 (tuple_int8 *z, const tuple_int8 *x, const tuple_int8 *y)
@@ -1296,18 +1296,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_INT8 \
    "void min_int8 (tuple_int8 *z, const tuple_int8 *x, const tuple_int8 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_int16 (tuple_int16 *z, const tuple_int16 *x, const tuple_int16 *y) ;
     void min_int16 (tuple_int16 *z, const tuple_int16 *x, const tuple_int16 *y)
@@ -1326,18 +1326,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_INT16 \
    "void min_int16 (tuple_int16 *z, const tuple_int16 *x, const tuple_int16 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_int32 (tuple_int32 *z, const tuple_int32 *x, const tuple_int32 *y) ;
     void min_int32 (tuple_int32 *z, const tuple_int32 *x, const tuple_int32 *y)
@@ -1356,18 +1356,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_INT32 \
    "void min_int32 (tuple_int32 *z, const tuple_int32 *x, const tuple_int32 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_int64 (tuple_int64 *z, const tuple_int64 *x, const tuple_int64 *y) ;
     void min_int64 (tuple_int64 *z, const tuple_int64 *x, const tuple_int64 *y)
@@ -1386,18 +1386,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_INT64 \
    "void min_int64 (tuple_int64 *z, const tuple_int64 *x, const tuple_int64 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_uint8 (tuple_uint8 *z, const tuple_uint8 *x, const tuple_uint8 *y) ;
     void min_uint8 (tuple_uint8 *z, const tuple_uint8 *x, const tuple_uint8 *y)
@@ -1416,18 +1416,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_UINT8 \
    "void min_uint8 (tuple_uint8 *z, const tuple_uint8 *x, const tuple_uint8 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_uint16 (tuple_uint16 *z, const tuple_uint16 *x, const tuple_uint16 *y) ;
     void min_uint16 (tuple_uint16 *z, const tuple_uint16 *x, const tuple_uint16 *y)
@@ -1446,18 +1446,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_UINT16 \
    "void min_uint16 (tuple_uint16 *z, const tuple_uint16 *x, const tuple_uint16 *y) \n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_uint32 (tuple_uint32 *z, const tuple_uint32 *x, const tuple_uint32 *y) ;
     void min_uint32 (tuple_uint32 *z, const tuple_uint32 *x, const tuple_uint32 *y)
@@ -1476,18 +1476,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_UINT32 \
    "void min_uint32 (tuple_uint32 *z, const tuple_uint32 *x, const tuple_uint32 *y) \n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_uint64 (tuple_uint64 *z, const tuple_uint64 *x, const tuple_uint64 *y) ;
     void min_uint64 (tuple_uint64 *z, const tuple_uint64 *x, const tuple_uint64 *y)
@@ -1506,18 +1506,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_UINT64 \
    "void min_uint64 (tuple_uint64 *z, const tuple_uint64 *x, const tuple_uint64 *y) \n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_fp32 (tuple_fp32 *z, const tuple_fp32 *x, const tuple_fp32 *y) ;
     void min_fp32 (tuple_fp32 *z, const tuple_fp32 *x, const tuple_fp32 *y)
@@ -1536,18 +1536,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_FP32 \
    "void min_fp32 (tuple_fp32 *z, const tuple_fp32 *x, const tuple_fp32 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
     void min_fp64 (tuple_fp64 *z, const tuple_fp64 *x, const tuple_fp64 *y) ;
     void min_fp64 (tuple_fp64 *z, const tuple_fp64 *x, const tuple_fp64 *y)
@@ -1566,18 +1566,18 @@ typedef struct { int64_t i,j ; double   v ; } tuple3_fp64 ;
 
 #define MIN_FP64 \
    "void min_fp64 (tuple_fp64 *z, const tuple_fp64 *x, const tuple_fp64 *y)\n" \
-   "{                                                                   \n" \
-   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))               \n" \
-   "    {                                                               \n" \
-   "        z->k = x->k ;                                               \n" \
-   "        z->v = x->v ;                                               \n" \
-   "    }                                                               \n" \
-   "    else                                                            \n" \
-   "    {                                                               \n" \
-   "        z->k = y->k ;                                               \n" \
-   "        z->v = y->v ;                                               \n" \
-   "    }                                                               \n" \
-   "}                                                                   \n"
+   "{                                                       \n" \
+   "    if (x->v < y->v || (x->v == y->v && x->k < y->k))   \n" \
+   "    {                                                   \n" \
+   "        z->k = x->k ;                                   \n" \
+   "        z->v = x->v ;                                   \n" \
+   "    }                                                   \n" \
+   "    else                                                \n" \
+   "    {                                                   \n" \
+   "        z->k = y->k ;                                   \n" \
+   "        z->v = y->v ;                                   \n" \
+   "    }                                                   \n" \
+   "}                                                       \n"
 
 //------------------------------------------------------------------------------
 // max3_* functions:
@@ -3569,6 +3569,7 @@ void mexFunction
     OK (GrB_Matrix_free (&y)) ;
     OK (GrB_Matrix_free (&c)) ;
     OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Matrix_free (&z)) ;
     OK (GrB_Scalar_free (&Theta)) ;
     OK (GrB_Scalar_free (&s)) ;
 
