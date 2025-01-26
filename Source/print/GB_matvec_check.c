@@ -16,6 +16,9 @@
 #define GB_DEVELOPER 0
 #endif
 
+#undef  GB_DEVELOPER
+#define GB_DEVELOPER 1  /* FIXME */
+
 #include "GB.h"
 #include "pending/GB_Pending.h"
 #include "get_set/GB_get_set.h"
