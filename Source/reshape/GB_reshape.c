@@ -19,9 +19,9 @@
 #define GB_FREE_WORKSPACE                       \
 {                                               \
     GB_WERK_POP (T_ek_slicing, int64_t) ;       \
-    GB_FREE (&I_work, I_work_size) ;            \
-    GB_FREE (&J_work, J_work_size) ;            \
-    GB_FREE (&S_work, S_work_size) ;            \
+    GB_FREE_MEMORY (&I_work, I_work_size) ;            \
+    GB_FREE_MEMORY (&J_work, J_work_size) ;            \
+    GB_FREE_MEMORY (&S_work, S_work_size) ;            \
     if (T != A && T != C)                       \
     {                                           \
         GB_Matrix_free (&T) ;                   \

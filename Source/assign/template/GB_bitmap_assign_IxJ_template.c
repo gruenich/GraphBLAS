@@ -27,7 +27,7 @@
 // It is not freed, so it can be used for subsequent uses of this template.
 // To free the workspace, the method that uses this template must do:
 //
-//      GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;
+//      GB_FREE_MEMORY (&TaskList_IxJ, TaskList_IxJ_size) ;
 
 {
 

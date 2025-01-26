@@ -16,9 +16,9 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_Matrix_free (A) ;            \
-    GB_FREE (&Ap_copy, Ap_size) ;   \
-    GB_FREE (&Ai_copy, Ai_size) ;   \
-    GB_FREE (&Ax_copy, Ax_size) ;   \
+    GB_FREE_MEMORY (&Ap_copy, Ap_size) ;   \
+    GB_FREE_MEMORY (&Ai_copy, Ai_size) ;   \
+    GB_FREE_MEMORY (&Ax_copy, Ax_size) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     GB_void  *Ax_copy = NULL ; size_t Ax_size = 0 ;
     size_t typesize = type->size ;
 
-    // Ap_copy, Ai_copy, Ax_copy are GB_MALLOC'ed so they are already in the
+    // Ap_copy, Ai_copy, Ax_copy are malloc'ed so they are already in the
     // debug memtable.  Thus, GB_import does not add them again to the
     // memtable (with add_to_memtable set to false).
 
@@ -133,15 +133,15 @@ static GrB_Info GB_import_worker   // import a matrix of any type
     {
         case GrB_CSR_FORMAT : 
         case GrB_CSC_FORMAT : 
-            Ap_copy = GB_MALLOC (plen,           uint64_t, &Ap_size) ;
-            Ai_copy = GB_MALLOC (nvals,          uint64_t, &Ai_size) ;
-            Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
+            Ap_copy = GB_MALLOC_MEMORY (plen,  sizeof (uint64_t), &Ap_size) ;
+            Ai_copy = GB_MALLOC_MEMORY (nvals, sizeof (uint64_t), &Ai_size) ;
+            Ax_copy = GB_MALLOC_MEMORY (nvals, typesize, &Ax_size) ;
             ok = (Ap_copy != NULL && Ai_copy != NULL && Ax_copy != NULL) ;
             break ;
 
 //      case GrB_DENSE_ROW_FORMAT :
 //      case GrB_DENSE_COL_FORMAT :
-//          Ax_copy = GB_MALLOC (nvals*typesize, GB_void,   &Ax_size) ;
+//          Ax_copy = GB_MALLOC_MEMORY (nvals, typesize, &Ax_size) ;
 //          ok = (Ax_copy != NULL) ;
 //          break ;
 

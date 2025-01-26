@@ -172,7 +172,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     {
         // V->x = (vtype) T->x
         // V is sparse so malloc is OK
-        V->x = GB_XALLOC (false, V->iso, vnz, vtype->size, &(V->x_size)) ;
+        V->x = GB_XALLOC_MEMORY (false, V->iso, vnz, vtype->size,
+            &(V->x_size)) ;
         if (V->x == NULL)
         { 
             // out of memory

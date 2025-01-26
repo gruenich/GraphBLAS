@@ -177,14 +177,14 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
     if (!ok)
     { 
         // out of memory: A is unchanged
-        GB_FREE (&Ap_new, Ap_new_size) ;
-        GB_FREE (&Ah_new, Ah_new_size) ;
-        GB_FREE (&Ai_new, Ai_new_size) ;
-        GB_FREE (&Yp_new, Yp_new_size) ;
-        GB_FREE (&Yi_new, Yi_new_size) ;
-        GB_FREE (&Yx_new, Yx_new_size) ;
-        GB_FREE (&Pending_i_new, Pending_i_new_size) ;
-        GB_FREE (&Pending_j_new, Pending_j_new_size) ;
+        GB_FREE_MEMORY (&Ap_new, Ap_new_size) ;
+        GB_FREE_MEMORY (&Ah_new, Ah_new_size) ;
+        GB_FREE_MEMORY (&Ai_new, Ai_new_size) ;
+        GB_FREE_MEMORY (&Yp_new, Yp_new_size) ;
+        GB_FREE_MEMORY (&Yi_new, Yi_new_size) ;
+        GB_FREE_MEMORY (&Yx_new, Yx_new_size) ;
+        GB_FREE_MEMORY (&Pending_i_new, Pending_i_new_size) ;
+        GB_FREE_MEMORY (&Pending_j_new, Pending_j_new_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -203,7 +203,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
                      plen+1, nthreads_max) ;
         if (!A->p_shallow)
         { 
-            GB_FREE (&(A->p), A->p_size) ;
+            GB_FREE_MEMORY (&(A->p), A->p_size) ;
         }
         A->p = Ap_new ;
         A->p_size = Ap_new_size ;
@@ -235,7 +235,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             GB_cast_int (Ai_new, icode_new, A->i, icode, anz, nthreads_max) ;
             if (!A->i_shallow)
             { 
-                GB_FREE (&(A->i), A->i_size) ;
+                GB_FREE_MEMORY (&(A->i), A->i_size) ;
             }
             A->i = Ai_new ;
             A->i_size = Ai_new_size ;
@@ -250,7 +250,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         { 
             GB_cast_int (Pending_i_new, ucode_new, Pending->i, ucode, npending,
                 nthreads_max) ;
-            GB_FREE (&(Pending->i), Pending->i_size) ;
+            GB_FREE_MEMORY (&(Pending->i), Pending->i_size) ;
             Pending->i = Pending_i_new ;
             Pending->i_size = Pending_i_new_size ;
         }
@@ -277,7 +277,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             GB_cast_int (Ah_new, ucode_new, A->h, ucode, plen, nthreads_max) ;
             if (!A->h_shallow)
             { 
-                GB_FREE (&(A->h), A->h_size) ;
+                GB_FREE_MEMORY (&(A->h), A->h_size) ;
             }
             A->h = Ah_new ;
             A->h_size = Ah_new_size ;
@@ -304,7 +304,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             GB_cast_int (Yp_new, ucode_new, Y->p, ucode, yplen+1, nthreads_max);
             if (!Y->p_shallow)
             { 
-                GB_FREE (&(Y->p), Y->p_size) ;
+                GB_FREE_MEMORY (&(Y->p), Y->p_size) ;
             }
             Y->p = Yp_new ;
             Y->p_size = Yp_new_size ;
@@ -318,7 +318,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             GB_cast_int (Yi_new, ucode_new, Y->i, ucode, ynz, nthreads_max) ;
             if (!Y->i_shallow)
             { 
-                GB_FREE (&(Y->i), Y->i_size) ;
+                GB_FREE_MEMORY (&(Y->i), Y->i_size) ;
             }
             Y->i = Yi_new ;
             Y->i_size = Yi_new_size ;
@@ -332,7 +332,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
             GB_cast_int (Yx_new, ucode_new, Y->x, ucode, ynz, nthreads_max) ;
             if (!Y->x_shallow)
             { 
-                GB_FREE (&(Y->x), Y->x_size) ;
+                GB_FREE_MEMORY (&(Y->x), Y->x_size) ;
             }
             Y->x = Yx_new ;
             Y->x_size = Yx_new_size ;
@@ -355,7 +355,7 @@ GrB_Info GB_convert_int     // convert the integers of a matrix
         { 
             GB_cast_int (Pending_j_new, ucode_new, Pending->j, ucode, npending,
                 nthreads_max) ;
-            GB_FREE (&(Pending->j), Pending->j_size) ;
+            GB_FREE_MEMORY (&(Pending->j), Pending->j_size) ;
             Pending->j = Pending_j_new ;
             Pending->j_size = Pending_j_new_size ;
         }

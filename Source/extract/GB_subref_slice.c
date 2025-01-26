@@ -40,10 +40,10 @@
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORKSPACE ;                         \
-    GB_FREE_WORK (&Cwork, Cwork_size) ;         \
-    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
-    GB_FREE_WORK (&Ihead, Ihead_size) ;         \
-    GB_FREE_WORK (&Inext, Inext_size) ;         \
+    GB_FREE_MEMORY (&Cwork, Cwork_size) ;         \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&Ihead, Ihead_size) ;         \
+    GB_FREE_MEMORY (&Inext, Inext_size) ;         \
 }
 
 #define GB_RETURN_RESULTS                   \
@@ -191,7 +191,8 @@ GrB_Info GB_subref_slice    // phase 1 of GB_subref
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    Cwork = GB_MALLOC_WORK (GB_IMAX (2, Cnvec+1), uint64_t, &Cwork_size) ;
+    Cwork = GB_MALLOC_MEMORY (GB_IMAX (2, Cnvec+1), sizeof (uint64_t),
+        &Cwork_size) ;
     if (Cwork == NULL)
     { 
         // out of memory

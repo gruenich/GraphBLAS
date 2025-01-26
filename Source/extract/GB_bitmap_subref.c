@@ -15,7 +15,7 @@
 
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
-    GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;   \
+    GB_FREE_MEMORY (&TaskList_IxJ, TaskList_IxJ_size) ;   \
 }
 
 #define GB_FREE_ALL                                     \

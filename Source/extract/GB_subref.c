@@ -72,18 +72,18 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
-    GB_FREE_WORK (&Ap_start, Ap_start_size) ;   \
-    GB_FREE_WORK (&Ap_end, Ap_end_size) ;       \
-    GB_FREE_WORK (&Ihead, Ihead_size) ;         \
-    GB_FREE_WORK (&Inext, Inext_size) ;         \
-    GB_FREE_WORK (&Cwork, Cwork_size) ;         \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&Ap_start, Ap_start_size) ;   \
+    GB_FREE_MEMORY (&Ap_end, Ap_end_size) ;       \
+    GB_FREE_MEMORY (&Ihead, Ihead_size) ;         \
+    GB_FREE_MEMORY (&Inext, Inext_size) ;         \
+    GB_FREE_MEMORY (&Cwork, Cwork_size) ;         \
 }
 
 #define GB_FREE_ALL             \
 {                               \
-    GB_FREE (&Cp, Cp_size) ;    \
-    GB_FREE (&Ch, Ch_size) ;    \
+    GB_FREE_MEMORY (&Cp, Cp_size) ;    \
+    GB_FREE_MEMORY (&Ch, Ch_size) ;    \
     GB_phybix_free (C) ;        \
     GB_FREE_WORKSPACE ;         \
 }

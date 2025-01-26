@@ -51,17 +51,17 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
-    GB_FREE_WORK (&C_to_M, C_to_M_size) ;       \
-    GB_FREE_WORK (&C_to_A, C_to_A_size) ;       \
-    GB_FREE_WORK (&C_to_B, C_to_B_size) ;       \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&C_to_M, C_to_M_size) ;       \
+    GB_FREE_MEMORY (&C_to_A, C_to_A_size) ;       \
+    GB_FREE_MEMORY (&C_to_B, C_to_B_size) ;       \
 }
 
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORKSPACE ;                         \
-    GB_FREE (&Ch, Ch_size) ;                    \
-    GB_FREE (&Cp, Cp_size) ;                    \
+    GB_FREE_MEMORY (&Ch, Ch_size) ;                    \
+    GB_FREE_MEMORY (&Cp, Cp_size) ;                    \
     GB_phybix_free (C) ;                        \
 }
 

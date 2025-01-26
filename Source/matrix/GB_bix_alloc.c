@@ -58,13 +58,13 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
         if (bitmap_calloc)
         { 
             // content is fully defined
-            A->b = GB_CALLOC (nzmax, int8_t, &(A->b_size)) ;
+            A->b = GB_CALLOC_MEMORY (nzmax, sizeof (int8_t), &(A->b_size)) ;
             A->magic = GB_MAGIC ;
         }
         else
         { 
             // bitmap is not defined and will be computed by the caller
-            A->b = GB_MALLOC (nzmax, int8_t, &(A->b_size)) ;
+            A->b = GB_MALLOC_MEMORY (nzmax, sizeof (int8_t), &(A->b_size)) ;
         }
         ok = (A->b != NULL) ;
     }
@@ -89,8 +89,8 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
     if (numeric)
     { 
         // calloc the space if A is bitmap
-        A->x = GB_XALLOC (sparsity == GxB_BITMAP, A_iso, nzmax, A->type->size,
-            &(A->x_size)) ;
+        A->x = GB_XALLOC_MEMORY (sparsity == GxB_BITMAP, A_iso, nzmax,
+            A->type->size, &(A->x_size)) ;
         ok = ok && (A->x != NULL) ;
     }
 

@@ -324,16 +324,16 @@ static GrB_Info GB_msort_2_method    // sort array A of size 2-by-n
     GB_A1_t *restrict W_1 = NULL ; size_t W_1_size = 0 ;
     int64_t *restrict W_T = NULL ; size_t W_T_size = 0 ;
 
-    W_0 = GB_MALLOC_WORK (n, GB_A0_t, &W_0_size) ;
-    W_1 = GB_MALLOC_WORK (n, GB_A1_t, &W_1_size) ;
-    W_T = GB_MALLOC_WORK (6*ntasks + 1, int64_t, &W_T_size) ;
+    W_0 = GB_MALLOC_MEMORY (n, sizeof (GB_A0_t), &W_0_size) ;
+    W_1 = GB_MALLOC_MEMORY (n, sizeof (GB_A1_t), &W_1_size) ;
+    W_T = GB_MALLOC_MEMORY (6*ntasks + 1, sizeof (int64_t), &W_T_size) ;
 
     if (W_0 == NULL || W_1 == NULL || W_T == NULL)
     { 
         // out of memory
-        GB_FREE_WORK (&W_0, W_0_size) ;
-        GB_FREE_WORK (&W_1, W_1_size) ;
-        GB_FREE_WORK (&W_T, W_T_size) ;
+        GB_FREE_MEMORY (&W_0, W_0_size) ;
+        GB_FREE_MEMORY (&W_1, W_1_size) ;
+        GB_FREE_MEMORY (&W_T, W_T_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 
@@ -432,9 +432,9 @@ static GrB_Info GB_msort_2_method    // sort array A of size 2-by-n
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK (&W_0, W_0_size) ;
-    GB_FREE_WORK (&W_1, W_1_size) ;
-    GB_FREE_WORK (&W_T, W_T_size) ;
+    GB_FREE_MEMORY (&W_0, W_0_size) ;
+    GB_FREE_MEMORY (&W_1, W_1_size) ;
+    GB_FREE_MEMORY (&W_T, W_T_size) ;
     return (GrB_SUCCESS) ;
 }
 

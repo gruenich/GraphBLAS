@@ -34,7 +34,7 @@ void GB_helper5             // construct pattern of S
 
 void GB_helper7              // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *restrict Kx,      // array of size mnz    FIXME
+    uint64_t *restrict Kx,      // array of size mnz
     const uint64_t mnz
 ) ;
 

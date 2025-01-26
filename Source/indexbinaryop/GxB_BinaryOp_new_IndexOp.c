@@ -39,7 +39,9 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    GrB_BinaryOp binop = GB_CALLOC (1, struct GB_BinaryOp_opaque, &header_size);
+    GrB_BinaryOp
+        binop = GB_CALLOC_MEMORY (1, sizeof (struct GB_BinaryOp_opaque),
+            &header_size) ;
     if (binop == NULL)
     { 
         // out of memory
@@ -71,7 +73,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (&binop, header_size) ;
+        GB_FREE_MEMORY (&binop, header_size) ;
         return (info) ;
     }
 
@@ -79,7 +81,7 @@ GrB_Info GxB_BinaryOp_new_IndexOp
     // copy theta into the new binary op
     //--------------------------------------------------------------------------
 
-    binop->theta = GB_MALLOC (binop->theta_type->size, GB_void,
+    binop->theta = GB_MALLOC_MEMORY (1, binop->theta_type->size,
         &(binop->theta_size)) ;
     if (binop->theta == NULL)
     { 

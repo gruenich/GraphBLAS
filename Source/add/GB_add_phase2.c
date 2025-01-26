@@ -270,8 +270,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         GB_FREE_ALL ;
-        GB_FREE (Cp_handle, Cp_size) ;
-        GB_FREE (Ch_handle, Ch_size) ;
+        GB_FREE_MEMORY (Cp_handle, Cp_size) ;
+        GB_FREE_MEMORY (Ch_handle, Ch_size) ;
         return (info) ;
     }
 

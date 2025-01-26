@@ -24,14 +24,14 @@ void GB_Matrix_free             // free a matrix
         if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
         {
             // free all content of A
-            GB_FREE (&(A->user_name), A->user_name_size) ;
+            GB_FREE_MEMORY (&(A->user_name), A->user_name_size) ;
             size_t header_size = A->header_size ;
             GB_phybix_free (A) ;
             if (!(A->static_header))
             { 
                 // free the header of A itself, unless it is static
                 A->magic = GB_FREED ;       // to help detect dangling pointers
-                GB_FREE (Ahandle, header_size) ;
+                GB_FREE_MEMORY (Ahandle, header_size) ;
                 (*Ahandle) = NULL ;
             }
         }

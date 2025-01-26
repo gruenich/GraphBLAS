@@ -53,8 +53,9 @@ GrB_Info GxB_IndexBinaryOp_new
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    GxB_IndexBinaryOp op = GB_CALLOC (1, struct GB_IndexBinaryOp_opaque,
-        &header_size) ;
+    GxB_IndexBinaryOp
+        op = GB_CALLOC_MEMORY (1, sizeof (struct GB_IndexBinaryOp_opaque),
+            &header_size) ;
     if (op == NULL)
     { 
         // out of memory
@@ -102,7 +103,7 @@ GrB_Info GxB_IndexBinaryOp_new
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (&op, header_size) ;
+        GB_FREE_MEMORY (&op, header_size) ;
         return (info) ;
     }
 

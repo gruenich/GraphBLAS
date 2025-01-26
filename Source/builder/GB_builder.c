@@ -121,10 +121,10 @@
 #define GB_FREE_WORKSPACE                           \
 {                                                   \
     GB_WERK_POP (Work, int64_t) ;                   \
-    GB_FREE (I_work_handle, *I_work_size_handle) ;  \
-    GB_FREE (J_work_handle, *J_work_size_handle) ;  \
-    GB_FREE (S_work_handle, *S_work_size_handle) ;  \
-    GB_FREE_WORK (&K_work, K_work_size) ;           \
+    GB_FREE_MEMORY (I_work_handle, *I_work_size_handle) ;  \
+    GB_FREE_MEMORY (J_work_handle, *J_work_size_handle) ;  \
+    GB_FREE_MEMORY (S_work_handle, *S_work_size_handle) ;  \
+    GB_FREE_MEMORY (&K_work, K_work_size) ;           \
 }
 
 #define GB_FREE_ALL GB_FREE_WORKSPACE
@@ -1034,7 +1034,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // J_work might be aliased to J_input, and in this case, J_work_handle
     // is NULL.  J_input is not modified.
     ASSERT (J_work_handle != NULL) ;
-    GB_FREE (J_work_handle, *J_work_size_handle) ;
+    GB_FREE_MEMORY (J_work_handle, *J_work_size_handle) ;
     J_work = NULL ;
     J_work32 = NULL ;
     J_work64 = NULL ;
@@ -1084,7 +1084,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     tnz, nthreads) ;
             }
             // free I_work
-            GB_FREE (I_work_handle, *I_work_size_handle) ;
+            GB_FREE_MEMORY (I_work_handle, *I_work_size_handle) ;
         }
 
         // I_work has been free or transplanted into T->i
@@ -1254,7 +1254,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
             // shrink the size of T->x
             bool ok = true ;
-            GB_REALLOC (T->x, tx_size_required, GB_void, &(T->x_size), &ok) ;
+            GB_REALLOC_MEMORY (T->x, tnz, tsize, &(T->x_size), &ok) ;
         }
         info = GrB_SUCCESS ;
 
@@ -1266,7 +1266,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // allocate T->x
         //----------------------------------------------------------------------
 
-        T->x = GB_XALLOC (false, S_iso, tnz, tsize, &(T->x_size)) ;
+        T->x = GB_XALLOC_MEMORY (false, S_iso, tnz, tsize, &(T->x_size)) ;
         if (T->x == NULL)
         { 
             // out of memory

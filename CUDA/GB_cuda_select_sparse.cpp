@@ -67,7 +67,7 @@ GrB_Info GB_cuda_select_sparse
     if (C->nvec == C->vdim)
     {
         // C hypersparse with all vectors present; quick convert to sparse
-        GB_FREE (&(C->h), C->h_size) ;
+        GB_FREE_MEMORY (&(C->h), C->h_size) ;
     }
 
     ASSERT_MATRIX_OK (C, "C output of cuda_select_sparse", GB0) ;

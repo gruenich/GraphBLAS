@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: exploit 32-bit integers for T and V
-
 // gblogextract computes the built-in logical indexing expression C = A(M).  The
 // matrices A and M must be the same size.  M is normally logical but it can be
 // of any type in this mexFunction.  M should not have any explicit zeros.  C

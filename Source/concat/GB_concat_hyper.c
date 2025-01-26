@@ -9,9 +9,9 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE (&Wi, Wi_size) ;        \
-    GB_FREE_WORK (&Wj, Wj_size) ;   \
-    GB_FREE_WORK (&Wx, Wx_size) ;   \
+    GB_FREE_MEMORY (&Wi, Wi_size) ;        \
+    GB_FREE_MEMORY (&Wj, Wj_size) ;   \
+    GB_FREE_MEMORY (&Wx, Wx_size) ;   \
     GB_phybix_free (C) ;            \
 }
 
@@ -68,7 +68,7 @@ GrB_Info GB_concat_hyper            // concatenate into a hypersparse matrix
     Wj = GB_MALLOC_MEMORY (cnz, cjsize, &Wj_size) ;     // freed below
     if (!C_iso)
     { 
-        Wx = GB_MALLOC_WORK (cnz * csize, GB_void, &Wx_size) ;  // freed below
+        Wx = GB_MALLOC_MEMORY (cnz, csize, &Wx_size) ;  // freed below
     }
     if (Wi == NULL || Wj == NULL || (!C_iso && Wx == NULL))
     { 

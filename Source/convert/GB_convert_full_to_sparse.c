@@ -53,8 +53,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     if (Ap == NULL || Ai == NULL)
     { 
         // out of memory
-        GB_FREE (&Ap, Ap_size) ;
-        GB_FREE (&Ai, Ai_size) ;
+        GB_FREE_MEMORY (&Ap, Ap_size) ;
+        GB_FREE_MEMORY (&Ai, Ai_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

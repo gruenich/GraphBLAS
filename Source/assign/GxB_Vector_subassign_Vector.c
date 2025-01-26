@@ -13,7 +13,7 @@
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
-    if (I_size > 0) GB_FREE (&I, I_size) ;
+    if (I_size > 0) GB_FREE_MEMORY (&I, I_size) ;
 
 GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
 (

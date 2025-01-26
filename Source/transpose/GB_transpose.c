@@ -36,9 +36,9 @@
 
 #define GB_FREE_WORKSPACE               \
 {                                       \
-    GB_FREE (&iwork, iwork_size) ;      \
-    GB_FREE (&jwork, jwork_size) ;      \
-    GB_FREE (&Swork, Swork_size) ;      \
+    GB_FREE_MEMORY (&iwork, iwork_size) ;      \
+    GB_FREE_MEMORY (&jwork, jwork_size) ;      \
+    GB_FREE_MEMORY (&Swork, Swork_size) ;      \
     GB_WERK_POP (Count, uint64_t) ;     \
 }
 
@@ -393,7 +393,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ;
+            T->x = GB_XALLOC_MEMORY (false, C_iso, anz, csize, &(T->x_size)) ;
         }
         if (T->p == NULL || T->i == NULL || (allocate_Tx && T->x == NULL))
         { 
@@ -547,7 +547,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         if (allocate_Tx)
         { 
             // allocate new space for the new typecasted numerical values of T
-            T->x = GB_XALLOC (false, C_iso, anz, csize, &(T->x_size)) ;
+            T->x = GB_XALLOC_MEMORY (false, C_iso, anz, csize, &(T->x_size)) ;
         }
 
         if (T->p == NULL || (T->i == NULL && !A_is_hyper) ||
@@ -794,8 +794,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             // if in_place, the prior A->p and A->h can now be freed
             if (in_place)
             { 
-                if (!A->p_shallow) GB_FREE (&A->p, A->p_size) ;
-                if (!A->h_shallow) GB_FREE (&A->h, A->h_size) ;
+                if (!A->p_shallow) GB_FREE_MEMORY (&A->p, A->p_size) ;
+                if (!A->h_shallow) GB_FREE_MEMORY (&A->h, A->h_size) ;
             }
 
             GB_void *S_input = NULL ;
@@ -814,7 +814,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
 
             if (op != NULL && !C_iso)
             { 
-                Swork = (GB_void *) GB_XALLOC (false, C_iso, anz, csize,
+                Swork = (GB_void *) GB_XALLOC_MEMORY (false, C_iso, anz, csize,
                     &Swork_size) ;
                 ok = ok && (Swork != NULL) ;
             }
@@ -1029,12 +1029,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             if (GB_IS_BITMAP (C))
             { 
                 // calloc the space so the new C->x has no uninitialized space
-                Cx_new = GB_CALLOC (anz_held*csize, GB_void, &Cx_size) ;
+                Cx_new = GB_CALLOC_MEMORY (anz_held, csize, &Cx_size) ;
             }
             else
             { 
                 // malloc is fine; all C->x will be written
-                Cx_new = GB_MALLOC (anz_held*csize, GB_void, &Cx_size) ;
+                Cx_new = GB_MALLOC_MEMORY (anz_held, csize, &Cx_size) ;
             }
             if (Cx_new == NULL)
             { 
@@ -1046,7 +1046,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
             GB_OK (GB_apply_op (Cx_new, ctype, GB_NON_ISO, op,
                 scalar, false, flipij, C, Werk)) ;
             // transplant Cx_new as C->x and finalize the type of C
-            GB_FREE (&(C->x), C->x_size) ;
+            GB_FREE_MEMORY (&(C->x), C->x_size) ;
             C->x = Cx_new ;
             C->x_size = Cx_size ;
             C->type = ctype ;

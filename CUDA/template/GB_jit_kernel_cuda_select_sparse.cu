@@ -5,9 +5,9 @@ using namespace cooperative_groups ;
 
 #define GB_FREE_WORKSPACE                  \
 {                                          \
-    GB_FREE_WORK (&W, W_size) ;            \
-    GB_FREE_WORK (&W_2, W_2_size) ;        \
-    GB_FREE_WORK (&W_3, W_3_size) ;        \
+    GB_FREE_MEMORY (&W, W_size) ;            \
+    GB_FREE_MEMORY (&W_2, W_2_size) ;        \
+    GB_FREE_MEMORY (&W_3, W_3_size) ;        \
 }
 
 #undef GB_FREE_ALL
@@ -254,7 +254,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     // Phase 1: Keep [p] = 1 if Ai,Ax [p] is kept, 0 otherwise; then cumsum
 
-    W = (int64_t *) GB_MALLOC_WORK (A->nvals + 1, int64_t, &W_size) ;
+    W = (int64_t *) GB_MALLOC_MEMORY (A->nvals + 1, sizeof (int64_t), &W_size) ;
     if (W == NULL)
     {
         // out of memory
@@ -294,8 +294,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     }
 
     // allocate workspace
-    W_2 = GB_MALLOC_WORK (cnz + 1, int64_t, &W_2_size) ;
-    W_3 = GB_MALLOC_WORK (cnz + 1, int64_t, &W_3_size) ;
+    W_2 = GB_MALLOC_MEMORY (cnz + 1, sizeof (int64_t), &W_2_size) ;
+    W_3 = GB_MALLOC_MEMORY (cnz + 1, sizeof (int64_t), &W_3_size) ;
     if (W_2 == NULL || W_3 == NULL)
     {
         // out of memory
@@ -346,16 +346,16 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // The caller has already allocated C->p, C->h for
     // a user-returnable empty hypersparse matrix.
     // Free them here before updating.
-    GB_FREE (&(C->p), C->p_size) ;
-    GB_FREE (&(C->h), C->h_size) ;
+    GB_FREE_MEMORY (&(C->p), C->p_size) ;
+    GB_FREE_MEMORY (&(C->h), C->h_size) ;
 
     // Allocate Cp, Ch, finalize matrix 
     C->plen = cnvec ;
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
     C->nvals = cnz ;
-    C->p = GB_MALLOC (C->plen + 1, int64_t, &(C->p_size)) ;
-    C->h = GB_MALLOC (C->plen, int64_t, &(C->h_size)) ; //BUG FIX: was A->h_size
+    C->p = GB_MALLOC_MEMORY (C->plen + 1, sizeof (int64_t), &(C->p_size)) ;
+    C->h = GB_MALLOC_MEMORY (C->plen, sizeof (int64_t), &(C->h_size)) ;
     if (C->p == NULL || C->h == NULL)
     {
         // The contents of C will be freed with GB_phybix_free()

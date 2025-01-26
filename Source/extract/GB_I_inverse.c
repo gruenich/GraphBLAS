@@ -66,8 +66,8 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     if (Inext == NULL || Ihead == NULL)
     { 
         // out of memory
-        GB_FREE_WORK (&Ihead, Ihead_size) ;
-        GB_FREE_WORK (&Inext, Inext_size) ;
+        GB_FREE_MEMORY (&Ihead, Ihead_size) ;
+        GB_FREE_MEMORY (&Inext, Inext_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

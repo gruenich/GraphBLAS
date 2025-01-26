@@ -103,8 +103,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (Cp_handle, Cp_size) ;
-        GB_FREE (Ch_handle, Ch_size) ;
+        GB_FREE_MEMORY (Cp_handle, Cp_size) ;
+        GB_FREE_MEMORY (Ch_handle, Ch_size) ;
         return (info) ;
     }
 

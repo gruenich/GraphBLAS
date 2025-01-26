@@ -12,7 +12,7 @@
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                     \
 {                                                       \
-    GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;   \
+    GB_FREE_MEMORY (&TaskList_IxJ, TaskList_IxJ_size) ;   \
 }
 
 GB_JIT_GLOBAL GB_JIT_KERNEL_BITMAP_SUBREF_PROTO (GB_jit_kernel) ;

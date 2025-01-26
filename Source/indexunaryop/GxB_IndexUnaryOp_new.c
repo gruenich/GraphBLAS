@@ -48,8 +48,9 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    GrB_IndexUnaryOp op = GB_CALLOC (1, struct GB_IndexUnaryOp_opaque,
-        &header_size) ;
+    GrB_IndexUnaryOp
+        op = GB_CALLOC_MEMORY (1, sizeof (struct GB_IndexUnaryOp_opaque),
+            &header_size) ;
     if (op == NULL)
     { 
         // out of memory
@@ -96,7 +97,7 @@ GrB_Info GxB_IndexUnaryOp_new   // create a named user-created IndexUnaryOp
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (&op, header_size) ;
+        GB_FREE_MEMORY (&op, header_size) ;
         return (info) ;
     }
 

@@ -13,7 +13,7 @@
 #undef  FREE_ALL
 #define FREE_ALL                        \
 {                                       \
-    GB_FREE (&X4, X4_size) ;            \
+    GB_free_memory (&X4, X4_size) ;            \
     if (X2 != NULL) mxFree (X2) ;       \
     X2 = NULL ;                         \
     GxB_Container_free (&Container) ;   \

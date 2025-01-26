@@ -89,12 +89,12 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
     if (A->iso)
     { 
         // shrink A->x so it holds a single entry
-        GB_REALLOC (A->x, asize, GB_void, &(A->x_size), &ok2) ;
+        GB_REALLOC_MEMORY (A->x, 1, asize, &(A->x_size), &ok2) ;
     }
     else
     { 
         // reallocate A->x from its current size to nzmax_new1 entries
-        GB_REALLOC (A->x, nzmax_new1 * asize, GB_void, &(A->x_size), &ok2) ;
+        GB_REALLOC_MEMORY (A->x, nzmax_new1, asize, &(A->x_size), &ok2) ;
     }
     bool ok = ok1 && ok2 ;
 

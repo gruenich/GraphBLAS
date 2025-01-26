@@ -186,7 +186,7 @@ static inline GrB_Info GB_valid1
     if (C != NULL)                                                  \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE (&(C->logger), C->logger_size) ;                    \
+        GB_FREE_MEMORY (&(C->logger), C->logger_size) ;                    \
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
         Werk->logger_size_handle = &(C->logger_size) ;              \
@@ -256,7 +256,7 @@ static inline GrB_Info GB_valid1
     if (desc != NULL)                                               \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE (&(desc->logger), desc->logger_size) ;              \
+        GB_FREE_MEMORY (&(desc->logger), desc->logger_size) ;              \
         Werk->logger_handle = &(desc->logger) ;                     \
         Werk->logger_size_handle = &(desc->logger_size) ;           \
     }
@@ -293,8 +293,8 @@ const char *GB_status_code (GrB_Info info) ;
         if (logger_handle != NULL)                                          \
         {                                                                   \
             size_t *logger_size_handle = Werk->logger_size_handle ;         \
-            (*logger_handle) = GB_CALLOC (GB_LOGGER_LEN+1, char,            \
-                logger_size_handle) ;                                       \
+            (*logger_handle) = GB_CALLOC_MEMORY (GB_LOGGER_LEN+1,           \
+                sizeof (char), logger_size_handle) ;                        \
             if ((*logger_handle) != NULL)                                   \
             {                                                               \
                 snprintf ((*logger_handle), GB_LOGGER_LEN,                  \

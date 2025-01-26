@@ -41,7 +41,8 @@
         bool ok ;                                                           \
         int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;               \
         int nnew = 2 * (ntasks) + 1 ;                                       \
-        GB_REALLOC_WORK (TaskList, nnew, GB_task_struct, &TaskList_size, &ok) ;\
+        GB_REALLOC_MEMORY (TaskList, nnew, sizeof (GB_task_struct),         \
+            &TaskList_size, &ok) ;                                          \
         if (!ok)                                                            \
         {                                                                   \
             /* out of memory */                                             \

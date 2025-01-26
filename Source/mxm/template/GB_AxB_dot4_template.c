@@ -440,7 +440,7 @@
         GB_B2TYPE *restrict W = NULL ;
         if (bvdim > 1)
         {
-            W = GB_MALLOC_WORK (wp * vlen, GB_B2TYPE, &W_size) ;
+            W = GB_MALLOC_MEMORY (wp * vlen, sizeof (GB_B2TYPE), &W_size) ;
             if (W == NULL)
             { 
                 // out of memory
@@ -699,7 +699,7 @@
         }
 
         // free workspace
-        GB_FREE_WORK (&W, W_size) ;
+        GB_FREE_MEMORY (&W, W_size) ;
     }
     #endif
 

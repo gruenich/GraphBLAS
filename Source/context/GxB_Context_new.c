@@ -32,7 +32,8 @@ GrB_Info GxB_Context_new            // create a new Context
 
     // allocate the Context
     size_t header_size ;
-    Context = GB_MALLOC (1, struct GB_Context_opaque, &header_size);
+    Context = GB_MALLOC_MEMORY (1, sizeof (struct GB_Context_opaque),
+        &header_size);
     if (Context == NULL)
     { 
         // out of memory

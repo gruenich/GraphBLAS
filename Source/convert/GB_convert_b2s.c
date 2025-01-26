@@ -18,7 +18,7 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 #include "unaryop/GB_unop.h"
-#define GB_FREE_ALL GB_FREE_WORK (&W, W_size) ;
+#define GB_FREE_ALL GB_FREE_MEMORY (&W, W_size) ;
 
 GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
 (

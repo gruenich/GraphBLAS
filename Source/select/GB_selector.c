@@ -22,8 +22,8 @@
 #include "select/GB_select.h"
 
 #define GB_FREE_ALL                         \
-    GB_FREE_WORK (&ythunk, ythunk_size) ;   \
-    GB_FREE_WORK (&athunk, athunk_size) ;
+    GB_FREE_MEMORY (&ythunk, ythunk_size) ;   \
+    GB_FREE_MEMORY (&athunk, athunk_size) ;
 
 GrB_Info GB_selector
 (
@@ -67,8 +67,8 @@ GrB_Info GB_selector
     // them on the CPU stack, so the CUDA kernels can access them.
     const size_t ysize = op->ytype->size ;
     const size_t asize = A->type->size ;
-    ythunk = GB_CALLOC_WORK (ysize, GB_void, &ythunk_size) ;
-    athunk = GB_CALLOC_WORK (asize, GB_void, &athunk_size) ;
+    ythunk = GB_CALLOC_MEMORY (1, ysize, &ythunk_size) ;
+    athunk = GB_CALLOC_MEMORY (1, asize, &athunk_size) ;
     if (ythunk == NULL || athunk == NULL)
     {
         // out of memory

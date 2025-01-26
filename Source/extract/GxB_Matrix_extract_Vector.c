@@ -11,8 +11,8 @@
 #include "mask/GB_get_mask.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
-    if (I_size > 0) GB_FREE (&I, I_size) ;      \
-    if (J_size > 0) GB_FREE (&J, J_size) ;
+    if (I_size > 0) GB_FREE_MEMORY (&I, I_size) ;      \
+    if (J_size > 0) GB_FREE_MEMORY (&J, J_size) ;
 
 GrB_Info GxB_Matrix_extract_Vector  // C<M> = accum (C, A(I,J))
 (

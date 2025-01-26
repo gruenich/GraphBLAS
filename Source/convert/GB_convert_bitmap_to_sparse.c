@@ -11,9 +11,9 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE (&Cp, Cp_size) ;            \
-    GB_FREE (&Ci, Ci_size) ;            \
-    GB_FREE (&Cx, Cx_size) ;            \
+    GB_FREE_MEMORY (&Cp, Cp_size) ;            \
+    GB_FREE_MEMORY (&Ci, Ci_size) ;            \
+    GB_FREE_MEMORY (&Cx, Cx_size) ;            \
 }
 
 GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
@@ -72,7 +72,7 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     { 
         // A is not iso.  Allocate new space for Cx, which is filled by
         // GB_convert_b2s.
-        Cx = GB_MALLOC (anzmax * asize, GB_void, &Cx_size) ;
+        Cx = GB_MALLOC_MEMORY (anzmax, asize, &Cx_size) ;
         if (Cx == NULL)
         { 
             // out of memory

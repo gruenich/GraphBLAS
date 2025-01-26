@@ -173,7 +173,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Cb)
     { 
         // allocate new C->b component
-        C->b = GB_MALLOC (anz, int8_t, &(C->b_size)) ;
+        C->b = GB_MALLOC_MEMORY (anz, sizeof (int8_t), &(C->b_size)) ;
         ok = ok && (C->b != NULL) ;
     }
 
@@ -187,8 +187,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (allocate_Cx)
     { 
         // allocate new C->x component; use calloc if C is bitmap
-        C->x = GB_XALLOC (C_is_bitmap, A_iso, anz,
-            C->type->size, &(C->x_size)) ;
+        C->x = GB_XALLOC_MEMORY (C_is_bitmap, A_iso, anz, C->type->size,
+            &(C->x_size)) ;
         ok = ok && (C->x != NULL) ;
     }
 
@@ -228,7 +228,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         GB_OK (GB_cast_matrix (C, A)) ;
         if (!A->x_shallow)
         { 
-            GB_FREE (&(A->x), A->x_size) ;
+            GB_FREE_MEMORY (&(A->x), A->x_size) ;
         }
         A->x = NULL ;
     }

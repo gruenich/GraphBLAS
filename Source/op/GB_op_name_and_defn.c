@@ -76,7 +76,7 @@ GrB_Info GB_op_name_and_defn
         defn_len = strlen (input_defn) ;
 
         // allocate space for the definition
-        defn = GB_MALLOC (defn_len+1, char, &defn_size) ;
+        defn = GB_MALLOC_MEMORY (defn_len+1, sizeof (char), &defn_size) ;
         if (defn == NULL)
         { 
             // out of memory

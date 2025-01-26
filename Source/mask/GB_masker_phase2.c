@@ -158,8 +158,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     if (info != GrB_SUCCESS)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
-        GB_FREE (Rp_handle, Rp_size) ;
-        GB_FREE (Rh_handle, Rh_size) ;
+        GB_FREE_MEMORY (Rp_handle, Rp_size) ;
+        GB_FREE_MEMORY (Rh_handle, Rh_size) ;
         return (info) ;
     }
 

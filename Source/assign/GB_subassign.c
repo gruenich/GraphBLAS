@@ -28,8 +28,8 @@
     GB_Matrix_free (&Cwork) ;       \
     GB_Matrix_free (&Mwork) ;       \
     GB_Matrix_free (&Awork) ;       \
-    GB_FREE_WORK (&I2, I2_size) ;   \
-    GB_FREE_WORK (&J2, J2_size) ;   \
+    GB_FREE_MEMORY (&I2, I2_size) ;   \
+    GB_FREE_MEMORY (&J2, J2_size) ;   \
 }
 
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'

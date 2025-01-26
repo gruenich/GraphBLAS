@@ -16,7 +16,7 @@
 #include "builder/GB_build.h"
 #include "ij/GB_ij.h"
 #define GB_FREE_ALL                             \
-    if (I_size > 0) GB_FREE (&I, I_size) ;
+    if (I_size > 0) GB_FREE_MEMORY (&I, I_size) ;
 
 GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
 (

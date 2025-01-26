@@ -40,7 +40,8 @@ GrB_Info GxB_Container_new
     //--------------------------------------------------------------------------
 
     size_t header_size ;
-    (*Container) = GB_CALLOC (1, struct GxB_Container_struct, &header_size) ;
+    (*Container) = GB_CALLOC_MEMORY (1, sizeof (struct GxB_Container_struct),
+        &header_size) ;
     if (*Container == NULL)
     { 
         // out of memory

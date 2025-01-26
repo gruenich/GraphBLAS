@@ -42,7 +42,8 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
 
     // allocate the unary operator
     size_t header_size ;
-    GrB_UnaryOp op = GB_CALLOC (1, struct GB_UnaryOp_opaque, &header_size) ;
+    GrB_UnaryOp op = GB_CALLOC_MEMORY (1, sizeof (struct GB_UnaryOp_opaque),
+        &header_size) ;
     if (op == NULL)
     { 
         // out of memory
@@ -57,7 +58,7 @@ GrB_Info GxB_UnaryOp_new            // create a new user-defined unary operator
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE (&op, header_size) ;
+        GB_FREE_MEMORY (&op, header_size) ;
         return (info) ;
     }
 

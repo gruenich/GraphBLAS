@@ -23,8 +23,8 @@
 
 #define GB_FREE_WORKSPACE                       \
 {                                               \
-    GB_FREE_WORK (&Cwork,    Cwork_size) ;      \
-    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&Cwork,    Cwork_size) ;      \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
 }
 
 #define GB_FREE_ALL                             \
@@ -277,7 +277,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // free the current tasks and construct the tasks for the second phase
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK (&TaskList, TaskList_size) ;
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;
     GB_OK (GB_AxB_dot3_slice (&TaskList, &TaskList_size, &ntasks, &nthreads,
         C, Cwork, cnz, Werk)) ;
 
@@ -296,7 +296,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         C->i_size = Cwork_size ;
         Cwork = NULL ;
         Cwork_size = 0 ;
-        C->x = GB_XALLOC (false, C_iso, cnz+1, C->type->size, &(C->x_size)) ;
+        C->x = GB_XALLOC_MEMORY (false, C_iso, cnz+1, C->type->size,
+            &(C->x_size)) ;
     }
     else if (sizeof (float) == C->type->size && !C_iso)
     { 
@@ -310,9 +311,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     else
     { 
         // otherwise, free Cwork and allocate both C->i and C->x
-        GB_FREE_WORK (&Cwork, Cwork_size) ;
+        GB_FREE_MEMORY (&Cwork, Cwork_size) ;
         C->i = GB_MALLOC_MEMORY (cnz+1, cisize, &(C->i_size)) ;
-        C->x = GB_XALLOC (false, C_iso, cnz+1, C->type->size, &(C->x_size)) ;
+        C->x = GB_XALLOC_MEMORY (false, C_iso, cnz+1, C->type->size,
+            &(C->x_size)) ;
     }
 
     // Cwork has either been transplanted into C as C->i or C->x, or it has

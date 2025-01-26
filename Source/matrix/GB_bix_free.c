@@ -42,7 +42,7 @@ void GB_bix_free                // free A->b, A->i, and A->x of a matrix
     // free A->b unless it is shallow
     if (!A->b_shallow)
     { 
-        GB_FREE (&(A->b), A->b_size) ;
+        GB_FREE_MEMORY (&(A->b), A->b_size) ;
     }
     A->b = NULL ;
     A->b_size = 0 ;
@@ -51,7 +51,7 @@ void GB_bix_free                // free A->b, A->i, and A->x of a matrix
     // free A->i unless it is shallow
     if (!A->i_shallow)
     { 
-        GB_FREE (&(A->i), A->i_size) ;
+        GB_FREE_MEMORY (&(A->i), A->i_size) ;
     }
     A->i = NULL ;
     A->i_size = 0 ;
@@ -60,7 +60,7 @@ void GB_bix_free                // free A->b, A->i, and A->x of a matrix
     // free A->x unless it is shallow
     if (!A->x_shallow)
     { 
-        GB_FREE (&(A->x), A->x_size) ;
+        GB_FREE_MEMORY (&(A->x), A->x_size) ;
     }
     A->x = NULL ;               // GB_nnz_max (A) will report zero
     A->x_size = 0 ;

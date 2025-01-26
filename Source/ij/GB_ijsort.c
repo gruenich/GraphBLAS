@@ -21,16 +21,16 @@
 
 #define GB_FREE_WORKSPACE               \
 {                                       \
-    GB_FREE_WORK (&I1, I1_size) ;       \
-    GB_FREE_WORK (&I1k, I1k_size) ;     \
+    GB_FREE_MEMORY (&I1, I1_size) ;       \
+    GB_FREE_MEMORY (&I1k, I1k_size) ;     \
     GB_WERK_POP (W, uint64_t) ;         \
 }
 
 #define GB_FREE_ALL                     \
 {                                       \
     GB_FREE_WORKSPACE ;                 \
-    GB_FREE_WORK (&I2, I2_size) ;       \
-    GB_FREE_WORK (&I2k, I2k_size) ;     \
+    GB_FREE_MEMORY (&I2, I2_size) ;       \
+    GB_FREE_MEMORY (&I2k, I2k_size) ;     \
 }
 
 GrB_Info GB_ijsort

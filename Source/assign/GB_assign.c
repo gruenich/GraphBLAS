@@ -30,8 +30,8 @@
     GB_Matrix_free (&Mwork) ;       \
     GB_Matrix_free (&Awork) ;       \
     GB_Matrix_free (&SubMask) ;     \
-    GB_FREE_WORK (&I2, I2_size) ;   \
-    GB_FREE_WORK (&J2, J2_size) ;   \
+    GB_FREE_MEMORY (&I2, I2_size) ;   \
+    GB_FREE_MEMORY (&J2, J2_size) ;   \
 }
 
 #include "assign/GB_assign.h"

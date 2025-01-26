@@ -29,7 +29,8 @@ bool GB_factory_kernels_enabled = true ;
 
 #define GB_ALLOCATE_WORK(work_type)                                         \
     size_t Work_size ;                                                      \
-    work_type *Work = GB_MALLOC_WORK (nthreads, work_type, &Work_size) ;    \
+    work_type *Work = GB_MALLOC_MEMORY (nthreads, sizeof (work_type),       \
+        &Work_size) ;                                                       \
     if (Work == NULL) return (false) ;
 
 //------------------------------------------------------------------------------
@@ -37,7 +38,7 @@ bool GB_factory_kernels_enabled = true ;
 //------------------------------------------------------------------------------
 
 #define GB_FREE_WORKSPACE                                                   \
-    GB_FREE_WORK (&Work, Work_size) ;
+    GB_FREE_MEMORY (&Work, Work_size) ;
 
 //------------------------------------------------------------------------------
 // GB_helper5: construct pattern of S for gblogassign
@@ -82,7 +83,7 @@ void GB_helper5             // construct pattern of S
 // GB_helper7: Kx = uint64 (0:mnz-1), for gblogextract
 //------------------------------------------------------------------------------
 
-// FIXME: use GrB_apply with a positional operator instead
+// TODO: use GrB_apply with a positional operator instead
 
 void GB_helper7              // Kx = uint64 (0:mnz-1)
 (

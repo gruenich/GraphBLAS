@@ -205,8 +205,6 @@ void mexFunction
         A->vlen, anz) ;
     GrB_Matrix S = gb_new (atype, nrows, ncols, GxB_BY_COL, 0) ;
 
-    // FIXME: use build_Vector method
-
     if (A->iso)
     {
         // build S as an iso matrix

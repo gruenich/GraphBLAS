@@ -3,7 +3,7 @@
 #undef GB_FREE_WORKSPACE
 #define GB_FREE_WORKSPACE                               \
 {                                                       \
-    GB_FREE_WORK (&scalarx_cuda, scalarx_cuda_size) ;   \
+    GB_FREE_MEMORY (&scalarx_cuda, scalarx_cuda_size) ;   \
 }
 
 #undef GB_FREE_ALL
@@ -29,12 +29,14 @@ GrB_Info GB_cuda_apply_binop
     if (bind1st)
     {
         ASSERT (op->xtype != NULL) ;
-        scalarx_cuda = GB_MALLOC_WORK (op->xtype->size, GB_void, &scalarx_cuda_size) ;
+        scalarx_cuda = GB_MALLOC_MEMORY (1, op->xtype->size,
+            &scalarx_cuda_size) ;
     }
     else
     {
         ASSERT (op->ytype != NULL) ;
-        scalarx_cuda = GB_MALLOC_WORK (op->ytype->size, GB_void, &scalarx_cuda_size) ;
+        scalarx_cuda = GB_MALLOC_MEMORY (1, op->ytype->size,
+            &scalarx_cuda_size) ;
     }
     if (scalarx_cuda == NULL)
     {

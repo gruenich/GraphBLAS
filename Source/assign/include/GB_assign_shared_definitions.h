@@ -35,12 +35,12 @@
 {                                               \
     GB_FREE_WORKSPACE ;                         \
     GB_WERK_POP (Npending, int64_t) ;           \
-    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
-    GB_FREE (&Zh, Zh_size) ;                    \
-    GB_FREE_WORK (&Z_to_X, Z_to_X_size) ;       \
-    GB_FREE_WORK (&Z_to_S, Z_to_S_size) ;       \
-    GB_FREE_WORK (&Z_to_A, Z_to_A_size) ;       \
-    GB_FREE_WORK (&Z_to_M, Z_to_M_size) ;       \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&Zh, Zh_size) ;                    \
+    GB_FREE_MEMORY (&Z_to_X, Z_to_X_size) ;       \
+    GB_FREE_MEMORY (&Z_to_S, Z_to_S_size) ;       \
+    GB_FREE_MEMORY (&Z_to_A, Z_to_A_size) ;       \
+    GB_FREE_MEMORY (&Z_to_M, Z_to_M_size) ;       \
     GB_FREE_S ;                                 \
 }
 
@@ -1763,7 +1763,7 @@
 #define GB_FREE_ALL_FOR_BITMAP                          \
     GB_WERK_POP (A_ek_slicing, int64_t) ;               \
     GB_WERK_POP (M_ek_slicing, int64_t) ;               \
-    GB_FREE_WORK (&TaskList_IxJ, TaskList_IxJ_size) ;
+    GB_FREE_MEMORY (&TaskList_IxJ, TaskList_IxJ_size) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_C_A_SCALAR_FOR_BITMAP: get the C and A matrices and the scalar

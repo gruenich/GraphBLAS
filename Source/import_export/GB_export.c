@@ -15,8 +15,8 @@
 
 #define GB_FREE_ALL                     \
 {                                       \
-    GB_FREE (&Ap_new, Ap_new_size) ;    \
-    GB_FREE (&Ah_new, Ah_new_size) ;    \
+    GB_FREE_MEMORY (&Ap_new, Ap_new_size) ;    \
+    GB_FREE_MEMORY (&Ah_new, Ah_new_size) ;    \
 }
 
 GrB_Info GB_export      // export/unpack a matrix in any format
@@ -129,11 +129,13 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     {
         plen_new = (avdim == 0) ? 0 : 1 ;
         nvec_new = (avdim == 1) ? 1 : 0 ;
-        Ap_new = GB_CALLOC (plen_new+1, int64_t, &(Ap_new_size)) ; // OK; 64-bit
+        Ap_new = GB_CALLOC_MEMORY (plen_new+1, sizeof (int64_t),
+            &(Ap_new_size)) ;
         if (avdim > 1)
         { 
             // A is sparse if avdim <= 1, hypersparse if avdim > 1
-            Ah_new = GB_CALLOC (1, int64_t, &(Ah_new_size)) ; // OK; 64-bit only
+            Ah_new = GB_CALLOC_MEMORY (1, sizeof (int64_t),
+                &(Ah_new_size)) ;
         }
         if (Ap_new == NULL || (avdim > 1 && Ah_new == NULL))
         { 

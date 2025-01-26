@@ -12,7 +12,7 @@
 
 #define GB_FREE_WORKSPACE                   \
     GB_WERK_POP (C_ek_slicing, int64_t) ;   \
-    GB_FREE_WORK (&Wp, Wp_size) ;
+    GB_FREE_MEMORY (&Wp, Wp_size) ;
 
 #define GB_FREE_ALL                         \
     GB_FREE_WORKSPACE ;                     \

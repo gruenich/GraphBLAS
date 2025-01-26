@@ -115,8 +115,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         { 
             // out of memory
             GB_WERK_POP (Count, int64_t) ;
-            GB_FREE (&Ap_new, Ap_new_size) ;
-            GB_FREE (&Ah_new, Ah_new_size) ;
+            GB_FREE_MEMORY (&Ap_new, Ap_new_size) ;
+            GB_FREE_MEMORY (&Ah_new, Ah_new_size) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
         GB_IPTR (Ap_new, A->p_is_32) ;
@@ -169,7 +169,7 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
         GB_WERK_POP (Count, int64_t) ;
         if (!Ap_old_shallow)
         { 
-            GB_FREE (&Ap_old, Ap_old_size) ;
+            GB_FREE_MEMORY (&Ap_old, Ap_old_size) ;
         }
 
         //----------------------------------------------------------------------

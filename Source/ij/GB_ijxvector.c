@@ -49,10 +49,10 @@
 
 #define GB_FREE_ALL                 \
 {                                   \
-    GB_FREE (&I2, I2_size) ;        \
+    GB_FREE_MEMORY (&I2, I2_size) ;        \
     if (I != NULL && I_size > 0)    \
     {                               \
-        GB_FREE (&I, I_size) ;      \
+        GB_FREE_MEMORY (&I, I_size) ;      \
     }                               \
     GB_Matrix_free (&T) ;           \
 }
@@ -463,7 +463,7 @@ GrB_Info GB_ijxvector
         // free the old I and replace it with I2
         if (I_size > 0)
         { 
-            GB_FREE (&I, I_size) ;
+            GB_FREE_MEMORY (&I, I_size) ;
         }
         I = I2 ;
         I_size = I2_size ;

@@ -9,9 +9,9 @@
 
 #define GB_FREE_WORKSPACE               \
 {                                       \
-    GB_FREE (&I_work, I_work_size) ;    \
-    GB_FREE (&J_work, J_work_size) ;    \
-    GB_FREE (&X_work, X_work_size) ;    \
+    GB_FREE_MEMORY (&I_work, I_work_size) ;    \
+    GB_FREE_MEMORY (&J_work, J_work_size) ;    \
+    GB_FREE_MEMORY (&X_work, X_work_size) ;    \
 }
 
 #define GB_FREE_ALL                     \

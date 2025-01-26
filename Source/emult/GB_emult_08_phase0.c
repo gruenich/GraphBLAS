@@ -39,9 +39,9 @@
 
 #define GB_FREE_ALL                             \
 {                                               \
-    GB_FREE_WORK (&C_to_M, C_to_M_size) ;       \
-    GB_FREE_WORK (&C_to_A, C_to_A_size) ;       \
-    GB_FREE_WORK (&C_to_B, C_to_B_size) ;       \
+    GB_FREE_MEMORY (&C_to_M, C_to_M_size) ;       \
+    GB_FREE_MEMORY (&C_to_A, C_to_A_size) ;       \
+    GB_FREE_MEMORY (&C_to_B, C_to_B_size) ;       \
 }
 
 #include "emult/GB_emult.h"
@@ -452,7 +452,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     {
         // allocate C_to_M
         ASSERT (Ch != NULL) ;
-        C_to_M = GB_MALLOC_WORK (Cnvec, int64_t, &C_to_M_size) ;
+        C_to_M = GB_MALLOC_MEMORY (Cnvec, sizeof (int64_t), &C_to_M_size) ;
         if (C_to_M == NULL)
         { 
             // out of memory
@@ -490,7 +490,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     {
         // allocate C_to_A
         ASSERT (Ch != NULL) ;
-        C_to_A = GB_MALLOC_WORK (Cnvec, int64_t, &C_to_A_size) ;
+        C_to_A = GB_MALLOC_MEMORY (Cnvec, sizeof (int64_t), &C_to_A_size) ;
         if (C_to_A == NULL)
         { 
             // out of memory
@@ -528,7 +528,7 @@ GrB_Info GB_emult_08_phase0     // find vectors in C for C=A.*B or C<M>=A.*B
     {
         // allocate C_to_B
         ASSERT (Ch != NULL) ;
-        C_to_B = GB_MALLOC_WORK (Cnvec, int64_t, &C_to_B_size) ;
+        C_to_B = GB_MALLOC_MEMORY (Cnvec, sizeof (int64_t), &C_to_B_size) ;
         if (C_to_B == NULL)
         { 
             // out of memory

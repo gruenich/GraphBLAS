@@ -14,8 +14,8 @@
 #define GB_FREE_ALL                     \
 {                                       \
     GB_Matrix_free (&T) ;               \
-    GB_FREE (&Ax_new, Ax_new_size) ;    \
-    GB_FREE (&Ab_new, Ab_new_size) ;    \
+    GB_FREE_MEMORY (&Ax_new, Ax_new_size) ;    \
+    GB_FREE_MEMORY (&Ab_new, Ab_new_size) ;    \
     GB_phybix_free (A) ;                \
 }
 
@@ -113,13 +113,13 @@ GrB_Info GB_resize              // change the size of a matrix
             if (in_place)
             { 
                 // reallocate A->x in-place; no data movement needed
-                GB_REALLOC (A->x, nzmax_new*asize, GB_void, &(A->x_size), &ok) ;
+                GB_REALLOC_MEMORY (A->x, nzmax_new, asize, &(A->x_size), &ok) ;
             }
             else
             { 
                 // allocate new space for A->x; use calloc to ensure all space
                 // is initialized.
-                Ax_new = GB_CALLOC (nzmax_new*asize, GB_void, &Ax_new_size) ;
+                Ax_new = GB_CALLOC_MEMORY (nzmax_new, asize, &Ax_new_size) ;
                 ok = (Ax_new != NULL) ;
             }
         }
@@ -131,7 +131,8 @@ GrB_Info GB_resize              // change the size of a matrix
         if (!in_place && A_is_bitmap)
         { 
             // allocate new space for A->b
-            Ab_new = GB_MALLOC (nzmax_new*asize, int8_t, &Ab_new_size) ;
+            Ab_new = GB_MALLOC_MEMORY (nzmax_new, sizeof (int8_t),
+                &Ab_new_size) ;
             ok = ok && (Ab_new != NULL) ;
         }
 
@@ -188,7 +189,7 @@ GrB_Info GB_resize              // change the size of a matrix
                         memcpy (pdest, psrc, vlen_new * asize) ;
                     }
                 }
-                GB_FREE (&Ax_old, A->x_size) ;
+                GB_FREE_MEMORY (&Ax_old, A->x_size) ;
                 A->x = Ax_new ; A->x_size = Ax_new_size ;
                 Ax_new = NULL ;
             }
@@ -214,7 +215,7 @@ GrB_Info GB_resize              // change the size of a matrix
                     anvals += ab ;
                 }
                 A->nvals = anvals ;
-                GB_FREE (&Ab_old, A->b_size) ;
+                GB_FREE_MEMORY (&Ab_old, A->b_size) ;
                 A->b = Ab_new ; A->b_size = Ab_new_size ;
                 Ab_new = NULL ;
             }

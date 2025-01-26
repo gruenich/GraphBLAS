@@ -10,9 +10,9 @@
 #define GB_FREE_ALL                 \
 {                                   \
     GB_phybix_free (C) ;            \
-    GB_FREE (&Cp, Cp_size) ;        \
-    GB_FREE (&Ch, Ch_size) ;        \
-    GB_FREE (&Ci, Ci_size) ;        \
+    GB_FREE_MEMORY (&Cp, Cp_size) ;        \
+    GB_FREE_MEMORY (&Ch, Ch_size) ;        \
+    GB_FREE_MEMORY (&Ci, Ci_size) ;        \
 }
 
 #include "mxm/GB_mxm.h"
@@ -200,7 +200,7 @@ GrB_Info GB_bitmap_expand_to_hyper
     C->i_is_32 = Ci_is_32 ;
 
     // free the bitmap, if present
-    GB_FREE ((&C->b), C->b_size) ;
+    GB_FREE_MEMORY ((&C->b), C->b_size) ;
 
     // C is now sparse or hypersparse
     ASSERT_MATRIX_OK (C, "C expanded from bitmap/full to hyper", GB0) ;

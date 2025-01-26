@@ -40,7 +40,7 @@ GrB_Info GxB_Container_free
 
         size_t header_size = (*Container)->header_size ;
         (*Container)->header_size = 0 ;
-        GB_FREE (Container, header_size) ;
+        GB_FREE_MEMORY (Container, header_size) ;
     }
 
     return (GrB_SUCCESS) ;

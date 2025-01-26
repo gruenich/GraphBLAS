@@ -26,14 +26,14 @@ GrB_Info GrB_Descriptor_free            // free a descriptor
         {
             size_t header_size = desc->header_size ;
             // free the Descriptor user_name
-            GB_FREE (&(desc->user_name), desc->user_name_size) ;
+            GB_FREE_MEMORY (&(desc->user_name), desc->user_name_size) ;
             if (header_size > 0)
             { 
-                GB_FREE (&(desc->logger), desc->logger_size) ;
+                GB_FREE_MEMORY (&(desc->logger), desc->logger_size) ;
                 desc->logger_size = 0 ;
                 desc->magic = GB_FREED ;  // to help detect dangling pointers
                 desc->header_size = 0 ;
-                GB_FREE (descriptor, header_size) ;
+                GB_FREE_MEMORY (descriptor, header_size) ;
             }
         }
     }

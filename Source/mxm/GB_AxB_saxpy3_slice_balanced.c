@@ -23,7 +23,7 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_WORK (&Bflops, Bflops_size) ;   \
+    GB_FREE_MEMORY (&Bflops, Bflops_size) ;   \
     GB_WERK_POP (Fine_fl, int64_t) ;        \
     GB_WERK_POP (Fine_slice, int64_t) ;     \
     GB_WERK_POP (Coarse_Work, int64_t) ;    \
@@ -33,7 +33,7 @@
 #define GB_FREE_ALL                                 \
 {                                                   \
     GB_FREE_WORKSPACE ;                             \
-    GB_FREE_WORK (&SaxpyTasks, SaxpyTasks_size) ;   \
+    GB_FREE_MEMORY (&SaxpyTasks, SaxpyTasks_size) ;   \
 }
 
 //------------------------------------------------------------------------------
@@ -586,7 +586,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    SaxpyTasks = GB_MALLOC_WORK ((*ntasks), GB_saxpy3task_struct,
+    SaxpyTasks = GB_MALLOC_MEMORY ((*ntasks), sizeof (GB_saxpy3task_struct),
         &SaxpyTasks_size) ;
     GB_WERK_PUSH (Coarse_Work, nthreads_max, int64_t) ;
     if (max_bjnz > 0)

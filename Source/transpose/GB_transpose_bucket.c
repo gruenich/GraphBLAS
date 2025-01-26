@@ -41,7 +41,7 @@
     {                                                                   \
         for (int tid = 0 ; tid < nworkspaces ; tid++)                   \
         {                                                               \
-            GB_FREE_WORK (&(Workspaces [tid]), Workspaces_size [tid]) ; \
+            GB_FREE_MEMORY (&(Workspaces [tid]), Workspaces_size [tid]) ; \
         }                                                               \
     }                                                                   \
     GB_WERK_POP (A_slice, int64_t) ;                                    \

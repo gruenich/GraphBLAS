@@ -9,8 +9,8 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_WORK (&Wf, Wf_size) ;           \
-    GB_FREE_WORK (&Wcx, Wcx_size) ;         \
+    GB_FREE_MEMORY (&Wf, Wf_size) ;           \
+    GB_FREE_MEMORY (&Wcx, Wcx_size) ;         \
     GB_WERK_POP (H_slice, int64_t) ;        \
     GB_WERK_POP (A_slice, int64_t) ;        \
     GB_WERK_POP (M_ek_slicing, int64_t) ;   \
@@ -228,8 +228,8 @@ GrB_Info GB_AxB_saxbit        // C = A*B where C is bitmap
             //------------------------------------------------------------------
 
             size_t csize = (C_iso) ? 0 : C->type->size ;
-            Wf  = GB_MALLOC_WORK (wspace, int8_t, &Wf_size) ;
-            Wcx = GB_MALLOC_WORK (wspace * csize, GB_void, &Wcx_size) ;
+            Wf  = GB_MALLOC_MEMORY (wspace, sizeof (int8_t), &Wf_size) ;
+            Wcx = GB_MALLOC_MEMORY (wspace, csize, &Wcx_size) ;
             if (Wf == NULL || Wcx == NULL)
             { 
                 // out of memory

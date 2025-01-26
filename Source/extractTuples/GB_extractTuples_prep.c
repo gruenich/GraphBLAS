@@ -62,7 +62,7 @@ GrB_Info GB_extractTuples_prep
         // If Vx is not large enough, reallocate it.  If Vx was initially not
         // empty, it means the space is growing incrementally, so add 25% extra
         // space for future growth.
-        GB_FREE (&Vx, Vx_size) ;
+        GB_FREE_MEMORY (&Vx, Vx_size) ;
         int64_t n = nvals + ((Vx_size == 0) ? 0 : (nvals / 4)) ;
         Vx = GB_MALLOC_MEMORY (n, vtype->size, &Vx_size) ;
         if (Vx == NULL)

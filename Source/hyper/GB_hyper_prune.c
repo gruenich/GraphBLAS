@@ -120,9 +120,9 @@ GrB_Info GB_hyper_prune
     if (Ap_new == NULL || Ah_new == NULL)
     { 
         // out of memory
-        GB_FREE_WORK (&W, W_size) ;
-        GB_FREE (&Ap_new, Ap_new_size) ;
-        GB_FREE (&Ah_new, Ah_new_size) ;
+        GB_FREE_MEMORY (&W, W_size) ;
+        GB_FREE_MEMORY (&Ap_new, Ap_new_size) ;
+        GB_FREE_MEMORY (&Ah_new, Ah_new_size) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
     GB_IPTR (Ap_new, A->p_is_32) ;
@@ -156,7 +156,7 @@ GrB_Info GB_hyper_prune
     // free workspace and old matrix components, including the A->Y hyper_hash
     //--------------------------------------------------------------------------
 
-    GB_FREE_WORK (&W, W_size) ;
+    GB_FREE_MEMORY (&W, W_size) ;
     GB_phy_free (A) ;
 
     //--------------------------------------------------------------------------

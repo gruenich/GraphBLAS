@@ -23,7 +23,7 @@
 #include "jitifyer/GB_stringify.h"
 #include "include/GB_masker_shared_definitions.h"
 
-#define GB_FREE_ALL GB_FREE (&Rp, Rp_size) ;
+#define GB_FREE_ALL GB_FREE_MEMORY (&Rp, Rp_size) ;
 
 GrB_Info GB_masker_phase1           // count nnz in each R(:,j)
 (

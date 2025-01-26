@@ -17,7 +17,7 @@
 #include "GB.h"
 #include "get_set/GB_get_set.h"
 #define GB_FREE_ALL \
-    GB_FREE (&C_user_name, C_user_name_size) ;
+    GB_FREE_MEMORY (&C_user_name, C_user_name_size) ;
 
 GrB_Info GB_dup_worker      // make an exact copy of a matrix
 (

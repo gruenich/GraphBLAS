@@ -82,7 +82,7 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         // free A->h unless it is shallow
         if (!A->h_shallow)
         { 
-            GB_FREE (&(A->h), A->h_size) ;
+            GB_FREE_MEMORY (&(A->h), A->h_size) ;
         }
         A->h = NULL ;
         A->h_size = 0 ;

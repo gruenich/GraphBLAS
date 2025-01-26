@@ -83,7 +83,7 @@ GrB_Info GB_op_or_type_string_set
             }
 
             // allocate space for the definition
-            (*defn) = GB_MALLOC (len+1, char, defn_size) ;
+            (*defn) = GB_MALLOC_MEMORY (len+1, sizeof (char), defn_size) ;
             if ((*defn) == NULL)
             { 
                 // out of memory

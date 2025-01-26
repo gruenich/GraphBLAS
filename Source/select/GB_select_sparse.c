@@ -17,7 +17,7 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_WORK (&Zp, Zp_size) ;           \
+    GB_FREE_MEMORY (&Zp, Zp_size) ;           \
     GB_WERK_POP (Work, uint64_t) ;          \
     GB_WERK_POP (A_ek_slicing, int64_t) ;   \
 }

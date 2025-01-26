@@ -718,7 +718,7 @@ void mexFunction
     GB_Global_malloc_tracking_set (false) ;
     GB_void *p = GB_malloc_memory (4, sizeof (int64_t), &nbytes) ;
     CHECK (p != NULL) ;
-    GB_FREE (&p, nbytes) ;
+    GB_free_memory (&p, nbytes) ;
     CHECK (p == NULL) ;
     p = GB_calloc_memory (4, sizeof (int64_t), &nbytes) ;
     CHECK (p != NULL) ;
@@ -726,7 +726,7 @@ void mexFunction
     p = GB_realloc_memory (6, sizeof (int64_t), p, &nbytes, &ok) ;
     CHECK (p != NULL) ;
     CHECK (ok) ;
-    GB_FREE (&p, nbytes) ;
+    GB_free_memory (&p, nbytes) ;
     CHECK (p == NULL) ;
 
     CHECK (!GB_Global_malloc_is_thread_safe_get ( )) ;

@@ -15,8 +15,8 @@
             GB_Matrix_free (&(S [k])) ;         \
         }                                       \
     }                                           \
-    GB_FREE_WORK (&S, S_size) ;                 \
-    GB_FREE_WORK (&Work, Work_size) ;           \
+    GB_FREE_MEMORY (&S, S_size) ;                 \
+    GB_FREE_MEMORY (&Work, Work_size) ;           \
     GB_WERK_POP (A_ek_slicing, int64_t) ;
 
 #define GB_FREE_ALL         \
@@ -102,7 +102,7 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
     int64_t ninner = csc ? m : n ;
     size_t cpsize = (Cp_is_32) ? sizeof (uint32_t) : sizeof (uint64_t) ;
     Work = GB_CALLOC_MEMORY (ninner * cvdim, cpsize, &Work_size) ;
-    S = GB_CALLOC_WORK (m * n, GrB_Matrix, &S_size) ;
+    S = GB_CALLOC_MEMORY (m * n, sizeof (GrB_Matrix), &S_size) ;
     if (S == NULL || Work == NULL)
     { 
         // out of memory

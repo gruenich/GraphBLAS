@@ -63,10 +63,10 @@
 
 #define GB_FREE_ALL                         \
 {                                           \
-    GB_FREE (&Ch, Ch_size) ;                \
-    GB_FREE_WORK (&C_to_M, C_to_M_size) ;   \
-    GB_FREE_WORK (&C_to_A, C_to_A_size) ;   \
-    GB_FREE_WORK (&C_to_B, C_to_B_size) ;   \
+    GB_FREE_MEMORY (&Ch, Ch_size) ;                \
+    GB_FREE_MEMORY (&C_to_M, C_to_M_size) ;   \
+    GB_FREE_MEMORY (&C_to_A, C_to_A_size) ;   \
+    GB_FREE_MEMORY (&C_to_B, C_to_B_size) ;   \
     GB_FREE_WORKSPACE ;                     \
 }
 
@@ -93,17 +93,20 @@ static inline bool GB_allocate_result
     }
     if (C_to_M_handle != NULL)
     { 
-        (*C_to_M_handle) = GB_MALLOC_WORK (Cnvec, int64_t, C_to_M_size_handle) ;
+        (*C_to_M_handle) = GB_MALLOC_MEMORY (Cnvec, sizeof (int64_t),
+            C_to_M_size_handle) ;
         ok = ok && (*C_to_M_handle != NULL) ;
     }
     if (C_to_A_handle != NULL)
     { 
-        *C_to_A_handle = GB_MALLOC_WORK (Cnvec, int64_t, C_to_A_size_handle) ;
+        *C_to_A_handle = GB_MALLOC_MEMORY (Cnvec, sizeof (int64_t),
+            C_to_A_size_handle) ;
         ok = ok && (*C_to_A_handle != NULL) ;
     }
     if (C_to_B_handle != NULL)
     { 
-        *C_to_B_handle = GB_MALLOC_WORK (Cnvec, int64_t, C_to_B_size_handle) ;
+        *C_to_B_handle = GB_MALLOC_MEMORY (Cnvec, sizeof (int64_t),
+            C_to_B_size_handle) ;
         ok = ok && (*C_to_B_handle != NULL) ;
     }
     return (ok) ;

@@ -39,7 +39,7 @@
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORKSPACE ;                         \
-    GB_FREE_WORK (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
 }
 
 //------------------------------------------------------------------------------

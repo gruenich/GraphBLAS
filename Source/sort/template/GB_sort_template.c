@@ -649,10 +649,10 @@ static void GB_SORT (vector)    // sort the pair of arrays A_0, A_1
 #define GB_FREE_WORKSPACE                       \
 {                                               \
     GB_WERK_POP (SortTasks, int64_t) ;          \
-    GB_FREE_WORK (&C_skipped, C_skipped_size) ; \
-    GB_FREE_WORK (&W_0, W_0_size) ;             \
-    GB_FREE_WORK (&W_1, W_1_size) ;             \
-    GB_FREE_WORK (&W, W_size) ;                 \
+    GB_FREE_MEMORY (&C_skipped, C_skipped_size) ; \
+    GB_FREE_MEMORY (&W_0, W_0_size) ;             \
+    GB_FREE_MEMORY (&W_1, W_1_size) ;             \
+    GB_FREE_MEMORY (&W, W_size) ;                 \
 }
 
 #ifdef GB_JIT_KERNEL
@@ -809,7 +809,8 @@ static GrB_Info GB_SORT (mtx)
     GB_cumsum1_64 ((uint64_t *) C_skip, ntasks) ;
     int64_t total_skipped = C_skip [ntasks] ;
 
-    C_skipped = GB_MALLOC_WORK (total_skipped, int64_t, &C_skipped_size) ;
+    C_skipped = GB_MALLOC_MEMORY (total_skipped, sizeof (int64_t),
+        &C_skipped_size) ;
     if (C_skipped == NULL)
     { 
         // out of memory
@@ -858,11 +859,12 @@ static GrB_Info GB_SORT (mtx)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    W   = GB_MALLOC_WORK (max_length + 6*ntasks2 + 1, int64_t, &W_size) ;
-    W_0 = (GB_C_TYPE *) GB_MALLOC_WORK (max_length * GB_SIZE, GB_void,
+    W   = GB_MALLOC_MEMORY (max_length + 6*ntasks2 + 1, sizeof (int64_t),
+        &W_size) ;
+    W_0 = (GB_C_TYPE *) GB_MALLOC_MEMORY (max_length, GB_SIZE,
         &W_0_size) ;
-    W_1 = (GB_Ci_TYPE *) GB_MALLOC_WORK (max_length * sizeof (GB_Ci_TYPE),
-        GB_Ci_TYPE, &W_1_size) ;
+    W_1 = (GB_Ci_TYPE *) GB_MALLOC_MEMORY (max_length, sizeof (GB_Ci_TYPE),
+        &W_1_size) ;
 
     if (W == NULL || W_0 == NULL || W_1 == NULL)
     { 

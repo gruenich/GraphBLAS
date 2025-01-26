@@ -20,7 +20,7 @@
 
 #define GB_FREE_ALL         \
 {                           \
-    GB_FREE (&X, X_size) ;  \
+    GB_FREE_MEMORY (&X, X_size) ;  \
 }
 
 GrB_Info GB_deserialize_from_blob
@@ -67,12 +67,12 @@ GrB_Info GB_deserialize_from_blob
     if (nblocks == 0)
     {
         // allocate an "empty" block (of 8 bytes) and set it zero
-        X = GB_CALLOC (X_len, GB_void, &X_size) ;  // OK
+        X = GB_CALLOC_MEMORY (X_len, sizeof (GB_void), &X_size) ;
     }
     else
     {
         // allocate a block that is filled below
-        X = GB_MALLOC (X_len, GB_void, &X_size) ;  // OK
+        X = GB_MALLOC_MEMORY (X_len, sizeof (GB_void), &X_size) ;
     }
 
     if (X == NULL)

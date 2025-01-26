@@ -25,7 +25,7 @@
 
 #define GB_FREE_ALL                             \
 {                                               \
-    GB_FREE_WORK (&Cp, Cp_size) ;               \
+    GB_FREE_MEMORY (&Cp, Cp_size) ;               \
 }
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
