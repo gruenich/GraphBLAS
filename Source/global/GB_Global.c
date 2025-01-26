@@ -531,7 +531,7 @@ void GB_Global_memtable_add (void *p, size_t size)
             {
                 if (p == GB_Global.memtable_p [i])
                 {
-                    GBMDUMP ("\nadd duplicate %p size %ld\n", p, size) ;
+                    GBDUMP ("\nFAIL add duplicate %p size %ld\n", p, size) ;
                     GB_Global_memtable_dump ( ) ;
                     fail = true ;
                     break ;
@@ -574,7 +574,7 @@ size_t GB_Global_memtable_size (void *p)
     }
     if (!found)
     {
-        GBMDUMP ("\nFAIL: %p not found\n", p) ;
+        GBDUMP ("\nFAIL: %p not found\n", p) ;
         GB_Global_memtable_dump ( ) ;
         ASSERT (0) ;
     }
@@ -638,10 +638,10 @@ void GB_Global_memtable_remove (void *p)
     }
     if (!found)
     {
-        GBMDUMP ("remove %p NOT FOUND\n", p) ;
+        GBDUMP ("remove %p NOT FOUND\n", p) ;
         GB_Global_memtable_dump ( ) ;
+        ASSERT (0) ;
     }
-    ASSERT (found) ;
     GB_Global_memtable_dump ( ) ;
     #endif
 

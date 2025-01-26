@@ -55,6 +55,11 @@ void mexFunction
     X = mxMalloc (X_size) ;     // X is owned by the user application
     X2 = X ;
 
+    // add X to the debug memtable, so GxB_Vector_unload can find it in the
+    // table and remove it.  This is not required; just for debugging.
+    printf ("mxMalloc: X = %p\n", (void *) X) ;
+    GB_Global_memtable_add (X, X_size) ;
+
     OK (GrB_Vector_new (&V, GrB_FP64, 0)) ;
     OK (GxB_print (V, 5)) ;
 
