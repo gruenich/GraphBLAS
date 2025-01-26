@@ -40,7 +40,7 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     GB_BURBLE_START ("GxB_Vector_build_Vector") ;
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;
-    ASSERT (GB_VECTOR_OK (J_vector)) ;
+    ASSERT (GB_VECTOR_OK (X_vector)) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: is GxB_unload_Vector_into_Container the right name?
+
 // V is returned as a length-0 vector in full data format, with no content.
 
 #include "GB_container.h"
@@ -24,14 +26,16 @@ GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
+    GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+    GB_RETURN_IF_NULL (Container) ;
+    GB_WHERE_1 (V, "GxB_Vector_unload_into_Container") ;
     ASSERT_VECTOR_OK (V, "Vector to unload into container", GB0) ;
 
     //--------------------------------------------------------------------------
     // unload the vector
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_unload ((GrB_Matrix) V, Container)) ;
+    GB_OK (GB_unload ((GrB_Matrix) V, Container, Werk)) ;
     V->vdim = 1 ;
     V->nvec = 1 ;
 

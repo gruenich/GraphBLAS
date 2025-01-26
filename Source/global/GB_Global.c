@@ -486,12 +486,12 @@ void GB_Global_abort (void)
 
 void GB_Global_memtable_dump (void)
 {
-    #ifdef GB_DEBUG
-    printf ("\nmemtable dump: %d nmalloc " GBd "\n",    // MEMDUMP
+    #if defined (GB_DEBUG) && defined (GB_MEMDUMP)
+    GBMDUMP ("\nmemtable dump: %d nmalloc " GBd "\n",
         GB_Global.nmemtable, GB_Global.nmalloc) ;
     for (int k = 0 ; k < GB_Global.nmemtable ; k++)
     {
-        printf ("  %4d: %12p : %ld\n", k,               // MEMDUMP
+        GBMDUMP ("  %4d: %12p : %ld\n", k,
             GB_Global.memtable_p [k],
             GB_Global.memtable_s [k]) ;
     }
@@ -520,9 +520,7 @@ void GB_Global_memtable_add (void *p, size_t size)
 
     #ifdef GB_DEBUG
     bool fail = false ;
-    #ifdef GB_MEMDUMP
-    printf ("memtable add %p size %ld\n", p, size) ;    // MEMDUMP
-    #endif
+    GBMDUMP ("memtable add %p size %ld\n", p, size) ;
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable ;
@@ -533,8 +531,7 @@ void GB_Global_memtable_add (void *p, size_t size)
             {
                 if (p == GB_Global.memtable_p [i])
                 {
-                    printf ("\nadd duplicate %p size %ld\n",    // MEMDUMP
-                        p, size) ;
+                    GBMDUMP ("\nadd duplicate %p size %ld\n", p, size) ;
                     GB_Global_memtable_dump ( ) ;
                     fail = true ;
                     break ;
@@ -549,9 +546,7 @@ void GB_Global_memtable_add (void *p, size_t size)
         }
     }
     ASSERT (!fail) ;
-    #ifdef GB_MEMDUMP
     GB_Global_memtable_dump ( ) ;
-    #endif
     #endif
 
 }
@@ -579,7 +574,7 @@ size_t GB_Global_memtable_size (void *p)
     }
     if (!found)
     {
-        printf ("\nFAIL: %p not found\n", p) ;      // MEMDUMP
+        GBMDUMP ("\nFAIL: %p not found\n", p) ;
         GB_Global_memtable_dump ( ) ;
         ASSERT (0) ;
     }
@@ -624,9 +619,7 @@ void GB_Global_memtable_remove (void *p)
 
     #ifdef GB_DEBUG
     bool found = false ;
-    #ifdef GB_MEMDUMP
-    printf ("memtable remove %p ", p) ;             // MEMDUMP
-    #endif
+    GBMDUMP ("memtable remove %p ", p) ;
     #pragma omp critical(GB_memtable)
     {
         int n = GB_Global.nmemtable ;
@@ -645,13 +638,11 @@ void GB_Global_memtable_remove (void *p)
     }
     if (!found)
     {
-        printf ("remove %p NOT FOUND\n", p) ;       // MEMDUMP
+        GBMDUMP ("remove %p NOT FOUND\n", p) ;
         GB_Global_memtable_dump ( ) ;
     }
     ASSERT (found) ;
-    #ifdef GB_MEMDUMP
     GB_Global_memtable_dump ( ) ;
-    #endif
     #endif
 
 }

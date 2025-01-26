@@ -18,7 +18,20 @@ GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
     GxB_Container Container,    // Container with contents to load into A
     const GrB_Descriptor desc   // currently unused
 )
-{
-    return (GB_load (A, Container)) ;
+{ 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (Container) ;
+    GB_WHERE_1 (A, "GxB_load_Matrix_from_Container") ;
+
+    //--------------------------------------------------------------------------
+    // load the matrix from the container
+    //--------------------------------------------------------------------------
+
+    return (GB_load (A, Container, Werk)) ;
 }
 

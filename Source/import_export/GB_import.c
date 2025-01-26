@@ -240,9 +240,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             if (add_to_memtable)
             { 
                 // for debugging only
-                #ifdef GB_MEMDUMP
-                printf ("import A->h to memtable: %p\n", (*A)->h) ; // MEMDUMP
-                #endif
+                GBMDUMP ("import A->h to memtable: %p\n", (*A)->h) ;
                 GB_Global_memtable_add ((*A)->h, (*A)->h_size) ;
             }
             // fall through to the sparse case
@@ -266,10 +264,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
                 if (add_to_memtable)
                 { 
                     // for debugging only
-                    #ifdef GB_MEMDUMP
-                    printf ("import A->p to memtable: %p\n", // MEMDUMP
-                        (*A)->p) ;
-                    #endif
+                    GBMDUMP ("import A->p to memtable: %p\n", (*A)->p) ;
                     GB_Global_memtable_add ((*A)->p, (*A)->p_size) ;
                 }
             }
@@ -280,10 +275,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             if (add_to_memtable)
             { 
                 // for debugging only
-                #ifdef GB_MEMDUMP
-                printf ("import A->i to memtable: %p\n", // MEMDUMP
-                    (*A)->i) ;
-                #endif
+                GBMDUMP ("import A->i to memtable: %p\n", (*A)->i) ;
                 GB_Global_memtable_add ((*A)->i, (*A)->i_size) ;
             }
             break ;
@@ -297,10 +289,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
             if (add_to_memtable)
             { 
                 // for debugging only
-                #ifdef GB_MEMDUMP
-                printf ("import A->b to memtable: %p\n", // MEMDUMP
-                    (*A)->b) ;
-                #endif
+                GBMDUMP ("import A->b to memtable: %p\n", (*A)->b) ;
                 GB_Global_memtable_add ((*A)->b, (*A)->b_size) ;
             }
             break ;
@@ -319,10 +308,8 @@ GrB_Info GB_import      // import/pack a matrix in any format
         if (add_to_memtable)
         { 
             // for debugging only
-            #ifdef GB_MEMDUMP
-            printf ("import A->x to memtable: %p size: %lu\n",  // MEMDUMP
+            GBMDUMP ("import A->x to memtable: %p size: %lu\n",
                 (*A)->x, Ax_size) ;
-            #endif
             GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
         }
     }

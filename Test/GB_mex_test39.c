@@ -13,9 +13,10 @@
 #undef  FREE_ALL
 #define FREE_ALL                        \
 {                                       \
-    GB_free_memory (&X4, X4_size) ;            \
-    if (X2 != NULL) mxFree (X2) ;       \
-    X2 = NULL ;                         \
+    if (X4 != NULL) mxFree (X4) ;       \
+    X3 = NULL ;                         \
+    if (X != NULL) mxFree (X) ;         \
+    X = NULL ;                          \
     GxB_Container_free (&Container) ;   \
     GrB_Vector_free (&V) ;              \
     GrB_Vector_free (&A) ;              \
@@ -51,7 +52,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     X_size = GB_IMAX (1, n * sizeof (uint32_t)) ;
-    X = mxMalloc (X_size) ;
+    X = mxMalloc (X_size) ;     // X is owned by the user application
     X2 = X ;
 
     OK (GrB_Vector_new (&V, GrB_FP64, 0)) ;
@@ -64,14 +65,16 @@ void mexFunction
 
     int expected = GrB_INVALID_VALUE ;
     ERR (GxB_Vector_load (V, &X, n, 2, GrB_UINT32, false, NULL)) ;
+    CHECK (X == X2) ;           // X is still owned by the user application
 
     OK (GxB_Vector_load (V, &X, n, X_size, GrB_UINT32, false, NULL)) ;
     OK (GxB_print (V, 5)) ;
-    CHECK (X == NULL) ;
+    CHECK (X == NULL) ;         // X is not freed, but owned by V
+    CHECK (X2 != NULL) ;        // X2 is not owned by the user application
 
-    OK (GxB_Vector_unload (V, &X3, &n2, &X_size2, &type, &read_only, NULL)) ;
+    OK (GxB_Vector_unload (V, &X, &n2, &X_size2, &type, &read_only, NULL)) ;
     OK (GxB_print (V, 5)) ;
-    CHECK (X3 == X2) ;
+    CHECK (X == X2) ;           // X is owned by the user application again
     CHECK (n2 == n) ;
     CHECK (X_size == X_size2) ;
     CHECK (type == GrB_UINT32) ;
@@ -79,9 +82,10 @@ void mexFunction
 
     for (int64_t i = 0 ; i < n ; i++)
     {
-        CHECK (X3 [i] == i) ;
+        CHECK (X [i] == i) ;
     }
 
+    // unload an empty vector
     OK (GxB_Vector_unload (V, &X3, &n2, &X_size2, &type, &read_only, NULL)) ;
     OK (GxB_print (V, 5)) ;
     CHECK (X3 == NULL) ;
@@ -98,14 +102,11 @@ void mexFunction
         OK (GrB_Vector_setElement_UINT32 (V, 2*i, i)) ;
     }
 
-//  OK (GxB_print (V, 5)) ;
-//  OK (GrB_wait (V, GrB_MATERIALIZE)) ;
-
     OK (GxB_print (V, 5)) ;
     OK (GxB_Vector_unload (V, &X4, &n4, &X4_size, &type, &read_only, NULL)) ;
     OK (GxB_print (V, 5)) ;
     CHECK (n4 == n) ;
-    CHECK (X4 != NULL) ;
+    CHECK (X4 != NULL) ;            // X4 is owned by the user application
     for (int64_t i = 0 ; i < n ; i++)
     {
         CHECK (X4 [i] == 2*i) ;

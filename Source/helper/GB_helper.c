@@ -428,10 +428,8 @@ void GB_make_shallow (GrB_Matrix A)
     A->b_shallow = (A->b != NULL) ;
     A->i_shallow = (A->i != NULL) ;
     A->x_shallow = (A->x != NULL) ;
-    #ifdef GB_MEMDUMP
-    printf ("remove from memtable: Ap:%p Ah:%p Ab:%p Ai:%p Ax:%p\n", // MEMDUMP
+    GBMDUMP ("remove from memtable: Ap:%p Ah:%p Ab:%p Ai:%p Ax:%p\n",
         A->p, A->h, A->b, A->i, A->x) ;
-    #endif
     if (A->p != NULL) GB_Global_memtable_remove (A->p) ;
     if (A->h != NULL) GB_Global_memtable_remove (A->h) ;
     if (A->b != NULL) GB_Global_memtable_remove (A->b) ;

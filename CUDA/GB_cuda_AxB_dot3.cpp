@@ -13,8 +13,6 @@
 // and B can have any sparsity format.  C is computed as sparse or hypersparse,
 // with the same format as M.
 
-#define GB_DEBUG    /* HACK FIXME */
-
 #define GB_FREE_WORKSPACE                                               \
 {                                                                       \
     /* FIXME: use a stream pool instead */                              \
@@ -254,7 +252,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB2) ;
+    ASSERT_MATRIX_OK (C, "C result from dot3 cuda A'*B", GB0) ;
     GB_FREE_WORKSPACE ;
     return GrB_SUCCESS;
 }

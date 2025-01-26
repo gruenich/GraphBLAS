@@ -27,7 +27,10 @@
 // On output, *X is a pointer to the numerical contents of V.  If V had length
 // zero on input, *X may be returned as a NULL pointer (which is not an error).
 
-#include "GB.h"
+// This method removes X from the debug memtable, since X is being returned
+// to the user application.
+
+#include "GB_container.h"
 #define GB_FREE_ALL ;
 
 GrB_Info GxB_Vector_unload
@@ -48,81 +51,21 @@ GrB_Info GxB_Vector_unload
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
     GB_RETURN_IF_NULL (type) ;
     GB_RETURN_IF_NULL (X) ;
     GB_RETURN_IF_NULL (n) ;
     GB_RETURN_IF_NULL (X_size) ;
+    GB_WHERE_1 (V, "GxB_Vector_unload") ;
     ASSERT_VECTOR_OK (V, "V to unload", GB0) ;
 
     //--------------------------------------------------------------------------
-    // finish any pending work and ensure V is not iso
+    // unload the vector
     //--------------------------------------------------------------------------
 
-    // This will do nothing (and take O(1) time) if the GrB_Vector V is a
-    // component of a Container obtained by unloading a GrB_Matrix or
-    // GrB_Vector into the Container.
-
-    if (GB_ANY_PENDING_WORK (V))
-    { 
-        GB_WHERE0 ("GxB_Vector_unload") ;
-        GB_OK (GB_wait ((GrB_Matrix) V, "V_to_unload", Werk)) ;
-    }
-    if (!GB_is_dense ((GrB_Matrix) V))
-    { 
-        // V must be dense with all entries present
-        return (GrB_INVALID_OBJECT) ;
-    }
-    GB_OK (GB_convert_any_to_non_iso ((GrB_Matrix) V, true)) ;
-    ASSERT_VECTOR_OK (V, "V ready to unload", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // unload the content from V
-    //--------------------------------------------------------------------------
-
-    (*X) = V->x ;
-    (*n) = V->vlen ;
-    (*X_size) = V->x_size ;
-    (*type) = V->type ;
-    (*read_only) = V->x_shallow ;
-    V->x = NULL ;
-    V->x_size = 0 ;
-    V->x_shallow = false ;
-
-    //--------------------------------------------------------------------------
-    // clear prior content of V and load X, making V a dense GrB_Vector
-    //--------------------------------------------------------------------------
-
-    // V->user_name is preserved; all other content is freed.  get/set controls
-    // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
-    // that V->sparsity_control is revised to allow V to become a full vector.
-
-    GB_phybix_free ((GrB_Matrix) V) ;
-//  V->type = type ;        (not modified)
-    V->plen = -1 ;
-    V->vlen = 0 ;
-    V->vdim = 1 ;
-    V->nvec = 1 ;
-    V->nvec_nonempty = 0 ;
-    V->nvals = 0 ;
-    V->sparsity_control = V->sparsity_control | GxB_FULL ;
-    V->is_csc = true ;
-    V->jumbled = false ;
-    V->iso = false ;
-    V->p_is_32 = false ;
-    V->j_is_32 = false ;
-    V->i_is_32 = false ;
-
-    // V is now a valid GrB_Vector of length 0, in the full format
-    V->magic = GB_MAGIC ;
-
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    ASSERT_VECTOR_OK (V, "V unloaded", GB0) ;
-    ASSERT (GB_IS_FULL (V)) ;
+    GB_OK (GB_vector_unload (V, X, n, X_size, type, read_only, Werk)) ;
+    GBMDUMP ("vector_unload, remove X from memtable %p\n", *X) ;
+    GB_Global_memtable_remove (*X)  ;
     return (GrB_SUCCESS) ;
 }
 

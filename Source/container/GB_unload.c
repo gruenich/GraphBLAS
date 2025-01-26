@@ -18,17 +18,15 @@
 GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
 (
     GrB_Matrix A,               // matrix to unload into the Container
-    GxB_Container Container     // Container to hold the contents of A
+    GxB_Container Container,    // Container to hold the contents of A
+    GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL (Container) ;
-    GB_WHERE_1 (A, "GxB_unload_into_Container") ;
     ASSERT_MATRIX_OK (A, "A to unload into Container", GB0) ;
     ASSERT_VECTOR_OK (Container->p, "Container->p before unload", GB0) ;
     ASSERT_VECTOR_OK (Container->h, "Container->h before unload", GB0) ;

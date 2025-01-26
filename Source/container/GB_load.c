@@ -14,18 +14,16 @@
 GrB_Info GB_load                // GxB_Container -> GrB_Matrix
 (
     GrB_Matrix A,               // matrix to load from the Container
-    GxB_Container Container     // Container with contents to load into A
+    GxB_Container Container,    // Container with contents to load into A
+    GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GB_CHECK_INIT ;
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL (Container) ;
     ASSERT_MATRIX_OK (A, "A to load from Container", GB0) ;
     ASSERT_VECTOR_OK (Container->p, "Container->p before load", GB0) ;
     ASSERT_VECTOR_OK (Container->h, "Container->h before load", GB0) ;
@@ -71,28 +69,28 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             A->Y = Container->Y ;
             Container->Y = NULL ;
 
-            GB_OK (GxB_Vector_unload (Container->h, &(A->h), &plen,
-                &Ah_size, &Ah_type, &(A->h_shallow), NULL)) ;
+            GB_OK (GB_vector_unload (Container->h, &(A->h), &plen,
+                &Ah_size, &Ah_type, &(A->h_shallow), Werk)) ;
             A->h_size = (size_t) Ah_size ;
 
             // fall through to the sparse case
 
         case GxB_SPARSE : 
 
-            GB_OK (GxB_Vector_unload (Container->p, &(A->p), &plen1,
-                &Ap_size, &Ap_type, &(A->p_shallow), NULL)) ;
+            GB_OK (GB_vector_unload (Container->p, &(A->p), &plen1,
+                &Ap_size, &Ap_type, &(A->p_shallow), Werk)) ;
             A->p_size = (size_t) Ap_size ;
 
-            GB_OK (GxB_Vector_unload (Container->i, &(A->i), &nvals,
-                &Ai_size, &Ai_type, &(A->i_shallow), NULL)) ;
+            GB_OK (GB_vector_unload (Container->i, &(A->i), &nvals,
+                &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
 
             break ;
 
         case GxB_BITMAP : 
 
-            GB_OK (GxB_Vector_unload (Container->b, &(A->b), &nheld,
-                &Ab_size, &Ab_type, &(A->b_shallow), NULL)) ;
+            GB_OK (GB_vector_unload (Container->b, &(A->b), &nheld,
+                &Ab_size, &Ab_type, &(A->b_shallow), Werk)) ;
             A->b_size = (size_t) Ab_size ;
             break ;
 
@@ -102,8 +100,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             break ;
     }
 
-    GB_OK (GxB_Vector_unload (Container->x, &(A->x), &nx,
-        &Ax_size, &(A->type), &(A->x_shallow), NULL)) ;
+    GB_OK (GB_vector_unload (Container->x, &(A->x), &nx,
+        &Ax_size, &(A->type), &(A->x_shallow), Werk)) ;
     A->x_size = (size_t) Ax_size ;
 
     //--------------------------------------------------------------------------

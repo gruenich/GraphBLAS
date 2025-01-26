@@ -178,9 +178,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
     (*vdim) = avdim ;
 
     // export A->x
-    #ifdef GB_MEMDUMP
-    printf ("export A->x from memtable: %p\n", (*A)->x) ;   // MEMDUMP
-    #endif
+    GBMDUMP ("export A->x from memtable: %p\n", (*A)->x) ;
     GB_Global_memtable_remove ((*A)->x) ;
     (*Ax) = (*A)->x ; (*A)->x = NULL ;
     (*Ax_size) = (*A)->x_size ;
@@ -191,9 +189,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             (*nvec) = (*A)->nvec ;
 
             // export A->h
-            #ifdef GB_MEMDUMP
-            printf ("export A->h from memtable: %p\n", (*A)->h) ;   // MEMDUMP
-            #endif
+            GBMDUMP ("export A->h from memtable: %p\n", (*A)->h) ;
             GB_Global_memtable_remove ((*A)->h) ;
             (*Ah) = (uint64_t *) ((*A)->h) ; (*A)->h = NULL ;
             (*Ah_size) = (*A)->h_size ;
@@ -213,18 +209,14 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             }
             else
             { 
-                #ifdef GB_MEMDUMP
-                printf ("export A->p from memtable: %p\n", (*A)->p) ; // MEMDUMP
-                #endif
+                GBMDUMP ("export A->p from memtable: %p\n", (*A)->p) ;
                 GB_Global_memtable_remove ((*A)->p) ;
                 (*Ap) = (uint64_t *) ((*A)->p) ; (*A)->p = NULL ;
                 (*Ap_size) = (*A)->p_size ;
             }
 
             // export A->i
-            #ifdef GB_MEMDUMP
-            printf ("export A->i from memtable: %p\n", (*A)->i) ;   // MEMDUMP
-            #endif
+            GBMDUMP ("export A->i from memtable: %p\n", (*A)->i) ;
             GB_Global_memtable_remove ((*A)->i) ;
             (*Ai) = (uint64_t *) ((*A)->i) ; (*A)->i = NULL ;
             (*Ai_size) = (*A)->i_size ;
@@ -234,9 +226,7 @@ GrB_Info GB_export      // export/unpack a matrix in any format
             (*nvals) = (*A)->nvals ;
 
             // export A->b
-            #ifdef GB_MEMDUMP
-            printf ("export A->b from memtable: %p\n", (*A)->b) ;   // MEMDUMP
-            #endif
+            GBMDUMP ("export A->b from memtable: %p\n", (*A)->b) ;
             GB_Global_memtable_remove ((*A)->b) ;
             (*Ab) = (*A)->b ; (*A)->b = NULL ;
             (*Ab_size) = (*A)->b_size ;

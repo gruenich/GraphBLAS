@@ -95,6 +95,7 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
         OK (GxB_Matrix_type (&type, S)) ;
         OK (GrB_Vector_new (&V, type, 0)) ;
         ASSERT_VECTOR_OK (V, "V result, empty", GB0) ;
+        GrB_Matrix_free (&S) ;
         return (V) ;
     }
 

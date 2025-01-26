@@ -185,6 +185,7 @@ void mexFunction
     { 
         OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     }
+    GrB_Matrix_free (&A) ;
     GB_WRAPUP ;
 }
 

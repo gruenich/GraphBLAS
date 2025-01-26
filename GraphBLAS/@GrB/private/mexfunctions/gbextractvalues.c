@@ -63,7 +63,7 @@ void mexFunction
     OK (GxB_Matrix_extractTuples_Vector (NULL, NULL, X_vector, A, NULL)) ;
     OK (GxB_Vector_unload (X_vector, &X, &nvals, &X_size, &xtype, &read_only,
         NULL)) ;
-    pargout [0] = gb_export_to_mxfull ((void **) &X, nvals, 1, xtype) ;
+    pargout [0] = gb_export_to_mxfull (&X, nvals, 1, xtype) ;
 
     //--------------------------------------------------------------------------
     // free workspace

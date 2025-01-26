@@ -9,13 +9,28 @@
 
 #include "GB_container.h"
 
+// FIXME: is GxB_unload_Matrix_into_Container the right name?
+
 GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
 (
     GrB_Matrix A,               // matrix to unload into the Container
     GxB_Container Container,    // Container to hold the contents of A
     const GrB_Descriptor desc   // currently unused
 )
-{
-    return (GB_unload (A, Container)) ;
+{ 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
+    GB_RETURN_IF_NULL (Container) ;
+    GB_WHERE_1 (A, "GxB_Matrix_unload_into_Container") ;
+
+    //--------------------------------------------------------------------------
+    // unload the matrix into the container
+    //--------------------------------------------------------------------------
+
+    return (GB_unload (A, Container, Werk)) ;
 }
 

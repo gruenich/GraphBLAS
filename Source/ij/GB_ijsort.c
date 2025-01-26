@@ -59,7 +59,7 @@ GrB_Info GB_ijsort
 
     GrB_Info info ;
     ASSERT (I != NULL) ;
-    ASSERT (p_ni != NULL) ;
+    ASSERT (p_ni2 != NULL) ;
     ASSERT (p_I2 != NULL) ;
     ASSERT (p_I2k != NULL) ;
     ASSERT (I2_is_32_handle != NULL) ;

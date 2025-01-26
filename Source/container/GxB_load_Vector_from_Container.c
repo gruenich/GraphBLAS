@@ -16,9 +16,21 @@ GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
     GxB_Container Container,    // Container with contents to load into A
     const GrB_Descriptor desc   // currently unused
 )
-{
-    GrB_Info info ;
-    GB_OK (GB_load ((GrB_Matrix) V, Container)) ;
+{ 
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+    GB_RETURN_IF_NULL (Container) ;
+    GB_WHERE_1 (V, "GxB_load_Vector_from_Container") ;
+
+    //--------------------------------------------------------------------------
+    // load the vector from the container
+    //--------------------------------------------------------------------------
+
+    GB_OK (GB_load ((GrB_Matrix) V, Container, Werk)) ;
     GB_OK ((GB_VECTOR_OK (V) ? GrB_SUCCESS : GrB_INVALID_OBJECT)) ;
     return (GrB_SUCCESS) ;
 }

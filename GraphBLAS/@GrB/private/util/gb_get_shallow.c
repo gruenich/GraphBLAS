@@ -392,6 +392,9 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Y->p = Yp ; Yp = NULL ; Y->p_size = Yp_size ;
             Y->i = Yi ; Yi = NULL ; Y->i_size = Yi_size ;
             Y->x = Yx ; Yx = NULL ; Y->x_size = Yx_size ;
+            Y->p_shallow = (Y->p != NULL) ;
+            Y->i_shallow = (Y->i != NULL) ;
+            Y->x_shallow = (Y->x != NULL) ;
             Y->sparsity_control = GxB_SPARSE ;
             Y->nvals = nvec ;
             Y->vlen = vdim ;
@@ -403,7 +406,11 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         }
 
         // tell GraphBLAS the matrix is shallow
-        GB_make_shallow (A) ;
+        A->p_shallow = (A->p != NULL) ;
+        A->h_shallow = (A->h != NULL) ;
+        A->b_shallow = (A->b != NULL) ;
+        A->i_shallow = (A->i != NULL) ;
+        A->x_shallow = (A->x != NULL) ;
 
     }
     else

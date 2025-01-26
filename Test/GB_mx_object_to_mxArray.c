@@ -30,6 +30,7 @@
 
 #define GB_AS_IF_FREE(p)                \
 {                                       \
+    GBMDUMP ("test, as-if-free removing %p\n", (void *) p) ; \
     GB_Global_memtable_remove (p) ;     \
     (p) = NULL ;                        \
 }

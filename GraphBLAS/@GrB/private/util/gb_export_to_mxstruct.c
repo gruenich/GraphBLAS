@@ -225,6 +225,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         mxSetN (Ap_mx, Ap_size / psize) ;
         void *p = (void *) mxGetData (Ap_mx) ; gb_mxfree (&p) ;
         mxSetData (Ap_mx, Ap) ;
+        GBMDUMP ("gb_export, remove Ap from memtable %p\n", Ap) ;
+        GB_Global_memtable_remove (Ap) ; Ap = NULL ;
         mxSetFieldByNumber (G, 0, 3, Ap_mx) ;
 
         // export the indices
@@ -234,6 +236,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             mxSetN (Ai_mx, Ai_size / isize) ;
             p = (void *) mxGetData (Ai_mx) ; gb_mxfree (&p) ;
             mxSetData (Ai_mx, Ai) ;
+            GBMDUMP ("gb_export, remove Ai from memtable %p\n", Ai) ;
+            GB_Global_memtable_remove (Ai) ; Ai = NULL ;
         }
         mxSetFieldByNumber (G, 0, 4, Ai_mx) ;
     }
@@ -245,6 +249,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         mxSetN (Ax_mx, Ax_size) ;
         void *p = mxGetData (Ax_mx) ; gb_mxfree (&p) ;
         mxSetData (Ax_mx, Ax) ;
+        GBMDUMP ("gb_export, remove Ax from memtable %p\n", Ax) ;
+        GB_Global_memtable_remove (Ax) ; Ax = NULL ;
     }
     mxSetFieldByNumber (G, 0, 2, Ax_mx) ;
 
@@ -262,6 +268,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             mxSetN (Ah_mx, Ah_size / jsize) ;
             void *p = (void *) mxGetData (Ah_mx) ; gb_mxfree (&p) ;
             mxSetData (Ah_mx, Ah) ;
+            GBMDUMP ("gb_export, remove Ah from memtable %p\n", Ah) ;
+            GB_Global_memtable_remove (Ah) ; Ah = NULL ;
         }
         mxSetFieldByNumber (G, 0, 5, Ah_mx) ;
 
@@ -273,6 +281,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             mxSetN (Yp_mx, yvdim+1) ;
             void *p = (void *) mxGetData (Yp_mx) ; gb_mxfree (&p) ;
             mxSetData (Yp_mx, Yp) ;
+            GBMDUMP ("gb_export, remove Yp from memtable %p\n", Yp) ;
+            GB_Global_memtable_remove (Yp) ; Yp = NULL ;
             mxSetFieldByNumber (G, 0, 6, Yp_mx) ;
 
             // export Yi, of size nvec
@@ -280,6 +290,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             mxSetN (Yi_mx, nvec) ;
             p = (void *) mxGetData (Yi_mx) ; gb_mxfree (&p) ;
             mxSetData (Yi_mx, Yi) ;
+            GBMDUMP ("gb_export, remove Yi from memtable %p\n", Yi) ;
+            GB_Global_memtable_remove (Yi) ; Yi = NULL ;
             mxSetFieldByNumber (G, 0, 7, Yi_mx) ;
 
             // export Yx, of size nvec
@@ -287,6 +299,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             mxSetN (Yx_mx, nvec) ;
             p = (void *) mxGetData (Yx_mx) ; gb_mxfree (&p) ;
             mxSetData (Yx_mx, Yx) ;
+            GBMDUMP ("gb_export, remove Yx from memtable %p\n", Yx) ;
+            GB_Global_memtable_remove (Yx) ; Yx = NULL ;
             mxSetFieldByNumber (G, 0, 8, Yx_mx) ;
         }
     }
@@ -300,6 +314,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
             mxSetN (Ab_mx, Ab_size) ;
             void *p = (void *) mxGetData (Ab_mx) ; gb_mxfree (&p) ;
             mxSetData (Ab_mx, Ab) ;
+            GBMDUMP ("gb_export, remove Ab from memtable %p\n", Ab) ;
+            GB_Global_memtable_remove (Ab) ; Ab = NULL ;
         }
         mxSetFieldByNumber (G, 0, 3, Ab_mx) ;
     }

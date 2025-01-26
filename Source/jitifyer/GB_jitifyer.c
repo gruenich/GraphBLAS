@@ -149,16 +149,16 @@ static void check_table (void)
     #define GB_MALLOC_PERSISTENT(X,siz)                     \
     {                                                       \
         X = GB_Global_persistent_malloc (siz) ;             \
-        printf ("persistent malloc (%4d): %p size %g\n",   /* MEMDUMP */ \
-            __LINE__, (void *) X, (double) siz) ;                    \
+        GBMDUMP ("persistent malloc (%4d): %p size %g\n",   \
+            __LINE__, (void *) X, (double) siz) ;           \
     }
 
     #define GB_FREE_PERSISTENT(X)                           \
     {                                                       \
         if (X != NULL)                                      \
         {                                                   \
-            printf ("persistent free   (%4d): %p\n",        /* MEMDUMP */ \
-            __LINE__, (void *) X) ;                                  \
+            GBMDUMP ("persistent free   (%4d): %p\n",       \
+            __LINE__, (void *) X) ;                         \
         }                                                   \
         GB_Global_persistent_free ((void **) &(X)) ;        \
     }

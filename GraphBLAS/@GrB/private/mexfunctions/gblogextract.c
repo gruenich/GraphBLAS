@@ -159,9 +159,7 @@ void mexFunction
     // Remove G->x from G
     void *Gx = G->x ;
     size_t Gx_size = G->x_size ;
-    #ifdef GB_MEMDUMP
-    printf ("remove G->x from memtable: %p\n", G->x) ;
-    #endif
+    GBMDUMP ("remove G->x from memtable: %p\n", G->x) ;
     GB_Global_memtable_remove (G->x) ;
     G->x = NULL ; G->x_size = 0 ;
     bool G_iso = G->iso  ;            	
@@ -200,9 +198,7 @@ void mexFunction
     K->x_shallow = false ;
     K->type = GrB_UINT64 ;
     K->x_size = Kx_size ;
-    #ifdef GB_MEMDUMP
-    printf ("add K->x to memtable: %p\n", K->x) ;
-    #endif
+    GBMDUMP ("add K->x to memtable: %p\n", K->x) ;
     GB_Global_memtable_add (K->x, K->x_size) ;
     K->iso = false  ;            	
 
@@ -223,9 +219,7 @@ void mexFunction
     OK (GrB_Matrix_nvals (&tnvals, T)) ;
     uint64_t *Tx = T->x ;
     size_t Tx_size = T->x_size ;
-    #ifdef GB_MEMDUMP
-    printf ("remove T->x from memtable: %p\n", T->x) ;
-    #endif
+    GBMDUMP ("remove T->x from memtable: %p\n", T->x) ;
     GB_Global_memtable_remove (T->x) ;
     T->x = NULL ; T->x_size = 0 ;
 
@@ -244,10 +238,8 @@ void mexFunction
     OK (GrB_Vector_new (&V, type, mnz)) ;
     OK (GrB_Vector_set_INT32 (V, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
 
-    #ifdef GB_MEMDUMP
-    printf ("remove V->i from memtable: %p\n", V->i) ;
-    printf ("remove V->x from memtable: %p\n", V->x) ;
-    #endif
+    GBMDUMP ("remove V->i from memtable: %p\n", V->i) ;
+    GBMDUMP ("remove V->x from memtable: %p\n", V->x) ;
     GB_Global_memtable_remove (V->i) ;
     gb_mxfree ((void **) (&V->i)) ;
     GB_Global_memtable_remove (V->x) ;
@@ -258,9 +250,7 @@ void mexFunction
     V->i_size = Tx_size ;
     V->i_shallow = false ;
     V->i_is_32 = false ;
-    #ifdef GB_MEMDUMP
-    printf ("add V->i to memtable: %p\n", V->i) ;
-    #endif
+    GBMDUMP ("add V->i to memtable: %p\n", V->i) ;
     GB_Global_memtable_add (V->i, V->i_size) ;  // this was the old T->x
 
     // transplant the values of G as the values of V
@@ -268,9 +258,7 @@ void mexFunction
     V->x_size = Gx_size ;
     V->x_shallow = false ;
     V->iso = G_iso  ;            	
-    #ifdef GB_MEMDUMP
-    printf ("add V->x to memtable: %p\n", V->x) ;
-    #endif
+    GBMDUMP ("add V->x to memtable: %p\n", V->x) ;
     GB_Global_memtable_add (V->x, V->x_size) ;  // this was the old G->x
 
     GB_Ap_DECLARE (Vp, ) ; GB_Ap_PTR (Vp, V) ;

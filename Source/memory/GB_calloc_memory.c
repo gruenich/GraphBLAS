@@ -30,7 +30,7 @@ static inline void *GB_calloc_helper
     p = GB_Global_malloc_function (*size) ;
 
     #ifdef GB_MEMDUMP
-    printf ("calloc  %p %8ld: ", p, *size) ; // MEMDUMP
+    GBMDUMP ("calloc  %p %8ld: ", p, *size) ;
     GB_Global_memtable_dump ( ) ;
     #endif
 

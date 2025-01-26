@@ -4022,10 +4022,12 @@ void mexFunction
     v->vdim = 2 ;
     void *psave = v->p ;
     size_t p_size_save = v->p_size ;
+    printf ("test0, remove v->p from memtable %d\n", v->p) ;
     GB_Global_memtable_remove (v->p) ;
     v->p_size = 3 * sizeof (int64_t) ;
     v->p = mxMalloc (v->p_size) ;
     memset (v->p, 0, v->p_size) ;
+    printf ("test0, add v->p to memtable %d\n", v->p) ;
     GB_Global_memtable_add (v->p, v->p_size) ;
     ERR (GB_Vector_check (v, "v invalid", G1, ff)) ;
     v->vdim = 1 ;
@@ -4038,9 +4040,11 @@ void mexFunction
     ERR (GB_Vector_check (v, "v p[0] invalid", G1, ff)) ;
 
     mxFree (v->p) ;
+    printf ("test0, remove v->p from memtable %d\n", v->p) ;
     GB_Global_memtable_remove (v->p) ;
     v->p = psave ;
     v->p_size = p_size_save ;
+    printf ("test0, add v->p to memtable %d\n", v->p) ;
     GB_Global_memtable_add (v->p, v->p_size) ;
     psave = NULL ;
     OK (GB_Vector_check (v, "v OK now", G1, ff)) ;
@@ -4690,10 +4694,12 @@ void mexFunction
     GB_free_memory ((void **) &(Eleven->h), Eleven->h_size) ;
     Eleven->h = &nothing ;
     Eleven->h_size = sizeof (int64_t) ;
+    printf ("test0, add Eleven->h to memtable %d\n", Eleven->h) ;
     GB_Global_memtable_add (Eleven->h, 1 * sizeof (int64_t)) ;
     ERR (GB_Matrix_check (Eleven, "Eleven invalid", G2, NULL)) ;
     ERR (GxB_Matrix_fprint (Eleven, "Eleven", G2, NULL)) ;
     ERR (GxB_Matrix_fprint (Eleven, "Eleven invalid", G2, ff)) ;
+    printf ("test0, remove Eleven->h from memtable %d\n", Eleven->h) ;
     GB_Global_memtable_remove (Eleven->h) ;
     Eleven->h = NULL ;
 
