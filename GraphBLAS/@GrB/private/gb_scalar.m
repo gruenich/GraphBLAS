@@ -8,7 +8,7 @@ function x = gb_scalar (A)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-[~, ~, x] = gbextracttuples (A) ;       % OK: scalar, no integers
+[~, ~, x] = gbextracttuples (A) ;
 if (isempty (x))
     x = 0 ;
 else

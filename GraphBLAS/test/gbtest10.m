@@ -58,9 +58,6 @@ M = logical (eye (4)) ;
 B = rand (4) ;
 H = GrB (B, 'by row') 
 A (M) = B (M) 
-H
-M
-G
 G (M) = H (M)
 assert (isequal (A, G)) ;
 

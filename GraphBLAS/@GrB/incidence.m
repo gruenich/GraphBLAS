@@ -90,7 +90,7 @@ end
 
 % build the incidence matrix
 desc.base = 'zero-based' ;
-[I, J] = gbextracttuples (A, desc) ;        % OK: I, J are zero-based
+[I, J] = gbextracttuples (A, desc) ;
 e = length (I) ;
 I = [I ; J] ;
 if (e > intmax ('uint32'))

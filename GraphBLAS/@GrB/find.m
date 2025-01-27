@@ -19,6 +19,9 @@ function [I, J, X] = find (G, k, search)
 % For this usage, the first and last k are in terms of nonzeros in the
 % column-major order.
 %
+% The indices I and J are returned as int32 or int64 column vectors,
+% depending on the dimenions of the matrix G.
+%
 % See also sparse, GrB.build, GrB.extracttuples.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

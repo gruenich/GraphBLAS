@@ -375,11 +375,10 @@ hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
 logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops
 
-
 % > 100 seconds, debug_off
 set_malloc_debug (mdebug, 0) ;
-logstat ('test280'    ,t, J4   , F1   ) ; % subassign method 26
 logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
+logstat ('test280(0)' ,t, J4   , F1   ) ; % subassign method 26
 
 %===============================================================================
 % finalize

@@ -62,7 +62,7 @@ if (firstchar == 2)
     if ((symmetric || hermitian) && (m ~= n))
         error ('GrB:error', 'input matrix must be square') ;
     end
-    [I, J] = gbextracttuples (A, desc) ;    % OK: zero-based int
+    [I, J] = gbextracttuples (A, desc) ;
     e = length (I) ;
 
 elseif (firstchar == (4 - (symmetric || hermitian)))

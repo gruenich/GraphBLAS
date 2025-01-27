@@ -79,7 +79,7 @@ void mexFunction
         case BASE_1_INT    : printf ("one-based int\n") ; break ;
         case BASE_1_DOUBLE : printf ("one-based\n")     ; break ;
         case BASE_DEFAULT  :
-        default            : printf ("default\n")       ; break ;
+        default            : printf ("default (one-based int)\n") ; break ;
     }
 
     printf ("    d.format   = ") ;
