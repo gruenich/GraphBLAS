@@ -13,9 +13,6 @@ J_0 = int64 (J) - 1 ;
 A (1,1) = 0 ;
 
 desc_default.base = 'default' ;
-desc_default.nthreads = 1 ;                 % ignored
-desc_default.chunk = 1024 ;                 % ignored
-desc_default
 desc0.base = 'zero-based' ;
 desc1.base = 'one-based' ;
 desc1_int.base = 'one-based int' ;
