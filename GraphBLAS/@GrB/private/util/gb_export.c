@@ -85,6 +85,8 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         CHECK_ERROR (GB_is_shallow (*C_handle), "internal error 717")
 
+// FIXME: use the new Container methods here
+
         // export as a full matrix, held by column, not uniform-valued
         void *Cx = NULL ;
         GrB_Type ctype = NULL ;

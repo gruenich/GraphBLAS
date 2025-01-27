@@ -319,7 +319,6 @@ logstat ('test142b'   ,t, J40  , F00  ) ; % GrB_assign with accum
 logstat ('test142'    ,t, J4   , F1   ) ; % GrB_assign with accum
 logstat ('test227'    ,t, J4   , F1   ) ; % kron
 logstat ('test292'    ,t, J4   , F1   ) ; % build_Vector with large vector
-logstat ('test280'    ,t, J4   , F1   ) ; % subassign method 26
 
 % 10 to 100 seconds, no Werk, debug_off
 hack (2) = 1 ; GB_mex_hack (hack) ;     % disable the Werk stack
@@ -369,12 +368,17 @@ logstat ('test154b'   ,t, J0   , F1   ) ; % apply binop and scalar binding
 logstat ('test154'    ,t, J4   , F1   ) ; % apply binop and scalar binding
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
+% these tests take a very long time when "define GB_DEBUG" is enabled in
+% GraphBLAS/Source/include/GB_dev.h, so place them last:
+
 % > 100 seconds, debug_on
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
 logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops
 
+
 % > 100 seconds, debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test280'    ,t, J4   , F1   ) ; % subassign method 26
 logstat ('test19'     ,t, J40  , F10  ) ; % GxB_subassign, many pending ops
 
 %===============================================================================

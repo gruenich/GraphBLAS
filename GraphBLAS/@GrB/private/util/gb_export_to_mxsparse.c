@@ -144,6 +144,9 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         uint64_t *Tp, *Ti ;
         void *Tx ;
 
+// FIXME: use the new Container methods
+// FIXME: add an option to GrB_Matrix_set_INT32 to tell a matrix to be non-iso
+
         // pass jumbled as NULL to indicate the matrix must be sorted
         // pass iso as NULL to indicate it cannot be uniform valued
         OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols,
