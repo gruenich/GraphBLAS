@@ -16,12 +16,23 @@ for k1 = 1:length (types)
     atype = types {k1} ;
     fprintf ('\n%s', atype) ;
     for d = [0.5 inf]
+        fprintf (' ') ;
+        % matrix case
         A = GB_spec_random (10, 10, d, 128, atype) ;
         for A_sparsity = 0:15
             fprintf ('.') ;
             A.sparsity = A_sparsity ;
             C = GB_mex_container (A) ;
             GB_spec_compare (A, C) ;
+        end
+        fprintf (':') ;
+        % vector case
+        V = GB_spec_random (10, 1, d, 128, atype) ;
+        for V_sparsity = 0:15
+            fprintf ('.') ;
+            V.sparsity = V_sparsity ;
+            C = GB_mex_container (V) ;
+            GB_spec_compare (V, C) ;
         end
     end
 end

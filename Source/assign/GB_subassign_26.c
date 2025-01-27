@@ -36,7 +36,7 @@ GrB_Info GB_subassign_26
     const GrB_Matrix A,
     GB_Werk Werk
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -114,44 +114,28 @@ GrB_Info GB_subassign_26
 
     bool phase1_parallel = (nJ > GB_CHUNK_DEFAULT) ;
     bool phase2_parallel = (anz * (aisize + csize) > GB_MEM_CHUNK) ;
-    int nthreads_max ;
-    double chunk ;
-
-    if (phase1_parallel || phase2_parallel)
-    { 
-        nthreads_max = GB_Context_nthreads_max ( ) ;
-        chunk = GB_Context_chunk ( ) ;
-    }
+    int nthreads_max = GB_Context_nthreads_max ( ) ;
+    double chunk = GB_Context_chunk ( ) ;
 
     //--------------------------------------------------------------------------
     // phase1: append to Cp and Ch; find # new nonempty vectors, and properties
     //--------------------------------------------------------------------------
 
     int64_t Anvec_nonempty = 0 ;
-    #define COMPUTE_CP_AND_CH                           \
-        for (k = 0 ; k < nJ ; k++)                      \
-        {                                               \
-            int64_t apk = GB_IGET (Ap, k) ;             \
-            int64_t anzk = GB_IGET (Ap, k+1) - apk ;    \
-            GB_ISET (Ch, Cnvec + k, j1 + k) ;           \
-            GB_ISET (Cp, Cnvec + k, cnz + apk) ;        \
-            Anvec_nonempty += (anzk > 0) ;              \
-        }
-
     int nthreads = (phase1_parallel) ?
         GB_nthreads (nJ, chunk, nthreads_max) : 1 ;
     int64_t k ;
-    if (nthreads > 1)
+
+    // compute Cp, Ch, and Anvec_nonempty in parallel
+    #pragma omp parallel for num_threads(nthreads) schedule(static) \
+        reduction(+:Anvec_nonempty)
+    for (k = 0 ; k < nJ ; k++)
     { 
-        // compute Cp and Ch in parallel
-        #pragma omp parallel for num_threads(nthreads) schedule(static) \
-            reduction(+:Anvec_nonempty)
-        COMPUTE_CP_AND_CH ;
-    }
-    else
-    { 
-        // compute Cp and Ch in a single thread
-        COMPUTE_CP_AND_CH ;
+        int64_t apk = GB_IGET (Ap, k) ;
+        int64_t anzk = GB_IGET (Ap, k+1) - apk ;
+        GB_ISET (Ch, Cnvec + k, j1 + k) ;
+        GB_ISET (Cp, Cnvec + k, cnz + apk) ;
+        Anvec_nonempty += (anzk > 0) ;
     }
 
     if (C->nvec_nonempty >= 0)

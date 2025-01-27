@@ -4,11 +4,16 @@ function test290
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
+% Note: this test takes about 93 seconds when GraphBLAS is compiled with
+% GB_DEBUG enabled.
+
 n = 3e9 ;
 A = ones (n,2, 'int8') ;
 A (1:2, 1:2) = [2 3 ; 4 5] ;
 I = uint64 (0:1) ;
+fprintf ('subref starting ...\n') ;
 C = GB_mex_subref_symbolic (A, I, I) ;
+fprintf ('subref done ...\n') ;
 S = [ 0   3000000000
       1   3000000001 ] ;
 S = uint64 (S) ;

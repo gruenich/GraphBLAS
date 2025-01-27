@@ -54,8 +54,20 @@ void mexFunction
     GET_DEEP_COPY ;
 
     METHOD (GxB_Container_new (&Container)) ;
-    METHOD (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
-    METHOD (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+
+    if (GB_VECTOR_OK (C))
+    {
+        // test vector variant
+        GrB_Vector V = (GrB_Vector) C ;
+        METHOD (GxB_unload_Vector_into_Container (V, Container, NULL)) ;
+        METHOD (GxB_load_Vector_from_Container (V, Container, NULL)) ;
+    }
+    else
+    {
+        // test matrix variant
+        METHOD (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
+        METHOD (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+    }
     OK (GxB_Container_free (&Container)) ;
 
     // return C as a struct and free the GraphBLAS C

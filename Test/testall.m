@@ -368,9 +368,6 @@ logstat ('test154b'   ,t, J0   , F1   ) ; % apply binop and scalar binding
 logstat ('test154'    ,t, J4   , F1   ) ; % apply binop and scalar binding
 hack (2) = 0 ; GB_mex_hack (hack) ;     % re-enable the Werk stack
 
-% these tests take a very long time when "define GB_DEBUG" is enabled in
-% GraphBLAS/Source/include/GB_dev.h, so place them last:
-
 % > 100 seconds, debug_on
 logstat ('test21b'    ,t, J0   , F0   ) ; % GB_mex_assign
 logstat ('test19b'    ,s, J40  , F10  ) ; % GrB_assign, many pending ops

@@ -80,10 +80,6 @@ GB_CALLBACK_BIX_ALLOC_PROTO (GB_bix_alloc)
         size_t isize = A->i_is_32 ? sizeof (int32_t) : sizeof (int64_t) ;
         A->i = GB_MALLOC_MEMORY (nzmax, isize, &(A->i_size)) ;
         ok = (A->i != NULL) ;
-//      if (ok)
-//      { 
-//          memset (A->i, 0, isize) ; // Ai [0] = 0; FIXME: why do I need this?
-//      }
     }
 
     if (numeric)

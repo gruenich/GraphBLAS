@@ -7,17 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-// for code development only:
-#ifdef GRAPHBLAS_HAS_CUDA
-// when CUDA kernels enabled:
-#define GB_DEVELOPER 0
-#else
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
-#endif
 
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1  /* FIXME */
+// For development only:
+// #undef  GB_DEVELOPER
+// #define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
