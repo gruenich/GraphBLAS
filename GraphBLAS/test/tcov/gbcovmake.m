@@ -49,8 +49,6 @@ fclose (f) ;
 % use -R2018a for the new interleaved complex API
 flags = '-g -R2018a -DGBCOV' ;
 
-need_rename = true ; % was: ~verLessThan ('matlab', '9.10') ;
-
 try
     if (strncmp (computer, 'GLNX', 4))
         % remove -ansi from CFLAGS and replace it with -std=c11
@@ -75,28 +73,20 @@ end
 
 here = pwd ;
 
-if (need_rename)
-    % use renamed version for all MATLAB versions:
-    flags = [flags ' -DGBMATLAB=1 ' ] ;
-    inc = sprintf ('-I%s/../../rename ', here) ;
-    libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
-else
-    % no longer used:
-    inc = [' '] ;
-    libraries = '-L../../../../../../build -L. -L/usr/local/lib -lgraphblas' ;
-end
+% use renamed version for all MATLAB versions:
+flags = [flags ' -DGBMATLAB=1 ' ] ;
+inc = sprintf ('-I%s/../../rename ', here) ;
+libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
 
 if (~ismac && isunix)
-    flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
+    flags = [ flags ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
     flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
-    flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
+    flags = [ flags ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
-
-% inc = [ inc '-I. -I../util -I../../../../../../Include -I../../../../../../Source -I../../../../../../Source/include -I../../../../../../cpu_features/include ' ] ;
 
 inc = [inc '-I. -I../util '] ;
     inc = [inc '-I../../../../../.. ' ] ;
-    inc = [inc '-I../../../../../../Include ']
+    inc = [inc '-I../../../../../../Include '] ;
     inc = [inc '-I../../../../../../Source ' ] ;
     inc = [inc '-I../../../../../../Source/include '] ;
     inc = [inc '-I../../../../../../Source/ij ' ] ;

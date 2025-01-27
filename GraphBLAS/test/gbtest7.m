@@ -52,6 +52,12 @@ d.kind = 'sparse' ;
 G = GrB.build (i, j, x, m, n, d) ;
 assert (gbtest_eq (S, G))
 
+I = GrB (i', 'by row') ;
+J = GrB (j', 'by row') ;
+X = GrB (x) ;
+G = GrB.build (I, J, X, m, n, d) ;
+assert (gbtest_eq (S, G))
+
 i0 = int64 (i) - 1 ;
 j0 = int64 (j) - 1 ;
 

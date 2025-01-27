@@ -1345,5 +1345,17 @@ catch expected_error
 end
 assert (ok) ;
 
+try
+    GrB.jit ('crud') ;
+    ok = false ;
+catch expected_error
+    expected_error
+    fprintf ('    message: %s\n', expected_error.message) ;
+    for k = 1:length (expected_error.stack)
+        disp (expected_error.stack (k))
+    end
+end
+assert (ok) ;
+
 fprintf ('gbtest43: all tests passed\n') ;
 

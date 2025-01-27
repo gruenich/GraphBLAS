@@ -17,7 +17,10 @@ function [I, J, X] = find (G, k, search)
 % [...] = find (G, k, 'first') returns the first k nonozeros of G.
 % [...] = find (G, k, 'last')  returns the last k nonozeros of G.
 % For this usage, the first and last k are in terms of nonzeros in the
-% column-major order.
+% column-major order.  Note that this usage is much slower than when 
+% using a MATLAB/Octave built-in matrix, because a GraphBLAS matrix must
+% have the ability to hold explicit zeros.  These must be pruned to match
+% the behavior of find(G,k).
 %
 % The indices I and J are returned as int32 or int64 column vectors,
 % depending on the dimenions of the matrix G.
@@ -26,10 +29,6 @@ function [I, J, X] = find (G, k, search)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
-
-%% FIXME: find (G,k,'first') and find (G,k,'last') are slow.
-% Use GxB_unload_* to extract the content Container->x, and use that to
-% find the first or last k entries in G.
 
 if (isobject (G))
     G = G.opaque ;

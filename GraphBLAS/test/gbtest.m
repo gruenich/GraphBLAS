@@ -174,6 +174,7 @@ gbtest119 % test GrB.eunion
 gbtest120 % test subsref
 gbtest121 % test times with scalars
 gbtest122 % test reshape
+gbtest123 % test reshape
 gbtest96  % test GrB.optype
 
 if (~have_octave)

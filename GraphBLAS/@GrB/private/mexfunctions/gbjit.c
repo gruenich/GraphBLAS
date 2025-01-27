@@ -7,17 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: test GrB.jit
-
 // Usage:
 
-// [status,path] = gbjit
-// [status,path] = gbjit (status)
-// [status,path] = gbjit (status,path)
+// [status] = gbjit
+// [status] = gbjit (status)
 
 #include "gb_interface.h"
 
-#define USAGE "usage: [status,path] = GrB.jit (status,path) ;"
+#define USAGE "usage: [status] = GrB.jit (status) ;"
 
 void mexFunction
 (
@@ -26,13 +23,13 @@ void mexFunction
     int nargin,
     const mxArray *pargin [ ]
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 2 && nargout <= 2, USAGE) ;
+    gb_usage (nargin <= 1 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // set the JIT control, if requested
@@ -43,7 +40,9 @@ void mexFunction
         // set the JIT control
         #define JIT(c) \
             OK (GrB_Global_set_INT32 (GrB_GLOBAL, c, GxB_JIT_C_CONTROL)) ;
-        char *status = gb_mxstring_to_string2 (pargin [0], "status", true) ;
+        #define LEN 256
+        char status [LEN+2]  ;
+        gb_mxstring_to_string (status, LEN, pargin [0], "status") ;
         if      (MATCH (status, ""     ))
         { 
             /* do nothing */ ;
@@ -77,19 +76,6 @@ void mexFunction
         { 
             ERROR2 ("unknown option: %s", status) ;
         }
-        mxFree (status) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // set the cache path, if requested
-    //--------------------------------------------------------------------------
-
-    if (nargin > 1)
-    { 
-        // set the JIT cache path
-        char *path = gb_mxstring_to_string2 (pargin [1], "path", false) ;
-        OK (GrB_Global_set_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
-        mxFree (path) ;
     }
 
     //--------------------------------------------------------------------------
@@ -110,21 +96,6 @@ void mexFunction
             default           : pargout [0] = mxCreateString ("unknown") ;
                                 break ;
         }
-    }
-
-    //--------------------------------------------------------------------------
-    // get the JIT cache path, if requested
-    //--------------------------------------------------------------------------
-
-    if (nargout > 1)
-    { 
-        char *path = NULL ;
-        size_t len = 0 ;
-        OK (GrB_Global_get_SIZE (GrB_GLOBAL, &len, GxB_JIT_CACHE_PATH)) ;
-        path = mxMalloc (len + 2) ;
-        OK (GrB_Global_get_String (GrB_GLOBAL, path, GxB_JIT_CACHE_PATH)) ;
-        pargout [1] = mxCreateString (path) ;
-        mxFree (path) ;
     }
 
     //--------------------------------------------------------------------------

@@ -30,67 +30,55 @@ static void get_descriptor
         // the field is present
         mxArray *value = mxGetFieldByNumber (desc_builtin, 0, fieldnumber) ;
 
-        if (MATCH (fieldname, "nthreads"))
+        // get the string from the built-in field
+        char s [LEN+2] ;
+        gb_mxstring_to_string (s, LEN, value, "field") ;
+
+        // convert the string to a Descriptor value, and set the value
+        if (MATCH (s, "default"))
         { 
-            // ignored
+            OK (GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
         }
-        else if (MATCH (fieldname, "chunk"))
+        else if (MATCH (s, "transpose"))
         { 
-            // ignored
+            OK (GxB_Desc_set (desc, field, GrB_TRAN)) ;
+        }
+        else if (MATCH (s, "complement"))
+        { 
+            OK (GxB_Desc_set (desc, field, GrB_COMP)) ;
+        }
+        else if (MATCH (s, "structure") || MATCH (s, "structural"))
+        { 
+            OK (GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
+        }
+        else if (MATCH (s, "structural complement"))
+        { 
+            OK (GxB_Desc_set (desc, field, GrB_COMP+GrB_STRUCTURE)) ;
+        }
+        else if (MATCH (s, "replace"))
+        { 
+            OK (GxB_Desc_set (desc, field, GrB_REPLACE)) ;
+        }
+        else if (MATCH (s, "gustavson"))
+        { 
+            OK (GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
+        }
+        else if (MATCH (s, "dot"))
+        { 
+            OK (GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
+        }
+        else if (MATCH (s, "saxpy"))
+        { 
+            OK (GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
+        }
+        else if (MATCH (s, "hash"))
+        { 
+            OK (GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
         }
         else
-        {
-
-            // get the string from the built-in field
-            char s [LEN+2] ;
-            gb_mxstring_to_string (s, LEN, value, "field") ;
-
-            // convert the string to a Descriptor value, and set the value
-            if (MATCH (s, "default"))
-            { 
-                OK (GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
-            }
-            else if (MATCH (s, "transpose"))
-            { 
-                OK (GxB_Desc_set (desc, field, GrB_TRAN)) ;
-            }
-            else if (MATCH (s, "complement"))
-            { 
-                OK (GxB_Desc_set (desc, field, GrB_COMP)) ;
-            }
-            else if (MATCH (s, "structure") || MATCH (s, "structural"))
-            { 
-                OK (GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
-            }
-            else if (MATCH (s, "structural complement"))
-            { 
-                OK (GxB_Desc_set (desc, field, GrB_COMP+GrB_STRUCTURE)) ;
-            }
-            else if (MATCH (s, "replace"))
-            { 
-                OK (GxB_Desc_set (desc, field, GrB_REPLACE)) ;
-            }
-            else if (MATCH (s, "gustavson"))
-            { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
-            }
-            else if (MATCH (s, "dot"))
-            { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
-            }
-            else if (MATCH (s, "saxpy"))
-            { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
-            }
-            else if (MATCH (s, "hash"))
-            { 
-                OK (GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
-            }
-            else
-            { 
-                // the string must be one of the strings listed above
-                ERROR ("unrecognized descriptor value") ;
-            }
+        { 
+            // the string must be one of the strings listed above
+            ERROR ("unrecognized descriptor value") ;
         }
     }
 }
@@ -140,12 +128,12 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
     GrB_Descriptor desc ;
     OK (GrB_Descriptor_new (&desc)) ;
 
-    // get each component of the descriptor struct
-    get_descriptor (desc, desc_builtin, "out"     , GrB_OUTP) ;
-    get_descriptor (desc, desc_builtin, "in0"     , GrB_INP0) ;
-    get_descriptor (desc, desc_builtin, "in1"     , GrB_INP1) ;
-    get_descriptor (desc, desc_builtin, "mask"    , GrB_MASK) ;
-    get_descriptor (desc, desc_builtin, "axb"     , GxB_AxB_METHOD) ;
+    // get each component for the GraphBLAS GrB_Descriptor
+    get_descriptor (desc, desc_builtin, "out" , GrB_OUTP) ;
+    get_descriptor (desc, desc_builtin, "in0" , GrB_INP0) ;
+    get_descriptor (desc, desc_builtin, "in1" , GrB_INP1) ;
+    get_descriptor (desc, desc_builtin, "mask", GrB_MASK) ;
+    get_descriptor (desc, desc_builtin, "axb" , GxB_AxB_METHOD) ;
 
     //--------------------------------------------------------------------------
     // get the desired kind of output
@@ -226,7 +214,6 @@ GrB_Descriptor gb_mxarray_to_descriptor // new descriptor, or NULL if none
             // one-based double indices
             (*base) = BASE_1_DOUBLE ;
         }
-
         else
         { 
             ERROR ("invalid descriptor.base") ;

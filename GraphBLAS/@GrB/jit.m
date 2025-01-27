@@ -1,4 +1,4 @@
-function [status,path] = jit (status,path)
+function [status] = jit (status)
 %GRB.JIT controls the GraphBLAS JIT
 %
 %   status = GrB.jit ;      % get the current status of the JIT
@@ -22,21 +22,10 @@ function [status,path] = jit (status,path)
 %
 % Refer to the GraphBLAS User Guide for details (GxB_JIT_C_CONTROL).
 %
-% A second input/output parameter gives the path to a cache folder where
-% GraphBLAS keeps the kernels it compiles for the user.  By default, this
-% is ~/.SuiteSparse/GrB8.0.0 for GraphBLAS v8.0.0, with a new cache path
-% used % for each future @GrB version.
-%
-% On Apple Silicon, the MATLAB JIT kernels are compiled as x86 binaries,
-% but the pure C installation may compile native Arm64 binaries.  Do not
-% mix the two.  In this case, set another cache path for MATLAB using
-% this method or using GxB_set in the C interface for your native Arm64
-% binaries.  See the User Guide for details.
-%
 % Example:
 %
-%   [status,path] = GrB.jit
-%   [status,path] = GrB.jit ('on', '/home/me/myothercache')
+%   [status] = GrB.jit
+%   [status] = GrB.jit ('on')
 %
 % See also GrB.threads, GrB.clear.
 
@@ -44,10 +33,8 @@ function [status,path] = jit (status,path)
 % SPDX-License-Identifier: Apache-2.0
 
 if (nargin == 0)
-    [status, path] = gbjit ;
+    [status] = gbjit ;
 elseif (nargin == 1)
-    [status, path] = gbjit (status) ;
-elseif (nargin == 2)
-    [status, path] = gbjit (status, path) ;
+    [status] = gbjit (status) ;
 end
 

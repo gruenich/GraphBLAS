@@ -13,9 +13,14 @@ J_0 = int64 (J) - 1 ;
 A (1,1) = 0 ;
 
 desc_default.base = 'default' ;
+desc_default.nthreads = 1 ;                 % ignored
+desc_default.chunk = 1024 ;                 % ignored
+desc_default
 desc0.base = 'zero-based' ;
 desc1.base = 'one-based' ;
 desc1_int.base = 'one-based int' ;
+desc1_double.base = 'double' ;
+desc1_double2.base = 'one-based double' ;   % same as 'double'
 
 for k = 1:length(list)
     xtype = list {k} ;
@@ -56,6 +61,22 @@ for k = 1:length(list)
     assert (isequal (C (:), X0)) ;
     assert (isequal (double (I_0+1), I1)) ;
     assert (isequal (double (J_0+1), J1)) ;
+    assert (isequal (class (I1), 'int32')) ;
+    assert (isequal (class (J1), 'int32')) ;
+
+    [I1, J1, X0] = GrB.extracttuples (G, desc1_double) ;
+    assert (isequal (C (:), X0)) ;
+    assert (isequal (I_0+1, I1)) ;
+    assert (isequal (J_0+1, J1)) ;
+    assert (isequal (class (I1), 'double')) ;
+    assert (isequal (class (J1), 'double')) ;
+
+    [I1, J1, X0] = GrB.extracttuples (G, desc1_double2) ;
+    assert (isequal (C (:), X0)) ;
+    assert (isequal (I_0+1, I1)) ;
+    assert (isequal (J_0+1, J1)) ;
+    assert (isequal (class (I1), 'double')) ;
+    assert (isequal (class (J1), 'double')) ;
 
     [I1, J1, X0] = GrB.extracttuples (G) ;
     assert (isequal (C (:), X0)) ;
