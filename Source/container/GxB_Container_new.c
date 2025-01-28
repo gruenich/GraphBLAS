@@ -11,8 +11,8 @@
 #define GB_FREE_ALL GxB_Container_free (Container) ;
 
 #define GB_VNEW(component, type)                                \
-    GB_OK (GB_new (&((*Container)->component), type,            \
-        0, 1, GB_ph_null, true, GxB_FULL,                       \
+    GB_OK (GB_new ((GrB_Matrix *) (&((*Container)->component)), \
+        type, 0, 1, GB_ph_null, true, GxB_FULL,                 \
         GB_HYPER_SWITCH_DEFAULT, 0, false, false, false)) ;     \
     (*Container)->component->magic = GB_MAGIC ;
 

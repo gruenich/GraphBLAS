@@ -1235,11 +1235,9 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc
 \verb'GxB_init' is identical to \verb'GrB_init', except that it also redefines
 the memory management functions that SuiteSparse:GraphBLAS will use.  Giving
 the user application control over this is particularly important when using the
-\verb'GxB_*pack',
-\verb'GxB_*unpack', and \verb'GxB_*serialize' functions described in
-Sections \ref{serialize_deserialize} and \ref{pack_unpack},
-since they require the user application and
-GraphBLAS to use the same memory manager.
+\verb'GxB_*serialize' and \verb'GxB_Container' methods described in Section
+\ref{serialize_deserialize} and \ref{container}, since they require the user
+application and GraphBLAS to use the same memory manager.
 \verb'user_calloc_func' and \verb'user_realloc_func' are optional, and
 may be \verb'NULL'.  If \verb'NULL', then the \verb'user_malloc_func' is
 relied on instead, for all memory allocations.
@@ -3736,6 +3734,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Scalar_setElement'     & set the single entry of a scalar     & \ref{scalar_setElement} \\
 \verb'GrB_Scalar_extractElement' & get the single entry from a scalar   & \ref{scalar_extractElement} \\
 \verb'GxB_Scalar_memoryUsage'    & memory used by a scalar              & \ref{scalar_memusage} \\
+\verb'GxB_Scalar_type'           & type of a scalar                     & \ref{scalar_type} \\
 \verb'GrB_Scalar_free'           & free a scalar                        & \ref{scalar_free} \\
 \hline
 \end{tabular}
@@ -3938,6 +3937,24 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 Returns the memory space required for a scalar, in bytes.
 
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_type:} type of a scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_type}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_type    // get the type of a GrB_Scalar
+(
+    GrB_Type *type,         // returns the type of the GrB_Scalar
+    const GrB_Scalar s      // GrB_Scalar to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the type of a scalar.  See \verb'GxB_Matrix_type' for details
+(Section~\ref{matrix_type}).
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_free:} free a scalar}
 %-------------------------------------------------------------------------------
 \label{scalar_free}
@@ -3999,6 +4016,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
 \verb'GxB_Vector_iso'            & query iso status                 & \ref{vector_iso} \\
 \verb'GxB_Vector_memoryUsage'    & memory used by a vector          & \ref{vector_memusage} \\
+\verb'GxB_Vector_type'           & type of the matrix               & \ref{vector_type} \\
 \verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
 \hline
 \hline
@@ -4010,24 +4028,13 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Vector_deserialize'    & deserialize a vector             & \ref{vector_deserialize_GxB} \\
 \hline
 \hline
-\verb'GxB_Vector_pack_CSC'         & pack in CSC format      & \ref{vector_pack_csc} \\
-\verb'GxB_Vector_unpack_CSC'       & unpack in CSC format    & \ref{vector_unpack_csc} \\
-\hline
-\verb'GxB_Vector_pack_Bitmap'      & pack in bitmap format   & \ref{vector_pack_bitmap} \\
-\verb'GxB_Vector_unpack_Bitmap'    & unpack in bitmap format & \ref{vector_unpack_bitmap} \\
-\hline
-\verb'GxB_Vector_pack_Full'        & pack in full format     & \ref{vector_pack_full} \\
-\verb'GxB_Vector_unpack_Full'      & unpack in full format   & \ref{vector_unpack_full} \\
-\hline
-\hline
 \verb'GxB_Vector_sort'          & sort a vector & \ref{vector_sort} \\
 \end{tabular}
 }
 
 \vspace{0.2in}
 Refer to
-Section~\ref{serialize_deserialize} for serialization/deserialization methods,
-Section~\ref{pack_unpack} for pack/unpack methods,
+Section~\ref{serialize_deserialize} for serialization/deserialization methods
 and to
 Section~\ref{sorting_methods} for sorting methods.
 
@@ -4472,6 +4479,24 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 Returns the memory space required for a vector, in bytes.
 
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_type:} type of a vector}
+%-------------------------------------------------------------------------------
+\label{vector_type}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_type    // get the type of a vector
+(
+    GrB_Type *type,         // returns the type of the vector
+    const GrB_Vector v      // vector to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the type of a vector.  See \verb'GxB_Matrix_type' for details
+(Section~\ref{matrix_type}).
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_free:}          free a vector}
 %-------------------------------------------------------------------------------
 \label{vector_free}
@@ -4537,6 +4562,7 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag_GxB} \\
 \verb'GxB_Matrix_iso'           & query iso status                      & \ref{matrix_iso} \\
 \verb'GxB_Matrix_memoryUsage'   & memory used by a matrix               & \ref{matrix_memusage} \\
+\verb'GxB_Matrix_type'          & type of the matrix                    & \ref{matrix_type} \\
 \verb'GrB_Matrix_free'          & free a matrix                         & \ref{matrix_free} \\
 \hline
 \hline
@@ -4556,36 +4582,10 @@ GraphBLAS function   & purpose                                      & Section \\
 \hline
 GraphBLAS function   & purpose                                      & Section \\
 \hline
-\verb'GxB_Matrix_pack_CSR'        &   pack CSR           & \ref{matrix_pack_csr} \\
-\verb'GxB_Matrix_unpack_CSR'      & unpack CSR           & \ref{matrix_unpack_csr} \\
-\hline
-\verb'GxB_Matrix_pack_CSC'        &   pack CSC           & \ref{matrix_pack_csc} \\
-\verb'GxB_Matrix_unpack_CSC'      & unpack CSC           & \ref{matrix_unpack_csc} \\
-\hline
-\verb'GxB_Matrix_pack_HyperCSR'   &   pack HyperCSR      & \ref{matrix_pack_hypercsr} \\
-\verb'GxB_Matrix_unpack_HyperCSR' & unpack HyperCSR      & \ref{matrix_unpack_hypercsr} \\
-\hline
-\verb'GxB_Matrix_pack_HyperCSC'   &   pack HyperCSC      & \ref{matrix_pack_hypercsc} \\
-\verb'GxB_Matrix_unpack_HyperCSC' & unpack HyperCSC      & \ref{matrix_unpack_hypercsc} \\
-\hline
-\verb'GxB_Matrix_pack_BitmapR'    &   pack BitmapR       & \ref{matrix_pack_bitmapr} \\
-\verb'GxB_Matrix_unpack_BitmapR'  & unpack BitmapR       & \ref{matrix_unpack_bitmapr} \\
-\hline
-\verb'GxB_Matrix_pack_BitmapC'    &   pack BitmapC       & \ref{matrix_pack_bitmapc} \\
-\verb'GxB_Matrix_unpack_BitmapC'  & unpack BitmapC       & \ref{matrix_unpack_bitmapc} \\
-\hline
-\verb'GxB_Matrix_pack_FullR'      &   pack FullR         & \ref{matrix_pack_fullr} \\
-\verb'GxB_Matrix_unpack_FullR'    & unpack FullR         & \ref{matrix_unpack_fullr} \\
-\hline
-\verb'GxB_Matrix_pack_FullC'      &   pack FullC         & \ref{matrix_pack_fullc} \\
-\verb'GxB_Matrix_unpack_FullC'    & unpack FullC         & \ref{matrix_unpack_fullc} \\
-\hline
-\hline
 \verb'GrB_Matrix_import'        & import in various formats & \ref{GrB_matrix_import} \\
 \verb'GrB_Matrix_export'        & export in various formats & \ref{GrB_matrix_export} \\
 \verb'GrB_Matrix_exportSize'    & array sizes for export & \ref{export_size} \\
 \verb'GrB_Matrix_exportHint'    & hint best export format & \ref{export_hint} \\
-\hline
 \hline
 \verb'GxB_Matrix_sort'          & sort a matrix & \ref{matrix_sort} \\
 \hline
@@ -4595,7 +4595,6 @@ GraphBLAS function   & purpose                                      & Section \\
 \vspace{0.2in}
 Refer to
 Section~\ref{serialize_deserialize} for serialization/deserialization methods,
-Section~\ref{pack_unpack} for \verb'GxB'pack/unpack methods,
 Section~\ref{GrB_import_export} for \verb'GrB' import/export methods,
 and
 Section~\ref{sorting_methods} for sorting methods.
@@ -5430,6 +5429,49 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 Returns the memory space required for a matrix, in bytes.
 
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_type:} type of a matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_type}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_type    // get the type of a matrix
+(
+    GrB_Type *type,         // returns the type of the matrix
+    const GrB_Matrix A      // matrix to query
+) ;
+\end{verbatim} } \end{mdframed}
+
+Returns the type of a matrix.  The \verb'type' parameter is not allocated.
+Calling \verb'GxB_Matrix_type' is identical to making a shallow pointer copy
+of the type used to create a matrix.  In particular, suppose a matrix is
+created, and a copy of its type is saved at the same time:
+
+{\footnotesize
+\begin{verbatim}
+    GrB_Matrix_new (&A, atype, m, n) ;
+    GrB_Type save_type = atype ;
+\end{verbatim}}
+
+Sometime later, while the matrix \verb'A' and its type \verb'atype' have not
+been freed, the following two code fragments are identical:
+
+{\footnotesize
+\begin{verbatim}
+    // using GxB_Matrix_type:
+    GrB_Type atype2 ;
+    GxB_Matrix_type (&atype2, A) ;
+    assert (atype2 == save_type) ;
+
+    // without GxB_Matrix_type:
+    GrB_Type atype2 = save_type ;
+\end{verbatim}}
+
+As a result, freeing \verb'atype2' would be the same as freeing the original
+\verb'atype'.
+
+%-------------------------------------------------------------------------------
 % \newpage
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
@@ -5851,1450 +5893,19 @@ Identical to \verb'GrB_Matrix_deserialize'.
 
 \newpage
 %===============================================================================
-\subsection{GraphBLAS pack/unpack: using move semantics} %========
-%===============================================================================
-\label{pack_unpack}
-
-The pack/unpack functions allow the user application to create a
-\verb'GrB_Matrix' or \verb'GrB_Vector' object, and to extract its contents,
-faster and with less memory overhead than the \verb'GrB_*_build' and
-\verb'GrB_*_extractTuples' functions.
-
-The \verb'GrB_Matrix_import' and \verb'GrB_Matrix_export' are not
-described in this section.  Refer to Section~\ref{GrB_import_export} instead.
-
-The semantics of the \verb'GxB' pack/unpack are the same as the
-{\em move constructor} in C++.  For \verb'GxB*pack*', the user provides a set of
-arrays that have been previously allocated via the ANSI C \verb'malloc',
-\verb'calloc', or \verb'realloc' functions (by default), or by the
-corresponding functions passed to \verb'GxB_init'.  The arrays define the
-content of the matrix or vector.  Unlike \verb'GrB_*_build', the GraphBLAS
-library then takes ownership of the user's input arrays and may either:
-
-\begin{enumerate}
-\item incorporate them
-into its internal data structure for the new \verb'GrB_Matrix' or
-\verb'GrB_Vector', potentially creating the \verb'GrB_Matrix' or
-\verb'GrB_Vector' in constant time with no memory copying performed, or
-\item if
-the library does not support the format directly, then it may convert
-the input to its internal format, and then free the user's input arrays.
-\item A
-GraphBLAS implementation may also choose to use a mix of the two strategies.
-\end{enumerate}
-
-SuiteSparse:GraphBLAS takes the first approach, and so the pack
-functions always take $O(1)$ time, and require $O(1)$ memory space to be
-allocated.
-
-Regardless of the method chosen, as listed above, the input arrays are no
-longer owned by the user application.  If \verb'A' is a \verb'GrB_Matrix'
-created by a pack method, the user input arrays are freed no later than
-\verb'GrB_free(&A)', and may be freed earlier, at the discretion of the
-GraphBLAS library.  The data structure of the \verb'GrB_Matrix' and
-\verb'GrB_Vector' remain opaque.
-
-The \verb'GxB*unpack*' of a \verb'GrB_Matrix' or \verb'GrB_Vector' is symmetric with the
-pack operation.  The unpack changes the ownership of the arrays, which are
-returned to the user and which contain the
-matrix or vector in the requested format.  Ownership of these arrays is given
-to the user application, which is then responsible for freeing them via the
-ANSI C \verb'free' function (by default), or by the \verb'free_function' that
-was passed in to \verb'GxB_init'.  Alternatively, these arrays can be
-re-packed into a \verb'GrB_Matrix' or \verb'GrB_Vector', at which point they
-again become the responsibility of GraphBLAS.
-
-For an unpack method, if the output format matches the current internal format of the
-matrix or vector then these arrays are returned to the user application in
-$O(1)$ time and with no memory copying performed.  Otherwise, the
-\verb'GrB_Matrix' or \verb'GrB_Vector' is first converted into the requested
-format, and then unpacked.
-
-For the pack methods, the \verb'A' matrix/vector must already exist on input, and its contents are
-populated with the new content, just like \verb'GrB_Matrix_build'.
-For the unpack
-methods, \verb'A' is passed in, and the matrix/vector still exists on return,
-just with no entries.  Its type and dimensions are preserved.
-
-Unpacking a matrix or vector forces completion of any pending
-operations on the matrix, with one exception.  SuiteSparse:GraphBLAS supports
-three kinds of pending operations: {\em zombies} (pending deletions), {\em
-pending tuples} (pending insertions), and a {\em lazy sort}.  Zombies and
-pending tuples are never unpacked, but the {\em jumbled} state may be
-optionally unpacked.  In the latter, if the matrix or vector is unpacked in a
-{\em jumbled} state, indices in any row or column may appear out of order.  If
-unpacked as {\em unjumbled}, the indices always appear in ascending order.
-
-The vector pack/unpack methods use three formats for a
-\verb'GrB_Vector'.  Eight different formats are provided for the
-pack/unpack of a \verb'GrB_Matrix'.  For each format, the
-numerical value array (\verb'Ax' or \verb'vx') has a C type corresponding to
-one of the 13 built-in types in GraphBLAS (\verb'bool', \verb'int*_t',
-\verb'uint*_t', \verb'float', \verb'double' \verb'float complex', \verb'double complex'),
-or that corresponds with the user-defined type.  No typecasting is
-done.
-
-If \verb'iso' is true, then all entries present in the matrix or vector
-have the same value, and the \verb'Ax' array (for matrices) or \verb'vx' array
-(for vectors) only need to be large enough to hold a single value.
-
-The unpack of a \verb'GrB_Vector' in \verb'CSC' format may return the
-indices in a jumbled state, in any order.
-For a \verb'GrB_Matrix' in \verb'CSR' or \verb'HyperCSR' format, if the matrix
-is returned as jumbled, the column indices in any given row may appear out of
-order.  For \verb'CSC' or \verb'HyperCSC' formats, if the matrix is returned as
-jumbled, the row indices in any given column may appear out of order.
-
-On pack, if the user-provided arrays contain jumbled row or column vectors,
-then the input flag \verb'jumbled' must be passed in as \verb'true'.  On
-unpack, if \verb'*jumbled' is \verb'NULL', this indicates to the unpack method
-that the user expects the unpacked matrix or vector to be returned in an
-ordered, unjumbled state.  If \verb'*jumbled' is provided as non-\verb'NULL',
-then it is returned as \verb'true' if the indices may appear out of order, or
-\verb'false' if they are known to be in ascending order.
-
-Matrices and vectors in bitmap or full format are never jumbled.
-
-If data is packed using
-\verb'GxB*_pack_*', the default is to trust the input data so that the
-pack can be done in $O(1)$ time.  However, if the data comes from an
-untrusted source, additional checks should be made during the pack.  This is
-indicated with a descriptor setting, and then passing the descriptor
-to the \verb'GxB' pack methods:
-
-    {\footnotesize
-    \begin{verbatim}
-    GrB_set (desc, GxB_SECURE_IMPORT, GxB_IMPORT) ; \end{verbatim}}
-
-The table below lists the methods presented in this section.
-
-\vspace{0.2in}
-{\footnotesize
-\begin{tabular}{lll}
-\hline
-method & purpose & Section \\
-\hline
-\verb'GxB_Vector_pack_CSC'       & pack a vector in CSC format & \ref{vector_pack_csc} \\
-\verb'GxB_Vector_unpack_CSC'     & unpack a vector in CSC format & \ref{vector_unpack_csc} \\
-\hline
-\verb'GxB_Vector_pack_Bitmap'    & pack a vector in bitmap format & \ref{vector_pack_bitmap} \\
-\verb'GxB_Vector_unpack_Bitmap'  & unpack a vector in bitmap format & \ref{vector_unpack_bitmap} \\
-\hline
-\verb'GxB_Vector_pack_Full'      & pack a vector in full format & \ref{vector_pack_full} \\
-\verb'GxB_Vector_unpack_Full'    & unpack a vector in full format & \ref{vector_unpack_full} \\
-\hline
-\hline
-\verb'GxB_Matrix_pack_CSR'        & pack a matrix in CSR form & \ref{matrix_pack_csr} \\
-\verb'GxB_Matrix_unpack_CSR'      & unpack a matrix in CSR form & \ref{matrix_unpack_csr} \\
-\hline
-\verb'GxB_Matrix_pack_CSC'        & pack a matrix in CSC form & \ref{matrix_pack_csc} \\
-\verb'GxB_Matrix_unpack_CSC'      & unpack a matrix in CSC form & \ref{matrix_unpack_csc} \\
-\hline
-\verb'GxB_Matrix_pack_HyperCSR'   & pack a matrix in HyperCSR form & \ref{matrix_pack_hypercsr} \\
-\verb'GxB_Matrix_unpack_HyperCSR' & unpack a matrix in HyperCSR form & \ref{matrix_unpack_hypercsr} \\
-\hline
-\verb'GxB_Matrix_pack_HyperCSC'   & pack a matrix in HyperCSC form & \ref{matrix_pack_hypercsc} \\
-\verb'GxB_Matrix_unpack_HyperCSC' & unpack a matrix in HyperCSC form & \ref{matrix_unpack_hypercsc} \\
-\hline
-\verb'GxB_unpack_HyperHash' & unpack a hyper-hash & \ref{unpack_hyperhash} \\
-\verb'GxB_pack_HyperHash'   & pack a hyper-hash & \ref{pack_hyperhash} \\
-\hline
-\verb'GxB_Matrix_pack_BitmapR'    & pack a matrix in BitmapR form & \ref{matrix_pack_bitmapr} \\
-\verb'GxB_Matrix_unpack_BitmapR'  & unpack a matrix in BitmapR form & \ref{matrix_unpack_bitmapr} \\
-\hline
-\verb'GxB_Matrix_pack_BitmapC'    & pack a matrix in BitmapC form & \ref{matrix_pack_bitmapc} \\
-\verb'GxB_Matrix_unpack_BitmapC'  & unpack a matrix in BitmapC form & \ref{matrix_unpack_bitmapc} \\
-\hline
-\verb'GxB_Matrix_pack_FullR'      & pack a matrix in FullR form & \ref{matrix_pack_fullr} \\
-\verb'GxB_Matrix_unpack_FullR'    & unpack a matrix in FullR form & \ref{matrix_unpack_fullr} \\
-\hline
-\verb'GxB_Matrix_pack_FullC'      & pack a matrix in FullC form & \ref{matrix_pack_fullc} \\
-\verb'GxB_Matrix_unpack_FullC'    & unpack a matrix in FullC form & \ref{matrix_unpack_fullc} \\
-\hline
-\end{tabular}
-}
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_pack\_CSC} pack a vector in CSC form}
-%-------------------------------------------------------------------------------
-\label{vector_pack_csc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
-(
-    GrB_Vector v,       // vector to create (type and length unchanged)
-    GrB_Index **vi,     // indices, vi_size >= nvals(v) * sizeof(int64_t)
-    void **vx,          // values, vx_size >= nvals(v) * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vi_size,  // size of vi in bytes
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in vector
-    bool jumbled,       // if true, indices may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\noindent
-\verb'GxB_Vector_pack_CSC' is analogous to \verb'GxB_Matrix_pack_CSC'.
-Refer to the description of \verb'GxB_Matrix_pack_CSC' for details
-(Section~\ref{matrix_pack_csc}).
-
-The vector \verb'v' must
-exist on input with the right type and length.  No typecasting is done.
-Its entries are
-the row indices given by \verb'vi', with the corresponding values in \verb'vx'.
-The two pointers \verb'vi' and \verb'vx' are returned as \verb'NULL', which
-denotes that they are no longer owned by the user application.  They have
-instead been moved into \verb'v'.  If \verb'jumbled'
-is false, the row indices in \verb'vi' must appear in sorted order.  No
-duplicates can appear.  These conditions are not checked, so results are
-undefined if they are not met exactly.  The user application can check the
-resulting vector \verb'v' with \verb'GxB_print', if desired, which will
-determine if these conditions hold.
-
-If not successful, \verb'v', \verb'vi' and
-\verb'vx' are not modified.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_unpack\_CSC:} unpack a vector in CSC form}
-%-------------------------------------------------------------------------------
-\label{vector_unpack_csc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
-(
-    GrB_Vector v,       // vector to unpack (type and length unchanged)
-    GrB_Index **vi,     // indices
-    void **vx,          // values
-    GrB_Index *vi_size, // size of vi in bytes
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    GrB_Index *nvals,   // # of entries in vector
-    bool *jumbled,      // if true, indices may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Vector_unpack_CSC' is analogous to \verb'GxB_Matrix_unpack_CSC'.
-Refer to the description of \verb'GxB_Matrix_unpack_CSC' for details
-(Section~\ref{matrix_unpack_csc}).
-
-Exporting a vector forces completion of any pending operations on the vector,
-except that indices may be unpacked out of order (\verb'jumbled' is \verb'true'
-if they may be out of order, \verb'false' if sorted in ascending order).  If
-\verb'jumbled' is \verb'NULL' on input, then the indices are always returned in
-sorted order.
-
-If successful, \verb'v' is returned with no entries, and its contents are
-returned to the user.
-A list of row indices of entries that were in
-\verb'v' is returned in \verb'vi', and the corresponding numerical values are
-returned in \verb'vx'.  If \verb'nvals' is zero, the \verb'vi' and \verb'vx'
-arrays are returned as \verb'NULL'; this is not an error condition.
-
-If not successful, \verb'v' is unmodified and \verb'vi' and \verb'vx' are
-not modified.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_pack\_Bitmap} pack a vector in bitmap form}
-%-------------------------------------------------------------------------------
-\label{vector_pack_bitmap}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_pack_Bitmap // pack a bitmap vector
-(
-    GrB_Vector v,       // vector to create (type and length unchanged)
-    int8_t **vb,        // bitmap, vb_size >= n
-    void **vx,          // values, vx_size >= n * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vb_size,  // size of vb in bytes
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\noindent
-\verb'GxB_Vector_pack_Bitmap' is analogous to
-\verb'GxB_Matrix_pack_BitmapC'.  Refer to the description of
-\verb'GxB_Matrix_pack_BitmapC' for details
-(Section~\ref{matrix_pack_bitmapc}).
-
-The vector \verb'v' must
-exist on input with the right type and length.  No typecasting is done.
-Its entries are determined by \verb'vb', where \verb'vb[i]=1' denotes that
-the entry $v(i)$ is present with value given by \verb'vx[i]', and
-\verb'vb[i]=0' denotes that the entry $v(i)$ is not present (\verb'vx[i]' is
-ignored in this case).
-
-The two pointers \verb'vb' and \verb'vx' are returned as \verb'NULL', which
-denotes that they are no longer owned by the user application.  They have
-instead been moved into the new \verb'GrB_Vector' \verb'v'.
-
-The \verb'vb' array must not hold any values other than 0 and 1.  The value
-\verb'nvals' must exactly match the number of 1s in the \verb'vb' array.  These
-conditions are not checked, so results are undefined if they are not met
-exactly.  The user application can check the resulting vector \verb'v' with
-\verb'GxB_print', if desired, which will determine if these conditions hold.
-
-If not successful, \verb'v', \verb'vb' and
-\verb'vx' are not modified.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_unpack\_Bitmap:} unpack a vector in bitmap form}
-%-------------------------------------------------------------------------------
-\label{vector_unpack_bitmap}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
-(
-    GrB_Vector v,       // vector to unpack (type and length unchanged)
-    int8_t **vb,        // bitmap
-    void **vx,          // values
-    GrB_Index *vb_size, // size of vb in bytes
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    GrB_Index *nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Vector_unpack_Bitmap' is analogous to
-\verb'GxB_Matrix_unpack_BitmapC'; see
-Section~\ref{matrix_unpack_bitmapc}.
-Exporting a vector forces completion of any pending operations on the vector.
-If successful, \verb'v' is returned with no entries, and its contents are
-returned to the user.
-The entries that were in \verb'v' are returned in
-\verb'vb', where \verb'vb[i]=1' means $v(i)$ is present with value
-\verb'vx[i]', and \verb'vb[i]=0' means $v(i)$ is not present (\verb'vx[i]' is
-undefined in this case).  The corresponding numerical values are returned in
-\verb'vx'.
-
-If not successful, \verb'v' is unmodified and \verb'vb' and \verb'vx' are not
-modified.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_pack\_Full} pack a vector in full form}
-%-------------------------------------------------------------------------------
-\label{vector_pack_full}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_pack_Full // pack a full vector
-(
-    GrB_Vector v,       // vector to create (type and length unchanged)
-    void **vx,          // values, vx_size >= nvals(v) * (type size)
-                        // or vx_size >= (type size), if iso is true
-    GrB_Index vx_size,  // size of vx in bytes
-    bool iso,           // if true, v is iso
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\noindent
-\verb'GxB_Vector_pack_Full' is analogous to \verb'GxB_Matrix_pack_FullC'.
-Refer to the description of \verb'GxB_Matrix_pack_BitmapC' for details
-(Section~\ref{matrix_pack_fullc}).
-The vector \verb'v' must exist on input with the right type and length.
-No typecasting is done.
-If successful, \verb'v' has
-all entries are present, and the value of $v(i)$ is given by \verb'vx[i]'.
-The pointer \verb'vx' is returned as \verb'NULL', which denotes that it is no
-longer owned by the user application.  It has instead been moved into the new
-\verb'GrB_Vector' \verb'v'.
-If not successful, \verb'v' and
-\verb'vx' are not modified.
-
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_unpack\_Full:} unpack a vector in full form}
-%-------------------------------------------------------------------------------
-\label{vector_unpack_full}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_unpack_Full   // unpack a full vector
-(
-    GrB_Vector v,       // vector to unpack (type and length unchanged)
-    void **vx,          // values
-    GrB_Index *vx_size, // size of vx in bytes
-    bool *iso,          // if true, v is iso
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Vector_unpack_Full' is analogous to \verb'GxB_Matrix_unpack_FullC'.
-Refer to the description of \verb'GxB_Matrix_unpack_FullC' for details
-(Section~\ref{matrix_unpack_fullc}).
-Exporting a vector forces completion of any pending operations on the vector.
-All entries in \verb'v' must be present.  In other words, prior to the unpack,
-\verb'GrB_Vector_nvals' for a vector of length \verb'n' must report that the
-vector contains \verb'n' entries; \verb'GrB_INVALID_VALUE' is returned if this
-condition does not hold.
-If successful, \verb'v' is returned with no entries, and its contents are
-returned to the user. The entries
-that were in \verb'v' are returned in the array \verb'vx', \verb'vb', where
-\verb'vb[i]=1' means $v(i)$ is present with value where the value of $v(i)$ is
-\verb'vx[i]'.
-If not successful, \verb'v' and \verb'vx' are not modified.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_CSR:} pack a CSR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_csr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_CSR      // pack a CSR matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (nrows+1)* sizeof(int64_t)
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A) * sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    bool jumbled,       // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_CSR' packs a matrix from 3 user arrays in CSR format.
-In the resulting \verb'GrB_Matrix A', the \verb'CSR' format is a sparse matrix
-with a format (\verb'GrB_STORAGE_ORIENTATION_HINT') of \verb'GrB_ROWMAJOR'.
-
-The \verb'GrB_Matrix A' must exist on input with the right type and
-dimensions.  No typecasting is done.
-
-This function populates the matrix
-\verb'A' with the three arrays \verb'Ap', \verb'Aj' and \verb'Ax', provided by
-the user, all of which must have been created with the ANSI C \verb'malloc',
-\verb'calloc', or \verb'realloc' functions (by default), or by the
-corresponding \verb'malloc_function', \verb'calloc_function', or
-\verb'realloc_function' provided to \verb'GxB_init'.  These arrays define the
-pattern and values of the new matrix \verb'A':
-
-\begin{itemize}
-\item \verb'GrB_Index Ap [nrows+1] ;'  The \verb'Ap' array is the row
-``pointer'' array.  It does not actual contain pointers.  More precisely, it is
-an integer array that defines where the column indices and values appear in
-\verb'Aj' and \verb'Ax', for each row.  The number of entries in row \verb'i'
-is given by the expression \verb'Ap [i+1] - Ap [i]'.
-
-\item \verb'GrB_Index Aj [nvals] ;'  The \verb'Aj' array defines the
-column indices of entries in each row.
-
-\item \verb'ctype Ax [nvals] ;'  The \verb'Ax' array defines the values of
-entries in each row.  It is passed in as a \verb'(void *)' pointer, but it must
-point to an array of size \verb'nvals' values, each of size
-\verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that corresponds
-to the \verb'GrB_Type type' parameter.  That is, if \verb'type' is
-\verb'GrB_INT32', then \verb'ctype' is \verb'int32_t'.  User types
-may be used, just the same as built-in types.
-\end{itemize}
-
-The content of the three arrays \verb'Ap' \verb'Aj', and \verb'Ax' is very
-specific.  This content is not checked, since this function takes only
-$O(1)$ time.  Results are undefined if the following specification is not
-followed exactly.
-
-The column indices of entries in the ith row of the matrix are held in
-\verb'Aj [Ap [i] ... Ap[i+1]]', and the corresponding values are held in the
-same positions in \verb'Ax'.  Column indices must be in the range 0 to
-\verb'ncols'-1.  If \verb'jumbled' is \verb'false', column indices must appear
-in ascending order within each row.  If \verb'jumbled' is \verb'true', column
-indices may appear in any order within each row.  No duplicate column indices
-may appear in any row.  \verb'Ap [0]' must equal zero, and \verb'Ap [nrows]'
-must equal nvals.  The \verb'Ap' array must be of size \verb'nrows'+1 (or
-larger), and the \verb'Aj' and \verb'Ax' arrays must have size at least
-\verb'nvals'.
-
-If \verb'nvals' is zero, then the content of the \verb'Aj' and \verb'Ax' arrays
-is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
-are still freed and returned as \verb'NULL', if the method is successful).
-
-An example of the CSR format is shown below.  Consider the following
-matrix with 10 nonzero entries, and suppose the zeros are not stored.
-
-    \begin{equation}
-    \label{eqn:Aexample}
-    A = \left[
-    \begin{array}{cccc}
-    4.5 &   0 & 3.2 &   0 \\
-    3.1 & 2.9 &  0  & 0.9 \\
-     0  & 1.7 & 3.0 &   0 \\
-    3.5 & 0.4 &  0  & 1.0 \\
-    \end{array}
-    \right]
-    \end{equation}
-
-The \verb'Ap' array has length 5, since the matrix is 4-by-4.  The first entry
-must always zero, and \verb'Ap [5] = 10' is the number of entries.
-The content of the arrays is shown below:
-
-{\footnotesize
-\begin{verbatim}
-    int64_t Ap [ ] = { 0,        2,             5,        7,            10 } ;
-    int64_t Aj [ ] = { 0,   2,   0,   1,   3,   1,   2,   0,   1,   3   } ;
-    double  Ax [ ] = { 4.5, 3.2, 3.1, 2.9, 0.9, 1.7, 3.0, 3.5, 0.4, 1.0 } ; \end{verbatim} }
-
-Spaces have been added to the \verb'Ap' array, just for illustration.  Row zero
-is in \verb'Aj [0..1]' (column indices) and \verb'Ax [0..1]' (values), starting
-at \verb'Ap [0] = 0' and ending at \verb'Ap [0+1]-1 = 1'.  The list of column
-indices of row one is at \verb'Aj [2..4]' and row two is in \verb'Aj [5..6]'.
-The last row (three) appears \verb'Aj [7..9]', because \verb'Ap [3] = 7' and
-\verb'Ap [4]-1 = 10-1 = 9'.  The corresponding numerical values appear in the
-same positions in \verb'Ax'.
-
-To iterate over the rows and entries of this matrix, the following code can be
-used
-(assuming it has type \verb'GrB_FP64'):
-
-    {\footnotesize
-    \begin{verbatim}
-    int64_t nvals = Ap [nrows] ;
-    for (int64_t i = 0 ; i < nrows ; i++)
-    {
-        // get A(i,:)
-        for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
-        {
-            // get A(i,j)
-            int64_t  j = Aj [p] ;           // column index
-            double aij = Ax [iso ? 0 : p] ;   // numerical value
-        }
-    } \end{verbatim}}
-
-If successful, the three pointers \verb'Ap', \verb'Aj',
-and \verb'Ax' are set to \verb'NULL' on output.  This denotes to the user
-application that it is no longer responsible for freeing these arrays.
-Internally, GraphBLAS has moved these arrays into its internal data structure.
-They will eventually be freed no later than when the user does
-\verb'GrB_free(&A)', but they may be freed or resized later, if the matrix
-changes.  If an unpack is performed, the freeing of these three arrays again
-becomes the responsibility of the user application.
-
-The \verb'GxB_Matrix_pack_CSR' function will rarely fail, since it allocates
-just $O(1)$ space.  If it does fail, it returns \verb'GrB_OUT_OF_MEMORY',
-and it leaves the three user arrays unmodified.  They are still owned by
-the user application, which is eventually responsible for freeing them with
-\verb'free(Ap)', etc.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_CSR:} unpack a CSR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_csr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Aj,     // column indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    bool *jumbled,      // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_CSR' unpacks a matrix in CSR form.
-
-If successful, the \verb'GrB_Matrix A' is returned with no entries.
-The CSR format is in the three arrays
-\verb'Ap', \verb'Aj', and \verb'Ax'.  If the matrix has no entries, the
-\verb'Aj' and \verb'Ax' arrays may be returned as \verb'NULL'; this is not an
-error, and \verb'GxB_Matrix_pack_CSR' also allows these two arrays to be
-\verb'NULL' on input when the matrix has no entries.  After a successful
-unpack, the user application is responsible for freeing these three arrays via
-\verb'free' (or the \verb'free' function passed to \verb'GxB_init').  The CSR
-format is described in Section~\ref{matrix_unpack_csr}.
-
-If \verb'jumbled' is returned as \verb'false', column indices will appear in
-ascending order within each row.  If \verb'jumbled' is returned as \verb'true',
-column indices may appear in any order within each row.  If \verb'jumbled' is
-passed in as \verb'NULL', then column indices will be returned in ascending
-order in each row.  No duplicate column indices will appear in any row.
-\verb'Ap [0]' is zero, and \verb'Ap [nrows]' is equal to the number of entries
-in the matrix (\verb'nvals').  The \verb'Ap' array will be of size
-\verb'nrows'+1 (or larger), and the \verb'Aj' and \verb'Ax' arrays will have
-size at least \verb'nvals'.
-
-This method takes $O(1)$ time if the matrix is already in CSR format
-internally.  Otherwise, the matrix is converted to CSR format and then
-unpacked.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_CSC:} pack a CSC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_csc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_CSC      // pack a CSC matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (ncols+1)*sizeof(int64_t)
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    bool jumbled,       // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_CSC' packs a matrix from 3 user arrays in CSC format.
-The \verb'GrB_Matrix A' must exist on input with the right type and dimensions.
-No typecasting is done.
-The arguments are identical to
-\verb'GxB_Matrix_pack_CSR', except for how the 3 user arrays are
-interpreted.  The column ``pointer'' array has size \verb'ncols+1'.  The row
-indices of the columns are in \verb'Ai', and if \verb'jumbled' is false,
-they must appear in ascending order in
-each column.  The corresponding numerical values are held in \verb'Ax'.  The
-row indices of column \verb'j' are held in \verb'Ai [Ap [j]...Ap [j+1]-1]',
-and the corresponding numerical values are in the same locations in \verb'Ax'.
-
-The same matrix from Equation~\ref{eqn:Aexample}in
-the last section (repeated here):
-
-    \begin{equation}
-    A = \left[
-    \begin{array}{cccc}
-    4.5 &   0 & 3.2 &   0 \\
-    3.1 & 2.9 &  0  & 0.9 \\
-     0  & 1.7 & 3.0 &   0 \\
-    3.5 & 0.4 &  0  & 1.0 \\
-    \end{array}
-    \right]
-    \end{equation}
-
-is held in CSC form as follows:
-
-{\footnotesize
-\begin{verbatim}
-    int64_t Ap [ ] = { 0,             3,             6,        8,       10 } ;
-    int64_t Ai [ ] = { 0,   1,   3,   1,   2,   3,   0,   2,   1,   3   } ;
-    double  Ax [ ] = { 4.5, 3.1, 3.5, 2.9, 1.7, 0.4, 3.2, 3.0, 0.9, 1.0 } ; \end{verbatim} }
-
-That is, the row indices of column 1 (the second column) are in
-\verb'Ai [3..5]', and the values in the same place in \verb'Ax',
-since \verb'Ap [1] = 3' and \verb'Ap [2]-1 = 5'.
-
-To iterate over the columns and entries of this matrix, the following code can
-be used
-(assuming it has type \verb'GrB_FP64'):
-
-    {\footnotesize
-    \begin{verbatim}
-    int64_t nvals = Ap [ncols] ;
-    for (int64_t j = 0 ; j < ncols ; j++)
-    {
-        // get A(:,j)
-        for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
-        {
-            // get A(i,j)
-            int64_t  i = Ai [p] ;             // row index
-            double aij = Ax [iso ? 0 : p] ;   // numerical value
-        }
-    } \end{verbatim}}
-
-The method is identical to \verb'GxB_Matrix_pack_CSR'; just the format is
-transposed.
-
-If \verb'Ap [ncols]' is zero, then the content of the \verb'Ai' and \verb'Ax' arrays
-is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
-are still freed and returned as \verb'NULL', if the method is successful).
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_CSC:} unpack a CSC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_csc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ai,     // row indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_CSC' unpacks a matrix in CSC form.
-
-If successful, the \verb'GrB_Matrix A' is returned with no entries.
-The CSC format is in the three arrays
-\verb'Ap', \verb'Ai', and \verb'Ax'.  If the matrix has no entries, \verb'Ai'
-and \verb'Ax' arrays are returned as \verb'NULL'; this is not an error, and
-\verb'GxB_Matrix_pack_CSC' also allows these two arrays to be \verb'NULL' on
-input when the matrix has no entries.  After a successful unpack, the user
-application is responsible for freeing these three arrays via \verb'free' (or
-the \verb'free' function passed to \verb'GxB_init').  The CSC format is
-described in Section~\ref{matrix_unpack_csc}.
-
-This method takes $O(1)$ time if the matrix is already in CSC format
-internally.  Otherwise, the matrix is converted to CSC format and then
-unpacked.
-
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_HyperCSR:} pack a HyperCSR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_hypercsr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_HyperCSR      // pack a hypersparse CSR matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers", Ap_size >= (plen+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // row indices, Ah_size >= plen*sizeof(int64_t)
-                        // where plen = 1 if nrows = 1, or nvec otherwise.
-    GrB_Index **Aj,     // column indices, Aj_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A) * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Aj_size,  // size of Aj in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of rows that appear in Ah
-    bool jumbled,       // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_HyperCSR' packs a matrix in hypersparse CSR format.
-The hypersparse HyperCSR format is identical to the CSR format, except that the
-\verb'Ap' array itself becomes sparse, if the matrix has rows that are
-completely empty.  An array \verb'Ah' of size \verb'nvec' provides a list of
-rows that appear in the data structure.  For example, consider
-Equation~\ref{eqn:Ahyper}, which is a sparser version of the matrix in
-Equation~\ref{eqn:Aexample}.  Row 2 and column 1 of this matrix are all zero.
-
-    \begin{equation}
-    \label{eqn:Ahyper}
-    A = \left[
-    \begin{array}{cccc}
-    4.5 &   0 & 3.2 &   0 \\
-    3.1 &   0 &  0  & 0.9 \\
-     0  &   0 &  0  &   0 \\
-    3.5 &   0 &  0  & 1.0 \\
-    \end{array}
-    \right]
-    \end{equation}
-
-The conventional CSR format would appear as follows.  Since the third row (row
-2) is all zero, accessing \verb'Ai [Ap [2] ... Ap [3]-1]' gives an empty set
-(\verb'[2..1]'), and the number of entries in this row is
-\verb'Ap [i+1] - Ap [i]' \verb'= Ap [3] - Ap [2] = 0'.
-
-{\footnotesize
-\begin{verbatim}
-    int64_t Ap [ ] = { 0,        2,2,      4,       5 } ;
-    int64_t Aj [ ] = { 0,   2,   0,   3,   0    3   }
-    double  Ax [ ] = { 4.5, 3.2, 3.1, 0.9, 3.5, 1.0 } ; \end{verbatim} }
-
-A hypersparse CSR format for this same matrix would discard
-these duplicate integers in \verb'Ap'.  Doing so requires
-another array, \verb'Ah', that keeps track of the rows that appear
-in the data structure.
-
-{\footnotesize
-\begin{verbatim}
-    int64_t nvec = 3 ;
-    int64_t Ah [ ] = { 0,        1,        3        } ;
-    int64_t Ap [ ] = { 0,        2,        4,       5 } ;
-    int64_t Aj [ ] = { 0,   2,   0,   3,   0    3   }
-    double  Ax [ ] = { 4.5, 3.2, 3.1, 0.9, 3.5, 1.0 } ; \end{verbatim} }
-
-Note that the \verb'Aj' and \verb'Ax' arrays are the same in the CSR and
-HyperCSR formats.  If \verb'jumbled' is false, the row indices in \verb'Ah'
-must appear in ascending order, and no duplicates can appear.  To iterate over
-this data structure (assuming it has type \verb'GrB_FP64'):
-
-    {\footnotesize
-    \begin{verbatim}
-    int64_t nvals = Ap [nvec] ;
-    for (int64_t k = 0 ; k < nvec ; k++)
-    {
-        int64_t i = Ah [k] ;                // row index
-        // get A(i,:)
-        for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
-        {
-            // get A(i,j)
-            int64_t  j = Aj [p] ;             // column index
-            double aij = Ax [iso ? 0 : p] ;   // numerical value
-        }
-    } \end{verbatim}}
-
-\vspace{-0.05in}
-This is more complex than the CSR format, but it requires at most
-$O(e)$ space, where $A$ is $m$-by-$n$ with $e$ = \verb'nvals' entries.  The
-CSR format requires $O(m+e)$ space.  If $e << m$, then the size $m+1$
-of \verb'Ap' can dominate the memory required.  In the hypersparse form,
-\verb'Ap' takes on size \verb'nvec+1', and \verb'Ah' has size \verb'nvec',
-where \verb'nvec' is the number of rows that appear in the data structure.
-The CSR format can be viewed as a dense array (of size \verb'nrows')
-of sparse row vectors.   By contrast, the hypersparse CSR format is a sparse
-array (of size \verb'nvec') of sparse row vectors.
-
-The pack takes $O(1)$ time.  If successful, the four arrays \verb'Ah',
-\verb'Ap', \verb'Aj', and \verb'Ax' are returned as \verb'NULL', and the
-hypersparse \verb'GrB_Matrix A' is modified to contain the entries
-they describe.
-
-If the matrix has no entries, then the content of the \verb'Aj' and \verb'Ax' arrays
-is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
-are still freed and returned as \verb'NULL', if the method is successful).
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_HyperCSR:} unpack a HyperCSR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_hypercsr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // row "pointers"
-    GrB_Index **Ah,     // row indices
-    GrB_Index **Aj,     // column indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Aj_size, // size of Aj in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of rows that appear in Ah
-    bool *jumbled,      // if true, indices in each row may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_HyperCSR' unpacks a matrix in HyperCSR format.
-
-If successful, the \verb'GrB_Matrix A' is returned with no entries.
-The number of non-empty rows is
-\verb'nvec'.  The hypersparse CSR format is in the four arrays \verb'Ah',
-\verb'Ap', \verb'Aj', and \verb'Ax'.  If the matrix has no entries, the
-\verb'Aj' and \verb'Ax' arrays are returned as \verb'NULL'; this is not an
-error.  After a successful unpack, the user application is responsible for
-freeing these three arrays via \verb'free' (or the \verb'free' function passed
-to \verb'GxB_init').  The hypersparse CSR format is described in
-Section~\ref{matrix_pack_hypercsr}.
-
-This method takes $O(1)$ time if the matrix is already in HyperCSR format
-internally.  Otherwise, the matrix is converted to HyperCSR format and then
-unpacked.
-
-In v7.3.0 and later, a hypersparse matrix \verb'A' also may include a hash
-table for \verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It
-allows for fast lookups of entries in \verb'Ah'.  The hyper-hash is not
-exported by this method.  Instead, it is discarded.  Use
-\verb'GxB_unpack_HyperHash' (Section~\ref{unpack_hyperhash}) to preserve it,
-prior to calling this method.  If the matrix is re-imported, and the hyper-hash
-is not preserved, it is recomputed from \verb'Ah' when needed.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_HyperCSC:} pack a HyperCSC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_hypercsc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // col "pointers", Ap_size >= (plen+1)*sizeof(int64_t)
-    GrB_Index **Ah,     // column indices, Ah_size >= plen*sizeof(int64_t)
-                        // where plen = 1 if ncols = 1, or nvec otherwise.
-    GrB_Index **Ai,     // row indices, Ai_size >= nvals(A)*sizeof(int64_t)
-    void **Ax,          // values, Ax_size >= nvals(A)*(type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ap_size,  // size of Ap in bytes
-    GrB_Index Ah_size,  // size of Ah in bytes
-    GrB_Index Ai_size,  // size of Ai in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvec,     // number of columns that appear in Ah
-    bool jumbled,       // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_HyperCSC' packs a matrix in hypersparse CSC format.
-It is identical to \verb'GxB_Matrix_pack_HyperCSR', except the data
-structure defined by the four arrays \verb'Ah', \verb'Ap', \verb'Ai', and
-\verb'Ax' holds the matrix as a sparse array of \verb'nvec' sparse column
-vectors.  The following code iterates over the matrix,
-assuming it has type \verb'GrB_FP64':
-
-    \vspace{-0.10in}
-    {\footnotesize
-    \begin{verbatim}
-    int64_t nvals = Ap [nvec] ;
-    for (int64_t k = 0 ; k < nvec ; k++)
-    {
-        int64_t j = Ah [k] ;                // column index
-        // get A(:,j)
-        for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
-        {
-            // get A(i,j)
-            int64_t  i = Ai [p] ;             // row index
-            double aij = Ax [iso ? 0 : p] ;   // numerical value
-        }
-    } \end{verbatim}}
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_HyperCSC:} unpack a HyperCSC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_hypercsc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_HyperCSC  // unpack a hypersparse CSC matrix
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    GrB_Index **Ap,     // column "pointers"
-    GrB_Index **Ah,     // column indices
-    GrB_Index **Ai,     // row indices
-    void **Ax,          // values
-    GrB_Index *Ap_size, // size of Ap in bytes
-    GrB_Index *Ah_size, // size of Ah in bytes
-    GrB_Index *Ai_size, // size of Ai in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvec,    // number of columns that appear in Ah
-    bool *jumbled,      // if true, indices in each column may be unsorted
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_HyperCSC' unpacks a matrix in HyperCSC form.
-
-If successful, the \verb'GrB_Matrix A' is
-returned with no entries.
-The number of non-empty
-rows is in \verb'nvec'.  The hypersparse CSC format is in the four arrays
-\verb'Ah', \verb'Ap', \verb'Ai', and \verb'Ax'.  If the matrix has no entries,
-the \verb'Ai' and \verb'Ax' arrays are returned as \verb'NULL'; this is not an
-error.  After a successful unpack, the user application is responsible for
-freeing these three arrays via \verb'free' (or the \verb'free' function passed
-to \verb'GxB_init').  The hypersparse CSC format is described in
-Section~\ref{matrix_pack_hypercsc}.
-
-This method takes $O(1)$ time if the matrix is already in HyperCSC format
-internally.  Otherwise, the matrix is converted to HyperCSC format and then
-unpacked.
-
-In v7.3.0 and later, a hypersparse matrix \verb'A' also may include a hash
-table for \verb'Ah', called the {\em hyper-hash}, based on \cite{Green19}.  It
-allows for fast lookups of entries in \verb'Ah'.  The hyper-hash is not
-exported by this method.  Instead, it is discarded.  Use
-\verb'GxB_unpack_HyperHash' (Section~\ref{unpack_hyperhash}) to preserve it,
-prior to calling this method.  If the matrix is re-imported, and the hyper-hash
-is not preserved, it is recomputed from \verb'Ah' when needed.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_unpack\_HyperHash:} unpack the hypersparse hash}
-%-------------------------------------------------------------------------------
-\label{unpack_hyperhash}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
-(
-    GrB_Matrix A,                   // matrix to modify
-    GrB_Matrix *Y,                  // hyper_hash matrix to move from A
-    const GrB_Descriptor desc       // unused
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-
-SuiteSparse:GraphBLAS v7.3.0 adds a new internal component to the
-hypersparse matrix format: the {\em hyper-hash} \verb'GrB_Matrix' \verb'A->Y'.
-The matrix provides a fast lookup into the hyperlist \verb'Ah'.
-
-\verb'GxB_unpack_HyperHash' unpacks the hyper-hash from the hypersparse matrix
-\verb'A'.  Normally, this method is called immediately before calling one of
-the two methods \verb'GxB_Matrix_unpack_Hyper(CSR/CSC)'.  For example, to
-unpack then pack a hypersparse CSC matrix:
-
-    {\footnotesize
-    \begin{verbatim}
-    GrB_Matrix Y = NULL ;
-    // to unpack all of A:
-    GxB_unpack_HyperHash (A, &Y, desc) ;    // first unpack A->Y into Y
-    GxB_Matrix_unpack_HyperCSC (A,          // then unpack the rest of A
-        &Ap, &Ah, &Ai, &Ax, &Ap_size, &Ah_size, &Ai_size, &Ax_size,
-        &iso, &nvec, &jumbled, descriptor) ;
-    // use the unpacked contents of A here, but do not change Ah or nvec.
-    ...
-    // to pack the data back into A:
-    GxB_Matrix_pack_HyperCSC (A, ...) ;     // pack most of A, except A->Y
-    GxB_pack_HyperHash (A, &Y, desc) ;      // then pack A->Y \end{verbatim}}
-
-The same process is used with \verb'GxB_Matrix_unpack_HyperCSR'.
-
-If \verb'A' is not hypersparse on input to \verb'GxB_unpack_HyperHash', or if
-\verb'A' is hypersparse but does yet not have a hyper-hash and or does not need
-one, then \verb'Y' is returned as \verb'NULL'.  This is not an error condition,
-and \verb'GrB_SUCCESS' is returned.
-
-The hyper-hash of a hypersparse matrix \verb'A' is a matrix that provides quick
-access to the inverse of \verb'Ah'.  It is not always needed and may not be
-present.  It is left as pending work to be computed when needed.  To ensure
-that the hyper-hash is constructed for a hypersparse matrix \verb'A' (if it
-needs one), use \verb'GrB_Matrix_wait (A, GrB_MATERIALIZE)'
-
-If \verb'Y' is moved from \verb'A' and returned as non-\verb'NULL' to the
-caller, then it is the responsibility of the user application to free it, or to
-re-pack it back into \verb'A' via \verb'GxB_pack_HyperHash', as shown in the
-example above.
-
-If this method is called to remove the hyper-hash \verb'Y' from the hypersparse
-matrix \verb'A', and then \verb'GrB_Matrix_wait (A, GrB_MATERIALZE)' is called,
-a new hyper-hash matrix is constructed for \verb'A' (if it needs one).
-
-Not all hypersparse matrices need the hyper-hash.  The hyper-hash is built
-only if the matrix has more than 1024 non-empty rows (if held by row) or
-columns (if held by column).  This threshold of 1024 can be revised with
-\verb'GrB_set' as a global setting, \verb'GxB_HYPER_HASH'
-(See Section \ref{get_set_global}).
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_pack\_HyperHash:} pack the hypersparse hash}
-%-------------------------------------------------------------------------------
-\label{pack_hyperhash}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_pack_HyperHash         // move Y into A->Y
-(
-    GrB_Matrix A,                   // matrix to modify
-    GrB_Matrix *Y,                  // hyper_hash matrix to pack into A
-    const GrB_Descriptor desc       // unused
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_pack_HyperHash' assigns the input \verb'Y' matrix as the \verb'A->Y'
-hyper-hash of the hypersparse matrix \verb'A'.  Normally, this method is called
-immediately after calling one of the two methods
-\verb'GxB_Matrix_pack_Hyper(CSR/CSC)'.
-
-If \verb'A' is not hypersparse on input to \verb'GxB_pack_HyperHash', or if
-\verb'A' already has a hyper-hash matrix, or if \verb'Y' is \verb'NULL' on
-input, then nothing happens and \verb'Y' is unchanged.  This is not an error
-condition and this method returns \verb'GrB_SUCCESS'.  In this case, if
-\verb'Y' is non-\verb'NULL' after calling this method, it owned by the user
-application and freeing it is the responsibility of the user application.
-
-If \verb'Y' is moved into \verb'A' as its hyper-hash, then the caller's
-\verb'Y' is set to \verb'NULL' to indicate that it has been moved into
-\verb'A'.  It is no longer owned by the caller, but is instead becomes an
-opaque component of the \verb'A' matrix.  It will be freed by
-SuiteSparse:GraphBLAS if \verb'A' is modified or freed.
-
-Results are undefined if the input \verb'Y' was not created by
-\verb'GxB_unpack_HyperHash' (see the example in Section \ref{unpack_hyperhash})
-or if the \verb'Ah' contents or \verb'nvec' of the matrix \verb'A' are modified
-after they were unpacked by \verb'GxB_Matrix_unpack_Hyper(CSR/CSC)'.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_BitmapR:} pack a BitmapR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_bitmapr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_BitmapR  // pack a bitmap matrix, held by row
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_BitmapR' packs a matrix from 2 user arrays in BitmapR
-format.
-The matrix must exist on input with the right type and dimensions.  No typecasting is done.
-
-The \verb'GrB_Matrix' \verb'A' is populated from the arrays \verb'Ab' and
-\verb'Ax', each of which are size \verb'nrows*ncols'.  Both arrays must have
-been created with the ANSI C \verb'malloc', \verb'calloc', or \verb'realloc'
-functions (by default), or by the corresponding \verb'malloc_function',
-\verb'calloc_function', or \verb'realloc_function' provided to \verb'GxB_init'.
-These arrays define the pattern and values of the new matrix \verb'A':
-
-\begin{itemize}
-\item \verb'int8_t Ab [nrows*ncols] ;'  The \verb'Ab' array defines which
-entries of \verb'A' are present.  If \verb'Ab[i*ncols+j]=1', then the entry
-$A(i,j)$ is present, with value \verb'Ax[i*ncols+j]'.  If
-\verb'Ab[i*ncols+j]=0', then the entry $A(i,j)$ is not present.  The \verb'Ab'
-array must contain only 0s and 1s.  The \verb'nvals' input must exactly match
-the number of 1s in the \verb'Ab' array.
-
-\item \verb'ctype Ax [nrows*ncols] ;'  The \verb'Ax' array defines the values
-of entries in the matrix.  It is passed in as a \verb'(void *)' pointer, but it
-must point to an array of size \verb'nrows*ncols' values, each of size
-\verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that
-corresponds to the \verb'GrB_Type type' parameter.  That is, if \verb'type' is
-\verb'GrB_INT32', then \verb'ctype' is \verb'int32_t'.  User types may be used,
-just the same as built-in types.
-If \verb'Ab[p]' is zero, the value of \verb'Ax[p]' is ignored.
-
-\end{itemize}
-
-To iterate over the rows and entries of this matrix, the following code can be
-used (assuming it has type \verb'GrB_FP64'):
-
-    {\footnotesize
-    \begin{verbatim}
-    for (int64_t i = 0 ; i < nrows ; i++)
-    {
-        // get A(i,:)
-        for (int64_t j = 0 ; j < ncols ; j++)
-        {
-            // get A(i,j)
-            int64_t p = i*ncols + j ;
-            if (Ab [p])
-            {
-                double aij = Ax [iso ? 0 : p] ;   // numerical value
-            }
-        }
-    } \end{verbatim}}
-
-On successful pack of \verb'A', the two pointers \verb'Ab', \verb'Ax',
-are set to \verb'NULL' on output.  This denotes to the user
-application that it is no longer responsible for freeing these arrays.
-Internally, GraphBLAS has moved these arrays into its internal data structure.
-They will eventually be freed no later than when the user does
-\verb'GrB_free(&A)', but they may be freed or resized later, if the matrix
-changes.  If an unpack is performed, the freeing of these three arrays again
-becomes the responsibility of the user application.
-
-The \verb'GxB_Matrix_pack_BitmapR' function will rarely fail, since it allocates
-just $O(1)$ space.  If it does fail, it returns \verb'GrB_OUT_OF_MEMORY',
-and it leaves the two user arrays unmodified.  They are still owned by
-the user application, which is eventually responsible for freeing them with
-\verb'free(Ab)', etc.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_BitmapR:} unpack a BitmapR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_bitmapr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_BitmapR  // unpack a bitmap matrix, by row
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap
-    void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_BitmapR' unpacks a matrix in BitmapR form.
-If successful, the \verb'GrB_Matrix A' is returned with no entries.
-The number of entries is in \verb'nvals'.
-The BitmapR format is two arrays \verb'Ab', and \verb'Ax'.  After an
-unpack, the user application is responsible for freeing these
-arrays via \verb'free' (or the \verb'free' function passed to \verb'GxB_init').
-The BitmapR format is described in Section~\ref{matrix_pack_bitmapr}.
-If \verb'Ab[p]' is zero, the value of \verb'Ax[p]' is undefined.
-This method takes $O(1)$ time if the matrix is already in BitmapR format.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_BitmapC:} pack a BitmapC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_bitmapc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_BitmapC  // pack a bitmap matrix, held by column
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap, Ab_size >= nrows*ncols
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ab_size,  // size of Ab in bytes
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    GrB_Index nvals,    // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_BitmapC' packs a matrix from 2 user arrays in BitmapC
-format.  It is identical to \verb'GxB_Matrix_pack_BitmapR', except that the
-entry $A(i,j)$ is held in \verb'Ab[i+j*nrows]' and \verb'Ax[i+j*nrows]',
-in column-major format.
-
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_BitmapC:} unpack a BitmapC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_bitmapc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_BitmapC  // unpack a bitmap matrix, by col
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    int8_t **Ab,        // bitmap
-    void **Ax,          // values
-    GrB_Index *Ab_size, // size of Ab in bytes
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    GrB_Index *nvals,   // # of entries in bitmap
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_BitmapC' unpacks a matrix in BitmapC form.
-It is identical to \verb'GxB_Matrix_unpack_BitmapR', except that the
-entry $A(i,j)$ is held in \verb'Ab[i+j*nrows]' and \verb'Ax[i+j*nrows]',
-in column-major format.
-
-\newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_FullR:} pack a FullR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_fullr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_FullR  // pack a full matrix, held by row
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_FullR' packs a matrix from a user array in FullR format.
-For the \verb'FullR' format, t value of $A(i,j)$ is \verb'Ax[i*ncols+j]'.  To
-iterate over the rows and entries of this matrix, the following code can be
-used (assuming it has type \verb'GrB_FP64').  If \verb'A' is both full and iso,
-it takes $O(1)$ memory, regardless of \verb'nrows' and \verb'ncols'.
-
-    \vspace{-0.1in}
-    {\footnotesize
-    \begin{verbatim}
-    for (int64_t i = 0 ; i < nrows ; i++)
-    {
-        for (int64_t j = 0 ; j < ncols ; j++)
-        {
-            int64_t p = i*ncols + j ;
-            double aij = Ax [iso ? 0 : p] ;   // numerical value of A(i,j)
-        }
-    } \end{verbatim}}
-
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_FullR:} unpack a FullR matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_fullr}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_FullR' unpacks a matrix in FullR form.  It is identical
-to \verb'GxB_Matrix_unpack_BitmapR', except that all entries must be present.
-Prior to unpack, \verb'GrB_Matrix_nvals (&nvals, A)' must return
-\verb'nvals' equal to \verb'nrows*ncols'.  Otherwise, if the \verb'A' is
-unpacked with \newline \verb'GxB_Matrix_unpack_FullR', an error is returned
-(\verb'GrB_INVALID_VALUE') and the matrix is not unpacked.
-
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_pack\_FullC:} pack a FullC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_pack_fullc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_pack_FullC  // pack a full matrix, held by column
-(
-    GrB_Matrix A,       // matrix to create (type, nrows, ncols unchanged)
-    void **Ax,          // values, Ax_size >= nrows*ncols * (type size)
-                        // or Ax_size >= (type size), if iso is true
-    GrB_Index Ax_size,  // size of Ax in bytes
-    bool iso,           // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_pack_FullC' packs a matrix from a user arrays in FullC
-format.  For the \verb'FullC' format,
-the value of $A(i,j)$ is \verb'Ax[i+j*nrows]'.
-To iterate over the rows and entries of this matrix, the following code can be
-used (assuming it has type \verb'GrB_FP64').
-If \verb'A' is both full and iso, it takes $O(1)$ memory,
-regardless of \verb'nrows' and \verb'ncols'.
-
-    \vspace{-0.1in}
-    {\footnotesize
-    \begin{verbatim}
-    for (int64_t i = 0 ; i < nrows ; i++)
-    {
-        for (int64_t j = 0 ; j < ncols ; j++)
-        {
-            int64_t p = i + j*nrows ;
-            double aij = Ax [iso ? 0 : p] ;   // numerical value of A(i,j)
-        }
-    } \end{verbatim}}
-
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_unpack\_FullC:} unpack a FullC matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_unpack_fullc}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_unpack_FullC  // unpack a full matrix, by column
-(
-    GrB_Matrix A,       // matrix to unpack (type, nrows, ncols unchanged)
-    void **Ax,          // values
-    GrB_Index *Ax_size, // size of Ax in bytes
-    bool *iso,          // if true, A is iso
-    const GrB_Descriptor desc
-) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb'GxB_Matrix_unpack_FullC' unpacks a matrix in FullC form.  It is identical
-to \verb'GxB_Matrix_unpack_BitmapC', except that all entries must be present.
-That is, prior to unpack, \verb'GrB_Matrix_nvals (&nvals, A)' must return
-\verb'nvals' equal to \verb'nrows*ncols'.  Otherwise, if the \verb'A' is
-unpacked with \newline \verb'GxB_Matrix_unpack_FullC', an error is returned
-(\verb'GrB_INVALID_VALUE') and the matrix is not unpacked.
-
-\newpage
-%===============================================================================
 \subsection{GraphBLAS import/export: using copy semantics} %====================
 %===============================================================================
 \label{GrB_import_export}
 
 The v2.0 C API includes import/export methods for matrices (not vectors) using
-a different strategy as compared to the \verb'GxB*pack/unpack*' methods.  The
-\verb'GxB' methods are based on {\em move semantics}, in which ownership of
-arrays is passed between SuiteSparse:GraphBLAS and the user application.  This
-allows the \verb'GxB*pack/unpack*' methods to work in $O(1)$ time, and require
-no additional memory, but it requires that GraphBLAS and the user application
-agree on which memory manager to use.  This is done via \verb'GxB_init'.  This
-allows GraphBLAS to \verb'malloc' an array that can be later \verb'free'd by
-the user application, and visa versa.
+a different strategy as compared to the \verb'GxB_Container' methods.  The
+\verb'GxB_Container' methods are based on {\em move semantics}, in which
+ownership of arrays is passed between SuiteSparse:GraphBLAS and the user
+application.  This allows the \verb'GxB_Container' methods to work in $O(1)$
+time, and require no additional memory, but it requires that GraphBLAS and the
+user application agree on which memory manager to use.  This is done via
+\verb'GxB_init'.  This allows GraphBLAS to \verb'malloc' an array that can be
+later \verb'free'd by the user application, and visa versa.
 
 The \verb'GrB' import/export methods take a different approach.  The data
 is always copied in and out between the opaque GraphBLAS matrix and the
@@ -7351,8 +5962,8 @@ The suffix \verb'TYPE' in the prototype above is one of \verb'BOOL',
 user-defined types.  The type of the \verb'Ax' array must match this type.  No
 typecasting is performed.
 
-Unlike the \verb'GxB'
-pack/unpack methods, memory is not handed off between the user application
+Unlike the \verb'GxB_Container'
+methods, memory is not handed off between the user application
 and GraphBLAS.   The three arrays \verb'Ap', \verb'Ai'.  and \verb'Ax' are not
 modified, and are still owned by the user application when the method finishes.
 
@@ -7618,7 +6229,6 @@ typedef enum
     GxB_AxB_METHOD = 1000, // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35   // control sort in GrB_mxm
     GxB_COMPRESSION = 36,   // select compression for serialize
-    GxB_IMPORT = 37,        // secure vs fast pack
 }
 GrB_Desc_Field ;
 
@@ -7638,8 +6248,6 @@ typedef enum
     GxB_AxB_DOT       = 1003,   // dot product
     GxB_AxB_HASH      = 1004,   // hash-based saxpy method
     GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
-    // for GxB_IMPORT only:
-    GxB_SECURE_IMPORT = 502     // GxB*_pack* methods trust their input data
 }
 GrB_Desc_Value ;
 \end{verbatim} } \end{mdframed}
@@ -7798,16 +6406,6 @@ GrB_Desc_Value ;
     The default is ZSTD (level 1).  See Section~\ref{serialize_deserialize} for
     other options.
 
-\item \verb'GxB_IMPORT' informs the \verb'GxB' pack methods
-    that they can trust their input data, or not.  The default is to trust
-    the input, for faster packing.  If the data is being packed from an
-    untrusted source, then additional checks should be made, and the
-    following descriptor setting should be used:
-
-    {\footnotesize
-    \begin{verbatim}
-    GrB_set (desc, GxB_SECURE_IMPORT, GxB_IMPORT) ; \end{verbatim}}
-
 \end{itemize}
 
 The next sections describe the methods for a \verb'GrB_Descriptor':
@@ -7816,13 +6414,13 @@ The next sections describe the methods for a \verb'GrB_Descriptor':
 {\footnotesize
 \begin{tabular}{lll}
 \hline
-GraphBLAS function   & purpose                                      & Section \\
+GraphBLAS function          & purpose                              & Section \\
 \hline
-\verb'GrB_Descriptor_new'        & create a descriptor                  & \ref{descriptor_new} \\
-\verb'GrB_Descriptor_wait'       & wait for a descriptor                & \ref{descriptor_wait} \\
+\verb'GrB_Descriptor_new'   & create a descriptor                  & \ref{descriptor_new} \\
+\verb'GrB_Descriptor_wait'  & wait for a descriptor                & \ref{descriptor_wait} \\
 \verb'GrB_get'              & get a parameter from a descriptor    & \ref{get_set_descriptor}  \\
 \verb'GrB_set'              & set a parameter in a descriptor      & \ref{get_set_descriptor}  \\
-\verb'GrB_Descriptor_free'       & free a descriptor                    & \ref{descriptor_free} \\
+\verb'GrB_Descriptor_free'  & free a descriptor                    & \ref{descriptor_free} \\
 \hline
 \end{tabular}
 }
@@ -13546,7 +12144,7 @@ is iso.
 \verb'GrB_transpose' constructs an iso matrix if its input is iso.
 
 \item
-The \verb'GxB_import/export/pack/unpack' methods preserve the iso property
+The \verb'GxB_Container' methods preserve the iso property
 of their matrices/vectors.
 \end{itemize}
 
@@ -14809,13 +13407,57 @@ GraphBLAS folder.
 \item XX, 2025: version 10.0.0
 
     \begin{itemize}
+
     \item 32/64 bit matrices and vectors: the \verb'GrB_Matrix' and
         \verb'GrB_Vector' now exploit 32-bit integers when possible.  New
         methods added to pass 32-bit integer arrays to/from \verb'GrB_build',
-        \verb'GrB_extract', \verb'GrB_assign', and \verb'GxB_subassign'.  The
-        API is upward-compatible with 9.4.3, but only after recompilation,
-        since the non-opaque \verb'GxB_Iterator' object must change.  As a
-        result, the SO version must increase to 10.0.0.
+        \verb'extract', \verb'assign', \verb'subassign', and
+        \verb'extractTuples'. New object, the \verb'GxB_Container' added for
+        fast import/export of matrices/vectors with arbitrary integer content.
+
+    \item \verb'GrB_Field': this enum is strongly deprecated, and replaced with
+        \verb'typedef int GrB_Field'.  This is an upward-compatible change to
+        the API, and will allow the creation of a future mathematical field
+        object in GraphBLAS.  This type should not be used; use an int instead.
+        It will be replaced in a future version of GraphBLAS.
+
+    \item enum parameters: replaced all enum parameters with int, to simplify
+        future updates to enum parameters, including the \verb'GrB_Field'.
+
+    \item \verb'GxB_JIT_ERROR': added in 9.4.x, changed value to avoid conflict
+        with LAGraph error codes.
+
+    \item AppleClang compiler bug:  On the Mac, the
+        \verb'Source/mask/GB_masker.c' file
+        triggers a bug in AppleClang 16.0.0 with -O3 in (MacOS 14.6.1 (23G93),
+        Xcode 16.2, Apple clang version 16.0.0, clang-1600.0.26.6).  It also
+        fails in MacOS 15.2 (Target: arm64-apple-darwin23.6.0).  The bug is
+        triggered by these tests in LAGraph (v1.2 branch, unreleased, Jan 4,
+        2025):
+        \begin{verbatim}
+	 39 - LAGraphX_BF (SIGTRAP)
+	 40 - LAGraphX_Coarsen_Matching (Failed)
+	 41 - LAGraphX_FastGraphletTransform (SIGTRAP)
+	 49 - LAGraphX_PageRankGX (SIGTRAP)
+	 54 - LAGraphX_SquareClustering (SIGTRAP)
+	 61 - LAGraphX_msf (Failed)
+        \end{verbatim}
+        When using clang, optimization is turned off for this file.  This has
+        no impact on performance since \verb'GB_masker.c' is very simple,
+        consisting of a single sequence of calls to other methods.
+
+    \item pack/unpack: these are declared historical; they still work but use
+        64-bit integers only.  Use the new \verb'GxB_Container' methods
+        instead.
+
+    \item \verb'GxB_Matrix_type', \verb'GxB_Vector_type',
+        \verb'GxB_Scalar_type': no longer historical;
+        added back to the user guide.
+
+    \item Summary: the API is upward-compatible with 9.4.x, but only after
+        the user application is recompiled with GraphBLAS v10.0.0.
+        As a result, the SO version must increase from 9 to 10.
+
     \end{itemize}
 
 \item Dec 20, 2024: version 9.4.3
@@ -15394,8 +14036,7 @@ GraphBLAS folder.
         \item \verb'GrB_ONEB_T': binary operator, $f(x,y)=1$, the same as
             \verb'GxB_PAIR_T'.
         \end{packed_itemize}
-    \item \verb'GxB*import*' and \verb'GxB*export*': now historical; use
-        \verb'GxB*pack/unpack*'
+    \item \verb'GxB*import*' and \verb'GxB*export*': now historical.
     \item \verb'GxB_select': is now historical; use \verb'GrB_select' instead.
     \item \verb'GxB_IGNORE_DUP': special operator for build methods only; if dup
         is this operator, then duplicates are ignored (not an error)
@@ -15406,9 +14047,6 @@ GraphBLAS folder.
     \item \verb'GxB_Type_name': to query the name of a type
     \item added \verb'GxB_*type_name' methods
         to query the name of a type as a string.
-    \item \verb'GxB' methods that query an object return a \verb'GrB_type' such
-        as \verb'GxB_Matrix_type' are declared historical; will be kept but not
-        recommended (use \verb'GxB_*type_name' methods).
     \item \verb'GxB_Matrix_serialize/deserialize': with compression;
         optional descriptor.
     \item \verb'GxB_Matrix_sort', \verb'GxB_Vector_sort':

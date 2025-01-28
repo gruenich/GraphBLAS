@@ -273,7 +273,7 @@ void mexFunction
 
     GrB_Info info ;
     malloc_debug = GB_mx_get_global (true) ;
-    void *I = NULL, *J = NULL ;
+    uint64_t *I = NULL, *J = NULL ;
     uint64_t ni = 0, I_range [3] ;
     uint64_t nj = 0, J_range [3] ;
     uint64_t nx = 0, nvals = 0 ;

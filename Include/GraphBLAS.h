@@ -3013,6 +3013,12 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
     const GrB_Scalar s      // GrB_Scalar to query
 ) ;
 
+GrB_Info GxB_Scalar_type    // get the type of a GrB_Scalar
+(
+    GrB_Type *type,         // returns the type of the GrB_Scalar
+    const GrB_Scalar s      // GrB_Scalar to query
+) ;
+
 //------------------------------------------------------------------------------
 // GrB_Scalar_setElement
 //------------------------------------------------------------------------------
@@ -3114,6 +3120,12 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 GrB_Info GxB_Vector_iso     // return iso status of a vector
 (
     bool *iso,              // true if the vector is iso-valued
+    const GrB_Vector v      // vector to query
+) ;
+
+GrB_Info GxB_Vector_type    // get the type of a vector
+(
+    GrB_Type *type,         // returns the type of the vector
     const GrB_Vector v      // vector to query
 ) ;
 
@@ -3402,6 +3414,12 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 GrB_Info GxB_Matrix_iso     // return iso status of a matrix
 (
     bool *iso,              // true if the matrix is iso-valued
+    const GrB_Matrix A      // matrix to query
+) ;
+
+GrB_Info GxB_Matrix_type    // get the type of a matrix
+(
+    GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A      // matrix to query
 ) ;
 
@@ -7418,7 +7436,6 @@ GrB_Info GxB_Semiring_add (GrB_Monoid *, GrB_Semiring) ;
 GrB_Info GxB_Semiring_multiply (GrB_BinaryOp *, GrB_Semiring) ;
 
 // GxB_Scalar_* queries: use GrB_get instead
-GrB_Info GxB_Scalar_type (GrB_Type *, const GrB_Scalar) ;
 GrB_Info GxB_Scalar_type_name (char *, const GrB_Scalar) ;
 
 // GxB_Scalar_* methods: use GrB_Scalar_* instead (as-is)
@@ -7459,11 +7476,9 @@ GrB_Info GxB_Scalar_error (const char **, const GrB_Scalar) ;
 #endif
 
 // GxB_Vector_* queries: use GrB_get instead
-GrB_Info GxB_Vector_type (GrB_Type *, const GrB_Vector) ;
 GrB_Info GxB_Vector_type_name (char *, const GrB_Vector) ;
 
 // GxB_Matrix_* queries: use GrB_get instead
-GrB_Info GxB_Matrix_type (GrB_Type *, const GrB_Matrix) ;
 GrB_Info GxB_Matrix_type_name (char *, const GrB_Matrix) ;
 
 // GxB_*_Option_set/get: use GrB_get/set instead

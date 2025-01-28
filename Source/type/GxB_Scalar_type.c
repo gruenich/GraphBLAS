@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// NOTE: this function is historical.  Use GxB_Scalar_type_name instead.
-
 #include "GB.h"
 
 GrB_Info GxB_Scalar_type    // get the type of a GrB_Scalar

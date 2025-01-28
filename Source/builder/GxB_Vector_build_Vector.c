@@ -51,8 +51,8 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
 
     GB_MATRIX_WAIT (I_vector) ;
     GB_MATRIX_WAIT (X_vector) ;
-    int64_t nvals = GB_nnz (X_vector) ;
-    int64_t ivals = GB_nnz (I_vector) ;
+    int64_t nvals = GB_nnz ((GrB_Matrix) X_vector) ;
+    int64_t ivals = GB_nnz ((GrB_Matrix) I_vector) ;
     if (nvals != ivals)
     { 
         GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,X must have the "

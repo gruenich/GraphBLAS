@@ -55,9 +55,9 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     GB_MATRIX_WAIT (I_vector) ;
     GB_MATRIX_WAIT (J_vector) ;
     GB_MATRIX_WAIT (X_vector) ;
-    int64_t nvals = GB_nnz (X_vector) ;
-    int64_t ivals = GB_nnz (I_vector) ;
-    int64_t jvals = GB_nnz (J_vector) ;
+    int64_t nvals = GB_nnz ((GrB_Matrix) X_vector) ;
+    int64_t ivals = GB_nnz ((GrB_Matrix) I_vector) ;
+    int64_t jvals = GB_nnz ((GrB_Matrix) J_vector) ;
     if (nvals != ivals || nvals != jvals)
     { 
         GB_ERROR (GrB_INVALID_VALUE, "Input vectors I,J must have the "

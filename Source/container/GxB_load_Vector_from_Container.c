@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_container.h"
-#define GB_FREE_ALL GB_phybix_free (V) ;
+#define GB_FREE_ALL GB_phybix_free ((GrB_Matrix) V) ;
 
 GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
 (

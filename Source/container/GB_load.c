@@ -89,7 +89,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
 
         case GxB_BITMAP : 
 
-            GB_OK (GB_vector_unload (Container->b, &(A->b), &nheld,
+            GB_OK (GB_vector_unload (Container->b, (void **) &(A->b), &nheld,
                 &Ab_size, &Ab_type, &(A->b_shallow), Werk)) ;
             A->b_size = (size_t) Ab_size ;
             break ;

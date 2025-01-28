@@ -161,7 +161,7 @@ void mexFunction
                 /* ensure J is non-iso */                           \
                 if (nvals > 0)                                      \
                 {                                                   \
-                    uint32_t gunk [1] ;                             \
+                    uint64_t gunk [1] ;                             \
                     gunk [0] = 0 ;                                  \
                     GrB_Vector_assign_UINT32 (J_vector, NULL, NULL, \
                         1, gunk, 1, NULL) ;                         \

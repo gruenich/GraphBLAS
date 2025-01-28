@@ -61,7 +61,7 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
     // prepare the I, X vectors
     //--------------------------------------------------------------------------
 
-    uint64_t nvals = GB_nnz (V) ;
+    uint64_t nvals = GB_nnz ((GrB_Matrix) V) ;
     int64_t nrows = V->vlen ;
     bool I_is_32 = (nrows <= INT32_MAX) ;
     GrB_Type I_type = (I_is_32) ? GrB_UINT32 : GrB_UINT64 ;

@@ -49,7 +49,7 @@ GrB_Info GB_extractTuples_prep
     //--------------------------------------------------------------------------
 
     void *Vx = V->x_shallow ? NULL : V->x ;
-    uint64_t Vx_size = V->x_shallow ? 0 : V->x_size ;
+    size_t Vx_size = V->x_shallow ? 0 : V->x_size ;
     V->x = NULL ;
     GB_phybix_free ((GrB_Matrix) V) ;
 

@@ -46,10 +46,6 @@ void mexFunction
         OK (GrB_Global_set_INT32 (GrB_GLOBAL, false, GxB_BURBLE)) ;
     }
 
-//  OK (GrB_Matrix_nvals (&nvals, A)) ;
-//  OK (GxB_Matrix_type (&xtype, A)) ;
-//  uint64_t s = MAX (nvals, 1) ;
-
     //--------------------------------------------------------------------------
     // extract the tuples
     //--------------------------------------------------------------------------
@@ -57,7 +53,7 @@ void mexFunction
     void *X = NULL ;
     GrB_Type xtype = NULL ;
     bool read_only = false ;
-    size_t X_size = 0 ;
+    uint64_t X_size = 0 ;
     GrB_Vector X_vector = NULL ;
     OK (GrB_Vector_new (&X_vector, GrB_FP64, 0)) ;
     OK (GxB_Matrix_extractTuples_Vector (NULL, NULL, X_vector, A, NULL)) ;

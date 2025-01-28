@@ -209,7 +209,7 @@ GrB_Info GB_ijxvector
     }
 
     bool list_is_stride = (list_descriptor == GxB_IS_STRIDE) ;
-    int64_t ni = GB_nnz (List) ;
+    int64_t ni = GB_nnz ((GrB_Matrix) List) ;
     if (list_is_stride && (ni != 3 || is_build))
     { 
         // List must have exactly 3 items (lo,hi,stride) for GxB_IS_STRIDE

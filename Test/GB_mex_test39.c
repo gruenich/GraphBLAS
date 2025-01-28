@@ -19,8 +19,8 @@
     X = NULL ;                          \
     GxB_Container_free (&Container) ;   \
     GrB_Vector_free (&V) ;              \
-    GrB_Vector_free (&A) ;              \
-    GrB_Vector_free (&C) ;              \
+    GrB_Matrix_free (&A) ;              \
+    GrB_Matrix_free (&C) ;              \
 }
 
 void mexFunction
@@ -69,15 +69,15 @@ void mexFunction
     }
 
     int expected = GrB_INVALID_VALUE ;
-    ERR (GxB_Vector_load (V, &X, n, 2, GrB_UINT32, false, NULL)) ;
+    ERR (GxB_Vector_load (V, (void **) &X, n, 2, GrB_UINT32, false, NULL)) ;
     CHECK (X == X2) ;           // X is still owned by the user application
 
-    OK (GxB_Vector_load (V, &X, n, X_size, GrB_UINT32, false, NULL)) ;
+    OK (GxB_Vector_load (V, (void **) &X, n, X_size, GrB_UINT32, false, NULL)) ;
     OK (GxB_print (V, 5)) ;
     CHECK (X == NULL) ;         // X is not freed, but owned by V
     CHECK (X2 != NULL) ;        // X2 is not owned by the user application
 
-    OK (GxB_Vector_unload (V, &X, &n2, &X_size2, &type, &read_only, NULL)) ;
+    OK (GxB_Vector_unload (V, (void **) &X, &n2, &X_size2, &type, &read_only, NULL)) ;
     OK (GxB_print (V, 5)) ;
     CHECK (X == X2) ;           // X is owned by the user application again
     CHECK (n2 == n) ;
@@ -91,7 +91,7 @@ void mexFunction
     }
 
     // unload an empty vector
-    OK (GxB_Vector_unload (V, &X3, &n2, &X_size2, &type, &read_only, NULL)) ;
+    OK (GxB_Vector_unload (V, (void **) &X3, &n2, &X_size2, &type, &read_only, NULL)) ;
     OK (GxB_print (V, 5)) ;
     CHECK (X3 == NULL) ;
     CHECK (n2 == 0) ;
@@ -108,7 +108,7 @@ void mexFunction
     }
 
     OK (GxB_print (V, 5)) ;
-    OK (GxB_Vector_unload (V, &X4, &n4, &X4_size, &type, &read_only, NULL)) ;
+    OK (GxB_Vector_unload (V, (void **) &X4, &n4, &X4_size, &type, &read_only, NULL)) ;
     OK (GxB_print (V, 5)) ;
     CHECK (n4 == n) ;
     CHECK (X4 != NULL) ;            // X4 is owned by the user application
@@ -120,7 +120,7 @@ void mexFunction
     expected = GrB_INVALID_OBJECT ;
     OK (GrB_Vector_free (&V)) ;
     OK (GrB_Vector_new (&V, GrB_FP64, n)) ;
-    ERR (GxB_Vector_unload (V, &X5, &n5, &X5_size, &type, &read_only, NULL)) ;
+    ERR (GxB_Vector_unload (V, (void **) &X5, &n5, &X5_size, &type, &read_only, NULL)) ;
     OK (GrB_Vector_free (&V)) ;
 
     //--------------------------------------------------------------------------
@@ -161,7 +161,7 @@ void mexFunction
     OK (GxB_print (V, 5)) ;
 
     printf ("\n------------------- testing Container load (Vector):\n") ;
-    OK (GxB_load_Matrix_from_Container (V, Container, NULL)) ;
+    OK (GxB_load_Vector_from_Container (V, Container, NULL)) ;
     OK (GxB_print (V, 5)) ;
 
     //--------------------------------------------------------------------------

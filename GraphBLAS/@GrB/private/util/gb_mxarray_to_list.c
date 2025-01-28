@@ -30,7 +30,7 @@ static GrB_Vector gb_subtract_base
     { 
         // V = S-1, but typecast to uint32 or uint64 to avoid roundoff errors
         GrB_Type type ;
-        OK (GxB_Matrix_type (&type, *S)) ;
+        OK (GxB_Vector_type (&type, *S)) ;
         GrB_BinaryOp minus ;
         if (type == GrB_BOOL   || type == GrB_INT8  || type == GrB_INT16  ||
             type == GrB_INT32  || type == GrB_UINT8 || type == GrB_UINT16 ||
@@ -52,7 +52,7 @@ static GrB_Vector gb_subtract_base
         OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (V, NULL, NULL, minus, *S, 1,
             NULL)) ;
         ASSERT_VECTOR_OK (V, "V result, after apply", GB0) ;
-        GrB_Matrix_free (S) ;
+        GrB_Vector_free (S) ;
     }
     return (V) ;
 }

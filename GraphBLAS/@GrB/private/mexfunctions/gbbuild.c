@@ -129,7 +129,7 @@ void mexFunction
     OK (GrB_Vector_nvals (&nx, X)) ;
 
     GrB_Type xtype ;
-    OK (GxB_Matrix_type (&xtype, X)) ;
+    OK (GxB_Vector_type (&xtype, X)) ;
 
     uint64_t Imax = UINT64_MAX, Jmax = UINT64_MAX ;
 
