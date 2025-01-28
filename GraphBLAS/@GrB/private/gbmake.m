@@ -93,43 +93,22 @@ if (have_octave)
     % mex command doesn't handle compiler options the same way.
     flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
 else
-    % remove -ansi from CFLAGS and replace it with -std=c11
-    try
-        if (strncmp (computer, 'GLNX', 4))
-            cc = mex.getCompilerConfigurations ('C', 'Selected') ;
-            env = cc.Details.SetEnv ;
-            c1 = strfind (env, 'CFLAGS=') ;
-            q = strfind (env, '"') ;
-            q = q (q > c1) ;
-            if (~isempty (c1) && length (q) > 1)
-                c2 = q (2) ;
-                cflags = env (c1:c2) ;  % the CFLAGS="..." string
-                ansi = strfind (cflags, '-ansi') ;
-                if (~isempty (ansi))
-                    cflags = [cflags(1:ansi-1) '-std=c11' cflags(ansi+5:end)] ;
-                    flags = [flags ' ' cflags] ;
-                    fprintf ('using -std=c11 instead of default -ansi\n') ;
-                end
-            end
-        end
-    catch
-    end
-    % revise compiler flags for MATLAB
-    if (ismac)
-        cflags = '' ;
-        ldflags = '-fPIC' ;
-        rpath = '-rpath ' ;
-    elseif (isunix)
-        cflags = '-fopenmp' ;
-        ldflags = '-fopenmp -fPIC' ;
-        rpath = '-rpath=' ;
-    end
-    if (ismac || isunix)
-        rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
-        flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
-        flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
-        flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
-    end
+
+% revise compiler flags for MATLAB
+if (ismac)
+    cflags = '' ;
+    ldflags = '-fPIC' ;
+    rpath = '-rpath ' ;
+elseif (isunix)
+    cflags = '-fopenmp'] ;
+    ldflags = '-fopenmp -fPIC' ;
+    rpath = '-rpath=' ;
+end
+if (ismac || isunix)
+    rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
+    flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
+    flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
+    flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
 end
 
 if ispc
@@ -169,7 +148,7 @@ try
     mexcmd = sprintf ('mex -silent %s %s complex/check_mex_complex.c', ...
         flags, cflag) ;
     eval (mexcmd) ;
-catch me
+catch
     % try MSVC complex types
     try
         cflag = ' -DGxB_HAVE_COMPLEX_MSVC=1' ;
@@ -198,7 +177,7 @@ cfiles = dir ('util/*.c') ;
 % These are #include'd into source files.
 htime = 0 ;
 for k = 1:length (hfiles)
-    t = datenum (hfiles (k).date) ;
+    t = datenum (hfiles (k).date) ; %#ok<*DATNM>
     htime = max (htime, t) ;
 end
 

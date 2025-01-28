@@ -73,7 +73,7 @@ for k1 = 1:nops
                 ok = gbsemiringinfo (semiring) ;
                 nsemirings = nsemirings + 1 ;
                 if (nargout > 0)
-                    result = [result ; semiring] ;
+                    result = [result ; semiring] ; %#ok<AGROW>
                 end
             catch
                 % this is an error, but it is expected since not all

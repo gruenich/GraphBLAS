@@ -175,6 +175,12 @@ gbtest120 % test subsref
 gbtest121 % test times with scalars
 gbtest122 % test reshape
 gbtest123 % test reshape
+gbtest124 % test binops
+gbtest125 % test monoids
+gbtest126 % test selectops
+gbtest127 % test semirings
+gbtest128 % test unops
+gbtest129 % test timing
 gbtest96  % test GrB.optype
 
 if (~have_octave)

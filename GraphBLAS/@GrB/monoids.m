@@ -1,5 +1,5 @@
 function result = monoids
-%GRB.MONOIDS list all semirings
+%GRB.MONOIDS list all monoids
 % Redundant monoids are not listed.  For example '+.logical'
 % exists, but it is identical to '|.logical'.
 %
@@ -58,7 +58,7 @@ for k1 = 1:nops
             ok = false ;
             monoid = [add '.' type] ;
 
-            % skip redundant logical semirings
+            % skip redundant logical monoids
             if (isequal (type, 'logical') && ...
                 ismember (add, skip_logical))
                 continue ;
@@ -68,7 +68,7 @@ for k1 = 1:nops
                 ok = gbmonoidinfo (monoid) ;
                 nmonoids = nmonoids + 1 ;
                 if (nargout > 0)
-                    result = [result ; monoid] ;
+                    result = [result ; monoid] ; %#ok<AGROW>
                 end
             catch
                 % this is an error, but it is expected since not all
@@ -97,6 +97,6 @@ for k1 = 1:nops
 end
 
 if (nargout == 0)
-    fprintf ('\nTotal number of available semirings: %d\n', nmonoids) ;
+    fprintf ('\nTotal number of available monoids: %d\n', nmonoids) ;
 end
 

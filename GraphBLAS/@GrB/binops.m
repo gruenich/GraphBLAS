@@ -59,7 +59,7 @@ end
                 ok = gbbinopinfo (binop) ;
                 nbinops = nbinops + 1 ;
                 if (nargout > 0)
-                    result = [result ; binop] ;
+                    result = [result ; binop] ; %#ok<AGROW>
                 end
             catch
                 % this is an error, but it is expected since not all

@@ -94,6 +94,8 @@ desc.base = 'zero-based' ;
 e = length (I) ;
 I = [I ; J] ;
 if (e > intmax ('uint32'))
+    % this line of code is not tested by gbtest since it requires
+    % a huge test problem:
     J = (uint64 (0) : uint64 (e-1))' ;
 else
     J = (uint32 (0) : uint32 (e-1))' ;

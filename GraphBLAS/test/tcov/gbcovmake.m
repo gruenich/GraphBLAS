@@ -49,26 +49,10 @@ fclose (f) ;
 % use -R2018a for the new interleaved complex API
 flags = '-g -R2018a -DGBCOV' ;
 
-try
-    if (strncmp (computer, 'GLNX', 4))
-        % remove -ansi from CFLAGS and replace it with -std=c11
-        cc = mex.getCompilerConfigurations ('C', 'Selected') ;
-        env = cc.Details.SetEnv ;
-        c1 = strfind (env, 'CFLAGS=') ;
-        q = strfind (env, '"') ;
-        q = q (q > c1) ;
-        if (~isempty (c1) && length (q) > 1)
-            c2 = q (2) ;
-            cflags = env (c1:c2) ;  % the CFLAGS="..." string
-            ansi = strfind (cflags, '-ansi') ;
-            if (~isempty (ansi))
-                cflags = [cflags(1:ansi-1) '-std=c11' cflags(ansi+5:end)] ;
-                flags = [flags ' ' cflags] ;
-                fprintf ('compiling with -std=c11 instead of default -ansi\n') ;
-            end
-        end
-    end
-catch
+if ispc
+    library_path = sprintf ('%s/../../build/Release', pwd) ;
+else
+    library_path = sprintf ('%s/../../build', pwd) ;
 end
 
 here = pwd ;
@@ -78,10 +62,21 @@ flags = [flags ' -DGBMATLAB=1 ' ] ;
 inc = sprintf ('-I%s/../../rename ', here) ;
 libraries = '-L../../../../../build -L. -L/usr/local/lib -lgraphblas_matlab' ;
 
-if (~ismac && isunix)
-    flags = [ flags ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
-    flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
-    flags = [ flags ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
+% revise compiler flags for MATLAB
+if (ismac)
+    cflags = '' ;
+    ldflags = '-fPIC' ;
+    rpath = '-rpath ' ;
+elseif (isunix)
+    cflags = '-fopenmp' ;
+    ldflags = '-fopenmp -fPIC' ;
+    rpath = '-rpath=' ;
+end
+if (ismac || isunix)
+    rpath = sprintf (' -Wl,%s''''%s'''' ', rpath, library_path) ;
+    flags = [ flags ' CFLAGS=''$CFLAGS ' cflags ' -Wno-pragmas'' '] ;
+    flags = [ flags ' CXXFLAGS=''$CXXFLAGS ' cflags ' -Wno-pragmas'' '] ;
+    flags = [ flags ' LDFLAGS=''$LDFLAGS ' ldflags rpath ' '' '] ;
 end
 
 inc = [inc '-I. -I../util '] ;
@@ -97,6 +92,13 @@ inc = [inc '-I. -I../util '] ;
     inc = [inc '-I../../../../../../Source/helper ' ] ;
     inc = [inc '-I../../../../../../Source/builtin ' ] ;
     inc = [inc '-I../../../../../../Source/hyper ' ] ;
+
+Lflags = sprintf ('-L''%s''', library_path) ;
+
+fprintf ('compiler flags: %s\n', flags) ;
+fprintf ('compiler incs:  %s\n', inc) ;
+fprintf ('linking flags:  %s\n', Lflags) ;
+fprintf ('libraries:      %s\n', libraries) ;
 
 cd tmp/@GrB/private
 try
@@ -130,8 +132,8 @@ try
         mexfunction = [(mexfunctions (k).folder) '/' mexfunc] ;
 
         % compile the mexFunction
-        mexcmd = sprintf ('mex -silent %s %s %s %s %s', ...
-            flags, inc, mexfunction, objlist, libraries) ;
+        mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s %s', ...
+            Lflags, flags, inc, mexfunction, objlist, libraries) ;
         fprintf (':') ;
         % fprintf ('%s\n', mexfunction) ;
         % fprintf ('%s\n', mexcmd) ;

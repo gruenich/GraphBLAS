@@ -29,28 +29,28 @@ types = {
     } ;
 
 selectops = {
-'nonzero'       , 'keeps nonzero entries, removes zeros',
-'zero'          , 'keeps zeros, removes nonzeros',
-'positive'      , 'keeps entries > 0, removes entries <= 0',
-'nonnegative'   , 'keeps entries >= 0, removes entries < 0',
-'negative'      , 'keeps entries < 0, removes entries >= 0',
-'nonpositive'   , 'keeps entries <= 0, removes entries > 0',
-'tril'          , 'keeps entries in tril(A,b)',
-'triu'          , 'keeps entries in triu(A,b)',
-'diag'          , 'keeps entries in diag(A,b)',
-'offdiag'       , 'keeps entries not in diag(A,b)',
-'rowne'         , 'keeps entries not in A(b,:), removes entries in A(b,:)',
-'rowle'         , 'keeps entries in A(1:b,:), removes entries in A(b+1:end,:)',
-'rowgt'         , 'keeps entries in A(b+1:end,:), removes entries in A(1:b,:)',
-'colne'         , 'keeps entries not in A(:,b), removes entries in A(:,b)', 
-'colle'         , 'keeps entries in A(:,1:b), removes entries in A(:,b+1:end)',
-'colgt'         , 'keeps entries in A(:,b+1:end), removes entries in A(:,1:b)',
-'~='            , 'keeps entries not equal to b, removes entries equal to b',
-'=='            , 'keeps entries equal to b, removes entries not equal to b',
-'>'             , 'keeps entries entries > b, removes entries <= b',
-'>='            , 'keeps entries entries >= b, removes entries < b',
-'<'             , 'keeps entries entries < b, removes entries >= b',
-'<='            , 'keeps entries entries <= b, removes entries > b', } ;
+'nonzero'       , 'keeps nonzero entries, removes zeros' ;
+'zero'          , 'keeps zeros, removes nonzeros' ;
+'positive'      , 'keeps entries > 0, removes entries <= 0' ;
+'nonnegative'   , 'keeps entries >= 0, removes entries < 0' ;
+'negative'      , 'keeps entries < 0, removes entries >= 0' ;
+'nonpositive'   , 'keeps entries <= 0, removes entries > 0' ;
+'tril'          , 'keeps entries in tril(A,b)' ;
+'triu'          , 'keeps entries in triu(A,b)' ;
+'diag'          , 'keeps entries in diag(A,b)' ;
+'offdiag'       , 'keeps entries not in diag(A,b)' ;
+'rowne'         , 'keeps entries not in A(b,:), removes entries in A(b,:)' ;
+'rowle'         , 'keeps entries in A(1:b,:), removes entries in A(b+1:end,:)' ;
+'rowgt'         , 'keeps entries in A(b+1:end,:), removes entries in A(1:b,:)' ;
+'colne'         , 'keeps entries not in A(:,b), removes entries in A(:,b)' ;
+'colle'         , 'keeps entries in A(:,1:b), removes entries in A(:,b+1:end)' ;
+'colgt'         , 'keeps entries in A(:,b+1:end), removes entries in A(:,1:b)' ;
+'~='            , 'keeps entries not equal to b, removes entries equal to b' ;
+'=='            , 'keeps entries equal to b, removes entries not equal to b' ;
+'>'             , 'keeps entries entries > b, removes entries <= b' ;
+'>='            , 'keeps entries entries >= b, removes entries < b' ;
+'<'             , 'keeps entries entries < b, removes entries >= b' ;
+'<='            , 'keeps entries entries <= b, removes entries > b' } ;
 
 nselectops = 0 ;
 nops = size (selectops, 1) ;
@@ -85,7 +85,7 @@ end
                 ok = gbselectopinfo (selectop) ;
                 nselectops = nselectops + 1 ;
                 if (nargout > 0)
-                    result = [result ; selectop] ;
+                    result = [result ; selectop] ; %#ok<AGROW>
                 end
             catch
                 % this is an error, but it is expected since not all

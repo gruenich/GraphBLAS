@@ -27,56 +27,56 @@ types = {
     } ;
 
 ops = {
-    'identity'  , 'f(x) = x',
-    '~'         , 'f(x) = ~x, where z has the same type as x',
-    '-'         , 'f(x) = -x',
-    '1'         , 'f(x) = 1',
-    'minv'      , 'f(x) = 1/x',
-    'abs'       , 'absolute value',
-    'sqrt'      , 'square root',
-    'log'       , 'base-e logarithm',
-    'exp'       , 'base-e exponential, e^x',
-    'sin'       , 'sine',
-    'cos'       , 'cosine',
-    'tan'       , 'tangent',
-    'asin'      , 'arc sine',
-    'acos'      , 'arc cosine',
-    'atan'      , 'arc tangent',
-    'sinh'      , 'hyperbolic sine',
-    'cosh'      , 'hyperbolic cosine',
-    'tanh'      , 'hyperbolic tangent',
-    'asinh'     , 'hyperbolic arc sine',
-    'acosh'     , 'hyperbolic arc cosine',
-    'atanh'     , 'hyperbolic arc tangent',
-    'sign'      , 'signum function',
-    'ceil'      , 'round to +inf',
-    'floor'     , 'round to -inf',
-    'round'     , 'round to nearest integer',
-    'fix'       , 'round to zero',
-    'pow2'      , '2^x',
-    'expm1'     , '(e^x)-1',
-    'log10'     , 'base-10 logarithm',
-    'log1p'     , 'log(1+x)',
-    'log2'      , 'base-2 logarithm',
-    'gammaln'   , 'log of gamma',
-    'gamma'     , 'gamma function',
-    'erf'       , 'error function',
-    'cbrt'      , 'cube root',
-    'erfc'      , 'complementary error function',
-    'conj'      , 'complex conjugate',
-    'creal'     , 'real part of a complex number',
-    'cimag'     , 'imaginary part of a complex number',
-    'angle'     , 'complex phase angle',
-    'isinf'     , 'true if +inf or -inf', 
-    'isnan'     , 'true if nan',
-    'isfinite'  , 'true if finite (not inf, -inf, or nan)',
-    'frexpx'    , 'normalized fractional part, in range [.5,1)',
-    'frexpe'    , 'integral exponent; x = frexpx(x)*2^frexpe(x)',
-    'bitcmp'    , 'bitwise complement',
-    'i0'        , 'row index of the entry in its matrix, minus 1',
-    'i1'        , 'row index of the entry in its matrix',
-    'j0'        , 'column index of the entry in its matrix, minus 1',
-    'j1'        , 'column index of the entry in its matrix',
+    'identity'  , 'f(x) = x' ;
+    '~'         , 'f(x) = ~x, where z has the same type as x' ;
+    '-'         , 'f(x) = -x' ;
+    '1'         , 'f(x) = 1' ;
+    'minv'      , 'f(x) = 1/x' ;
+    'abs'       , 'absolute value' ;
+    'sqrt'      , 'square root' ;
+    'log'       , 'base-e logarithm' ;
+    'exp'       , 'base-e exponential, e^x' ;
+    'sin'       , 'sine' ;
+    'cos'       , 'cosine' ;
+    'tan'       , 'tangent' ;
+    'asin'      , 'arc sine' ;
+    'acos'      , 'arc cosine' ;
+    'atan'      , 'arc tangent' ;
+    'sinh'      , 'hyperbolic sine' ;
+    'cosh'      , 'hyperbolic cosine' ;
+    'tanh'      , 'hyperbolic tangent' ;
+    'asinh'     , 'hyperbolic arc sine' ;
+    'acosh'     , 'hyperbolic arc cosine' ;
+    'atanh'     , 'hyperbolic arc tangent' ;
+    'sign'      , 'signum function' ;
+    'ceil'      , 'round to +inf' ;
+    'floor'     , 'round to -inf' ;
+    'round'     , 'round to nearest integer' ;
+    'fix'       , 'round to zero' ;
+    'pow2'      , '2^x' ;
+    'expm1'     , '(e^x)-1' ;
+    'log10'     , 'base-10 logarithm' ;
+    'log1p'     , 'log(1+x)' ;
+    'log2'      , 'base-2 logarithm' ;
+    'gammaln'   , 'log of gamma' ;
+    'gamma'     , 'gamma function' ;
+    'erf'       , 'error function' ;
+    'cbrt'      , 'cube root' ;
+    'erfc'      , 'complementary error function' ;
+    'conj'      , 'complex conjugate' ;
+    'creal'     , 'real part of a complex number' ;
+    'cimag'     , 'imaginary part of a complex number' ;
+    'angle'     , 'complex phase angle' ;
+    'isinf'     , 'true if +inf or -inf' ;
+    'isnan'     , 'true if nan' ;
+    'isfinite'  , 'true if finite (not inf, -inf, or nan)' ;
+    'frexpx'    , 'normalized fractional part, in range [.5,1)' ;
+    'frexpe'    , 'integral exponent; x = frexpx(x)*2^frexpe(x)' ;
+    'bitcmp'    , 'bitwise complement' ;
+    'i0'        , 'row index of the entry in its matrix, minus 1' ;
+    'i1'        , 'row index of the entry in its matrix' ;
+    'j0'        , 'column index of the entry in its matrix, minus 1' ;
+    'j1'        , 'column index of the entry in its matrix' ;
     } ;
 
 nunops = 0 ;
@@ -98,7 +98,7 @@ for k1 = 1:nops
             ok = gbunopinfo (unop) ;
             nunops = nunops + 1 ;
             if (nargout > 0)
-                result = [result ; unop] ;
+                result = [result ; unop] ; %#ok<AGROW>
             end
         catch
         end
@@ -106,11 +106,7 @@ for k1 = 1:nops
         if (ok && nargout == 0)
             if (first_op)
                 fprintf ('unary op: %s.type', op) ;
-                if (isempty (op_description))
-                    fprintf ('\n') ;
-                else
-                    fprintf (', %s\n', op_description) ;
-                end
+                fprintf (', %s\n', op_description) ;
                 fprintf ('        types: %s', type) ;
             else
                 fprintf (', %s', type) ;

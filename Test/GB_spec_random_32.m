@@ -1,5 +1,5 @@
 function C = GB_spec_random_32 (A, x)
-%GB_SPEC_RANDOM_32: select 32/64 bit format at random
+%GB_SPEC_RANDOM_32 select 32/64 bit format at random
 %
 % C = GB_spec_random_32 (A, x)
 %
@@ -52,4 +52,5 @@ else
         C.j_is_32 = false ;
     end
 end
+
 

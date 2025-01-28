@@ -1309,6 +1309,7 @@
 #define GB_vector_load GM_vector_load
 #define GB_Vector_removeElement GM_Vector_removeElement
 #define GB_Vector_subassign_scalar GM_Vector_subassign_scalar
+#define GB_vector_unload GM_vector_unload
 #define GB_wait GM_wait
 #define GB_werk_pop GM_werk_pop
 #define GB_werk_push GM_werk_push
