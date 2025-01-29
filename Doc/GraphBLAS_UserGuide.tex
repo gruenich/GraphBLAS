@@ -81,9 +81,87 @@ a second, while MATLAB takes about 4 to 5 days.
 
 SuiteSparse:GraphBLAS is under the Apache-2.0 license.
 
+\newpage
 \begin{note}
-FIXME: add Doc updates for GraphBLAS v10.   %% FIXME
+FIXME: add Doc updates for GraphBLAS v10:   %% FIXME
 \end{note}
+
+\begin{verbatim}
+NEW FOR v10:
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
+    GxB_ROWINDEX_INTEGER_HINT = 7053,   // hint for row indices
+    GxB_COLINDEX_INTEGER_HINT = 7054,   // hint for column indices
+    GxB_OFFSET_INTEGER_HINT = 7056,     // hint for offsets
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
+    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
+    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
+    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
+
+    // GrB_get for GrB_Matrix:
+    // GrB_get/GrB_set for GrB_Matrix:
+    GxB_ISO = 7079,     // get: returns the current iso status
+                        // set true: make the matrix iso-valued, if possible.
+                        // set false: make the matrix non-iso-valued.
+
+    // GrB_get/GrB_set for GrB_Descriptor:
+    GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted
+    GxB_COLINDEX_LIST = 7063,       // how GrB_Vector J is intrepretted
+    GxB_VALUE_LIST = 7064,          // how GrB_Vector X is intrepretted
+
+// settings for GxB_ROWINDEX_LIST, GxB_COLINDEX_LIST, and GxB_VALUE_LIST:
+#define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
+#define GxB_USE_INDICES (7060)  /* use the indices of the vector */
+#define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
+
+new Container methods:
+
+    struct GxB_Container_struct
+
+new _Vector methods for build, extract, extractTuples, assign, subassign:
+
+    GrB_assign polymorphic method extended
+    GxB_Row_assign_Vector
+    GxB_Col_assign_Vector
+    GxB_Matrix_assign_Scalar_Vector
+    GxB_Matrix_assign_Vector
+    GxB_Vector_assign_Scalar_Vector
+    GxB_Vector_assign_Vector
+
+    GxB_subassign polymorphic method extended
+    GxB_Row_subassign_Vector
+    GxB_Col_subassign_Vector
+    GxB_Matrix_subassign_Scalar_Vector
+    GxB_Matrix_subassign_Vector
+    GxB_Vector_subassign_Scalar_Vector
+    GxB_Vector_subassign_Vector
+
+    GxB_extract polymorphic method extended
+    GxB_Col_extract_Vector
+    GxB_Matrix_extract_Vector
+    GxB_Vector_extract_Vector
+
+    GxB_Matrix_build_Scalar_Vector
+    GxB_Matrix_build_Vector
+    GxB_Vector_build_Scalar_Vector
+    GxB_Vector_build_Vector
+
+    GxB_Matrix_extractTuples_Vector
+    GxB_Vector_extractTuples_Vector
+
+    GxB_Container_new
+    GxB_Container_free
+    GxB_load_Matrix_from_Container
+    GxB_load_Vector_from_Container
+    GxB_unload_Matrix_into_Container
+    GxB_unload_Vector_into_Container
+    GxB_Vector_load
+    GxB_Vector_unload
+
+GrB_Field enum deprecated
+
+\end{verbatim}
 
 \end{abstract}
 
@@ -4014,7 +4092,6 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
 \verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
 \verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
-\verb'GxB_Vector_iso'            & query iso status                 & \ref{vector_iso} \\
 \verb'GxB_Vector_memoryUsage'    & memory used by a vector          & \ref{vector_memusage} \\
 \verb'GxB_Vector_type'           & type of the matrix               & \ref{vector_type} \\
 \verb'GrB_Vector_free'           & free a vector                    & \ref{vector_free} \\
@@ -4444,22 +4521,6 @@ are typecasted into the type of \verb'v'.  Any settings made to \verb'v' by
 unchanged.
 
 \newpage
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_iso:} query iso status of a vector}
-%-------------------------------------------------------------------------------
-\label{vector_iso}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Vector_iso     // return iso status of a vector
-(
-    bool *iso,              // true if the vector is iso-valued
-    const GrB_Vector v      // vector to query
-) ;
-\end{verbatim} } \end{mdframed}
-
-Returns the true if the vector is iso-valued, false otherwise.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_memoryUsage:} memory used by a vector}
@@ -4560,7 +4621,6 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
 \verb'GrB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag} \\
 \verb'GxB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag_GxB} \\
-\verb'GxB_Matrix_iso'           & query iso status                      & \ref{matrix_iso} \\
 \verb'GxB_Matrix_memoryUsage'   & memory used by a matrix               & \ref{matrix_memusage} \\
 \verb'GxB_Matrix_type'          & type of the matrix                    & \ref{matrix_type} \\
 \verb'GrB_Matrix_free'          & free a matrix                         & \ref{matrix_free} \\
@@ -5392,23 +5452,6 @@ so that if the type of \verb'C' and \verb'v' differ, the entries are typecasted
 into the type of \verb'C'.  Any settings made to \verb'C' by
 \verb'GrB_set' (format by row or by column, bitmap switch, hyper
 switch, and sparsity control) are unchanged.
-
-%-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_iso:} query iso status of a matrix}
-%-------------------------------------------------------------------------------
-\label{matrix_iso}
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-GrB_Info GxB_Matrix_iso     // return iso status of a matrix
-(
-    bool *iso,              // true if the matrix is iso-valued
-    const GrB_Matrix A      // matrix to query
-) ;
-\end{verbatim} } \end{mdframed}
-
-Returns the true if the matrix is iso-valued, false otherwise.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -12430,8 +12473,8 @@ Using iso-valued matrices and vectors is always faster than using matrices and
 vectors whose entries can have different values.  Iso-valued matrices are very
 important in graph algorithms.  For example, an unweighted graph is best
 represented as an iso-valued sparse matrix, and unweighted graphs are very
-common.  The burble output, or the \verb'GxB_print', \verb'GxB_Matrix_iso', or
-\verb'GxB_Vector_iso' can all be used to report whether or not your matrix or
+common.  The burble output, \verb'GxB_print', or \verb'GrB_get'
+can all be used to report whether or not your matrix or
 vector is iso-valued.
 
 Sometimes a matrix or vector may have values that are all the same, but
@@ -13449,6 +13492,9 @@ GraphBLAS folder.
     \item pack/unpack: these are declared historical; they still work but use
         64-bit integers only.  Use the new \verb'GxB_Container' methods
         instead.
+
+    \item \verb'GxB_Matrix_iso' and \verb'GxB_Vector_iso': declared
+        historical; use \verb'GrB_get' with the new \verb'GxB_ISO' enum.
 
     \item \verb'GxB_Matrix_type', \verb'GxB_Vector_type',
         \verb'GxB_Scalar_type': no longer historical;

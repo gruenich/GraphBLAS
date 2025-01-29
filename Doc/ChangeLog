@@ -31,6 +31,8 @@ FIXME 2025: version 10.0.0
         of a single sequence of calls to other methods.
     * pack/unpack: these are declared historical; they still work but use
         64-bit integers only.  Use the new GxB_Container methods instead.
+    * GxB_Matrix_iso and GxB_Vector_iso: declared historical; use GrB_get
+        with the new GxB_ISO enum.
     * GxB_Matrix_type, GxB_Vector_type, GxB_Scalar_type: no longer historical;
         added back to the user guide.
     * Summary: the API is upward-compatible with 9.4.x, but only after

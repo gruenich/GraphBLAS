@@ -548,7 +548,8 @@ bool jumbled ;          // true if the matrix may be jumbled.  bitmap and full
 // takes only O(1) memory, regardless of its dimension.
 
 // 1 bytes:
-bool iso ;              // true if all entries have the same value
+bool iso ;          // true if all entries have the same value and only a
+                    // single entry is stored in A->x
 
 //------------------------------------------------------------------------------
 // integer sizes

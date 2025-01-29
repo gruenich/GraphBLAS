@@ -1513,6 +1513,9 @@ typedef enum    // GxB_Option_Field ;
     //------------------------------------------------------------
 
     GxB_SPARSITY_CONTROL = 7036,    // sparsity control: 0 to 15; see below
+    GxB_ISO = 7079,     // get: returns the current iso status
+                        // set true: make the matrix iso-valued, if possible.
+                        // set false: make the matrix non-iso-valued.
 
     //------------------------------------------------------------
     // GrB_get/GrB_set for GrB_Descriptor:

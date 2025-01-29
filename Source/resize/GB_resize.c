@@ -11,12 +11,12 @@
 #include "scalar/GB_Scalar_wrap.h"
 #include "resize/GB_resize.h"
 
-#define GB_FREE_ALL                     \
-{                                       \
-    GB_Matrix_free (&T) ;               \
-    GB_FREE_MEMORY (&Ax_new, Ax_new_size) ;    \
-    GB_FREE_MEMORY (&Ab_new, Ab_new_size) ;    \
-    GB_phybix_free (A) ;                \
+#define GB_FREE_ALL                         \
+{                                           \
+    GB_Matrix_free (&T) ;                   \
+    GB_FREE_MEMORY (&Ax_new, Ax_new_size) ; \
+    GB_FREE_MEMORY (&Ab_new, Ab_new_size) ; \
+    GB_phybix_free (A) ;                    \
 }
 
 //------------------------------------------------------------------------------

@@ -173,6 +173,30 @@ GrB_Info GB_matvec_set
             A->sparsity_control = GB_sparsity_control (ivalue, (int64_t) (-1)) ;
             break ;
 
+        case GxB_ISO : 
+
+            if (ivalue)
+            { 
+                // try to make the matrix iso-valued
+                if (!A->iso && GB_all_entries_are_iso (A))
+                { 
+                    // All entries in A are the same; convert A to iso
+                    GBURBLE ("(set iso) ") ;
+                    A->iso = true ;
+                    GB_OK (GB_convert_any_to_iso (A, NULL)) ;
+                }
+            }
+            else
+            { 
+                // make the matrix non-iso-valued
+                if (A->iso)
+                { 
+                    GBURBLE ("(set non-iso) ") ;
+                    GB_OK (GB_convert_any_to_non_iso (A, true)) ;
+                }
+            }
+            break ;
+
         case GrB_STORAGE_ORIENTATION_HINT : 
 
             format = (ivalue == GrB_COLMAJOR) ? GxB_BY_COL : GxB_BY_ROW ;

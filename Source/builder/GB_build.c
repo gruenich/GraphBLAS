@@ -343,7 +343,7 @@ GrB_Info GB_build               // build matrix
         // All entries in T are the same; convert T to iso
         GBURBLE ("(post iso) ") ;
         T->iso = true ;
-        GB_OK (GB_convert_any_to_iso (T, NULL)) ;
+        GB_OK (GB_convert_any_to_iso (T, NULL)) ;   // OK
     }
 
     //--------------------------------------------------------------------------

@@ -4205,6 +4205,7 @@ void mexFunction
 
     A_Pending = A->Pending ;
     CHECK (A_Pending == NULL) ;
+    OK (GB_Matrix_check (A, "so far", G3, NULL)) ;
 
     printf ("\n========================================== valid [pi 7.1]\n") ;
     OK (GrB_Matrix_setElement_FP64 (A, 7.1, 1, 0)) ;
@@ -4598,11 +4599,13 @@ void mexFunction
     ERR (GxB_Global_Option_get_CHAR (-1, &ignore6)) ;
     CHECK (ignore6 == NULL) ;
 
+    expected = GrB_NULL_POINTER ;
     ERR (GxB_Matrix_Option_get_(A, 999, NULL)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("error expected (bad field):%s\n", err) ;
 
     int ii ;
+    expected = GrB_INVALID_VALUE ;
     ERR (GxB_Matrix_Option_get_INT32 (A, 999, &ii)) ;
     GrB_Matrix_error_(&err, A) ;
     printf ("error expected (bad field):%s\n", err) ;

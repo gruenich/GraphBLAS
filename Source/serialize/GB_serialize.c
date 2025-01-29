@@ -384,10 +384,10 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     uint32_t i_encoding = GB_pji_control_encoding (A->i_control) ;
     sparsity_control &= 0xFF ;
     uint32_t control_encoding =
-        GB_LSHIFT (p_encoding       , 16) | // 4 bits
-        GB_LSHIFT (j_encoding       , 12) | // 4 bits
-        GB_LSHIFT (i_encoding       ,  8) | // 4 bits
-        GB_LSHIFT (sparsity_control,  0) ;  // 8 bits (only 4 needed for now)
+        GB_LSHIFT (p_encoding      , 16) | // 4 bits
+        GB_LSHIFT (j_encoding      , 12) | // 4 bits
+        GB_LSHIFT (i_encoding      ,  8) | // 4 bits
+        GB_LSHIFT (sparsity_control,  0) ; // 8 bits (only 4 needed for now)
     GB_BLOB_WRITE (control_encoding, uint32_t) ;
 
     GB_BLOB_WRITE (sparsity_iso_csc, int32_t);

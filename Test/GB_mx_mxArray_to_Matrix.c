@@ -492,7 +492,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 // A->x for the iso value, so set it to zero
                 A->iso = false ;
             }
-            GB_convert_any_to_iso (A, NULL) ;
+            GB_convert_any_to_iso (A, NULL) ;       // OK
         }
         else
         {

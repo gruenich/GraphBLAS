@@ -102,6 +102,7 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
 //  GB_BLOB_READ (sparsity_control, int32_t) ;
 // now in GrB v10.0.0:
     GB_BLOB_READ (control_encoding, uint32_t) ;
+
     uint32_t p_encoding = GB_RSHIFT (control_encoding, 16, 4) ;
     uint32_t j_encoding = GB_RSHIFT (control_encoding, 12, 4) ;
     uint32_t i_encoding = GB_RSHIFT (control_encoding,  8, 4) ;

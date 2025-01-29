@@ -96,17 +96,29 @@ if (jit_enabled)
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 3, GrB_ALL, 4, NULL)) ;
     OK (GxB_Matrix_iso (&iso, A)) ;
     CHECK (iso) ;
+    bool iso2 = false ;
+    OK (GrB_Matrix_get_INT32 (A, &iso2, GxB_ISO)) ;
+    CHECK (iso == iso2) ;
+
     OK (GrB_Matrix_setElement (A, 3, 0, 0)) ;
     OK (GxB_Matrix_iso (&iso, A)) ;
     CHECK (!iso) ;
+    OK (GrB_Matrix_get_INT32 (A, &iso2, GxB_ISO)) ;
+    CHECK (iso == iso2) ;
 
     OK (GrB_Vector_new (&v, GrB_FP32, 3)) ;
     OK (GrB_assign (v, NULL, NULL, 1, GrB_ALL, 3, NULL)) ;
     OK (GxB_Vector_iso (&iso, v)) ;
     CHECK (iso) ;
+    OK (GrB_Vector_get_INT32 (v, &iso2, GxB_ISO)) ;
+    CHECK (iso == iso2) ;
+
     OK (GrB_Vector_setElement (v, 3, 0)) ;
     OK (GxB_Vector_iso (&iso, v)) ;
     CHECK (!iso) ;
+    OK (GrB_Vector_get_INT32 (v, &iso2, GxB_ISO)) ;
+    CHECK (iso == iso2) ;
+
     OK (GrB_free (&v)) ;
 
     OK (GxB_set (GxB_PRINT_1BASED, true)) ;

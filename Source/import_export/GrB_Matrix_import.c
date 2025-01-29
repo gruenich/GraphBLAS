@@ -314,7 +314,7 @@ static GrB_Info GB_import_worker   // import a matrix of any type
         // All entries in A are the same; convert A to iso
         GBURBLE ("(import post iso) ") ;
         (*A)->iso = true ;
-        GB_OK (GB_convert_any_to_iso (*A, NULL)) ;
+        GB_OK (GB_convert_any_to_iso (*A, NULL)) ;      // OK
     }
 
     //--------------------------------------------------------------------------

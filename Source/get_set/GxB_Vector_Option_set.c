@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_Option_set: set an option in a vector
+// GxB_Vector_Option_set: set an option in a vector: historical methods
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,18 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "transpose/GB_transpose.h"
-
-#define GB_FREE_ALL ;
-
-//------------------------------------------------------------------------------
-
-// GxB_Vector_Option_set is a single va_arg-based method for any vector option,
-// of any type.  The following functions are non-va_arg-based methods
-// (useful for compilers and interfaces that do not support va_arg):
-//
-//  GxB_Vector_Option_set_INT32         int32_t scalars
-//  GxB_Vector_Option_set_FP64          double scalars
+#include "GB.h"
 
 //------------------------------------------------------------------------------
 // GxB_Vector_Option_set_INT32: set vector options (int32_t scalars)
@@ -31,47 +20,14 @@ GrB_Info GxB_Vector_Option_set_INT32    // set an option in a vector
     int32_t value                   // value to change it to
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 (v, "GxB_Vector_Option_set_INT32 (v, field, value)") ;
-    GB_RETURN_IF_NULL (v) ;
-    GB_BURBLE_START ("GxB_set") ;
-
-    ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // set the vector option
-    //--------------------------------------------------------------------------
-
-    switch (field)
-    {
-
-        case GxB_SPARSITY_CONTROL : 
-
-            v->sparsity_control = GB_sparsity_control (value, (int64_t) (-1)) ;
-            break ;
-
-        default : 
-
-            return (GrB_INVALID_VALUE) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // conform the vector to its new desired sparsity structure
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_conform ((GrB_Matrix) v, Werk)) ;
-    GB_BURBLE_END ;
-    ASSERT_VECTOR_OK (v, "v set", GB0) ;
-    return (info) ;
+    return (GrB_Vector_set_INT32 (v, value, field)) ;
 }
 
 //------------------------------------------------------------------------------
 // GxB_Vector_Option_set_FP64: set vector options (double scalars)
 //------------------------------------------------------------------------------
+
+#define GB_FREE_ALL GrB_Scalar_free (&scalar) ;
 
 GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
 (
@@ -80,43 +36,16 @@ GrB_Info GxB_Vector_Option_set_FP64    // set an option in a vector
     double value                    // value to change it to
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 (v, "GxB_Vector_Option_set_FP64 (v, field, value)") ;
-    GB_RETURN_IF_NULL (v) ;
-    GB_BURBLE_START ("GxB_set") ;
-
-    ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // set the vector option
-    //--------------------------------------------------------------------------
-
-    switch (field)
-    {
-
-        case GxB_BITMAP_SWITCH : 
-
-            v->bitmap_switch = (float) value ;
-            break ;
-
-        default : 
-
-            return (GrB_INVALID_VALUE) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // conform the vector to its new desired sparsity structure
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_conform ((GrB_Matrix) v, Werk)) ;
-    GB_BURBLE_END ;
-    ASSERT_VECTOR_OK (v, "v set", GB0) ;
-    return (info) ;
+    GrB_Info info ;
+    GrB_Scalar scalar = NULL ;
+    GB_OK (GrB_Scalar_new (&scalar, GrB_FP64)) ;
+    GB_OK (GrB_Scalar_setElement_FP64 (scalar, value)) ;
+    GB_OK (GrB_Vector_set_Scalar (v, scalar, field)) ;
+    GB_FREE_ALL
+    return (GrB_SUCCESS) ;
 }
+
+#undef GB_FREE_ALL
 
 //------------------------------------------------------------------------------
 // GxB_Vector_Option_set: based on va_arg
@@ -129,59 +58,25 @@ GrB_Info GxB_Vector_Option_set      // set an option in a vector
     ...                             // value to change it to
 )
 {
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    GB_WHERE1 (v, "GxB_Vector_Option_set (v, field, value)") ;
-    GB_RETURN_IF_NULL (v) ;
-    GB_BURBLE_START ("GxB_set") ;
-
-    ASSERT_VECTOR_OK (v, "v to set option", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // set the vector option
-    //--------------------------------------------------------------------------
-
     va_list ap ;
-
     switch (field)
     {
-
         case GxB_BITMAP_SWITCH : 
-
-            {
-                va_start (ap, field) ;
-                double bitmap_switch = va_arg (ap, double) ;
-                va_end (ap) ;
-                v->bitmap_switch = (float) bitmap_switch ;
-            }
-            break ;
-
-        case GxB_SPARSITY_CONTROL : 
-
-            {
-                va_start (ap, field) ;
-                int sparsity_control = va_arg (ap, int) ;
-                va_end (ap) ;
-                v->sparsity_control =
-                    GB_sparsity_control (sparsity_control, (int64_t) (-1)) ;
-            }
-            break ;
+        case GxB_HYPER_SWITCH : 
+        {
+            va_start (ap, field) ;
+            double value = va_arg (ap, double) ;
+            va_end (ap) ;
+            return (GxB_Vector_Option_set_FP64 (v, field, value)) ;
+        }
 
         default : 
-
-            return (GrB_INVALID_VALUE) ;
+        {
+            va_start (ap, field) ;
+            int value = va_arg (ap, int) ;
+            va_end (ap) ;
+            return (GxB_Vector_Option_set_INT32 (v, field, value)) ;
+        }
     }
-
-    //--------------------------------------------------------------------------
-    // conform the vector to its new desired sparsity structure
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_conform ((GrB_Matrix) v, Werk)) ;
-    GB_BURBLE_END ;
-    ASSERT_VECTOR_OK (v, "v set", GB0) ;
-    return (info) ;
 }
 

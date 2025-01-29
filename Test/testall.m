@@ -120,6 +120,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test295'    ,t, J4   , F1   ) ; % get/set iso
 logstat ('test294'    ,t, J0   , F1   ) ; % reduce with zombies
 logstat ('test293'    ,t, J0   , F0   ) ; % msort/qsort: all int variants
 logstat ('test291'    ,t, J0   , F0   , [0 1 2 4]) ; % GB_ix_realloc

@@ -170,11 +170,11 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // s = (ctype) scalar
             GB_void s [GB_VLA(csize)] ;
             GB_cast_scalar (s, ccode, scalar, scalar_code, csize) ;
-            GB_OK (GB_convert_any_to_iso (C, s)) ;
+            GB_OK (GB_convert_any_to_iso (C, s)) ;  // OK
         }
         else
         { 
-            GB_OK (GB_convert_any_to_iso (C, (GB_void *) scalar)) ;
+            GB_OK (GB_convert_any_to_iso (C, (GB_void *) scalar)) ; // OK
         }
     }
 

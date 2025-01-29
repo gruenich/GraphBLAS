@@ -4,8 +4,7 @@ function test290
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 % SPDX-License-Identifier: Apache-2.0
 
-% Note: this test takes about 93 seconds when GraphBLAS is compiled with
-% GB_DEBUG enabled.
+% This takes about 93 seconds when GraphBLAS is compiled with GB_DEBUG
 
 n = 3e9 ;
 A = ones (n,2, 'int8') ;
