@@ -14,6 +14,10 @@
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 
+// #define NHISTORICAL
+#include "GraphBLAS.h"
+// #undef NHISTORICAL
+
 #include "GB_helper.h"
 #include "mex.h"
 #include <ctype.h>

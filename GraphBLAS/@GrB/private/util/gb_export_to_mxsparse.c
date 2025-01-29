@@ -98,7 +98,24 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     // drop zeros from T
     //--------------------------------------------------------------------------
 
-    OK1 (T, GxB_Matrix_select (T, NULL, NULL, GxB_NONZERO, T, NULL, NULL)) ;
+    GrB_IndexUnaryOp op ;
+    if (type == GrB_BOOL)
+    { 
+        op = GrB_VALUENE_BOOL ;
+    }
+    else if (type == GrB_FP64)
+    { 
+        op = GrB_VALUENE_FP64 ;
+    }
+    else if (type == GxB_FC64)
+    { 
+        op = GxB_VALUENE_FC64 ;
+    }
+    GrB_Scalar zero ;
+    OK (GrB_Scalar_new (&zero, type)) ;
+    OK (GrB_Scalar_setElement_FP64 (zero, 0)) ;
+    OK1 (T, GrB_Matrix_select_Scalar (T, NULL, NULL, op, T, zero, NULL)) ;
+    OK (GrB_Scalar_free (&zero)) ;
 
     //--------------------------------------------------------------------------
     // create the new built-in sparse matrix
@@ -140,21 +157,54 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // export the content of T as a sparse CSC matrix (all-64-bit)
         //----------------------------------------------------------------------
 
-        GrB_Index Tp_size, Ti_size, Tx_size, type_size ;
+        uint64_t Tp_size, Ti_size, Tx_size, type_size, plen, ilen, xlen ;
         uint64_t *Tp, *Ti ;
         void *Tx ;
 
-// FIXME: use the new Container methods
-// FIXME: add an option to GrB_Matrix_set_INT32 to tell a matrix to be non-iso
+        // ensure the matrix is in sparse CSC format
+        OK (GrB_Matrix_set_INT32 (T, GxB_SPARSE, GxB_SPARSITY_CONTROL)) ;
+        OK (GrB_Matrix_set_INT32 (T, GxB_BY_COL, GxB_FORMAT)) ;
 
-        // pass jumbled as NULL to indicate the matrix must be sorted
-        // pass iso as NULL to indicate it cannot be uniform valued
-        OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols,
-            &Tp, &Ti, &Tx, &Tp_size, &Ti_size, &Tx_size, NULL, NULL, NULL)) ;
+        // ensure the matrix uses all 64-bit integers
+        OK (GrB_Matrix_set_INT32 (T, 64, GxB_ROWINDEX_INTEGER_HINT)) ;
+        OK (GrB_Matrix_set_INT32 (T, 64, GxB_COLINDEX_INTEGER_HINT)) ;
+        OK (GrB_Matrix_set_INT32 (T, 64, GxB_OFFSET_INTEGER_HINT)) ;
 
-        CHECK_ERROR (Ti_size == 0, "internal error 8") ;
-        CHECK_ERROR (Tp == NULL || Ti == NULL || Tx == NULL,
-            "internal error 9") ;
+        // ensure the matrix is not iso-valued
+        OK (GrB_Matrix_set_INT32 (T, 0, GxB_ISO)) ;
+
+        // unload T into a Container and free T
+        GxB_Container Container ;
+        OK (GxB_Container_new (&Container)) ;
+        OK (GxB_unload_Matrix_into_Container (T, Container, NULL)) ;
+        OK (GrB_Matrix_free (&T)) ;
+
+        // ensure the container holds content that is not jumbled or iso,
+        // and is in sparse CSC format; this 'cannot' fail but check just
+        // in case.
+        CHECK_ERROR (Container->iso, "internal error 904") ;
+        CHECK_ERROR (Container->jumbled, "internal error 905") ;
+        CHECK_ERROR (Container->format != GxB_SPARSE, "internal error 906") ;
+        CHECK_ERROR (Container->orientation != GrB_COLMAJOR,
+            "internal error 907") ;
+
+        // unload the Container GrB_Vectors into raw C arrays Tp, Ti, and Tx
+        GrB_Type Tp_type, Ti_type, Tx_type ;
+        bool ignore ;
+        OK (GxB_Vector_unload (Container->p, &Tp, &plen, &Tp_size, &Tp_type,
+            &ignore, NULL)) ;
+        OK (GxB_Vector_unload (Container->i, &Ti, &ilen, &Ti_size, &Ti_type,
+            &ignore, NULL)) ;
+        OK (GxB_Vector_unload (Container->x, &Tx, &xlen, &Tx_size, &Tx_type,
+            &ignore, NULL)) ;
+
+        // ensure the types are correct; this 'cannot' fail but check anyway
+        CHECK_ERROR (Tp_type != GrB_UINT64, "internal error 901") ;
+        CHECK_ERROR (Ti_type != GrB_UINT64, "internal error 902") ;
+        CHECK_ERROR (Tx_type != type, "internal error 903") ;
+
+        // free the Container
+        OK (GxB_Container_free (&Container)) ;
 
         //----------------------------------------------------------------------
         // allocate an empty sparse matrix of the right type, then set content

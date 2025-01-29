@@ -92,7 +92,7 @@ if (have_octave)
     % Octave does not have the new MEX classdef object and as of version 7, the
     % mex command doesn't handle compiler options the same way.
     flags = [flags ' -std=c11 -fopenmp -fPIC -Wno-pragmas' ] ;
-else
+end
 
 % revise compiler flags for MATLAB
 if (ismac)
@@ -100,7 +100,7 @@ if (ismac)
     ldflags = '-fPIC' ;
     rpath = '-rpath ' ;
 elseif (isunix)
-    cflags = '-fopenmp'] ;
+    cflags = '-fopenmp' ;
     ldflags = '-fopenmp -fPIC' ;
     rpath = '-rpath=' ;
 end
