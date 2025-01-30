@@ -182,6 +182,6 @@ void mexFunction
         pargout [1] = mxCreateDoubleScalar ((double) hi) ;
     }
 
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

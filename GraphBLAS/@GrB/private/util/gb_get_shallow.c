@@ -115,7 +115,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
 
         GrB_Type type = gb_mxstring_to_type (mx_type) ;
         size_t type_size ;
-        OK (GxB_Type_size (&type_size, type)) ;
+        OK (GrB_Type_get_SIZE (type, &type_size, GrB_SIZE)) ;
 
         // get the scalar info
         mxArray *opaque = mxGetField (X, 0, "s") ;
@@ -540,7 +540,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         { 
             // import the matrix in CSC format.  This sets Xp, Xi, and Xx to
             // NULL, but it does not change the built-in matrix they came from.
-            OK (GxB_Matrix_pack_CSC (A,
+            OK (GxB_Matrix_pack_CSC (A, // FIXME
                 &Xp, &Xi, &Xx,
                 (ncols+1) * sizeof (int64_t),
                 nzmax * sizeof (int64_t),
@@ -549,7 +549,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         else
         { 
             // import a full matrix
-            OK (GxB_Matrix_pack_FullC (A,
+            OK (GxB_Matrix_pack_FullC (A,   // FIXME
                 &Xx, nzmax * type_size, false, NULL)) ;
         }
 

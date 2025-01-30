@@ -59,6 +59,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export ((GrB_Matrix *) &chunk, KIND_FULL) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

@@ -49,6 +49,6 @@ void mexFunction
     mxFree (date) ;
 
     pargout [0] = mxCreateString (s) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

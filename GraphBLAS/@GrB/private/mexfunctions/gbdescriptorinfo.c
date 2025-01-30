@@ -147,6 +147,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_Descriptor_free (&desc)) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

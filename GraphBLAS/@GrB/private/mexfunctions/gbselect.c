@@ -311,7 +311,7 @@ void mexFunction
     { 
         // get the descriptor contents to determine if A is transposed
         int in0 ;
-        OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
+        OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
         bool A_transpose = (in0 == GrB_TRAN) ;
 
         // get the size of A
@@ -452,10 +452,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     // typecast the b2 scalar to the idxunop->ytype
-    GrB_Type ytype ;
-    char ytype_name [GxB_MAX_NAME_LEN] ;
-    OK (GxB_IndexUnaryOp_ytype_name (ytype_name, idxunop)) ;
-    OK (GxB_Type_from_name (&ytype, ytype_name)) ;
+    int code ;
+    OK (GrB_IndexUnaryOp_get_INT32 (idxunop, &code, GrB_INP1_TYPE_CODE)) ;
+    GrB_Type ytype = gb_code_to_type (code) ;
     OK (GrB_Matrix_new (&b4, ytype, 1, 1)) ;
     OK (GrB_Matrix_assign (b4, NULL, NULL, b2, GrB_ALL, 1, GrB_ALL, 1, NULL)) ;
     OK1 (C, GrB_Matrix_select_Scalar (C, M, accum, idxunop, A,
@@ -480,6 +479,6 @@ void mexFunction
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

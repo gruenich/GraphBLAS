@@ -21,7 +21,6 @@
 // If accum or M is used, then Cin must appear.
 
 #include "gb_interface.h"
-#include "GB_ij.h"
 
 #define USAGE "usage: C = GrB.extract (Cin, M, accum, A, I, J, desc)"
 
@@ -103,7 +102,7 @@ void mexFunction
     { 
         // if accum appears, then Cin must also appear
         CHECK_ERROR (C == NULL, USAGE) ;
-        accum  = gb_mxstring_to_binop  (String [0], ctype, ctype) ;
+        accum  = gb_mxstring_to_binop (String [0], ctype, ctype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -206,6 +205,6 @@ void mexFunction
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

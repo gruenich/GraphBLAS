@@ -178,7 +178,7 @@ void mexFunction
         {
             // A is the scalar and B is the matrix
             int in1 ;
-            OK (GxB_Desc_get (desc, GrB_INP0, &in1)) ;
+            OK (GrB_Descriptor_get_INT32 (desc, &in1, GrB_INP1)) ;
             bool B_transpose = (in1 == GrB_TRAN) ;
             // determine the size of C
             cnrows = (B_transpose) ? bncols : bnrows ;
@@ -188,7 +188,7 @@ void mexFunction
         {
             // A is the matrix and B is the scalar
             int in0 ;
-            OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
+            OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
             bool A_transpose = (in0 == GrB_TRAN) ;
             // determine the size of C
             cnrows = (A_transpose) ? ancols : anrows ;
@@ -198,12 +198,14 @@ void mexFunction
         // use the ztype of the op as the type of C
         if (op2 != NULL)
         {
-            OK (GxB_BinaryOp_ztype (&ctype, op2)) ;
+            ctype = gb_binaryop_ztype (op2) ;
         }
         else
         {
-            // OK (GxB_IndexUnaryOp_ztype (&ctype, idxunop)) ;
-            ctype = idxunop->ztype ;
+            int code = 0 ;
+            OK (GrB_IndexUnaryOp_get_INT32 (idxunop, &code,
+                GrB_OUTP_TYPE_CODE)) ;
+            ctype = gb_code_to_type (code) ;
         }
 
         // create the matrix C and set its format and sparsity
@@ -248,6 +250,6 @@ void mexFunction
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

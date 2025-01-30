@@ -103,7 +103,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
         "invalid semiring (add operator not a monoid)") ;
 
     // the type of add must match the mult->ztype
-    CHECK_ERROR (add->ztype != mult->ztype, 
+    CHECK_ERROR (add->ztype != mult->ztype,
         "invalid semiring (add opeartor not a monoid)") ;
 
     // The conditions above are true for any semiring and any A and B, whether
@@ -119,6 +119,8 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     //--------------------------------------------------------------------------
     // rename redundant Boolean multiply operators
     //--------------------------------------------------------------------------
+
+    // FIXME could use GrB_Type_Code instead, for xcode and zcode
 
     GB_Type_code xcode = mult->xtype->code ;
     GB_Type_code zcode = mult->ztype->code ;

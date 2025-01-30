@@ -1,1 +1,3 @@
-FIXME: do not use any historical methods in @GrB interface, if possible
+FIXME: Remove as many accesses to opaque content and internal methods as
+possible: look for -> uses, which are often opaque content, and look for GB_*
+methods.

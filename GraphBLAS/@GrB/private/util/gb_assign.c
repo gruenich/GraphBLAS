@@ -29,7 +29,6 @@
 // Cin and A are required.  See GrB.m for more details.
 
 #include "gb_interface.h"
-#include "GB_ij.h"
 
 void gb_assign                  // gbassign or gbsubassign mexFunctions
 (
@@ -231,6 +230,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

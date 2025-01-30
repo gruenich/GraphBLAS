@@ -71,6 +71,6 @@ void mexFunction
     GrB_Matrix C = gb_get_shallow (pargin [0]) ;
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;
     OK (GrB_Matrix_free (&C)) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

@@ -67,6 +67,6 @@ void mexFunction
     {
         pargout [0] = mxCreateLogicalScalar (true) ;
     }
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

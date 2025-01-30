@@ -133,7 +133,7 @@ void mexFunction
     { 
         // get the descriptor contents to determine if A is transposed
         int in0 ;
-        OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
+        OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
         bool A_transpose = (in0 == GrB_TRAN) ;
 
         // get the size of A
@@ -146,7 +146,7 @@ void mexFunction
         uint64_t cncols = (A_transpose) ? anrows : ancols ;
 
         // use the ztype of the op as the type of C
-        OK (GxB_BinaryOp_ztype (&ctype, op)) ;
+        ctype = gb_binaryop_ztype (op) ;
 
         // create the matrix C and set its format and sparsity
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;
@@ -178,6 +178,6 @@ void mexFunction
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

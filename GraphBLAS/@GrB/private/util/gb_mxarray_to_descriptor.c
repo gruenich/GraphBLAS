@@ -37,43 +37,44 @@ static void get_descriptor
         // convert the string to a Descriptor value, and set the value
         if (MATCH (s, "default"))
         { 
-            OK (GxB_Desc_set (desc, field, GxB_DEFAULT)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GxB_DEFAULT, field)) ;
         }
         else if (MATCH (s, "transpose"))
         { 
-            OK (GxB_Desc_set (desc, field, GrB_TRAN)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GrB_TRAN, field)) ;
         }
         else if (MATCH (s, "complement"))
         { 
-            OK (GxB_Desc_set (desc, field, GrB_COMP)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GrB_COMP, field)) ;
         }
         else if (MATCH (s, "structure") || MATCH (s, "structural"))
         { 
-            OK (GxB_Desc_set (desc, field, GrB_STRUCTURE)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GrB_STRUCTURE, field)) ;
         }
         else if (MATCH (s, "structural complement"))
         { 
-            OK (GxB_Desc_set (desc, field, GrB_COMP+GrB_STRUCTURE)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GrB_COMP+GrB_STRUCTURE,
+                field)) ;
         }
         else if (MATCH (s, "replace"))
         { 
-            OK (GxB_Desc_set (desc, field, GrB_REPLACE)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GrB_REPLACE, field)) ;
         }
         else if (MATCH (s, "gustavson"))
         { 
-            OK (GxB_Desc_set (desc, field, GxB_AxB_GUSTAVSON)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GxB_AxB_GUSTAVSON, field)) ;
         }
         else if (MATCH (s, "dot"))
         { 
-            OK (GxB_Desc_set (desc, field, GxB_AxB_DOT)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GxB_AxB_DOT, field)) ;
         }
         else if (MATCH (s, "saxpy"))
         { 
-            OK (GxB_Desc_set (desc, field, GxB_AxB_SAXPY)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GxB_AxB_SAXPY, field)) ;
         }
         else if (MATCH (s, "hash"))
         { 
-            OK (GxB_Desc_set (desc, field, GxB_AxB_HASH)) ;
+            OK (GrB_Descriptor_set_INT32 (desc, GxB_AxB_HASH, field)) ;
         }
         else
         { 

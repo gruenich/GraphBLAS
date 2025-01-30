@@ -172,6 +172,6 @@ void mexFunction
         pargout [2] = mxCreateString (iso ? "iso-valued" : "non-iso-valued") ;
     }
 
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

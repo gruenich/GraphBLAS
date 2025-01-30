@@ -53,6 +53,6 @@ void mexFunction
 
     OK (GrB_Global_get_INT32 (GrB_GLOBAL, &nthreads_max, GxB_NTHREADS)) ;
     pargout [0] = mxCreateDoubleScalar (nthreads_max) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

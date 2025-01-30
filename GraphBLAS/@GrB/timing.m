@@ -6,7 +6,7 @@ function t = timing (c)
 %
 % This method is for development only, and returns t as all zero when
 % GraphBLAS is compiled for production use.  GraphBLAS must be compiled
-% with -DGB_TIMING for timers to be enabled.
+% with timers enabled.
 %
 % See also spparms.
 

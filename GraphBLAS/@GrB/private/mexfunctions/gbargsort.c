@@ -138,6 +138,6 @@ void mexFunction
     { 
         pargout [1] = gb_export (&P, KIND_GRB) ;
     }
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

@@ -158,7 +158,6 @@ GrB_Vector gb_mxcell_to_list    // return index list I
             { 
                 // the list is non-empty, for example, 7:-2:4 = [7 5]
                 (*nI) = ((ibegin - iend) / (-iinc)) + 1 ;
-                // I_max = GB_ijlist (NULL, 0, GB_STRIDE, I)
                 imax = ibegin ;
             }
         }
@@ -170,8 +169,7 @@ GrB_Vector gb_mxcell_to_list    // return index list I
                 // nI = length of the expanded list,
                 // which is 3 for the list 4:2:9.
                 (*nI) = ((iend - ibegin) / iinc) + 1 ;
-                // I_max = GB_ijlist (NULL, nI-1, GB_STRIDE, I),
-                // which is 8 for the list 4:2:9
+                // imax is 8 for the list 4:2:9
                 imax = ibegin + ((*nI)-1) * iinc ;
             }
         }

@@ -14,9 +14,9 @@
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 
-// #define NHISTORICAL
+#define NHISTORICAL
 #include "GraphBLAS.h"
-// #undef NHISTORICAL
+#undef NHISTORICAL
 
 #include "GB_helper.h"
 #include "mex.h"
@@ -37,15 +37,15 @@ void gbcov_put (void) ;
 #define GB_COV_PUT
 #endif
 
-#define GB_WRAPUP                                           \
-{                                                           \
-    GB_COV_PUT ;                                            \
-    if (GB_Global_memtable_n ( ) != 0)                      \
-    {                                                       \
-        printf ("GrB memory leak!\n") ;                     \
-        GB_Global_memtable_dump ( ) ;                       \
-        mexErrMsgIdAndTxt ("GrB:error", "memory leak") ;    \
-    }                                                       \
+static inline void gb_wrapup (void)
+{
+    GB_COV_PUT ;
+    if (GB_Global_memtable_n ( ) != 0)
+    { 
+        printf ("GrB memory leak!\n") ;
+        GB_Global_memtable_dump ( ) ;
+        mexErrMsgIdAndTxt ("GrB:error", "memory leak") ;
+    }
 }
 
 #define ERROR2(message, arg)                                \
@@ -64,26 +64,26 @@ void gbcov_put (void) ;
 
 #define OK(method)                                          \
 {                                                           \
-    GrB_Info info = method ;                                \
-    if (info != GrB_SUCCESS)                                \
+    GrB_Info this_info = method ;                           \
+    if (this_info != GrB_SUCCESS)                           \
     {                                                       \
-        ERROR (gb_error (info)) ;                           \
+        ERROR (gb_error_string (this_info)) ;               \
     }                                                       \
 }
 
-#define OK0(method)                                         \
-{                                                           \
-    GrB_Info info = method ;                                \
-    if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))     \
-    {                                                       \
-        ERROR (gb_error (info)) ;                           \
-    }                                                       \
+#define OK0(method)                                                 \
+{                                                                   \
+    GrB_Info this_info = method ;                                   \
+    if (!(this_info == GrB_SUCCESS || this_info == GrB_NO_VALUE))   \
+    {                                                               \
+        ERROR (gb_error_string (this_info)) ;                       \
+    }                                                               \
 }
 
 #define OK1(C,method)                                       \
 {                                                           \
-    GrB_Info info = method ;                                \
-    if (info != GrB_SUCCESS)                                \
+    GrB_Info this_info = method ;                           \
+    if (this_info != GrB_SUCCESS)                           \
     {                                                       \
         const char *message ;                               \
         GrB_Matrix_error (&message, C) ;                    \
@@ -177,6 +177,21 @@ GrB_Type gb_mxstring_to_type    // return the GrB_Type from a built-in string
     const mxArray *S        // built-in mxArray containing a string
 ) ;
 
+GrB_Type gb_code_to_type    // return the GrB_Type from a GrB_Type_Code
+(
+    GrB_Type_Code code
+) ;
+
+GrB_Type gb_binaryop_ztype  // return the GrB_Type of the output of a binary op
+(
+    GrB_BinaryOp op
+) ;
+
+GrB_Type gb_monoid_type     // return the GrB_Type of a monoid
+(
+    GrB_Monoid op
+) ;
+
 void gb_mxstring_to_string  // copy a built-in string into a C string
 (
     char *string,           // size at least maxlen+1
@@ -227,7 +242,7 @@ void gb_usage       // check usage and make sure GxB_init has been called
     const char *message     // error message if usage is not correct
 ) ;
 
-const char *gb_error        // return an error string from a GrB_Info value
+const char *gb_error_string     // return an error string from a GrB_Info value
 (
     GrB_Info info
 ) ;

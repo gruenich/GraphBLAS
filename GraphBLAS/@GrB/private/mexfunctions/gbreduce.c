@@ -104,10 +104,7 @@ void mexFunction
     if (C == NULL)
     { 
         // use the ztype of the monoid as the type of C
-        GrB_BinaryOp binop ;
-        OK (GxB_Monoid_operator (&binop, monoid)) ;
-        OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
-
+        ctype = gb_monoid_type (monoid) ;
         fmt = gb_get_format (1, 1, A, NULL, fmt) ;
         sparsity = gb_get_sparsity (A, NULL, sparsity) ;
         C = gb_new (ctype, 1, 1, fmt, sparsity) ;
@@ -144,6 +141,6 @@ void mexFunction
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

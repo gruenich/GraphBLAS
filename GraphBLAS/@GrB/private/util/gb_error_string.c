@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_error: return a string from a GraphBLAS GrB_info
+// gb_error_string: return a string from a GraphBLAS GrB_info
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "gb_interface.h"
 
-const char *gb_error        // return an error message from a GrB_Info value
+const char *gb_error_string // return an error message from a GrB_Info value
 (
     GrB_Info info
 )

@@ -113,6 +113,6 @@ void mexFunction
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&B)) ;
     pargout [0] = mxCreateDoubleScalar (s) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

@@ -137,6 +137,6 @@ void mexFunction
 
     pargout [0] = C ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

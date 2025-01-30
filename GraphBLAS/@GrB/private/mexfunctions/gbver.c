@@ -110,6 +110,6 @@ void mexFunction
 
     mxFree (date) ;
 
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

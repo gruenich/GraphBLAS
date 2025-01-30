@@ -64,6 +64,6 @@ void mexFunction
     }
     pargout [0] = mxCreateDoubleScalar (anvals) ;
     OK (GrB_Matrix_free (&X)) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

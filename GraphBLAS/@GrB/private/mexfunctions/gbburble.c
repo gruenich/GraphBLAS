@@ -63,6 +63,6 @@ void mexFunction
 
     OK (GrB_Global_get_INT32 (GrB_GLOBAL, &burble, GxB_BURBLE)) ;
     pargout [0] = mxCreateDoubleScalar (burble) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

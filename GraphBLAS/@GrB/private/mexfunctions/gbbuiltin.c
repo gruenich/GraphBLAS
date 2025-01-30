@@ -60,6 +60,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&X, KIND_BUILTIN) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

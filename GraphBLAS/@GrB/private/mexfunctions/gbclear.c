@@ -46,6 +46,6 @@ void mexFunction
     // save test coverage
     //--------------------------------------------------------------------------
 
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

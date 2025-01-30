@@ -51,6 +51,6 @@ void mexFunction
 
     OK (GrB_Matrix_free (&A)) ;
     OK (GrB_Matrix_free (&B)) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

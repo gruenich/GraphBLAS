@@ -85,6 +85,6 @@ void mexFunction
     OK (GrB_Matrix_free (&x)) ;
     OK (GrB_Matrix_free (&A)) ;
     pargout [0] = gb_export ((GrB_Matrix *) &d, KIND_GRB) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

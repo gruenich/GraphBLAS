@@ -49,6 +49,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_type_to_mxstring (optype) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

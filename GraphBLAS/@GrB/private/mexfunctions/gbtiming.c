@@ -50,6 +50,6 @@ void mexFunction
     { 
         GB_Global_timing_clear_all ( ) ;
     }
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

@@ -64,7 +64,7 @@ void mexFunction
     { 
         OK (GrB_Descriptor_new (&desc)) ;
     }
-    OK (GxB_Desc_set (desc, GxB_SORT, true)) ;
+    OK (GrB_Descriptor_set_INT32 (desc, true, GxB_SORT)) ;
 
     //--------------------------------------------------------------------------
     // get the matrices
@@ -87,10 +87,12 @@ void mexFunction
     char semiring_string [8] ;
     strcpy (semiring_string, "+.*") ;
     plus_times = gb_string_to_semiring (semiring_string, atype, btype) ;
-    OK (GxB_Semiring_add (&plus_monoid, plus_times)) ;
-    OK (GxB_Semiring_multiply (&times, plus_times)) ;
-    OK (GxB_Monoid_operator (&plus, plus_monoid)) ;
-    OK (GxB_BinaryOp_ztype (&ctype, plus)) ;
+    OK (GrB_Semiring_get_VOID (plus_times, (void *) &plus_monoid,
+        GxB_SEMIRING_MONOID)) ;
+    OK (GrB_Semiring_get_VOID (plus_times, (void *) &times,
+        GxB_SEMIRING_MULTIPLY)) ;
+    OK (GrB_Monoid_get_VOID (plus_monoid, (void *) &plus, GxB_MONOID_OPERATOR));
+    ctype = gb_binaryop_ztype (plus) ;
 
     //--------------------------------------------------------------------------
     // construct C
@@ -105,8 +107,8 @@ void mexFunction
 
     // get the descriptor contents to determine if A and B are transposed
     int in0, in1 ;
-    OK (GxB_Desc_get (desc, GrB_INP0, &in0)) ;
-    OK (GxB_Desc_get (desc, GrB_INP1, &in1)) ;
+    OK (GrB_Descriptor_get_INT32 (desc, &in0, GrB_INP0)) ;
+    OK (GrB_Descriptor_get_INT32 (desc, &in1, GrB_INP1)) ;
     bool A_transpose = (in0 == GrB_TRAN) ;
     bool B_transpose = (in1 == GrB_TRAN) ;
 
@@ -241,6 +243,6 @@ void mexFunction
 
     pargout [0] = gb_export (&C, kind) ;
     pargout [1] = mxCreateDoubleScalar (kind) ;
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 

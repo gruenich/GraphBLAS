@@ -71,6 +71,6 @@ void mexFunction
     { 
         OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     }
-    GB_WRAPUP ;
+    gb_wrapup ( ) ;
 }
 
