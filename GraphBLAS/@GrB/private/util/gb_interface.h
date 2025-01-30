@@ -8,16 +8,14 @@
 //------------------------------------------------------------------------------
 
 // This interface depends heavily on internal details of the
-// SuiteSparse:GraphBLAS library.  Thus, GB.h is #include'd, not just
-// GraphBLAS.h.
+// SuiteSparse:GraphBLAS library.  Thus, GB.h is #include'd (via GB_helper.h),
+// not just GraphBLAS.h.
 
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 
 #define NHISTORICAL
 #include "GraphBLAS.h"
-#undef NHISTORICAL
-
 #include "GB_helper.h"
 #include "mex.h"
 #include <ctype.h>
