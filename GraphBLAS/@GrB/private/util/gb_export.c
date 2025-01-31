@@ -65,6 +65,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         // No typecasting is needed since MATLAB full matrices support all
         // the same types.
 
+        // ensure C is full
         GrB_Matrix C = NULL ;
         if (!is_full)
         {
@@ -75,6 +76,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
             CHECK_ERROR (GB_is_shallow (*C_handle), "internal error 707")
         }
 
+        // ensure the matrix is not shallow
         if (GB_is_shallow (*C_handle))
         {
             // C is shallow so make a deep copy
@@ -82,19 +84,39 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
             OK (GrB_Matrix_free (C_handle)) ;
             (*C_handle) = C ;
         }
-
         CHECK_ERROR (GB_is_shallow (*C_handle), "internal error 717")
 
-// FIXME: use the new Container methods here
+        // ensure C is in full format, held by column
+        C = (*C_handle) ;
+        OK (GrB_Matrix_set_INT32 (C, GxB_FULL,   GxB_SPARSITY_CONTROL)) ;
+        OK (GrB_Matrix_set_INT32 (C, GxB_BY_COL, GxB_FORMAT)) ;
 
-        // export as a full matrix, held by column, not uniform-valued
+        // ensure the matrix is not iso-valued
+        OK (GrB_Matrix_set_INT32 (C, 0, GxB_ISO)) ;
+
+        // unload C into the Container and free C
+        GxB_Container Container = GB_helper_container ( ) ;
+        CHECK_ERROR (Container == NULL, "internal error 911") ;
+        OK (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
+        OK (GrB_Matrix_free (C_handle)) ;
+
+        // ensure the container holds the right content: not iso, full, and in
+        // column major format.  This is just a sanity check; it should always
+        // succeed.
+        CHECK_ERROR (Container->iso, "internal error 718") ;
+        CHECK_ERROR (Container->format != GxB_FULL, "internal error 719") ;
+        CHECK_ERROR (Container->orientation != GrB_COLMAJOR,
+            "internal error 720") ;
+
+        // unload the Container->x vector into the raw C array Cx
         void *Cx = NULL ;
         GrB_Type ctype = NULL ;
-        uint64_t Cx_size ;
-        OK (GxB_Matrix_export_FullC // FIXME
-            (C_handle, &ctype, &nrows, &ncols,
-            &Cx, &Cx_size, NULL, NULL)) ;
+        uint64_t Cx_size, xlen ;
+        bool ignore ;
+        OK (GxB_Vector_unload (Container->x, &Cx, &xlen, &Cx_size, &ctype,
+            &ignore, NULL)) ;
 
+        // export Cx as a dense nrows-by-ncols MATLAB matrix
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
 
     }

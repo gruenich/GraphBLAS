@@ -174,8 +174,8 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         OK (GrB_Matrix_set_INT32 (T, 0, GxB_ISO)) ;
 
         // unload T into a Container and free T
-        GxB_Container Container ;
-        OK (GxB_Container_new (&Container)) ;
+        GxB_Container Container = GB_helper_container ( ) ;
+        CHECK_ERROR (Container == NULL, "internal error 911") ;
         OK (GxB_unload_Matrix_into_Container (T, Container, NULL)) ;
         OK (GrB_Matrix_free (&T)) ;
 
@@ -202,9 +202,6 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         CHECK_ERROR (Tp_type != GrB_UINT64, "internal error 901") ;
         CHECK_ERROR (Ti_type != GrB_UINT64, "internal error 902") ;
         CHECK_ERROR (Tx_type != type, "internal error 903") ;
-
-        // free the Container
-        OK (GxB_Container_free (&Container)) ;
 
         //----------------------------------------------------------------------
         // allocate an empty sparse matrix of the right type, then set content

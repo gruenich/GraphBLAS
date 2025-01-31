@@ -47,6 +47,12 @@ void gb_usage       // check usage and make sure GrB.init has been called
 
         OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
         gb_defaults ( ) ;
+
+        //----------------------------------------------------------------------
+        // allocate a Container for loading/unloading matrices to/from MATLAB
+        //----------------------------------------------------------------------
+
+        GB_helper_container_new ( ) ;
     }
 
     //--------------------------------------------------------------------------

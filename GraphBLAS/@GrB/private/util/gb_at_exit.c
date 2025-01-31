@@ -14,6 +14,10 @@
 
 void gb_at_exit ( void )
 {
+
+    // free the global Container used by this @GrB interface
+    GB_helper_container_free ( ) ;
+
     // Finalize GraphBLAS, clearing all JIT kernels and freeing the hash table.
     // MATLAB can only use GraphBLAS if GrB_init / GxB_init is called again.
 

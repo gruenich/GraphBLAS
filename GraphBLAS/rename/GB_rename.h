@@ -419,6 +419,7 @@
 #define GB_Global_is_csc_set GM_Global_is_csc_set
 #define GB_Global_j_control_get GM_Global_j_control_get
 #define GB_Global_j_control_set GM_Global_j_control_set
+#define GB_Global_make_persistent GM_Global_make_persistent
 #define GB_Global_malloc_debug_count_decrement GM_Global_malloc_debug_count_decrement
 #define GB_Global_malloc_debug_count_set GM_Global_malloc_debug_count_set
 #define GB_Global_malloc_debug_get GM_Global_malloc_debug_get
@@ -463,6 +464,9 @@
 #define GB_helper10 GM_helper10
 #define GB_helper5 GM_helper5
 #define GB_helper7 GM_helper7
+#define GB_helper_container_free GM_helper_container_free
+#define GB_helper_container GM_helper_container
+#define GB_helper_container_new GM_helper_container_new
 #define GB_HIST_countFast GM_HIST_countFast
 #define GB_HIST_countFast_wksp GM_HIST_countFast_wksp
 #define GB_HIST_count GM_HIST_count

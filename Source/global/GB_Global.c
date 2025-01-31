@@ -781,12 +781,17 @@ void * GB_Global_persistent_malloc (size_t size)
 {
     // malloc persistent memory
     void *p = GB_Global.malloc_function (size) ;
+    GB_Global_make_persistent (p) ;
+    return (p) ;
+}
+
+void GB_Global_make_persistent (void *p)
+{
     if (p != NULL && GB_Global.persistent_function != NULL)
     { 
         // tell MATLAB to make this memory persistent
         GB_Global.persistent_function (p) ;
     }
-    return (p) ;
 }
 
 void GB_Global_persistent_set (void (* persistent_function) (void *))

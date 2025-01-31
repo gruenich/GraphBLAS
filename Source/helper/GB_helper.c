@@ -438,3 +438,37 @@ void GB_make_shallow (GrB_Matrix A)
     GB_make_shallow (A->Y) ;
 }
 
+//------------------------------------------------------------------------------
+// persistent Container
+//------------------------------------------------------------------------------
+
+static GxB_Container Container = NULL ;
+
+GxB_Container GB_helper_container (void)    // return the global Container
+{
+    return (Container) ;
+}
+
+void GB_helper_container_new (void)         // allocate the global Container
+{
+    // free any existing Container (it should already be NULL, but do this
+    // just in case)
+    GxB_Container_free (&Container) ;
+
+    // allocate a new Container
+    GxB_Container_new (&Container) ;
+
+    // ensure the Container persists when any mexFunction returns
+    GB_Global_make_persistent (Container) ;
+    GB_Global_make_persistent (Container->p) ;
+    GB_Global_make_persistent (Container->h) ;
+    GB_Global_make_persistent (Container->b) ;
+    GB_Global_make_persistent (Container->i) ;
+    GB_Global_make_persistent (Container->x) ;
+}
+
+void GB_helper_container_free (void)        // free the global Container
+{
+    GxB_Container_free (&Container) ;
+}
+
