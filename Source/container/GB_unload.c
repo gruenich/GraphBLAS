@@ -46,7 +46,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     //--------------------------------------------------------------------------
 
     int64_t nvals = GB_nnz (A) ;
-    int64_t nheld = GB_nnz_held (A) ;
+    int64_t nx = GB_nnz_held (A) ;
     bool iso = A->iso ;
 
     bool is_csc = A->is_csc ;
@@ -55,7 +55,6 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     Container->nrows_nonempty = (is_csc) ? -1 : A->nvec_nonempty ;
     Container->ncols_nonempty = (is_csc) ? A->nvec_nonempty : -1 ;
     Container->nvals = nvals ;
-    Container->nheld = nheld ;
     Container->nhyper = A->nvec ;
     Container->format = GB_sparsity (A) ;
     Container->orientation = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
@@ -93,7 +92,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
         case GxB_BITMAP : 
 
             // unload A->b into the Container
-            GB_vector_load (Container->b, (void **) &(A->b), nheld, A->b_size,
+            GB_vector_load (Container->b, (void **) &(A->b), nx, A->b_size,
                 GrB_INT8, A->b_shallow) ;
 
         case GxB_FULL : 
@@ -102,7 +101,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     }
 
     // unload A->x into the Container
-    GB_vector_load (Container->x, &(A->x), iso ? 1 : nheld, A->x_size,
+    GB_vector_load (Container->x, &(A->x), iso ? 1 : nx, A->x_size,
         A->type, A->x_shallow) ;
 
     //--------------------------------------------------------------------------

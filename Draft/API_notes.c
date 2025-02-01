@@ -484,9 +484,8 @@ struct GxB_Container_struct
     int64_t nrows_nonempty ;
     int64_t ncols_nonempty ;
     uint64_t nvals ;
-    uint64_t nheld ;
     uint64_t nhyper ;
-    uint64_t u64_future [24] ;      // for future expansion
+    uint64_t u64_future [25] ;      // for future expansion
 
     // 16 words of uint32_t / int32_t:
     int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP,

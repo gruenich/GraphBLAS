@@ -15,6 +15,8 @@
 // GB_set_format: set A->is_csc and transpose if needed
 //------------------------------------------------------------------------------
 
+// This does nothing if (A->is_csc == new_csc) holds
+
 static GrB_Info GB_set_format
 (
     GrB_Matrix A,
@@ -204,21 +206,25 @@ GrB_Info GB_matvec_set
 
         case GxB_FORMAT : 
 
-            return (GB_set_format (A, is_vector, format, Werk)) ;
+            GB_OK (GB_set_format (A, is_vector, format, Werk)) ;
+            break ;
 
         case GxB_OFFSET_INTEGER_HINT : 
 
-            return (GB_set_p_control (A, ivalue)) ;
+            GB_OK (GB_set_p_control (A, ivalue)) ;
+            break ;
 
         case GxB_COLINDEX_INTEGER_HINT : 
 
-            return (A->is_csc ? GB_set_j_control (A, ivalue) :
-                                GB_set_i_control (A, ivalue)) ;
+            GB_OK (A->is_csc ? GB_set_j_control (A, ivalue) :
+                               GB_set_i_control (A, ivalue)) ;
+            break ;
 
         case GxB_ROWINDEX_INTEGER_HINT : 
 
-            return (A->is_csc ? GB_set_i_control (A, ivalue) :
-                                GB_set_j_control (A, ivalue)) ;
+            GB_OK (A->is_csc ? GB_set_i_control (A, ivalue) :
+                               GB_set_j_control (A, ivalue)) ;
+            break ;
 
         default : 
 

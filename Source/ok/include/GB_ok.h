@@ -12,7 +12,7 @@
 
 #define GB_OK(method)                       \
 {                                           \
-    info = method ;                         \
+    info = (method) ;                       \
     if (info != GrB_SUCCESS)                \
     {                                       \
         GB_FREE_ALL ;                       \

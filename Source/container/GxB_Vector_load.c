@@ -50,7 +50,10 @@ GrB_Info GxB_Vector_load
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
     GB_RETURN_IF_NULL (X) ;
-    GB_RETURN_IF_NULL (*X) ;
+    if (n > 0)
+    { 
+        GB_RETURN_IF_NULL (*X) ;
+    }
     if (X_size < n * type->size)
     { 
         // X is too small

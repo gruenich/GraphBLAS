@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
+#define GB_DEBUG
 
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.
@@ -444,6 +445,27 @@ void GB_make_shallow (GrB_Matrix A)
 
 static GxB_Container Container = NULL ;
 
+static GrB_Vector GB_helper_component (void)
+{
+    size_t s = sizeof (struct GB_Vector_opaque) ;
+    GrB_Vector p = GB_Global_persistent_malloc (s) ;
+    if (p != NULL)
+    {
+        memset (p, 0, s) ;
+        p->header_size = s ;
+        p->type = GrB_BOOL ;
+        p->is_csc = true ;
+        p->plen = -1 ;
+        p->vdim = 1 ;
+        p->nvec = 1 ;
+        p->sparsity_control = GxB_FULL ;
+        p->magic = GB_MAGIC ;
+    }
+    ASSERT (GB_VECTOR_OK (p)) ;
+    GxB_print (p, 5) ;
+    return (p) ;
+}
+
 GxB_Container GB_helper_container (void)    // return the global Container
 {
     return (Container) ;
@@ -451,24 +473,32 @@ GxB_Container GB_helper_container (void)    // return the global Container
 
 void GB_helper_container_new (void)         // allocate the global Container
 {
-    // free any existing Container (it should already be NULL, but do this
-    // just in case)
-    GxB_Container_free (&Container) ;
+    // free any existing Container
+    GB_helper_container_free ( ) ;
 
     // allocate a new Container
-    GxB_Container_new (&Container) ;
-
-    // ensure the Container persists when any mexFunction returns
-    GB_Global_make_persistent (Container) ;
-    GB_Global_make_persistent (Container->p) ;
-    GB_Global_make_persistent (Container->h) ;
-    GB_Global_make_persistent (Container->b) ;
-    GB_Global_make_persistent (Container->i) ;
-    GB_Global_make_persistent (Container->x) ;
+    size_t header_size = sizeof (struct GxB_Container_struct) ; 
+    Container = GB_Global_persistent_malloc (header_size) ;
+    if (Container != NULL)
+    {
+        memset (Container, 0, header_size) ;
+        Container->header_size = header_size ;
+        Container->p = GB_helper_component ( ) ;
+        Container->h = GB_helper_component ( ) ;
+        Container->b = GB_helper_component ( ) ;
+        Container->i = GB_helper_component ( ) ;
+        Container->x = GB_helper_component ( ) ;
+    }
 }
 
 void GB_helper_container_free (void)        // free the global Container
 {
-    GxB_Container_free (&Container) ;
+    if (Container == NULL) return ;
+    GB_Global_persistent_free (&(Container->p)) ;
+    GB_Global_persistent_free (&(Container->h)) ;
+    GB_Global_persistent_free (&(Container->b)) ;
+    GB_Global_persistent_free (&(Container->i)) ;
+    GB_Global_persistent_free (&(Container->x)) ;
+    GB_Global_persistent_free (&(Container)) ;
 }
 
