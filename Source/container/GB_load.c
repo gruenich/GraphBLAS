@@ -17,6 +17,7 @@
 #define CHECK(condition)                \
     if (!(condition))                   \
     {                                   \
+        printf ("fail %s %d\n", __FILE__, __LINE__) ; \
         return (GrB_INVALID_VALUE) ;    \
     }
 
@@ -106,7 +107,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     A->is_csc = (Container->orientation == GrB_COLMAJOR) ;
     A->vlen = (A->is_csc) ? nrows : ncols ;
     A->vdim = (A->is_csc) ? ncols : nrows ;
-    A->nvec = Container->nhyper ;   // FIXME remove this
+//  A->nvec = Container->nhyper ;   // FIXME remove this
     // FIXME: set A->nvec to A->vdim for bitmap/full,
     //  to A->plen for sparse
     //  to length of A->h for hypersparse
@@ -140,9 +141,10 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_OK (GB_vector_unload (Container->i, &(A->i), &nvals,
                 &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
-            // FIXME: ensure length of A->p is nvec+1
             A->plen = plen ;
+            A->nvec = plen ;
             CHECK (plen1 == plen + 1) ;
+            CHECK (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim) ;
             break ;
 
         case GxB_SPARSE : 
@@ -159,6 +161,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             A->i_size = (size_t) Ai_size ;
             // FIXME: ensure length of A->p is vdim+1
             A->plen = plen1 - 1 ;
+            A->nvec = A->plen ;
+            CHECK (A->nvec == A->plen && A->plen == A->vdim) ;
             break ;
 
         case GxB_BITMAP : 
@@ -171,9 +175,9 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
                 &Ab_size, &Ab_type, &(A->b_shallow), Werk)) ;
             A->b_size = (size_t) Ab_size ;
             GB_vector_reset (Container->i) ;
-            // FIXME: set A->plen = -1
             // FIXME: ensure nx is nrows*ncols
             A->plen = -1 ;
+            A->nvec = A->vdim ;
             break ;
 
         case GxB_FULL : 
@@ -184,8 +188,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_Matrix_free (&(Container->Y)) ;
             GB_vector_reset (Container->b) ;
             GB_vector_reset (Container->i) ;
-            // FIXME: set A->plen = -1
             A->plen = -1 ;
+            A->nvec = A->vdim ;
             break ;
 
         default :;
@@ -212,7 +216,10 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (A, "A loaded from Container", GB0) ;
+    printf ("A->nvec %ld nhyper %ld\n", A->nvec, Container->nhyper) ;
+//  A->nvec = Container->nhyper ;   // FIXME remove this
+
+    ASSERT_MATRIX_OK (A, "A loaded from Container", GB2) ;
     ASSERT_VECTOR_OK (Container->p, "Container->p after load", GB0) ;
     ASSERT_VECTOR_OK (Container->h, "Container->h after load", GB0) ;
     ASSERT_VECTOR_OK (Container->b, "Container->b after load", GB0) ;

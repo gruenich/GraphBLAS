@@ -140,7 +140,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         int64_t nvec_nonempty = s [4] ;
         bool    by_col        = (bool) (s [6]) ;
         int64_t nzmax         = s [7] ;
-        // printf ("plen from struct: %d\n", plen) ;
 
         int sparsity_status, sparsity_control ;
         int64_t nvals ;
@@ -188,6 +187,15 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
                 // A is hypersparse, with 6 fields: GraphBLAS*, s, x, p, i, h
                 // or with 9 fields: Yp, Yi, and Yx added.
                 sparsity_status = GxB_HYPERSPARSE ;
+                // GraphBLAS v9 and earlier can export a matrix to the MATLAB
+                // struct with plen of 1 but nvec of 0.  Fix it here for v9 and
+                // earlier structs, and also in gb_export_to_mxstruct for v10:
+                if (plen != nvec)
+                {
+                    printf ("hyper from struct: plen %d nvec %d\n",
+                        plen, nvec) ;
+                }
+                plen = nvec ;
                 break ;
 
             case 4 :
@@ -418,7 +426,7 @@ OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;  // FIXME
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
 
-OK (GxB_Matrix_fprint (A, "got A shallow", 0, NULL)) ;  // FIXME
+OK (GxB_Matrix_fprint (A, "got A shallow", 2, NULL)) ;  // FIXME
 
 #if 0
 

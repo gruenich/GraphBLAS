@@ -95,7 +95,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 
     OK1 (A, GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
 
-OK (GxB_Matrix_fprint (A, "A to export", 0, NULL)) ;    // FIXME
+OK (GxB_Matrix_fprint (A, "A to export", 2, NULL)) ;    // FIXME
 
     //--------------------------------------------------------------------------
     // extract the content of the GrB_Matrix and free it
