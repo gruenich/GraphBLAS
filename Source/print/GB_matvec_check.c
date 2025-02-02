@@ -318,6 +318,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // A is sparse
         if (! (A->nvec == A->plen && A->plen == A->vdim))
         { 
+//          printf ("A->nvec: %ld\n", A->nvec) ;    // FIXME
+//          printf ("A->plen: %ld\n", A->plen) ;    // FIXME
+//          printf ("A->vdim: %ld\n", A->vdim) ;    // FIXME
             GBPR0 ("  invalid sparse %s structure\n", kind) ;
             return (GrB_INVALID_OBJECT) ;
         }

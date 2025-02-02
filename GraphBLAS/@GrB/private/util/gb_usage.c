@@ -28,7 +28,7 @@ void gb_usage       // check usage and make sure GrB.init has been called
 
     if (!GB_Global_GrB_init_called_get ( ))
     {
-        printf ("\n=========================== GrB_init:\n") ;
+//      printf ("\n=========================== GrB_init:\n") ;
 
         //----------------------------------------------------------------------
         // tell MATLAB to call GrB_finalize when this mexFunction is cleared
@@ -53,9 +53,9 @@ void gb_usage       // check usage and make sure GrB.init has been called
         // allocate a Container for loading/unloading matrices to/from MATLAB
         //----------------------------------------------------------------------
 
-        printf ("\n=========================== persistent Container:\n") ;
+//      printf ("\n=========================== persistent Container:\n") ;
         GB_helper_container_new ( ) ;
-        printf ("\n=========================== done with persistent Container:\n") ;
+//      printf ("\n====================== done with persistent Container:\n") ;
     }
 
     //--------------------------------------------------------------------------

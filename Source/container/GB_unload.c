@@ -48,14 +48,14 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     int64_t nvals = GB_nnz (A) ;
     int64_t nx = GB_nnz_held (A) ;
     bool iso = A->iso ;
-
     bool is_csc = A->is_csc ;
+
     Container->nrows = (is_csc) ? A->vlen : A->vdim ;
     Container->ncols = (is_csc) ? A->vdim : A->vlen ;
     Container->nrows_nonempty = (is_csc) ? -1 : A->nvec_nonempty ;
     Container->ncols_nonempty = (is_csc) ? A->nvec_nonempty : -1 ;
     Container->nvals = nvals ;
-    Container->nhyper = A->nvec ;
+    Container->nhyper = A->nvec ;       // FIXME : remove this
     Container->format = GB_sparsity (A) ;
     Container->orientation = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
     Container->iso = iso ;
@@ -74,11 +74,14 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
                 Container->Y = A->Y ;
                 A->Y = NULL ;
             }
-            // unload A->h into the Container
-            GB_vector_load (Container->h, &(A->h), A->plen, A->h_size,
+            // unload A->p, A->h, and A->i into the Container
+            GB_vector_load (Container->p, &(A->p), A->nvec+1, A->p_size,
+                A->p_is_32 ? GrB_UINT32 : GrB_UINT64, A->p_shallow) ;
+            GB_vector_load (Container->h, &(A->h), A->nvec, A->h_size,
                 A->j_is_32 ? GrB_UINT32 : GrB_UINT64, A->h_shallow) ;
-
-            // fall through to the sparse case
+            GB_vector_load (Container->i, &(A->i), nvals, A->i_size,
+                A->i_is_32 ? GrB_UINT32 : GrB_UINT64, A->i_shallow) ;
+            break ;
 
         case GxB_SPARSE : 
 
@@ -94,6 +97,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
             // unload A->b into the Container
             GB_vector_load (Container->b, (void **) &(A->b), nx, A->b_size,
                 GrB_INT8, A->b_shallow) ;
+            break ;
 
         case GxB_FULL : 
         default :;

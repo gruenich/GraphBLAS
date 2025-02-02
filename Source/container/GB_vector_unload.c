@@ -82,7 +82,7 @@ GrB_Info GB_vector_unload
     ASSERT_VECTOR_OK (V, "V ready to unload", GB0) ;
 
     //--------------------------------------------------------------------------
-    // unload the content from V
+    // unload the content from V into X
     //--------------------------------------------------------------------------
 
     (*X) = V->x ;
@@ -95,31 +95,10 @@ GrB_Info GB_vector_unload
     V->x_shallow = false ;
 
     //--------------------------------------------------------------------------
-    // clear prior content of V and load X, making V a dense GrB_Vector
+    // clear prior content of V, making V a dense GrB_Vector
     //--------------------------------------------------------------------------
 
-    // V->user_name is preserved; all other content is freed.  get/set controls
-    // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
-    // that V->sparsity_control is revised to allow V to become a full vector.
-
-    GB_phybix_free ((GrB_Matrix) V) ;
-//  V->type = type ;        (not modified)
-    V->plen = -1 ;
-    V->vlen = 0 ;
-    V->vdim = 1 ;
-    V->nvec = 1 ;
-    V->nvec_nonempty = 0 ;
-    V->nvals = 0 ;
-    V->sparsity_control = V->sparsity_control | GxB_FULL ;
-    V->is_csc = true ;
-    V->jumbled = false ;
-    V->iso = false ;
-    V->p_is_32 = false ;
-    V->j_is_32 = false ;
-    V->i_is_32 = false ;
-
-    // V is now a valid GrB_Vector of length 0, in the full format
-    V->magic = GB_MAGIC ;
+    GB_vector_reset (V) ;
 
     //--------------------------------------------------------------------------
     // return result

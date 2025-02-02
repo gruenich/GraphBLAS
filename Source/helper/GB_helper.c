@@ -461,8 +461,7 @@ static GrB_Vector GB_helper_component (void)
         p->sparsity_control = GxB_FULL ;
         p->magic = GB_MAGIC ;
     }
-    ASSERT (GB_VECTOR_OK (p)) ;
-    GxB_print (p, 5) ;
+    ASSERT_VECTOR_OK (p, "container component", GB0) ;
     return (p) ;
 }
 

@@ -7,4 +7,3 @@ function e = gb_nnz (G)
 
 % count entries in G and then subtract the number explicit zero entries
 e = gbnvals (G) - gbnvals (gbselect (G, '==0')) ;
-

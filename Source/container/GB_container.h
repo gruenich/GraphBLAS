@@ -51,5 +51,10 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     GB_Werk Werk
 ) ;
 
+void GB_vector_reset    // clear almost all prior content; making V length 0
+(
+    GrB_Vector V
+) ;
+
 #endif
 
