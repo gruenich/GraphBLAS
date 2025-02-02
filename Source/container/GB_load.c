@@ -7,9 +7,18 @@
 
 //------------------------------------------------------------------------------
 
+// A->user_name and all controls are preserved.  Everything else in the matrix
+// A is revised: the dimensions, type, content, 32/64 integer status, iso
+// status, jumbled status, orientation (by row/col), etc.
+
 #include "GB_container.h"
-#define GB_FREE_ALL \
-    GB_phybix_free (A) ;
+#define GB_FREE_ALL ;
+
+#define CHECK(condition)                \
+    if (!(condition))                   \
+    {                                   \
+        return (GrB_INVALID_VALUE) ;    \
+    }
 
 GrB_Info GB_load                // GxB_Container -> GrB_Matrix
 (
@@ -131,8 +140,9 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_OK (GB_vector_unload (Container->i, &(A->i), &nvals,
                 &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
-            // FIXME: set A->plen as length of A->h
             // FIXME: ensure length of A->p is nvec+1
+            A->plen = plen ;
+            CHECK (plen1 == plen + 1) ;
             break ;
 
         case GxB_SPARSE : 
@@ -147,8 +157,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_OK (GB_vector_unload (Container->i, &(A->i), &nvals,
                 &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
-            // FIXME: set A->plen as length of A->p-1
             // FIXME: ensure length of A->p is vdim+1
+            A->plen = plen1 - 1 ;
             break ;
 
         case GxB_BITMAP : 
@@ -163,6 +173,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_vector_reset (Container->i) ;
             // FIXME: set A->plen = -1
             // FIXME: ensure nx is nrows*ncols
+            A->plen = -1 ;
             break ;
 
         case GxB_FULL : 
@@ -174,6 +185,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_vector_reset (Container->b) ;
             GB_vector_reset (Container->i) ;
             // FIXME: set A->plen = -1
+            A->plen = -1 ;
             break ;
 
         default :;
@@ -188,14 +200,7 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     // A->nvals for the sparse/hypersparse cases, or
     // nrows*ncols if full/bitmap
 
-    //--------------------------------------------------------------------------
-    // change the type and dimensions of A to match content from Container
-    //--------------------------------------------------------------------------
-
-    // A->user_name and all controls are preserved.  Everything else is
-    // revised.
-
-    A->plen = plen1 - 1 ;
+//  A->plen = plen1 - 1 ;
     A->p_is_32 = (Ap_type == GrB_UINT32) ;
     A->j_is_32 = (Ah_type == GrB_UINT32) ;
     A->i_is_32 = (Ai_type == GrB_UINT32) ;

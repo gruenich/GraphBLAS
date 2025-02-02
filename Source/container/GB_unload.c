@@ -39,7 +39,8 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     // finish any pending work
     //--------------------------------------------------------------------------
 
-    GB_MATRIX_WAIT (A) ;
+    GB_MATRIX_WAIT (A) ;    // FIXME: do instead, to allow jumbled true:
+    // GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
 
     //--------------------------------------------------------------------------
     // unload the matrix into the container
@@ -59,7 +60,7 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     Container->format = GB_sparsity (A) ;
     Container->orientation = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
     Container->iso = iso ;
-    Container->jumbled = A->jumbled ;
+    Container->jumbled = A->jumbled ;   // always false : FIXME allow true
 
     switch (Container->format)
     {
