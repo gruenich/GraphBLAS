@@ -14,7 +14,7 @@
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 
-#define NHISTORICAL
+// #define NHISTORICAL  /* FIXME: uncomment when done */
 #include "GraphBLAS.h"
 #include "GB_helper.h"
 #include "mex.h"

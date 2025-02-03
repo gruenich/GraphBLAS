@@ -96,11 +96,93 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     OK1 (A, GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
     // OK (GxB_Matrix_fprint (A, "A to export", 0, NULL)) ;
 
-// FIXME: use Container methods to export the matrix
-
     //--------------------------------------------------------------------------
     // extract the content of the GrB_Matrix and free it
     //--------------------------------------------------------------------------
+
+    int sparsity_control ;
+    OK (GrB_Matrix_get_INT32 (A, &sparsity_control, GxB_SPARSITY_CONTROL)) ;
+
+    GxB_Container Container = GB_helper_container ( ) ;
+    OK (GxB_unload_Matrix_into_Container (A, Container, NULL)) ;
+    GrB_Matrix_free (&A) ;
+
+    // get the scalars from the Container
+    int sparsity_status = Container->format ;
+    bool by_col = (Container->orientation == GrB_COLMAJOR) ;
+    uint64_t nrows = Container->nrows ;
+    uint64_t ncols = Container->ncols ;
+    uint64_t nvals = Container->nvals ;
+    uint64_t nrows_nonempty = Container->nrows_nonempty ;
+    uint64_t ncols_nonempty = Container->ncols_nonempty ;
+    bool iso = Container->iso ;
+    bool ro ;                           // ignored; no content is read-only
+//  bool jumbled = Container->jumbled ; // not needed; matrix is not jumbled
+
+    // get the vectors from the Container
+    void *Ap = NULL ; uint64_t Ap_size, Ap_len ; GrB_Type Ap_type = NULL ;
+    void *Ah = NULL ; uint64_t Ah_size, Ah_len ; GrB_Type Ah_type = NULL ;
+    void *Ab = NULL ; uint64_t Ab_size, Ab_len ; GrB_Type Ab_type = NULL ;
+    void *Ai = NULL ; uint64_t Ai_size, Ai_len ; GrB_Type Ai_type = NULL ;
+    void *Ax = NULL ; uint64_t Ax_size, Ax_len ; GrB_Type Ax_type = NULL ;
+
+    OK (GxB_Vector_unload (Container->p, &Ap, &Ap_len, &Ap_size, &Ap_type, &ro,
+        NULL)) ;
+    OK (GxB_Vector_unload (Container->h, &Ah, &Ah_len, &Ah_size, &Ah_type, &ro,
+        NULL)) ;
+    OK (GxB_Vector_unload (Container->b, &Ab, &Ab_len, &Ab_size, &Ab_type, &ro,
+        NULL)) ;
+    OK (GxB_Vector_unload (Container->i, &Ai, &Ai_len, &Ai_size, &Ai_type, &ro,
+        NULL)) ;
+    OK (GxB_Vector_unload (Container->x, &Ax, &Ax_len, &Ax_size, &Ax_type, &ro,
+        NULL)) ;
+
+    // get the Y matrix from the Container
+    void *Yp = NULL ; uint64_t Yp_size, Yp_len ; GrB_Type Yp_type = NULL ;
+    void *Yi = NULL ; uint64_t Yi_size, Yi_len ; GrB_Type Yi_type = NULL ;
+    void *Yx = NULL ; uint64_t Yx_size, Yx_len ; GrB_Type Yx_type = NULL ;
+    uint64_t ynrows = 0, yncols = 0 ;
+    if (Container->Y != NULL)
+    {
+        // remove Y from the Container and unload it; reusing the Container
+        Y = Container->Y ;
+        Container->Y = NULL ;
+        OK (GxB_unload_Matrix_into_Container (Y, Container, NULL)) ;
+        GrB_Matrix_free (&Y) ;
+        OK (GxB_Vector_unload (Container->p, &Yp, &Yp_len, &Yp_size, &Yp_type,
+            &ro, NULL)) ;
+        OK (GxB_Vector_unload (Container->i, &Yi, &Yi_len, &Yi_size, &Yi_type,
+            &ro, NULL)) ;
+        OK (GxB_Vector_unload (Container->x, &Yx, &Yx_len, &Yx_size, &Yx_type,
+            &ro, NULL)) ;
+        ynrows = Container->nrows ;
+        yncols = Container->ncols ;
+    }
+
+//  size_t type_size = 0 ;
+//  OK (GrB_Type_get_SIZE (Ax_type, &type_size, GrB_SIZE)) ;
+
+    //--------------------------------------------------------------------------
+    // revise for the MATLAB struct
+    //--------------------------------------------------------------------------
+
+    uint64_t vlen = (by_col) ? nrows : ncols ;
+    uint64_t vdim = (by_col) ? ncols : nrows ;
+    int64_t nvec_nonempty = (by_col) ? ncols_nonempty : nrows_nonempty ;
+
+    bool Ap_is_32 = (Ap_type == GrB_UINT32) ;
+    bool Aj_is_32 = (Ah_type == GrB_UINT32) ;
+    bool Ai_is_32 = (Ai_type == GrB_UINT32) ;
+
+    mxClassID Ap_class = Ap_is_32 ? mxUINT32_CLASS : mxUINT64_CLASS ;
+    mxClassID Aj_class = Aj_is_32 ? mxUINT32_CLASS : mxUINT64_CLASS ;
+    mxClassID Ai_class = Ai_is_32 ? mxUINT32_CLASS : mxUINT64_CLASS ;
+
+//  size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t jsize = Aj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+//  size_t isize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+#if 0
 
     int sparsity_status ;
     OK (GrB_Matrix_get_INT32 (A, &sparsity_status, GxB_SPARSITY_STATUS)) ;
@@ -162,6 +244,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     }
 
     GrB_Matrix_free (&A) ;
+#endif
 
     //--------------------------------------------------------------------------
     // construct the output struct
@@ -199,20 +282,20 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // export content into the output struct
     //--------------------------------------------------------------------------
 
-    // export the GraphBLAS type as a string
-    mxSetFieldByNumber (G, 0, 0, gb_type_to_mxstring (type)) ;
+    // export the GraphBLAS Ax_type as a string
+    mxSetFieldByNumber (G, 0, 0, gb_type_to_mxstring (Ax_type)) ;
 
     // export the scalar content
     mxArray *opaque = mxCreateNumericMatrix (1, 10, mxINT64_CLASS, mxREAL) ;
     int64_t *s = (int64_t *) mxGetData (opaque) ;
-    s [0] = plen ;
+    s [0] = Ap_len - 1 ;
     s [1] = vlen ;
     s [2] = vdim ;
-    s [3] = (sparsity_status == GxB_HYPERSPARSE) ? nvec : (s [2]) ;
+    s [3] = (sparsity_status == GxB_HYPERSPARSE) ? Ah_len : (s [2]) ;
     s [4] = nvec_nonempty ;
     s [5] = sparsity_control ;
     s [6] = (int64_t) by_col ;
-    s [7] = nzmax ;
+    s [7] = Ax_len ;
     s [8] = nvals ;
     s [9] = (int64_t) iso ;             // new in GraphBLASv5
     mxSetFieldByNumber (G, 0, 1, opaque) ;
@@ -225,22 +308,24 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     {
         // export the pointers
         mxArray *Ap_mx = mxCreateNumericMatrix (1, 0, Ap_class, mxREAL) ;
-        mxSetN (Ap_mx, Ap_size / psize) ;
+//      mxSetN (Ap_mx, Ap_size / psize) ;
+        mxSetN (Ap_mx, Ap_len) ;
         void *p = (void *) mxGetData (Ap_mx) ; gb_mxfree (&p) ;
         mxSetData (Ap_mx, Ap) ;
-        GBMDUMP ("gb_export, remove Ap from memtable %p\n", Ap) ;
-        GB_Global_memtable_remove (Ap) ; Ap = NULL ;
+//      GBMDUMP ("gb_export, remove Ap from memtable %p\n", Ap) ;
+//      GB_Global_memtable_remove (Ap) ; Ap = NULL ;
         mxSetFieldByNumber (G, 0, 3, Ap_mx) ;
 
         // export the indices
         mxArray *Ai_mx = mxCreateNumericMatrix (1, 0, Ai_class, mxREAL) ;
         if (Ai_size > 0)
         { 
-            mxSetN (Ai_mx, Ai_size / isize) ;
+//          mxSetN (Ai_mx, Ai_size / isize) ;
+            mxSetN (Ai_mx, Ai_len) ;
             p = (void *) mxGetData (Ai_mx) ; gb_mxfree (&p) ;
             mxSetData (Ai_mx, Ai) ;
-            GBMDUMP ("gb_export, remove Ai from memtable %p\n", Ai) ;
-            GB_Global_memtable_remove (Ai) ; Ai = NULL ;
+//          GBMDUMP ("gb_export, remove Ai from memtable %p\n", Ai) ;
+//          GB_Global_memtable_remove (Ai) ; Ai = NULL ;
         }
         mxSetFieldByNumber (G, 0, 4, Ai_mx) ;
     }
@@ -252,8 +337,8 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         mxSetN (Ax_mx, Ax_size) ;
         void *p = mxGetData (Ax_mx) ; gb_mxfree (&p) ;
         mxSetData (Ax_mx, Ax) ;
-        GBMDUMP ("gb_export, remove Ax from memtable %p\n", Ax) ;
-        GB_Global_memtable_remove (Ax) ; Ax = NULL ;
+//      GBMDUMP ("gb_export, remove Ax from memtable %p\n", Ax) ;
+//      GB_Global_memtable_remove (Ax) ; Ax = NULL ;
     }
     mxSetFieldByNumber (G, 0, 2, Ax_mx) ;
 
@@ -261,49 +346,50 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     {
         // export the hyperlist
         mxArray *Ah_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
-        if (Ah_size > nvec * jsize)
-        {
-            // clear the space beyond the end of the data
-            memset (Ah + nvec, 0, Ah_size - nvec * jsize) ;
-        }
+//      if (Ah_size > nvec * jsize)
+//      {
+//          // clear the space beyond the end of the data
+//          memset (Ah + nvec, 0, Ah_size - nvec * jsize) ;
+//      }
         if (Ah_size > 0)
         { 
-            mxSetN (Ah_mx, Ah_size / jsize) ;
+//          mxSetN (Ah_mx, Ah_size / jsize) ;
+            mxSetN (Ah_mx, Ah_len) ;
             void *p = (void *) mxGetData (Ah_mx) ; gb_mxfree (&p) ;
             mxSetData (Ah_mx, Ah) ;
-            GBMDUMP ("gb_export, remove Ah from memtable %p\n", Ah) ;
-            GB_Global_memtable_remove (Ah) ; Ah = NULL ;
+//          GBMDUMP ("gb_export, remove Ah from memtable %p\n", Ah) ;
+//          GB_Global_memtable_remove (Ah) ; Ah = NULL ;
         }
         mxSetFieldByNumber (G, 0, 5, Ah_mx) ;
 
         if (Yp != NULL)
         {
 
-            // export Yp, of size yvdim+1
+            // export Yp, of size yncols+1
             mxArray *Yp_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
-            mxSetN (Yp_mx, yvdim+1) ;
+            mxSetN (Yp_mx, yncols+1) ;
             void *p = (void *) mxGetData (Yp_mx) ; gb_mxfree (&p) ;
             mxSetData (Yp_mx, Yp) ;
-            GBMDUMP ("gb_export, remove Yp from memtable %p\n", Yp) ;
-            GB_Global_memtable_remove (Yp) ; Yp = NULL ;
+//          GBMDUMP ("gb_export, remove Yp from memtable %p\n", Yp) ;
+//          GB_Global_memtable_remove (Yp) ; Yp = NULL ;
             mxSetFieldByNumber (G, 0, 6, Yp_mx) ;
 
-            // export Yi, of size nvec
+            // export Yi, of size Ah_len
             mxArray *Yi_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
-            mxSetN (Yi_mx, nvec) ;
+            mxSetN (Yi_mx, Ah_len) ;
             p = (void *) mxGetData (Yi_mx) ; gb_mxfree (&p) ;
             mxSetData (Yi_mx, Yi) ;
-            GBMDUMP ("gb_export, remove Yi from memtable %p\n", Yi) ;
-            GB_Global_memtable_remove (Yi) ; Yi = NULL ;
+//          GBMDUMP ("gb_export, remove Yi from memtable %p\n", Yi) ;
+//          GB_Global_memtable_remove (Yi) ; Yi = NULL ;
             mxSetFieldByNumber (G, 0, 7, Yi_mx) ;
 
-            // export Yx, of size nvec
+            // export Yx, of size Ah_len
             mxArray *Yx_mx = mxCreateNumericMatrix (1, 0, Aj_class, mxREAL) ;
-            mxSetN (Yx_mx, nvec) ;
+            mxSetN (Yx_mx, Ah_len) ;
             p = (void *) mxGetData (Yx_mx) ; gb_mxfree (&p) ;
             mxSetData (Yx_mx, Yx) ;
-            GBMDUMP ("gb_export, remove Yx from memtable %p\n", Yx) ;
-            GB_Global_memtable_remove (Yx) ; Yx = NULL ;
+//          GBMDUMP ("gb_export, remove Yx from memtable %p\n", Yx) ;
+//          GB_Global_memtable_remove (Yx) ; Yx = NULL ;
             mxSetFieldByNumber (G, 0, 8, Yx_mx) ;
         }
     }
@@ -314,11 +400,12 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         mxArray *Ab_mx = mxCreateNumericMatrix (1, 0, mxINT8_CLASS, mxREAL) ;
         if (Ab_size > 0)
         { 
-            mxSetN (Ab_mx, Ab_size) ;
+//          mxSetN (Ab_mx, Ab_size) ;
+            mxSetN (Ab_mx, Ab_len) ;
             void *p = (void *) mxGetData (Ab_mx) ; gb_mxfree (&p) ;
             mxSetData (Ab_mx, Ab) ;
-            GBMDUMP ("gb_export, remove Ab from memtable %p\n", Ab) ;
-            GB_Global_memtable_remove (Ab) ; Ab = NULL ;
+//          GBMDUMP ("gb_export, remove Ab from memtable %p\n", Ab) ;
+//          GB_Global_memtable_remove (Ab) ; Ab = NULL ;
         }
         mxSetFieldByNumber (G, 0, 3, Ab_mx) ;
     }

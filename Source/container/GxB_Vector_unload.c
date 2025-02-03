@@ -53,11 +53,8 @@ GrB_Info GxB_Vector_unload
     // check inputs
     //--------------------------------------------------------------------------
 
+    // just check V; other inputs are checked in GB_vector_unload
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
-    GB_RETURN_IF_NULL (type) ;
-    GB_RETURN_IF_NULL (X) ;
-    GB_RETURN_IF_NULL (n) ;
-    GB_RETURN_IF_NULL (X_size) ;
     GB_WHERE_1 (V, "GxB_Vector_unload") ;
     ASSERT_VECTOR_OK (V, "V to unload", GB0) ;
 
