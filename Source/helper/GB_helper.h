@@ -49,8 +49,6 @@ double GB_helper10       // norm (x-y,p), or -1 on error
     uint64_t n
 ) ;
 
-void GB_make_shallow (GrB_Matrix A) ;
-
 GxB_Container GB_helper_container (void) ;  // return the global Container
 void GB_helper_container_new (void) ;       // allocate the global Container
 void GB_helper_container_free (void) ;      // free the global Container
