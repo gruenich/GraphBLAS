@@ -39,7 +39,7 @@ void mexFunction
     double *T = mxGetData (pargout [0]) ;
     for (int k = 0 ; k < 40 ; k++)
     { 
-        T [k] = GB_Global_timing_get (k) ;
+        T [k] = GB_Global_timing_get (k) ;  // FIXME?
     }
 
     //--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ void mexFunction
 
     if (nargin > 0 && mxGetScalar (pargin [0]) == 0)
     { 
-        GB_Global_timing_clear_all ( ) ;
+        GB_Global_timing_clear_all ( ) ;    // FIXME?
     }
     gb_wrapup ( ) ;
 }

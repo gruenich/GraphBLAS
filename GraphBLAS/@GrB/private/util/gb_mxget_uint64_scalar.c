@@ -22,7 +22,7 @@ uint64_t gb_mxget_uint64_scalar // return uint64 value of a MATLAB scalar
 
     if (!gb_mxarray_is_scalar (mxscalar))
     { 
-        GB_COV_PUT ;
+        GBCOV_PUT ;
         mexErrMsgIdAndTxt ("GrB:error", "%s must be a scalar", name) ;
     }
 

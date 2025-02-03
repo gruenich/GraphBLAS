@@ -14,7 +14,7 @@
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 
-// #define NHISTORICAL  /* FIXME: uncomment when done */
+#define NHISTORICAL
 #include "GraphBLAS.h"
 #include "GB_helper.h"
 #include "mex.h"
@@ -30,14 +30,14 @@ extern int64_t gbcov [GBCOV_MAX] ;
 extern int gbcov_max ;
 void gbcov_get (void) ;
 void gbcov_put (void) ;
-#define GB_COV_PUT gbcov_put ( )
+#define GBCOV_PUT gbcov_put ( )
 #else
-#define GB_COV_PUT
+#define GBCOV_PUT
 #endif
 
 static inline void gb_wrapup (void)
 {
-    GB_COV_PUT ;
+    GBCOV_PUT ;
     if (GB_Global_memtable_n ( ) != 0)
     { 
         printf ("GrB memory leak!\n") ;
@@ -48,13 +48,13 @@ static inline void gb_wrapup (void)
 
 #define ERROR2(message, arg)                                \
 {                                                           \
-    GB_COV_PUT ;                                            \
+    GBCOV_PUT ;                                             \
     mexErrMsgIdAndTxt ("GrB:error", message, arg) ;         \
 }
 
 #define ERROR(message)                                      \
 {                                                           \
-    GB_COV_PUT ;                                            \
+    GBCOV_PUT ;                                             \
     mexErrMsgIdAndTxt ("GrB:error", message) ;              \
 }
 

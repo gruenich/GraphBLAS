@@ -50,7 +50,7 @@ void gb_isnan32 (bool *z, const float *aij,
     (*z) = isnan (*aij) ;
 }
 
-#define GB_ISNAN32_DEFN                                             \
+#define ISNAN32_DEFN                                                \
 "void gb_isnan32 (bool *z, const float *aij,                    \n" \
 "                 int64_t i, int64_t j, const void *thunk)      \n" \
 "{                                                              \n" \
@@ -63,7 +63,7 @@ void gb_isnan64 (bool *z, const double *aij,
     (*z) = isnan (*aij) ;
 }
 
-#define GB_ISNAN64_DEFN                                             \
+#define ISNAN64_DEFN                                                \
 "void gb_isnan64 (bool *z, const double *aij,                   \n" \
 "                 int64_t i, int64_t j, const void *thunk)      \n" \
 "{                                                              \n" \
@@ -76,7 +76,7 @@ void gb_isnotnan32 (bool *z, const float *aij,
     (*z) = !isnan (*aij) ;
 }
 
-#define GB_ISNOTNAN32_DEFN                                          \
+#define ISNOTNAN32_DEFN                                             \
 "void gb_isnotnan32 (bool *z, const float *aij,                 \n" \
 "                    int64_t i, int64_t j, const void *thunk)   \n" \
 "{                                                              \n" \
@@ -89,7 +89,7 @@ void gb_isnotnan64 (bool *z, const double *aij,
     (*z) = !isnan (*aij) ;
 }
 
-#define GB_ISNOTNAN64_DEFN                                          \
+#define ISNOTNAN64_DEFN                                             \
 "void gb_isnotnan64 (bool *z, const double *aij,                \n" \
 "                    int64_t i, int64_t j, const void *thunk)   \n" \
 "{                                                              \n" \
@@ -99,54 +99,54 @@ void gb_isnotnan64 (bool *z, const double *aij,
 void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,
                    int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = isnan (GB_crealf (*aij)) || isnan (GB_cimagf (*aij)) ;
+    (*z) = isnan (crealf (*aij)) || isnan (cimagf (*aij)) ;
 }
 
 
-#define GB_ISNANFC32_DEFN                                           \
+#define ISNANFC32_DEFN                                              \
 "void gb_isnanfc32 (bool *z, const GxB_FC32_t *aij,             \n" \
 "                   int64_t i, int64_t j, const void *thunk)    \n" \
 "{                                                              \n" \
-"    (*z) = isnan (GB_crealf (*aij)) || isnan (GB_cimagf (*aij)) ;  \n" \
+"    (*z) = isnan (crealf (*aij)) || isnan (cimagf (*aij)) ;    \n" \
 "}"
 
 void gb_isnanfc64 (bool *z, const GxB_FC64_t *aij,
                    int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = isnan (GB_creal (*aij)) || isnan (GB_cimag (*aij)) ;
+    (*z) = isnan (creal (*aij)) || isnan (cimag (*aij)) ;
 }
 
-#define GB_ISNANFC64_DEFN                                           \
+#define ISNANFC64_DEFN                                              \
 "void gb_isnanfc64 (bool *z, const GxB_FC64_t *aij,             \n" \
 "                   int64_t i, int64_t j, const void *thunk)    \n" \
 "{                                                              \n" \
-"    (*z) = isnan (GB_creal (*aij)) || isnan (GB_cimag (*aij)) ;\n" \
+"    (*z) = isnan (creal (*aij)) || isnan (cimag (*aij)) ;      \n" \
 "}"
 
 void gb_isnotnanfc32 (bool *z, const GxB_FC32_t *aij,
                       int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = !isnan (GB_crealf (*aij)) && !isnan (GB_cimagf (*aij)) ;
+    (*z) = !isnan (crealf (*aij)) && !isnan (cimagf (*aij)) ;
 }
 
-#define GB_ISNOTNANFC32_DEFN                                        \
+#define ISNOTNANFC32_DEFN                                           \
 "void gb_isnotnanfc32 (bool *z, const GxB_FC32_t *aij,          \n" \
 "                      int64_t i, int64_t j, const void *thunk) \n" \
 "{                                                              \n" \
-"    (*z) = !isnan (GB_crealf (*aij)) && !isnan (GB_cimagf (*aij)) ; \n" \
+"    (*z) = !isnan (crealf (*aij)) && !isnan (cimagf (*aij)) ;  \n" \
 "}"
 
 void gb_isnotnanfc64 (bool *z, const GxB_FC64_t *aij,
                       int64_t i, int64_t j, const void *thunk)
 { 
-    (*z) = !isnan (GB_creal (*aij)) && !isnan (GB_cimag (*aij)) ;
+    (*z) = !isnan (creal (*aij)) && !isnan (cimag (*aij)) ;
 }
 
-#define GB_ISNOTNANFC64_DEFN                                        \
+#define ISNOTNANFC64_DEFN                                           \
 "void gb_isnotnanfc64 (bool *z, const GxB_FC64_t *aij,          \n" \
 "                      int64_t i, int64_t j, const void *thunk) \n" \
 "{                                                              \n" \
-"    (*z) = !isnan (GB_creal (*aij)) && !isnan (GB_cimag (*aij)) ;  \n" \
+"    (*z) = !isnan (creal (*aij)) && !isnan (cimag (*aij)) ;    \n" \
 "}"
 
 //------------------------------------------------------------------------------
@@ -367,13 +367,13 @@ void mexFunction
         { 
             GxB_FC32_t b_value = GxB_CMPLXF (0, 0) ;
             OK0 (GxB_Matrix_extractElement_FC32 (&b_value, b, 0, 0)) ;
-            b_is_nan = GB_cisnanf (b_value) ;
+            b_is_nan = isnan (crealf (b_value)) || isnan (cimagf (b_value)) ;
         }
         else if (btype == GxB_FC64)
         { 
             GxB_FC64_t b_value = GxB_CMPLX (0, 0) ;
             OK0 (GxB_Matrix_extractElement_FC64 (&b_value, b, 0, 0)) ;
-            b_is_nan = GB_cisnan (b_value) ;
+            b_is_nan = isnan (creal (b_value)) || isnan (cimag (b_value)) ;
         }
 
         if (b_is_nan)
@@ -387,56 +387,56 @@ void mexFunction
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnan32,
                     GrB_BOOL, GrB_FP32, GrB_FP32,
-                    "gb_isnan32", GB_ISNAN32_DEFN)) ;
+                    "gb_isnan32", ISNAN32_DEFN)) ;
             }
             else if (idxunop == GrB_VALUEEQ_FP64)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnan64,
                     GrB_BOOL, GrB_FP64, GrB_FP64,
-                    "gb_isnan64", GB_ISNAN64_DEFN)) ;
+                    "gb_isnan64", ISNAN64_DEFN)) ;
             }
             else if (idxunop == GxB_VALUEEQ_FC32)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnanfc32,
                     GrB_BOOL, GxB_FC32, GxB_FC32,
-                    "gb_isnanfc32", GB_ISNANFC32_DEFN)) ;
+                    "gb_isnanfc32", ISNANFC32_DEFN)) ;
             }
             else if (idxunop == GxB_VALUEEQ_FC64)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnanfc64,
                     GrB_BOOL, GxB_FC64, GxB_FC64,
-                    "gb_isnanfc64", GB_ISNANFC64_DEFN)) ;
+                    "gb_isnanfc64", ISNANFC64_DEFN)) ;
             }
             else if (idxunop == GrB_VALUENE_FP32)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnotnan32,
                     GrB_BOOL, GrB_FP32, GrB_FP32,
-                    "gb_isnotnan32", GB_ISNOTNAN32_DEFN)) ;
+                    "gb_isnotnan32", ISNOTNAN32_DEFN)) ;
             }
             else if (idxunop == GrB_VALUENE_FP64)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnotnan64,
                     GrB_BOOL, GrB_FP64, GrB_FP64,
-                    "gb_isnotnan64", GB_ISNOTNAN64_DEFN)) ;
+                    "gb_isnotnan64", ISNOTNAN64_DEFN)) ;
             }
             else if (idxunop == GxB_VALUENE_FC32)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnotnanfc32,
                     GrB_BOOL, GxB_FC32, GxB_FC32,
-                    "gb_isnotnanfc32", GB_ISNOTNANFC32_DEFN)) ;
+                    "gb_isnotnanfc32", ISNOTNANFC32_DEFN)) ;
             }
             else if (idxunop == GxB_VALUENE_FC64)
             { 
                 OK (GxB_IndexUnaryOp_new (&nan_test,
                     (GxB_index_unary_function) gb_isnotnanfc64,
                     GrB_BOOL, GxB_FC64, GxB_FC64,
-                    "gb_isnotnanfc64", GB_ISNOTNANFC64_DEFN)) ;
+                    "gb_isnotnanfc64", ISNOTNANFC64_DEFN)) ;
             }
         }
 

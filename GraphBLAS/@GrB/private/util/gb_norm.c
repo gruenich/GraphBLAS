@@ -141,7 +141,7 @@ double gb_norm              // compute norm (A,kind)
 
             case INT64_MIN :    // (-inf)-norm
 
-                if (GB_is_dense (A))
+                if (GB_is_dense (A))    // FIXME
                 { 
                     // X = abs (A)
                     OK1 (X, GrB_Matrix_apply (X, NULL, NULL, absop, A, NULL)) ;

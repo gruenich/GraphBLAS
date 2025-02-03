@@ -120,7 +120,7 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     if (quick)
     { 
         // return S as a shallow GrB_Vector, but subtract the base if needed
-        ASSERT (GB_VECTOR_OK (S)) ;
+        ASSERT (GB_VECTOR_OK (S)) ; // FIXME
         ASSERT_VECTOR_OK ((GrB_Vector) S, "S as vector", GB0) ;
         // V = S - base_offset
         V = gb_subtract_base ((GrB_Vector *) &S, base_offset) ;
@@ -133,7 +133,7 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     //--------------------------------------------------------------------------
 
     // C = S (:)
-    bool ok = GB_uint64_multiply (&n, nrows, ncols) ;
+    bool ok = GB_uint64_multiply (&n, nrows, ncols) ;   // FIXME
     if (!ok)
     { 
         ERROR ("input matrix dimensions are too large") ;

@@ -1,3 +1,7 @@
 FIXME: Remove as many accesses to opaque content and internal methods as
 possible: look for -> uses, which are often opaque content, and look for GB_*
 methods.
+
+FIXME: remove GB_is_shallow, replace with GrB_Matrix_get_INT32-based method.
+
+FIXME: remove GB_is_dense

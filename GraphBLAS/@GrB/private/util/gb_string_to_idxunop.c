@@ -68,7 +68,8 @@ void gb_string_to_idxunop
         // ignore the type.  But a placeholder type is needed for VALUE ops.
         type = GrB_FP64 ;
     }
-    GB_Type_code typecode = type->code ;
+
+    GB_Type_code typecode = type->code ;    // FIXME: use GrB_*_CODE
 
     //--------------------------------------------------------------------------
     // convert the string to a GrB_IndexUnaryOp
