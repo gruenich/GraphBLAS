@@ -476,12 +476,11 @@ void GB_helper_container_new (void)         // allocate the global Container
     GB_helper_container_free ( ) ;
 
     // allocate a new Container
-    size_t header_size = sizeof (struct GxB_Container_struct) ; 
-    Container = GB_Global_persistent_malloc (header_size) ;
+    size_t s = sizeof (struct GxB_Container_struct) ;
+    Container = GB_Global_persistent_malloc (s) ;
     if (Container != NULL)
     {
-        memset (Container, 0, header_size) ;
-        Container->header_size = header_size ;
+        memset (Container, 0, s) ;
         Container->p = GB_helper_component ( ) ;
         Container->h = GB_helper_component ( ) ;
         Container->b = GB_helper_component ( ) ;

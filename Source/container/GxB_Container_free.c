@@ -38,9 +38,7 @@ GrB_Info GxB_Container_free
         // free the Container itself
         //----------------------------------------------------------------------
 
-        size_t header_size = (*Container)->header_size ;
-        (*Container)->header_size = 0 ;
-        GB_FREE_MEMORY (Container, header_size) ;
+        GB_FREE_MEMORY (Container, sizeof (struct GxB_Container_struct)) ;
     }
 
     return (GrB_SUCCESS) ;

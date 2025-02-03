@@ -5861,15 +5861,13 @@ GrB_Info GxB_Context_fprint         // print and check a GxB_Context
 
 struct GxB_Container_struct
 {
-
-    // 32 words of uint64_t / int64_t:
-    uint64_t header_size ;          // size of this struct as allocated
+    // 16 words of uint64_t / int64_t:
     uint64_t nrows ;
     uint64_t ncols ;
     int64_t nrows_nonempty ;
     int64_t ncols_nonempty ;
     uint64_t nvals ;
-    uint64_t u64_future [26] ;       // for future expansion
+    uint64_t u64_future [11] ;      // for future expansion
 
     // 16 words of uint32_t / int32_t:
     int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP,
@@ -5889,7 +5887,7 @@ struct GxB_Container_struct
     GrB_Matrix Y ;
     GrB_Matrix matrix_future [15] ; // for future expansion
 
-    // 32 bool values
+    // 32 words of bool
     bool iso ;
     bool jumbled ;
     bool bool_future [30] ;         // for future expansion

@@ -47,7 +47,6 @@ GrB_Info GxB_Container_new
         // out of memory
         return (GrB_OUT_OF_MEMORY) ;
     }
-    (*Container)->header_size = header_size ;
 
     //--------------------------------------------------------------------------
     // allocate headers for the p, h, b, i and x components
