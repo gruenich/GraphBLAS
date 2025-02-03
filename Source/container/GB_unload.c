@@ -56,7 +56,6 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     Container->nrows_nonempty = (is_csc) ? -1 : A->nvec_nonempty ;
     Container->ncols_nonempty = (is_csc) ? A->nvec_nonempty : -1 ;
     Container->nvals = nvals ;
-    Container->nhyper = A->nvec ;       // FIXME : remove this
     Container->format = GB_sparsity (A) ;
     Container->orientation = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
     Container->iso = iso ;

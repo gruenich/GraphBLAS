@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: is GxB_unload_Vector_into_Container the right name?
-
 // V is returned as a length-0 vector in full data format, with no content.
 
 #include "GB_container.h"

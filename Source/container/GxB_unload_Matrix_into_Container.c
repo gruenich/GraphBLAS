@@ -9,8 +9,6 @@
 
 #include "GB_container.h"
 
-// FIXME: is GxB_unload_Matrix_into_Container the right name?
-
 GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
 (
     GrB_Matrix A,               // matrix to unload into the Container

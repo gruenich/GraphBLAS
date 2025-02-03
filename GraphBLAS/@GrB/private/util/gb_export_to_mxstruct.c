@@ -94,8 +94,9 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     OK1 (A, GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;
+    // OK (GxB_Matrix_fprint (A, "A to export", 0, NULL)) ;
 
-OK (GxB_Matrix_fprint (A, "A to export", 2, NULL)) ;    // FIXME
+// FIXME: use Container methods to export the matrix
 
     //--------------------------------------------------------------------------
     // extract the content of the GrB_Matrix and free it
@@ -104,7 +105,6 @@ OK (GxB_Matrix_fprint (A, "A to export", 2, NULL)) ;    // FIXME
     int sparsity_status ;
     OK (GrB_Matrix_get_INT32 (A, &sparsity_status, GxB_SPARSITY_STATUS)) ;
     int sparsity_control = A->sparsity_control ;
-// printf ("sparsity_ status export %d\n", sparsity_status) ;  // FIXME
 
     int64_t nzmax = GB_nnz_max (A) ;
     int64_t plen = A->plen ;

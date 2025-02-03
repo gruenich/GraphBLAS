@@ -28,6 +28,8 @@
 
 #include "GB_container.h"
 
+// FIXME change signature to put type before n
+
 GrB_Info GxB_Vector_load
 (
     // input/output:

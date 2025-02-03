@@ -149,8 +149,6 @@ GrB_Info GB_convert_b2s   // extract CSC/CSR or triplets from bitmap
         // cumulative sum to compute nnz(A(:,j)) for each vector j
         //----------------------------------------------------------------------
 
-        // FIXME: use a factory template here
-
         int64_t j ;
         if (Cp_is_32)
         {

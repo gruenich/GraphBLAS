@@ -35,6 +35,8 @@ for k = 1:length (types)
     Z = sparse (m, n)
     assert (isequal (A, Z)) ;
     A = GrB (m, n, 'by row') ;
+    Z
+    A
     assert (isequal (A, Z)) ;
 
     fprintf ('\n---- A = GrB (%d, %d, ''%s'') :\n', m, n, type) ;

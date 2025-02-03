@@ -57,6 +57,7 @@ void GB_vector_load
     if (!read_only)
     { 
         // tell the caller that X has been moved into V
+        // FIXME: add to debug memtable
         (*X) = NULL ;
     }
 

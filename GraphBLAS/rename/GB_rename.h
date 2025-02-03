@@ -1312,6 +1312,7 @@
 #define GB_Vector_diag GM_Vector_diag
 #define GB_vector_load GM_vector_load
 #define GB_Vector_removeElement GM_Vector_removeElement
+#define GB_vector_reset GM_vector_reset
 #define GB_Vector_subassign_scalar GM_Vector_subassign_scalar
 #define GB_vector_unload GM_vector_unload
 #define GB_wait GM_wait

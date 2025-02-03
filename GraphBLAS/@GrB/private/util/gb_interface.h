@@ -14,7 +14,7 @@
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 
-// #define NHISTORICAL   /* FIXME: add this when done */
+#define NHISTORICAL
 #include "GraphBLAS.h"
 #include "GB_helper.h"
 #include "mex.h"
@@ -65,7 +65,6 @@ static inline void gb_wrapup (void)
     GrB_Info this_info = method ;                           \
     if (this_info != GrB_SUCCESS)                           \
     {                                                       \
-printf ("%s %d: info %d\n", __FILE__, __LINE__, this_info) ; /* FIXME*/\
         ERROR (gb_error_string (this_info)) ;               \
     }                                                       \
 }

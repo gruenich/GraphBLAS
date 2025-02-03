@@ -71,7 +71,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
     }
     else if (mxIsStruct (X))
     { 
-// printf ("\n====================== get shallow via struct\n") ;
+
         //----------------------------------------------------------------------
         // construct a shallow GrB_Matrix copy from a MATLAB struct
         //----------------------------------------------------------------------
@@ -144,6 +144,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         int sparsity_status, sparsity_control ;
         int64_t nvals ;
         bool iso ;
+
         if (GraphBLASv3)
         {
             // GraphBLASv3 struct: sparse or hypersparse only
@@ -153,9 +154,10 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         }
         else
         {
-            // GraphBLASv4 or v5 struct: sparse, hypersparse, bitmap, or full
+            // GraphBLASv4 or later struct: sparse, hypersparse, bitmap, or full
             sparsity_control = (int) (s [5]) ;
             nvals            = s [8] ;
+//          printf ("nvals: %ld\n", nvals) ;
             if (GraphBLASv4)
             {
                 // GraphBLASv4: iso is always false
@@ -190,12 +192,8 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
                 // GraphBLAS v9 and earlier can export a matrix to the MATLAB
                 // struct with plen of 1 but nvec of 0.  Fix it here for v9 and
                 // earlier structs, and also in gb_export_to_mxstruct for v10:
-                if (plen != nvec)
-                {
-                    printf ("hyper from struct: plen %d nvec %d\n",
-                        plen, nvec) ;
-                }
                 plen = nvec ;
+//              printf ("get shallow hyper, plen %ld nvec %ld\n", plen, nvec) ;
                 break ;
 
             case 4 :
@@ -209,7 +207,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         // each component
         void   *Ap = NULL ; uint64_t Ap_size = 0 ;
         void   *Ah = NULL ; uint64_t Ah_size = 0 ;
-        void   *Ai = NULL ; uint64_t Ai_size = 0, Ai_len = 0 ;
+        void   *Ai = NULL ; uint64_t Ai_size = 0 ;
         int8_t *Ab = NULL ; uint64_t Ab_size = 0, Ab_len = 0 ;
         void   *Ax = NULL ; uint64_t Ax_size = 0, Ax_len = 0 ;
         void   *Yp = NULL ; uint64_t Yp_size = 0, Yp_len = 0 ;
@@ -261,8 +259,8 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Ai_is_32 = (class == mxUINT32_CLASS) ;
             isize = Ai_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
             Ai_type = Ai_is_32 ? GrB_UINT32 : GrB_UINT64 ;
-            Ai_len = mxGetN (Ai_mx) ;
-            Ai_size = Ai_len * isize ;
+            Ai_size = mxGetN (Ai_mx) * isize ;
+            IF (mxGetN (Ai_mx) < nvals, ".i wrong size") ;
             Ai = (Ai_size == 0) ? NULL : ((void *) mxGetData (Ai_mx)) ;
         }
 
@@ -367,7 +365,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Container->nrows_nonempty = -1 ;
             Container->ncols_nonempty = -1 ;
             Container->nvals = nvec ;
-            Container->nhyper = yvdim ;
             Container->format = GxB_SPARSE ;
             Container->orientation = GrB_COLMAJOR ;
             Container->iso = false ;
@@ -379,7 +376,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             OK (GxB_Vector_load (Container->x, &Yx, nvec, Yx_size, Aj_type,
                 true, NULL)) ;
             OK (GxB_load_Matrix_from_Container (Y, Container, NULL)) ;
-OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;  // FIXME
+            // OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;
         }
 
         // import the A matrix using the Container
@@ -388,7 +385,6 @@ OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;  // FIXME
         Container->nrows_nonempty = (by_col) ? -1 : nvec_nonempty ;
         Container->ncols_nonempty = (by_col) ? nvec_nonempty : -1 ;
         Container->nvals = nvals ;
-        Container->nhyper = nvec ;
         Container->format = sparsity_status ;
         Container->orientation = (by_col) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
         Container->iso = iso ;
@@ -406,7 +402,7 @@ OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;  // FIXME
             case GxB_SPARSE : 
                 OK (GxB_Vector_load (Container->p, &Ap, plen+1, Ap_size,
                     Ap_type, true, NULL)) ;
-                OK (GxB_Vector_load (Container->i, &Ai, Ai_len, Ai_size,
+                OK (GxB_Vector_load (Container->i, &Ai, nvals, Ai_size,
                     Ai_type, true, NULL)) ;
                 break ;
 
@@ -426,7 +422,7 @@ OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;  // FIXME
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
 
-OK (GxB_Matrix_fprint (A, "got A shallow", 2, NULL)) ;  // FIXME
+        // OK (GxB_Matrix_fprint (A, "got A shallow", 0, NULL)) ;
 
 #if 0
 
@@ -520,7 +516,6 @@ OK (GxB_Matrix_fprint (A, "got A shallow", 2, NULL)) ;  // FIXME
         A->i_shallow = (A->i != NULL) ;
         A->x_shallow = (A->x != NULL) ;
 #endif
-// printf ("got  via struct---------------------------------------\n") ;
 
     }
     else
@@ -671,7 +666,6 @@ OK (GxB_Matrix_fprint (A, "got A shallow", 2, NULL)) ;  // FIXME
     // restore the burble and return result
     //--------------------------------------------------------------------------
 
-// printf ("got a shallow done\n") ;
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, burble, GxB_BURBLE)) ;
     return (A) ;
 }
