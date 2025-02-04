@@ -811,11 +811,33 @@ void mexFunction
     GrB_Vector_free_(&w) ;
     GrB_Scalar_free_(&scalar) ;
 
-    GB_Global_print_mem_shallow_set (true) ;
-    CHECK (GB_Global_print_mem_shallow_get ( )) ;
+    int shallow = false ;
+    GB_Global_stats_mem_shallow_set (true) ;
+    CHECK (GB_Global_stats_mem_shallow_get ( )) ;
+    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &shallow,
+        GxB_INCLUDE_READONLY_STATISTICS)) ;
+    CHECK (shallow) ;
 
-    GB_Global_print_mem_shallow_set (false) ;
-    CHECK (!GB_Global_print_mem_shallow_get ( )) ;
+    shallow = true ;
+    GB_Global_stats_mem_shallow_set (false) ;
+    CHECK (!GB_Global_stats_mem_shallow_get ( )) ;
+    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &shallow,
+        GxB_INCLUDE_READONLY_STATISTICS)) ;
+    CHECK (!shallow) ;
+
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
+        GxB_INCLUDE_READONLY_STATISTICS)) ;
+    CHECK (GB_Global_stats_mem_shallow_get ( )) ;
+
+    shallow = false ;
+    OK (GrB_Global_get_INT32 (GrB_GLOBAL, &shallow,
+        GxB_INCLUDE_READONLY_STATISTICS)) ;
+    CHECK (shallow) ;
+    CHECK (GB_Global_stats_mem_shallow_get ( )) ;
+
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, false,
+        GxB_INCLUDE_READONLY_STATISTICS)) ;
+    CHECK (!GB_Global_stats_mem_shallow_get ( )) ;
 
     int64_t nallocs ;
     size_t mem_deep, mem_shallow ;

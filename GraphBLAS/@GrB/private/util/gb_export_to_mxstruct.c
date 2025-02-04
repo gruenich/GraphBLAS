@@ -78,7 +78,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     CHECK_ERROR (A_handle == NULL, "matrix missing") ;
 
     GrB_Matrix T = NULL ;
-    if (GB_is_shallow (*A_handle))  // FIXME
+    if (gb_is_readonly (*A_handle))
     {
         // A is shallow so make a deep copy
         OK (GrB_Matrix_dup (&T, *A_handle)) ;

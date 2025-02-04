@@ -88,8 +88,8 @@ bool     GB_Global_burble_get (void) ;
 void     GB_Global_print_one_based_set (bool onebased) ;
 bool     GB_Global_print_one_based_get (void) ;
 
-void     GB_Global_print_mem_shallow_set (bool mem_shallow) ;
-bool     GB_Global_print_mem_shallow_get (void) ;
+void     GB_Global_stats_mem_shallow_set (bool mem_shallow) ;
+bool     GB_Global_stats_mem_shallow_get (void) ;
 
 bool     GB_Global_gpu_count_set (bool enable_cuda) ;
 int      GB_Global_gpu_count_get (void) ;

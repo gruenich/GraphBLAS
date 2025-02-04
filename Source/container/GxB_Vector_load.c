@@ -24,7 +24,7 @@
 
 // FIXME: if a matrix/vector/scalar with any shallow content is passed to a
 // GrB* or GxB* method as the output matrix/vector/scalar, return an error
-// code, such as GxB_OUTPUT_IS_READ_ONLY.
+// code: GxB_OUTPUT_IS_READONLY.
 
 #include "GB_container.h"
 

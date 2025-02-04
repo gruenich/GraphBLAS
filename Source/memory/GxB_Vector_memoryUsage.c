@@ -33,6 +33,10 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
     int64_t nallocs ;
     size_t mem_shallow ;
     GB_memoryUsage (&nallocs, size, &mem_shallow, (GrB_Matrix) v, false) ;
+    if (GB_Global_stats_mem_shallow_get ( ))
+    { 
+        (*size) += mem_shallow ;
+    }
     return (GrB_SUCCESS) ;
 }
 

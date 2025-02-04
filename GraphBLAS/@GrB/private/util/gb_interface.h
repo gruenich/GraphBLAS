@@ -590,6 +590,11 @@ bool gb_is_dense                // true if A is dense
     GrB_Matrix A                // GrB_Matrix to query
 ) ;
 
+bool gb_is_readonly             // true if A has any read-only components
+(
+    GrB_Matrix A                // GrB_matrix to query
+) ;
+
 GrB_UnaryOp gb_round_op (const GrB_Type type) ;
 
 mxArray *gb_mxclass_to_mxstring (mxClassID class, bool is_complex) ;

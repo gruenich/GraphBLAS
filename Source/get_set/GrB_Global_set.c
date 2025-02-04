@@ -102,6 +102,11 @@ static GrB_Info GB_global_enum_set (int32_t value, int field)
             GB_Global_print_one_based_set ((bool) value) ;
             break ;
 
+        case GxB_INCLUDE_READONLY_STATISTICS : 
+
+            GB_Global_stats_mem_shallow_set ((bool) value) ;
+            break ;
+
         case GxB_JIT_USE_CMAKE : 
 
             GB_jitifyer_set_use_cmake ((bool) value) ;

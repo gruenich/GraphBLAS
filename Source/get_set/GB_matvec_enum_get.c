@@ -33,6 +33,11 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
             (*value) = GB_sparsity (A) ;
             break ;
 
+        case GxB_IS_READONLY : 
+
+            (*value) = GB_is_shallow (A) ;
+            break ;
+
         case GxB_ISO : 
 
             (*value) = A->iso ;

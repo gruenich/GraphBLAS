@@ -464,6 +464,12 @@ void GB_helper_container_new (void)         // allocate the global Container
         Container->b = GB_helper_component ( ) ;
         Container->i = GB_helper_component ( ) ;
         Container->x = GB_helper_component ( ) ;
+
+        // clear the Container scalars
+        Container->nrows_nonempty = -1 ;
+        Container->ncols_nonempty = -1 ;
+        Container->format = GxB_FULL ;
+        Container->orientation = GrB_ROWMAJOR ;
     }
 }
 

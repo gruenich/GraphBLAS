@@ -383,6 +383,7 @@ typedef enum    // GrB_Info
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
     GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
     GxB_JIT_ERROR = -7001,          // JIT compiler/loader error
+    GxB_OUTPUT_IS_READONLY = -7002, // output matrix has readonly components
 
 }
 GrB_Info ;
@@ -1429,25 +1430,38 @@ typedef enum    // GxB_Option_Field ;
     // GrB_BinaryOp or GrB_Semiring:
     GxB_THETA = 7052,               // to get the value of theta
 
+    //------------------------------------------------------------
     // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
+    //------------------------------------------------------------
+
     GxB_ROWINDEX_INTEGER_HINT = 7053,   // hint for row indices
     GxB_COLINDEX_INTEGER_HINT = 7054,   // hint for column indices
     GxB_OFFSET_INTEGER_HINT = 7056,     // hint for offsets
-
-    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
-    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
-    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
-    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
-
-    //------------------------------------------------------------
-    // GrB_get / GrB_set for GrB_Matrix and GrB_GLOBAL:
-    //------------------------------------------------------------
-
     GxB_HYPER_SWITCH = 7000,    // switch to hypersparse (double value)
     GxB_HYPER_HASH = 7048,      // hyper_hash control (global int64 value,
                                 // or bool per matrix)
     GxB_BITMAP_SWITCH = 7001,   // switch to bitmap (double value)
     GxB_FORMAT = 7002,          // Historical; use GrB_STORAGE_ORIENTATION_HINT
+
+    //------------------------------------------------------------
+    // GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
+    //------------------------------------------------------------
+
+    GxB_ISO = 7079,     // get: returns the current iso status
+                        // set true: make the matrix iso-valued, if possible.
+                        // set false: make the matrix non-iso-valued.
+    GxB_SPARSITY_CONTROL = 7036,    // sparsity control: 0 to 15; see below
+
+    //------------------------------------------------------------
+    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
+    //------------------------------------------------------------
+
+    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
+    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
+    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
+    GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
+    GxB_IS_HYPER = 7035,            // Historical; use GxB_SPARSITY_STATUS
+    GxB_IS_READONLY = 7078,         // true if it has any read-only components
 
     //------------------------------------------------------------
     // GrB_get for GrB_GLOBAL:
@@ -1487,6 +1501,8 @@ typedef enum    // GxB_Option_Field ;
     GxB_FLUSH = 7021,                // flush function diagnostic output
     GxB_MEMORY_POOL = 7022,          // no longer used
     GxB_PRINT_1BASED = 7023,         // print matrices as 0-based or 1-based
+    GxB_INCLUDE_READONLY_STATISTICS = 7077, // include readonly memory in
+                                     // memory usage statistics
 
     GxB_JIT_C_COMPILER_NAME = 7024,  // CPU JIT C compiler name
     GxB_JIT_C_COMPILER_FLAGS = 7025, // CPU JIT C compiler flags
@@ -1500,22 +1516,6 @@ typedef enum    // GxB_Option_Field ;
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
 
     GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
-
-    //------------------------------------------------------------
-    // GrB_get for GrB_Matrix:
-    //------------------------------------------------------------
-
-    GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
-    GxB_IS_HYPER = 7035,            // Historical; use GxB_SPARSITY_STATUS
-
-    //------------------------------------------------------------
-    // GrB_get/GrB_set for GrB_Matrix:
-    //------------------------------------------------------------
-
-    GxB_SPARSITY_CONTROL = 7036,    // sparsity control: 0 to 15; see below
-    GxB_ISO = 7079,     // get: returns the current iso status
-                        // set true: make the matrix iso-valued, if possible.
-                        // set false: make the matrix non-iso-valued.
 
     //------------------------------------------------------------
     // GrB_get/GrB_set for GrB_Descriptor:

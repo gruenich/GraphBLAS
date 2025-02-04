@@ -136,6 +136,11 @@ static GrB_Info GB_global_enum_get (int32_t *value, int field)
             (*value) = (int) GB_Global_print_one_based_get ( ) ;
             break ;
 
+        case GxB_INCLUDE_READONLY_STATISTICS : 
+
+            (*value) = (int) GB_Global_stats_mem_shallow_get ( ) ;
+            break ;
+
         case GxB_JIT_C_CONTROL : 
 
             (*value) = (int) GB_jitifyer_get_control ( ) ;

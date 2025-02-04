@@ -106,7 +106,8 @@ typedef struct
     GB_printf_function_t printf_func ;  // pointer to printf
     GB_flush_function_t flush_func ;   // pointer to flush
     bool print_one_based ;          // if true, print 1-based indices
-    bool print_mem_shallow ;        // if true, print # shallow bytes
+    bool stats_mem_shallow ;        // if true, include shallow bytes in
+                                    // memory usage statistics
 
     //--------------------------------------------------------------------------
     // timing: for code development only
@@ -212,7 +213,7 @@ static GB_Global_struct GB_Global =
     .printf_func = NULL,
     .flush_func = NULL,
     .print_one_based = false,   // if true, print 1-based indices
-    .print_mem_shallow = false, // for @GrB interface only
+    .stats_mem_shallow = false, // if true, include shallow bytes in stats
 
     .timing = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -958,17 +959,17 @@ bool GB_Global_print_one_based_get (void)
 }
 
 //------------------------------------------------------------------------------
-// for printing matrix in @GrB interface
+// for memory usage statistics
 //------------------------------------------------------------------------------
 
-void GB_Global_print_mem_shallow_set (bool mem_shallow)
+void GB_Global_stats_mem_shallow_set (bool mem_shallow)
 { 
-    GB_Global.print_mem_shallow = mem_shallow ;
+    GB_Global.stats_mem_shallow = mem_shallow ;
 }
 
-bool GB_Global_print_mem_shallow_get (void)
+bool GB_Global_stats_mem_shallow_get (void)
 { 
-    return (GB_Global.print_mem_shallow) ;
+    return (GB_Global.stats_mem_shallow) ;
 }
 
 //------------------------------------------------------------------------------

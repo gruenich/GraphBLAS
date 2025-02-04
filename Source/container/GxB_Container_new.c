@@ -48,6 +48,17 @@ GrB_Info GxB_Container_new
         return (GrB_OUT_OF_MEMORY) ;
     }
 
+    // clear the Container scalars
+    (*Container)->nrows = 0 ;
+    (*Container)->ncols = 0 ;
+    (*Container)->nrows_nonempty = -1 ;
+    (*Container)->ncols_nonempty = -1 ;
+    (*Container)->nvals = 0 ;
+    (*Container)->format = GxB_FULL ;
+    (*Container)->orientation = GrB_ROWMAJOR ;
+    (*Container)->iso = false ;
+    (*Container)->jumbled = false ;
+
     //--------------------------------------------------------------------------
     // allocate headers for the p, h, b, i and x components
     //--------------------------------------------------------------------------

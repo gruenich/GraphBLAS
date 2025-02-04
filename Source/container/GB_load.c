@@ -107,17 +107,30 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     A->nvec_nonempty = (A->is_csc) ?
         Container->ncols_nonempty : Container->nrows_nonempty ;
     A->iso = Container->iso ;
-    A->jumbled = Container->jumbled ;
+    A->jumbled = false ;
     uint64_t plen1 = 0, plen, Ab_len = 0, Ax_len = 0, Ai_len = 0 ;
     GrB_Type Ap_type = NULL, Ah_type = NULL, Ab_type = NULL, Ai_type = NULL ;
     uint64_t Ah_size = 0, Ap_size = 0, Ai_size = 0, Ab_size = 0, Ax_size = 0 ;
     uint64_t nrows_times_ncols = UINT64_MAX ;
     bool ok = GB_uint64_multiply (&nrows_times_ncols, nrows, ncols) ;
+    int format = Container->format ;
+    bool jumbled = Container->jumbled ;
+
+    // clear the Container scalars
+    Container->nrows = 0 ;
+    Container->ncols = 0 ;
+    Container->nrows_nonempty = -1 ;
+    Container->ncols_nonempty = -1 ;
+    Container->nvals = 0 ;
+    Container->format = GxB_FULL ;
+    Container->orientation = GrB_ROWMAJOR ;
+    Container->iso = false ;
+    Container->jumbled = false ;
 
     // Get or clear the phybix content: Ap, Ah, A->Y, A->b, A->i, and A->x,
     // depending on the format of the data held in the container.
 
-    switch (Container->format)
+    switch (format)
     {
 
         case GxB_HYPERSPARSE : 
@@ -163,15 +176,15 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
                 &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
 
-            // define plen and nvec
+            // define plen, nvec, and jumbled
             A->plen = plen ;
             A->nvec = plen ;
+            A->jumbled = jumbled ;
 
             // basic sanity checks
             if (plen1 != plen + 1 ||
                 !(A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
             { 
-                printf ("fail %s %d\n", __FILE__, __LINE__) ;
                 return (GrB_INVALID_VALUE) ;
             }
             break ;
@@ -197,14 +210,14 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
                 &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
 
-            // define plen and nvec
+            // define plen, nvec, and jumbled
             A->plen = plen1 - 1 ;
             A->nvec = A->plen ;
+            A->jumbled = jumbled ;
 
             // basic sanity checks
             if (!(A->nvec == A->plen && A->plen == A->vdim))
             { 
-                printf ("fail %s %d\n", __FILE__, __LINE__) ;
                 return (GrB_INVALID_VALUE) ;
             }
             break ;
@@ -235,8 +248,6 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             // basic sanity checks
             if (Ab_type != GrB_INT8 || !ok || Ab_len < nrows_times_ncols)
             { 
-                printf ("fail %s %d: %lu, %lu\n", __FILE__, __LINE__,
-                    Ab_len, nrows_times_ncols) ;
                 return (GrB_INVALID_VALUE) ;
             }
             break ;
@@ -277,43 +288,37 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     { 
         // A->x must have size >= 1 for all iso matrices
         ok = (Ax_len >= 1) ;
-        if (!ok) printf (":fail %s %d: Ax_len %lu\n",
-            __FILE__, __LINE__, Ax_len) ;
     }
-    else if (Container->format == GxB_HYPERSPARSE ||
-             Container->format == GxB_SPARSE)
+    else if (format == GxB_HYPERSPARSE || format == GxB_SPARSE)
     { 
         // A->x must have size >= A->nvals for non-iso sparse/hypersparse
         ok = (Ax_len >= A->nvals) ;
-        if (!ok) printf (":fail %s %d\n", __FILE__, __LINE__) ;
     }
     else
     { 
         // A->x must have size >= nrows*ncols for non-iso full/bitmap
         ok = ok && (Ax_len >= nrows_times_ncols) ;
-        if (!ok) printf (":fail %s %d: %lu, %lu\n", __FILE__, __LINE__,
-            Ax_len, nrows_times_ncols) ;
     }
 
     // ensure Ai_len is the right size
-    if (Container->format == GxB_HYPERSPARSE ||
-        Container->format == GxB_SPARSE)
+    if (format == GxB_HYPERSPARSE || format == GxB_SPARSE)
     { 
         // A->i must have size >= A->nvals for sparse/hypersparse
         ok = ok && (Ai_len >= A->nvals) ;
-        if (!ok) printf (":fail %s %d: %lu %lu\n", __FILE__, __LINE__,
-            Ai_len, A->nvals) ;
 
         // A->p [A->plen] must match A->nvals
         GB_Ap_DECLARE (Ap, const) ; GB_Ap_PTR (Ap, A) ;
         ok = ok && (A->nvals == GB_IGET (Ap, A->plen)) ;
-        if (!ok) printf (":fail %s %d: %lu, %lu\n", __FILE__, __LINE__,
-            A->nvals, GB_IGET (Ap, A->plen)) ;
+    }
+
+    // if A->jumbled is true, ensure A has no readonly components
+    if (A->jumbled)
+    { 
+        ok = ok && !GB_is_shallow (A) ;
     }
 
     if (!ok)
     { 
-        printf ("fail %s %d\n", __FILE__, __LINE__) ;
         return (GrB_INVALID_VALUE) ;
     }
 

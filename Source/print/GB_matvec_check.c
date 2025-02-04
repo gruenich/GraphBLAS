@@ -11,8 +11,8 @@
 #define GB_DEVELOPER 0
 
 // For development only:
-#undef  GB_DEVELOPER
-#define GB_DEVELOPER 1
+// #undef  GB_DEVELOPER
+// #define GB_DEVELOPER 1
 
 #include "GB.h"
 #include "pending/GB_Pending.h"
@@ -57,7 +57,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     bool pr_complete = (pr == GxB_COMPLETE || pr == GxB_COMPLETE_VERBOSE) ;
     bool pr_short    = (pr == GxB_SHORT    || pr == GxB_SHORT_VERBOSE   ) ;
     bool one_based = GB_Global_print_one_based_get ( ) ;
-    bool pr_mem_shallow = GB_Global_print_mem_shallow_get ( ) ;
+    bool pr_mem_shallow = GB_Global_stats_mem_shallow_get ( ) ;
     int64_t offset = (one_based) ? 1 : 0 ;
     #if GB_DEVELOPER
     int pr_developer = pr ;
@@ -595,6 +595,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     { 
         GBPR0 ("  invalid number of zombies: " GBd " "
             "must be >= 0 and <= # entries (" GBd ")\n", A->nzombies, anz) ;
+        return (GrB_INVALID_OBJECT) ;
+    }
+
+    if (A->jumbled && GB_is_shallow (A))
+    { 
+        GBPR0 ("  jumbled %s cannot contain readonly components\n", kind) ;
         return (GrB_INVALID_OBJECT) ;
     }
 

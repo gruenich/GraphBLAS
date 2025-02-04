@@ -66,7 +66,8 @@ void mexFunction
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true, GxB_PRINT_1BASED)) ;
 
     // print sizes of shallow components
-    GB_Global_print_mem_shallow_set (true) ;    // FIXME? make an option?
+    OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
+        GxB_INCLUDE_READONLY_STATISTICS)) ;
 
     GrB_Matrix C = gb_get_shallow (pargin [0]) ;
     OK (GxB_Matrix_fprint (C, s, level, NULL)) ;

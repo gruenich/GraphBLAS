@@ -337,6 +337,11 @@ void mexFunction
     OK (GrB_Matrix_build_INT32 (A, I, I, I32, 0, GrB_PLUS_INT32)) ;     // OK
     OK (GxB_Matrix_fprint (A, "empty", GxB_COMPLETE, NULL)) ;
     CHECK (!GB_is_shallow (A)) ;
+
+    int shallow = true ;
+    OK (GrB_Matrix_get_INT32 (A, &shallow, GxB_IS_READONLY)) ;
+    CHECK (!shallow) ;
+
     GrB_Matrix_free_(&A) ;
 
     OK (GrB_Matrix_new (&A, GrB_INT32, n, n)) ;
