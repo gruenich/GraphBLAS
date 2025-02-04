@@ -317,8 +317,7 @@ GrB_Scalar GB_mx_get_Scalar
 
 #define METHOD_START(OP) \
     printf ("\n================================================================================\n") ; \
-    printf ("method: [%s] start: "GBd" \n", #OP, \
-        GB_Global_nmalloc_get ( )) ; \
+    printf ("method: [%s] start: "GBd" \n", #OP, GB_Global_nmalloc_get ( )) ; \
     printf ("================================================================================\n") ;
 
 #define METHOD_TRY \
