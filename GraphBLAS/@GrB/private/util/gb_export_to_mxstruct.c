@@ -31,6 +31,8 @@
 // they work fine for MATLAB since GraphBLAS requires R2018a with the
 // interleaved complex data type.
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 // for hypersparse, sparse, or full matrices

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// This function accesses opaque content and GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 #include "GB_binop.h"
 

@@ -11,6 +11,8 @@
 // SuiteSparse:GraphBLAS library.  Thus, GB.h is #include'd (via GB_helper.h),
 // not just GraphBLAS.h.
 
+// The gb_wrapup function accesses GB_methods inside GraphBLAS.
+
 #ifndef GB_INTERFACE_H
 #define GB_INTERFACE_H
 

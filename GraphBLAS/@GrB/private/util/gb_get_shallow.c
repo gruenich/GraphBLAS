@@ -26,6 +26,8 @@
 // because mxGetData works best for Octave, and it works fine for MATLAB
 // since GraphBLAS requires R2018a with the interleaved complex data type.
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 #define IF(error,message) \

@@ -12,6 +12,8 @@
 // The input GrB_Matrix A may be shallow or deep.  The output is a standard
 // MATLAB sparse matrix as an mxArray.
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 void gb_usage       // check usage and make sure GrB.init has been called

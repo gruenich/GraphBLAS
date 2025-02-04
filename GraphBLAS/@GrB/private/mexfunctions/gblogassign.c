@@ -13,6 +13,8 @@
 // is a sparse vector of size nnz(M)-by-1.  Scalar expansion is not handled.
 // Use GrB.subassign (C, M, scalar) for that case.
 
+// This function accesses opaque content and GB_methods inside GraphBLAS.
+
 // Usage:
 
 //      C = gblogassign (C, M, A)
@@ -184,7 +186,7 @@ void mexFunction
     // extract the values and pattern of A; handle iso case
     //--------------------------------------------------------------------------
 
-    void *Ax = A->x ;          		 	 	 	 	 	
+    void *Ax = A->x ;
     char nil [16] = "iso logassign  " ;
     if (Ax == NULL) Ax = &nil ;
 

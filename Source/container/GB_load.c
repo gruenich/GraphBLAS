@@ -86,7 +86,6 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
 
         default : 
             return (GrB_INVALID_VALUE) ;
-            break ;
     }
 
     //--------------------------------------------------------------------------

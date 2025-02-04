@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 typedef void (*function_pointer) (void) ;

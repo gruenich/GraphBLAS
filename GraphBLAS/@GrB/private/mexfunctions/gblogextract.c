@@ -12,6 +12,8 @@
 // of any type in this mexFunction.  M should not have any explicit zeros.  C
 // has the same type as A, and is a sparse vector of size nnz(M)-by-1.
 
+// This function accesses opaque content and GB_methods inside GraphBLAS.
+
 // Usage:
 
 // C = gblogextract (A, M)

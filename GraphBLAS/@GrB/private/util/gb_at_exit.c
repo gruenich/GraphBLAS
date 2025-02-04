@@ -10,6 +10,8 @@
 // This method is called by MATLAB when the mexFunction that called GrB_init
 // (or GxB_init) is cleared.
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 void gb_at_exit ( void )

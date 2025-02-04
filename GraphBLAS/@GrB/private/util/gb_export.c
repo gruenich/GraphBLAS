@@ -10,6 +10,8 @@
 // mxArray pargout [0] = gb_export (&C, kind) ; exports C as a MATLAB matrix
 // and frees the remaining content of C.
 
+// This function accesses GB_methods inside GraphBLAS.
+
 #include "gb_interface.h"
 
 mxArray *gb_export              // return the exported MATLAB matrix or struct
