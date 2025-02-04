@@ -54,7 +54,7 @@ void mexFunction
 
     double s ;
 
-    if (GB_is_dense (A) && GB_is_dense (B) &&   // FIXME
+    if (gb_is_dense (A) && gb_is_dense (B) &&
         (atype == GrB_FP32 || atype == GrB_FP64) && (atype == btype)
         && (anrows == 1 || ancols == 1 || norm_kind == 0))
     {

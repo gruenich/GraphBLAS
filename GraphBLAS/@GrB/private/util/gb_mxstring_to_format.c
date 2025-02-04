@@ -63,14 +63,14 @@ bool gb_mxstring_to_format      // true if a valid format is found
             valid = true ;
             (*fmt) = GxB_BY_ROW ;
             len = len - 6 ;
-            format_string [GB_IMAX (0, len-1)] = '\0' ;
+            format_string [MAX (0, len-1)] = '\0' ;
         }
         else if (MATCH (format_string + len - 6, "by col"))
         { 
             valid = true ;
             (*fmt) = GxB_BY_COL ;
             len = len - 6 ;
-            format_string [GB_IMAX (0, len-1)] = '\0' ;
+            format_string [MAX (0, len-1)] = '\0' ;
         }
     }
 

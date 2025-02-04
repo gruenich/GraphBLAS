@@ -88,10 +88,7 @@ void mexFunction
     OK (GxB_Matrix_type (&atype, A)) ;
     if (C != NULL)
     { 
-        CHECK_ERROR (C->h != NULL, "Cin cannot be hypersparse") ;
-        CHECK_ERROR (!(C->is_csc), "Cin must be stored by column") ;
-        CHECK_ERROR (!GB_VECTOR_OK (C), // FIXME
-            "Cin must be a column vector") ;
+        CHECK_ERROR (!gb_is_column_vector (C), "Cin must be a column vector") ;
         OK (GxB_Matrix_type (&ctype, C)) ;
     }
 

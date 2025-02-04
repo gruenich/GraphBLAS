@@ -78,12 +78,12 @@ void mexFunction
     else if (k >= 0)
     {
         // if k is in range 0 to n-1, V must have length min (m,n-k)
-        n = GB_IMIN (nrows, ncols - k) ;
+        n = MIN (nrows, ncols - k) ;
     }
     else
     {
         // if k is in range -1 to -m+1, V must have length min (m+k,n)
-        n = GB_IMIN (nrows + k, ncols) ;
+        n = MIN (nrows + k, ncols) ;
     }
 
     V = gb_new (vtype, n, 1, GxB_BY_COL, 0) ;

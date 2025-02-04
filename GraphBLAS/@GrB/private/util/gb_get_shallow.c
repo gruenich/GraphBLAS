@@ -275,7 +275,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
         if (sparsity_status == GxB_SPARSE)
         {
             // A is sparse; determine Aj_is_32
-            Aj_is_32 = GB_determine_j_is_32 (true, vdim) ;  // FIXME
+            Aj_is_32 = (vdim <= ((int64_t) (1ULL << 31))) ;
             Aj_type = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
             jsize = Aj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
@@ -296,7 +296,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Ah_size = mxGetN (Ah_mx) * jsize ;
             Ah = (Ah_size == 0) ? NULL : ((void *) mxGetData (Ah_mx)) ;
 
-            // get the A->Y hyper_hash, if it exists
+            // get the hyper_hash, if it exists
 
             if (nfields == 9)
             { 

@@ -374,7 +374,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     {
 
         //----------------------------------------------------------------------
-        // 1000 semirings with TxT->T multiply operators
+        // 1000 semirings with TxT -> T multiply operators
         //----------------------------------------------------------------------
 
         // x,y,z are all the same non-Boolean type

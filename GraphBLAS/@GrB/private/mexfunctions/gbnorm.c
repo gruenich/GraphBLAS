@@ -49,7 +49,7 @@ void mexFunction
 
     double s ;
 
-    if (norm_kind == INT64_MIN && !GB_is_dense (A)) // FIXME
+    if (norm_kind == INT64_MIN && !gb_is_dense (A))
     { 
         // norm (A,-inf) is zero if A is not full
         s = 0 ;

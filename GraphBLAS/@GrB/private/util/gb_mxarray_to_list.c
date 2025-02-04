@@ -80,7 +80,7 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     // get the properties of S
     //--------------------------------------------------------------------------
 
-    uint64_t ncols, nrows, n ;
+    uint64_t ncols, nrows ;
     OK (GrB_Matrix_nrows (&nrows, S)) ;
     OK (GrB_Matrix_ncols (&ncols, S)) ;
 
@@ -120,7 +120,7 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     if (quick)
     { 
         // return S as a shallow GrB_Vector, but subtract the base if needed
-        ASSERT (GB_VECTOR_OK (S)) ; // FIXME
+        ASSERT (gb_is_column_vector (S)) ;
         ASSERT_VECTOR_OK ((GrB_Vector) S, "S as vector", GB0) ;
         // V = S - base_offset
         V = gb_subtract_base ((GrB_Vector *) &S, base_offset) ;
@@ -133,12 +133,11 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
     //--------------------------------------------------------------------------
 
     // C = S (:)
-    bool ok = GB_uint64_multiply (&n, nrows, ncols) ;   // FIXME
-    if (!ok)
+    if (((double) nrows) * ((double) ncols) > INT64_MAX / 8)
     { 
         ERROR ("input matrix dimensions are too large") ;
     }
-    OK (GxB_Matrix_reshapeDup (&C, S, true, n, 1, NULL)) ;
+    OK (GxB_Matrix_reshapeDup (&C, S, true, nrows * ncols, 1, NULL)) ;
     GrB_Matrix_free (&S) ;
 
     // ensure C is not hypersparse, and is stored by column
@@ -146,8 +145,8 @@ GrB_Vector gb_mxarray_to_list      // list of indices or values
         GxB_SPARSITY_CONTROL)) ;
     OK (GrB_Matrix_set_INT32 (C, GxB_BY_COL, GxB_FORMAT)) ;
 
-    // C is now a valid vector
-    ASSERT_VECTOR_OK ((GrB_Vector) C, "C as vector", GB0) ;
+    // C is now a valid column vector
+    ASSERT (gb_is_column_vector (C)) ;
 
     // V = C - base_offset
     V = gb_subtract_base ((GrB_Vector *) &C, base_offset) ;

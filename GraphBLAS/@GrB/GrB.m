@@ -1053,8 +1053,6 @@ methods (Static)
     v = ver ;
     C = vreduce (Cin, M, accum, monoid, A, desc) ;
 
-    t = timing (c) ; % timing for diagnositics only
-
     % these were formerly overloaded methods, now Static methods
     C = false (varargin) ;
     C = true (varargin) ;

@@ -76,7 +76,7 @@ void mexFunction
     uint64_t n ;
     OK (GxB_Matrix_type (&ctype, V)) ;
     OK (GrB_Matrix_nrows (&n, V)) ;
-    n += GB_IABS (k) ;
+    n += ABS (k) ;
     fmt = gb_get_format (n, n, NULL, NULL, fmt) ;
     C = gb_new (ctype, n, n, fmt, 0) ;
 

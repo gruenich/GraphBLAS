@@ -97,6 +97,8 @@ static inline void gb_wrapup (void)
 #define MATCH(s,t) (strcmp(s,t) == 0)
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+#define ABS(x)   (((x) >= 0) ? (x) : (-(x)))
 
 // largest integer representable as a double
 #define FLINTMAX (((int64_t) 1) << 53)
@@ -494,6 +496,11 @@ bool gb_is_vector               // true if A is a row or column vector
     GrB_Matrix A                // GrB_Matrix to query
 ) ;
 
+bool gb_is_column_vector        // true if A is a column vector
+(
+    GrB_Matrix A                // GrB_matrix to query
+) ;
+
 int gb_get_format           // GxB_BY_ROW or GxB_BY_COL
 (
     GrB_Index cnrows,       // C is cnrows-by-cncols
@@ -577,6 +584,11 @@ GrB_Type gb_default_type        // return the default type to use
 bool gb_is_integer (const GrB_Type type) ;
 
 bool gb_is_float (const GrB_Type type) ;
+
+bool gb_is_dense                // true if A is dense
+(
+    GrB_Matrix A                // GrB_Matrix to query
+) ;
 
 GrB_UnaryOp gb_round_op (const GrB_Type type) ;
 

@@ -167,8 +167,8 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     uint64_t cncols_required = J_max + 1 ;
     if (cnrows_required > cnrows || cncols_required > cncols)
     {
-        uint64_t cnrows_new = GB_IMAX (cnrows, cnrows_required) ;
-        uint64_t cncols_new = GB_IMAX (cncols, cncols_required) ;
+        uint64_t cnrows_new = MAX (cnrows, cnrows_required) ;
+        uint64_t cncols_new = MAX (cncols, cncols_required) ;
         OK (GrB_Matrix_resize (C, cnrows_new, cncols_new)) ;
     }
 

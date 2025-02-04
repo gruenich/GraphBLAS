@@ -47,9 +47,9 @@ static const char *MatrixFields [9] =
     "i",                // 4: array of uint32_t or uint64_t, size nzmax
     "h",                // 5: array of uint32_t or uint64_t, size plen if hyper
     // added for v7.2: for hypersparse matrices only:
-    "Yp",               // 6: Y->p, uint32_t or uint64_t array, size Y->vdim+1
-    "Yi",               // 7: Y->i, uint32_t or uint64_t array, size nvec (s[3])
-    "Yx"                // 8: Y->x, uint32_t or uint64_t array, size nvec
+    "Yp",               // 6: Yp, uint32_t or uint64_t array, size yvdim+1
+    "Yi",               // 7: Yi, uint32_t or uint64_t array, size nvec (s[3])
+    "Yx"                // 8: Yx, uint32_t or uint64_t array, size nvec
 } ;
 
 // for bitmap matrices only
@@ -90,7 +90,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     GrB_Matrix Y = NULL ;
 
     //--------------------------------------------------------------------------
-    // make sure the matrix is finished, including the creation of A->Y
+    // make sure the matrix is finished, including the creation of Y
     //--------------------------------------------------------------------------
 
     OK1 (A, GrB_Matrix_wait (A, GrB_MATERIALIZE)) ;

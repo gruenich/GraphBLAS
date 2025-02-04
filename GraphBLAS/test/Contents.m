@@ -132,7 +132,6 @@
 %   gbtest126      - test GrB.selectops
 %   gbtest127      - test GrB.semirings
 %   gbtest128      - test GrB.unops
-%   gbtest129      - test GrB.timing
 %
 % Utilities and other tests:
 %

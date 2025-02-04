@@ -1058,7 +1058,6 @@
 #define GB_macrofy_unop GM_macrofy_unop
 #define GB_macrofy_user_op GM_macrofy_user_op
 #define GB_macrofy_user_type GM_macrofy_user_type
-#define GB_make_shallow GM_make_shallow
 #define GB_malloc_memory GM_malloc_memory
 #define GB_Mask_compatible GM_Mask_compatible
 #define GB_masker GM_masker

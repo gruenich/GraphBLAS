@@ -180,7 +180,6 @@ gbtest125 % test monoids
 gbtest126 % test selectops
 gbtest127 % test semirings
 gbtest128 % test unops
-gbtest129 % test timing
 gbtest96  % test GrB.optype
 
 if (~have_octave)

@@ -4,4 +4,3 @@ methods.
 
 FIXME: remove GB_is_shallow, replace with GrB_Matrix_get_INT32-based method.
 
-FIXME: remove GB_is_dense

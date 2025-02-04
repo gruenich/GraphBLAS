@@ -227,8 +227,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         // set the size
         mxSetM (S, nrows) ;
         mxSetN (S, ncols) ;
-        int64_t nzmax = GB_IMIN (Ti_size / sizeof (int64_t),
-                                 Tx_size / type_size) ;
+        int64_t nzmax = MIN (Ti_size / sizeof (int64_t), Tx_size / type_size) ;
         mxSetNzmax (S, nzmax) ;
 
         // set the column pointers
