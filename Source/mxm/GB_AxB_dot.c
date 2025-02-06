@@ -200,11 +200,7 @@ GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
         if (!C_iso &&   // Fixme for CUDA, remove and create C iso on output
-            GB_cuda_AxB_dot3_branch (M, Mask_struct, A, B, semiring, flipxy)
-            && !C->p_is_32 && !C->j_is_32 && !C->i_is_32
-            && !M->p_is_32 && !M->j_is_32 && !M->i_is_32
-            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32
-            && !B->p_is_32 && !B->j_is_32 && !B->i_is_32)
+            GB_cuda_AxB_dot3_branch (M, Mask_struct, A, B, semiring, flipxy))
         {
             info = (GB_cuda_AxB_dot3 (C, M, Mask_struct, A, B, semiring,
                 flipxy)) ;

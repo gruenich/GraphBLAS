@@ -41,7 +41,7 @@ if ( NOT BUILD_SHARED_LIBS )
 endif ( )
 
 # CUDA is under development for now, and not deployed in production:
-# set ( GRAPHBLAS_USE_CUDA OFF )
+# set ( GRAPHBLAS_USE_CUDA OFF )    # FIXME: turn CUDA off
   set ( GRAPHBLAS_USE_CUDA ON )     # use this for CUDA development only
 
 include ( SuiteSparsePolicy )

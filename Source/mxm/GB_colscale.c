@@ -211,10 +211,7 @@ GrB_Info GB_colscale                // C = A*D, column scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_colscale_branch (A, D, semiring, flipxy)
-            && !C->p_is_32 && !C->j_is_32 && !C->i_is_32    
-            && !A->p_is_32 && !A->j_is_32 && !A->i_is_32    
-            && !D->p_is_32 && !D->j_is_32 && !D->i_is_32)
+        if (GB_cuda_colscale_branch (A, D, semiring, flipxy))
         {
             info = GB_cuda_colscale (C, A, D, semiring, flipxy) ;
         }

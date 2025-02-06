@@ -201,10 +201,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
         info = GrB_NO_VALUE ;
 
         #if defined ( GRAPHBLAS_HAS_CUDA )
-        if (GB_cuda_rowscale_branch (D, B, semiring, flipxy)
-            && !C->p_is_32 && !C->j_is_32 && !C->i_is_32
-            && !D->p_is_32 && !D->j_is_32 && !D->i_is_32
-            && !B->p_is_32 && !B->j_is_32 && !B->i_is_32)
+        if (GB_cuda_rowscale_branch (D, B, semiring, flipxy))
         {
             info = GB_cuda_rowscale (C, D, B, semiring, flipxy) ;
         }
