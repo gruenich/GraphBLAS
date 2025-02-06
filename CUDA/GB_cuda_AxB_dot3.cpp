@@ -163,10 +163,11 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     }
 
     GB_OK (GB_new_bix (&C, // sparse or hyper (from M), existing header
-        ctype, cvlen, cvdim, GB_ph_malloc, true,
-        M_sparsity, false, M->hyper_switch, cnvec,
+        ctype, cvlen, cvdim, GB_ph_malloc, /* is_csc: */ true,
+        M_sparsity, /* bitmap_calloc: */ false, M->hyper_switch, cnvec,
         cnz+1,  // add one to cnz for cumsum of Cwork
-        true, C_iso, M->p_is_32, M->i_is_32)) ;
+        /* numeric: */ true, /* iso: */ C_iso,
+        /* C pji_is_32: */ M->p_is_32, M->j_is_32, M->i_is_32)) ;
 
     //--------------------------------------------------------------------------
     // Pre-fetch arrays that will be used on the device

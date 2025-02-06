@@ -29,13 +29,13 @@ GrB_Info GB_cuda_apply_binop
     if (bind1st)
     {
         ASSERT (op->xtype != NULL) ;
-        scalarx_cuda = GB_MALLOC_MEMORY (1, op->xtype->size,
+        scalarx_cuda = (GB_void *) GB_MALLOC_MEMORY (1, op->xtype->size,
             &scalarx_cuda_size) ;
     }
     else
     {
         ASSERT (op->ytype != NULL) ;
-        scalarx_cuda = GB_MALLOC_MEMORY (1, op->ytype->size,
+        scalarx_cuda = (GB_void *) GB_MALLOC_MEMORY (1, op->ytype->size,
             &scalarx_cuda_size) ;
     }
     if (scalarx_cuda == NULL)

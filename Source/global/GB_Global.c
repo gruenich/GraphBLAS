@@ -14,6 +14,7 @@
 // global matrix options, and other settings.
 
 #include "GB.h"
+#include "include/GB_unused.h"
 #include "cpu/GB_cpu_features.h"
 
 //------------------------------------------------------------------------------

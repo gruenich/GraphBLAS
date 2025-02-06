@@ -30,8 +30,9 @@ GrB_Info GB_cuda_colscale_jit
     uint64_t hash = GB_encodify_ewise (&encoding, &suffix,
         GB_JIT_CUDA_KERNEL_COLSCALE, false,
         /* C_iso: */ false, /* C_in_iso: */ false, GB_sparsity (C), C->type,
-        C->p_is_32, C->i_is_32,
-        /* M: */ NULL, false, false, binaryop, false, flipxy, A, D) ;
+        C->p_is_32, C->j_is_32, C->i_is_32,
+        /* M: */ NULL, /* Mask_struct: */ false, /* Mask_comp: */ false,
+        binaryop, false, flipxy, A, D) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

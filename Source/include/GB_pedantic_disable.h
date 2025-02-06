@@ -9,6 +9,6 @@
 
 #if GB_COMPILER_GCC
 #pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-pedantic" 
+// #pragma GCC diagnostic ignored "-pedantic"
 #endif
 

@@ -339,10 +339,9 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
-
     int64_t *Ck_map = Keep;
     int64_t cnvec = Ck_map [cnz - 1] ;
-    
+
     // The caller has already allocated C->p, C->h for
     // a user-returnable empty hypersparse matrix.
     // Free them here before updating.

@@ -26,9 +26,8 @@
 #elif GB_COMPILER_GCC
 
     // disable gcc -Wall -Wextra -Wpedantic warnings
-    #if (__GNUC__ > 4)
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-    #endif
+    #pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
     #pragma GCC diagnostic ignored "-Wunused-variable"
     #pragma GCC diagnostic ignored "-Wunused-function"
     #pragma GCC diagnostic ignored "-Wunused-parameter"

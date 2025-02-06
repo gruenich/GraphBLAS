@@ -196,7 +196,8 @@ GrB_Info GB_selector
         // the CPU.
         // Fixme CUDA: put the test of sparse(A) or hypersparse(A) in
         // GB_cuda_select_branch.
-        info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, athunk, ythunk) ;
+        info = GB_cuda_select_sparse (C, C_iso, op, flipij, A, athunk, ythunk,
+            Werk) ;
     }
     #endif
 

@@ -30,6 +30,8 @@
 
 #include "include/GB_compiler.h"
 #include "cpu/GB_cpu_features.h"
+#include "include/GB_pedantic_disable.h"
+#include "include/GB_unused.h"
 
 #if !defined ( GBNCPUFEAT )
 

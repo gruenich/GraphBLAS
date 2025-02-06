@@ -39,9 +39,10 @@ GrB_Info GB_cuda_AxB_dot3_jit
     char *suffix ;
     uint64_t hash = GB_encodify_mxm (&encoding, &suffix,
         GB_JIT_CUDA_KERNEL_AXB_DOT3,
-        // FIXME: all C to be iso
-        /* C->iso: */ false, false, GB_sparsity (C), C->type,
-        M, Mask_struct, false, semiring, flipxy, A, B) ;
+        // FIXME: allow C to be iso:
+        /* C->iso: */ false, /* C_in_iso: */ false,
+        GB_sparsity (C), C->type, C->p_is_32, C->j_is_32, C->i_is_32,
+        M, Mask_struct, /* Mask_comp: */ false, semiring, flipxy, A, B) ;
 
     //--------------------------------------------------------------------------
     // get the kernel function pointer, loading or compiling it if needed

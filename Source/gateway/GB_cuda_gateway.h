@@ -225,7 +225,8 @@ GrB_Info GB_cuda_select_sparse
     const bool flipij,
     const GrB_Matrix A,
     const GB_void *athunk,
-    const GB_void *ythunk
+    const GB_void *ythunk,
+    GB_Werk Werk
 ) ;
 
 bool GB_cuda_type_branch            // return true if the type is OK on GPU

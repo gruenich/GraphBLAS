@@ -90,7 +90,8 @@ GrB_Info GB_cuda_reduce_to_scalar
         // the kernel launch can reduce A to zscalar all by itself
         // allocate and initialize zscalar (upscaling it to at least 32 bits)
         size_t zscalar_space = GB_IMAX (zsize, sizeof (uint32_t)) ;
-        zscalar = GB_MALLOC_MEMORY (1, zscalar_space, &zscalar_size) ;
+        zscalar = (GB_void *) GB_MALLOC_MEMORY (1, zscalar_space,
+            &zscalar_size) ;
         if (zscalar == NULL)
         {
             // out of memory
@@ -105,7 +106,10 @@ GrB_Info GB_cuda_reduce_to_scalar
         // gridsz-by-1, and of type ztype.  V is allocated but not
         // initialized.
         GB_OK (GB_new_bix (&V, ztype, gridsz, 1, GB_ph_null,
-            true, GxB_FULL, false, 0, -1, gridsz, true, false, false, false)) ;
+            /* is_csc: */ true, /* sparsity: */ GxB_FULL,
+            /* bitmap_calloc: */ false, /* hyper_switch: */ 0,
+            /* plen: */ -1, /* nzmax: */ gridsz, /* numeric: */ true,
+            /* iso: */ false, /* pji_is_32: */ false, false, false)) ;
     }
 
     GBURBLE ("(cuda reduce launch %d threads in %d blocks)",

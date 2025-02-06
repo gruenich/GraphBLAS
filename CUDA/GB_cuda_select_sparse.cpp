@@ -18,7 +18,8 @@ GrB_Info GB_cuda_select_sparse
     const bool flipij,
     const GrB_Matrix A,
     const GB_void *athunk,
-    const GB_void *ythunk
+    const GB_void *ythunk,
+    GB_Werk Werk
 )
 {
     // check inputs
@@ -38,11 +39,25 @@ GrB_Info GB_cuda_select_sparse
     int32_t gridsz = std::min (raw_gridsz, (int64_t) (number_of_sms * 256)) ;
     gridsz = std::max (gridsz, 1) ;
 
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
+    int csparsity = GxB_HYPERSPARSE ;
+    bool Cp_is_32, Cj_is_32, Ci_is_32 ;
+    GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
+        csparsity, anz, A->vlen, A->vdim, Werk) ;
+
     // Initialize C to be a user-returnable hypersparse empty matrix.
     // If needed, we handle the hyper->sparse conversion below.
-    GB_OK (GB_new (&C, A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
-            GxB_HYPERSPARSE, A->hyper_switch, /* C->plen: */ 1,
-            /* FIXME: */ false, false)) ;
+
+// was:
+//  GB_OK (GB_new (&C, A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
+//          GxB_HYPERSPARSE, A->hyper_switch, /* C->plen: */ 1,
+//          /* FIXME: */ false, false)) ;
+// now:
+    GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
+        A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
+        csparsity, A->hyper_switch, /* C->plen: revised later: */ 1,
+        Cp_is_32, Cj_is_32, Ci_is_32)) ;
+
     C->jumbled = A->jumbled ;
     C->iso = C_iso ;
 

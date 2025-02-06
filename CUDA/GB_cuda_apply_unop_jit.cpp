@@ -30,9 +30,9 @@ GrB_Info GB_cuda_apply_unop_jit
     char *suffix ;
     uint64_t hash = GB_encodify_apply (&encoding, &suffix,
         GB_JIT_CUDA_KERNEL_APPLYUNOP, GxB_FULL, false, ctype,
-        /* FIXME: */ false, false, false,
+        /* pji_is_32: ignored; no matrix C: */ false, false, false,
         op, flipij, GB_sparsity (A), true, A->type,
-        /* FIXME: */ false, false,
+        A->p_is_32, A->j_is_32, A->i_is_32,
         A->iso, A->nzombies) ;
 
     //--------------------------------------------------------------------------
