@@ -8,6 +8,8 @@
 
 //------------------------------------------------------------------------------
 
+// FIXME: remove printf
+
 #include "GB_cuda.hpp"
 
 bool GB_cuda_get_device_count   // true if OK, false if failure

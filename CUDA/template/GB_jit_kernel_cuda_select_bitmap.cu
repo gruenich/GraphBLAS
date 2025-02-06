@@ -40,7 +40,7 @@ __global__ void GB_cuda_select_bitmap_kernel
     for (int64_t p = tid ; p < anz ; p += nthreads)
     {
         Cb_out [p] = 0 ;
-        if (!GBB_A (Ab, p)) { continue; }
+        if (!GBb_A (Ab, p)) { continue; }
 
         #if ( GB_DEPENDS_ON_I )
         int64_t i = (p % nrows) ;

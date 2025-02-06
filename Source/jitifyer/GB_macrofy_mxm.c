@@ -378,7 +378,6 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
 
     GB_macrofy_output (fp, "c", "C", "C", ctype, ztype, csparsity, C_iso,
         C_in_iso, Cp_is_32, Cj_is_32, Ci_is_32) ;
-    fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------
     // construct the macros to access the mask (if any), and its name

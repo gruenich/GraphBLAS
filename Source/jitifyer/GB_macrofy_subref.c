@@ -108,14 +108,12 @@ void GB_macrofy_subref          // construct all macros for GrB_extract
     GB_macrofy_nvals (fp, "C", csparsity, false) ;
     GB_macrofy_type (fp, "C", "_", ctype->name) ;
     GB_macrofy_bits (fp, "C", Cp_is_32, Cj_is_32, Ci_is_32) ;
-    fprintf (fp, "#define GB_Ci_TYPE uint%d_t\n", Ci_is_32 ? 32 : 64) ;
 
     GrB_Type atype = ctype ;        // C and A have the same type
     GB_macrofy_sparsity (fp, "A", asparsity) ;
     GB_macrofy_nvals (fp, "A", asparsity, false) ;
     GB_macrofy_type (fp, "A", "_", atype->name) ;
     GB_macrofy_bits (fp, "A", Ap_is_32, Aj_is_32, Ai_is_32) ;
-    fprintf (fp, "#define GB_Ap_TYPE uint%d_t\n", Ap_is_32 ? 32 : 64) ;
 
     //--------------------------------------------------------------------------
     // include the final default definitions

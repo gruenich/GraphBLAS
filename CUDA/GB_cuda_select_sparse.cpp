@@ -1,10 +1,22 @@
 
 #include "GB_cuda_select.hpp"
 
-#undef GB_FREE_ALL
+#undef  GB_FREE_WORKSPACE
+#define GB_FREE_WORKSPACE                                   \
+{                                                           \
+    if (stream != nullptr)                                  \
+    {                                                       \
+        cudaStreamSynchronize (stream) ;                    \
+        cudaStreamDestroy (stream) ;                        \
+    }                                                       \
+    stream = nullptr ;                                      \
+}
+
+#undef  GB_FREE_ALL
 #define GB_FREE_ALL         \
 {                           \
     GB_phybix_free (C) ;    \
+    GB_FREE_WORKSPACE ;     \
 }
 
 #define BLOCK_SIZE 512
@@ -22,14 +34,14 @@ GrB_Info GB_cuda_select_sparse
     GB_Werk Werk
 )
 {
+
     // check inputs
+    GrB_Info info = GrB_NO_VALUE ;
     ASSERT (C != NULL && !(C->static_header)) ;
     ASSERT (A != NULL && !(A->static_header)) ;
 
-    GrB_Info info = GrB_NO_VALUE ;
-
     // FIXME: use the stream pool
-    cudaStream_t stream ;
+    cudaStream_t stream = nullptr ;
     CUDA_OK (cudaStreamCreate (&stream)) ;
 
     GrB_Index anz = GB_nnz_held (A) ;
@@ -48,11 +60,6 @@ GrB_Info GB_cuda_select_sparse
     // Initialize C to be a user-returnable hypersparse empty matrix.
     // If needed, we handle the hyper->sparse conversion below.
 
-// was:
-//  GB_OK (GB_new (&C, A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
-//          GxB_HYPERSPARSE, A->hyper_switch, /* C->plen: */ 1,
-//          /* FIXME: */ false, false)) ;
-// now:
     GB_OK (GB_new (&C, // sparse or hyper (from A), existing header
         A->type, A->vlen, A->vdim, GB_ph_calloc, A->is_csc,
         csparsity, A->hyper_switch, /* C->plen: revised later: */ 1,
@@ -61,16 +68,12 @@ GrB_Info GB_cuda_select_sparse
     C->jumbled = A->jumbled ;
     C->iso = C_iso ;
 
-    info = GB_cuda_select_sparse_jit (C, A,
-        flipij, ythunk, op, stream, gridsz, BLOCK_SIZE) ;
-//  printf ("cuda select sparse jit, info %d iso %d\n", info, C_iso) ;
+    GB_OK (GB_cuda_select_sparse_jit (C, A,
+        flipij, ythunk, op, stream, gridsz, BLOCK_SIZE)) ;
 
-    CUDA_OK (cudaStreamSynchronize (stream)) ;
-    CUDA_OK (cudaStreamDestroy (stream)) ;
+    GB_FREE_WORKSPACE ;
 
     ASSERT (C->x != NULL) ;
-
-    GB_OK (info) ;
 
     if (C_iso)
     {

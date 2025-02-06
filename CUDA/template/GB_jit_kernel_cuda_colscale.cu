@@ -19,9 +19,9 @@ __global__ void GB_cuda_colscale_kernel
     GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *) C->x ;
 
     #if ( GB_A_IS_SPARSE || GB_A_IS_HYPER )
-    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
+    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
         #if ( GB_A_IS_HYPER )
-        const int64_t *__restrict__ Ah = (int64_t *) A->h ;
+        const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
         #endif
     #endif
 
@@ -38,7 +38,7 @@ __global__ void GB_cuda_colscale_kernel
         int tid = blockIdx.x * blockDim.x + threadIdx.x ;
         for (int64_t p = tid ; p < anz ; p += nthreads_in_entire_grid)
         {
-            if (!GBB_A (Ab, p)) continue ;
+            if (!GBb_A (Ab, p)) continue ;
             // the pth entry in A is A(i,j) where i = p%avlen and j = p/avlen
             int64_t col_idx = p / avlen ;
     //      int64_t row_idx = p % avlen ;
@@ -66,7 +66,7 @@ __global__ void GB_cuda_colscale_kernel
                 {
                     int64_t p_final ;
                     int64_t k = GB_cuda_ek_slice_entry (&p_final, pdelta, pfirst, Ap, anvec_sub1, kfirst, slope) ;
-                    int64_t j = GBH_A (Ah, k) ;
+                    int64_t j = GBh_A (Ah, k) ;
 
                     GB_DECLAREB (djj) ;
                     GB_GETB (djj, Dx, j, ) ;

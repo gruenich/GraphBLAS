@@ -3,11 +3,11 @@ using namespace cooperative_groups ;
 #include "GB_cuda_ek_slice.cuh"
 #include "GB_cuda_cumsum.cuh"
 
-#define GB_FREE_WORKSPACE                  \
-{                                          \
-    GB_FREE_MEMORY (&W, W_size) ;            \
-    GB_FREE_MEMORY (&W_2, W_2_size) ;        \
-    GB_FREE_MEMORY (&W_3, W_3_size) ;        \
+#define GB_FREE_WORKSPACE                   \
+{                                           \
+    GB_FREE_MEMORY (&W, W_size) ;           \
+    GB_FREE_MEMORY (&W_2, W_2_size) ;       \
+    GB_FREE_MEMORY (&W_3, W_3_size) ;       \
 }
 
 #undef GB_FREE_ALL
@@ -29,14 +29,14 @@ __global__ void GB_cuda_select_sparse_phase1
 )
 {
     #if ( GB_DEPENDS_ON_I )
-    const int64_t *__restrict__ Ai = (int64_t *) A->i ;
+    const GB_Ai_SIGNED_TYPE *__restrict__ Ai = (GB_Ai_SIGNED_TYPE *) A->i ;
     #endif
 
     #if ( GB_DEPENDS_ON_J )
         #if ( GB_A_IS_HYPER )
-        const int64_t *__restrict__ Ah = (int64_t *) A->h ;
+        const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
         #endif
-    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
+    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
     #endif
 
     #if ( GB_DEPENDS_ON_X )
@@ -66,7 +66,7 @@ __global__ void GB_cuda_select_sparse_phase1
                 int64_t pA ;
                 int64_t k = GB_cuda_ek_slice_entry (&pA, pdelta, pfirst, Ap,
                     anvec1, kfirst, slope) ;
-                int64_t j = GBH_A (Ah, k) ;
+                int64_t j = GBh_A (Ah, k) ;
 
                 #if ( GB_DEPENDS_ON_I )
                 int64_t i = Ai [pA] ;
@@ -103,12 +103,12 @@ __global__ void GB_cuda_select_sparse_phase2
     int64_t *Map,
     GrB_Matrix A,
     int64_t *Ak_keep,
-    int64_t *Ci,
+    GB_Ci_TYPE *Ci,
     GB_C_TYPE *Cx
 )
 {
-    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
-    const int64_t *__restrict__ Ai = (int64_t *) A->i ;
+    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
+    const GB_Ai_TYPE *__restrict__ Ai = (GB_Ai_TYPE *) A->i ;
     #if (!GB_ISO_SELECT)
     const GB_A_TYPE *__restrict__ Ax = (GB_A_TYPE *) A->x ;
     #endif
@@ -187,12 +187,12 @@ __global__ void GB_cuda_select_sparse_phase4
     int64_t cnz,
     int64_t *Ak_keep,
     int64_t *Ck_map,
-    int64_t *Cp,
-    int64_t *Ch
+    GB_Cp_TYPE *Cp,
+    GB_Cj_TYPE *Ch
 )
 {
     #if ( GB_A_IS_HYPER ) 
-    const int64_t *__restrict__ Ah = (int64_t *) A->h;
+    const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h;
     #endif
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x ;
@@ -204,7 +204,7 @@ __global__ void GB_cuda_select_sparse_phase4
         {
             int64_t kA = Ak_keep [pC] ;
             Cp [Ck_map[pC] - 1] = pC ;
-            Ch [Ck_map[pC] - 1] = GBH_A (Ah, kA) ;
+            Ch [Ck_map[pC] - 1] = GBh_A (Ah, kA) ;
         }
     }
 }
@@ -316,7 +316,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
     
     GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
-        (Map, A, Ak_keep, (int64_t *) C->i, (GB_C_TYPE *) C->x) ;
+        (Map, A, Ak_keep, (GB_Ci_TYPE *) C->i, (GB_C_TYPE *) C->x) ;
     
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
@@ -353,8 +353,10 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
     C->nvals = cnz ;
-    C->p = GB_MALLOC_MEMORY (C->plen + 1, sizeof (int64_t), &(C->p_size)) ;
-    C->h = GB_MALLOC_MEMORY (C->plen, sizeof (int64_t), &(C->h_size)) ;
+    size_t psize = C->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = C->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    C->p = GB_MALLOC_MEMORY (C->plen + 1, psize, &(C->p_size)) ;
+    C->h = GB_MALLOC_MEMORY (C->plen, jsize, &(C->h_size)) ;
     if (C->p == NULL || C->h == NULL)
     {
         // The contents of C will be freed with GB_phybix_free()
@@ -363,13 +365,13 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
         GB_FREE_ALL ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-    int64_t *Cp = (int64_t *) C->p ;
+    GB_Cp_TYPE *Cp = (GB_Cp_TYPE *) C->p ;
 
     //--------------------------------------------------------------------------
     // Phase 3: Build Cp and Ch
     //--------------------------------------------------------------------------
     GB_cuda_select_sparse_phase4 <<<grid, block, 0, stream>>>
-        (A, cnz, Ak_keep, Ck_map, Cp, (int64_t *) C->h) ;
+        (A, cnz, Ak_keep, Ck_map, Cp, (GB_Cj_TYPE *) C->h) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // log the end of the last vector of C

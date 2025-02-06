@@ -24,15 +24,19 @@ GrB_Info GB_cuda_matrix_prefetch
     const int64_t anvec = A->nvec ;
     const int64_t anz = GB_nnz_held (A) ;
 
+    size_t psize = A->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = A->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = A->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
     if (A->p != NULL && (which & GB_PREFETCH_P))
     {
-        CUDA_OK (cudaMemPrefetchAsync (A->p, (anvec+1) * sizeof (int64_t),
+        CUDA_OK (cudaMemPrefetchAsync (A->p, (anvec+1) * psize,
             device, stream)) ;
     }
 
     if (A->h != NULL && (which & GB_PREFETCH_H))
     {
-        CUDA_OK (cudaMemPrefetchAsync (A->h, anvec * sizeof (int64_t),
+        CUDA_OK (cudaMemPrefetchAsync (A->h, anvec * jsize,
             device, stream)) ;
     }
 
@@ -51,7 +55,7 @@ GrB_Info GB_cuda_matrix_prefetch
 
     if (A->i != NULL && (which & GB_PREFETCH_I))
     {
-        CUDA_OK (cudaMemPrefetchAsync (A->i, anz * sizeof (int64_t),
+        CUDA_OK (cudaMemPrefetchAsync (A->i, anz * isize,
             device, stream)) ;
     }
 

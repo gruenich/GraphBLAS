@@ -22,7 +22,7 @@ __global__ void GB_cuda_apply_bind1st_kernel
 
     for (int64_t p = tid ; p < nvals ; p += nthreads)
     {
-        if (!GBB_B (Bb, p)) { continue ; }
+        if (!GBb_B (Bb, p)) { continue ; }
         GB_DECLAREB (bij) ;
         GB_GETB (bij, Bx, p, false) ;
         GB_EWISEOP (Cx, p, x, bij, /* i */, /* j */) ;

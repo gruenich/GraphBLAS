@@ -63,43 +63,37 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
     const GB_B_TYPE *__restrict__ Bx = (GB_B_TYPE *)B->x  ;
     #endif
           GB_C_TYPE *__restrict__ Cx = (GB_C_TYPE *)C->x  ;
-          int64_t *__restrict__ Ci = (int64_t *) C->i ;
+          GB_Ci_SIGNED_TYPE *__restrict__ Ci = (GB_Ci_SIGNED_TYPE *) C->i ;
 
-    const int64_t *__restrict__ Mp = (int64_t *) M->p ;
-    const int64_t *__restrict__ Mi = (int64_t *) M->i ;
+    const GB_Mp_TYPE *__restrict__ Mp = (GB_Mp_TYPE *) M->p ;
+    const GB_Mi_TYPE *__restrict__ Mi = (GB_Mi_TYPE *) M->i ;
     #if GB_M_IS_HYPER
-    const int64_t *__restrict__ Mh = (int64_t *) M->h ;
+    const GB_Mj_TYPE *__restrict__ Mh = (GB_Mj_TYPE *) M->h ;
     #endif
 
     // A and B are either sparse or hypersparse
-    const int64_t *__restrict__ Ai = (int64_t *) A->i ;
-    const int64_t *__restrict__ Bi = (int64_t *) B->i ;
-    const int64_t *__restrict__ Ap = (int64_t *) A->p ;
-    const int64_t *__restrict__ Bp = (int64_t *) B->p ;
+    const GB_Ai_TYPE *__restrict__ Ai = (GB_Ai_TYPE *) A->i ;
+    const GB_Bi_TYPE *__restrict__ Bi = (GB_Bi_TYPE *) B->i ;
+    const GB_Ap_TYPE *__restrict__ Ap = (GB_Ap_TYPE *) A->p ;
+    const GB_Bp_TYPE *__restrict__ Bp = (GB_Bp_TYPE *) B->p ;
     ASSERT (GB_A_IS_HYPER || GB_A_IS_SPARSE) ;
     ASSERT (GB_B_IS_HYPER || GB_B_IS_SPARSE) ;
 
     #if GB_A_IS_HYPER
     const int64_t anvec = A->nvec ;
-    const int64_t *__restrict__ Ah = (int64_t *) A->h ;
-    const int64_t *__restrict__ A_Yp = (int64_t *)
-        ((A->Y == NULL) ? NULL : A->Y->p) ;
-    const int64_t *__restrict__ A_Yi = (int64_t *)
-        ((A->Y == NULL) ? NULL : A->Y->i) ;
-    const int64_t *__restrict__ A_Yx = (int64_t *)
-        ((A->Y == NULL) ? NULL : A->Y->x) ;
+    const GB_Aj_TYPE *__restrict__ Ah = (GB_Aj_TYPE *) A->h ;
+    const void *A_Yp = (void *) ((A->Y == NULL) ? NULL : A->Y->p) ;
+    const void *A_Yi = (void *) ((A->Y == NULL) ? NULL : A->Y->i) ;
+    const void *A_Yx = (void *) ((A->Y == NULL) ? NULL : A->Y->x) ;
     const int64_t A_hash_bits = (A->Y == NULL) ? 0 : (A->Y->vdim - 1) ;
     #endif
 
     #if GB_B_IS_HYPER
     const int64_t bnvec = B->nvec ;
-    const int64_t *__restrict__ Bh = (int64_t *) B->h ;
-    const int64_t *__restrict__ B_Yp = (int64_t *)
-        ((B->Y == NULL) ? NULL : B->Y->p) ;
-    const int64_t *__restrict__ B_Yi = (int64_t *)
-        ((B->Y == NULL) ? NULL : B->Y->i) ;
-    const int64_t *__restrict__ B_Yx = (int64_t *)
-        ((B->Y == NULL) ? NULL : B->Y->x) ;
+    const GB_Bj_TYPE *__restrict__ Bh = (GB_Bj_TYPE *) B->h ;
+    const void *B_Yp = (void *) ((B->Y == NULL) ? NULL : B->Y->p) ;
+    const void *B_Yi = (void *) ((B->Y == NULL) ? NULL : B->Y->i) ;
+    const void *B_Yx = (void *) ((B->Y == NULL) ? NULL : B->Y->x) ;
     const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
     #endif
 
@@ -131,12 +125,12 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         // assert: Ci [pair_id] & 0xF == GB_BUCKET_MERGEPATH
 
         // j = k or j = Mh [k] if C and M are hypersparse
-        int64_t j = GBH_M (Mh, k) ;
+        int64_t j = GBh_M (Mh, k) ;
 
         // find A(:,i)
         int64_t pA_start, pA_end ;
         #if GB_A_IS_HYPER
-        GB_hyper_hash_lookup (false, false, // FIXME
+        GB_hyper_hash_lookup (Ap_is_32, Aj_is_32,
             Ah, anvec, Ap, A_Yp, A_Yi, A_Yx, A_hash_bits,
             i, &pA_start, &pA_end) ;
         #else
@@ -147,7 +141,7 @@ __global__ void GB_cuda_AxB_dot3_phase3_mp_kernel
         // find B(:,j)
         int64_t pB_start, pB_end ;
         #if GB_B_IS_HYPER
-        GB_hyper_hash_lookup (false, false, // FIXME
+        GB_hyper_hash_lookup (Bp_is_32, Bj_is_32,
             Bh, bnvec, Bp, B_Yp, B_Yi, B_Yx, B_hash_bits,
             j, &pB_start, &pB_end) ;
         #else

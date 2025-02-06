@@ -1563,8 +1563,10 @@ bool GB_jitifyer_query
 // Returns GrB_SUCCESS if kernel is found (already loaded, or just now loaded,
 // or just now compiled and loaded).
 
-// Returns GrB_NO_VALUE if the kernel is not found and cannot be loaded or
-// compiled.  This tells the caller that a generic method must be used.
+// Returns GrB_NO_VALUE only if the kernel intentionally cannot be loaded, run,
+// or compiled.  This tells the caller that a generic method must be used.
+
+// Returns GxB_JIT_ERROR if the JIT should succeed, but fails.
 
 GrB_Info GB_jitifyer_load
 (
@@ -1606,14 +1608,14 @@ GrB_Info GB_jitifyer_load
         // This is not a JIT failure.  It is an expected error if the strings
         // (name & defn) are NULL, so always fallback to the generic case.
         GBURBLE ("(jit: undefined) ") ;
-        return (GrB_NO_VALUE) ;
+        return (GrB_NO_VALUE) ;     // no hash code (no strings given)
     }
 
     if ((GB_jit_control == GxB_JIT_OFF) || (GB_jit_control == GxB_JIT_PAUSE))
     { 
         // The JIT control has disabled all JIT kernels.  Punt to generic.
         // This is not a JIT failure.
-        return (GrB_NO_VALUE) ;
+        return (GrB_NO_VALUE) ;     // JIT is off or paused
     }
 
     //--------------------------------------------------------------------------
@@ -1648,7 +1650,7 @@ GrB_Info GB_jitifyer_load
             // This is not a JIT failure since the JIT control is already
             // set to 'run', and the kernel is not already loaded.  So always
             // fallback to the generic kernel.
-            return (GrB_NO_VALUE) ;
+            return (GrB_NO_VALUE) ; // JIT set to 'run'; but kernel not loaded
         }
     }
 
@@ -1797,7 +1799,7 @@ GrB_Info GB_jitifyer_load2_worker
         // This is not a JIT failure since the JIT control is already
         // set to 'run', and the kernel is not already loaded.  So always
         // fallback to the generic kernel.
-        return (GrB_NO_VALUE) ;
+        return (GrB_NO_VALUE) ;     // JIT set to 'run'; but kernel not loaded
     }
 
     //--------------------------------------------------------------------------
@@ -2004,7 +2006,7 @@ GrB_Info GB_jitifyer_load_worker
             // a JIT failure.  It is an expected condition because of the JIT
             // control, so always allow a fallback to the generic kernel.
             GBURBLE ("(jit: not compiled) ") ;
-            return (GrB_NO_VALUE) ;
+            return (GrB_NO_VALUE) ; // JIT not on; compiler disabled
         }
 
         //----------------------------------------------------------------------

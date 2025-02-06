@@ -36,15 +36,16 @@ __global__ void GB_cuda_AxB_dot3_dense_phase1_kernel
     // get C, M, A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *__restrict__ Mp = (int64_t *) M->p ;
-    const int64_t *__restrict__ Mi = (int64_t *) M->i ;
+    const GB_Mp_TYPE *__restrict__ Mp = (GB_Mp_TYPE *) M->p ;
+    const GB_Mi_TYPE *__restrict__ Mi = (GB_Mi_TYPE *) M->i ;
     #if !GB_MASK_STRUCT
     const GB_M_TYPE *__restrict__ Mx = (GB_M_TYPE *) M->x ;
     #endif
     const int64_t mnvec = M->nvec ;
     const GB_M_NVALS (mnz) ;
 
-    int64_t *__restrict__ Ci = (int64_t *) C->i ;   // for zombies, or vector k
+    // for zombies, or vector k
+    GB_Ci_SIGNED_TYPE *__restrict__ Ci = (GB_Ci_SIGNED_TYPE *) C->i ;
 
     // Ci [p] for an entry C(i,j) contains either GB_ZOMBIE (i) if C(i,j) is a
     // zombie, or k otherwise, where C(:,j) is the kth vector of C (j = Ch [k]

@@ -42,10 +42,7 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
     // need k, just the bucket for each entry C(i,j).
 
     // for zombies, or bucket assignment:
-    int64_t *__restrict__ Ci = (int64_t *) C->i ;
-
-    //int64_t *Mp = (int64_t *) C->p ;       // for offset calculations
-    //int64_t mnvec = C->nvec;
+    GB_Ci_SIGNED_TYPE *__restrict__ Ci = (GB_Ci_SIGNED_TYPE *) C->i ;
 
     //--------------------------------------------------------------------------
     // load and shift the nanobuckets for this thread block
@@ -86,9 +83,6 @@ __global__ void GB_cuda_AxB_dot3_phase2end_kernel
 
     // FIXME: why is bucket_idx needed?
     __shared__ int64_t bucket_idx [chunk_size] ;
-
-//  int64_t chunk_max = (cnz + chunk_size -1) / chunk_size ;
-//  for (int64_t chunk = blockIdx.x ; chunk < chunk_max ; chunk += gridDim.x)
 
     for (int64_t pfirst = blockIdx.x << log2_chunk_size ;
                  pfirst < cnz ;

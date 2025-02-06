@@ -69,7 +69,7 @@
 static __device__ __inline__ void GB_cuda_ek_slice_setup
 (
     // inputs, not modified:
-    const int64_t *Ap,          // array of size anvec+1
+    const GB_Ap_TYPE *Ap,       // array of size anvec+1
     const int64_t anvec,        // # of vectors in the matrix A
     const int64_t anz,          // # of entries in the sparse/hyper matrix A
     const int64_t pfirst,       // first entry in A to find k
@@ -156,7 +156,7 @@ static __device__ __inline__ int64_t GB_cuda_ek_slice_entry
     const int64_t pdelta,       // find the k value of the pfirst+pdelta entry
     const int64_t pfirst,       // first entry in A to find k (for which
                                 // pdelta=0)
-    const int64_t *Ap,          // array of size anvec+1
+    const GB_Ap_TYPE *Ap,       // array of size anvec+1
     const int64_t anvec1,       // anvec-1
     const int64_t kfirst,       // estimate of first vector in the chunk
     const float slope           // estimate # vectors in chunk / my_chunk_size
@@ -202,7 +202,7 @@ static __device__ __inline__ int64_t GB_cuda_ek_slice_entry
 static __device__ __inline__ int64_t GB_cuda_ek_slice // returns my_chunk_size
 (
     // inputs, not modified:
-    const int64_t *Ap,          // array of size anvec+1
+    const GB_Ap_TYPE *Ap,       // array of size anvec+1
     const int64_t anvec,        // # of vectors in the matrix A
     const int64_t anz,          // # of entries in the sparse/hyper matrix A
     const int64_t pfirst,       // first entry in A to find k

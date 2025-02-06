@@ -13,6 +13,9 @@
 // assumed.  Then each GPU is "warmed up" by allocating a small amount of
 // memory.
 
+// FIXME: remove printfs
+// FIXME: instead of GrB_PANIC, add a new GxB_CUDA_ERROR or something
+
 #include "GB.h"
 
 GrB_Info GB_cuda_init (void)

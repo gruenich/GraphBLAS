@@ -129,8 +129,6 @@ void GB_macrofy_masker          // construct all macros for GrB_eWise
     GB_macrofy_sparsity (fp, "R", rsparsity) ;
     GB_macrofy_nvals (fp, "R", rsparsity, false) ;
     fprintf (fp, "#define GB_R_ISO 0\n") ;
-    fprintf (fp, "#define GB_Rp_TYPE uint%d_t\n", Rp_is_32 ? 32 : 64) ;
-    fprintf (fp, "#define GB_Rj_TYPE uint%d_t\n", Rj_is_32 ? 32 : 64) ;
     GB_macrofy_bits (fp, "R", Rp_is_32, Rj_is_32, Ri_is_32) ;
 
     //--------------------------------------------------------------------------
