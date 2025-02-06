@@ -107,23 +107,23 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = GB_IS_HYPERSPARSE( M ) ;
 
-    const int64_t anz = GB_nnz (A) ;
-    const int64_t anvec = A->nvec ;
-    bool A_is_sparse = GB_IS_SPARSE (A) ;
-    bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;
-    bool A_is_bitmap = GB_IS_BITMAP (A) ;
-    bool A_is_full   = GB_IS_FULL (A) ;
-    bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
-    bool A_is_bitmap_or_full  = A_is_bitmap || A_is_full  ;
+//  const int64_t anz = GB_nnz (A) ;
+//  const int64_t anvec = A->nvec ;
+//  bool A_is_sparse = GB_IS_SPARSE (A) ;
+//  bool A_is_hyper  = GB_IS_HYPERSPARSE (A) ;
+//  bool A_is_bitmap = GB_IS_BITMAP (A) ;
+//  bool A_is_full   = GB_IS_FULL (A) ;
+//  bool A_is_sparse_or_hyper = A_is_sparse || A_is_hyper ;
+//  bool A_is_bitmap_or_full  = A_is_bitmap || A_is_full  ;
 
-    const int64_t bnz = GB_nnz (B) ;
-    const int64_t bnvec = B->nvec ;
-    bool B_is_sparse = GB_IS_SPARSE (B) ;
-    bool B_is_hyper  = GB_IS_HYPERSPARSE (B) ;
-    bool B_is_bitmap = GB_IS_BITMAP (B) ;
-    bool B_is_full   = GB_IS_FULL (B) ;
-    bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
-    bool B_is_bitmap_or_full  = B_is_bitmap || B_is_full  ;
+//  const int64_t bnz = GB_nnz (B) ;
+//  const int64_t bnvec = B->nvec ;
+//  bool B_is_sparse = GB_IS_SPARSE (B) ;
+//  bool B_is_hyper  = GB_IS_HYPERSPARSE (B) ;
+//  bool B_is_bitmap = GB_IS_BITMAP (B) ;
+//  bool B_is_full   = GB_IS_FULL (B) ;
+//  bool B_is_sparse_or_hyper = B_is_sparse || B_is_hyper ;
+//  bool B_is_bitmap_or_full  = B_is_bitmap || B_is_full  ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -175,14 +175,18 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     // GB_cuda_matrix_advise (C, cnvec, cnz, which, what, device)
     // advise C
-    CUDA_OK (cudaMemAdvise (C->p, (cnvec+1) * sizeof ( int64_t),
+    size_t psize = C->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t jsize = C->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+    size_t isize = C->i_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
+
+    CUDA_OK (cudaMemAdvise (C->p, (cnvec+1) * psize,
         cudaMemAdviseSetPreferredLocation, device)) ;
     if (M_is_hyper)
     { 
-        CUDA_OK (cudaMemAdvise (C->h, cnvec * sizeof ( int64_t),
+        CUDA_OK (cudaMemAdvise (C->h, cnvec * jsize,
             cudaMemAdviseSetPreferredLocation, device)) ;
     }
-    CUDA_OK (cudaMemAdvise (C->i, (cnz+1) * sizeof ( int64_t),
+    CUDA_OK (cudaMemAdvise (C->i, (cnz+1) * isize,
         cudaMemAdviseSetPreferredLocation, device)) ;
     if (!C_iso)
     {
@@ -199,11 +203,11 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     // FIXME: use shallow?
-    CUDA_OK (cudaMemcpyAsync (C->p, M->p, (cnvec+1) * sizeof (int64_t),
+    CUDA_OK (cudaMemcpyAsync (C->p, M->p, (cnvec+1) * psize,
         cudaMemcpyDefault, stream)) ;
     if (M_is_hyper)
     { 
-        CUDA_OK (cudaMemcpyAsync (C->h, M->h, cnvec * sizeof (int64_t),
+        CUDA_OK (cudaMemcpyAsync (C->h, M->h, cnvec * hsize,
             cudaMemcpyDefault, stream)) ;
     }
 
@@ -246,7 +250,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 //  debugging for now, to die early if the CUDA fails to compile, load, or run:
     info = GB_cuda_AxB_dot3_jit (C, M, Mask_struct, A, B, semiring, flipxy,
         stream, device, number_of_sms) ;
-    if (info == GrB_NO_VALUE) info = GrB_PANIC ;
+    if (info == GrB_NO_VALUE) info = GrB_PANIC ;    // FIXME: no longer needed
     GB_OK (info) ;
 
     //--------------------------------------------------------------------------
