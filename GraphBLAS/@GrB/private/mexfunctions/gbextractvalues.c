@@ -57,7 +57,7 @@ void mexFunction
     GrB_Vector X_vector = NULL ;
     OK (GrB_Vector_new (&X_vector, GrB_FP64, 0)) ;
     OK (GxB_Matrix_extractTuples_Vector (NULL, NULL, X_vector, A, NULL)) ;
-    OK (GxB_Vector_unload (X_vector, &X, &nvals, &X_size, &xtype, &read_only,
+    OK (GxB_Vector_unload (X_vector, &X, &xtype, &nvals, &X_size, &read_only,
         NULL)) ;
     pargout [0] = gb_export_to_mxfull (&X, nvals, 1, xtype) ;
 

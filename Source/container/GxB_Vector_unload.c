@@ -33,17 +33,15 @@
 #include "GB_container.h"
 #define GB_FREE_ALL ;
 
-// FIXME change signature to put type before n
-
 GrB_Info GxB_Vector_unload
 (
     // input/output:
     GrB_Vector V,           // vector to unload
     void **X,               // numerical array to unload from V
     // output:
+    GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type *type,         // type of X
     bool *read_only,        // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
 )
@@ -62,7 +60,7 @@ GrB_Info GxB_Vector_unload
     // unload the vector
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_vector_unload (V, X, n, X_size, type, read_only, Werk)) ;
+    GB_OK (GB_vector_unload (V, X, type, n, X_size, read_only, Werk)) ;
     GBMDUMP ("vector_unload, remove X from memtable %p\n", *X) ;
     GB_Global_memtable_remove (*X)  ;
     return (GrB_SUCCESS) ;

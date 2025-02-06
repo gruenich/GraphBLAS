@@ -599,9 +599,9 @@ GrB_Info GxB_Vector_load
     GrB_Vector V,           // vector to load from the C array X
     void **X,               // numerical array to load into V
     // input:
+    GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type type,          // type of X
     bool read_only,         // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
@@ -623,9 +623,9 @@ GrB_Info GxB_Vector_unload
     GrB_Vector V,           // vector to unload
     void **X,               // numerical array to unload from V
     // output:
+    GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type *type,         // type of X
     bool *read_only,        // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
@@ -672,7 +672,7 @@ for (as many times as you like)
     void *x = NULL ;
     uint64_t nvals = 0, nheld = 0 ;
     GrB_Type xtype = NULL ;
-    GxB_Vector_unload (Container->x, &x, &nheld, &xtype, desc) ;
+    GxB_Vector_unload (Container->x, &x, &xtype, &nheld, desc) ;
 
     // The C array x now has size nheld and contains the values of the original
     // GrB_Matrix A, with type xtype being the original type of the matrix A.
@@ -689,13 +689,13 @@ for (as many times as you like)
         case GxB_HYPERSPARSE :
             // The Container->Y matrix can be unloaded here as well,
             // if desired.  Its use is optional.
-            GxB_Vector_unload (Container->h, &h, &plen, &htype, desc) ;
+            GxB_Vector_unload (Container->h, &h, &htype, &plen, desc) ;
         case GxB_SPARSE :
-            GxB_Vector_unload (Container->p, &p, &plen1, &ptype, desc) ;
-            GxB_Vector_unload (Container->i, &i, &nvals, &itype, desc) ;
+            GxB_Vector_unload (Container->p, &p, &ptype, &plen1, desc) ;
+            GxB_Vector_unload (Container->i, &i, &itype, &nvals, desc) ;
             break ;
         case GxB_BITMAP :
-            GxB_Vector_unload (Container->b, &b, &nheld, &btype, desc) ;
+            GxB_Vector_unload (Container->b, &b, &btype, &nheld, desc) ;
             break ;
     }
 
@@ -711,16 +711,16 @@ for (as many times as you like)
         case GxB_HYPERSPARSE :
             // The Container->Y matrix can be loaded here as well,
             // if desired.  Its use is optional.
-            GxB_Vector_load (Container->h, &h, plen, htype, desc) ;
+            GxB_Vector_load (Container->h, &h, htype, plen, desc) ;
         case GxB_SPARSE :
-            GxB_Vector_load (Container->p, &p, plen1, ptype, desc) ;
-            GxB_Vector_load (Container->i, &i, nvals, itype, desc) ;
+            GxB_Vector_load (Container->p, &p, ptype, plen1, desc) ;
+            GxB_Vector_load (Container->i, &i, itype, nvals, desc) ;
             break ;
         case GxB_BITMAP :
-            GxB_Vector_load (Container->b, &b, nheld, btype, desc) ;
+            GxB_Vector_load (Container->b, &b, btype, nheld, desc) ;
             break ;
     }
-    GxB_Vector_load (Container->x, &x, nheld, xtype, desc) ;
+    GxB_Vector_load (Container->x, &x, xtype, nheld, desc) ;
 
     // Now the C arrays p, h, i, b, and x are all NULL.  They are in the
     // Container->p,h,b,i,x GrB_Vectors.  Load A from the non-opaque Container:

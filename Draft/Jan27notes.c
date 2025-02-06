@@ -57,9 +57,9 @@ GrB_Info GxB_Vector_load    // vector <- raw C array
     GrB_Vector V,           // vector to load from the C array X
     void **X,               // numerical array to load into V
     // input:
+    GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type type,          // type of X
     bool read_only,         // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
@@ -70,9 +70,9 @@ GrB_Info GxB_Vector_unload  // vector -> raw C array
     GrB_Vector V,           // vector to unload
     void **X,               // numerical array to unload from V
     // output:
+    GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type *type,         // type of X
     bool *read_only,        // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;

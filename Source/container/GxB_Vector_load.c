@@ -28,17 +28,15 @@
 
 #include "GB_container.h"
 
-// FIXME change signature to put type before n
-
 GrB_Info GxB_Vector_load
 (
     // input/output:
     GrB_Vector V,           // vector to load from the C array X
     void **X,               // numerical array to load into V
     // input:
+    GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type type,          // type of X
     bool read_only,         // if true, X is treated as read-only
     const GrB_Descriptor desc   // currently unused; for future expansion
 )
@@ -71,7 +69,7 @@ GrB_Info GxB_Vector_load
     // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
     // that V->sparsity_control is revised to allow V to become a full vector.
 
-    GB_vector_load (V, X, n, X_size, type, read_only) ;
+    GB_vector_load (V, X, type, n, X_size, read_only) ;
 
     //--------------------------------------------------------------------------
     // return result

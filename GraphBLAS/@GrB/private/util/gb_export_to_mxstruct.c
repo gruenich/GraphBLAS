@@ -128,15 +128,15 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     void *Ai = NULL ; uint64_t Ai_size, Ai_len ; GrB_Type Ai_type = NULL ;
     void *Ax = NULL ; uint64_t Ax_size, Ax_len ; GrB_Type Ax_type = NULL ;
 
-    OK (GxB_Vector_unload (Container->p, &Ap, &Ap_len, &Ap_size, &Ap_type, &ro,
+    OK (GxB_Vector_unload (Container->p, &Ap, &Ap_type, &Ap_len, &Ap_size, &ro,
         NULL)) ;
-    OK (GxB_Vector_unload (Container->h, &Ah, &Ah_len, &Ah_size, &Ah_type, &ro,
+    OK (GxB_Vector_unload (Container->h, &Ah, &Ah_type, &Ah_len, &Ah_size, &ro,
         NULL)) ;
-    OK (GxB_Vector_unload (Container->b, &Ab, &Ab_len, &Ab_size, &Ab_type, &ro,
+    OK (GxB_Vector_unload (Container->b, &Ab, &Ab_type, &Ab_len, &Ab_size, &ro,
         NULL)) ;
-    OK (GxB_Vector_unload (Container->i, &Ai, &Ai_len, &Ai_size, &Ai_type, &ro,
+    OK (GxB_Vector_unload (Container->i, &Ai, &Ai_type, &Ai_len, &Ai_size, &ro,
         NULL)) ;
-    OK (GxB_Vector_unload (Container->x, &Ax, &Ax_len, &Ax_size, &Ax_type, &ro,
+    OK (GxB_Vector_unload (Container->x, &Ax, &Ax_type, &Ax_len, &Ax_size, &ro,
         NULL)) ;
 
     // get the Y matrix from the Container
@@ -151,11 +151,11 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
         Container->Y = NULL ;
         OK (GxB_unload_Matrix_into_Container (Y, Container, NULL)) ;
         GrB_Matrix_free (&Y) ;
-        OK (GxB_Vector_unload (Container->p, &Yp, &Yp_len, &Yp_size, &Yp_type,
+        OK (GxB_Vector_unload (Container->p, &Yp, &Yp_type, &Yp_len, &Yp_size,
             &ro, NULL)) ;
-        OK (GxB_Vector_unload (Container->i, &Yi, &Yi_len, &Yi_size, &Yi_type,
+        OK (GxB_Vector_unload (Container->i, &Yi, &Yi_type, &Yi_len, &Yi_size,
             &ro, NULL)) ;
-        OK (GxB_Vector_unload (Container->x, &Yx, &Yx_len, &Yx_size, &Yx_type,
+        OK (GxB_Vector_unload (Container->x, &Yx, &Yx_type, &Yx_len, &Yx_size,
             &ro, NULL)) ;
         yncols = Container->ncols ;
     }

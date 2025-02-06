@@ -139,8 +139,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             //------------------------------------------------------------------
 
             // load A->p
-            GB_OK (GB_vector_unload (Container->p, &(A->p), &plen1,
-                &Ap_size, &Ap_type, &(A->p_shallow), Werk)) ;
+            GB_OK (GB_vector_unload (Container->p, &(A->p), &Ap_type,
+                &plen1, &Ap_size, &(A->p_shallow), Werk)) ;
             A->p_size = (size_t) Ap_size ;
 
             // load A->h
@@ -158,8 +158,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             }
             else
             { 
-                GB_OK (GB_vector_unload (Container->h, &(A->h), &plen,
-                    &Ah_size, &Ah_type, &(A->h_shallow), Werk)) ;
+                GB_OK (GB_vector_unload (Container->h, &(A->h), &Ah_type,
+                    &plen, &Ah_size, &(A->h_shallow), Werk)) ;
             }
             A->h_size = (size_t) Ah_size ;
 
@@ -171,8 +171,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_vector_reset (Container->b) ;
 
             // load A->i
-            GB_OK (GB_vector_unload (Container->i, &(A->i), &Ai_len,
-                &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
+            GB_OK (GB_vector_unload (Container->i, &(A->i), &Ai_type,
+                &Ai_len, &Ai_size, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
 
             // define plen, nvec, and jumbled
@@ -195,8 +195,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             //------------------------------------------------------------------
 
             // load A->p
-            GB_OK (GB_vector_unload (Container->p, &(A->p), &plen1,
-                &Ap_size, &Ap_type, &(A->p_shallow), Werk)) ;
+            GB_OK (GB_vector_unload (Container->p, &(A->p), &Ap_type,
+                &plen1, &Ap_size, &(A->p_shallow), Werk)) ;
             A->p_size = (size_t) Ap_size ;
 
             // clear Container->h, Y, and b
@@ -205,8 +205,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_vector_reset (Container->b) ;
 
             // load A->i
-            GB_OK (GB_vector_unload (Container->i, &(A->i), &Ai_len,
-                &Ai_size, &Ai_type, &(A->i_shallow), Werk)) ;
+            GB_OK (GB_vector_unload (Container->i, &(A->i), &Ai_type,
+                &Ai_len, &Ai_size, &(A->i_shallow), Werk)) ;
             A->i_size = (size_t) Ai_size ;
 
             // define plen, nvec, and jumbled
@@ -233,8 +233,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             GB_Matrix_free (&(Container->Y)) ;
 
             // load A->b
-            GB_OK (GB_vector_unload (Container->b, (void **) &(A->b), &Ab_len,
-                &Ab_size, &Ab_type, &(A->b_shallow), Werk)) ;
+            GB_OK (GB_vector_unload (Container->b, (void **) &(A->b), &Ab_type,
+                &Ab_len, &Ab_size, &(A->b_shallow), Werk)) ;
             A->b_size = (size_t) Ab_size ;
 
             // clear Container->i
@@ -273,8 +273,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     }
 
     // load A->x
-    GB_OK (GB_vector_unload (Container->x, &(A->x), &Ax_len,
-        &Ax_size, &(A->type), &(A->x_shallow), Werk)) ;
+    GB_OK (GB_vector_unload (Container->x, &(A->x), &(A->type),
+        &Ax_len, &Ax_size, &(A->x_shallow), Werk)) ;
     A->x_size = (size_t) Ax_size ;
 
     // define the integer types

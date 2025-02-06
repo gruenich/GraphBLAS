@@ -370,11 +370,11 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Container->orientation = GrB_COLMAJOR ;
             Container->iso = false ;
             Container->jumbled = false ;
-            OK (GxB_Vector_load (Container->p, &Yp, Yp_len, Yp_size, Aj_type,
+            OK (GxB_Vector_load (Container->p, &Yp, Aj_type, Yp_len, Yp_size,
                 true, NULL)) ;
-            OK (GxB_Vector_load (Container->i, &Yi, Yi_len, Yi_size, Aj_type,
+            OK (GxB_Vector_load (Container->i, &Yi, Aj_type, Yi_len, Yi_size,
                 true, NULL)) ;
-            OK (GxB_Vector_load (Container->x, &Yx, nvec, Yx_size, Aj_type,
+            OK (GxB_Vector_load (Container->x, &Yx, Aj_type, nvec, Yx_size,
                 true, NULL)) ;
             OK (GxB_load_Matrix_from_Container (Y, Container, NULL)) ;
             // OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;
@@ -396,20 +396,20 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             case GxB_HYPERSPARSE : 
                 Container->Y = Y ;
                 Y = NULL ;
-                OK (GxB_Vector_load (Container->h, &Ah, plen, Ah_size,
-                    Aj_type, true, NULL)) ;
+                OK (GxB_Vector_load (Container->h, &Ah, Aj_type, plen,
+                    Ah_size, true, NULL)) ;
                 // fall through to sparse case
 
             case GxB_SPARSE : 
-                OK (GxB_Vector_load (Container->p, &Ap, plen+1, Ap_size,
-                    Ap_type, true, NULL)) ;
-                OK (GxB_Vector_load (Container->i, &Ai, nvals, Ai_size,
-                    Ai_type, true, NULL)) ;
+                OK (GxB_Vector_load (Container->p, &Ap, Ap_type, plen+1,
+                    Ap_size, true, NULL)) ;
+                OK (GxB_Vector_load (Container->i, &Ai, Ai_type, nvals,
+                    Ai_size, true, NULL)) ;
                 break ;
 
             case GxB_BITMAP : 
-                OK (GxB_Vector_load (Container->b, &Ab, Ab_len, Ab_size,
-                    GrB_INT8, true, NULL)) ;
+                OK (GxB_Vector_load (Container->b, &Ab, GrB_INT8, Ab_len,
+                    Ab_size, true, NULL)) ;
                 break ;
 
             case GxB_FULL : 
@@ -418,8 +418,8 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             default: ;
         }
 
-        OK (GxB_Vector_load (Container->x, &Ax, Ax_len, Ax_size,
-            Ax_type, true, NULL)) ;
+        OK (GxB_Vector_load (Container->x, &Ax, Ax_type, Ax_len,
+            Ax_size, true, NULL)) ;
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
         // OK (GxB_Matrix_fprint (A, "got A shallow", 0, NULL)) ;
@@ -563,10 +563,10 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             // import the matrix in CSC format (all-64-bit)
             uint64_t Xp_size = (ncols + 1) * sizeof (uint64_t) ;
             uint64_t Xi_size = (nvals) * sizeof (uint64_t) ;
-            OK (GxB_Vector_load (Container->p, &Xp, ncols+1, Xp_size,
-                GrB_UINT64, true, NULL)) ;
-            OK (GxB_Vector_load (Container->i, &Xi, nvals, Xi_size,
-                GrB_UINT64, true, NULL)) ;
+            OK (GxB_Vector_load (Container->p, &Xp, GrB_UINT64, ncols+1,
+                Xp_size, true, NULL)) ;
+            OK (GxB_Vector_load (Container->i, &Xi, GrB_UINT64, nvals,
+                Xi_size, true, NULL)) ;
             Container->format = GxB_SPARSE ;
         }
         else
@@ -575,8 +575,8 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Container->format = GxB_FULL ;
         }
 
-        OK (GxB_Vector_load (Container->x, &Xx, nvals, Xx_size,
-            Ax_type, true, NULL)) ;
+        OK (GxB_Vector_load (Container->x, &Xx, Ax_type, nvals,
+            Xx_size, true, NULL)) ;
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
     }

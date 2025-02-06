@@ -15,9 +15,9 @@ void GB_vector_load
     GrB_Vector V,           // vector to load from the C array X
     void **X,               // numerical array to load into V
     // input:
+    GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    GrB_Type type,          // type of X
     bool read_only          // if true, X is treated as read-only
 )
 { 

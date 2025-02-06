@@ -444,7 +444,7 @@ GrB_Info GB_ijxvector
         GB_OK (GB_new (&T, // static header
             I_type, ni, 1, GB_ph_null, true, GxB_FULL, 0, 0,
             false, false, false)) ;
-        GB_vector_load ((GrB_Vector) T, &I, ni, I_size, I_type, true) ;
+        GB_vector_load ((GrB_Vector) T, &I, I_type, ni, I_size, true) ;
         ASSERT_MATRIX_OK (T, "T for typecast to I", GB0) ;
 
         // I2 = (uint64_t) T->x or (int64_t) T->x

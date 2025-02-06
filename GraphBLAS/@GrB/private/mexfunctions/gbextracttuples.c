@@ -131,7 +131,7 @@ void mexFunction
             OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (I, NULL, NULL,
                 GrB_PLUS_UINT64, I, 1, NULL)) ;
         }
-        OK (GxB_Vector_unload (I, &x, &nvals, &size, &type, &ignore, NULL));
+        OK (GxB_Vector_unload (I, &x, &type, &nvals, &size, &ignore, NULL)) ;
         if (type == GrB_UINT32) type = GrB_INT32 ;
         if (type == GrB_UINT64) type = GrB_INT64 ;
         pargout [0] = gb_export_to_mxfull (&x, nvals, 1, type) ;
@@ -159,7 +159,7 @@ void mexFunction
             OK (GrB_Vector_apply_BinaryOp2nd_UINT64 (J, NULL, NULL,
                 GrB_PLUS_UINT64, J, 1, NULL)) ;
         }
-        OK (GxB_Vector_unload (J, &x, &nvals, &size, &type, &ignore, NULL));
+        OK (GxB_Vector_unload (J, &x, &type, &nvals, &size, &ignore, NULL)) ;
         if (type == GrB_UINT32) type = GrB_INT32 ;
         if (type == GrB_UINT64) type = GrB_INT64 ;
         pargout [1] = gb_export_to_mxfull (&x, nvals, 1, type) ;
@@ -172,7 +172,7 @@ void mexFunction
 
     if (extract_X)
     { 
-        OK (GxB_Vector_unload (X, &x, &nvals, &size, &xtype, &ignore, NULL));
+        OK (GxB_Vector_unload (X, &x, &xtype, &nvals, &size, &ignore, NULL)) ;
         pargout [2] = gb_export_to_mxfull (&x, nvals, 1, xtype) ;
         OK (GrB_Vector_free (&X)) ;
     }

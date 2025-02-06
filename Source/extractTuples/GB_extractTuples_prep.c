@@ -75,7 +75,7 @@ GrB_Info GB_extractTuples_prep
     // load Vx back, to create V as a dense nvals-by-1 vector of type vtype
     //--------------------------------------------------------------------------
 
-    GB_vector_load (V, &Vx, nvals, Vx_size, vtype, false) ;
+    GB_vector_load (V, &Vx, vtype, nvals, Vx_size, false) ;
     ASSERT_VECTOR_OK (V, "V prepped", GB0) ;
     return (GrB_SUCCESS) ;
 }
