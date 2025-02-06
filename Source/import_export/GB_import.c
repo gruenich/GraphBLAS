@@ -204,7 +204,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     { 
         // clear the content and reuse the header
         GB_phybix_free (*A) ;
-        ASSERT (!((*A)->static_header)) ;
+        ASSERT (!((*A)->header_size == 0)) ;
     }
 
     // also create A->p if this is a sparse GrB_Vector
@@ -219,7 +219,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
     }
 
     // A never has a static header
-    ASSERT (!((*A)->static_header)) ;
+    ASSERT (!((*A)->header_size == 0)) ;
 
     //--------------------------------------------------------------------------
     // import the matrix

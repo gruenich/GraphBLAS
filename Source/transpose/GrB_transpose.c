@@ -75,7 +75,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // T = A or A', where T can have the type of C or the type of A
     //--------------------------------------------------------------------------
 
-    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
     bool C_is_csc = C->is_csc ;
     if (C_is_csc != A->is_csc)
     { 

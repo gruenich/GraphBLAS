@@ -131,7 +131,7 @@ static GrB_Info GB_export_worker  // export a matrix
 
     if (make_copy)
     { 
-        GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         if (is_csc != csc_requested)
         { 
             // T = A'

@@ -207,10 +207,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // remove zombies and pending tuples from M.  M can be jumbled.
             GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (M) ;
             ASSERT (GB_JUMBLED_OK (M)) ;
-            GB_CLEAR_STATIC_HEADER (MT, &MT_header) ;
+            GB_CLEAR_MATRIX_HEADER (MT, &MT_header) ;
             GB_OK (GB_transpose_cast (MT, GrB_BOOL, C->is_csc, M, Mask_struct,
                 Werk)) ;
-            ASSERT (MT->static_header || GBNSTATIC) ;
+            ASSERT (MT->header_size == 0 || GBNSTATIC) ;
             // use the transpose mask
             M = MT ;
             ASSERT (GB_JUMBLED_OK (M)) ;
@@ -355,7 +355,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // see GB_spec_accum.m for a description of this step.  If C is empty,
         // then the accumulator can be ignored.
 
-        GB_CLEAR_STATIC_HEADER (Z, &Z_header) ;
+        GB_CLEAR_MATRIX_HEADER (Z, &Z_header) ;
 
         if (use_transplant)
         { 
@@ -409,7 +409,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         // T has been transplanted into Z or freed after Z=C+T
         ASSERT (*Thandle == NULL ||
-               (*Thandle != NULL && ((*Thandle)->static_header || GBNSTATIC))) ;
+            (*Thandle != NULL && ((*Thandle)->header_size == 0 || GBNSTATIC))) ;
 
         // C and Z have the same type
         ASSERT_MATRIX_OK (Z, "Z in accum_mask", GB0) ;

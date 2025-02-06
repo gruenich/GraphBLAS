@@ -215,7 +215,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
 
             ASSERT_MATRIX_OK (M, "big mask", GB0) ;
-            GB_CLEAR_STATIC_HEADER (SubMask, &SubMask_header) ;
+            GB_CLEAR_MATRIX_HEADER (SubMask, &SubMask_header) ;
 
             const void *I_SubMask = I ; int64_t ni_SubMask = ni ;
             const void *J_SubMask = J ; int64_t nj_SubMask = nj ;

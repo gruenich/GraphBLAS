@@ -50,7 +50,7 @@ GrB_Info GB_selector
     ASSERT (GB_IMPLIES (GB_IS_INDEXUNARYOP_CODE_POSITIONAL (opcode),
         !GB_JUMBLED (A))) ;
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     const bool A_iso = A->iso ;
     void *ythunk = NULL ; size_t ythunk_size = 0 ;
     void *athunk = NULL ; size_t athunk_size = 0 ;

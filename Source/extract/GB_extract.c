@@ -177,7 +177,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 
     // TODO::: iso:  if accum is PAIR, extract T as iso
 
-    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
     GB_OK (GB_subref (T, false, T_is_csc, A,
         I, I_is_32, ni, J, J_is_32, nj, false, Werk)) ;
     ASSERT_MATRIX_OK (T, "T extracted", GB0) ;

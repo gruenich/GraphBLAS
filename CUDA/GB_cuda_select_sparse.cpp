@@ -37,8 +37,8 @@ GrB_Info GB_cuda_select_sparse
 
     // check inputs
     GrB_Info info = GrB_NO_VALUE ;
-    ASSERT (C != NULL && !(C->static_header)) ;
-    ASSERT (A != NULL && !(A->static_header)) ;
+    ASSERT (C != NULL && !(C->header_size == 0)) ;
+    ASSERT (A != NULL && !(A->header_size == 0)) ;
 
     // FIXME: use the stream pool
     cudaStream_t stream = nullptr ;

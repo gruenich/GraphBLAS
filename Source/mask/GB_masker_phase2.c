@@ -106,7 +106,7 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (C->type == Z->type) ;
 
-    ASSERT (R != NULL && (R->static_header || GBNSTATIC)) ;
+    ASSERT (R != NULL && (R->header_size == 0 || GBNSTATIC)) ;
 
     ASSERT (Rp_handle != NULL) ;
     ASSERT (Rh_handle != NULL) ;

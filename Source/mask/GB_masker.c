@@ -85,7 +85,7 @@ GrB_Info GB_masker          // R = masker (C, M, Z)
 
     GrB_Info info ;
 
-    ASSERT (R != NULL && (R->static_header || GBNSTATIC)) ;
+    ASSERT (R != NULL && (R->header_size == 0 || GBNSTATIC)) ;
 
     ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
     ASSERT (!GB_PENDING (M)) ;

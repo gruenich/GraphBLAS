@@ -62,7 +62,7 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     ASSERT (Cp_handle != NULL) ;
     ASSERT (Ch_handle != NULL) ;
 

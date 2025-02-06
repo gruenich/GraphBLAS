@@ -367,7 +367,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // create T
     //--------------------------------------------------------------------------
 
-    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
 
     if (make_copy)
     { 

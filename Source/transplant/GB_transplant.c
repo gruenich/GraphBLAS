@@ -14,7 +14,7 @@
 // shallow.  This function is not user-callable.  The new type of C (ctype)
 // must be compatible with A->type.
 
-// C->hyper_switch, C->bitmap_switch, C->sparsity_control, C->static_header,
+// C->hyper_switch, C->bitmap_switch, C->sparsity_control, C->header_size,
 // C->user_name, C->user_name_size, C->p_control, C->j_control, and
 // C->i_control are not modified by the transplant.
 

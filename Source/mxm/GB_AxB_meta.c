@@ -88,8 +88,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     ASSERT_SEMIRING_OK (semiring_in, "semiring_in for numeric A*B", GB0) ;
     ASSERT (mask_applied != NULL) ;
-    ASSERT (C  != NULL && ( C->static_header || GBNSTATIC)) ;
-    ASSERT (MT != NULL && (MT->static_header || GBNSTATIC)) ;
+    ASSERT (C  != NULL && ( C->header_size == 0 || GBNSTATIC)) ;
+    ASSERT (MT != NULL && (MT->header_size == 0 || GBNSTATIC)) ;
 
     //--------------------------------------------------------------------------
     // declare workspace
@@ -584,7 +584,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // This is currently unused, since C=A'*B' and C'=A'*B' are always
             // converted to C=(B*A)' and C=B*A, respectively.  It is left here
             // in case the swap_rule changes.
-            GB_CLEAR_STATIC_HEADER (BT, &BT_header) ;
+            GB_CLEAR_MATRIX_HEADER (BT, &BT_header) ;
             GB_OK (GB_transpose_cast (BT, btype_cast, true, B, B_is_pattern,
                 Werk)) ;
             B = BT ;
@@ -605,7 +605,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method == GB_USE_COLSCALE || axb_method == GB_USE_SAXPY)
         {
             // AT = A', or AT=one(A') if only the pattern is needed.
-            GB_CLEAR_STATIC_HEADER (AT, &AT_header) ;
+            GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
             GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                 Werk)) ;
             // do not use colscale if AT is now bitmap
@@ -686,7 +686,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (axb_method != GB_USE_COLSCALE)
         {
             // BT = B', or BT=one(B') if only the pattern of B is needed
-            GB_CLEAR_STATIC_HEADER (BT, &BT_header) ;
+            GB_CLEAR_MATRIX_HEADER (BT, &BT_header) ;
             GB_OK (GB_transpose_cast (BT, btype_cast, true, B, B_is_pattern,
                 Werk)) ;
             // do not use rowscale if BT is now bitmap
@@ -718,7 +718,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B' via dot product, or C_in<M>+=A*B' if in-place
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) "
                     "(transposed %s) ", M_str, A_str, B_str) ;
-                GB_CLEAR_STATIC_HEADER (AT, &AT_header) ;
+                GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
                 GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                     Werk)) ;
                 GB_OK (GB_AxB_dot (C, can_do_in_place ? C_in : NULL, M,
@@ -822,7 +822,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // C<M>=A*B via dot product, or C_in<M>+=A*B if in-place.
                 GBURBLE ("C%s=A*B', dot_product (transposed %s) ",
                     M_str, A_str) ;
-                GB_CLEAR_STATIC_HEADER (AT, &AT_header) ;
+                GB_CLEAR_MATRIX_HEADER (AT, &AT_header) ;
                 GB_OK (GB_transpose_cast (AT, atype_cast, true, A, A_is_pattern,
                     Werk)) ;
                 GB_OK (GB_AxB_dot (C, can_do_in_place ? C_in : NULL, M,

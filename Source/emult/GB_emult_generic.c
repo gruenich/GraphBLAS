@@ -56,7 +56,7 @@ GrB_Info GB_emult_generic       // generic emult
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (A, "A for ewise generic", GB0) ;
     ASSERT_MATRIX_OK (B, "B for ewise generic", GB0) ;

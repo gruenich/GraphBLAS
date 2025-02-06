@@ -22,7 +22,6 @@
 #include "assign/GB_assign.h"
 #include "ij/GB_ij.h"
 #include "mask/GB_get_mask.h"
-#include "matrix/include/GB_static_header.h"
 #define GB_FREE_ALL GB_Matrix_free (&A) ;
 
 GrB_Info GB_Matrix_assign_scalar    // C<Mask>(I,J) = accum (C(I,J),s)
@@ -136,7 +135,7 @@ GrB_Info GB_Matrix_assign_scalar    // C<Mask>(I,J) = accum (C(I,J),s)
 
         // create an empty matrix A of the right size, and use matrix assign
         struct GB_Matrix_opaque A_header ;
-        GB_CLEAR_STATIC_HEADER (A, &A_header) ;
+        GB_CLEAR_MATRIX_HEADER (A, &A_header) ;
         bool is_csc = C->is_csc ;
         int64_t vlen = is_csc ? nI : nJ ;
         int64_t vdim = is_csc ? nJ : nI ;

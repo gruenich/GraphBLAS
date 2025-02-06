@@ -111,7 +111,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // though it is m-by-1.  It contains no dynamically-allocated content and
     // does not need to be freed.
     int64_t m = A_transpose ? GB_NROWS (A) : GB_NCOLS (A) ;
-    GB_CLEAR_STATIC_HEADER (B, &B_header) ;
+    GB_CLEAR_MATRIX_HEADER (B, &B_header) ;
     info = GB_new (&B, // full, existing header
         ztype, m, 1, GB_ph_null, true, GxB_FULL, GB_NEVER_HYPER, 1,
         /* OK: */ false, false, false) ;

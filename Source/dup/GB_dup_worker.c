@@ -12,7 +12,7 @@
 // if numeric is false, C->x is allocated but not initialized.
 
 // If *Chandle is not NULL on input, the header is reused.  It may be a static
-// or dynamic header, depending on C->static_header.
+// or dynamic header, depending on C->header_size.
 
 #include "GB.h"
 #include "get_set/GB_get_set.h"

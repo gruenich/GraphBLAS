@@ -80,7 +80,7 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
 
     ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
     ASSERT_MATRIX_OK (A, "A for emult 08 phase2", GB0) ;

@@ -190,8 +190,12 @@
         // Y = A*X using a matrix iterator
         //----------------------------------------------------------------------
 
-        // useless descriptor, just to test nthreads extraction for GB_wait
-        if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) A->jumbled = true ;
+        // need to test GB_Iterator_attach call to GB_wait
+//      ... but is not valid if A is shallow:
+//      if (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) A->jumbled = true ;
+//      the above line is necessary to test the call to GB_wait in
+//      GB_Iterator_attach.  Need to be able to pass in A as a deep copy
+//      so it can be flagged here as jumbled.
 
         // attach it to the matrix A
         OK (GxB_Matrix_Iterator_attach (iterator, A, GrB_DESC_S)) ;

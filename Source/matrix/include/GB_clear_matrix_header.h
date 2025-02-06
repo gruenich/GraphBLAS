@@ -1,17 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_static_header.h: macros for allocating static headers
+// GB_clear_matrix_header.h: macros for allocating static headers
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-
-// FIXME  XX->static_header can be inferred from XX->header_size.
-// assert (XX->static_header == (XX->header_size == 0))
-// Remove the static_header bool from the matrix struct. 
-//
-// rename GB_CLEAR_STATIC_HEADER to just GB_CLEAR_HEADER.
 
 // By default, many internal temporary matrices use statically allocated
 // headers to reduce the number of calls to malloc/free.  This works fine for
@@ -29,12 +23,12 @@
     #endif
 #endif
 
-#undef GB_CLEAR_STATIC_HEADER
+#undef GB_CLEAR_MATRIX_HEADER
 
 #if GBNSTATIC
 
     // do not use any static headers
-    #define GB_CLEAR_STATIC_HEADER(XX,XX_header_handle)                     \
+    #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                     \
     {                                                                       \
         size_t XX_size ;                                                    \
         XX = GB_CALLOC_MEMORY (1, sizeof (struct GB_Matrix_opaque),         \
@@ -44,7 +38,6 @@
             GB_FREE_ALL ;                                                   \
             return (GrB_OUT_OF_MEMORY) ;                                    \
         }                                                                   \
-        XX->static_header = false ;                                         \
         XX->header_size = XX_size ;                                         \
         XX->magic = GB_MAGIC2 ;                                             \
     }
@@ -52,23 +45,22 @@
 #else
 
     // use static headers
-    #define GB_CLEAR_STATIC_HEADER(XX,XX_header_handle)                     \
+    #define GB_CLEAR_MATRIX_HEADER(XX,XX_header_handle)                     \
     {                                                                       \
-        XX = GB_clear_static_header (XX_header_handle) ;                    \
+        XX = GB_clear_matrix_header (XX_header_handle) ;                    \
     }
 
 #endif
 
-#ifndef GB_STATIC_HEADER_H
-#define GB_STATIC_HEADER_H
+#ifndef GB_CLEAR_MATRIX_HEADER_H
+#define GB_CLEAR_MATRIX_HEADER_H
 
-static inline GrB_Matrix GB_clear_static_header // clear a static header
+static inline GrB_Matrix GB_clear_matrix_header // clear a static header
 (
     GrB_Matrix C    // static header to clear
 )
 {
     memset (C, 0, sizeof (struct GB_Matrix_opaque)) ;
-    C->static_header = true ;
     return (C) ;
 }
 

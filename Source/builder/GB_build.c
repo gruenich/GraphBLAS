@@ -274,7 +274,7 @@ GrB_Info GB_build               // build matrix
     void *no_J_work = NULL ; size_t J_work_size = 0 ;
     GB_void *no_X_work = NULL ; size_t X_work_size = 0 ;
 
-    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
     GrB_Type ttype = (discard_duplicates) ? xtype : dup->ztype ;
 
     GB_OK (GB_builder (

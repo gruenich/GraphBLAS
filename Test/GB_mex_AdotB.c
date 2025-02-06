@@ -216,7 +216,7 @@ void mexFunction
     GET_SCALAR (3, bool, flipxy, false) ;
 
     struct GB_Matrix_opaque C_header ;
-    C = GB_clear_static_header (&C_header) ;
+    C = GB_clear_matrix_header (&C_header) ;
 
     if (A->type == Complex)
     {

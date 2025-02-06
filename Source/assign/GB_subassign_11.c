@@ -68,7 +68,7 @@ GrB_Info GB_subassign_11
     //--------------------------------------------------------------------------
 
     struct GB_Matrix_opaque S_header ;
-    GB_CLEAR_STATIC_HEADER (S, &S_header) ;
+    GB_CLEAR_MATRIX_HEADER (S, &S_header) ;
     GB_OK (GB_subassign_symbolic (S, C, I, I_is_32, ni, J, J_is_32, nj, true,
         Werk)) ;
 

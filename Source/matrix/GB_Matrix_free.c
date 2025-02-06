@@ -27,7 +27,7 @@ void GB_Matrix_free             // free a matrix
             GB_FREE_MEMORY (&(A->user_name), A->user_name_size) ;
             size_t header_size = A->header_size ;
             GB_phybix_free (A) ;
-            if (!(A->static_header))
+            if (!(A->header_size == 0))
             { 
                 // free the header of A itself, unless it is static
                 A->magic = GB_FREED ;       // to help detect dangling pointers

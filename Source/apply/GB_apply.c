@@ -272,7 +272,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A'), typecasting to op->ztype
         GBURBLE ("(transpose-op) ") ;
-        GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         info = GB_transpose (T, T_type, T_is_csc, A, op, scalar,
             binop_bind1st, flipij, Werk) ;
         ASSERT (GB_JUMBLED_OK (T)) ;
@@ -316,7 +316,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A), pattern is a shallow copy of A, type is op->ztype.
         GBURBLE ("(shallow-op) ") ;
-        GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         info = GB_shallow_op (T, T_is_csc, op, scalar, binop_bind1st, flipij,
             A, Werk) ;
     }

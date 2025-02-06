@@ -44,7 +44,6 @@
 // does not use this method and ignores the descriptor settings above.
 
 #include "GB_ij.h"
-#include "matrix/include/GB_static_header.h"
 #include "container/GB_container.h"
 
 #define GB_FREE_ALL                 \
@@ -441,7 +440,7 @@ GrB_Info GB_ijxvector
     if ((need_copy && I_size == 0) || I_type != I_target_type)
     { 
         // Create an ni-by-1 matrix T containing the values of I
-        GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         GB_OK (GB_new (&T, // static header
             I_type, ni, 1, GB_ph_null, true, GxB_FULL, 0, 0,
             false, false, false)) ;

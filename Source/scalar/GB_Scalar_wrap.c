@@ -68,8 +68,6 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
     s->bitmap_switch = 0.5 ;
     s->sparsity_control = GxB_FULL ;
 
-    s->static_header = true ;
-
     s->is_csc = true ;
     s->jumbled = false ;
     s->iso = true ;

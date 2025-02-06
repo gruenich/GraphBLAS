@@ -482,7 +482,7 @@ int32_t x_memory_location ;
 float hyper_switch ;    // controls conversion hyper to/from sparse
 float bitmap_switch ;   // controls conversion sparse to/from bitmap
 
-// the remaining content of this struct is 18 bytes
+// the remaining content of this struct is 17 bytes
 
 // 5 bytes:
 int8_t sparsity_control ;   // controls sparsity structure: hypersparse,
@@ -507,14 +507,13 @@ bool no_hyper_hash ;    // if true, disable the Y hyper_hash matrix
 // object is a pointer into components of another object.  They must not
 // be freed when freeing this object.
 
-// 7 bytes
+// 6 bytes
 bool p_shallow ;        // true if p is a shallow copy
 bool h_shallow ;        // true if h is a shallow copy
 bool b_shallow ;        // true if b is a shallow copy
 bool i_shallow ;        // true if i is a shallow copy
 bool x_shallow ;        // true if x is a shallow copy
 bool Y_shallow ;        // true if Y is a shallow matrix
-bool static_header ;    // true if this struct is statically allocated
 
 //------------------------------------------------------------------------------
 // other bool content
@@ -572,12 +571,6 @@ bool i_is_32 ;  // true if A->i is 32-bit, false if 64
 // The type is assumed to be double, just for illustration.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
-
-// for reference:
-#define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
-#define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
-#define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
-#define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 
     // A->vdim: the vector dimension of A (ncols(A))
     // A->nvec: # of vectors that appear in A.  For the hypersparse case,
@@ -663,6 +656,12 @@ bool i_is_32 ;  // true if A->i is 32-bit, false if 64
 
     //--------------------
     // generic: for any matrix
+
+        // for reference:
+        #define GBI(Ai,p,avlen) ((Ai == NULL) ? ((p) % (avlen)) : Ai [p])
+        #define GBB(Ab,p)       ((Ab == NULL) ? 1 : Ab [p])
+        #define GBP(Ap,k,avlen) ((Ap == NULL) ? ((k) * (avlen)) : Ap [k])
+        #define GBH(Ah,k)       ((Ah == NULL) ? (k) : Ah [k])
 
         int64_t vlen = A->vlen ;
         for (k = 0 ; k < A->nvec ; k++)

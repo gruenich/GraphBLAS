@@ -38,7 +38,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     ASSERT_MATRIX_OK (A, "A for shallow copy", GB0) ;
     GB_MATRIX_WAIT_IF_PENDING_OR_ZOMBIES (A) ;
     ASSERT (!GB_PENDING (A)) ;

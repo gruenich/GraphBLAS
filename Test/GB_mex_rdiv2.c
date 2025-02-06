@@ -110,8 +110,8 @@ GrB_Info axb (GB_Werk Werk)
         }
     }
 
-    MT = GB_clear_static_header (&MT_header) ;
-    T  = GB_clear_static_header (&T_header) ;
+    MT = GB_clear_matrix_header (&MT_header) ;
+    T  = GB_clear_matrix_header (&T_header) ;
 
     // C = A*B or C += A*B
     info = GB_AxB_meta (T, C,  // can be done in place if C != NULL

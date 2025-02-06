@@ -45,7 +45,7 @@ void GB_memoryUsage         // count # allocated blocks and their sizes
 
     GB_Pending Pending = A->Pending ;
 
-    if (!A->static_header)
+    if (!(A->header_size == 0))
     { 
         (*nallocs)++ ;
         (*mem_deep) += A->header_size ;

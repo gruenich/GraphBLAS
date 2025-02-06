@@ -1003,12 +1003,5 @@ struct GB_Matrix_opaque     // content of GrB_Matrix
 
 #endif
 
-//------------------------------------------------------------------------------
-// OLD style: remove all of these?
-//------------------------------------------------------------------------------
-
-#define GBP(Ap,k,avlen) ((Ap) ? Ap [k] : ((k) * (avlen)))
-#define GBI(Ai,p,avlen) ((Ai) ? Ai [p] : ((p) % (avlen)))
-
 #endif
 

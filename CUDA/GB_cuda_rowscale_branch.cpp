@@ -8,11 +8,11 @@ bool GB_cuda_rowscale_branch
     const bool flipxy
 )
 {
-    if (D->static_header)
+    if (D->header_size == 0)
     {
         return false ;
     }
-    if (B->static_header)
+    if (B->header_size == 0)
     {
         return false ;
     }

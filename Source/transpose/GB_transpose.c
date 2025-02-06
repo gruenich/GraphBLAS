@@ -89,7 +89,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
     GB_void *Swork = NULL ; size_t Swork_size = 0 ;
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
-    GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+    GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
 
     ASSERT_MATRIX_OK (A, "A input for GB_transpose", GB0) ;
     ASSERT_TYPE_OK_OR_NULL (ctype, "ctype for GB_transpose", GB0) ;

@@ -50,7 +50,7 @@ GrB_Info GB_select_sparse
     // sparse/hypersparse, with one exception: for the DIAG operator, A may be
     // sparse, hypersparse, or full.
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     ASSERT_MATRIX_OK (A, "A input for GB_select_sparse", GB0) ;
     ASSERT_INDEXUNARYOP_OK (op, "op for GB_select_sparse", GB0) ;
     ASSERT (!GB_IS_BITMAP (A)) ;

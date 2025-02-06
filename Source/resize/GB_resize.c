@@ -284,7 +284,7 @@ GrB_Info GB_resize              // change the size of a matrix
             struct GB_Scalar_opaque scalar_header ;
             int64_t k = vlen_new - 1 ;
             GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;
-            GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+            GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
             GB_OK (GB_selector (T, GrB_ROWLE, false, A, scalar, Werk)) ;
             GB_OK (GB_transplant (A, A->type, &T, Werk)) ;
         }

@@ -35,7 +35,7 @@ GrB_Info GB_rowscale                // C = D*B, row scale with diagonal D
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     ASSERT_MATRIX_OK (D, "D for rowscale D*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for rowscale D*B", GB0) ;
     ASSERT (!GB_ZOMBIES (D)) ;

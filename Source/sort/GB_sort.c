@@ -414,7 +414,7 @@ GrB_Info GB_sort
     if (C_is_NULL)
     { 
         // C is a temporary matrix, which is freed when done
-        GB_CLEAR_STATIC_HEADER (T, &T_header) ;
+        GB_CLEAR_MATRIX_HEADER (T, &T_header) ;
         C = T ;
     }
 

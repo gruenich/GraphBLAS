@@ -126,7 +126,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // Transplant the content of Cwork into C_in and free Cwork.  Zombies
         // and pending tuples can be transplanted from Cwork into C_in, and if
         // Cwork is jumbled, C_in becomes jumbled too.
-        ASSERT (Cwork->static_header || GBNSTATIC) ;
+        ASSERT (Cwork->header_size == 0 || GBNSTATIC) ;
         GB_OK (GB_transplant (C_in, C_in->type, &Cwork, Werk)) ;
     }
 

@@ -89,14 +89,14 @@ GrB_Info GB_new                 // create matrix, except for indices & values
             return (GrB_OUT_OF_MEMORY) ;
         }
         allocated_header = true ;
-        (*Ahandle)->static_header = false ;  // header of A has been malloc'd
         (*Ahandle)->header_size = header_size ;
     }
 //  else
 //  {
 //      // the header of A has been provided on input.  It may already be
-//      // malloc'd, or it might be statically allocated in the caller. 
-//      // (*Ahandle)->static_header is not modified.
+//      // malloc'd, or it might be statically allocated in the caller.  In the
+//      // latter case, the header_size is zero.  Thus,
+//      // (*Ahandle)->header_size is not modified.
 //  }
 
     GrB_Matrix A = *Ahandle ;

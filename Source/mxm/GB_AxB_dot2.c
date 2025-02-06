@@ -71,7 +71,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
 
     GrB_Info info ;
 
-    ASSERT (C != NULL && (C->static_header || GBNSTATIC)) ;
+    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A for dot A'*B", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B for dot A'*B", GB0) ;
@@ -130,7 +130,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (A_is_hyper)
     { 
         // A = hypershallow version of A_in
-        GB_CLEAR_STATIC_HEADER (Awork, &Awork_header) ;
+        GB_CLEAR_MATRIX_HEADER (Awork, &Awork_header) ;
         A = GB_hyper_shallow (Awork, A_in) ;
     }
     else
@@ -142,7 +142,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     if (B_is_hyper)
     { 
         // B = hypershallow version of B_in
-        GB_CLEAR_STATIC_HEADER (Bwork, &Bwork_header) ;
+        GB_CLEAR_MATRIX_HEADER (Bwork, &Bwork_header) ;
         B = GB_hyper_shallow (Bwork, B_in) ;
     }
     else
@@ -176,7 +176,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     { 
         // Mwork = M_in (Ah, Bh), where Mwork has a static header
         // if Mask_struct then Mwork is extracted as iso
-        GB_CLEAR_STATIC_HEADER (Mwork, &Mwork_header) ;
+        GB_CLEAR_MATRIX_HEADER (Mwork, &Mwork_header) ;
         GB_OK (GB_subref (Mwork, Mask_struct, M_in->is_csc, M_in,
             (A_is_hyper) ? Ah : GrB_ALL, A->j_is_32, cvlen,
             (B_is_hyper) ? Bh : GrB_ALL, B->j_is_32, cvdim,

@@ -86,8 +86,8 @@ GrB_Info axb (GB_Werk Werk, bool cprint)
         return (info) ;
     }
 
-    MT = GB_clear_static_header (&MT_header) ;
-    C  = GB_clear_static_header (&C_header) ;
+    MT = GB_clear_matrix_header (&MT_header) ;
+    C  = GB_clear_matrix_header (&C_header) ;
 
     // C = A*B
     info = GB_AxB_meta (C, NULL,       // C cannot be computed in place

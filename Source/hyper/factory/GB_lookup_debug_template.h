@@ -53,8 +53,10 @@ static inline bool GB_lookup_debug_T // find j = Ah [k]
     {
         // A is sparse, bitmap, or full; j always appears
         // k = j
-        (*pstart) = GBP (Ap, j, avlen) ;        // OK
-        (*pend)   = GBP (Ap, j+1, avlen) ;      // OK
+        #define GBP(Ap,k,avlen) ((Ap) ? Ap [k] : ((k) * (avlen)))
+        (*pstart) = GBP (Ap, j, avlen) ;
+        (*pend)   = GBP (Ap, j+1, avlen) ;
+        #undef GBP
         return (true) ;
     }
 }
