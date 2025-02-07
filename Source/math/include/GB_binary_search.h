@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// These methods are used for all kernels, include CUDA kernels, which is why
+// GB_STATIC_INLINE is used.  It becomes "static inline" on the CPU, and
+// "static __device__ inline" on the GPU.
+
 #ifndef GB_BINARY_SEARCH_H
 #define GB_BINARY_SEARCH_H
 
@@ -29,12 +33,17 @@ GB_STATIC_INLINE void GB_trim_binary_search_32
     // binary search of X [pleft ... pright] for the integer i
     while (*pleft < *pright)
     {
-        #ifdef CUDA_KERNEL
+        // Both of following methods work on both the GPU and CPU, but the
+        // first method works fastest on the GPU, while the 2nd works fastest
+        // on the CPU.
+        #ifdef GB_CUDA_KERNEL
+            // binary search on the GPU
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
             bool less = (X [pmiddle] < i) ;
             *pleft  = less ? (pmiddle+1) : *pleft ;
             *pright = less ? *pright : pmiddle ;
         #else
+            // binary search on the CPU
             int64_t pmiddle = (*pleft + *pright) / 2 ;
             if (X [pmiddle] < i)
             {
@@ -64,7 +73,7 @@ GB_STATIC_INLINE void GB_trim_binary_search_64
     // binary search of X [pleft ... pright] for the integer i
     while (*pleft < *pright)
     {
-        #ifdef CUDA_KERNEL
+        #ifdef GB_CUDA_KERNEL
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
             bool less = (X [pmiddle] < i) ;
             *pleft  = less ? (pmiddle+1) : *pleft ;
@@ -256,7 +265,7 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_32
     // binary search of X [pleft ... pright] for the integer i
     while (*pleft < *pright)
     {
-        #ifdef CUDA_KERNEL
+        #ifdef GB_CUDA_KERNEL
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
             int64_t ix = X [pmiddle] ;
             ix = GB_UNZOMBIE (ix) ;
@@ -295,7 +304,7 @@ GB_STATIC_INLINE void GB_trim_binary_search_zombie_64
     // binary search of X [pleft ... pright] for the integer i
     while (*pleft < *pright)
     {
-        #ifdef CUDA_KERNEL
+        #ifdef GB_CUDA_KERNEL
             int64_t pmiddle = (*pleft + *pright) >> 1 ;
             int64_t ix = X [pmiddle] ;
             ix = GB_UNZOMBIE (ix) ;

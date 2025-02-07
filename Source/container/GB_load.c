@@ -143,11 +143,12 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
                 &plen1, &Ap_size, &(A->p_shallow), Werk)) ;
             A->p_size = (size_t) Ap_size ;
 
-            // load A->h
-            if (Container->h->vlen == 0 &&
-                (Container->h == NULL || Container->h->x == NULL))
-            { 
-                // A is an empty hypersparse matrix but A->h must not be NULL
+            // load or create A->h
+            if (Container->h == NULL ||
+                (Container->h->vlen == 0 && Container->h->x == NULL))
+            {
+                // A is an empty hypersparse matrix but A->h must not be NULL;
+                // allocate space for A->h of type uint32 or uint64
                 plen = 0 ;
                 A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &Ah_size) ;
                 if (A->h == NULL)
@@ -155,6 +156,21 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
                     return (GrB_OUT_OF_MEMORY) ;
                 }
                 A->h_shallow = false ;
+                bool Aj_is_32 ;
+                if (Container->h == NULL)
+                { 
+                    // there is no Container->h, so get global/matrix settings
+                    bool Ap_is_32, Ai_is_32 ;
+                    GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
+                        GxB_HYPERSPARSE, A->nvals, A->vlen, A->vdim, Werk) ;
+                }
+                else
+                { 
+                    // determine the type of A->h from Container->h_type
+                    Aj_is_32 = (Container->h->type == GrB_UINT32) ||
+                               (Container->h->type == GrB_INT32) ;
+                }
+                Ah_type = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
             }
             else
             { 

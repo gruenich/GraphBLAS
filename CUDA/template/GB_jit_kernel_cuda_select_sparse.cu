@@ -353,10 +353,8 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     C->nvec = cnvec ;
     C->nvec_nonempty = cnvec ;
     C->nvals = cnz ;
-    size_t psize = C->p_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    size_t jsize = C->j_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
-    C->p = GB_MALLOC_MEMORY (C->plen + 1, psize, &(C->p_size)) ;
-    C->h = GB_MALLOC_MEMORY (C->plen, jsize, &(C->h_size)) ;
+    C->p = GB_MALLOC_MEMORY (C->plen + 1, sizeof (GB_Cp_TYPE), &(C->p_size)) ;
+    C->h = GB_MALLOC_MEMORY (C->plen, sizeof (GB_Cj_TYPE), &(C->h_size)) ;
     if (C->p == NULL || C->h == NULL)
     {
         // The contents of C will be freed with GB_phybix_free()

@@ -14,15 +14,13 @@
 // CUDA_OK: like GB_OK but for calls to cuda* methods
 //------------------------------------------------------------------------------
 
-// FIXME: need to use an error like GxB_GPU_ERROR
-
 #define CUDA_OK(cudaMethod)                                                 \
 {                                                                           \
     cudaError_t cuda_error = cudaMethod ;                                   \
     if (cuda_error != cudaSuccess)                                          \
     {                                                                       \
         GrB_Info info = (cuda_error == cudaErrorMemoryAllocation) ?         \
-            GrB_OUT_OF_MEMORY : GrB_PANIC ;                                 \
+            GrB_OUT_OF_MEMORY : GxB_GPU_ERROR ;                             \
         GBURBLE ("(cuda failed: %d:%s file:%s line:%d) ", (int) cuda_error, \
             cudaGetErrorString (cuda_error), __FILE__, __LINE__) ;          \
         GB_FREE_ALL ;                                                       \

@@ -383,7 +383,8 @@ typedef enum    // GrB_Info
     GrB_INDEX_OUT_OF_BOUNDS = -105, // row or col index out of bounds
     GrB_EMPTY_OBJECT = -106,        // an object does not contain a value
     GxB_JIT_ERROR = -7001,          // JIT compiler/loader error
-    GxB_OUTPUT_IS_READONLY = -7002, // output matrix has readonly components
+    GxB_GPU_ERROR = -7002,          // GPU error (future; not yet in production)
+    GxB_OUTPUT_IS_READONLY = -7003, // output matrix has readonly components
 
 }
 GrB_Info ;

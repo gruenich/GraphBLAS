@@ -107,7 +107,7 @@ static __device__ __inline__ void GB_cuda_ek_slice_setup
 
     (*kfirst) = 0 ;
     int64_t kright = anvec ;
-    GB_trim_binary_search (pfirst, Ap, false, kfirst, &kright) ;
+    GB_trim_binary_search (pfirst, Ap, GB_Ap_IS_32, kfirst, &kright) ;
 
     // find klast, the last vector of the slice for this chunk.  klast is the
     // vector that owns the entry Ai [plast-1] and Ax [plast-1].  The search
@@ -115,7 +115,7 @@ static __device__ __inline__ void GB_cuda_ek_slice_setup
 
     (*klast) = (*kfirst) ;
     kright = anvec ;
-    GB_trim_binary_search (plast, Ap, false, klast, &kright) ;
+    GB_trim_binary_search (plast, Ap, GB_Ap_IS_32, klast, &kright) ;
 
     //--------------------------------------------------------------------------
     // find slope of vectors in this chunk, and return result
