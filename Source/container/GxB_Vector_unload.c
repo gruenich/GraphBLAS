@@ -42,10 +42,10 @@ GrB_Info GxB_Vector_unload
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    bool *read_only,        // if true, X is treated as read-only
+    int *handling,          // see GxB_Vector_load
     const GrB_Descriptor desc   // currently unused; for future expansion
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -53,6 +53,7 @@ GrB_Info GxB_Vector_unload
 
     // just check V; other inputs are checked in GB_vector_unload
     GB_RETURN_IF_NULL_OR_FAULTY (V) ;
+    GB_RETURN_IF_NULL (handling) ;
     GB_WHERE_1 (V, "GxB_Vector_unload") ;
     ASSERT_VECTOR_OK (V, "V to unload", GB0) ;
 
@@ -60,14 +61,16 @@ GrB_Info GxB_Vector_unload
     // unload the vector
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_vector_unload (V, X, type, n, X_size, read_only, Werk)) ;
+    bool read_only ;
+    GB_OK (GB_vector_unload (V, X, type, n, X_size, &read_only, Werk)) ;
     GBMDUMP ("vector_unload, remove X from memtable %p\n", *X) ;
-    if (!(*read_only))
+    if (!read_only)
     { 
         // *X is given to the user application, so remove it from the debug
         // global memtable
         GB_Global_memtable_remove (*X)  ;
     }
+    (*handling) = read_only ? GxB_IS_READONLY : GrB_DEFAULT ;
     return (GrB_SUCCESS) ;
 }
 

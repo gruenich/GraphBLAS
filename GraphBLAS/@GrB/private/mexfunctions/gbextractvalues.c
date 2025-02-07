@@ -52,12 +52,12 @@ void mexFunction
 
     void *X = NULL ;
     GrB_Type xtype = NULL ;
-    bool read_only = false ;
+    int ignore = 0 ;
     uint64_t X_size = 0 ;
     GrB_Vector X_vector = NULL ;
     OK (GrB_Vector_new (&X_vector, GrB_FP64, 0)) ;
     OK (GxB_Matrix_extractTuples_Vector (NULL, NULL, X_vector, A, NULL)) ;
-    OK (GxB_Vector_unload (X_vector, &X, &xtype, &nvals, &X_size, &read_only,
+    OK (GxB_Vector_unload (X_vector, &X, &xtype, &nvals, &X_size, &ignore,
         NULL)) ;
     pargout [0] = gb_export_to_mxfull (&X, nvals, 1, xtype) ;
 

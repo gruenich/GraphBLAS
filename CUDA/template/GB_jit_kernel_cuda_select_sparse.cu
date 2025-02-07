@@ -268,7 +268,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
 
     GB_cuda_select_sparse_phase1 <<<grid, block, 0, stream>>>
         (Keep, A, ythunk) ;
-
+    CUDA_OK (cudaGetLastError ( )) ;  // FIXME add after all kernel launches
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     //--------------------------------------------------------------------------
@@ -317,7 +317,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     
     GB_cuda_select_sparse_phase2 <<<grid, block, 0, stream>>>
         (Map, A, Ak_keep, (GB_Ci_TYPE *) C->i, (GB_C_TYPE *) C->x) ;
-    
+    CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     //--------------------------------------------------------------------------
@@ -327,7 +327,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // Phase 3a: Build Ck_delta
     GB_cuda_select_sparse_phase3 <<<grid, block, 0, stream>>>
         (A->nvals, Map, Ak_keep, Ck_delta) ;
-
+    CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // Cumsum over Ck_delta array to get Ck_map
@@ -372,6 +372,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     //--------------------------------------------------------------------------
     GB_cuda_select_sparse_phase4 <<<grid, block, 0, stream>>>
         (A, cnz, Ak_keep, Ck_map, Cp, (GB_Cj_TYPE *) C->h) ;
+    CUDA_OK (cudaGetLastError ( )) ;
     CUDA_OK (cudaStreamSynchronize (stream)) ;
 
     // log the end of the last vector of C

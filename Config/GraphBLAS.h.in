@@ -5940,7 +5940,9 @@ GrB_Info GxB_Vector_load
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    bool read_only,         // if true, X is treated as read-only
+    int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
+                            // GxB_IS_READONLY: X treated as read-only;
+                            //      ownership kept by the user application
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
 
@@ -5953,7 +5955,7 @@ GrB_Info GxB_Vector_unload
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    bool *read_only,        // if true, X is treated as read-only
+    int *handling,          // see GxB_Vector_load
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;
 

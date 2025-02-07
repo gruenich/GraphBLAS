@@ -192,7 +192,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 
         // unload the Container GrB_Vectors into raw C arrays Tp, Ti, and Tx
         GrB_Type Tp_type, Ti_type, Tx_type ;
-        bool ignore ;
+        int ignore = 0 ;
         OK (GxB_Vector_unload (Container->p, &Tp, &Tp_type, &plen, &Tp_size,
             &ignore, NULL)) ;
         OK (GxB_Vector_unload (Container->i, &Ti, &Ti_type, &ilen, &Ti_size,

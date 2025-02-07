@@ -19,8 +19,8 @@
 
 // V is returned as a non-iso vector of length n, in the full data format.
 
-// if read_only is true, *X is returned unchanged.  Otherwise, it is returned
-// as NULL to indicate that it has been moved into V.
+// if handling is GxB_IS_READONLY, *X is returned unchanged.  Otherwise, it is
+// returned as NULL to indicate that it has been moved into V.
 
 // FIXME: return GxB_OUTPUT_IS_READONLY if an object with any shallow content
 // is passed to any GrB* or GxB* method as the output matrix/vector/scalar.
@@ -36,10 +36,12 @@ GrB_Info GxB_Vector_load
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    bool read_only,         // if true, X is treated as read-only
+    int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
+                            // GxB_IS_READONLY: X treated as read-only;
+                            //  ownership kept by the user application
     const GrB_Descriptor desc   // currently unused; for future expansion
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -68,6 +70,7 @@ GrB_Info GxB_Vector_load
     // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
     // that V->sparsity_control is revised to allow V to become a full vector.
 
+    bool read_only = (handling != GrB_DEFAULT) ;
     if (!read_only)
     { 
         // *X is given to GraphBLAS to be owned by the vector V, so add it to

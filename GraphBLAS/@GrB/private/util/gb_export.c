@@ -114,7 +114,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         void *Cx = NULL ;
         GrB_Type ctype = NULL ;
         uint64_t Cx_size, xlen ;
-        bool ignore ;
+        int ignore = 0 ;
         OK (GxB_Vector_unload (Container->x, &Cx, &ctype, &xlen, &Cx_size,
             &ignore, NULL)) ;
 

@@ -110,7 +110,7 @@ void mexFunction
 
     void *x = NULL ;
     uint64_t size = 0 ;
-    bool ignore = true ;
+    int ignore = 0 ;
     GrB_Type type = NULL ;
     GrB_Vector T = NULL ;
 
