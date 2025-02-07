@@ -36,6 +36,7 @@ GrB_Info GrB_Vector_eWiseMult_BinaryOp       // w<M> = accum (w, u.*v)
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_WHERE4 (w, Mask, u, v,
         "GrB_Vector_eWiseMult (w, M, accum, op, u, v, desc)") ;
     GB_BURBLE_START ("GrB_eWiseMult") ;

@@ -186,7 +186,7 @@ static inline GrB_Info GB_valid1
     if (C != NULL)                                                  \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE_MEMORY (&(C->logger), C->logger_size) ;                    \
+        GB_FREE_MEMORY (&(C->logger), C->logger_size) ;             \
         /* get the error logger */                                  \
         Werk->logger_handle = &(C->logger) ;                        \
         Werk->logger_size_handle = &(C->logger_size) ;              \
@@ -256,7 +256,7 @@ static inline GrB_Info GB_valid1
     if (desc != NULL)                                               \
     {                                                               \
         /* free any prior error logged in the object */             \
-        GB_FREE_MEMORY (&(desc->logger), desc->logger_size) ;              \
+        GB_FREE_MEMORY (&(desc->logger), desc->logger_size) ;       \
         Werk->logger_handle = &(desc->logger) ;                     \
         Werk->logger_size_handle = &(desc->logger_size) ;           \
     }
@@ -338,6 +338,13 @@ const char *GB_status_code (GrB_Info info) ;
 #define GB_RETURN_IF_NULL_OR_FAULTY(arg)                                \
     GB_RETURN_IF_NULL (arg) ;                                           \
     GB_RETURN_IF_FAULTY (arg) ;
+
+// output cannot be readonly
+#define GB_RETURN_IF_OUTPUT_IS_READONLY(arg)                            \
+    if (GB_is_shallow (arg))                                            \
+    {                                                                   \
+        return (GxB_OUTPUT_IS_READONLY) ;                               \
+    }
 
 // arg must be a matrix, vector, or scalar
 #define GB_RETURN_IF_NULL_OR_INVALID(arg)                               \

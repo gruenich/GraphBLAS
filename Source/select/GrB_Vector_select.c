@@ -34,6 +34,7 @@ static inline GrB_Info GB_sel   // w<M> = accum (w, select(w,k))
 
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_BURBLE_START ("GrB_select") ;
 
     // get the descriptor

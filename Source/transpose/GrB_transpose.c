@@ -29,10 +29,11 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (C, M_in, A, "GrB_transpose (C, M, accum, A, desc)") ;
     GB_RETURN_IF_NULL (C) ;
-    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE3 (C, M_in, A, "GrB_transpose (C, M, accum, A, desc)") ;
+    GB_RETURN_IF_FAULTY_OR_POSITIONAL (accum) ;
     GB_BURBLE_START ("GrB_transpose") ;
 
     struct GB_Matrix_opaque T_header ;

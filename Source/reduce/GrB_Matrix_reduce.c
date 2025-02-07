@@ -94,6 +94,7 @@ GrB_Info GrB_Matrix_reduce_Monoid   // w<M> = accum (w,reduce(A))
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_WHERE3 (w, M, A,
         "GrB_Matrix_reduce_Monoid (w, M, accum, monoid, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
@@ -117,6 +118,7 @@ GrB_Info GrB_Matrix_reduce_Monoid_Scalar
     const GrB_Descriptor desc
 )
 { 
+    GB_RETURN_IF_NULL (S) ;
     GB_WHERE2 (S, A,
         "GrB_Matrix_reduce_Monoid_Scalar (s, accum, monoid, A, desc)") ;
     GB_BURBLE_START ("GrB_reduce") ;
@@ -146,6 +148,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_WHERE3 (w, M, A, "GrB_Matrix_reduce_BinaryOp : DEPRECATED!") ;
     GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED!") ;
 
@@ -183,6 +186,7 @@ GrB_Info GrB_Matrix_reduce_BinaryOp_Scalar
     const GrB_Descriptor desc
 )
 {
+    GB_RETURN_IF_NULL (S) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_WHERE2 (S, A, "GrB_Matrix_reduce_BinaryOp_Scalar : DEPRECATED!") ;
     GB_BURBLE_START ("GrB_reduce with binary op : DEPRECATED!") ;

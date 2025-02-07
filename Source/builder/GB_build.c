@@ -125,6 +125,7 @@ GrB_Info GB_build               // build matrix
     struct GB_Matrix_opaque T_header ;
     GrB_Matrix T = NULL ;
     ASSERT (C != NULL) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     if (GB_nnz (C) > 0 || GB_PENDING (C))
     { 
         // The matrix has existing entries.  This is required by the GraphBLAS

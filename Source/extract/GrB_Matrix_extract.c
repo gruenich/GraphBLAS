@@ -32,6 +32,7 @@ GrB_Info GrB_Matrix_extract         // C<M> = accum (C, A(I,J))
         "GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_BURBLE_START ("GrB_extract") ;
 
     // get the descriptor

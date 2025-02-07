@@ -18,7 +18,7 @@ void GB_vector_load
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    bool read_only          // if true, X is treated as read-only
+    bool readonly           // if true, X is treated as readonly
 )
 { 
 
@@ -52,9 +52,9 @@ void GB_vector_load
     //--------------------------------------------------------------------------
 
     V->x = (*X) ;
-    V->x_shallow = read_only ;
+    V->x_shallow = readonly ;
     V->x_size = X_size ;
-    if (!read_only)
+    if (!readonly)
     { 
         // tell the caller that X has been moved into V
         (*X) = NULL ;

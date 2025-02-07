@@ -561,6 +561,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
             has_sparsity_control = true ;
             sparsity_control = mxGetScalar (mxGetFieldByNumber (A_matlab,
                 0, fieldnumber)) ;
+//          printf ("sparsity control is %d\n", sparsity_control) ;
         }
     }
 
@@ -571,9 +572,19 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     int64_t nrows_old = GB_NROWS (A) ;
     int64_t ncols_old = GB_NCOLS (A) ;
 
+    #define ENSURE_DEEP             \
+    if (GB_is_shallow (A))          \
+    {                               \
+        GrB_Matrix_dup (&T, A) ;    \
+        GrB_Matrix_free (&A) ;      \
+        A = T ;                     \
+        T = NULL ;                  \
+    }
+
     if (!is_csc)
     {
         // this might convert A to hypersparse
+        ENSURE_DEEP ;
         GxB_Matrix_Option_set_(A, GxB_FORMAT, GxB_BY_ROW) ;
         // so convert it back; hypersparsity is defined below
         if (sparsity != GxB_FULL)
@@ -603,11 +614,13 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     {
         // this sets the hyper_switch and then conforms the matrix to its
         // desired hypersparsity.  It may stay non-hypersparse.
+        ENSURE_DEEP ;
         GxB_Matrix_Option_set_(A, GxB_HYPER_SWITCH, hyper_switch) ;
     }
     else if (A_is_hyper)
     {
         // this forces the matrix to be always hypersparse
+        ENSURE_DEEP ;
         ASSERT_MATRIX_OK (A, "to always hyper", GB0) ;
         GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, GxB_HYPERSPARSE) ;
         ASSERT_MATRIX_OK (A, "always hyper", GB0) ;
@@ -620,6 +633,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     if (has_sparsity_control)
     {
         ASSERT_MATRIX_OK (A, "setting sparsity", GB0) ;
+        ENSURE_DEEP ;
         GxB_Matrix_Option_set_(A, GxB_SPARSITY_CONTROL, sparsity_control) ;
         ASSERT_MATRIX_OK (A, "set sparsity", GB0) ;
     }

@@ -24,8 +24,8 @@ GrB_Info GrB_Matrix_wait    // finish all work on a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 (A, "GrB_Matrix_wait (A, waitmode)") ;
     GB_RETURN_IF_NULL (A) ;
+    GB_WHERE1 (A, "GrB_Matrix_wait (A, waitmode)") ;
 
     //--------------------------------------------------------------------------
     // finish all pending work on the matrix, including creating A->Y

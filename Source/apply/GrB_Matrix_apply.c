@@ -33,6 +33,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     GB_WHERE3 (C, M_in, A, "GrB_Matrix_apply (C, M, accum, op, A, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_BURBLE_START ("GrB_apply") ;
 
     // get the descriptor
@@ -82,6 +83,7 @@ static inline GrB_Info GB_1st       // C<M>=accum(C,op(x,A))
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (x) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_BURBLE_START ("GrB_apply") ;
 
     // get the descriptor, using GrB_INP1 to transpose the matrix
@@ -132,6 +134,7 @@ static inline GrB_Info GB_2nd       // C<M>=accum(C,op(A,y))
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL (y) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_BURBLE_START ("GrB_apply") ;
 
     // get the descriptor, using GrB_INP0 to transpose the matrix

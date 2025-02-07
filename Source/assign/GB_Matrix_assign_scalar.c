@@ -51,6 +51,7 @@ GrB_Info GB_Matrix_assign_scalar    // C<Mask>(I,J) = accum (C(I,J),s)
     GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I) ;
     GB_RETURN_IF_NULL (J) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
 
     // if C has a user-defined type, its type must match the scalar type
     if (C->type->code == GB_UDT_code && C->type != scalar->type)

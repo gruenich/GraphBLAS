@@ -2043,27 +2043,37 @@ void mexFunction
     s2 = GxB_MAX_PLUS_FP32 ;
     o2 = GrB_MAX_FP32 ;
 
-    expected = GrB_UNINITIALIZED_OBJECT ;
-
+    expected = GrB_NULL_POINTER ;
     ERR1 (Acrud, GrB_mxm (Acrud,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
     ERR1 (C, GrB_mxm (C    ,  Acrud, NULL   , NULL    , NULL , NULL , NULL )) ;
     ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , Acrud, NULL , NULL )) ;
+
+    expected = GrB_UNINITIALIZED_OBJECT ;
+    ERR1 (Acrud, GrB_mxm (Acrud, NULL , NULL, s2      , A    , A    , NULL )) ;
     ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , A    , Acrud, NULL )) ;
     ERR1 (C, GrB_mxm (C    ,  C    , NULL   , NULL    , A    , A    , dcrud)) ;
     ERR1 (C, GrB_mxm (C    ,  C    , op2crud, NULL    , A    , A    , NULL )) ;
     ERR1 (C, GrB_mxm (C    ,  C    , o2     , semicrud, A    , A    , NULL )) ;
 
+    expected = GrB_NULL_POINTER ;
     ERR1 (vcrud, GrB_vxm (vcrud,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
     ERR1 (v, GrB_vxm (v    ,  vcrud, NULL   , NULL    , NULL , NULL , NULL )) ;
     ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , vcrud, NULL , NULL )) ;
+
+    expected = GrB_UNINITIALIZED_OBJECT ;
+    ERR1 (vcrud, GrB_vxm (vcrud,  NULL, NULL, s2      , v    , A    , NULL )) ;
     ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , v    , Acrud, NULL )) ;
     ERR1 (v, GrB_vxm (v    ,  v    , NULL   , NULL    , v    , A    , dcrud)) ;
     ERR1 (v, GrB_vxm (v    ,  v    , op2crud, NULL    , v    , A    , NULL )) ;
     ERR1 (v, GrB_vxm (v    ,  v    , o2     , semicrud, v    , A    , NULL )) ;
 
+    expected = GrB_NULL_POINTER ;
     ERR1 (vcrud, GrB_mxv (vcrud,  NULL , NULL   , NULL    , NULL , NULL , NULL )) ;
     ERR1 (v, GrB_mxv (v    ,  vcrud, NULL   , NULL    , NULL , NULL , NULL )) ;
     ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , Acrud, NULL , NULL )) ;
+
+    expected = GrB_UNINITIALIZED_OBJECT ;
+    ERR1 (vcrud, GrB_mxv (vcrud, NULL , NULL, s2      , A    , v    , NULL )) ;
     ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , A    , vcrud, NULL )) ;
     ERR1 (v, GrB_mxv (v    ,  v    , NULL   , NULL    , A    , v    , dcrud)) ;
     ERR1 (v, GrB_mxv (v    ,  v    , op2crud, NULL    , A    , v    , NULL )) ;
@@ -3666,11 +3676,12 @@ void mexFunction
     ERR (GrB_transpose (NULL, NULL, NULL, NULL, NULL)) ;
     ERR1 (A, GrB_transpose (A   , NULL, NULL, NULL, NULL)) ;
 
-    expected = GrB_UNINITIALIZED_OBJECT ;
-
+    expected = GrB_NULL_POINTER ;
     ERR1 (Acrud, GrB_transpose (Acrud, NULL , NULL   , NULL , NULL )) ;
     ERR1 (A,  GrB_transpose (A    , Acrud, NULL   , NULL , NULL )) ;
     ERR1 (A,  GrB_transpose (A    , A    , op2crud, NULL , NULL )) ;
+
+    expected = GrB_UNINITIALIZED_OBJECT ;
     ERR1 (A,  GrB_transpose (A    , NULL , NULL   , Acrud, NULL )) ;
     ERR1 (A,  GrB_transpose (A    , NULL , NULL   , A    , dcrud)) ;
 

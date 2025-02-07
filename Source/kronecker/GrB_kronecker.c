@@ -33,6 +33,7 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL (B) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_WHERE4 (C, Mask, A, B, "GrB_Matrix_kronecker (C, M, accum, op, A, B, "
         "desc)") ;
     GB_BURBLE_START ("GrB_kronecker") ;

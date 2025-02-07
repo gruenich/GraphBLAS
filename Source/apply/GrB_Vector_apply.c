@@ -33,6 +33,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
     GB_WHERE3 (w, M_in, u, "GrB_Vector_apply (w, M, accum, op, u, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_BURBLE_START ("GrB_apply") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
@@ -86,6 +87,7 @@ static inline GrB_Info GB_1st       // w<mask> = accum (w, op(x,u))
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (x) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_BURBLE_START ("GrB_apply") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
@@ -140,6 +142,7 @@ static inline GrB_Info GB_2nd       // w<mask> = accum (w, op(u,y))
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
     GB_RETURN_IF_NULL (y) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_BURBLE_START ("GrB_apply") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;

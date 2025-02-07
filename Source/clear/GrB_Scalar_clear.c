@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// See GrB_Matrix_clear for details.
+
 #include "GB.h"
 
 GrB_Info GrB_Scalar_clear   // clear a GrB_Scalar of its entry

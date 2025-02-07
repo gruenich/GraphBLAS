@@ -36,6 +36,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
         "GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_BURBLE_START ("GrB_extract") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;

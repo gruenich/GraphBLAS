@@ -31,6 +31,7 @@ GrB_Info GrB_Row_assign             // C<mask'>(i,J) = accum (C(i,J),u')
         "GrB_Row_assign (C, M, accum, u, i, J, nj, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_BURBLE_START ("GrB_assign") ;
 
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;

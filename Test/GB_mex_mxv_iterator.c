@@ -100,6 +100,7 @@ void mexFunction
     OK (GxB_Vector_Option_get (X, GxB_SPARSITY_STATUS, &sparsity)) ;
     if (sparsity != GxB_FULL)
     {
+        GxB_print (X, 5) ;
         FREE_ALL ;
         mexErrMsgTxt ("X must be full") ;
     }

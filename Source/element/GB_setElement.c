@@ -53,6 +53,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     GrB_Info info ;
     ASSERT (C != NULL) ;
     GB_RETURN_IF_NULL (scalar) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
 
     if (row >= GB_NROWS (C))
     { 

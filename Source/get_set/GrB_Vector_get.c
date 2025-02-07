@@ -25,9 +25,9 @@ GrB_Info GrB_Vector_get_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE2 (v, scalar, "GrB_Vector_get_Scalar (v, scalar, field)") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL (scalar) ;
+    GB_WHERE2 (v, scalar, "GrB_Vector_get_Scalar (v, scalar, field)") ;
 
     ASSERT_VECTOR_OK (v, "v to get option", GB0) ;
 

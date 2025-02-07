@@ -266,6 +266,7 @@ GrB_Info GrB_Matrix_removeElement
 { 
     GB_RETURN_IF_NULL (C) ;
     GB_WHERE1 (C, "GrB_Matrix_removeElement (C, row, col)") ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
 
     return (GB_Matrix_removeElement (C, row, col, Werk)) ;
 }

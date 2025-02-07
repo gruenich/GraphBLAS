@@ -32,6 +32,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(I,J) += A or A'
         "GrB_Matrix_assign (C, M, accum, A, I, ni, J, nj, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_BURBLE_START ("GrB_assign") ;
 
     // get the descriptor

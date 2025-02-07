@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // free all the content of a vector.  After GrB_Vector_free (&v), v is set
-// to NULL
+// to NULL.  The vector may have readonly content; it is simply removed from s
+// and not modified.
 
 #include "GB.h"
 

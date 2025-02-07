@@ -46,6 +46,7 @@ GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
     GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (Rows) ;
     GB_RETURN_IF_NULL (Cols) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
     // get the descriptor

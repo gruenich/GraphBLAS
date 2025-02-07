@@ -11,7 +11,7 @@
 
 GrB_Info GxB_Iterator_free (GxB_Iterator *iterator)
 {
-    if (iterator != NULL)
+    if (iterator != NULL && (*iterator) != NULL)
     {
         size_t header_size = (*iterator)->header_size ;
         if (header_size > 0)

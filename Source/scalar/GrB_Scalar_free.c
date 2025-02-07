@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // free all the content of a GrB_Scalar.  After GrB_Scalar_free (&s), s is set
-// to NULL
+// to NULL.  The scalar may have readonly content; it is simply removed from s
+// and not modified.
 
 #include "GB.h"
 

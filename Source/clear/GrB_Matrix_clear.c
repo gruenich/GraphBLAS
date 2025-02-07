@@ -9,7 +9,8 @@
 
 // The A->x and A->i content is freed and the vector pointers A->p are set to
 // zero.  This puts the matrix A in the same state it had after GrB_Matrix_new
-// (&A, ...).  The dimensions and type of A are not changed.
+// (&A, ...).  The dimensions and type of A are not changed.  The matrix A on
+// input may have readonly (shallow) components; these are simply removed.
 
 #include "GB.h"
 

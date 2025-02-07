@@ -21,7 +21,7 @@ void GB_vector_load
     GrB_Type type,          // type of X
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
-    bool read_only          // if true, X is treated as read-only
+    bool readonly           // if true, X is treated as read-only
 ) ;
 
 GrB_Info GB_vector_unload
@@ -33,7 +33,7 @@ GrB_Info GB_vector_unload
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    bool *read_only,        // if true, X is treated as read-only
+    bool *readonly,         // if true, X is treated as read-only
     GB_Werk Werk
 ) ;
 

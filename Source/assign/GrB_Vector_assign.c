@@ -34,6 +34,7 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
         "GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_BURBLE_START ("GrB_assign") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;

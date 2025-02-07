@@ -19,7 +19,7 @@
 // NULL).  It type is not changed.  If on input V was in the full data format,
 // then no mallocs/frees are performed.
 
-// If read_only is returned as true, then V was created as a "shallow" vector
+// If readonly is returned as true, then V was created as a "shallow" vector
 // by GxB_Vector_load.  Its numerical content, V->x = (*X), was "shallow" and
 // thus treated as read-only by GraphBLAS.  Its allocation/deallocation is the
 // responsibility of the user application that created V via GxB_Vector_load.
@@ -44,7 +44,7 @@ GrB_Info GB_vector_unload
     GrB_Type *type,         // type of X
     uint64_t *n,            // # of entries in X
     uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
-    bool *read_only,        // if true, X is treated as read-only
+    bool *readonly,         // if true, X is treated as read-only
     GB_Werk Werk
 )
 { 
@@ -89,7 +89,7 @@ GrB_Info GB_vector_unload
     (*n) = V->vlen ;
     (*X_size) = V->x_size ;
     (*type) = V->type ;
-    (*read_only) = V->x_shallow ;
+    (*readonly) = V->x_shallow ;
     V->x = NULL ;
     V->x_size = 0 ;
     V->x_shallow = false ;

@@ -44,6 +44,9 @@ const char *gb_error_string // return an error message from a GrB_Info value
         case GrB_INVALID_OBJECT :       return ("object is corrupted") ;
         case GrB_INDEX_OUT_OF_BOUNDS :  return ("row or column index out of bounds") ;
         case GrB_EMPTY_OBJECT :         return ("an object does not contain a value") ;
+        case GxB_JIT_ERROR :            return ("jit error") ;
+//      case GxB_GPU_ERROR:             return ("GPU error") ; // in progress
+        case GxB_OUTPUT_IS_READONLY :   return ("output is readonly") ;
         default :
         case GrB_PANIC :                break ;
     }

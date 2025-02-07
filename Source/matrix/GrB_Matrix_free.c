@@ -8,7 +8,8 @@
 //------------------------------------------------------------------------------
 
 // free all the content of a matrix.  After GrB_Matrix_free (&A), A is set
-// to NULL
+// to NULL.  A can have readonly-content; it is simple removed from A and not
+// modified.  See also GrB_Matrix_clear.
 
 #include "GB.h"
 

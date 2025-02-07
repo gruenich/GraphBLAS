@@ -145,6 +145,7 @@ GrB_Info GB_matvec_set
     GrB_Info info ;
     GB_BURBLE_START ("GrB_set") ;
     ASSERT_MATRIX_OK (A, "A before set", GB0) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
 
     int format = ivalue ;
 

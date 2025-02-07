@@ -133,6 +133,7 @@ GrB_Info GB_wait                // finish all pending computations
         // jumbled, then it stays sparse or hypersparse.  A->Y is not modified
         // nor accessed, and remains NULL if it is NULL on input.  If it is
         // present, it remains valid.
+        GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
         GB_OK (GB_unjumble (A, Werk)) ;
         ASSERT (A->nvec_nonempty >= 0) ;
         #pragma omp flush
@@ -160,6 +161,7 @@ GrB_Info GB_wait                // finish all pending computations
         // z=accum(x,y) operator can have any types, and it does not have to be
         // associative.  T is constructed as iso if A is iso.
 
+        GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
         GB_void *S_input = (A_iso) ? ((GB_void *) A->x) : NULL ;
         GrB_Type stype = (A_iso) ? A->type : A->Pending->type ;
 
@@ -245,6 +247,7 @@ GrB_Info GB_wait                // finish all pending computations
     if (nzombies > 0)
     { 
         // remove all zombies from A
+        GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
         struct GB_Scalar_opaque scalar_header ;
         int64_t k = 0 ;
         GrB_Scalar scalar = GB_Scalar_wrap (&scalar_header, GrB_INT64, &k) ;

@@ -201,6 +201,7 @@ GrB_Info GrB_Vector_removeElement
 {
     GB_RETURN_IF_NULL (V) ;
     GB_WHERE1 (V, "GrB_Vector_removeElement (v, i)") ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (V) ;
 
     ASSERT (GB_VECTOR_OK (V)) ;
     return (GB_Vector_removeElement (V, i, Werk)) ;

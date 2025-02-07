@@ -77,8 +77,8 @@ void mexFunction
     #define GET_DEEP_COPY ;
     #define FREE_DEEP_COPY ;
 
-    // get A
-    A = GB_mx_mxArray_to_Matrix (pargin [0], "A", false, true) ;
+    // get A (deep copy)
+    A = GB_mx_mxArray_to_Matrix (pargin [0], "A", true, true) ;
     if (A == NULL)
     {
         mexErrMsgTxt ("A failed") ;

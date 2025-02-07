@@ -11,7 +11,7 @@
 // dense vector of length 0 with no content (V->x == NULL), then no malloc
 // or frees are performed.
 
-// If read_only is true, then V is created as a "shallow" vector.  Its
+// If readonly is true, then V is created as a "shallow" vector.  Its
 // numerical content, V->x = (*X), is "shallow" and thus treated as read-only
 // by GraphBLAS.  It is not freed if V is freed with GrB_Vector_free.  (*X)
 // need not be a malloc'd array at all.  Its allocation/deallocation is the
@@ -70,15 +70,15 @@ GrB_Info GxB_Vector_load
     // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
     // that V->sparsity_control is revised to allow V to become a full vector.
 
-    bool read_only = (handling != GrB_DEFAULT) ;
-    if (!read_only)
+    bool readonly = (handling != GrB_DEFAULT) ;
+    if (!readonly)
     { 
         // *X is given to GraphBLAS to be owned by the vector V, so add it to
         // the global debug memtable.
         GB_Global_memtable_add (*X, X_size) ;
     }
 
-    GB_vector_load (V, X, type, n, X_size, read_only) ;
+    GB_vector_load (V, X, type, n, X_size, readonly) ;
 
     //--------------------------------------------------------------------------
     // return result
