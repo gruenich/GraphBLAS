@@ -26,6 +26,7 @@ GrB_Info GxB_Matrix_unpack_FullR  // unpack a full matrix, by row
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
     GB_WHERE_1 (A, "GxB_Matrix_unpack_FullR (A, &Ax, &Ax_size, &iso, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_FullR") ;
 

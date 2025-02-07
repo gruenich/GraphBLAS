@@ -78,7 +78,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
             CHECK_ERROR (gb_is_readonly (*C_handle), "internal error 707")
         }
 
-        // ensure the matrix is not read-only
+        // ensure the matrix is not readonly
         if (gb_is_readonly (*C_handle))
         {
             // C is shallow so make a deep copy

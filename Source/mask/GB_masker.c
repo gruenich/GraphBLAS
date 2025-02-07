@@ -15,9 +15,8 @@
 // GB_accum_mask.
 
 // Let R be the result of the mask.  In the caller, R is written back into the
-// final C matrix, but in GB_masker, C is a read-only matrix.  Consider the
-// following table, where "add" is the result of C+Z, an "emult" is the result
-// of C.*Z.
+// final C matrix, but C is not modified in GB_masker.  Consider the following
+// table, where "add" is the result of C+Z, an "emult" is the result of C.*Z.
 
 //                                      R = masker (C,M,Z)
 

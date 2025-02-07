@@ -29,6 +29,7 @@ GrB_Info GxB_Vector_unpack_Bitmap   // unpack a bitmap vector
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (v) ;
     GB_WHERE_1 (v, "GxB_Vector_unpack_Bitmap (v, &vb, &vx, &vb_size, &vx_size,"
         " &iso, &nvals, desc)") ;
     GB_BURBLE_START ("GxB_Vector_unpack_Bitmap") ;

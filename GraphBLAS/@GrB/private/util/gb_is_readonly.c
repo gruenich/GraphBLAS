@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_is_readonly: determine if A has any read-only components
+// gb_is_readonly: determine if A has any readonly components
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "gb_interface.h"
 
-bool gb_is_readonly             // true if A has any read-only components
+bool gb_is_readonly             // true if A has any readonly components
 (
     GrB_Matrix A                // GrB_matrix to query
 )

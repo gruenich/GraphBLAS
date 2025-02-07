@@ -68,6 +68,8 @@ GrB_Info GxB_unpack_HyperHash       // move A->Y into Y
     GB_RETURN_IF_NULL_OR_INVALID (A) ;
     GB_RETURN_IF_NULL (Y) ;
     GB_RETURN_IF_INVALID (*Y) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (*Y) ;
 
     //--------------------------------------------------------------------------
     // unpack the hyper_hash matrix Y from A

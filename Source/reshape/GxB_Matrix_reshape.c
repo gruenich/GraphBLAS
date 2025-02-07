@@ -50,6 +50,7 @@ GrB_Info GxB_Matrix_reshape     // reshape a GrB_Matrix in place
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (C) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_WHERE1 (C, "GxB_Matrix_reshape (C, nrows_new, ncols_new, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_reshape") ;
 

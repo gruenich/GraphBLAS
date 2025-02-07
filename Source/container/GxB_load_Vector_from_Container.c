@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// The vector V may have readonly components on input; they are simply removed
+// from V and not modified.
+
 #include "GB_container.h"
 #define GB_FREE_ALL GB_phybix_free ((GrB_Matrix) V) ;
 

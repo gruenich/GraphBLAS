@@ -28,6 +28,8 @@ GrB_Info GxB_Vector_sort
 
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (p) ;
     GB_WHERE_3 (w, p, u, "GxB_Vector_sort (w, p, op, u, desc)") ;
     GB_BURBLE_START ("GxB_Vector_sort") ;
 

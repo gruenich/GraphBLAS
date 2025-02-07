@@ -38,9 +38,11 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_NULL (V) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (I_vector) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (X_vector) ;
     GB_WHERE_3 (I_vector, X_vector, V,
         "GxB_Vector_extractTuples_Vector (I, J, X, A, desc)") ;
-    GB_RETURN_IF_NULL (V) ;
     GB_BURBLE_START ("GxB_Vector_extractTuples_Vector") ;
     ASSERT_VECTOR_OK (V, "V for GxB_Vector_extractTuples_Vector", GB0) ;
 
@@ -48,7 +50,7 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
         (I_vector != NULL && I_vector == X_vector))
     { 
         // vector parameters cannot be aliased
-        return (GrB_NOT_IMPLEMENTED) ;
+        return (GrB_NOT_IMPLEMENTED) ;  // FIXME: use another error code
     }
 
     //--------------------------------------------------------------------------

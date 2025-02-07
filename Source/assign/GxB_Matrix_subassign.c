@@ -30,10 +30,11 @@ GrB_Info GxB_Matrix_subassign       // C(I,J)<M> += A or A'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (C, Mask, A,
-        "GxB_Matrix_subassign (C, M, accum, A, I, ni, J, nj, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE3 (C, Mask, A,
+        "GxB_Matrix_subassign (C, M, accum, A, I, ni, J, nj, desc)") ;
     GB_BURBLE_START ("GxB_subassign") ;
 
     // get the descriptor

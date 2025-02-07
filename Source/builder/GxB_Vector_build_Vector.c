@@ -32,11 +32,12 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, I_vector, X_vector,
-        "GxB_Vector_build_Vector (w, I, X, dup, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (I_vector) ;
     GB_RETURN_IF_NULL (X_vector) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
+    GB_WHERE3 (w, I_vector, X_vector,
+        "GxB_Vector_build_Vector (w, I, X, dup, desc)") ;
     GB_BURBLE_START ("GxB_Vector_build_Vector") ;
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;

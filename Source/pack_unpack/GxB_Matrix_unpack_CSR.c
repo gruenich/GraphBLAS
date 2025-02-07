@@ -31,6 +31,7 @@ GrB_Info GxB_Matrix_unpack_CSR  // unpack a CSR matrix
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
     GB_WHERE_1 (A, "GxB_Matrix_unpack_CSR (A, &Ap, &Aj, &Ax, &Ap_size,"
         " &Aj_size, &Ax_size, &iso, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_CSR") ;

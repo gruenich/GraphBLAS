@@ -56,6 +56,7 @@ GrB_Info GxB_Matrix_eWiseUnion      // C<M> = accum (C, A+B)
     GB_RETURN_IF_NULL (alpha) ;
     GB_RETURN_IF_NULL (beta) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
     GB_WHERE6 (C, M_in, A, alpha, B, beta,
         "GxB_Matrix_eWiseUnion (C, M, accum, op, A, alpha,  B, beta, desc)") ;
     GB_BURBLE_START ("GxB_eWiseUnion") ;

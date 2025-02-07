@@ -31,6 +31,7 @@ GrB_Info GxB_Matrix_unpack_CSC  // unpack a CSC matrix
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
     GB_WHERE_1 (A, "GxB_Matrix_unpack_CSC (A, &Ap, &Ai, &Ax, &Ap_size,"
         " &Ai_size, &Ax_size, &iso, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_unpack_CSC") ;

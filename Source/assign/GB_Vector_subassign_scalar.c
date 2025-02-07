@@ -49,6 +49,7 @@ GrB_Info GB_Vector_subassign_scalar // w(I)><Mask> = accum (w(I),s)
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
 
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;

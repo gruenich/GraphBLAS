@@ -28,6 +28,8 @@ GrB_Info GxB_Matrix_sort
 
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (P) ;
     GB_WHERE_3 (C, P, A, "GxB_Matrix_sort (C, P, op, A, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_sort") ;
 

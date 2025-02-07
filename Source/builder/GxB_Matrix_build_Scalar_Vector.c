@@ -33,10 +33,11 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE4 (C, I_vector, J_vector, scalar,
-        "GxB_Matrix_build_Scalar_Vector (C, I, J, scalar, nvals, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (scalar) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE4 (C, I_vector, J_vector, scalar,
+        "GxB_Matrix_build_Scalar_Vector (C, I, J, scalar, nvals, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_build_Scalar") ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;
     ASSERT (GB_VECTOR_OK (J_vector)) ;

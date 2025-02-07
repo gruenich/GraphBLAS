@@ -1462,7 +1462,7 @@ typedef enum    // GxB_Option_Field ;
     GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
     GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
     GxB_IS_HYPER = 7035,            // Historical; use GxB_SPARSITY_STATUS
-    GxB_IS_READONLY = 7078,         // true if it has any read-only components
+    GxB_IS_READONLY = 7078,         // true if it has any readonly components
 
     //------------------------------------------------------------
     // GrB_get for GrB_GLOBAL:
@@ -5942,7 +5942,7 @@ GrB_Info GxB_Vector_load
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
     int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
-                            // GxB_IS_READONLY: X treated as read-only;
+                            // GxB_IS_READONLY: X treated as readonly;
                             //      ownership kept by the user application
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;

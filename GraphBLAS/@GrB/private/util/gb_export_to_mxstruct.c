@@ -118,7 +118,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     uint64_t nrows_nonempty = Container->nrows_nonempty ;
     uint64_t ncols_nonempty = Container->ncols_nonempty ;
     bool iso = Container->iso ;
-    int ro = 0 ;                        // ignored; no content is read-only
+    int ro = 0 ;                        // ignored; no content is readonly
 //  bool jumbled = Container->jumbled ; // not needed; matrix is not jumbled
 
     // get the vectors from the Container

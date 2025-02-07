@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// A is returned as a 0-by-0 matrix in full data format, with no content.
+
 #include "GB_container.h"
 
 GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container

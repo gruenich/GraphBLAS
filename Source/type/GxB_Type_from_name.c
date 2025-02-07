@@ -58,10 +58,8 @@
 // corresponding GrB_Type with tests such as the ones below, or in the example
 // above.  This cannot be safely done with GxB_Matrix_type.
 
-// As a result, the GxB_Matrix_type function that appears in SuiteSparse
-// GraphBLAS has been declared "historical" and its use is discouraged.  It
-// won't be removed, to preserve backward compatibility, but it is removed from
-// the user guide.  Use the string-based type mechanism instead.
+// However, GxB_Matrix_Type is still very useful when the caller function is in
+// the same process that created the matrix.
 
 #include "GB.h"
 

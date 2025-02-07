@@ -30,12 +30,13 @@ GrB_Info GxB_Vector_unpack_CSC  // unpack a CSC vector
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_NULL (nvals) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (v) ;
     GB_WHERE_1 (v, "GxB_Vector_unpack_CSC (v, &vi, &vx, &vi_size, &vx_size,"
         " &iso, &nvals, &jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Vector_unpack_CSC") ;
 
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5, xx6, xx7) ;
-    GB_RETURN_IF_NULL (nvals) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work

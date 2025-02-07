@@ -535,10 +535,10 @@ typedef struct GxB_Container_struct *GxB_Container ;
 // dimensions and type are changed to match the data from the Container.
 
 // To support the future SparseBLAS, a GrB_Matrix A or GrB_Vector V can take on
-// "read-only" content.  These are pointers user-provided arrays that a moved
-// into A or V, but declared "read-only" by GraphBLAS.  Ownership of these
+// "readonly" content.  These are pointers user-provided arrays that a moved
+// into A or V, but declared "readonly" by GraphBLAS.  Ownership of these
 // arrays is kept by the user application.  If GraphBLAS is asked to modify
-// a matrix with any read-only content, it will refuse and return an error
+// a matrix with any readonly content, it will refuse and return an error
 // code (info = GxB_OUTPUT_IS_READONLY).
 
 GrB_Info GxB_Container_new (GxB_Container *Container) ;
@@ -601,7 +601,7 @@ GrB_Info GxB_Vector_load
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
     int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
-                            // GxB_IS_READONLY: X treated as read-only;
+                            // GxB_IS_READONLY: X treated as readonly;
                             //      ownership kept by the user application
     const GrB_Descriptor desc   // currently unused; for future expansion
 ) ;

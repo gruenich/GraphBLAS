@@ -29,10 +29,11 @@ GrB_Info GxB_Row_subassign_Vector   // C(i,J)<mask'> = accum (C(i,J),u')
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE4 (C, mask, u, J_vector,
-        "GxB_Row_subassign_Vector (C, M, accum, u, i, J, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE4 (C, mask, u, J_vector,
+        "GxB_Row_subassign_Vector (C, M, accum, u, i, J, desc)") ;
     GB_BURBLE_START ("GxB_Row_subassign_Vector") ;
 
     ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;

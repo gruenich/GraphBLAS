@@ -29,6 +29,7 @@ GrB_Info GxB_Vector_pack_CSC  // pack a vector in CSC format
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (v) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (v) ;
     GB_WHERE_1 (v, "GxB_Vector_pack_CSC (v, &vi, &vx, vi_size, vx_size, iso,"
         " nvals, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Vector_pack_CSC") ;

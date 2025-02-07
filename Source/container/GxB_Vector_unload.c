@@ -21,7 +21,7 @@
 
 // If readonly is returned as true, then V was created as a "shallow" vector
 // by GxB_Vector_load.  Its numerical content, V->x = (*X), was "shallow" and
-// thus treated as read-only by GraphBLAS.  Its allocation/deallocation is the
+// thus treated as readonly by GraphBLAS.  Its allocation/deallocation is the
 // responsibility of the user application that created V via GxB_Vector_load.
 
 // On output, *X is a pointer to the numerical contents of V.  If V had length

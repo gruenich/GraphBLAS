@@ -30,9 +30,10 @@ GrB_Info GxB_Matrix_build_Scalar
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE2 (C, scalar, "GxB_Matrix_build_Scalar (C, I, J, scalar, nvals)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (scalar) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE2 (C, scalar, "GxB_Matrix_build_Scalar (C, I, J, scalar, nvals)") ;
     GB_BURBLE_START ("GxB_Matrix_build_Scalar") ;
 
     GB_MATRIX_WAIT (scalar) ;

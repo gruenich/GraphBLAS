@@ -34,6 +34,7 @@ GrB_Info GxB_Matrix_pack_HyperCSC      // pack a hypersparse CSC matrix
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
     GB_WHERE_1 (A, "GxB_Matrix_pack_HyperCSC (A, &Ap, &Ah, &Ai, &Ax, Ap_size,"
         " Ah_size, Ai_size, Ax_size, iso, nvec, jumbled, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_pack_HyperCSC") ;

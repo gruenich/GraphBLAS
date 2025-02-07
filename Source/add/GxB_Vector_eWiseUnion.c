@@ -47,6 +47,7 @@ GrB_Info GxB_Vector_eWiseUnion      // w<M> = accum (w, u+v)
     GB_RETURN_IF_NULL (alpha) ;
     GB_RETURN_IF_NULL (beta) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
     GB_WHERE6 (w, M_in, u, alpha, v, beta,
         "GxB_Vector_eWiseUnion (w, M, accum, op, u, alpha, v, beta, desc)") ;
     GB_BURBLE_START ("GxB_eWiseUnion") ;

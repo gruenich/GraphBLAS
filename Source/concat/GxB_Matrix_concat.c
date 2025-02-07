@@ -23,9 +23,10 @@ GrB_Info GxB_Matrix_concat          // concatenate a 2D array of matrices
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE1 (C, "GxB_Matrix_concat (C, Tiles, m, n, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (Tiles) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE1 (C, "GxB_Matrix_concat (C, Tiles, m, n, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_concat") ;
 
     if (m <= 0 || n <= 0)

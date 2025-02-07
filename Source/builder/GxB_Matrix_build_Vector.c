@@ -34,12 +34,13 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE4 (C, I_vector, J_vector, X_vector,
-        "GxB_Matrix_build_Vector (C, I, J, X, dup, desc)") ;
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (I_vector) ;
     GB_RETURN_IF_NULL (J_vector) ;
     GB_RETURN_IF_NULL (X_vector) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (C) ;
+    GB_WHERE4 (C, I_vector, J_vector, X_vector,
+        "GxB_Matrix_build_Vector (C, I, J, X, dup, desc)") ;
     GB_BURBLE_START ("GxB_Matrix_build_Vector") ;
     ASSERT_VECTOR_OK (I_vector, "I_vector for build", GB0) ;
     ASSERT_VECTOR_OK (J_vector, "J_vector for build", GB0) ;

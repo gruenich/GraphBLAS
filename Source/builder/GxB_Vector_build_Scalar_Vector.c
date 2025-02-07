@@ -31,11 +31,12 @@ GrB_Info GxB_Vector_build_Scalar_Vector // build a vector from (I,s) tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE3 (w, scalar, I_vector,
-        "GxB_Vector_build_Scalar_Vector (w, I, scalar, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (scalar) ;
     GB_RETURN_IF_NULL (I_vector) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
+    GB_WHERE3 (w, scalar, I_vector,
+        "GxB_Vector_build_Scalar_Vector (w, I, scalar, desc)") ;
     GB_BURBLE_START ("GxB_Vector_build_Scalar_Vector") ;
     ASSERT (GB_VECTOR_OK (w)) ;
     ASSERT (GB_VECTOR_OK (I_vector)) ;

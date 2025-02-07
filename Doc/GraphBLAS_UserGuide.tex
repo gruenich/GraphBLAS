@@ -1248,7 +1248,7 @@ safe to use in a multithreaded user application.  See Section~\ref{sec:install}
 for details.
 User threads must not operate on the same matrices at the same time, with one
 exception.  Multiple user threads can use the same matrices or vectors as
-read-only inputs to GraphBLAS operations or methods, but only if they have no
+inputs to GraphBLAS operations or methods, but only if they have no
 pending operations (use \verb'GrB_wait'
 first).  User threads cannot simultaneously modify a matrix or vector via any
 GraphBLAS operation or method.

@@ -592,7 +592,7 @@ bool gb_is_dense                // true if A is dense
     GrB_Matrix A                // GrB_Matrix to query
 ) ;
 
-bool gb_is_readonly             // true if A has any read-only components
+bool gb_is_readonly             // true if A has any readonly components
 (
     GrB_Matrix A                // GrB_matrix to query
 ) ;

@@ -12,18 +12,18 @@
 // or frees are performed.
 
 // If readonly is true, then V is created as a "shallow" vector.  Its
-// numerical content, V->x = (*X), is "shallow" and thus treated as read-only
+// numerical content, V->x = (*X), is "shallow" and thus treated as readonly
 // by GraphBLAS.  It is not freed if V is freed with GrB_Vector_free.  (*X)
 // need not be a malloc'd array at all.  Its allocation/deallocation is the
 // responsibility of the user application.
 
 // V is returned as a non-iso vector of length n, in the full data format.
 
-// if handling is GxB_IS_READONLY, *X is returned unchanged.  Otherwise, it is
+// If handling is GxB_IS_READONLY, *X is returned unchanged.  Otherwise, it is
 // returned as NULL to indicate that it has been moved into V.
 
-// FIXME: return GxB_OUTPUT_IS_READONLY if an object with any shallow content
-// is passed to any GrB* or GxB* method as the output matrix/vector/scalar.
+// The vector V may have readonly components on input; they are simply removed
+// from V and not modified.
 
 #include "GB_container.h"
 
@@ -37,7 +37,7 @@ GrB_Info GxB_Vector_load
     uint64_t n,             // # of entries in X
     uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
     int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
-                            // GxB_IS_READONLY: X treated as read-only;
+                            // GxB_IS_READONLY: X treated as readonly;
                             //  ownership kept by the user application
     const GrB_Descriptor desc   // currently unused; for future expansion
 )

@@ -41,9 +41,12 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (I_vector) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (J_vector) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (X_vector) ;
     GB_WHERE_4 (I_vector, J_vector, X_vector, A,
         "GxB_Matrix_extractTuples_Vector (I, J, X, A, desc)") ;
-    GB_RETURN_IF_NULL (A) ;
     GB_BURBLE_START ("GxB_Matrix_extractTuples_Vector") ;
     ASSERT_MATRIX_OK (A, "A for GxB_Matrix_extractTuples_Vector", GB0) ;
 
@@ -51,7 +54,7 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
         (J_vector != NULL && (J_vector == X_vector)))
     { 
         // input vectors cannot be aliased
-        return (GrB_NOT_IMPLEMENTED) ;
+        return (GrB_NOT_IMPLEMENTED) ;  // FIXME: use another error code
     }
 
     //--------------------------------------------------------------------------

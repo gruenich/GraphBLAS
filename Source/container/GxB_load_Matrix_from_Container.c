@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// The matrix A may have readonly components on input; they are simply removed
+// from A and not modified.
+
 #include "GB_container.h"
 
 GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container

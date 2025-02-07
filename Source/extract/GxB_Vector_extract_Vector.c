@@ -28,10 +28,11 @@ GrB_Info GxB_Vector_extract_Vector  // w<mask> = accum (w, u(I))
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE4 (w, mask, u, I_vector,
-        "GxB_Vector_extract_Vector (w, M, accum, u, I, desc)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL (u) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (w) ;
+    GB_WHERE4 (w, mask, u, I_vector,
+        "GxB_Vector_extract_Vector (w, M, accum, u, I, desc)") ;
     GB_BURBLE_START ("GrB_extract") ;
 
     ASSERT (GB_VECTOR_OK (w)) ;

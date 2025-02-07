@@ -34,6 +34,7 @@ GrB_Info GxB_Matrix_unpack_HyperCSR  // unpack a hypersparse CSR matrix
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (A) ;
+    GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
     GB_WHERE_1 (A, "GxB_Matrix_unpack_HyperCSR (A, &Ap, &Ah, &Aj, &Ax,"
         " &Ap_size, &Ah_size, &Aj_size, &Ax_size, &iso, &nvec, &jumbled,"
         " desc)") ;

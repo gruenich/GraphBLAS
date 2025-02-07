@@ -60,7 +60,7 @@ GrB_Info GB_subassign_symbolic  // S = C(I,J), extracting pattern not values
     //--------------------------------------------------------------------------
 
     // FUTURE::: if whole_C_matrix is true, then C(:,:) = ... and S == C,
-    // except that S is zombie-free, read-only; and C collects zombies.
+    // except that S is zombie-free and not modified, but C collects zombies.
 
     // FUTURE:: the properties of I and J are already known, and thus do
     // not need to be recomputed by GB_subref.

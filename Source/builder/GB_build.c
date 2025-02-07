@@ -268,7 +268,7 @@ GrB_Info GB_build               // build matrix
     // If C->type differs from T->type, it is typecasted by
     // GB_transplant_conform.
 
-    // I, J, and X must be treated as read-only, so GB_builder is not allowed
+    // I, J, and X must be treated as readonly, so GB_builder is not allowed
     // to transplant them into T->x.
 
     void *no_I_work = NULL ; size_t I_work_size = 0 ;
