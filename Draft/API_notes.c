@@ -25,8 +25,8 @@
 
 // For GrB_GLOBAL, GrB_set can set these values to:
 
-        32  // prefer 32 bit integers; use 64-bit when necessary
-        64  // prefer 64 bit integers (default)
+        32  // prefer 32 bit integers; use 64-bit when necessary (default)
+        64  // prefer 64 bit integers
 
 // For GrB_Matrix, GrB_Vector, and GrB_Scalar: GrB_set can use:
 
@@ -138,16 +138,16 @@ GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,X) tuples
 ) ;
 
 // GrB_Vector_build includes the 2 new GxB_Vector_build*Vector methods:
-// GrB_Vector_build_TYPE          (w, I, X , nvals, dup)
-// GxB_Vector_build_Scalar        (w, I, s , nvals, dup)
+// GrB_Vector_build_TYPE          (w, I, X, nvals, dup)
+// GxB_Vector_build_Scalar        (w, I, s, nvals, dup)
 // GxB_Vector_build_Vector        (w, I, X, dup, desc) where I,X are GrB_Vector
-// GxB_Vector_build_Scalar_Vector (w, I, s , desc ) where I is GrB_Vector
+// GxB_Vector_build_Scalar_Vector (w, I, s, desc ) where I is GrB_Vector
 
 // GrB_Matrix_build includes the 2 new GxB_Matrix_build*Vector methods:
-// GrB_Matrix_build_TYPE          (C, I, J, X , nvals, dup)
-// GxB_Matrix_build_Scalar        (C, I, J, s , nvals, dup)
-// GxB_Matrix_build_Vector        (C, I, J, Xv, dup, desc): I,J,X are GrB_Vector
-// GxB_Matrix_build_Scalar_Vector (C, I, J, s , desc ): I,J are GrB_Vector
+// GrB_Matrix_build_TYPE          (C, I, J, X, nvals, dup)
+// GxB_Matrix_build_Scalar        (C, I, J, s, nvals, dup)
+// GxB_Matrix_build_Vector        (C, I, J, X, dup, desc): I,J,X are GrB_Vector
+// GxB_Matrix_build_Scalar_Vector (C, I, J, s, desc ): I,J are GrB_Vector
 
 //==============================================================================
 // GrB_extractTuples:
@@ -476,15 +476,13 @@ GrB_Info GxB_Matrix_assign_Scalar_Vector   // C<Mask>(I,J) = accum (C(I,J),x)
 
 struct GxB_Container_struct
 {
-
-    // 32 words of uint64_t / int64_t:
-    uint64_t header_size ;          // size of this struct as allocated
+    // 16 words of uint64_t / int64_t:
     uint64_t nrows ;
     uint64_t ncols ;
     int64_t nrows_nonempty ;
     int64_t ncols_nonempty ;
     uint64_t nvals ;
-    uint64_t u64_future [26] ;      // for future expansion
+    uint64_t u64_future [11] ;      // for future expansion
 
     // 16 words of uint32_t / int32_t:
     int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE, GxB_BITMAP,
@@ -497,14 +495,14 @@ struct GxB_Container_struct
     GrB_Vector h ;
     GrB_Vector b ;
     GrB_Vector i ;
-    GrB_Vector x ;                  // if iso, length (Container->x) == 1.
+    GrB_Vector x ;
     GrB_Vector vector_future [11] ; // for future expansion
 
     // 16 GrB_Matrix objects:
     GrB_Matrix Y ;
     GrB_Matrix matrix_future [15] ; // for future expansion
 
-    // 32 bool values
+    // 32 words of bool
     bool iso ;
     bool jumbled ;
     bool bool_future [30] ;         // for future expansion
@@ -541,7 +539,7 @@ typedef struct GxB_Container_struct *GxB_Container ;
 // into A or V, but declared "read-only" by GraphBLAS.  Ownership of these
 // arrays is kept by the user application.  If GraphBLAS is asked to modify
 // a matrix with any read-only content, it will refuse and return an error
-// code (perhaps a new one, info = GxB_OUTPUT_IS_READ_ONLY).
+// code (info = GxB_OUTPUT_IS_READONLY).
 
 GrB_Info GxB_Container_new (GxB_Container *Container) ;
 

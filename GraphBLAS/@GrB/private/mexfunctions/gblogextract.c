@@ -170,7 +170,6 @@ void mexFunction
     // change G to boolean (all true and iso)
     //--------------------------------------------------------------------------
 
-    // Tim: use G as structural instead
     bool Gbool = true ;        							
     G->type = GrB_BOOL ;       	             	 	                 	
     G->x = &Gbool ;            		 	 	 	 	 	

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// FIXME: add a descriptor that allows input I,J to be 1-based
-
 // CALLED BY: GB_build, GB_wait, GB_transpose, GB_concat_hyper
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
@@ -104,6 +102,8 @@
 
 // This method always returns T as hypersparse, and T is iso if and only if Sx
 // is iso.
+
+// FUTURE: add a descriptor that allows input I,J to be 1-based
 
 #include "builder/GB_build.h"
 #include "sort/GB_sort.h"

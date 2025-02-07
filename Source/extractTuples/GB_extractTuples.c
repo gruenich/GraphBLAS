@@ -18,7 +18,7 @@
 
 // If A is iso and X is not NULL, the iso scalar Ax [0] is expanded into X.
 
-// FIXME: pass in parameters I_offset and J_offset to add to I and J
+// FUTURE: pass in parameters I_offset and J_offset to add to I and J
 
 #include "GB.h"
 #include "extractTuples/GB_extractTuples.h"
@@ -134,7 +134,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         // Extract the pattern and the values, typecasting if needed.  If A is
         // iso or X is NULL, GB_convert_b2s only does the symbolic work.
 
-        // FIXME: either extract the tuples directly from the bitmap, without
+        // FUTURE: either extract the tuples directly from the bitmap, without
         // the need for Cp, or revise GB_convert_b2s to take in offsets
         // to add to I and J.
 
@@ -195,7 +195,6 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
         if (J != NULL)
         { 
-            // FIXME: revise GB_extract_vector_list
             GB_OK (GB_extract_vector_list (J, J_is_32, A, Werk)) ;
         }
 

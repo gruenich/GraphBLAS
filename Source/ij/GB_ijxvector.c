@@ -46,14 +46,14 @@
 #include "GB_ij.h"
 #include "container/GB_container.h"
 
-#define GB_FREE_ALL                 \
-{                                   \
-    GB_FREE_MEMORY (&I2, I2_size) ;        \
-    if (I != NULL && I_size > 0)    \
-    {                               \
-        GB_FREE_MEMORY (&I, I_size) ;      \
-    }                               \
-    GB_Matrix_free (&T) ;           \
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_FREE_MEMORY (&I2, I2_size) ;     \
+    if (I != NULL && I_size > 0)        \
+    {                                   \
+        GB_FREE_MEMORY (&I, I_size) ;   \
+    }                                   \
+    GB_Matrix_free (&T) ;               \
 }
 
 //------------------------------------------------------------------------------

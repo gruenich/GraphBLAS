@@ -73,10 +73,11 @@ GrB_Info GxB_Vector_build_Vector // build a vector from (I,X) tuples
         &X, &nx, &X_size, &X_type, Werk)) ;
     bool I_is_32 = (I_type == GrB_UINT32) ;
 
-    // FIXME: if they come from List->i, then I,X are known to be sorted
-    // with no duplicates.
+    // FUTURE: if they come from List->i, then I,X are known to be sorted
+    // with no duplicates.  Exploit this in GB_build.
 
-    // FIXME: if I,X have been allocated, they can be ingested into w
+    // FUTURE: if I,X have been allocated, they can be ingested into w.
+    // Exploit this in GB_build.
 
     //--------------------------------------------------------------------------
     // build the vector

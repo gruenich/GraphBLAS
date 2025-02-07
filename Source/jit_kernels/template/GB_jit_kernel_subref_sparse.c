@@ -42,7 +42,6 @@ GB_JIT_GLOBAL GB_JIT_KERNEL_SUBREF_SPARSE_PROTO (GB_jit_kernel)
     const GB_IHEAD_TYPE *restrict Inext = Inext_input ;
 
     #ifndef GB_Ai_IS_32
-    // FIXME: remove this if not needed
     #define GB_Ai_IS_32 (GB_Ai_BITS == 32)
     #endif
 

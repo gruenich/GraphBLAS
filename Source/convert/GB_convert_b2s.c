@@ -13,7 +13,7 @@
 
 // Ci, Cj, and Cx_new may be NULL.
 
-// FIXME: make a separate function for constructing triplets
+// FUTURE: make a separate function for constructing triplets
 
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"

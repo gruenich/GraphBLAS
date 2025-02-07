@@ -80,10 +80,11 @@ GrB_Info GxB_Matrix_build_Vector // build a matrix from (I,J,X) tuples
     bool I_is_32 = (I_type == GrB_UINT32) ;
     bool J_is_32 = (J_type == GrB_UINT32) ;
 
-    // FIXME: if they come from List->i, then I,J,X are known to be sorted
-    // with no duplicates.
+    // FUTURE: if they come from List->i, then I,J,X are known to be sorted
+    // with no duplicates.  Exploit this in GB_build.
 
-    // FIXME: if I,J,X have been allocated, they can be ingested into C
+    // FUTURE: if I,J,X have been allocated, they can be ingested into C;
+    // exploit this in GB_build.
 
     //--------------------------------------------------------------------------
     // build the matrix

@@ -22,9 +22,8 @@
 // if read_only is true, *X is returned unchanged.  Otherwise, it is returned
 // as NULL to indicate that it has been moved into V.
 
-// FIXME: if a matrix/vector/scalar with any shallow content is passed to a
-// GrB* or GxB* method as the output matrix/vector/scalar, return an error
-// code: GxB_OUTPUT_IS_READONLY.
+// FIXME: return GxB_OUTPUT_IS_READONLY if an object with any shallow content
+// is passed to any GrB* or GxB* method as the output matrix/vector/scalar.
 
 #include "GB_container.h"
 
@@ -68,6 +67,13 @@ GrB_Info GxB_Vector_load
     // V->user_name is preserved; all other content is freed.  get/set controls
     // (hyper_switch, bitmap_switch, [pji]_control, etc) are preserved, except
     // that V->sparsity_control is revised to allow V to become a full vector.
+
+    if (!read_only)
+    { 
+        // *X is given to GraphBLAS to be owned by the vector V, so add it to
+        // the global debug memtable.
+        GB_Global_memtable_add (*X, X_size) ;
+    }
 
     GB_vector_load (V, X, type, n, X_size, read_only) ;
 

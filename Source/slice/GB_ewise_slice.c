@@ -25,13 +25,13 @@
 #define GB_FREE_WORKSPACE                       \
 {                                               \
     GB_WERK_POP (Coarse, int64_t) ;             \
-    GB_FREE_MEMORY (&Cwork, Cwork_size) ;         \
+    GB_FREE_MEMORY (&Cwork, Cwork_size) ;       \
 }
 
 #define GB_FREE_ALL                             \
 {                                               \
     GB_FREE_WORKSPACE ;                         \
-    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ; \
 }
 
 #include "GB.h"

@@ -62,7 +62,12 @@ GrB_Info GxB_Vector_unload
 
     GB_OK (GB_vector_unload (V, X, type, n, X_size, read_only, Werk)) ;
     GBMDUMP ("vector_unload, remove X from memtable %p\n", *X) ;
-    GB_Global_memtable_remove (*X)  ;
+    if (!(*read_only))
+    { 
+        // *X is given to the user application, so remove it from the debug
+        // global memtable
+        GB_Global_memtable_remove (*X)  ;
+    }
     return (GrB_SUCCESS) ;
 }
 

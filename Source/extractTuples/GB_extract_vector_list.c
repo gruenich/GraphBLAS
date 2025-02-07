@@ -14,7 +14,7 @@
 // method is used.  The integers of J do not have to match the integers of
 // A->h, but they must be at least as large.
 
-// FIXME: pass in an offset to add to J
+// FUTURE: pass in an offset to add to J
 
 #include "extractTuples/GB_extractTuples.h"
 

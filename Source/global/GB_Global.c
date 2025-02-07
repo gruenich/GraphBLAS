@@ -550,7 +550,6 @@ void GB_Global_memtable_add (void *p, size_t size)
     ASSERT (!fail) ;
     GB_Global_memtable_dump ( ) ;
     #endif
-
 }
 
 // get the size of a malloc'd block

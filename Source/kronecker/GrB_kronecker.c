@@ -17,7 +17,7 @@
 GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix M_in,          // optional mask for C, unused if NULL
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // defines '*' for T=kron(A,B)
     const GrB_Matrix A,             // first input:  matrix A
@@ -33,7 +33,7 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
     GB_RETURN_IF_NULL (C) ;
     GB_RETURN_IF_NULL (A) ;
     GB_RETURN_IF_NULL (B) ;
-    GB_WHERE4 (C, M_in, A, B, "GrB_Matrix_kronecker (C, M, accum, op, A, B, "
+    GB_WHERE4 (C, Mask, A, B, "GrB_Matrix_kronecker (C, M, accum, op, A, B, "
         "desc)") ;
     GB_BURBLE_START ("GrB_kronecker") ;
 
@@ -42,7 +42,7 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
         A_tran, B_tran, xx, xx7) ;
 
     // get the mask
-    GrB_Matrix M = GB_get_mask (M_in, &Mask_comp, &Mask_struct) ;
+    GrB_Matrix M = GB_get_mask (Mask, &Mask_comp, &Mask_struct) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -65,8 +65,6 @@ GrB_Info GrB_Matrix_kronecker_BinaryOp  // C<M> = accum (C, kron(A,B))
 //------------------------------------------------------------------------------
 // GrB_Matrix_kronecker_Monoid: Kronecker product with monoid
 //------------------------------------------------------------------------------
-
-// FIXME: use this apprach for other ewise methods
 
 GrB_Info GrB_Matrix_kronecker_Monoid  // C<M> = accum (C, kron(A,B))
 (
@@ -119,7 +117,6 @@ GrB_Info GxB_kron                   // C<M> = accum (C, kron(A,B))
     const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
-    // call the new GrB_kronecker (the binary op version)
     return (GrB_Matrix_kronecker_BinaryOp (C, M, accum, op, A, B, desc)) ;
 }
 

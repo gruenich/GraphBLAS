@@ -14,7 +14,7 @@
     // all Wx [...].   If both A and C are iso, then all tiles are iso,
     // and Wx is not extracted.
 
-    // FIXME: pass in these offsets to GB_extractTuples instead
+    // FUTURE: could revise GB_extractTuples to take in an offset instead
 
     if (csc)
     {

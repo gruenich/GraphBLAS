@@ -52,6 +52,9 @@
         Mx = (GB_M_TYPE *) (GB_MASK_STRUCT ? NULL : (M->x)) ;
     const size_t Mvlen = M->vlen ;
     const size_t msize = M->type->size ;
+    #ifndef GB_JIT_KERNEL
+    const bool M_is_bitmap = (Mb != NULL) ;
+    #endif
 
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     const int64_t Cvlen = C->vlen ;
@@ -92,8 +95,7 @@
             // C<M(:,j)> = x
             //------------------------------------------------------------------
 
-//          if (GB_MASK_STRUCT && !GB_M_IS_BITMAP)  <--- use this instead
-            if (Mx == NULL && Mb == NULL)   // FIXME
+            if (GB_MASK_STRUCT && !GB_M_IS_BITMAP)
             {
                 // mask is structural and not bitmap
                 GB_PRAGMA_SIMD_VECTORIZE
