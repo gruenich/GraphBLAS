@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_unload_Matrix_into_Container: unload a GrB_Matrix into a Container
+// GB_container_component_new: create a new component for a Container
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,15 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// A is returned as a 0-by-0 matrix in full data format, with no content.
-
 #include "GB_container.h"
+#define GB_FREE_ALL ;
 
-GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
+GrB_Info GB_container_component_new
 (
-    GrB_Matrix A,               // matrix to unload into the Container
-    GxB_Container Container,    // Container to hold the contents of A
-    const GrB_Descriptor desc   // currently unused
+    GrB_Vector *component,
+    GrB_Type type
 )
 { 
 
@@ -23,14 +21,20 @@ GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    GB_RETURN_IF_NULL (Container) ;
-    GB_WHERE_1 (A, "GxB_Matrix_unload_into_Container") ;
+    GrB_Info info ;
+    ASSERT (component != NULL) ;
 
     //--------------------------------------------------------------------------
-    // unload the matrix into the container
+    // allocate a length-0 full vector and initialize its contents
     //--------------------------------------------------------------------------
 
-    return (GB_unload_into_container (A, Container, Werk)) ;
+    GB_OK (GB_new ((GrB_Matrix *) component,
+        type, 0, 1, GB_ph_null, /* is_csc: */ true, GxB_FULL,
+        GB_HYPER_SWITCH_DEFAULT, 0, /* pji: */ false, false, false)) ;
+
+    GB_vector_reset (*component) ;
+
+    ASSERT_VECTOR_OK (*component, "new component", GB0) ;
+    return (GrB_SUCCESS) ;
 }
 

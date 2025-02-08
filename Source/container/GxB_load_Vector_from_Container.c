@@ -33,7 +33,7 @@ GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
     // load the vector from the container
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_load ((GrB_Matrix) V, Container, Werk)) ;
+    GB_OK (GB_load_from_container ((GrB_Matrix) V, Container, Werk)) ;
     GB_OK ((GB_VECTOR_OK (V) ? GrB_SUCCESS : GrB_INVALID_OBJECT)) ;
     return (GrB_SUCCESS) ;
 }

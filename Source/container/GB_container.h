@@ -12,6 +12,22 @@
 
 #include "GB.h"
 
+// ensure a Container->component exists and is valid
+#define GB_CHECK_CONTAINER_COMPONENT(Container,component,type)               \
+    if (Container->component == NULL)                                        \
+    {                                                                        \
+        GB_OK (GB_container_component_new (&(Container->component), type)) ; \
+    }                                                                        \
+    GB_RETURN_IF_INVALID (Container->component) ;                            \
+    ASSERT_VECTOR_OK (Container->component, "Container component", GB0) ;
+
+#define GB_CHECK_CONTAINER(Container)                           \
+    GB_CHECK_CONTAINER_COMPONENT (Container, p, GrB_UINT32) ;   \
+    GB_CHECK_CONTAINER_COMPONENT (Container, h, GrB_UINT32) ;   \
+    GB_CHECK_CONTAINER_COMPONENT (Container, b, GrB_INT8) ;     \
+    GB_CHECK_CONTAINER_COMPONENT (Container, i, GrB_UINT32) ;   \
+    GB_CHECK_CONTAINER_COMPONENT (Container, x, GrB_BOOL) ;
+
 void GB_vector_load
 (
     // input/output:
@@ -37,14 +53,14 @@ GrB_Info GB_vector_unload
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
+GrB_Info GB_unload_into_container   // GrB_Matrix -> GxB_Container
 (
     GrB_Matrix A,               // matrix to unload into the Container
     GxB_Container Container,    // Container to hold the contents of A
     GB_Werk Werk
 ) ;
 
-GrB_Info GB_load                // GxB_Container -> GrB_Matrix
+GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 (
     GrB_Matrix A,               // matrix to load from the Container
     GxB_Container Container,    // Container with contents to load into A
@@ -54,6 +70,12 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
 void GB_vector_reset    // clear almost all prior content; making V length 0
 (
     GrB_Vector V
+) ;
+
+GrB_Info GB_container_component_new
+(
+    GrB_Vector *component,
+    GrB_Type type
 ) ;
 
 #endif

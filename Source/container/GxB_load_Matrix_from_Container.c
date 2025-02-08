@@ -35,6 +35,6 @@ GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
     // load the matrix from the container
     //--------------------------------------------------------------------------
 
-    return (GB_load (A, Container, Werk)) ;
+    return (GB_load_from_container (A, Container, Werk)) ;
 }
 

@@ -33,7 +33,7 @@ GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
     // unload the vector
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_unload ((GrB_Matrix) V, Container, Werk)) ;
+    GB_OK (GB_unload_into_container ((GrB_Matrix) V, Container, Werk)) ;
     V->vdim = 1 ;
     V->nvec = 1 ;
 

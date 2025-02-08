@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_unload: unload a GrB_Matrix into a Container
+// GB_unload_into_container: unload a GrB_Matrix into a Container
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -15,7 +15,7 @@
 #include "GB_container.h"
 #define GB_FREE_ALL ;
 
-GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
+GrB_Info GB_unload_into_container   // GrB_Matrix -> GxB_Container
 (
     GrB_Matrix A,               // matrix to unload into the Container
     GxB_Container Container,    // Container to hold the contents of A
@@ -27,13 +27,10 @@ GrB_Info GB_unload              // GrB_Matrix -> GxB_Container
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to unload into Container", GB0) ;
-    ASSERT_VECTOR_OK (Container->p, "Container->p before unload", GB0) ;
-    ASSERT_VECTOR_OK (Container->h, "Container->h before unload", GB0) ;
-    ASSERT_VECTOR_OK (Container->b, "Container->b before unload", GB0) ;
-    ASSERT_VECTOR_OK (Container->i, "Container->i before unload", GB0) ;
-    ASSERT_VECTOR_OK (Container->x, "Container->x before unload", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Container->Y, "Container->Y before unload", GB0) ;
+    GB_CHECK_CONTAINER (Container) ;
 
     //--------------------------------------------------------------------------
     // finish any pending work, but permit A to still be jumbled

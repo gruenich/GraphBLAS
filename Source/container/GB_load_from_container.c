@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_load: load a GrB_Matrix from a Container
+// GB_load_from_container: load a GrB_Matrix from a Container
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -11,13 +11,10 @@
 // A is revised: the dimensions, type, content, 32/64 integer status, iso
 // status, jumbled status, orientation (by row/col), etc.
 
-// FIXME: if any Container->[phbix] are missing, recreate them here as
-// vectors of length zero.  See GxB_Container_new.
-
 #include "GB_container.h"
 #define GB_FREE_ALL ;
 
-GrB_Info GB_load                // GxB_Container -> GrB_Matrix
+GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 (
     GrB_Matrix A,               // matrix to load from the Container
     GxB_Container Container,    // Container with contents to load into A
@@ -31,58 +28,8 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
 
     GrB_Info info ;
     ASSERT_MATRIX_OK (A, "A to load from Container", GB0) ;
-    ASSERT_VECTOR_OK (Container->p, "Container->p before load", GB0) ;
-    ASSERT_VECTOR_OK (Container->h, "Container->h before load", GB0) ;
-    ASSERT_VECTOR_OK (Container->b, "Container->b before load", GB0) ;
-    ASSERT_VECTOR_OK (Container->i, "Container->i before load", GB0) ;
-    ASSERT_VECTOR_OK (Container->x, "Container->x before load", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (Container->Y, "Container->Y before load", GB0) ;
-
-    //--------------------------------------------------------------------------
-    // quick sanity checks
-    //--------------------------------------------------------------------------
-
-    uint64_t nvals = Container->nvals ;
-    uint64_t nrows = Container->nrows ;
-    uint64_t ncols = Container->ncols ;
-
-    switch (Container->format)
-    {
-        case GxB_HYPERSPARSE : 
-        case GxB_SPARSE : 
-            GB_RETURN_IF_NULL (Container->p) ;
-            GB_RETURN_IF_NULL (Container->p->x) ;
-            if (nvals > 0)
-            { 
-                GB_RETURN_IF_NULL (Container->i) ;
-                GB_RETURN_IF_NULL (Container->i->x) ;
-                GB_RETURN_IF_NULL (Container->x) ;
-                GB_RETURN_IF_NULL (Container->x->x) ;
-            }
-            break ;
-
-        case GxB_BITMAP : 
-            GB_RETURN_IF_NULL (Container->b) ;
-            GB_RETURN_IF_NULL (Container->b->x) ;
-            if (nrows > 0 && ncols > 0)
-            { 
-                GB_RETURN_IF_NULL (Container->x) ;
-                GB_RETURN_IF_NULL (Container->x->x) ;
-            }
-            break ;
-
-        case GxB_FULL : 
-            if (nrows > 0 && ncols > 0)
-            { 
-                GB_RETURN_IF_NULL (Container->x) ;
-                GB_RETURN_IF_NULL (Container->x->x) ;
-            }
-            nvals = 0 ; // not used when A is full; see GB_nnz.
-            break ;
-
-        default : 
-            return (GrB_INVALID_VALUE) ;
-    }
+    GB_CHECK_CONTAINER (Container) ;
 
     //--------------------------------------------------------------------------
     // free any prior content of A
@@ -93,6 +40,11 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     //--------------------------------------------------------------------------
     // load the matrix from the container
     //--------------------------------------------------------------------------
+
+    int format = Container->format ;
+    uint64_t nvals = (format == GxB_FULL) ? 0 : (Container->nvals) ;
+    uint64_t nrows = Container->nrows ;
+    uint64_t ncols = Container->ncols ;
 
     A->nvals = nvals ;
     A->is_csc = (Container->orientation == GrB_COLMAJOR) ;
@@ -108,7 +60,6 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     uint64_t Ah_size = 0, Ap_size = 0, Ai_size = 0, Ab_size = 0, Ax_size = 0 ;
     uint64_t nrows_times_ncols = UINT64_MAX ;
     bool ok = GB_uint64_multiply (&nrows_times_ncols, nrows, ncols) ;
-    int format = Container->format ;
     bool jumbled = Container->jumbled ;
 
     // determine the A->j_is_32 condition when Container->h is empty

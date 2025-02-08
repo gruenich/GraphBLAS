@@ -10,12 +10,6 @@
 #include "GB_container.h"
 #define GB_FREE_ALL GxB_Container_free (Container) ;
 
-#define GB_VNEW(component, type)                                \
-    GB_OK (GB_new ((GrB_Matrix *) (&((*Container)->component)), \
-        type, 0, 1, GB_ph_null, true, GxB_FULL,                 \
-        GB_HYPER_SWITCH_DEFAULT, 0, false, false, false)) ;     \
-    (*Container)->component->magic = GB_MAGIC ;
-
 //------------------------------------------------------------------------------
 // GxB_Container_new
 //------------------------------------------------------------------------------
@@ -60,14 +54,14 @@ GrB_Info GxB_Container_new
     (*Container)->jumbled = false ;
 
     //--------------------------------------------------------------------------
-    // allocate headers for the p, h, b, i and x components
+    // allocate the p, h, b, i and x components
     //--------------------------------------------------------------------------
 
-    GB_VNEW (p, GrB_UINT32) ;
-    GB_VNEW (h, GrB_UINT32) ;
-    GB_VNEW (b, GrB_INT8) ;
-    GB_VNEW (i, GrB_UINT32) ;
-    GB_VNEW (x, GrB_BOOL) ;
+    GB_OK (GB_container_component_new (&((*Container)->p), GrB_UINT32)) ;
+    GB_OK (GB_container_component_new (&((*Container)->h), GrB_UINT32)) ;
+    GB_OK (GB_container_component_new (&((*Container)->b), GrB_INT8)) ;
+    GB_OK (GB_container_component_new (&((*Container)->i), GrB_UINT32)) ;
+    GB_OK (GB_container_component_new (&((*Container)->x), GrB_BOOL)) ;
 
     //--------------------------------------------------------------------------
     // return result
