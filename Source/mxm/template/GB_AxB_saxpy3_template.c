@@ -329,10 +329,26 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    // FIXME: C->p is currently only uint64_t, to avoid overflow when cnz >
-    // UINT32_MAX.  Figure out how to set it to uint32_t for smaller matrices.
+    // C->p may be revised by GB_AxB_saxpy3_cumsum, from 32-bit to 64-bit.
 
-    GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
+    GrB_Info info ;
+    info = GB_AxB_saxpy3_cumsum (C, SaxpyTasks, nfine, chunk, nthreads, Werk) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        return (GrB_OUT_OF_MEMORY) ;
+    }
+
+    // Cp may have started as 32-bit but might now be 64-bit, depending on the
+    // problem size.  Use Cp_new for phase5.  For the JIT kernel, the size of
+    // C->p is no longer known at compile time.
+
+    void *Cp_new = C->p ;
+    const uint32_t *restrict Cp_new32 = C->p_is_32 ? Cp_new : NULL ;
+    const uint64_t *restrict Cp_new64 = C->p_is_32 ? NULL : Cp_new ;
+    Cp = NULL ;
+
+    #define GB_Cp_IGET(k) (Cp_new32 ? Cp_new32 [k] : Cp_new64 [k])
 
     //==========================================================================
     // phase5: numeric phase for coarse tasks, gather for fine tasks
@@ -341,8 +357,9 @@
     // C is iso for the ANY_PAIR semiring, and non-iso otherwise
 
     // allocate Ci and Cx
-    int64_t cnz = GB_IGET (Cp, cnvec) ;
-    GrB_Info info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
+//  int64_t cnz = GB_IGET (Cp, cnvec) ;
+    int64_t cnz = GB_Cp_IGET (cnvec) ;
+    info = GB_bix_alloc (C, cnz, GxB_SPARSE, false, true,
         GB_IS_ANY_PAIR_SEMIRING) ;
     if (info != GrB_SUCCESS)
     { 
@@ -386,7 +403,8 @@
             int team_size = SaxpyTasks [taskid].team_size ;
             int leader    = SaxpyTasks [taskid].leader ;
             int my_teamid = taskid - leader ;
-            int64_t pC = GB_IGET (Cp, kk) ;
+//          int64_t pC = GB_IGET (Cp, kk) ;
+            int64_t pC = GB_Cp_IGET (kk) ;
 
             if (use_Gustavson)
             {
@@ -398,7 +416,8 @@
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
                 int8_t *restrict
                     Hf = (int8_t *restrict) SaxpyTasks [taskid].Hf ;
-                int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
+//              int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
+                int64_t cjnz = GB_Cp_IGET (kk+1) - pC ;
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
                 if (cjnz == cvlen)

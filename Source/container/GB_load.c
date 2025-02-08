@@ -46,13 +46,6 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     switch (Container->format)
     {
         case GxB_HYPERSPARSE : 
-            if (Container->h->vlen > 0)
-            { 
-                GB_RETURN_IF_NULL (Container->h) ;
-                GB_RETURN_IF_NULL (Container->h->x) ;
-            }
-            // fall through to sparse case
-
         case GxB_SPARSE : 
             GB_RETURN_IF_NULL (Container->p) ;
             GB_RETURN_IF_NULL (Container->p->x) ;
@@ -115,6 +108,17 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     int format = Container->format ;
     bool jumbled = Container->jumbled ;
 
+    // determine the A->j_is_32 condition when Container->h is empty
+    bool h_empty = (Container->h == NULL ||
+           (Container->h->vlen == 0 && Container->h->x == NULL)) ;
+    if ((format == GxB_SPARSE) || (format == GxB_HYPERSPARSE && h_empty))
+    { 
+        bool Ap_is_32, Aj_is_32, Ai_is_32 ;
+        GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
+            GxB_SPARSE, A->nvals, A->vlen, A->vdim, Werk) ;
+        Ah_type = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
+    }
+
     // clear the Container scalars
     Container->nrows = 0 ;
     Container->ncols = 0 ;
@@ -144,11 +148,11 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
             A->p_size = (size_t) Ap_size ;
 
             // load or create A->h
-            if (Container->h == NULL ||
-                (Container->h->vlen == 0 && Container->h->x == NULL))
-            {
+            if (h_empty)
+            { 
                 // A is an empty hypersparse matrix but A->h must not be NULL;
-                // allocate space for A->h of type uint32 or uint64
+                // allocate space for A->h of type Ah_type for a single entry
+                // Ah_type is uint32 or uint64, so sizeof (uint64_t) is fine.
                 plen = 0 ;
                 A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &Ah_size) ;
                 if (A->h == NULL)
@@ -156,21 +160,6 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
                     return (GrB_OUT_OF_MEMORY) ;
                 }
                 A->h_shallow = false ;
-                bool Aj_is_32 ;
-                if (Container->h == NULL)
-                { 
-                    // there is no Container->h, so get global/matrix settings
-                    bool Ap_is_32, Ai_is_32 ;
-                    GB_determine_pji_is_32 (&Ap_is_32, &Aj_is_32, &Ai_is_32,
-                        GxB_HYPERSPARSE, A->nvals, A->vlen, A->vdim, Werk) ;
-                }
-                else
-                { 
-                    // determine the type of A->h from Container->h_type
-                    Aj_is_32 = (Container->h->type == GrB_UINT32) ||
-                               (Container->h->type == GrB_INT32) ;
-                }
-                Ah_type = Aj_is_32 ? GrB_UINT32 : GrB_UINT64 ;
             }
             else
             { 
@@ -297,6 +286,15 @@ GrB_Info GB_load                // GxB_Container -> GrB_Matrix
     A->p_is_32 = (Ap_type == GrB_UINT32) ;
     A->j_is_32 = (Ah_type == GrB_UINT32) ;
     A->i_is_32 = (Ai_type == GrB_UINT32) ;
+
+    //--------------------------------------------------------------------------
+    // more basic sanity checks
+    //--------------------------------------------------------------------------
+
+    // Loading a GrB_Matrix from a Container takes O(1) time, so there is not
+    // enough time to test the entire content of the matrix to see if it's
+    // valid.  The user application can do that with GxB_Matrix_fprint with a
+    // print level of zero, after the matrix is loaded.
 
     // ensure Ax_len is the right size
     if (A->iso)

@@ -398,8 +398,7 @@ GrB_Info GB_sort
     // free any prior content of C and P
     if (A == P)
     { 
-        // A and P cannot be aliased
-        return (GrB_NOT_IMPLEMENTED) ;
+        return (GrB_NOT_IMPLEMENTED) ;  // A and P cannot be aliased
     }
     GB_phybix_free (P) ;    // this frees A if A == P are aliased
     if (!sort_in_place)

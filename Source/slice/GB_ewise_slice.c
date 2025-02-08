@@ -20,8 +20,6 @@
 // M, A, B: any sparsity structure (hypersparse, sparse, bitmap, or full).
 // C: constructed as sparse or hypersparse in the caller.
 
-// FIXME: can C_to_[MAB] workspace be made uint32_t, depending on C?
-
 #define GB_FREE_WORKSPACE                       \
 {                                               \
     GB_WERK_POP (Coarse, int64_t) ;             \

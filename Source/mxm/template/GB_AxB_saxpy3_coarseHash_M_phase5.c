@@ -24,8 +24,13 @@
 
     for (int64_t kk = kfirst ; kk <= klast ; kk++)
     {
-        int64_t pC = GB_IGET (Cp, kk) ;
-        int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
+//      int64_t pC = GB_IGET (Cp, kk) ;
+//      int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
+        int64_t pC_start = GB_Cp_IGET (kk) ;
+        int64_t pC_end = GB_Cp_IGET (kk+1) ;
+        int64_t pC = pC_start ;
+        int64_t cjnz = pC_end - pC ;
+
         if (cjnz == 0) continue ;   // nothing to do
         GB_GET_M_j ;                // get M(:,j)
         GB_GET_M_j_RANGE (64) ;     // get 1st & last in M(:,j)

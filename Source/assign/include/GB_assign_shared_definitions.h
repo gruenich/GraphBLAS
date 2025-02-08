@@ -35,12 +35,12 @@
 {                                               \
     GB_FREE_WORKSPACE ;                         \
     GB_WERK_POP (Npending, int64_t) ;           \
-    GB_FREE_MEMORY (&TaskList, TaskList_size) ;   \
-    GB_FREE_MEMORY (&Zh, Zh_size) ;                    \
-    GB_FREE_MEMORY (&Z_to_X, Z_to_X_size) ;       \
-    GB_FREE_MEMORY (&Z_to_S, Z_to_S_size) ;       \
-    GB_FREE_MEMORY (&Z_to_A, Z_to_A_size) ;       \
-    GB_FREE_MEMORY (&Z_to_M, Z_to_M_size) ;       \
+    GB_FREE_MEMORY (&TaskList, TaskList_size) ; \
+    GB_FREE_MEMORY (&Zh, Zh_size) ;             \
+    GB_FREE_MEMORY (&Z_to_X, Z_to_X_size) ;     \
+    GB_FREE_MEMORY (&Z_to_S, Z_to_S_size) ;     \
+    GB_FREE_MEMORY (&Z_to_A, Z_to_A_size) ;     \
+    GB_FREE_MEMORY (&Z_to_M, Z_to_M_size) ;     \
     GB_FREE_S ;                                 \
 }
 

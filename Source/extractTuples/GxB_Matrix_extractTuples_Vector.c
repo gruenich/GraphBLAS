@@ -53,8 +53,7 @@ GrB_Info GxB_Matrix_extractTuples_Vector    // [I,J,X] = find (A)
     if ((I_vector != NULL && (I_vector == X_vector || I_vector == J_vector)) ||
         (J_vector != NULL && (J_vector == X_vector)))
     { 
-        // input vectors cannot be aliased
-        return (GrB_NOT_IMPLEMENTED) ;  // FIXME: use another error code
+        return (GrB_NOT_IMPLEMENTED) ;  // input vectors cannot be aliased
     }
 
     //--------------------------------------------------------------------------

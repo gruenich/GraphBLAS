@@ -340,8 +340,7 @@
     if (do_sort)                                                \
     {                                                           \
         /* sort the pattern of C(:,j) (non-default) */          \
-        int64_t p = GB_IGET (Cp, kk) ;                          \
-        GB_QSORT_1 (Ci, p, cjnz) ;                              \
+        GB_QSORT_1 (Ci, pC_start, cjnz) ;                       \
     }                                                           \
     else                                                        \
     {                                                           \
@@ -367,8 +366,7 @@
     {                                                           \
         GB_SORT_C_j_PATTERN ;                                   \
         /* gather the values into C(:,j) */                     \
-        int64_t pC_end = GB_IGET (Cp, kk+1) ;                   \
-        for (int64_t pC = GB_IGET (Cp, kk) ; pC < pC_end ; pC++)\
+        for (int64_t pC = pC_start ; pC < pC_end ; pC++)        \
         {                                                       \
             const int64_t i = GB_IGET (Ci, pC) ;                \
             GB_CIJ_GATHER (pC, i) ;   /* Cx [pC] = Hx [i] */    \
@@ -393,8 +391,7 @@
     #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark)                    \
     {                                                                   \
         GB_SORT_C_j_PATTERN ;                                           \
-        int64_t pC_end = GB_IGET (Cp, kk+1) ;                           \
-        for (int64_t pC = GB_IGET (Cp, kk) ; pC < pC_end ; pC++)        \
+        for (int64_t pC = pC_start ; pC < pC_end ; pC++)                \
         {                                                               \
             const int64_t i = GB_IGET (Ci, pC) ;                        \
             for (GB_HASH (i))           /* find i in hash table */      \

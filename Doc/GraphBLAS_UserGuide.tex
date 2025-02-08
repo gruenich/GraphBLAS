@@ -163,6 +163,16 @@ new _Vector methods for build, extract, extractTuples, assign, subassign:
     GxB_Vector_load
     GxB_Vector_unload
 
+    The Container->[phbix] GrB_Vectors should not be freed by the user
+    application, just loaded/unloaded with GxB_Vector load/unload.  All of them
+    must be present for the Container to be used, for any matrix format.  They
+    are allocated when the Container is created, and freed when the Container
+    is freed.  If they are somehow freed, simply free the entire Container and
+    recreate it, or replace the missing vectors with length-0 vectors of any
+    type; for example:
+
+        GrB_Vector_new (&(Container->p), GrB_UINT32, 0) ;
+
 GrB_Field enum deprecated
 
 \end{verbatim}

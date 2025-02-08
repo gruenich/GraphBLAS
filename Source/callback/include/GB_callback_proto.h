@@ -17,7 +17,7 @@
 #define GB_CALLBACK_PROTO_H
 
 #define GB_CALLBACK_SAXPY3_CUMSUM_PROTO(GX_AxB_saxpy3_cumsum)               \
-void GX_AxB_saxpy3_cumsum                                                   \
+GrB_Info GX_AxB_saxpy3_cumsum                                               \
 (                                                                           \
     GrB_Matrix C,               /* finalize C->p */                         \
     GB_saxpy3task_struct *SaxpyTasks, /* list of tasks, and workspace */    \

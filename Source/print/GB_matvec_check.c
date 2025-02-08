@@ -166,13 +166,14 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", GB_nnz_max (A)) ;
     GBPR0 ("  vlen: " GBd , A->vlen) ;
+    GBPR0 ("  vdim: " GBd "\n", A->vlen) ;
     if (A->nvec_nonempty != -1)
     {
-        GBPR0 (" nvec_nonempty: " GBd , A->nvec_nonempty) ;
+        GBPR0 ("  nvec_nonempty: " GBd , A->nvec_nonempty) ;
     }
-    GBPR0 (" nvec: " GBd " plen: " GBd " vdim: " GBd "\n  hyper_switch %g "
+    GBPR0 (" nvec: " GBd " plen: " GBd "\n  hyper_switch %g "
         "bitmap_switch %g\n",
-        A->nvec, A->plen, A->vdim, A->hyper_switch, A->bitmap_switch) ;
+        A->nvec, A->plen, A->hyper_switch, A->bitmap_switch) ;
     #endif
 
     switch (A->sparsity_control)
@@ -279,7 +280,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (is_hyper || is_sparse)
     { 
         #if GB_DEVELOPER
-        GBPR0 ("  p_hint: %d, j_hint: %d, i_hint: %d\n",
+        GBPR0 ("  p_control: %d, j_control: %d, i_control: %d\n",
             A->p_control, A->j_control, A->i_control) ;
         #endif
         if (!GB_valid_pji_is_32 (A->p_is_32, A->j_is_32, A->i_is_32,

@@ -128,8 +128,33 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
     // fine tasks or coarse tasks, and where j == GBh_B (Bh, kk) 
 
+    // FUTURE: create a variant of GB_cumsum that can reallocate its count
+    // array by itself, starting with 32-bit and switching to 64-bit.
+
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    GB_cumsum (Cp, Cp_is_32, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+    bool ok = GB_cumsum (Cp, Cp_is_32, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+
+    if (!ok)
+    { 
+        // convert Cp to uint64_t and redo the cumulative sum
+        ASSERT (Cp_is_32) ;
+        ASSERT (!C->p_shallow) ;
+        void *Cp_new = NULL ;
+        size_t Cp_new_size = 0 ;
+        Cp_new = GB_MALLOC_MEMORY (cnvec+1, sizeof (uint64_t), &Cp_new_size) ;
+        if (Cp_new == NULL)
+        { 
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        // Cp_new = (uint64_t) Cp, casting from 32-bit to 64-bit
+        GB_cast_int (Cp_new, GB_UINT64_code, Cp, GB_UINT32_code, cnvec+1, nth) ;
+        GB_FREE_MEMORY (&Cp, C->p_size) ;
+        C->p = Cp_new ;
+        C->p_size = Cp_new_size ;
+        C->p_is_32 = false ;
+        // redo the cumsum
+        GB_cumsum (C->p, false, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+    }
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks
@@ -146,5 +171,7 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
         SaxpyTasks [taskid].my_cjnz = cjnz_sum ;
         cjnz_sum += my_cjnz ;
     }
+
+    return (GrB_SUCCESS) ;
 }
 

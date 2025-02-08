@@ -1597,7 +1597,7 @@ GrB_Info GB_jitifyer_load
     {
         // the JIT can be disabled for testing, to test error handling
         GBURBLE ("(jit: test error handling) ") ;
-        return (GrB_NOT_IMPLEMENTED) ;
+        return (GrB_NOT_IMPLEMENTED) ; // only to test error handling in MATLAB
     }
     #endif
 

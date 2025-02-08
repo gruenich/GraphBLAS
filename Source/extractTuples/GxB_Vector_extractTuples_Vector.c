@@ -49,8 +49,7 @@ GrB_Info GxB_Vector_extractTuples_Vector    // [I,~,X] = find (V)
     if (V == I_vector || V == X_vector ||
         (I_vector != NULL && I_vector == X_vector))
     { 
-        // vector parameters cannot be aliased
-        return (GrB_NOT_IMPLEMENTED) ;  // FIXME: use another error code
+        return (GrB_NOT_IMPLEMENTED) ;  // input vectors cannot be aliased
     }
 
     //--------------------------------------------------------------------------

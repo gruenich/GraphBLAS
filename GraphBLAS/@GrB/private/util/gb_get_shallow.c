@@ -159,7 +159,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             // GraphBLASv4 or later struct: sparse, hypersparse, bitmap, or full
             sparsity_control = (int) (s [5]) ;
             nvals            = s [8] ;
-//          printf ("nvals: %ld\n", nvals) ;
             if (GraphBLASv4)
             {
                 // GraphBLASv4: iso is always false
@@ -195,7 +194,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
                 // struct with plen of 1 but nvec of 0.  Fix it here for v9 and
                 // earlier structs, and also in gb_export_to_mxstruct for v10:
                 plen = nvec ;
-//              printf ("get shallow hyper, plen %ld nvec %ld\n", plen, nvec) ;
                 break ;
 
             case 4 :
@@ -377,7 +375,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             OK (GxB_Vector_load (Container->x, &Yx, Aj_type, nvec, Yx_size,
                 GxB_IS_READONLY, NULL)) ;
             OK (GxB_load_Matrix_from_Container (Y, Container, NULL)) ;
-            // OK (GxB_Matrix_fprint (Y, "got Y shallow", 0, NULL)) ;
         }
 
         // import the A matrix using the Container
@@ -422,7 +419,6 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Ax_size, GxB_IS_READONLY, NULL)) ;
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
-        // OK (GxB_Matrix_fprint (A, "got A shallow", 0, NULL)) ;
 
     }
     else

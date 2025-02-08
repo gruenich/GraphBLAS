@@ -429,7 +429,6 @@ GrB_Info GB_ijxvector
     else
     { 
         // I_type is not a 32/64 bit integer; typecast it to GrB_UINT64
-        // FIXME: check max value of I, and use 32-bit int if OK
         I_target_type = GrB_UINT64 ;
     }
 

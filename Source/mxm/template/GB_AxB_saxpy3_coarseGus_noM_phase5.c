@@ -15,8 +15,13 @@
         // get C(:,j) and B(:,j)
         //----------------------------------------------------------------------
 
-        int64_t pC = GB_IGET (Cp, kk) ;
-        int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
+//      int64_t pC = GB_IGET (Cp, kk) ;
+//      int64_t cjnz = GB_IGET (Cp, kk+1) - pC ;
+        int64_t pC_start = GB_Cp_IGET (kk) ;
+        int64_t pC_end = GB_Cp_IGET (kk+1) ;
+        int64_t pC = pC_start ;
+        int64_t cjnz = pC_end - pC ;
+
         if (cjnz == 0) continue ;           // no work to do if C(:,j) empty
         GB_GET_B_j ;
 

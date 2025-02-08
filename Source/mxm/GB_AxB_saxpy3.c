@@ -217,14 +217,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cvdim = B->vdim ;
     int64_t cnvec = B->nvec ;
 
-    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix
+    // determine the p_is_32, j_is_32, and i_is_32 settings for the new matrix;
+    // select Cp_is_32 by assuming any given column could see arbitrary fillin,
+    // where nnz(C(:,j)) <= cvlen.  Later on, Cp may need to be resized by
+    // GB_AxB_saxpy3_cumsum if nnz(C) > UINT32_MAX.
     bool Cp_is_32, Cj_is_32, Ci_is_32 ;
     GB_determine_pji_is_32 (&Cp_is_32, &Cj_is_32, &Ci_is_32,
-        C_sparsity, 1, cvlen, cvdim, Werk) ;
-
-    // Cp_is_32 is determined later, since nnz(C) is not yet known.  For now,
-    // always allocate Cp as 64-bit.
-    Cp_is_32 = false ;
+        C_sparsity, cvlen, cvlen, cvdim, Werk) ;
 
     GB_OK (GB_new (&C, // sparse or hyper, existing header
         ctype, cvlen, cvdim, GB_ph_malloc, true,
@@ -240,7 +239,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // B and C are both hypersparse
         ASSERT (C_sparsity == GxB_HYPERSPARSE) ;
         int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
-//      GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nth) ;
         GB_cast_int (C->h, cjcode, B->h, bjcode, cnvec, nth) ;
         C->nvec = B->nvec ;
     }
