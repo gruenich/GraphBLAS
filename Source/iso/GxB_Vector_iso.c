@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Vector_iso: report if a vector is iso-valued or not
+// GxB_Vector_iso: report if a vector is iso-valued or not (historical)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_iso: report if a matrix is iso-valued or not
+// GxB_Matrix_iso: report if a matrix is iso-valued or not (historical)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.

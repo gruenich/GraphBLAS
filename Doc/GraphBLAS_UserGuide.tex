@@ -163,13 +163,15 @@ new _Vector methods for build, extract, extractTuples, assign, subassign:
     GxB_Vector_load
     GxB_Vector_unload
 
-    The Container->[phbix] GrB_Vectors should not be freed by the user
+    The Container->[phbix] GrB_Vectors need not be freed by the user
     application, just loaded/unloaded with GxB_Vector load/unload.  All of them
     must be present for the Container to be used, for any matrix format.  They
     are allocated when the Container is created, and freed when the Container
-    is freed.  If they are somehow freed, simply free the entire Container and
-    recreate it, or replace the missing vectors with length-0 vectors of any
-    type; for example:
+    is freed.  If they are freed or removed by the user application, they are
+    simply recreated as vectors of length zero the next time
+    GxB_load_*_from_Container is called.  Alternatively, Container->[phbix]
+    components can be replaced with the following, where the type is
+    arbitrary:
 
         GrB_Vector_new (&(Container->p), GrB_UINT32, 0) ;
 
@@ -13461,7 +13463,7 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item XX, 2025: version 10.0.0
+\item Mar 1, 2025: version 10.0.0
 
     \begin{itemize}
 

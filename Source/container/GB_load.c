@@ -11,6 +11,9 @@
 // A is revised: the dimensions, type, content, 32/64 integer status, iso
 // status, jumbled status, orientation (by row/col), etc.
 
+// FIXME: if any Container->[phbix] are missing, recreate them here as
+// vectors of length zero.  See GxB_Container_new.
+
 #include "GB_container.h"
 #define GB_FREE_ALL ;
 
