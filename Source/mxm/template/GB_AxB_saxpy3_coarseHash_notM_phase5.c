@@ -32,7 +32,7 @@
         if (cjnz == 0) continue ;   // nothing to do
         GB_GET_M_j ;                // get M(:,j)
         mark += 2 ;
-        int64_t mark1 = mark+1 ;
+        uint64_t mark1 = mark+1 ;
         GB_HASH_M_j ;               // hash M(:,j)
         GB_GET_B_j ;                // get B(:,j)
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -47,7 +47,7 @@
                 GB_GET_A_ik_INDEX ;     // get index i of A(i,k)
                 for (GB_HASH (i))       // find i in hash
                 {
-                    int64_t f = Hf [hash] ;
+                    uint64_t f = Hf [hash] ;
                     if (f < mark)   // if true, i is new
                     { 
                         // C(i,j) is new

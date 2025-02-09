@@ -83,7 +83,7 @@
                 // the mask
                 GB_CHECK_MASK_ij ;
                 #endif
-                int64_t hash ;
+                uint64_t hash ;
                 bool marked = false ;
                 bool done = false ;
                 for (hash = GB_HASHF (i, hash_bits) ; ;

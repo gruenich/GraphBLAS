@@ -42,7 +42,7 @@
         // count nnz in C(:,j), terminating early if C(:,j) becomes dense
         //----------------------------------------------------------------------
 
-        const int64_t f = (++mark) ;
+        const uint64_t f = (++mark) ;
         int64_t cjnz = 0 ;
         for ( ; pB < pB_end && cjnz < cvlen ; pB++)     // scan B(:,j)
         {

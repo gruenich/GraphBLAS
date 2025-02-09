@@ -178,7 +178,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
 
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
     GB_Bh_DECLARE (Bh, const) ; GB_Bh_PTR (Bh, B) ;
-    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    GB_Bi_DECLARE_U (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     const int8_t  *restrict Bb = B->b ;
     const int64_t bvlen = B->vlen ;
 
@@ -310,7 +310,7 @@ GrB_Info GB_AxB_saxpy3_flopcount
             for ( ; pB < pB_end ; pB++)
             {
                 // get B(k,j)
-                int64_t k = GBi_B (Bi, pB, bvlen) ;
+                uint64_t k = GBi_B (Bi, pB, bvlen) ;
                 if (!GBb_B (Bb, pB)) continue ;
 
                 // B(k,j) is nonzero

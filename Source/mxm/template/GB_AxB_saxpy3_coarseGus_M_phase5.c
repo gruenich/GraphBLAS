@@ -41,7 +41,7 @@
         GB_GET_M_j ;            // get M(:,j)
         GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
         mark += 2 ;
-        int64_t mark1 = mark+1 ;
+        uint64_t mark1 = mark+1 ;
 
         // scatter M(:,j) into the Gustavson workspace
         GB_SCATTER_M_j (pM_start, pM_end, mark) ;
@@ -61,7 +61,7 @@
                 GB_GET_B_kj ;               // bkj = B(k,j)
                 #define GB_UPDATE_IKJ                               \
                 {                                                   \
-                    int64_t hf = Hf [i] ;                           \
+                    uint64_t hf = Hf [i] ;                          \
                     if (hf == mark)                                 \
                     {                                               \
                         /* C(i,j) = A(i,k) * B(k,j) */              \
@@ -97,7 +97,7 @@
                 GB_GET_B_kj ;               // bkj = B(k,j)
                 #define GB_UPDATE_IKJ                                   \
                 {                                                       \
-                    int64_t hf = Hf [i] ;                               \
+                    uint64_t hf = Hf [i] ;                              \
                     if (hf == mark)                                     \
                     {                                                   \
                         /* C(i,j) = A(i,k) * B(k,j) */                  \

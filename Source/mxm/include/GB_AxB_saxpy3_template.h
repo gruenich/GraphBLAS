@@ -163,7 +163,7 @@
     {                                                       \
         GB_GET_M_ij (pM) ;      /* get M(i,j) */            \
         if (!mij) continue ;    /* skip if M(i,j)=0 */      \
-        const int64_t i = GBi_M (Mi, pM, mvlen) ;           \
+        const uint64_t i = GBi_M (Mi, pM, mvlen) ;          \
         for (GB_HASH (i))       /* find i in hash */        \
         {                                                   \
             if (Hf [hash] < mark)                           \
@@ -393,7 +393,7 @@
         GB_SORT_C_j_PATTERN ;                                           \
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)                \
         {                                                               \
-            const int64_t i = GB_IGET (Ci, pC) ;                        \
+            const uint64_t i = GB_IGET (Ci, pC) ;                       \
             for (GB_HASH (i))           /* find i in hash table */      \
             {                                                           \
                 if (Hf [hash] == (hash_mark) && (Hi [hash] == i))       \
@@ -601,13 +601,13 @@
 // which expands into the following, where f(i) is the GB_HASHF(i) hash
 // function:
 //
-//      for (int64_t hash = f(i) ; ; hash = (hash+1)&(hash_size-1))
+//      for (uint64_t hash = f(i) ; ; hash = (hash+1)&(hash_size-1))
 //      {
 //          ...
 //      }
 
 #define GB_HASH(i) \
-    int64_t hash = GB_HASHF (i,hash_bits) ; ; GB_REHASH (hash,i,hash_bits)
+    uint64_t hash = GB_HASHF (i,hash_bits) ; ; GB_REHASH (hash,i,hash_bits)
 
 //------------------------------------------------------------------------------
 // define macros for any sparsity of A and B

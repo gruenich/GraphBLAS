@@ -200,15 +200,15 @@
 
     #if GB_COMPILER_MSC
 
-        #define GB_ATOMIC_CAPTURE_INT64(result, target, value)          \
+        #define GB_ATOMIC_CAPTURE_UINT64(result, target, value)         \
         {                                                               \
             result = _InterlockedExchange64                             \
-                ((int64_t volatile *) (&(target)), value) ;             \
+                ((uint64_t volatile *) (&(target)), value) ;            \
         }
 
     #else
 
-        #define GB_ATOMIC_CAPTURE_INT64(result, target, value)          \
+        #define GB_ATOMIC_CAPTURE_UINT64(result, target, value)         \
         {                                                               \
             GB_ATOMIC_CAPTURE                                           \
             {                                                           \
@@ -256,15 +256,15 @@
 
     #if GB_COMPILER_MSC
 
-        #define GB_ATOMIC_CAPTURE_INT64_OR(result, target, value)       \
+        #define GB_ATOMIC_CAPTURE_UINT64_OR(result, target, value)      \
         {                                                               \
             result = _InterlockedOr64                                   \
-                ((int64_t volatile *) (&(target)), value) ;             \
+                ((uint64_t volatile *) (&(target)), value) ;            \
         }
 
     #else
 
-        #define GB_ATOMIC_CAPTURE_INT64_OR(result, target, value)       \
+        #define GB_ATOMIC_CAPTURE_UINT64_OR(result, target, value)      \
         {                                                               \
             GB_ATOMIC_CAPTURE                                           \
             {                                                           \

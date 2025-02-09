@@ -23,7 +23,7 @@
 
 #define GB_FREE_WORKSPACE                   \
 {                                           \
-    GB_FREE_MEMORY (&Bflops, Bflops_size) ;   \
+    GB_FREE_MEMORY (&Bflops, Bflops_size) ; \
     GB_WERK_POP (Fine_fl, int64_t) ;        \
     GB_WERK_POP (Fine_slice, int64_t) ;     \
     GB_WERK_POP (Coarse_Work, int64_t) ;    \
@@ -33,7 +33,7 @@
 #define GB_FREE_ALL                                 \
 {                                                   \
     GB_FREE_WORKSPACE ;                             \
-    GB_FREE_MEMORY (&SaxpyTasks, SaxpyTasks_size) ;   \
+    GB_FREE_MEMORY (&SaxpyTasks, SaxpyTasks_size) ; \
 }
 
 //------------------------------------------------------------------------------
@@ -53,14 +53,14 @@
 // either of those methods.  However, if Hash is selected but the hash table
 // equals or exceeds cvlen, then Gustavson's method is used instead.
 
-static inline int64_t GB_hash_table_size
+static inline uint64_t GB_hash_table_size
 (
     int64_t flmax,      // max flop count for any vector computed by this task
     int64_t cvlen,      // vector length of C
     const int AxB_method     // Default, Gustavson, or Hash
 )
 {
-    int64_t hash_size ;
+    uint64_t hash_size ;
 
     if (AxB_method == GxB_AxB_GUSTAVSON || flmax >= cvlen/2)
     { 
@@ -180,7 +180,7 @@ static inline void GB_create_coarse_task
     SaxpyTasks [taskid].Hi     = NULL ;      // assigned later
     SaxpyTasks [taskid].Hf     = NULL ;      // assigned later
     SaxpyTasks [taskid].Hx     = NULL ;      // assigned later
-    SaxpyTasks [taskid].my_cjnz = 0 ;        // for fine tasks only 
+    SaxpyTasks [taskid].my_cjnz = 0 ;        // for fine tasks only
     SaxpyTasks [taskid].leader  = taskid ;
     SaxpyTasks [taskid].team_size = 1 ;
 }
@@ -280,7 +280,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     const bool Aj_is_32 = A->j_is_32 ;
 
     GB_Bp_DECLARE (Bp, const) ; GB_Bp_PTR (Bp, B) ;
-    GB_Bi_DECLARE (Bi, const) ; GB_Bi_PTR (Bi, B) ;
+    GB_Bi_DECLARE_U (Bi, const) ; GB_Bi_PTR (Bi, B) ;
     const int8_t *restrict Bb = B->b ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_nnz_held (B) ;
@@ -319,7 +319,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
     { 
 
         //----------------------------------------------------------------------
-        // M is not present 
+        // M is not present
         //----------------------------------------------------------------------
 
         (*apply_mask) = false ;
@@ -682,7 +682,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                             Fine_fl [s] = 1 ;
                             int64_t pB = pB_start + s ;
                             if (!GBb_B (Bb, pB)) continue ;
-                            int64_t k = GBi_B (Bi, pB, bvlen) ;
+                            uint64_t k = GBi_B (Bi, pB, bvlen) ;
                             // fl = flop count for just A(:,k)*B(k,j)
 
                             // find A(:,k)
@@ -716,7 +716,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
                             team_size, false) ;
 
                         // shared hash table for all fine tasks for A*B(:,j)
-                        int64_t hsize = 
+                        uint64_t hsize =
                             GB_hash_table_size (jflops, cvlen, AxB_method) ;
 
                         // construct the fine tasks for C(:,j)=A*B(:,j)
@@ -772,7 +772,7 @@ GrB_Info GB_AxB_saxpy3_slice_balanced
         GB_create_coarse_task (0, bnvec-1, SaxpyTasks, 0, Bflops, cvlen, 1, 1,
             Coarse_Work, AxB_method) ;
 
-        int64_t hash_size = SaxpyTasks [0].hsize ;
+        uint64_t hash_size = SaxpyTasks [0].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
         if (bnvec == 1 && !use_Gustavson)
         { 

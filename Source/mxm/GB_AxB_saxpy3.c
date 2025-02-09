@@ -63,11 +63,11 @@
 // table size for the task, and C is m-by-n (assuming all matrices are CSC; if
 // CSR, then m is replaced with n).
 //
-//      fine Gustavson task (shared):   int8_t  Hf [m] ; ctype Hx [m] ;
-//      fine hash task (shared):        int64_t Hf [s] ; ctype Hx [s] ;
-//      coarse Gustavson task:          int64_t Hf [m] ; ctype Hx [m] ;
-//      coarse hash task:               int64_t Hf [s] ; ctype Hx [s] ;
-//                                      int64_t Hi [s] ; 
+//      fine Gustavson task (shared):   int8_t   Hf [m] ; ctype Hx [m] ;
+//      fine hash task (shared):        uint64_t Hf [s] ; ctype Hx [s] ;
+//      coarse Gustavson task:          uint64_t Hf [m] ; ctype Hx [m] ;
+//      coarse hash task:               uint64_t Hf [s] ; ctype Hx [s] ;
+//                                      uint64_t Hi [s] ;
 //
 // Note that the Hi array is needed only for the coarse hash task.  Additional
 // workspace is allocated to construct the list of tasks, but this is freed
@@ -179,9 +179,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // define workspace
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Hi_all = NULL ; size_t Hi_all_size = 0 ;
-    int64_t *restrict Hf_all = NULL ; size_t Hf_all_size = 0 ;
-    GB_void *restrict Hx_all = NULL ; size_t Hx_all_size = 0 ;
+    uint64_t *restrict Hi_all = NULL ; size_t Hi_all_size = 0 ;
+    uint64_t *restrict Hf_all = NULL ; size_t Hf_all_size = 0 ;
+    GB_void  *restrict Hx_all = NULL ; size_t Hx_all_size = 0 ;
     GB_saxpy3task_struct *SaxpyTasks = NULL ; size_t SaxpyTasks_size = 0 ;
 
     //--------------------------------------------------------------------------
@@ -231,8 +231,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     C->iso = C_iso ;
 
-    GB_Type_code cjcode = (Cj_is_32  ) ? GB_UINT32_code : GB_UINT64_code ; 
-    GB_Type_code bjcode = (B->j_is_32) ? GB_UINT32_code : GB_UINT64_code ; 
+    GB_Type_code cjcode = (Cj_is_32  ) ? GB_UINT32_code : GB_UINT64_code ;
+    GB_Type_code bjcode = (B->j_is_32) ? GB_UINT32_code : GB_UINT64_code ;
 
     if (GB_IS_HYPERSPARSE (B))
     { 
@@ -318,7 +318,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //      Hx [i] is the value of C(i,j) during the numeric phase.
     //
     //      Gustavson's method is used if the hash_size for the Hash method
-    //      is a significant fraction of cvlen. 
+    //      is a significant fraction of cvlen.
     //
     // If the Hash method is used (coarse tasks):
     //
@@ -356,7 +356,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (taskid == SaxpyTasks [taskid].leader)
         { 
             hx_pad = GB_ICEIL (64, csize) ;
-            hi_pad = 64 / sizeof (int64_t) ;
+            hi_pad = 64 / sizeof (uint64_t) ;
             break ;
         }
     }
@@ -378,7 +378,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {
 
         // get the task type and its hash size
-        int64_t hash_size = SaxpyTasks [taskid].hsize ;
+        uint64_t hash_size = SaxpyTasks [taskid].hsize ;
         int64_t k = SaxpyTasks [taskid].vector ;
         bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
@@ -419,8 +419,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             continue ;
         }
 
-        int64_t hi_size = GB_IMAX (hash_size, 8) ;
-        int64_t hx_size = hi_size ;
+        uint64_t hi_size = GB_IMAX (hash_size, 8) ;
+        uint64_t hx_size = hi_size ;
         if (!GB_IS_POWER_OF_TWO (hi_size))
         { 
             hi_size += hi_pad ;
@@ -429,13 +429,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (is_fine && use_Gustavson)
         { 
             // Hf is int8_t for the fine Gustavson tasks, but round up
-            // to the nearest number of int64_t values.
-            int64_t hi_size2 = GB_IMAX (hi_size, 64) ;
-            Hf_size_total += GB_ICEIL (hi_size2, sizeof (int64_t)) ;
+            // to the nearest number of uint64_t values.
+            uint64_t hi_size2 = GB_IMAX (hi_size, 64) ;
+            Hf_size_total += GB_ICEIL (hi_size2, sizeof (uint64_t)) ;
         }
         else
         { 
-            // Hf is int64_t for all other methods
+            // Hf is uint64_t for all other methods
             Hf_size_total += hi_size ;
         }
         if (!is_fine && !use_Gustavson)
@@ -464,13 +464,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (Hi_size_total > 0)
     { 
-        Hi_all = GB_MALLOC_MEMORY (Hi_size_total, sizeof (int64_t),
+        Hi_all = GB_MALLOC_MEMORY (Hi_size_total, sizeof (uint64_t),
             &Hi_all_size) ;
     }
     if (Hf_size_total > 0)
     { 
-        // Hf must be calloc'd to initialize all entries as empty 
-        Hf_all = GB_CALLOC_MEMORY (Hf_size_total, sizeof (int64_t),
+        // Hf must be calloc'd to initialize all entries as empty
+        Hf_all = GB_CALLOC_MEMORY (Hf_size_total, sizeof (uint64_t),
             &Hf_all_size) ;
     }
     if (Hx_size_total > 0)
@@ -479,7 +479,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
 
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
-        (Hf_size_total > 0 && Hf_all == NULL) || 
+        (Hf_size_total > 0 && Hf_all == NULL) ||
         (Hx_size_total > 0 && Hx_all == NULL))
     { 
         // out of memory
@@ -491,8 +491,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // split the space into separate hash tables
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Hi_part = Hi_all ;
-    int64_t *restrict Hf_part = Hf_all ;
+    uint64_t *restrict Hi_part = Hi_all ;
+    uint64_t *restrict Hf_part = Hf_all ;
     GB_void *restrict Hx_part = Hx_all ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
@@ -505,7 +505,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             continue ;
         }
 
-        int64_t hash_size = SaxpyTasks [taskid].hsize ;
+        uint64_t hash_size = SaxpyTasks [taskid].hsize ;
         int64_t k = SaxpyTasks [taskid].vector ;
         bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
@@ -514,8 +514,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         SaxpyTasks [taskid].Hf = (GB_void *) Hf_part ;
         SaxpyTasks [taskid].Hx = Hx_part ;
 
-        int64_t hi_size = GB_IMAX (hash_size, 8) ;
-        int64_t hx_size = hi_size ;
+        uint64_t hi_size = GB_IMAX (hash_size, 8) ;
+        uint64_t hx_size = hi_size ;
         if (!GB_IS_POWER_OF_TWO (hi_size))
         { 
             hi_size += hi_pad ;
@@ -524,13 +524,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (is_fine && use_Gustavson)
         { 
             // Hf is int8_t for the fine Gustavson tasks, but round up
-            // to the nearest number of int64_t values.
-            int64_t hi_size2 = GB_IMAX (hi_size, 64) ;
-            Hf_part += GB_ICEIL (hi_size2, sizeof (int64_t)) ;
+            // to the nearest number of uint64_t values.
+            uint64_t hi_size2 = GB_IMAX (hi_size, 64) ;
+            Hf_part += GB_ICEIL (hi_size2, sizeof (uint64_t)) ;
         }
         else
         { 
-            // Hf is int64_t for all other methods
+            // Hf is uint64_t for all other methods
             Hf_part += hi_size ;
         }
         if (!is_fine && !use_Gustavson)

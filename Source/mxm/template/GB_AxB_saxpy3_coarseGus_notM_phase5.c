@@ -37,7 +37,7 @@
         #endif
         GB_GET_M_j ;            // get M(:,j)
         mark += 2 ;
-        int64_t mark1 = mark+1 ;
+        uint64_t mark1 = mark+1 ;
 
         // scatter M(:,j) into the Gustavson workspace
         GB_SCATTER_M_j (pM_start, pM_end, mark) ;
@@ -59,7 +59,7 @@
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
                     GB_GET_A_ik_INDEX ;         // get i of A(i,k)
-                    int64_t hf = Hf [i] ;
+                    uint64_t hf = Hf [i] ;
                     if (hf < mark)
                     { 
                         // C(i,j) = A(i,k) * B(k,j)
@@ -95,7 +95,7 @@
                 for (int64_t pA = pA_start ; pA < pA_end ; pA++)
                 {
                     GB_GET_A_ik_INDEX ;         // get i of A(i,k)
-                    int64_t hf = Hf [i] ;
+                    uint64_t hf = Hf [i] ;
                     if (hf < mark)
                     { 
                         // C(i,j) = A(i,k) * B(k,j)

@@ -35,8 +35,8 @@
         if (mjnz == 0) continue ;
         GB_GET_M_j_RANGE (64) ;
         mark += 2 ;
-        const int64_t f0 = mark ;
-        const int64_t f1 = mark+1 ;
+        const uint64_t f0 = mark ;
+        const uint64_t f1 = mark+1 ;
         GB_SCATTER_M_j (pM_start, pM_end, f0) ;     // scatter M(:,j)
 
         //----------------------------------------------------------------------

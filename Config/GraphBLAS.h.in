@@ -340,8 +340,6 @@ typedef uint64_t GrB_Index ;
 // matrix or vector dimension is GrB_INDEX_MAX+1, or 2^60 in SuiteSparse:GrB.
 #define GrB_INDEX_MAX ((uint64_t) (1ULL << 60) - 1)
 
-// FIXME: try to increase GrB_INDEX_MAX to 2^62-1
-
 //==============================================================================
 // GraphBLAS error and informational codes
 //==============================================================================

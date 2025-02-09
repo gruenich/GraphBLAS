@@ -42,7 +42,7 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
         //----------------------------------------------------------------------
 
         // int64_t kk = SaxpyTasks [taskid].vector ;
-        int64_t hash_size = SaxpyTasks [taskid].hsize ;
+        uint64_t hash_size = SaxpyTasks [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
         int team_size = SaxpyTasks [taskid].team_size ;
         int leader    = SaxpyTasks [taskid].leader ;
@@ -81,10 +81,10 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
             // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
             // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
-            int64_t *restrict Hf = (int64_t *restrict) SaxpyTasks [taskid].Hf ;
-            int64_t mystart, myend ;
+            uint64_t *restrict Hf = (uint64_t *restrict) SaxpyTasks [taskid].Hf;
+            uint64_t mystart, myend ;
             GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
-            for (int64_t hash = mystart ; hash < myend ; hash++)
+            for (uint64_t hash = mystart ; hash < myend ; hash++)
             {
                 if ((Hf [hash] & 3) == 2)
                 { 

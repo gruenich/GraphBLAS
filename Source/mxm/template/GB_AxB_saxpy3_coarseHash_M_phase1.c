@@ -37,8 +37,8 @@
         if (mjnz == 0) continue ;
         GB_GET_M_j_RANGE (64) ;
         mark += 2 ;
-        const int64_t f0 = mark ;
-        const int64_t f1 = mark+1 ;
+        const uint64_t f0 = mark ;
+        const uint64_t f1 = mark+1 ;
         GB_HASH_M_j ;                               // hash M(:,j)
 
         //----------------------------------------------------------------------
@@ -55,7 +55,7 @@
             {                                                           \
                 for (GB_HASH (i))               /* find i in hash */    \
                 {                                                       \
-                    int64_t f = Hf [hash] ;                             \
+                    uint64_t f = Hf [hash] ;                            \
                     if (f < f0) break ;         /* M(i,j)=0; ignore */  \
                     if (Hi [hash] == i)         /* if true, i found */  \
                     {                                                   \

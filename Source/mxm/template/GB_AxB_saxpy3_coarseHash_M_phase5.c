@@ -33,7 +33,7 @@
         GB_GET_M_j ;                // get M(:,j)
         GB_GET_M_j_RANGE (64) ;     // get 1st & last in M(:,j)
         mark += 2 ;
-        int64_t mark1 = mark+1 ;
+        uint64_t mark1 = mark+1 ;
         GB_HASH_M_j ;               // hash M(:,j)
         GB_GET_B_j ;                // get B(:,j)
         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -46,7 +46,7 @@
             {                                                           \
                 for (GB_HASH (i))       /* find i in hash */            \
                 {                                                       \
-                    int64_t f = Hf [hash] ;                             \
+                    uint64_t f = Hf [hash] ;                            \
                     if (f < mark) break ; /* M(i,j)=0, ignore*/         \
                     if (Hi [hash] == i)                                 \
                     {                                                   \

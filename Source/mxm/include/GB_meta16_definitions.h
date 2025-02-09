@@ -30,7 +30,7 @@
 
             // B is sparse
             #define GB_GET_B_j                              \
-                const int64_t j = kk ;                      \
+                const uint64_t j = kk ;                     \
                 int64_t pB = GB_IGET (Bp, kk) ;             \
                 const int64_t pB_end = GB_IGET (Bp, kk+1) ; \
                 const int64_t bjnz = pB_end - pB ;          \
@@ -40,7 +40,7 @@
 
             // B is bitmap or full
             #define GB_GET_B_j                              \
-                const int64_t j = kk ;                      \
+                const uint64_t j = kk ;                     \
                 int64_t pB = kk * bvlen ;                   \
                 const int64_t pB_end = pB + bvlen ;         \
                 const int64_t bjnz = bvlen ;                \
@@ -70,20 +70,20 @@
 
         // B is hyper or sparse
         #define GB_GET_B_kj_INDEX                   \
-            const int64_t k = GB_IGET (Bi, pB)
+            const uint64_t k = GB_IGET (Bi, pB)
 
     #elif ( GB_B_IS_BITMAP )
 
         // B is bitmap
         #define GB_GET_B_kj_INDEX                   \
             if (!Bb [pB]) continue ;                \
-            const int64_t k = pB % bvlen
+            const uint64_t k = pB % bvlen
 
     #else
 
         // B is full
         #define GB_GET_B_kj_INDEX                   \
-            const int64_t k = pB % bvlen
+            const uint64_t k = pB % bvlen
 
     #endif
 
@@ -92,7 +92,7 @@
     // for any format of B
     #define GB_GET_B_kj_INDEX                       \
         if (!GBb_B (Bb, pB)) continue ;             \
-        const int64_t k = GBi_B (Bi, pB, bvlen)
+        const uint64_t k = GBi_B (Bi, pB, bvlen)
 
 #endif
 
@@ -146,20 +146,20 @@
 
         // A is hyper or sparse
         #define GB_GET_A_ik_INDEX                   \
-            const int64_t i = GB_IGET (Ai, pA)
+            const uint64_t i = GB_IGET (Ai, pA)
 
     #elif ( GB_A_IS_BITMAP )
 
         // A is bitmap
         #define GB_GET_A_ik_INDEX                   \
             if (!Ab [pA]) continue ;                \
-            const int64_t i = pA % avlen
+            const uint64_t i = pA % avlen
 
     #else
 
         // A is full
         #define GB_GET_A_ik_INDEX                   \
-            const int64_t i = pA % avlen
+            const uint64_t i = pA % avlen
 
     #endif
 
@@ -168,7 +168,7 @@
     // for any format of A
     #define GB_GET_A_ik_INDEX                       \
         if (!GBb_A (Ab, pA)) continue ;             \
-        const int64_t i = GBi_A (Ai, pA, avlen)
+        const uint64_t i = GBi_A (Ai, pA, avlen)
 
 #endif
 
@@ -188,10 +188,9 @@
         ASSERT (A_is_sparse || A_is_hyper) ;                            \
         GB_GET_B_kj_INDEX ;         /* get index k of B(k,j) */         \
         GB_GET_A_k ;                /* get A(:,k) */                    \
-     /* memcpy (Ci + pC, Ai + pA_start, aknz * sizeof (int64_t)) ; */   \
         for (int64_t kk = 0 ; kk < aknz ; kk++)                         \
         {                                                               \
-            int64_t i = GB_IGET (Ai, pA_start + kk) ;                   \
+            uint64_t i = GB_IGET (Ai, pA_start + kk) ;                  \
             GB_ISET (Ci, pC + kk, i) ;                                  \
         }                                                               \
         /* C becomes jumbled if A is jumbled */                         \
@@ -284,7 +283,7 @@
         {                                                                   \
             GB_GET_M_ij (pM) ;      /* get M(i,j) */                        \
             if (!mij) continue ;    /* skip if M(i,j)=0 */                  \
-            int64_t i = GB_IGET (Mi, pM) ;                                  \
+            uint64_t i = GB_IGET (Mi, pM) ;                                 \
             bool found ;            /* search for A(i,k) */                 \
             if (M_jumbled) pA = pA_start ;                                  \
             int64_t apright = pA_end - 1 ;                                  \
