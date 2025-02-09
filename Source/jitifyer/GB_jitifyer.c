@@ -172,7 +172,7 @@ static void check_table (void)
 
     #define GB_FREE_PERSISTENT(X)                           \
     {                                                       \
-        GB_Global_persistent_free ((void **) &X) ;          \
+        GB_Global_persistent_free ((void **) &(X)) ;        \
     }
 
 #endif

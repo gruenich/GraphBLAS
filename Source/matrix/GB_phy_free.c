@@ -43,21 +43,13 @@ void GB_phy_free                // free A->p, A->h, and A->Y of a matrix
     A->p_size = 0 ;
     A->p_shallow = false ;
 
-    // free A->h unless it is shallow
-    if (!A->h_shallow)
-    { 
-        GB_FREE_MEMORY (&(A->h), A->h_size) ;
-    }
-    A->h = NULL ;
-    A->h_size = 0 ;
-    A->h_shallow = false ;
+    // free A->h and A->Y
+    GB_hy_free (A) ;
 
     A->plen = 0 ;
     A->nvec = 0 ;
     A->nvals = 0 ;
     A->nvec_nonempty = 0 ;
-
-    GB_hyper_hash_free (A) ;
 
     //--------------------------------------------------------------------------
     // set the status to invalid

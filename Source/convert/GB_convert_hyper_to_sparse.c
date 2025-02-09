@@ -21,6 +21,10 @@
 
 #include "GB.h"
 
+//------------------------------------------------------------------------------
+// GB_convert_hyper_to_sparse
+//------------------------------------------------------------------------------
+
 GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
 (
     GrB_Matrix A,           // matrix to convert to non-hypersparse
@@ -55,8 +59,6 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
     bool Aj_is_32 = A->j_is_32 ;
     size_t psize = Ap_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
-    // FIXME: if A->nvec_nonempty == n, just free A->h and A-Y
-
     if (n == 1)
     { 
 
@@ -79,19 +81,21 @@ GrB_Info GB_convert_hyper_to_sparse // convert hypersparse to sparse
         }
         A->nvec_nonempty = (anz > 0) ? 1 : 0 ;
 
-        // free A->h unless it is shallow
-        if (!A->h_shallow)
-        { 
-            GB_FREE_MEMORY (&(A->h), A->h_size) ;
-        }
-        A->h = NULL ;
-        A->h_size = 0 ;
-        A->h_shallow = false ;
-        GB_hyper_hash_free (A) ;
+        GB_hy_free (A) ;
+
+    }
+    else if (A->nvec == A->plen && A->plen == A->vdim)
+    { 
+
+        //----------------------------------------------------------------------
+        // all entries are present in A->h, so just free it, and A->Y if present
+        //----------------------------------------------------------------------
+
+        GB_hy_free (A) ;
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // determine the number of threads to use

@@ -672,7 +672,10 @@ for (as many times as you like)
     void *x = NULL ;
     uint64_t nvals = 0, nheld = 0 ;
     GrB_Type xtype = NULL ;
-    GxB_Vector_unload (Container->x, &x, &xtype, &nheld, desc) ;
+    int x_handling, p_handling, h_handling, i_handling, b_handling ;
+    uint64_t x_size, p_size, h_size, i_size, b_size ;
+    GxB_Vector_unload (Container->x, &x, &xtype, &nheld, &x_size, &x_handling,
+        desc) ;
 
     // The C array x now has size nheld and contains the values of the original
     // GrB_Matrix A, with type xtype being the original type of the matrix A.
@@ -689,13 +692,17 @@ for (as many times as you like)
         case GxB_HYPERSPARSE :
             // The Container->Y matrix can be unloaded here as well,
             // if desired.  Its use is optional.
-            GxB_Vector_unload (Container->h, &h, &htype, &plen, desc) ;
+            GxB_Vector_unload (Container->h, &h, &htype, &plen, &h_size,
+                &h_handling, desc) ;
         case GxB_SPARSE :
-            GxB_Vector_unload (Container->p, &p, &ptype, &plen1, desc) ;
-            GxB_Vector_unload (Container->i, &i, &itype, &nvals, desc) ;
+            GxB_Vector_unload (Container->p, &p, &ptype, &plen1, &p_size,
+                &p_handling, desc) ;
+            GxB_Vector_unload (Container->i, &i, &itype, &nvals, &i_size,
+                &i_handling, desc) ;
             break ;
         case GxB_BITMAP :
-            GxB_Vector_unload (Container->b, &b, &btype, &nheld, desc) ;
+            GxB_Vector_unload (Container->b, &b, &btype, &nheld, &b_size,
+                &b_handling, desc) ;
             break ;
     }
 
@@ -711,16 +718,21 @@ for (as many times as you like)
         case GxB_HYPERSPARSE :
             // The Container->Y matrix can be loaded here as well,
             // if desired.  Its use is optional.
-            GxB_Vector_load (Container->h, &h, htype, plen, desc) ;
+            GxB_Vector_load (Container->h, &h, htype, plen, h_size,
+                h_handling, desc) ;
         case GxB_SPARSE :
-            GxB_Vector_load (Container->p, &p, ptype, plen1, desc) ;
-            GxB_Vector_load (Container->i, &i, itype, nvals, desc) ;
+            GxB_Vector_load (Container->p, &p, ptype, plen1, p_size,
+                p_handling, desc) ;
+            GxB_Vector_load (Container->i, &i, itype, nvals, i_size,
+                i_handling, desc) ;
             break ;
         case GxB_BITMAP :
-            GxB_Vector_load (Container->b, &b, btype, nheld, desc) ;
+            GxB_Vector_load (Container->b, &b, btype, nheld, b_size,
+                b_handling, desc) ;
             break ;
     }
-    GxB_Vector_load (Container->x, &x, xtype, nheld, desc) ;
+    GxB_Vector_load (Container->x, &x, xtype, nheld, x_size,
+        x_handling, desc) ;
 
     // Now the C arrays p, h, i, b, and x are all NULL.  They are in the
     // Container->p,h,b,i,x GrB_Vectors.  Load A from the non-opaque Container:
