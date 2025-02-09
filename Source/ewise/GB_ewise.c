@@ -398,12 +398,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // T<any mask> = A.*B
         //----------------------------------------------------------------------
 
-        // T can be returned with shallow components derived from its inputs A1
-        // and/or B1.  In particular, if T is hypersparse, T->h may be a
+        // T can be returned with shallow components derived from its inputs
+        // A1, B1, and/or M1.  For example, if T is hypersparse, T->h may be a
         // shallow copy of A1->h, B1->h, or M1->h.  T is hypersparse if any
-        // matrix A1, B1, or M1 are hypersparse.  Internally, T->h always
-        // starts as a shallow copy of A1->h, B1->h, or M1->h, but it may be
-        // pruned by GB_hyper_prune, and thus no longer shallow.
+        // matrix A1, B1, or M1 are hypersparse.
 
         GB_OK (GB_emult (T, T_type, T_is_csc, M1, Mask_struct, Mask_comp,
             &mask_applied, A1, B1, op, flipij, Werk)) ;
@@ -412,7 +410,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // transplant shallow content from AT, BT, or MT
         //----------------------------------------------------------------------
 
-        // If T is hypersparse, T->h is always a shallow copy of A1->h, B1->h,
+        // If T is hypersparse, T->h can be a shallow copy of A1->h, B1->h,
         // or M1->h.  Any of the three matrices A1, B1, or M1 may be temporary
         // transposes, AT, BT, and MT respectively.  If T->h is a shallow cpoy
         // of a temporary matrix, then change the ownership of the T->h array,
@@ -467,6 +465,18 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
                 (T->h == A1->h || T->h == B1->h ||
                  (M1 != NULL && T->h == M1->h)))) ;
         }
+
+        #if 0
+        if (T->p_shallow)
+        { 
+            TODO: transfer from AT or BT
+        }
+
+        if (T->i_shallow)
+        { 
+            TODO: transfer from AT or BT
+        }
+        #endif
     }
 
     //--------------------------------------------------------------------------

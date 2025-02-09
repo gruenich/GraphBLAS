@@ -57,7 +57,7 @@ GrB_Info GB_hyper_prune
     #endif
 
     //--------------------------------------------------------------------------
-    // prune empty vectors must be pruned
+    // prune empty vectors
     //--------------------------------------------------------------------------
 
     GB_Ap_DECLARE (Ap_old, const) ; GB_Ap_PTR (Ap_old, A) ;

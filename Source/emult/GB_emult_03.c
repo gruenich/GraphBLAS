@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // C = A.*B where B is sparse/hyper and A is bitmap/full constructs C with
-// the same sparsity structure as B.
+// the same sparsity structure as B.  GB_emult_03 is a mirror of GB_emult_02.
 
 // When no mask is present, or the mask is applied later, this method handles
 // the following cases:
@@ -76,7 +76,9 @@
 
 GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
 (
+    // input/output:
     GrB_Matrix C,           // output matrix, static header
+    // input:
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL
@@ -163,19 +165,6 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     bool C_iso = GB_emult_iso (cscalar, ctype, A, B, op) ;
 
     //--------------------------------------------------------------------------
-    // allocate C->p and C->h
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_new (&C, // sparse or hyper (same as B), existing header
-        ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, B->hyper_switch, nvec,
-        B->p_is_32, B->j_is_32, B->i_is_32)) ;
-
-    ASSERT (C->p_is_32 == B->p_is_32) ;
-    ASSERT (C->j_is_32 == B->j_is_32) ;
-    ASSERT (C->i_is_32 == B->i_is_32) ;
-
-    //--------------------------------------------------------------------------
     // slice the input matrix B
     //--------------------------------------------------------------------------
 
@@ -200,11 +189,13 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     uint64_t *restrict Cp_kfirst = Work + B_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
-    // phase1: count entries in C and allocate C->i and C->x
+    // phase1: count entries in C and allocate C
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_emult_02_phase1 (C, C_iso, M, Mask_struct, Mask_comp, B, A,
-        B_ek_slicing, B_ntasks, B_nthreads, Wfirst, Wlast, Cp_kfirst, Werk)) ;
+    GB_OK (GB_emult_02_phase1 (C, ctype, C_is_csc, C_iso,
+        M, Mask_struct, Mask_comp,
+        B, A, B_ek_slicing, B_ntasks, B_nthreads,
+        Wfirst, Wlast, Cp_kfirst, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get the opcode for phase2
@@ -277,8 +268,8 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
             #define GB_BINOP_WORKER(mult,xname)                         \
             {                                                           \
                 info = GB_AemultB_03(mult,xname) (C,                    \
-                    M, Mask_struct, Mask_comp, A, B,                    \
-                    Cp_kfirst, B_ek_slicing, B_ntasks, B_nthreads) ;    \
+                    M, Mask_struct, Mask_comp, A, B, Cp_kfirst,         \
+                    B_ek_slicing, B_ntasks, B_nthreads) ;               \
             }                                                           \
             break ;
 
@@ -306,8 +297,8 @@ GrB_Info GB_emult_03        // C=A.*B when A bitmap/full, B is sparse/hyper
     if (info == GrB_NO_VALUE)
     { 
         info = GB_emult_03_jit (C, C_sparsity, M, Mask_struct,
-            Mask_comp, op, flipij, A, B, Cp_kfirst, B_ek_slicing, B_ntasks,
-            B_nthreads) ;
+            Mask_comp, op, flipij, A, B, Cp_kfirst,
+            B_ek_slicing, B_ntasks, B_nthreads) ;
     }
 
     //--------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // C = A.*B where A is sparse/hyper and B is bitmap/full constructs C with
-// the same sparsity structure as A.
+// the same sparsity structure as A.  GB_emult_02 is a mirror of GB_emult_03.
 
 // When no mask is present, or the mask is applied later, this method handles
 // the following cases:
@@ -76,7 +76,9 @@
 
 GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
 (
+    // input/output:
     GrB_Matrix C,           // output matrix, static header
+    // input:
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL
@@ -141,7 +143,7 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int8_t  *restrict Mb = (M == NULL) ? NULL : M->b ;
+    const int8_t *restrict Mb = (M == NULL) ? NULL : M->b ;
     const GB_M_TYPE *restrict Mx = (M == NULL || Mask_struct) ? NULL :
         (const GB_M_TYPE *) M->x ;
     const size_t msize = (M == NULL) ? 0 : M->type->size ;
@@ -161,19 +163,6 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     const size_t csize = ctype->size ;
     GB_void cscalar [GB_VLA(csize)] ;
     bool C_iso = GB_emult_iso (cscalar, ctype, A, B, op) ;
-
-    //--------------------------------------------------------------------------
-    // allocate C->p and C->h
-    //--------------------------------------------------------------------------
-
-    GB_OK (GB_new (&C, // sparse or hyper (same as A), existing header
-        ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, A->hyper_switch, nvec,
-        A->p_is_32, A->j_is_32, A->i_is_32)) ;
-
-    ASSERT (C->p_is_32 == A->p_is_32) ;
-    ASSERT (C->j_is_32 == A->j_is_32) ;
-    ASSERT (C->i_is_32 == A->i_is_32) ;
 
     //--------------------------------------------------------------------------
     // slice the input matrix A
@@ -200,11 +189,13 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     uint64_t *restrict Cp_kfirst = Work + A_ntasks * 2 ;
 
     //--------------------------------------------------------------------------
-    // phase1: count entries in C and allocate C->i and C->x
+    // phase1: count entries in C and allocate C
     //--------------------------------------------------------------------------
 
-    GB_OK (GB_emult_02_phase1 (C, C_iso, M, Mask_struct, Mask_comp, A, B,
-        A_ek_slicing, A_ntasks, A_nthreads, Wfirst, Wlast, Cp_kfirst, Werk)) ;
+    GB_OK (GB_emult_02_phase1 (C, ctype, C_is_csc, C_iso,
+        M, Mask_struct, Mask_comp,
+        A, B, A_ek_slicing, A_ntasks, A_nthreads,
+        Wfirst, Wlast, Cp_kfirst, Werk)) ;
 
     //--------------------------------------------------------------------------
     // get the opcode for phase2
@@ -277,8 +268,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
             #define GB_BINOP_WORKER(mult,xname)                         \
             {                                                           \
                 info = GB_AemultB_02(mult,xname) (C,                    \
-                    M, Mask_struct, Mask_comp, A, B,                    \
-                    Cp_kfirst, A_ek_slicing, A_ntasks, A_nthreads) ;    \
+                    M, Mask_struct, Mask_comp, A, B, Cp_kfirst,         \
+                    A_ek_slicing, A_ntasks, A_nthreads) ;               \
             }                                                           \
             break ;
 
@@ -305,8 +296,8 @@ GrB_Info GB_emult_02        // C=A.*B when A is sparse/hyper, B bitmap/full
     if (info == GrB_NO_VALUE)
     { 
         info = GB_emult_02_jit (C, C_sparsity, M, Mask_struct,
-            Mask_comp, op, flipij, A, B, Cp_kfirst, A_ek_slicing, A_ntasks,
-            A_nthreads) ;
+            Mask_comp, op, flipij, A, B, Cp_kfirst,
+            A_ek_slicing, A_ntasks, A_nthreads) ;
     }
 
     //--------------------------------------------------------------------------
