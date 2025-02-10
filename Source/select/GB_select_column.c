@@ -366,7 +366,7 @@ GrB_Info GB_select_column
     C->magic = GB_MAGIC ;
     C->jumbled = A_jumbled ;    // C is jumbled if A is jumbled
     C->nvals = GB_IGET (Cp, cnvec) ;
-    C->nvec_nonempty = GB_nvec_nonempty (C) ;
+    GB_nvec_nonempty_set (C, GB_nvec_nonempty (C)) ;
     ASSERT_MATRIX_OK (C, "C output for GB_select_column", GB0) ;
     return (GrB_SUCCESS) ;
 }

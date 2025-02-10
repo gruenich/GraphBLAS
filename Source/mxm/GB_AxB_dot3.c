@@ -231,7 +231,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 //      GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
         GB_cast_int (Ch, cjcode, M->h, mjcode, cnvec, nthreads) ;
     }
-    C->nvec_nonempty = M->nvec_nonempty ;
+//  C->nvec_nonempty = M->nvec_nonempty ;
+    GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (M)) ;
     C->nvec = M->nvec ;
     C->nvals = M->nvals ;
     C->magic = GB_MAGIC ;

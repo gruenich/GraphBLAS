@@ -42,18 +42,15 @@ GrB_Info GB_hyper_prune
     // count # of empty vectors and check if pruning is needed
     //--------------------------------------------------------------------------
 
-    if (A->nvec_nonempty < 0)
-    { 
-        // A->nvec_nonempty is needed to prune the hyperlist
-        A->nvec_nonempty = GB_nvec_nonempty (A) ;
-    }
-    if (A->nvec_nonempty == A->nvec)
+    // A->nvec_nonempty is needed to prune the hyperlist
+    int64_t nvec_nonempty = GB_nvec_nonempty_update (A) ;
+    if (nvec_nonempty == A->nvec)
     { 
         // nothing to prune
         return (GrB_SUCCESS) ;
     }
     #ifdef GB_DEBUG
-    int64_t nvec_save = A->nvec_nonempty ;
+    int64_t nvec_save = nvec_nonempty ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -168,7 +165,7 @@ GrB_Info GB_hyper_prune
     A->nvec = nvec_new ;
     A->plen = plen_new ;
     ASSERT (nvec_new == nvec_save) ;
-    A->nvec_nonempty = nvec_new ;
+    GB_nvec_nonempty_set (A, nvec_new) ;
     A->nvals = nvals ;
     A->magic = GB_MAGIC ;
 

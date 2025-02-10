@@ -51,8 +51,11 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     A->vlen = (A->is_csc) ? nrows : ncols ;
     A->vdim = (A->is_csc) ? ncols : nrows ;
 
-    A->nvec_nonempty = (A->is_csc) ?
-        Container->ncols_nonempty : Container->nrows_nonempty ;
+//  A->nvec_nonempty = (A->is_csc) ?
+//      Container->ncols_nonempty : Container->nrows_nonempty ;
+    GB_nvec_nonempty_set (A, (A->is_csc) ?
+        Container->ncols_nonempty : Container->nrows_nonempty) ;
+
     A->iso = Container->iso ;
     A->jumbled = false ;
     uint64_t plen1 = 0, plen, Ab_len = 0, Ax_len = 0, Ai_len = 0 ;

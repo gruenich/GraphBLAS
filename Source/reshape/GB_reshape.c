@@ -198,7 +198,8 @@ GrB_Info GB_reshape         // reshape a GrB_Matrix into another GrB_Matrix
         C->vlen = vlen_new ;
         C->vdim = vdim_new ;
         C->nvec = vdim_new ;
-        C->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
+//      C->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
+        GB_nvec_nonempty_set (C, (vlen_new == 0) ? 0 : vdim_new) ;
 
     }
     else

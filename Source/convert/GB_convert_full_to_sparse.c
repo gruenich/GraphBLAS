@@ -65,7 +65,8 @@ GrB_Info GB_convert_full_to_sparse      // convert matrix from full to sparse
     A->i_is_32 = Ai_is_32 ;
     A->plen = avdim ;
     A->nvec = avdim ;
-    A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
+//  A->nvec_nonempty = (avlen == 0) ? 0 : avdim ;
+    GB_nvec_nonempty_set (A, (avlen == 0) ? 0 : avdim) ;
     A->nvals = anz ;
 
     //--------------------------------------------------------------------------

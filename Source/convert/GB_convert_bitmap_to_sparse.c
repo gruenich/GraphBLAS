@@ -116,7 +116,8 @@ GrB_Info GB_convert_bitmap_to_sparse    // convert matrix from bitmap to sparse
     A->nvals = anvals ;
     A->plen = avdim ;
     A->nvec = avdim ;
-    A->nvec_nonempty = cnvec_nonempty ;
+//  A->nvec_nonempty = cnvec_nonempty ;
+    GB_nvec_nonempty_set (A, cnvec_nonempty) ;
     A->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

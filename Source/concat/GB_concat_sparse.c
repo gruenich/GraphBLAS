@@ -246,9 +246,11 @@ GrB_Info GB_concat_sparse           // concatenate into a sparse matrix
         GB_ISET (Cp, k, s) ;    // Cp [k] = s ;
     }
 
-    GB_cumsum (Cp, Cp_is_32, cvdim, &(C->nvec_nonempty), nthreads_max, Werk) ;
+    int64_t C_nvec_nonempty ;
+    GB_cumsum (Cp, Cp_is_32, cvdim, &C_nvec_nonempty, nthreads_max, Werk) ;
     ASSERT (cnz == GB_IGET (Cp, cvdim)) ;
     C->nvals = cnz ;
+    GB_nvec_nonempty_set (C, C_nvec_nonempty) ;
 
     #pragma omp parallel for num_threads(nth) schedule(static)
     for (k = 0 ; k < cvdim ; k++)

@@ -119,7 +119,6 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     //--------------------------------------------------------------------------
 
     GB_OK (GB_wait (A, "A to serialize", Werk)) ;
-    ASSERT (A->nvec_nonempty >= 0) ;
 
     // the matrix has no pending work
     ASSERT (!GB_PENDING (A)) ;
@@ -155,7 +154,8 @@ GrB_Info GB_serialize               // serialize a matrix into a blob
     int64_t vdim = A->vdim ;
     int64_t nvec = A->nvec ;
     int64_t nvals = A->nvals ;
-    int64_t nvec_nonempty = A->nvec_nonempty ;
+    int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
+    ASSERT (nvec_nonempty >= 0) ;
     int32_t sparsity = GB_sparsity (A) ;
     bool iso = A->iso ;
     float hyper_switch = A->hyper_switch ;

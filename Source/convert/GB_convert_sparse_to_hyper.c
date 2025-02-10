@@ -98,7 +98,8 @@ GrB_Info GB_convert_sparse_to_hyper // convert from sparse to hypersparse
 
         GB_cumsum1_64 ((uint64_t *) Count, ntasks) ;
         int64_t nvec_nonempty = Count [ntasks] ;
-        A->nvec_nonempty = nvec_nonempty ;
+//      A->nvec_nonempty = nvec_nonempty ;
+        GB_nvec_nonempty_set (A, nvec_nonempty) ;
 
         //----------------------------------------------------------------------
         // allocate the new A->p and A->h

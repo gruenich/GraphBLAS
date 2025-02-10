@@ -60,7 +60,8 @@ GrB_Info GB_concat_bitmap           // concatenate into a bitmap matrix
             C_iso)) ;
         C->plen = -1 ;
         C->nvec = cvdim ;
-        C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
+//      C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
+        GB_nvec_nonempty_set (C, (cvlen > 0) ? cvdim : 0) ;
     }
     ASSERT (GB_IS_BITMAP (C)) ;
     ASSERT (C->iso == C_iso) ;

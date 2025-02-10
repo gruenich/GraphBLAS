@@ -28,10 +28,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     ASSERT (!GB_ZOMBIES (A)) ;      // zombies must be killed first
     ASSERT (GB_PENDING_OK (A)) ;    // pending tuples are not modified
 
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A) ;
-    }
+    GB_nvec_nonempty_update (A) ;
 
     if (!A->jumbled)
     { 
@@ -209,7 +206,7 @@ GrB_Info GB_unjumble        // unjumble a matrix
     { 
         A->jumbled = false ;        // A has been unjumbled
         ASSERT_MATRIX_OK (A, "A unjumbled", GB0) ;
-        ASSERT (A->nvec_nonempty >= 0)
+        ASSERT (GB_nvec_nonempty_get (A) >= 0)
     }
     return (info) ;
 }

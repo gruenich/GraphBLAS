@@ -771,7 +771,8 @@ GrB_Info GB_sort
     {
         P->is_csc = C->is_csc ;
         P->nvec = C->nvec ;
-        P->nvec_nonempty = C->nvec_nonempty ;
+//      P->nvec_nonempty = C->nvec_nonempty ;
+        GB_nvec_nonempty_set (P, GB_nvec_nonempty_get (C)) ;
         P->iso = false ;
         P->vlen = C->vlen ;
         P->vdim = C->vdim ;

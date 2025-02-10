@@ -132,7 +132,9 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     // array by itself, starting with 32-bit and switching to 64-bit.
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    bool ok = GB_cumsum (Cp, Cp_is_32, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+    int64_t nvec_nonempty ;
+    bool ok = GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nth, Werk) ;
+    GB_nvec_nonempty_set (C, nvec_nonempty) ;
 
     if (!ok)
     { 
@@ -153,7 +155,8 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
         C->p_size = Cp_new_size ;
         C->p_is_32 = false ;
         // redo the cumsum
-        GB_cumsum (C->p, false, cnvec, &(C->nvec_nonempty), nth, Werk) ;
+        GB_cumsum (C->p, false, cnvec, &nvec_nonempty, nth, Werk) ;
+        GB_nvec_nonempty_set (C, nvec_nonempty) ;
     }
 
     //--------------------------------------------------------------------------

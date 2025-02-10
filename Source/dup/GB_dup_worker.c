@@ -55,7 +55,7 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     int64_t anz = GB_nnz_held (A) ;
     int64_t anvec = A->nvec ;
     int64_t anvals = A->nvals ;
-    int64_t anvec_nonempty = A->nvec_nonempty ;
+    int64_t anvec_nonempty = GB_nvec_nonempty_update (A) ;
     int64_t A_nzombies = A->nzombies ;
     bool A_jumbled = A->jumbled ;
     int sparsity_control = A->sparsity_control ;
@@ -99,7 +99,8 @@ GrB_Info GB_dup_worker      // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     C->nvec = anvec ;
-    C->nvec_nonempty = anvec_nonempty ;
+//  C->nvec_nonempty = anvec_nonempty ;
+    GB_nvec_nonempty_set (C, anvec_nonempty) ;
     C->nvals = anvals ;
     C->jumbled = A_jumbled ;        // C is jumbled if A is jumbled
     C->nzombies = A_nzombies ;      // zombies can be duplicated

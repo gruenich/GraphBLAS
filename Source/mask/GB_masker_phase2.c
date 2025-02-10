@@ -170,7 +170,8 @@ GrB_Info GB_masker_phase2           // phase2 for R = masker (C,M,Z)
     // add Rp as the vector pointers for R, from GB_masker_phase1
     if (R_is_sparse_or_hyper)
     { 
-        R->nvec_nonempty = Rnvec_nonempty ;
+//      R->nvec_nonempty = Rnvec_nonempty ;
+        GB_nvec_nonempty_set (R, Rnvec_nonempty) ;
         R->p = Rp ; R->p_size = Rp_size ;
         R->nvals = rnz ;
         (*Rp_handle) = NULL ;

@@ -76,7 +76,8 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->h_size = A->h_size ;
     C->plen = A->plen ;                 // C and A have the same hyperlist size
     C->nvec = A->nvec ;
-    C->nvec_nonempty = A->nvec_nonempty ;
+//  C->nvec_nonempty = A->nvec_nonempty ;
+    GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (A)) ;
     C->jumbled = A->jumbled ;           // C is jumbled if A is jumbled
     C->nvals = A->nvals ;
     C->magic = GB_MAGIC ;

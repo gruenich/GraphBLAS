@@ -215,7 +215,9 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     //--------------------------------------------------------------------------
 
     GB_ek_slice_merge1 (Cp, Cp_is_32, Wfirst, Wlast, M_ek_slicing, M_ntasks) ;
-    GB_cumsum (Cp, Cp_is_32, nvec, &(C->nvec_nonempty), M_nthreads, Werk) ;
+    int64_t nvec_nonempty ;
+    GB_cumsum (Cp, Cp_is_32, nvec, &nvec_nonempty, M_nthreads, Werk) ;
+    GB_nvec_nonempty_set (C, nvec_nonempty) ;
     GB_ek_slice_merge2 (Cp_kfirst, Cp, Cp_is_32,
         Wfirst, Wlast, M_ek_slicing, M_ntasks) ;
 

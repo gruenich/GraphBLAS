@@ -61,7 +61,8 @@ GrB_Matrix GB_hyper_shallow         // return C
     // C reduces in dimension to the # of vectors in A
     C->vdim = C->nvec ;
     C->plen = C->nvec ;
-    C->nvec_nonempty = C->nvec ;
+//  C->nvec_nonempty = C->nvec ;
+    GB_nvec_nonempty_set (C, C->nvec) ;
 
     //--------------------------------------------------------------------------
     // return result

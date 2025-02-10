@@ -176,7 +176,8 @@ GrB_Info GB_deserialize             // deserialize a matrix from a blob
         sparsity, hyper_switch, nvec, Cp_is_32, Cj_is_32, Ci_is_32)) ;
 
     C->nvec = nvec ;
-    C->nvec_nonempty = nvec_nonempty ;
+//  C->nvec_nonempty = nvec_nonempty ;
+    GB_nvec_nonempty_set (C, nvec_nonempty) ;
     C->nvals = nvals ;      // revised below if version <= 7.2.0
     C->bitmap_switch = bitmap_switch ;
     C->sparsity_control = sparsity_control ;

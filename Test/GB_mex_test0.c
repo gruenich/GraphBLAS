@@ -4382,10 +4382,7 @@ void mexFunction
 
     // make sure A->nvec_nonempty is valid
     CHECK (GB_IS_HYPERSPARSE (A)) ;
-    if (A->nvec_nonempty < 0)
-    {
-        A->nvec_nonempty = GB_nvec_nonempty (A) ;
-    }
+    GB_nvec_nonempty_update (A) ;
 
     // now make invalid.  GB_Matrix_check requires it to be -1, or correct value
     CHECK (GB_IS_HYPERSPARSE (A)) ;

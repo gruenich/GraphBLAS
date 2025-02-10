@@ -214,7 +214,8 @@ GrB_Info GB_Matrix_diag     // build a diagonal matrix from a vector
     GB_ISET (Cp, vnz, vnz) ;    // Cp [vnz] = vnz ;
     C->nvals = vnz ;
     C->nvec = vnz ;
-    C->nvec_nonempty = vnz ;
+//  C->nvec_nonempty = vnz ;
+    GB_nvec_nonempty_set (C, vnz) ;
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

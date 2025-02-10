@@ -322,24 +322,17 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
         else if (A_is_full && B_is_sparse)
         {
             // C = A*B or A'*B, where A is full and B sparse
-            if (B->nvec_nonempty < 0)
-            { 
-                B->nvec_nonempty = GB_nvec_nonempty (B) ;
-            }
+            int64_t B_nvec_nonempty = GB_nvec_nonempty_update (B) ;
             // C is full if all vectors of B are present
-            C_sparsity = (B->nvec_nonempty == B->vdim) ?
+            C_sparsity = (B_nvec_nonempty == B->vdim) ?
                 GxB_FULL : GxB_BITMAP ;
         }
         else if (A_is_sparse && B_is_full)
         {
             // C = A'*B, where A is sparse and B is full
-            if (A->nvec_nonempty < 0)
-            { 
-                // A->nvec_nonempty is used to select the method 
-                A->nvec_nonempty = GB_nvec_nonempty (A) ;
-            }
+            int64_t A_nvec_nonempty = GB_nvec_nonempty_update (A) ;
             // C is full if all vectors of A are present
-            C_sparsity = (A->nvec_nonempty == A->vdim) ?
+            C_sparsity = (A_nvec_nonempty == A->vdim) ?
                 GxB_FULL : GxB_BITMAP ;
         }
     }
@@ -529,7 +522,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<#M>=A'*B, dot product method
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_JUMBLED (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    ASSERT (C->nvec_nonempty >= 0) ;
+    ASSERT (GB_nvec_nonempty_get (C) >= 0) ;
     return (GrB_SUCCESS) ;
 }
 

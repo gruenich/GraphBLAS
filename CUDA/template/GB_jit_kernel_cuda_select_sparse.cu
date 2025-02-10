@@ -351,7 +351,7 @@ GB_JIT_CUDA_KERNEL_SELECT_SPARSE_PROTO (GB_jit_kernel)
     // Allocate Cp, Ch, finalize matrix 
     C->plen = cnvec ;
     C->nvec = cnvec ;
-    C->nvec_nonempty = cnvec ;
+    C->nvec_nonempty = cnvec ;  // FIXME
     C->nvals = cnz ;
     C->p = GB_MALLOC_MEMORY (C->plen + 1, sizeof (GB_Cp_TYPE), &(C->p_size)) ;
     C->h = GB_MALLOC_MEMORY (C->plen, sizeof (GB_Cj_TYPE), &(C->h_size)) ;

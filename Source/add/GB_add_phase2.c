@@ -278,7 +278,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // add Cp as the vector pointers for C, from GB_add_phase1
     if (C_is_sparse_or_hyper)
     { 
-        C->nvec_nonempty = Cnvec_nonempty ;
+//      C->nvec_nonempty = Cnvec_nonempty ;
+        GB_nvec_nonempty_set (C, Cnvec_nonempty) ;
         C->p = Cp ; C->p_size = Cp_size ;
         (*Cp_handle) = NULL ;
         C->nvals = cnz ;

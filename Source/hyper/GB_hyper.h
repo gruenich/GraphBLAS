@@ -15,6 +15,53 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     const GrB_Matrix A          // input matrix to examine
 ) ;
 
+static inline int64_t GB_nvec_nonempty_get
+(
+    GrB_Matrix A
+)
+{
+    int64_t nvec_nonempty = 0 ;
+    if (A != NULL)
+    { 
+        GB_ATOMIC_READ
+        nvec_nonempty = A->nvec_nonempty ;
+    }
+    return (nvec_nonempty) ;
+}
+
+static inline void GB_nvec_nonempty_set
+(
+    GrB_Matrix A,
+    int64_t nvec_nonempty
+)
+{
+    if (A != NULL)
+    { 
+        GB_ATOMIC_WRITE
+        A->nvec_nonempty = nvec_nonempty ;
+    }
+}
+
+static inline int64_t GB_nvec_nonempty_update
+(
+    GrB_Matrix A
+)
+{
+    int64_t nvec_nonempty = 0 ;
+    if (A != NULL)
+    {
+        // get the current value of A->nvec_nonempty
+        nvec_nonempty = GB_nvec_nonempty_get (A) ;
+        if (nvec_nonempty < 0)
+        { 
+            // compute A->nvec_nonempty and then update it atomically
+            nvec_nonempty = GB_nvec_nonempty (A) ;
+            GB_nvec_nonempty_set (A, nvec_nonempty) ;
+        }
+    }
+    return (nvec_nonempty) ;
+}
+
 GrB_Info GB_hyper_realloc
 (
     GrB_Matrix A,               // matrix with hyperlist to reallocate

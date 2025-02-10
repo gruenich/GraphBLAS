@@ -1020,7 +1020,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     }
 
     // log the end of the last vector
-    T->nvec_nonempty = tnvec ;
+//  T->nvec_nonempty = tnvec ;
+    GB_nvec_nonempty_set (T, tnvec) ;
     T->nvec = tnvec ;
     GB_ISET (Tp, tnvec, tnz) ;  // Tp [tnvec] = tnz ;
     T->nvals = tnz ;

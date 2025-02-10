@@ -194,7 +194,8 @@ GrB_Info GB_bitmap_expand_to_hyper
     C->nvals = cnz ;
     C->nvec = cvdim ;
     C->plen = cvdim ;
-    C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
+//  C->nvec_nonempty = (cvlen == 0) ? 0 : cvdim ;
+    GB_nvec_nonempty_set (C, (cvlen == 0) ? 0 : cvdim) ;
     C->p_is_32 = Cp_is_32 ;
     C->j_is_32 = Cj_is_32 ;
     C->i_is_32 = Ci_is_32 ;

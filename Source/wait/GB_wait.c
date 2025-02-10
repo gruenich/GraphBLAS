@@ -66,13 +66,15 @@ GrB_Info GB_wait                // finish all pending computations
 
     ASSERT_MATRIX_OK (A, "A to wait", GB0_Z) ;
 
+    int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
+
     if (GB_IS_FULL (A) || GB_IS_BITMAP (A))
     { 
         // full and bitmap matrices never have any pending work
         ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT (!GB_JUMBLED (A)) ;
         ASSERT (!GB_PENDING (A)) ;
-        ASSERT (A->nvec_nonempty >= 0) ;
+        ASSERT (nvec_nonempty >= 0) ;
         // ensure the matrix is written to memory
         #pragma omp flush
         return (GrB_SUCCESS) ;
@@ -91,13 +93,13 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t nzombies = A->nzombies ;
     int64_t npending = GB_Pending_n (A) ;
     const bool A_iso = A->iso ;
-    if (nzombies > 0 || npending > 0 || A->jumbled || A->nvec_nonempty < 0)
+    if (nzombies > 0 || npending > 0 || A->jumbled || nvec_nonempty < 0)
     { 
         GB_BURBLE_MATRIX (A, "(%swait:%s " GBd " %s, " GBd " pending%s%s) ",
             A_iso ? "iso " : "", name, nzombies,
             (nzombies == 1) ? "zombie" : "zombies", npending,
             A->jumbled ? ", jumbled" : "",
-            A->nvec_nonempty < 0 ? ", nvec" : "") ;
+            nvec_nonempty < 0 ? ", nvec" : "") ;
     }
 
     //--------------------------------------------------------------------------
@@ -114,10 +116,7 @@ GrB_Info GB_wait                // finish all pending computations
     if (npending == 0 && nzombies == 0 && !A->jumbled)
     { 
         // A->Y is not modified.  If not NULL, it remains valid
-        if (A->nvec_nonempty < 0)
-        {
-            A->nvec_nonempty = GB_nvec_nonempty (A) ;
-        }
+        GB_nvec_nonempty_update (A) ;
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -135,7 +134,7 @@ GrB_Info GB_wait                // finish all pending computations
         // present, it remains valid.
         GB_RETURN_IF_OUTPUT_IS_READONLY (A) ;
         GB_OK (GB_unjumble (A, Werk)) ;
-        ASSERT (A->nvec_nonempty >= 0) ;
+        ASSERT (GB_nvec_nonempty_get (A) >= 0) ;
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -282,7 +281,7 @@ GrB_Info GB_wait                // finish all pending computations
     { 
         // conform A to its desired sparsity structure and return result
         GB_OK (GB_conform (A, Werk)) ;
-        ASSERT (A->nvec_nonempty >= 0) ;
+        ASSERT (GB_nvec_nonempty_get (A) >= 0) ;
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -297,7 +296,7 @@ GrB_Info GB_wait                // finish all pending computations
         // A has no entries so just transplant T into A, then free T and
         // conform A to its desired hypersparsity.
         GB_OK (GB_transplant_conform (A, A->type, &T, Werk)) ;
-        ASSERT (A->nvec_nonempty >= 0) ;
+        ASSERT (GB_nvec_nonempty_get (A) >= 0) ;
         #pragma omp flush
         return (GrB_SUCCESS) ;
     }
@@ -423,7 +422,7 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_OK (GB_transplant_conform (A, A->type, &S, Werk)) ;
-    ASSERT (A->nvec_nonempty >= 0) ;
+    ASSERT (GB_nvec_nonempty_get (A) >= 0) ;
 
     //--------------------------------------------------------------------------
     // restore the A->Y hyper_hash, if A is still hypersparse

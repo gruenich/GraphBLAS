@@ -1461,6 +1461,7 @@ typedef enum    // GxB_Option_Field ;
     GxB_SPARSITY_STATUS = 7034,     // hyper, sparse, bitmap or full (1,2,4,8)
     GxB_IS_HYPER = 7035,            // Historical; use GxB_SPARSITY_STATUS
     GxB_IS_READONLY = 7078,         // true if it has any readonly components
+    GxB_WILL_WAIT = 7076,           // true if GrB_wait(A) will do anything
 
     //------------------------------------------------------------
     // GrB_get for GrB_GLOBAL:

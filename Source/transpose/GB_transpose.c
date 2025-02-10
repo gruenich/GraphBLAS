@@ -457,7 +457,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // T->p = 0:anz and T->i = zeros (1,anz), newly allocated
         T->plen = tplen ;
         T->nvec = anz ;
-        T->nvec_nonempty = anz ;
+//      T->nvec_nonempty = anz ;
+        GB_nvec_nonempty_set (T, anz) ;
 
         GB_Ap_DECLARE (Tp, ) ; GB_Ap_PTR (Tp, T) ;
         GB_Ai_DECLARE (Ti, ) ; GB_Ai_PTR (Ti, T) ;
@@ -712,7 +713,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A' or C=op(A')
         // T->p = [0 anz]
         ASSERT (T->plen == 1) ;
         ASSERT (T->nvec == 1) ;
-        T->nvec_nonempty = (anz == 0) ? 0 : 1 ;
+//      T->nvec_nonempty = (anz == 0) ? 0 : 1 ;
+        GB_nvec_nonempty_set (T, (anz == 0) ? 0 : 1) ;
 
         GB_Ap_DECLARE (Tp, ) ; GB_Ap_PTR (Tp, T) ;
         // Tp [0] = 0 ;

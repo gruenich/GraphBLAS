@@ -228,7 +228,8 @@ GrB_Info GB_resize              // change the size of a matrix
         A->vdim = vdim_new ;
         A->vlen = vlen_new ;
         A->nvec = vdim_new ;
-        A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
+//      A->nvec_nonempty = (vlen_new == 0) ? 0 : vdim_new ;
+        GB_nvec_nonempty_set (A, (vlen_new == 0) ? 0 : vdim_new) ;
 
     }
     else
@@ -261,7 +262,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
             // number of vectors is decreasing, need to count the new number of
             // non-empty vectors: done during pruning or by selector, below.
-            A->nvec_nonempty = -1 ;     // recomputed just below
+            GB_nvec_nonempty_set (A, -1) ;     // recomputed just below
         }
 
         if (vdim_new < A->plen)

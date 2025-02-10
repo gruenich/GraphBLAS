@@ -47,10 +47,12 @@ GrB_Info GB_unload_into_container   // GrB_Matrix -> GxB_Container
     bool iso = A->iso ;
     bool is_csc = A->is_csc ;
 
+    int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
+
     Container->nrows = (is_csc) ? A->vlen : A->vdim ;
     Container->ncols = (is_csc) ? A->vdim : A->vlen ;
-    Container->nrows_nonempty = (is_csc) ? -1 : A->nvec_nonempty ;
-    Container->ncols_nonempty = (is_csc) ? A->nvec_nonempty : -1 ;
+    Container->nrows_nonempty = (is_csc) ? -1 : nvec_nonempty ;
+    Container->ncols_nonempty = (is_csc) ? nvec_nonempty : -1 ;
     Container->nvals = nvals ;
     Container->format = GB_sparsity (A) ;
     Container->orientation = (is_csc) ? GrB_COLMAJOR : GrB_ROWMAJOR ;
@@ -120,7 +122,8 @@ GrB_Info GB_unload_into_container   // GrB_Matrix -> GxB_Container
     A->plen = -1 ;
     A->vlen = 0 ;
     A->vdim = 0 ;
-    A->nvec_nonempty = 0 ;
+//  A->nvec_nonempty = 0 ;
+    GB_nvec_nonempty_set (A, 0) ;
     A->p_is_32 = false ;
     A->j_is_32 = false ;
     A->i_is_32 = false ;

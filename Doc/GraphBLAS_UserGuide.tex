@@ -107,7 +107,10 @@ NEW FOR v10:
                         // set true: make the matrix iso-valued, if possible.
                         // set false: make the matrix non-iso-valued.
 
-    GxB_INCLUDE_READONLY_STATISTICS
+    GxB_INCLUDE_READONLY_STATISTICS = 7077, // include readonly memory in
+                                     // memory usage statistics
+
+    GxB_WILL_WAIT = 7076,           // true if GrB_wait(A) will do anything
 
     // GrB_get/GrB_set for GrB_Descriptor:
     GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted

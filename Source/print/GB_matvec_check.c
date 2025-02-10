@@ -163,13 +163,16 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     GBPR0 ("\n") ;
 
+    int64_t nvec_nonempty = GB_nvec_nonempty_get (A) ;
+    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A) ;
+
     #if GB_DEVELOPER
     GBPR0 ("  max # entries: " GBd "\n", GB_nnz_max (A)) ;
     GBPR0 ("  vlen: " GBd , A->vlen) ;
     GBPR0 ("  vdim: " GBd "\n", A->vlen) ;
-    if (A->nvec_nonempty != -1)
+    if (nvec_nonempty != -1)
     {
-        GBPR0 ("  nvec_nonempty: " GBd , A->nvec_nonempty) ;
+        GBPR0 ("  nvec_nonempty: " GBd , nvec_nonempty) ;
     }
     GBPR0 (" nvec: " GBd " plen: " GBd "\n  hyper_switch %g "
         "bitmap_switch %g\n",
@@ -907,10 +910,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // when its computation is postponed or not needed.  If not -1, however,
     // the value must be correct.
 
-    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A) ;
-
-    if (! ((A->nvec_nonempty == actual_nvec_nonempty) ||
-           (A->nvec_nonempty == -1)))
+    if (! ((nvec_nonempty == actual_nvec_nonempty) || (nvec_nonempty == -1)))
     { 
         // invalid nvec_nonempty
         GBPR0 ("  invalid count of non-empty vectors\n") ;

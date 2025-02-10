@@ -188,7 +188,8 @@ GrB_Info GB_Vector_diag     // extract a diagonal from a matrix, as a vector
     //--------------------------------------------------------------------------
 
     V->jumbled = T->jumbled ;
-    V->nvec_nonempty = (vnz == 0) ? 0 : 1 ;
+//  V->nvec_nonempty = (vnz == 0) ? 0 : 1 ;
+    GB_nvec_nonempty_set (V, (vnz == 0) ? 0 : 1) ;
     V->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------

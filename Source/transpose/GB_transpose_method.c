@@ -26,7 +26,9 @@ bool GB_transpose_method        // if true: use GB_builder, false: use bucket
     //--------------------------------------------------------------------------
 
     // if available, A->nvec_nonempty is used to select the method
-    int64_t anvec = (A->nvec_nonempty < 0) ? A->nvec : A->nvec_nonempty ;
+    int64_t nvec_nonempty = GB_nvec_nonempty (A) ;
+    int64_t anvec = (nvec_nonempty < 0) ? A->nvec : nvec_nonempty ;
+
     int64_t anz = GB_nnz (A) ;
     int64_t avlen = A->vlen ;
 //  int64_t avdim = A->vdim ;

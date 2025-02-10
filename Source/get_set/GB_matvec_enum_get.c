@@ -83,6 +83,11 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
             (*value) = ((A->is_csc) ? A->i_is_32 : A->j_is_32) ? 32 : 64 ;
             break ;
 
+        case GxB_WILL_WAIT : 
+
+            (*value) = GB_ANY_PENDING_WORK (A) || GB_hyper_hash_need (A) ;
+            break ;
+
         default : 
             return (GrB_INVALID_VALUE) ;
     }

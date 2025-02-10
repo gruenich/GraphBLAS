@@ -85,7 +85,8 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // count entries in C
     //--------------------------------------------------------------------------
 
-    C->nvec_nonempty = A->nvec_nonempty ;
+//  C->nvec_nonempty = A->nvec_nonempty ;
+    GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (A)) ;
     C->nvec = nvec ;
     const bool C_has_pattern_of_A = !B_is_bitmap && (M == NULL) ;
 
@@ -197,7 +198,9 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
         GB_ek_slice_merge1 (Cp, Cp_is_32,
             Wfirst, Wlast, A_ek_slicing, A_ntasks) ;
 
-        GB_cumsum (Cp, Cp_is_32, nvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+        int64_t nvec_nonempty ;
+        GB_cumsum (Cp, Cp_is_32, nvec, &nvec_nonempty, A_nthreads, Werk) ;
+        GB_nvec_nonempty_set (C, nvec_nonempty) ;
 
         GB_ek_slice_merge2 (Cp_kfirst, Cp, Cp_is_32,
             Wfirst, Wlast, A_ek_slicing, A_ntasks) ;

@@ -56,7 +56,8 @@ GrB_Info GB_concat_full             // concatenate into a full matrix
         GB_OK (GB_bix_alloc (C, GB_nnz_full (C), GxB_FULL, false, true, C_iso));
         C->plen = -1 ;
         C->nvec = cvdim ;
-        C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
+//      C->nvec_nonempty = (cvlen > 0) ? cvdim : 0 ;
+        GB_nvec_nonempty_set (C, (cvlen > 0) ? cvdim : 0) ;
     }
     ASSERT (GB_IS_FULL (C)) ;
     int nthreads_max = GB_Context_nthreads_max ( ) ;

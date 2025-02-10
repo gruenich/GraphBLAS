@@ -124,7 +124,8 @@ GrB_Info GB_subref_phase3   // C=A(I,J)
     // now Cp and Ch have been transplanted into C, so they must not be freed.
     ASSERT ((*Cp_handle) == NULL) ;
     ASSERT ((*Ch_handle) == NULL) ;
-    C->nvec_nonempty = Cnvec_nonempty ;
+//  C->nvec_nonempty = Cnvec_nonempty ;
+    GB_nvec_nonempty_set (C, Cnvec_nonempty) ;
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
     ASSERT (C->p_is_32 == Cp_is_32) ;

@@ -202,7 +202,7 @@ GrB_Info GB_cuda_AxB_dot3           // C<M> = A'*B using dot product method
 
     C->nvals = cnz ;
     C->magic = GB_MAGIC ;
-    C->nvec_nonempty = M->nvec_nonempty ;
+    C->nvec_nonempty = M->nvec_nonempty ;   // FIXME
     C->nvec = cnvec ;
     C->jumbled = GB_JUMBLED (M) ;   // C is jumbled if M is jumbled
 

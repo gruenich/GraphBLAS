@@ -136,10 +136,7 @@ GrB_Info GB_conform     // conform a matrix to its desired sparsity structure
     bool is_full = GB_IS_FULL (A) ;
     bool is_bitmap = GB_IS_BITMAP (A) ;
     bool as_if_full = GB_as_if_full (A) ;
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A) ;
-    }
+    GB_nvec_nonempty_update (A) ;
     if (A->no_hyper_hash)
     { 
         // A does not want the hyper_hash, so free A->Y if present

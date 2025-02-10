@@ -138,9 +138,11 @@ GrB_Info GB_subassign_26
         Anvec_nonempty += (anzk > 0) ;
     }
 
-    if (C->nvec_nonempty >= 0)
+    int64_t C_nvec_nonempty = GB_nvec_nonempty_get (C) ;
+    if (C_nvec_nonempty >= 0)
     { 
-        C->nvec_nonempty += Anvec_nonempty ;
+//      C->nvec_nonempty += Anvec_nonempty ;
+        GB_nvec_nonempty_set (C, C_nvec_nonempty + Anvec_nonempty) ;
     }
     C->nvec += nJ ;
     GB_ISET (Cp, C->nvec, cnz_new) ;

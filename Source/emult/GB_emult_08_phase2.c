@@ -164,7 +164,8 @@ GrB_Info GB_emult_08_phase2             // C=A.*B or C<M>=A.*B
     ASSERT (C->i_is_32 == Ci_is_32) ;
 
     // transplant Cp into C as the vector pointers, from GB_emult_08_phase1
-    C->nvec_nonempty = Cnvec_nonempty ;
+//  C->nvec_nonempty = Cnvec_nonempty ;
+    GB_nvec_nonempty_set (C, Cnvec_nonempty) ;
     C->p = Cp ; C->p_size = Cp_size ;
     C->nvals = cnz ;
     (*Cp_handle) = NULL ;

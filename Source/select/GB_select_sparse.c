@@ -277,7 +277,9 @@ GrB_Info GB_select_sparse
             A_ntasks) ;
     }
 
-    GB_cumsum (Cp, Cp_is_32, anvec, &(C->nvec_nonempty), A_nthreads, Werk) ;
+    int64_t nvec_nonempty ;
+    GB_cumsum (Cp, Cp_is_32, anvec, &nvec_nonempty, A_nthreads, Werk) ;
+    GB_nvec_nonempty_set (C, nvec_nonempty) ;
     GB_ek_slice_merge2 (Cp_kfirst, Cp, Cp_is_32, Wfirst, Wlast, A_ek_slicing,
         A_ntasks) ;
 

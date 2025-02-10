@@ -95,7 +95,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->is_csc = A->is_csc ;
     C->vlen = avlen ;
     C->vdim = avdim ;
-    C->nvec_nonempty = A->nvec_nonempty ;
+//  C->nvec_nonempty = A->nvec_nonempty ;
+    GB_nvec_nonempty_set (C, GB_nvec_nonempty_get (A)) ;
     C->iso = A_iso ;
 
     // C is not shallow, and has no content yet
