@@ -20,8 +20,6 @@
         // sequential method: A is not sliced
         //----------------------------------------------------------------------
 
-        // FIXME: can do this with no workspace; just use Cp directly
-
         // Only requires a single workspace of size avlen for a single thread.
         // The resulting C matrix is not jumbled.
         GBURBLE ("(1-thread bucket transpose) ") ;
@@ -48,8 +46,6 @@
         //----------------------------------------------------------------------
         // atomic method: A is sliced but workspace is shared
         //----------------------------------------------------------------------
-
-        // FIXME: can do this with no workspace; just use Cp directly
 
         // Only requires a single workspace of size avlen, shared by all
         // threads.  Scales well, but requires atomics.  If the # of rows is
@@ -87,8 +83,6 @@
         //----------------------------------------------------------------------
         // non-atomic method
         //----------------------------------------------------------------------
-
-        // FIXME: reduce workspaces by one; one thread can use Cp itself.
 
         // compute the row counts of A for each slice, one per thread; This
         // method is parallel, but not highly scalable.  Each thread requires

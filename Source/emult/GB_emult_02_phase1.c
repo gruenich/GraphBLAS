@@ -214,7 +214,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // copy pattern into C
     //--------------------------------------------------------------------------
 
-    // FIXME: could make these components of C shallow instead of memcpy
+    // FUTURE: could make these components of C shallow instead of memcpy
 
     size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t cjsize = Cj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;

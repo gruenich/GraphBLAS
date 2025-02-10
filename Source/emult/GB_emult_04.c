@@ -230,7 +230,7 @@ GrB_Info GB_emult_04        // C<M>=A.*B, M sparse/hyper, A and B bitmap/full
     // copy pattern into C
     //--------------------------------------------------------------------------
 
-    // FIXME: could make this components of C shallow instead
+    // FUTURE: could make this components of C shallow instead
 
     size_t cjsize = Cj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
 
