@@ -25,8 +25,6 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // input/output:
     GrB_Matrix C,
     // input:
-    const GrB_Type ctype,   // type of output matrix C
-    const bool C_is_csc,    // format of output matrix C
     const bool C_iso,
     const GrB_Matrix M,
     const bool Mask_struct,
@@ -46,13 +44,12 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
 {
 
     //--------------------------------------------------------------------------
-    // get M, A, and B
+    // get C, M, A, and B
     //--------------------------------------------------------------------------
 
     ASSERT (GB_IS_SPARSE (A) || GB_IS_HYPERSPARSE (A)) ;
     ASSERT (GB_IS_BITMAP (B) || GB_IS_FULL (B)) ;
     ASSERT ((M == NULL) || GB_IS_BITMAP (M) || GB_IS_FULL (M)) ;
-    ASSERT (C != NULL && (C->header_size == 0 || GBNSTATIC)) ;
 
     GrB_Info info ;
     const int8_t  *restrict Mb = (M == NULL) ? NULL : M->b ;
@@ -65,28 +62,11 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     GB_Ai_DECLARE (Ai, const) ; GB_Ai_PTR (Ai, A) ;
 
     const int64_t vlen = A->vlen ;
-    const int64_t vdim = A->vdim ;
     const int64_t nvec = A->nvec ;
     const int64_t anz = GB_nnz (A) ;
 
     const int8_t *restrict Bb = B->b ;
     const bool B_is_bitmap = GB_IS_BITMAP (B) ;
-
-    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
-    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
-    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
-
-    //--------------------------------------------------------------------------
-    // allocate C
-    //--------------------------------------------------------------------------
-
-    const bool C_has_pattern_of_A = !B_is_bitmap && (M == NULL) ;
-    int C_sparsity = GB_sparsity (A) ;
-
-    GB_OK (GB_new (&C, // sparse or hyper (same as A), existing header
-        ctype, vlen, vdim, GB_ph_calloc, C_is_csc,
-        C_sparsity, A->hyper_switch, nvec,
-        A->p_is_32, A->j_is_32, A->i_is_32)) ;
 
     GB_Cp_DECLARE (Cp, ) ; GB_Cp_PTR (Cp, C) ;
     const bool Cp_is_32 = C->p_is_32 ;
@@ -97,12 +77,17 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     ASSERT (C->j_is_32 == A->j_is_32) ;
     ASSERT (C->i_is_32 == A->i_is_32) ;
 
+    const int64_t *restrict kfirst_Aslice = A_ek_slicing ;
+    const int64_t *restrict klast_Aslice  = A_ek_slicing + A_ntasks ;
+    const int64_t *restrict pstart_Aslice = A_ek_slicing + A_ntasks * 2 ;
+
     //--------------------------------------------------------------------------
     // count entries in C
     //--------------------------------------------------------------------------
 
     C->nvec_nonempty = A->nvec_nonempty ;
     C->nvec = nvec ;
+    const bool C_has_pattern_of_A = !B_is_bitmap && (M == NULL) ;
 
     if (!C_has_pattern_of_A)
     { 
@@ -229,7 +214,7 @@ GrB_Info GB_emult_02_phase1 // symbolic analysis for GB_emult_02 and GB_emult_03
     // copy pattern into C
     //--------------------------------------------------------------------------
 
-    // FIXME: make these components of C shallow instead of memcpy
+    // FIXME: could make these components of C shallow instead of memcpy
 
     size_t cpsize = Cp_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
     size_t cjsize = Cj_is_32 ? sizeof (uint32_t) : sizeof (uint64_t) ;
