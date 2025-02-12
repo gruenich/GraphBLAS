@@ -70,7 +70,8 @@
 
     GxB_USE_VALUES == GrB_DEFAULT     // use the values of the vector (default)
     GxB_USE_INDICES         // use the indices entries in the vector
-    GxB_IS_STRIDE           // use the values, of size 3, for lo:hi:inc
+    GxB_IS_STRIDE           // use the values, of size 3, for lo:inc:hi
+                            // I = 0:10:1000
 
 // However, GrB_build will not use GxB_IS_STRIDE, and GrB_extractTuples will
 // use none of these descriptor settings.
@@ -237,6 +238,18 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
     const GrB_Descriptor desc       // descriptor for w, mask, and A
 ) ;
 
+// should I use GrB_Scalar j??  See below:
+GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
+(
+    GrB_Vector w,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Vector I_vector,      // row indices
+    GrB_Scalar j,                    // column index
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+
 // GrB_extract is a polymorphic interface to the following functions, the
 // existing ones and the three new ones:
 //
@@ -384,7 +397,7 @@ GrB_Info GxB_Col_assign_Vector      // C<M>(I,j) = accum (C(I,j),u)
     const GrB_BinaryOp accum,       // optional accum for z=accum(C(I,j),t)
     const GrB_Vector u,             // input vector
     const GrB_Vector I_vector,      // row indices
-    GrB_Index j,                    // column index
+    GrB_Index j,                    // column index (should it be GrB_Scalar??)
     const GrB_Descriptor desc
 ) ;
 
@@ -394,7 +407,7 @@ GrB_Info GxB_Row_assign_Vector      // C<mask'>(i,J) = accum(C(i,j),u')
     const GrB_Vector mask,          // mask for C(i,:), unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(C(i,J),t)
     const GrB_Vector u,             // input vector
-    GrB_Index i,                    // row index
+    GrB_Index i,                    // row index (should it be GrB_Scalar??)
     const GrB_Vector J_vector,      // column indices
     const GrB_Descriptor desc
 ) ;
