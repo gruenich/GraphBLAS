@@ -80,10 +80,7 @@
                 // get A(:,k)
                 const int64_t pA = k * m ;
                 #endif
-                #if GB_IS_FIRSTI_MULTIPLIER
-                    // s depends on i
-                    #define s (i + GB_OFFSET)
-                #else
+                #if !GB_IS_FIRSTI_MULTIPLIER
                     // s = a * bkj, not dependent on i
                     GB_C_TYPE s ;
                     GB_DECLAREB (bkj) ;
@@ -95,6 +92,10 @@
                 { 
                     #if GB_A_IS_BITMAP
                     if (!Ab [pA + i]) continue ;
+                    #endif
+                    #if GB_IS_FIRSTI_MULTIPLIER
+                    // s depends on i
+                    GB_C_TYPE s = (i + GB_OFFSET) ;
                     #endif
                     // C(i,j) += s ;
                     GB_CIJ_UPDATE (pC + i, s) ;
