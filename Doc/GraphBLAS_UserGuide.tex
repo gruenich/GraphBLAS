@@ -14832,9 +14832,11 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Dec 20, 2024: version 9.4.3
+\item Feb 12, 2024: version 9.4.3
 
     \begin{itemize}
+    \item (58) bug fix: semirings with user-defined monoids and the \verb'GrB_ONEB' or
+        \verb'GxB_PAIR' operators caused a JIT compiler error.  Caught by Gabe Gomez.
     \item (57) bug fix: GraphBLAS.h header: remove duplicate definitions of
         \verb'GxB_MAX_FIRST_*' semirings (incompletely moved to 'historical' section
         in 9.4.2).
