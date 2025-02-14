@@ -234,6 +234,7 @@
 #define GB_concat_sparse_jit GM_concat_sparse_jit
 #define GB_conform GM_conform
 #define GB_conform_hyper GM_conform_hyper
+#define GB_container_component_new GM_container_component_new
 #define GB_Context_check GM_Context_check
 #define GB_Context_chunk_get GM_Context_chunk_get
 #define GB_Context_chunk GM_Context_chunk
@@ -497,6 +498,7 @@
 #define GB_HUF_selectDecoder GM_HUF_selectDecoder
 #define GB_HUF_validateCTable GM_HUF_validateCTable
 #define GB_HUF_writeCTable_wksp GM_HUF_writeCTable_wksp
+#define GB_hy_free GM_hy_free
 #define GB_hyper_hash_build GM_hyper_hash_build
 #define GB_hyper_hash_free GM_hyper_hash_free
 #define GB_hyper_hash_need GM_hyper_hash_need
@@ -939,7 +941,7 @@
 #define GB_kroner GM_kroner
 #define GB_kroner_jit GM_kroner_jit
 #define GB_kron GM_kron
-#define GB_load GM_load
+#define GB_load_from_container GM_load_from_container
 #define GB_LZ4_attach_dictionary GM_LZ4_attach_dictionary
 #define GB_LZ4_attach_HC_dictionary GM_LZ4_attach_HC_dictionary
 #define GB_LZ4_calloc GM_LZ4_calloc
@@ -1297,7 +1299,7 @@
 #define GB_union_jit GM_union_jit
 #define GB_unjumble GM_unjumble
 #define GB_unjumble_jit GM_unjumble_jit
-#define GB_unload GM_unload
+#define GB_unload_into_container GM_unload_into_container
 #define GB_unop_code_iso GM_unop_code_iso
 #define GB_unop_identity GM_unop_identity
 #define GB_unop_iso GM_unop_iso
