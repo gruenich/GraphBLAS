@@ -567,9 +567,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     // TODO constructing the tasks (the work above) can take a lot of time.
     // Figure out a faster method.
+GB_HERE ;
 
     GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, M_in_place,
         A, B, SaxpyTasks, ntasks, nfine, nthreads) ;
+
+GB_HERE ;
 
     //==========================================================================
     // C = A*B, via saxpy3 method, phases 2 to 5
@@ -659,6 +662,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
 
     GB_OK (info) ;
+GB_HERE ;
 
     //--------------------------------------------------------------------------
     // prune empty vectors, free workspace, and return result

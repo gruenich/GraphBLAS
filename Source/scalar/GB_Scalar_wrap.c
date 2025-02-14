@@ -48,7 +48,7 @@ GrB_Scalar GB_Scalar_wrap   // create a new GrB_Scalar with one entry
     s->nvec = 1 ;
 
 //  s->nvec_nonempty = 1 ;
-    GB_nvec_nonempty_set (s, 1) ;
+    GB_nvec_nonempty_set ((GrB_Matrix) s, 1) ;
 
     s->p = NULL ; s->p_size = 0 ; s->p_shallow = false ;
     s->h = NULL ; s->h_size = 0 ; s->h_shallow = false ;

@@ -17,12 +17,13 @@
 //------------------------------------------------------------------------------
 
 {
+GB_HERE ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;
+    GB_Cp_DECLARE (Cp, const) ; GB_Cp_PTR (Cp, C) ;     // shadowed below
     ASSERT (Cp != NULL) ;
     const int64_t cvlen = C->vlen ;
     const int64_t cnvec = C->nvec ;
@@ -157,6 +158,7 @@
 
         if (use_Gustavson)
         {
+GB_HERE ;
 
             //------------------------------------------------------------------
             // phase2: fine Gustavson task
@@ -202,6 +204,7 @@
         }
         else
         {
+GB_HERE ;
 
             //------------------------------------------------------------------
             // phase2: fine hash task
@@ -236,6 +239,7 @@
 
             #if ( GB_NO_MASK )
             { 
+GB_HERE ;
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C(:,j)=A*B(:,j)
@@ -248,6 +252,7 @@
             }
             #elif ( !GB_MASK_COMP )
             {
+GB_HERE ;
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C(:,j)<M(:,j)>=A*B(:,j)
@@ -286,6 +291,7 @@
             }
             #else
             {
+GB_HERE ;
 
                 //--------------------------------------------------------------
                 // phase2: fine hash task, C(:,j)<!M(:,j)>=A*B(:,j)
@@ -329,6 +335,7 @@
     // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
+GB_HERE ;
     // C->p may be revised by GB_AxB_saxpy3_cumsum, from 32-bit to 64-bit.
 
     GrB_Info info ;
@@ -342,21 +349,29 @@
         fflush (stderr) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
-
-    // Cp may have started as 32-bit but might now be 64-bit, depending on the
-    // problem size.  Use Cp_new for phase5.  For the JIT kernel, the size of
-    // C->p is no longer known at compile time.
-
-    void *Cp_new = C->p ;
-    const uint32_t *restrict Cp_new32 = C->p_is_32 ? Cp_new : NULL ;
-    const uint64_t *restrict Cp_new64 = C->p_is_32 ? NULL : Cp_new ;
-    Cp = NULL ;
-
-    #define GB_Cp_IGET(k) (Cp_new32 ? Cp_new32 [k] : Cp_new64 [k])
+GB_HERE ;
 
     //==========================================================================
     // phase5: numeric phase for coarse tasks, gather for fine tasks
     //==========================================================================
+
+{
+
+    // Cp may have started as 32-bit but might now be 64-bit, depending on the
+    // problem size.  Use the new C->p for phase5.  For the JIT kernel, the
+    // size of C->p is no longer known at compile time, and thus it must use
+    // the ternary operator in the GB_Cp_IGET macro.  The definitions of Cp,
+    // Cp32, and Cp64 intentionally shadow the definitions above, by
+    // GB_Cp_DECLARE (...) ;
+
+    const void *Cp = C->p ;
+    const uint32_t *restrict Cp32 = C->p_is_32 ? Cp : NULL ;
+    const uint64_t *restrict Cp64 = C->p_is_32 ? NULL : Cp ;
+    ASSERT (Cp != NULL) ;
+
+GB_HERE ;
+
+    #define GB_Cp_IGET(k) (Cp32 ? Cp32 [k] : Cp64 [k])
 
     // C is iso for the ANY_PAIR semiring, and non-iso otherwise
 
@@ -372,11 +387,24 @@
         return (GrB_OUT_OF_MEMORY) ;
     }
     C->nvals = cnz ;
+    printf ("cnz " GBd "\n", cnz) ;
+GB_HERE ;
+
+    for (int64_t kk = 0 ; kk < cnvec ; kk++)
+    {
+        int64_t pC_start = GB_Cp_IGET (kk) ;
+        int64_t pC_end = GB_Cp_IGET (kk+1) ;
+        ASSERT (pC_start >= 0) ;
+        ASSERT (pC_start <= pC_end) ;
+        ASSERT (pC_end <= cnz) ;
+    }
 
     GB_Ci_DECLARE_U (Ci, ) ; GB_Ci_PTR (Ci, C) ;
     #if ( !GB_IS_ANY_PAIR_SEMIRING )
     GB_C_TYPE *restrict Cx = (GB_C_TYPE *) C->x ;
     #endif
+
+GB_HERE ;
 
     bool C_jumbled = false ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
@@ -623,12 +651,15 @@
         }
         C_jumbled = C_jumbled || task_C_jumbled ;
     }
+GB_HERE ;
 
     //--------------------------------------------------------------------------
     // log the state of C->jumbled
     //--------------------------------------------------------------------------
 
     C->jumbled = C_jumbled ;    // C is jumbled if any task left it jumbled
+GB_HERE ;
+}
 }
 
 #undef GB_NO_MASK

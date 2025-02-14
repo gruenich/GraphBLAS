@@ -316,8 +316,10 @@ GB_CALLBACK_ADD_PHASE0_PROTO (GB_add_phase0)
             const void *B_Yx = (B->Y == NULL) ? NULL : B->Y->x ;
             const int64_t B_hash_bits = (B->Y == NULL) ? 0 : (B->Y->vdim - 1) ;
 
+#define PROC_BIND proc_bind(spread)
+
             int64_t k ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            #pragma omp parallel for num_threads(nthreads) schedule(static) PROC_BIND
             for (k = 0 ; k < Cnvec ; k++)
             {
                 int64_t j = GB_IGET (Ch, k) ;   // j = Ch [k]

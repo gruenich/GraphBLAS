@@ -476,11 +476,11 @@ void GB_helper_container_new (void)         // allocate the global Container
 void GB_helper_container_free (void)        // free the global Container
 {
     if (Container == NULL) return ;
-    GB_Global_persistent_free (&(Container->p)) ;
-    GB_Global_persistent_free (&(Container->h)) ;
-    GB_Global_persistent_free (&(Container->b)) ;
-    GB_Global_persistent_free (&(Container->i)) ;
-    GB_Global_persistent_free (&(Container->x)) ;
-    GB_Global_persistent_free (&(Container)) ;
+    GB_Global_persistent_free ((void **) &(Container->p)) ;
+    GB_Global_persistent_free ((void **) &(Container->h)) ;
+    GB_Global_persistent_free ((void **) &(Container->b)) ;
+    GB_Global_persistent_free ((void **) &(Container->i)) ;
+    GB_Global_persistent_free ((void **) &(Container->x)) ;
+    GB_Global_persistent_free ((void **) &(Container)) ;
 }
 

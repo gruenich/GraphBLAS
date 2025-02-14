@@ -180,8 +180,6 @@ GB_HERE ;
         GB_nvec_nonempty_set (C, nvec_nonempty) ;
 GB_HERE ;
     }
-printf ("\nhere\n") ; fflush (stdout) ;
-fprintf (stderr, "\nhere\n") ; fflush (stderr) ;
 GB_HERE ;
 
     //--------------------------------------------------------------------------
@@ -200,6 +198,7 @@ GB_HERE ;
         cjnz_sum += my_cjnz ;
     }
 
+GB_HERE ;
     return (GrB_SUCCESS) ;
 }
 

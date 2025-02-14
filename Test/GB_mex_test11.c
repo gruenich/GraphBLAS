@@ -96,7 +96,7 @@ if (jit_enabled)
     OK (GrB_assign (A, NULL, NULL, 1, GrB_ALL, 3, GrB_ALL, 4, NULL)) ;
     OK (GxB_Matrix_iso (&iso, A)) ;
     CHECK (iso) ;
-    bool iso2 = false ;
+    int iso2 = false ;
     OK (GrB_Matrix_get_INT32 (A, &iso2, GxB_ISO)) ;
     CHECK (iso == iso2) ;
 

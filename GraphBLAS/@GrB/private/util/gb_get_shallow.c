@@ -368,12 +368,12 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Container->orientation = GrB_COLMAJOR ;
             Container->iso = false ;
             Container->jumbled = false ;
-            OK (GxB_Vector_load (Container->p, &Yp, Aj_type, Yp_len, Yp_size,
-                GxB_IS_READONLY, NULL)) ;
-            OK (GxB_Vector_load (Container->i, &Yi, Aj_type, Yi_len, Yi_size,
-                GxB_IS_READONLY, NULL)) ;
-            OK (GxB_Vector_load (Container->x, &Yx, Aj_type, nvec, Yx_size,
-                GxB_IS_READONLY, NULL)) ;
+            OK (GxB_Vector_load (Container->p, (void **) &Yp, Aj_type, Yp_len,
+                Yp_size, GxB_IS_READONLY, NULL)) ;
+            OK (GxB_Vector_load (Container->i, (void **) &Yi, Aj_type, Yi_len,
+                Yi_size, GxB_IS_READONLY, NULL)) ;
+            OK (GxB_Vector_load (Container->x, (void **) &Yx, Aj_type, nvec,
+                Yx_size, GxB_IS_READONLY, NULL)) ;
             OK (GxB_load_Matrix_from_Container (Y, Container, NULL)) ;
         }
 
@@ -393,20 +393,20 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             case GxB_HYPERSPARSE : 
                 Container->Y = Y ;
                 Y = NULL ;
-                OK (GxB_Vector_load (Container->h, &Ah, Aj_type, plen,
-                    Ah_size, GxB_IS_READONLY, NULL)) ;
+                OK (GxB_Vector_load (Container->h, (void **) &Ah, Aj_type,
+                    plen, Ah_size, GxB_IS_READONLY, NULL)) ;
                 // fall through to sparse case
 
             case GxB_SPARSE : 
-                OK (GxB_Vector_load (Container->p, &Ap, Ap_type, plen+1,
-                    Ap_size, GxB_IS_READONLY, NULL)) ;
-                OK (GxB_Vector_load (Container->i, &Ai, Ai_type, nvals,
-                    Ai_size, GxB_IS_READONLY, NULL)) ;
+                OK (GxB_Vector_load (Container->p, (void **) &Ap, Ap_type,
+                    plen+1, Ap_size, GxB_IS_READONLY, NULL)) ;
+                OK (GxB_Vector_load (Container->i, (void **) &Ai, Ai_type,
+                    nvals, Ai_size, GxB_IS_READONLY, NULL)) ;
                 break ;
 
             case GxB_BITMAP : 
-                OK (GxB_Vector_load (Container->b, &Ab, GrB_INT8, Ab_len,
-                    Ab_size, GxB_IS_READONLY, NULL)) ;
+                OK (GxB_Vector_load (Container->b, (void **) &Ab, GrB_INT8,
+                    Ab_len, Ab_size, GxB_IS_READONLY, NULL)) ;
                 break ;
 
             case GxB_FULL : 
@@ -415,7 +415,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             default: ;
         }
 
-        OK (GxB_Vector_load (Container->x, &Ax, Ax_type, Ax_len,
+        OK (GxB_Vector_load (Container->x, (void **) &Ax, Ax_type, Ax_len,
             Ax_size, GxB_IS_READONLY, NULL)) ;
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;
@@ -559,10 +559,10 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             // import the matrix in CSC format (all-64-bit)
             uint64_t Xp_size = (ncols + 1) * sizeof (uint64_t) ;
             uint64_t Xi_size = (nvals) * sizeof (uint64_t) ;
-            OK (GxB_Vector_load (Container->p, &Xp, GrB_UINT64, ncols+1,
-                Xp_size, GxB_IS_READONLY, NULL)) ;
-            OK (GxB_Vector_load (Container->i, &Xi, GrB_UINT64, nvals,
-                Xi_size, GxB_IS_READONLY, NULL)) ;
+            OK (GxB_Vector_load (Container->p, (void **) &Xp, GrB_UINT64,
+                ncols+1, Xp_size, GxB_IS_READONLY, NULL)) ;
+            OK (GxB_Vector_load (Container->i, (void **) &Xi, GrB_UINT64,
+                nvals, Xi_size, GxB_IS_READONLY, NULL)) ;
             Container->format = GxB_SPARSE ;
         }
         else
@@ -571,7 +571,7 @@ GrB_Matrix gb_get_shallow   // shallow copy of MATLAB sparse matrix or struct
             Container->format = GxB_FULL ;
         }
 
-        OK (GxB_Vector_load (Container->x, &Xx, Ax_type, nvals,
+        OK (GxB_Vector_load (Container->x, (void **) &Xx, Ax_type, nvals,
             Xx_size, GxB_IS_READONLY, NULL)) ;
 
         OK (GxB_load_Matrix_from_Container (A, Container, NULL)) ;

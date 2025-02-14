@@ -269,7 +269,7 @@ void mexFunction
     V->nvals = tnvals ;
     V->magic = GB_MAGIC ;
 //  V->nvec_nonempty = (tnvals > 0) ? 1 : 0 ;
-    GB_nvec_nonempty_set (V, (tnvals > 0) ? 1 : 0) ;
+    GB_nvec_nonempty_set ((GrB_Matrix) V, (tnvals > 0) ? 1 : 0) ;
 
     // typecast V to a matrix C, for export
     GrB_Matrix C = (GrB_Matrix) V ;

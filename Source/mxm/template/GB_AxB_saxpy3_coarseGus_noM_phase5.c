@@ -19,6 +19,9 @@
         int64_t pC_end = GB_Cp_IGET (kk+1) ;
         int64_t pC = pC_start ;
         int64_t cjnz = pC_end - pC ;
+        ASSERT (pC_start >= 0) ;
+        ASSERT (pC_start <= pC_end) ;
+        ASSERT (pC_end <= cnz) ;
 
         if (cjnz == 0) continue ;           // no work to do if C(:,j) empty
         GB_GET_B_j ;

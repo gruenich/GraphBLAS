@@ -38,7 +38,7 @@ void GB_vector_load
     V->vdim = 1 ;
     V->nvec = 1 ;
 //  V->nvec_nonempty = (n == 0) ? 0 : 1 ;
-    GB_nvec_nonempty_set (V, (n == 0) ? 0 : 1) ;
+    GB_nvec_nonempty_set ((GrB_Matrix) V, (n == 0) ? 0 : 1) ;
     V->nvals = n ;
     V->sparsity_control = V->sparsity_control | GxB_FULL ;
     V->is_csc = true ;

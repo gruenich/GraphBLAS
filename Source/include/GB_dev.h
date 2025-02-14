@@ -23,7 +23,7 @@
 
 // to turn on a very verbose memory trace
 // (GraphBLAS will be exceedingly slow; this is for development only)
-#define GB_MEMDUMP
+// #define GB_MEMDUMP
 
 #endif
 

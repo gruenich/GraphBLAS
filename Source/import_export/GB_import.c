@@ -310,8 +310,7 @@ GrB_Info GB_import      // import/pack a matrix in any format
         if (add_to_memtable)
         { 
             // for debugging only
-            GBMDUMP ("import A->x to memtable: %p size: %lu\n",
-                (*A)->x, Ax_size) ;
+            GBMDUMP ("import A->x to memtable: %p\n", (*A)->x) ;
             GB_Global_memtable_add ((*A)->x, (*A)->x_size) ;
         }
     }

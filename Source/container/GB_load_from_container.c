@@ -111,11 +111,13 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
                 // allocate space for A->h of type Ah_type for a single entry
                 // Ah_type is uint32 or uint64, so sizeof (uint64_t) is fine.
                 plen = 0 ;
-                A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &Ah_size) ;
+                size_t s = 0 ;
+                A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &s) ;
                 if (A->h == NULL)
                 { 
                     return (GrB_OUT_OF_MEMORY) ;
                 }
+                Ah_size = (uint64_t) s ;
                 A->h_shallow = false ;
             }
             else

@@ -341,7 +341,7 @@ const char *GB_status_code (GrB_Info info) ;
 
 // output cannot be readonly
 #define GB_RETURN_IF_OUTPUT_IS_READONLY(arg)                            \
-    if (GB_is_shallow (arg))                                            \
+    if (GB_is_shallow ((GrB_Matrix) arg))                               \
     {                                                                   \
         return (GxB_OUTPUT_IS_READONLY) ;                               \
     }

@@ -38,4 +38,4 @@ end
 % restore the flag
 GB_mex_hack (save) ;
 
-fprintf ('test296: all tests passed') ;
+fprintf ('test296: all tests passed\n') ;
