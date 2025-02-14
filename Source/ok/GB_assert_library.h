@@ -162,3 +162,35 @@
 #define ASSERT_CONTEXT_OK_OR_NULL(c,name,pr)  \
     ASSERT_OK_OR_NULL (GB_Context_check (c, name, pr, NULL))
 
+#if 0
+// HACK
+#undef  ASSERT_MATRIX_OK
+#undef  ASSERT_MATRIX_OK_OR_NULL
+#undef  ASSERT_VECTOR_OK
+#undef  ASSERT_VECTOR_OK_OR_NULL
+
+#define ASSERT_MATRIX_OK(A,name,pr) \
+{ \
+    if ((A) != NULL && GB_IS_SPARSE((A))) \
+    { \
+        if (!((A)->p_is_32) || !((A)->i_is_32))  \
+        { \
+            printf ("Hey: %s %d: %s (%d,%d)\n", \
+            __FILE__, __LINE__, name, (A)->p_is_32, (A)->i_is_32) ; \
+        } \
+    } \
+    else if ((A) != NULL && GB_IS_HYPERSPARSE((A))) \
+    { \
+        if (!((A)->p_is_32) || !((A)->i_is_32) || !((A)->j_is_32))  \
+        { \
+            printf ("Hey: %s %d: %s (%d,%d,%d)\n", \
+            __FILE__, __LINE__, name, (A)->p_is_32, (A)->j_is_32, (A)->i_is_32) ; \
+        } \
+    } \
+}
+
+#define ASSERT_MATRIX_OK_OR_NULL(A,name,pr) ASSERT_MATRIX_OK (A,name,pr)
+#define ASSERT_VECTOR_OK_OR_NULL(A,name,pr) ASSERT_MATRIX_OK (A,name,pr)
+#define ASSERT_VECTOR_OK(A,name,pr) ASSERT_MATRIX_OK (A,name,pr)
+#endif
+

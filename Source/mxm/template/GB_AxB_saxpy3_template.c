@@ -336,6 +336,10 @@
     if (info != GrB_SUCCESS)
     { 
         // out of memory
+        printf ("cumsum out of memory\n") ;
+        fprintf (stderr, "cumsum out of memory\n") ;
+        fflush (stdout) ;
+        fflush (stderr) ;
         return (GrB_OUT_OF_MEMORY) ;
     }
 

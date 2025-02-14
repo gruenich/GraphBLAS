@@ -19,11 +19,11 @@
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // (GraphBLAS will be exceedingly slow; this is for development only)
-// #define GB_DEBUG
+#define GB_DEBUG
 
 // to turn on a very verbose memory trace
 // (GraphBLAS will be exceedingly slow; this is for development only)
-// #define GB_MEMDUMP
+#define GB_MEMDUMP
 
 #endif
 

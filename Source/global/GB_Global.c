@@ -207,7 +207,7 @@ static GB_Global_struct GB_Global =
     .malloc_debug_count = 0,     // counter for testing memory handling
 
     // for testing and development only
-    .hack = {0, 0, 0, 0},
+    .hack = {0, 0, 0, 0, 0, 0, 0, 0},
 
     // diagnostics
     .burble = false,

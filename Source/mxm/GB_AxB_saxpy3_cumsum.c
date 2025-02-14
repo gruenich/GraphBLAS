@@ -136,28 +136,53 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     bool ok = GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nth, Werk) ;
     GB_nvec_nonempty_set (C, nvec_nonempty) ;
 
+//  #ifdef GBCOVER
+    // Testing the following block of code would normally require a matrix
+    // with over 4 billion entries.  To keep the test suite modest in size,
+    // an artificial integer overflow can be triggered, but only when GraphBLAS
+    // is compiled with test coverage, inside MATLAB (GraphBLAS/Tcov).
+    if (Cp_is_32 && GB_Global_hack_get (4)) ok = false ;
+//  #endif
+
     if (!ok)
     { 
+
+printf ("\n:::::::::::::::::::::::::::::::::::::::::::::::::trigger\n") ; fflush (stdout) ;
+GB_HERE ;
+fprintf (stderr, "\ntrigger\n") ; fflush (stderr) ;
         // convert Cp to uint64_t and redo the cumulative sum
         ASSERT (Cp_is_32) ;
         ASSERT (!C->p_shallow) ;
         void *Cp_new = NULL ;
         size_t Cp_new_size = 0 ;
+GB_HERE ;
         Cp_new = GB_MALLOC_MEMORY (cnvec+1, sizeof (uint64_t), &Cp_new_size) ;
+GB_HERE ;
         if (Cp_new == NULL)
         { 
+printf ("\n======================================================================================tested out of memory condition\n") ; fflush (stdout) ;
+fprintf (stderr, "\n========================================================================================tested out of memory condition\n") ; fflush (stderr) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
+GB_HERE ;
         // Cp_new = (uint64_t) Cp, casting from 32-bit to 64-bit
         GB_cast_int (Cp_new, GB_UINT64_code, Cp, GB_UINT32_code, cnvec+1, nth) ;
+GB_HERE ;
         GB_FREE_MEMORY (&Cp, C->p_size) ;
+GB_HERE ;
         C->p = Cp_new ;
         C->p_size = Cp_new_size ;
         C->p_is_32 = false ;
         // redo the cumsum
+GB_HERE ;
         GB_cumsum (C->p, false, cnvec, &nvec_nonempty, nth, Werk) ;
+GB_HERE ;
         GB_nvec_nonempty_set (C, nvec_nonempty) ;
+GB_HERE ;
     }
+printf ("\nhere\n") ; fflush (stdout) ;
+fprintf (stderr, "\nhere\n") ; fflush (stderr) ;
+GB_HERE ;
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks
