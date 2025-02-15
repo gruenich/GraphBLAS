@@ -103,9 +103,9 @@ typedef struct
     // diagnostic output
     //--------------------------------------------------------------------------
 
-    bool burble ;                   // controls GBURBLE output
-    GB_printf_function_t printf_func ;  // pointer to printf
-    GB_flush_function_t flush_func ;   // pointer to flush
+    bool burble ;                       // controls GBURBLE output
+    GB_printf_function_t printf_func ;  // pointer to printf_style function
+    GB_flush_function_t flush_func ;    // pointer to flush_style function
     bool print_one_based ;          // if true, print 1-based indices
     bool stats_mem_shallow ;        // if true, include shallow bytes in
                                     // memory usage statistics
@@ -206,7 +206,7 @@ static GB_Global_struct GB_Global =
     .malloc_debug = false,       // do not test memory handling
     .malloc_debug_count = 0,     // counter for testing memory handling
 
-    // for testing and development only
+    // for testing and development only; not used in production
     .hack = {0, 0, 0, 0, 0, 0, 0, 0},
 
     // diagnostics
@@ -216,6 +216,7 @@ static GB_Global_struct GB_Global =
     .print_one_based = false,   // if true, print 1-based indices
     .stats_mem_shallow = false, // if true, include shallow bytes in stats
 
+    // timing is for testing and development only; not used in production
     .timing = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 

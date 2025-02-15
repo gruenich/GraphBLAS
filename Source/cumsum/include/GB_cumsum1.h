@@ -73,10 +73,24 @@ static inline bool GB_cumsum1_32   // cumulative sum of an array
     ASSERT (n >= 0) ;
 
     //--------------------------------------------------------------------------
-    // count = cumsum ([0 count[0:n-1]]) ;
+    // check for overflow
     //--------------------------------------------------------------------------
 
     uint64_t s = 0 ;
+    for (int64_t i = 0 ; i < n ; i++)
+    {
+        s += count [i] ;
+        if (s > UINT32_MAX)
+        { 
+            return (false) ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // count = cumsum ([0 count[0:n-1]]) ;
+    //--------------------------------------------------------------------------
+
+    s = 0 ;
     for (int64_t i = 0 ; i < n ; i++)
     { 
         uint64_t c = count [i] ;
@@ -85,7 +99,7 @@ static inline bool GB_cumsum1_32   // cumulative sum of an array
     }
     count [n] = s ;
 
-    return (s <= UINT32_MAX) ;
+    return (true) ;
 }
 
 //------------------------------------------------------------------------------

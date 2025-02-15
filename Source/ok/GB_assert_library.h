@@ -163,7 +163,7 @@
     ASSERT_OK_OR_NULL (GB_Context_check (c, name, pr, NULL))
 
 #if 0
-// HACK
+// FIXME: remove this when done
 #undef  ASSERT_MATRIX_OK
 #undef  ASSERT_MATRIX_OK_OR_NULL
 #undef  ASSERT_VECTOR_OK

@@ -81,9 +81,8 @@
 #define ASSERT_DESCRIPTOR_OK(d,name,pr)
 #define ASSERT_DESCRIPTOR_OK_OR_NULL(d,name,pr)
 
-
 #if 0
-// HACK
+// FIXME: remove this when done
 #undef  ASSERT_MATRIX_OK
 #undef  ASSERT_MATRIX_OK_OR_NULL
 #undef  ASSERT_VECTOR_OK

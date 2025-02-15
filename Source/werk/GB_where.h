@@ -273,11 +273,10 @@ static inline GrB_Info GB_valid1
 //          "Row index %d out of bounds; must be < %d", i, nrows) ;
 //  }
 //
-// The user can then do:
+// The user can then retrieve the error string (owned by GraphBLAS) with:
 //
 //  const char *error ;
 //  GrB_error (&error, A) ;
-//  printf ("%s", error) ;
 
 const char *GB_status_code (GrB_Info info) ;
 

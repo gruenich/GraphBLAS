@@ -17,6 +17,15 @@
 // On input, count [n] is not accessed and is implicitly zero on input.
 // On output, count [n] is the total sum.
 
+// If the type is uint32_t, integer overflow is checked.  If it occurs,
+// the count array is not modified and the method returns false.
+
+// Testing how GraphBLAS handles integer overflow would require a very large
+// test problem (a matrix with over 4 billion entries).  To keep the test suite
+// modest in size, an artificial integer overflow can be triggered, but only
+// when GraphBLAS is compiled with test coverage, inside MATLAB
+// (GraphBLAS/Tcov).
+
 {
     #ifndef GB_NO_KRESULT
     if (kresult != NULL)
@@ -33,8 +42,27 @@
             // cumsum with one thread, also compute k
             //------------------------------------------------------------------
 
-            uint64_t k = 0 ;
             uint64_t s = 0 ;
+
+            #if GB_CHECK_OVERFLOW
+            { 
+                for (int64_t i = 0 ; i < n ; i++)
+                {
+                    s += count [i] ;
+                    if (s > UINT32_MAX)
+                    { 
+                        return (false) ;
+                    }
+                }
+                #ifdef GBCOVER
+                // pretend to fail, for test coverage only
+                if (GB_Global_hack_get (5)) return (false) ;
+                #endif
+                s = 0 ;
+            }
+            #endif
+
+            uint64_t k = 0 ;
             for (int64_t i = 0 ; i < n ; i++)
             { 
                 uint64_t c = count [i] ;
@@ -44,15 +72,6 @@
             }
             count [n] = s ;
             (*kresult) = k ;
-
-            #if GB_CHECK_OVERFLOW
-            { 
-                if (s > UINT32_MAX)
-                { 
-                    return (false) ;
-                }
-            }
-            #endif
 
         }
         else
@@ -96,6 +115,7 @@
 
             #if GB_CHECK_OVERFLOW
             { 
+                // for uint32_t case only
                 uint64_t total = 0 ;
                 for (tid = 0 ; tid < nthreads ; tid++)
                 { 
@@ -103,9 +123,20 @@
                 }
                 if (total > UINT32_MAX)
                 { 
+                    GB_WERK_POP (wk, uint64_t) ;
+                    GB_WERK_POP (ws, uint64_t) ;
                     return (false) ;
                 }
             }
+            #ifdef GBCOVER
+            if (GB_Global_hack_get (5))
+            {
+                // pretend to fail, for test coverage only
+                GB_WERK_POP (wk, uint64_t) ;
+                GB_WERK_POP (ws, uint64_t) ;
+                return (false) ;
+            }
+            #endif
             #endif
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -202,9 +233,18 @@
                 }
                 if (total > UINT32_MAX)
                 { 
+                    GB_WERK_POP (ws, GB_WS_TYPE) ;
                     return (false) ;
                 }
             }
+            #ifdef GBCOVER
+            if (GB_Global_hack_get (5))
+            {
+                // pretend to fail, for test coverage only
+                GB_WERK_POP (ws, GB_WS_TYPE) ;
+                return (false) ;
+            }
+            #endif
             #endif
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)

@@ -299,8 +299,6 @@
                 // C<M> = A where A is sparse or hyper, with no entries
                 //--------------------------------------------------------------
 
-                GBURBLE ("(A empty) ") ;
-
                 // delete entries via the mask
                 #undef  GB_MASK_WORK
                 #define GB_MASK_WORK(pC)                        \

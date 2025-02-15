@@ -19,26 +19,26 @@
 
 // all other cases use GB_Global_*
 #undef  GBDUMP
-#define GBDUMP(...)                                                 \
-{                                                                   \
-    GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;   \
-    if (printf_func != NULL)                                        \
-    {                                                               \
-        printf_func (__VA_ARGS__) ;                                 \
-    }                                                               \
-    else                                                            \
-    {                                                               \
-        printf (__VA_ARGS__) ;                                      \
-    }                                                               \
-    GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;      \
-    if (flush_func != NULL)                                         \
-    {                                                               \
-        flush_func ( ) ;                                            \
-    }                                                               \
-    else                                                            \
-    {                                                               \
-        fflush (stdout) ;                                           \
-    }                                                               \
+#define GBDUMP(...)                                                     \
+{                                                                       \
+    GB_printf_function_t printf_func = GB_Global_printf_get ( ) ;       \
+    if (printf_func != NULL)                                            \
+    {                                                                   \
+        printf_func (__VA_ARGS__) ;                                     \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+        printf (__VA_ARGS__) ;  /* printf_func is NULL; use libc */     \
+    }                                                                   \
+    GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;          \
+    if (flush_func != NULL)                                             \
+    {                                                                   \
+        flush_func ( ) ;                                                \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+        fflush (stdout) ; /* flush_func is NULL; use libc */            \
+    }                                                                   \
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +62,8 @@
         }                                                               \
         else                                                            \
         {                                                               \
-            printf_result = printf (__VA_ARGS__) ;                      \
+            printf_result =                                             \
+            printf (__VA_ARGS__) ;  /* printf_func NULL; use libc */    \
         }                                                               \
         GB_flush_function_t flush_func = GB_Global_flush_get ( ) ;      \
         if (flush_func != NULL)                                         \
@@ -71,13 +72,13 @@
         }                                                               \
         else                                                            \
         {                                                               \
-            fflush (stdout) ;                                           \
+            fflush (stdout) ; /* flush_func is NULL; use libc */        \
         }                                                               \
     }                                                                   \
     else                                                                \
     {                                                                   \
         printf_result = fprintf (f, __VA_ARGS__)  ;                     \
-        fflush (f) ;                                                    \
+        fflush (f) ; /* flush_func is NULL; use libc */                 \
     }                                                                   \
     if (printf_result < 0)                                              \
     {                                                                   \

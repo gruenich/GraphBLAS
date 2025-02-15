@@ -128,59 +128,82 @@ GB_CALLBACK_SAXPY3_CUMSUM_PROTO (GB_AxB_saxpy3_cumsum)
     // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
     // fine tasks or coarse tasks, and where j == GBh_B (Bh, kk) 
 
-    // FUTURE: create a variant of GB_cumsum that can reallocate its count
-    // array by itself, starting with 32-bit and switching to 64-bit.
+    #ifdef GBCOVER
+    // tell GB_cumsum to fake a failure and return ok as false:
+    if (GB_Global_hack_get (4)) GB_Global_hack_set (5, 1) ;
+    #endif
 
     int nth = GB_nthreads (cnvec, chunk, nthreads) ;
     int64_t nvec_nonempty ;
     bool ok = GB_cumsum (Cp, Cp_is_32, cnvec, &nvec_nonempty, nth, Werk) ;
-    GB_nvec_nonempty_set (C, nvec_nonempty) ;
+    if (ok)
+    { 
+        GB_nvec_nonempty_set (C, nvec_nonempty) ;
+    }
 
-//  #ifdef GBCOVER
-    // Testing the following block of code would normally require a matrix
-    // with over 4 billion entries.  To keep the test suite modest in size,
-    // an artificial integer overflow can be triggered, but only when GraphBLAS
-    // is compiled with test coverage, inside MATLAB (GraphBLAS/Tcov).
-    if (Cp_is_32 && GB_Global_hack_get (4)) ok = false ;
-//  #endif
+    #ifdef GBCOVER
+    // restore the hack (for test coverage only)
+    if (GB_Global_hack_get (4)) GB_Global_hack_set (5, 0) ;
+    #endif
+
+    #ifdef GB_DEBUG
+    int64_t cnz1 = 0, cnz2 = 0 ;
+    if (Cp_is_32)
+    {
+        uint32_t *Cp_debug = C->p ;
+        if (ok) cnz1 = Cp_debug [cnvec] ;
+        for (int k = 0 ; k <= cnvec ; k++)
+        {
+            if (!ok && k < cnvec) cnz1 += Cp_debug [k] ;
+        }
+    }
+    else
+    {
+        uint64_t *Cp_debug = C->p ;
+        if (ok) cnz1 = Cp_debug [cnvec] ;
+        for (int k = 0 ; k <= cnvec ; k++)
+        {
+            if (!ok && k < cnvec) cnz1 += Cp_debug [k] ;
+        }
+    }
+    #endif
 
     if (!ok)
     { 
-
-printf ("\n:::::::::::::::::::::::::::::::::::::::::::::::::trigger\n") ; fflush (stdout) ;
-GB_HERE ;
-fprintf (stderr, "\ntrigger\n") ; fflush (stderr) ;
         // convert Cp to uint64_t and redo the cumulative sum
         ASSERT (Cp_is_32) ;
         ASSERT (!C->p_shallow) ;
         void *Cp_new = NULL ;
         size_t Cp_new_size = 0 ;
-GB_HERE ;
         Cp_new = GB_MALLOC_MEMORY (cnvec+1, sizeof (uint64_t), &Cp_new_size) ;
-GB_HERE ;
         if (Cp_new == NULL)
         { 
-printf ("\n======================================================================================tested out of memory condition\n") ; fflush (stdout) ;
-fprintf (stderr, "\n========================================================================================tested out of memory condition\n") ; fflush (stderr) ;
             return (GrB_OUT_OF_MEMORY) ;
         }
-GB_HERE ;
         // Cp_new = (uint64_t) Cp, casting from 32-bit to 64-bit
         GB_cast_int (Cp_new, GB_UINT64_code, Cp, GB_UINT32_code, cnvec+1, nth) ;
-GB_HERE ;
         GB_FREE_MEMORY (&Cp, C->p_size) ;
-GB_HERE ;
         C->p = Cp_new ;
         C->p_size = Cp_new_size ;
         C->p_is_32 = false ;
-        // redo the cumsum
-GB_HERE ;
+        // redo the cumsum (this will always succeed)
         GB_cumsum (C->p, false, cnvec, &nvec_nonempty, nth, Werk) ;
-GB_HERE ;
         GB_nvec_nonempty_set (C, nvec_nonempty) ;
-GB_HERE ;
     }
-GB_HERE ;
+
+    #ifdef GB_DEBUG
+    if (C->p_is_32)
+    {
+        uint32_t *Cp_debug = C->p ;
+        cnz2 = Cp_debug [cnvec] ;
+    }
+    else
+    {
+        uint64_t *Cp_debug = C->p ;
+        cnz2 = Cp_debug [cnvec] ;
+    }
+    ASSERT (cnz1 == cnz2) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks
@@ -190,7 +213,7 @@ GB_HERE ;
     for (taskid = 0 ; taskid < nfine ; taskid++)
     {
         if (taskid == SaxpyTasks [taskid].leader)
-        {
+        { 
             cjnz_sum = 0 ;
         }
         int64_t my_cjnz = SaxpyTasks [taskid].my_cjnz ;
@@ -198,7 +221,6 @@ GB_HERE ;
         cjnz_sum += my_cjnz ;
     }
 
-GB_HERE ;
     return (GrB_SUCCESS) ;
 }
 

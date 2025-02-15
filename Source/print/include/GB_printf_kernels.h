@@ -24,14 +24,15 @@
 //------------------------------------------------------------------------------
 
 // print to the standard output, and flush the result.  No error check is done.
-// This function is used for the BURBLE, and for debugging output. 
+// This function is used for the BURBLE, and for debugging output.  JIT kernels
+// do not BURBLE, but they can use GBDUMP for debugging.
 
 // the JIT run time kernels use printf and flush directly from libc:
 #undef  GBDUMP
-#define GBDUMP(...)                                                 \
-{                                                                   \
-    printf (__VA_ARGS__) ;                                          \
-    fflush (stdout) ;                                               \
+#define GBDUMP(...)                                             \
+{                                                               \
+    printf (__VA_ARGS__) ; /* JIT kernels use libc printf */    \
+    fflush (stdout) ;      /* JIT kernels use libc fflush */    \
 }
 
 //------------------------------------------------------------------------------
