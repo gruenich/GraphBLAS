@@ -12,7 +12,7 @@
 // status, jumbled status, orientation (by row/col), etc.
 
 #include "GB_container.h"
-#define GB_FREE_ALL ;
+#define GB_FREE_ALL GB_phybix_free (A) ;
 
 GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
 (
@@ -115,6 +115,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
                 A->h = GB_CALLOC_MEMORY (1, sizeof (uint64_t), &s) ;
                 if (A->h == NULL)
                 { 
+                    GB_FREE_ALL ;
                     return (GrB_OUT_OF_MEMORY) ;
                 }
                 Ah_size = (uint64_t) s ;
@@ -148,6 +149,8 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
             if (plen1 != plen + 1 ||
                 !(A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
             { 
+GB_GOTCHA ;
+                GB_FREE_ALL ;
                 return (GrB_INVALID_VALUE) ;
             }
             break ;
@@ -181,6 +184,8 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
             // basic sanity checks
             if (!(A->nvec == A->plen && A->plen == A->vdim))
             { 
+GB_GOTCHA ;
+                GB_FREE_ALL ;
                 return (GrB_INVALID_VALUE) ;
             }
             break ;
@@ -211,6 +216,8 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
             // basic sanity checks
             if (Ab_type != GrB_INT8 || !ok || Ab_len < nrows_times_ncols)
             { 
+GB_GOTCHA ;
+                GB_FREE_ALL ;
                 return (GrB_INVALID_VALUE) ;
             }
             break ;
@@ -258,6 +265,7 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     // ensure Ax_len is the right size
     if (A->iso)
     { 
+GB_GOTCHA ;
         // A->x must have size >= 1 for all iso matrices
         ok = (Ax_len >= 1) ;
     }
@@ -286,11 +294,14 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
     // if A->jumbled is true, ensure A has no readonly components
     if (A->jumbled)
     { 
+GB_GOTCHA ;
         ok = ok && !GB_is_shallow (A) ;
     }
 
     if (!ok)
     { 
+GB_GOTCHA ;
+        GB_FREE_ALL ;
         return (GrB_INVALID_VALUE) ;
     }
 

@@ -84,6 +84,7 @@ GrB_Info GB_matvec_enum_get (GrB_Matrix A, int32_t *value, int field)
             break ;
 
         case GxB_WILL_WAIT : 
+GB_GOTCHA ;
 
             (*value) = GB_ANY_PENDING_WORK (A) || GB_hyper_hash_need (A) ;
             break ;

@@ -10,7 +10,7 @@
 // in production: turn off developer flag
 #define GB_DEVELOPER 0
 
-// For development only:
+// For development only: FIXME: set 0 for release
 #undef  GB_DEVELOPER
 #define GB_DEVELOPER 1
 
@@ -604,6 +604,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (A->jumbled && GB_is_shallow (A))
     { 
+GB_GOTCHA ;
         GBPR0 ("  jumbled %s cannot contain readonly components\n", kind) ;
         return (GrB_INVALID_OBJECT) ;
     }

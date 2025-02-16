@@ -11,14 +11,97 @@
 
 #include "GB_mex.h"
 #include "GB_mex_errors.h"
+#include "../Source/container/GB_container.h"
 
 #define USAGE "C = GB_mex_container (A)"
 
+#undef  FREE_ALL2
+#define FREE_ALL2                       \
+{                                       \
+    GrB_Matrix_free_(&C) ;              \
+    GxB_Container_free (&Container) ;   \
+}
+
+#define OK2(method)                     \
+{                                       \
+    info = (method) ;                   \
+    if (info != GrB_SUCCESS)            \
+    {                                   \
+        FREE_ALL2 ;                     \
+        return (info) ;                 \
+    }                                   \
+}
+
+//------------------------------------------------------------------------------
+// matrix_method
+//------------------------------------------------------------------------------
+
+GrB_Info matrix_method (GrB_Matrix *C_handle, GrB_Matrix A) ;
+GrB_Info matrix_method (GrB_Matrix *C_handle, GrB_Matrix A)
+{
+    // test matrix variant
+    GrB_Info info ;
+    GrB_Matrix C = NULL ;
+    GxB_Container Container = NULL ;
+    OK2 (GxB_Container_new (&Container)) ;
+    OK2 (GrB_Matrix_dup (&C, A)) ;
+    OK2 (GrB_Matrix_wait (C, GrB_MATERIALIZE)) ;
+    OK2 (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
+    uint64_t len ;
+    OK2 (GrB_Vector_size (&len, Container->h)) ;
+    if (len == 0)
+    {
+//      printf ("\n----------------- h_empty:\n") ;
+        // test case when h_empty is true
+        GB_vector_reset (Container->h) ;
+    }
+//  printf ("\n----------------- GxB_load_Matrix_from_Container:\n") ;
+    OK2 (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+    (*C_handle) = C ;
+    GxB_Container_free (&Container) ;
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// vector_method
+//------------------------------------------------------------------------------
+
+GrB_Info vector_method (GrB_Vector *C_handle, GrB_Vector A) ;
+GrB_Info vector_method (GrB_Vector *C_handle, GrB_Vector A)
+{
+    // test vector variant
+    GrB_Info info ;
+    GrB_Vector C = NULL ;
+    GxB_Container Container ;
+    OK2 (GxB_Container_new (&Container)) ;
+    OK2 (GrB_Vector_dup (&C, A)) ;
+    OK2 (GrB_Vector_wait (C, GrB_MATERIALIZE)) ;
+    OK2 (GxB_unload_Vector_into_Container (C, Container, NULL)) ;
+    uint64_t len ;
+    OK2 (GrB_Vector_size (&len, Container->h)) ;
+    if (len == 0)
+    {
+//      printf ("\n----------------- h_empty:\n") ;
+        // test case when h_empty is true
+        GB_vector_reset (Container->h) ;
+    }
+//  printf ("\n----------------- GxB_load_Vector_from_Container:\n") ;
+    OK2 (GxB_load_Vector_from_Container (C, Container, NULL)) ;
+    (*C_handle) = C ;
+    GxB_Container_free (&Container) ;
+    return (GrB_SUCCESS) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_mex_container mexFunction
+//------------------------------------------------------------------------------
+
+
+#undef  FREE_ALL
 #define FREE_ALL                        \
 {                                       \
     GrB_Matrix_free_(&C) ;              \
     GrB_Matrix_free_(&A) ;              \
-    GxB_Container_free (&Container) ;   \
     GB_mx_put_global (true) ;           \
 }
 
@@ -33,7 +116,6 @@ void mexFunction
 
     GrB_Info info ;
     bool malloc_debug = GB_mx_get_global (true) ;
-    GxB_Container Container = NULL ;
     GrB_Matrix C = NULL, A = NULL ;
 
     // check inputs
@@ -42,33 +124,23 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    #define GET_DEEP_COPY           \
-        GrB_Matrix_dup (&C, A) ;    \
-        GrB_Matrix_wait (C, GrB_MATERIALIZE) ;
-    #define FREE_DEEP_COPY  GrB_Matrix_free (&C) ;
+    #define GET_DEEP_COPY ;
+    #define FREE_DEEP_COPY \
+        GrB_Matrix_free (&C) ;
 
     // get a shallow copy of the input
     A = GB_mx_mxArray_to_Matrix (pargin [0], "A input", false, true) ;
 
-    // C = A
-    GET_DEEP_COPY ;
-
-    METHOD (GxB_Container_new (&Container)) ;
-
-    if (GB_VECTOR_OK (C))
+    if (GB_VECTOR_OK (A))
     {
         // test vector variant
-        GrB_Vector V = (GrB_Vector) C ;
-        METHOD (GxB_unload_Vector_into_Container (V, Container, NULL)) ;
-        METHOD (GxB_load_Vector_from_Container (V, Container, NULL)) ;
+        METHOD (vector_method ((GrB_Vector) &C, (GrB_Vector) A)) ;
     }
     else
     {
         // test matrix variant
-        METHOD (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
-        METHOD (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+        METHOD (matrix_method (&C, A)) ;
     }
-    OK (GxB_Container_free (&Container)) ;
 
     // return C as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;

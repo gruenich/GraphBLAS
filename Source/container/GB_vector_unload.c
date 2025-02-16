@@ -95,7 +95,7 @@ GrB_Info GB_vector_unload
     V->x_shallow = false ;
 
     //--------------------------------------------------------------------------
-    // clear prior content of V, making V a dense GrB_Vector
+    // clear prior content of V, making V a dense GrB_Vector of length 0
     //--------------------------------------------------------------------------
 
     GB_vector_reset (V) ;

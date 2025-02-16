@@ -12,6 +12,12 @@ GB_mex_burble (0) ;
 
 rng ('default') ;
 
+% empty hypersparse test
+B = GB_spec_random (10, 10, 0, 128, 'double') ;
+B.sparsity = 1 ;
+C = GB_mex_container (B) ;
+GB_spec_compare (B, C) ;
+
 for k1 = 1:length (types)
     atype = types {k1} ;
     fprintf ('\n%s', atype) ;
@@ -26,6 +32,12 @@ for k1 = 1:length (types)
             GB_spec_compare (A, C) ;
         end
         fprintf (':') ;
+        % emtpy hypersparse case
+        B = GB_spec_random (10, 10, 0, 128, atype) ;
+        B.sparsity = 1 ;
+        C = GB_mex_container (B) ;
+        GB_spec_compare (B, C) ;
+        fprintf (':') ;
         % vector case
         V = GB_spec_random (10, 1, d, 128, atype) ;
         for V_sparsity = 0:15
@@ -39,5 +51,5 @@ end
 
 fprintf ('\n') ;
 GB_mex_burble (0) ;
-fprintf ('test289: all tests passed\n') ;
+fprintf ('\ntest289: all tests passed\n') ;
 

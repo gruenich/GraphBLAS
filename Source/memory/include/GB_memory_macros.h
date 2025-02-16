@@ -30,22 +30,22 @@
 
     #define GB_MALLOC_MEMORY(n,sizeof_type,s)                               \
         GB_malloc_memory (n, sizeof_type, s) ;                              \
-        GBMDUMP ("(%s, line %d)\n", __FILE__, __LINE__)
+        GBMDUMP ("did malloc: (%s, line %d)\n", __FILE__, __LINE__)
 
     #define GB_CALLOC_MEMORY(n,sizeof_type,s)                               \
         GB_calloc_memory (n, sizeof_type, s) ;                              \
-        GBMDUMP ("(%s, line %d)\n", __FILE__, __LINE__)
+        GBMDUMP ("did calloc: (%s, line %d)\n", __FILE__, __LINE__)
 
     #define GB_REALLOC_MEMORY(p,nnew,sizeof_type,s,ok)                      \
     {                                                                       \
         p = GB_realloc_memory (nnew, sizeof_type,                           \
             (void *) p, s, ok) ;                                            \
-        GBMDUMP ("(%s, line %d)\n", __FILE__, __LINE__) ;                   \
+        GBMDUMP ("did realloc (%s, line %d)\n", __FILE__, __LINE__) ;                   \
     }
 
     #define GB_XALLOC_MEMORY(use_calloc,iso,n,sizeof_type,s)                \
         GB_xalloc_memory (use_calloc, iso, n, sizeof_type, s) ;             \
-        GBMDUMP ("(%s, line %d)\n", __FILE__, __LINE__)
+        GBMDUMP ("did xalloc (%s, line %d)\n", __FILE__, __LINE__)
 
 #else
 
