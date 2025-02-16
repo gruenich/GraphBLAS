@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_plusplus: C<M> = accum(C,A*B) with user-defined plus_plus_fp32
+// GB_mex_plusone: C<M> = accum(C,A*B) with user-defined plus_one_fp64
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2025, All Rights Reserved.
@@ -7,9 +7,12 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_mex.h"
+// User-defined monoid with the ONEB operator, to check bug fix for bug 58.
 
-#define USAGE "C = GB_mex_plusplus (C, M, accum, [ ], A, B, desc)"
+#include "GB_mex.h"
+#include "GB_mex_errors.h"
+
+#define USAGE "C = GB_mex_plusone (C, M, accum, [ ], A, B, desc)"
 
 #define FREE_ALL                                    \
 {                                                   \
@@ -19,15 +22,15 @@
     GrB_Matrix_free_(&M) ;                          \
     GrB_BinaryOp_free_(&MyPlus) ;                   \
     GrB_Monoid_free_(&MyAdd) ;                      \
-    GrB_Semiring_free_(&MyPlusPlus) ;               \
+    GrB_Semiring_free_(&MyPlusOne) ;                \
     GrB_Descriptor_free_(&desc) ;                   \
     GB_mx_put_global (true) ;                       \
 }
 
-void myplus (float *z, const float *x, const float *y) ;
-void myplus (float *z, const float *x, const float *y) { (*z) = (*x)+(*y) ; }
-#define MYPLUS_DEFN \
-"void myplus (float *z, const float *x, const float *y) { (*z) = (*x)+(*y) ; }"
+void myplus64 (double *z, const double *x, const double *y) ;
+void myplus64 (double *z, const double *x, const double *y) { (*z) = (*x)+(*y) ; }
+#define MYPLUS64_DEFN \
+"void myplus64 (double *z, const double *x, const double *y) { (*z) = (*x)+(*y) ; }"
 
 void mexFunction
 (
@@ -38,12 +41,13 @@ void mexFunction
 )
 {
 
+    GrB_Info info ;
     bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
     GrB_Matrix B = NULL ;
     GrB_Matrix C = NULL ;
     GrB_Matrix M = NULL ;
-    GrB_Semiring MyPlusPlus = NULL ;
+    GrB_Semiring MyPlusOne = NULL ;
     GrB_Descriptor desc = NULL ;
     GrB_BinaryOp MyPlus = NULL ;
     GrB_Monoid MyAdd = NULL ;
@@ -90,11 +94,11 @@ void mexFunction
     }
 
     // create the semiring
-    GxB_BinaryOp_new (&MyPlus, (GxB_binary_function) myplus,
-        GrB_FP32, GrB_FP32, GrB_FP32, "myplus", MYPLUS_DEFN) ;
-    float zero = 0 ;
-    GrB_Monoid_new (&MyAdd, MyPlus, zero) ;
-    GrB_Semiring_new (&MyPlusPlus, MyAdd, MyPlus) ;
+    OK (GxB_BinaryOp_new (&MyPlus, (GxB_binary_function) myplus64,
+        GrB_FP64, GrB_FP64, GrB_FP64, "myplus64", MYPLUS64_DEFN)) ;
+    double zero = 0 ;
+    OK (GrB_Monoid_new_FP64 (&MyAdd, MyPlus, zero)) ;
+    OK (GrB_Semiring_new (&MyPlusOne, MyAdd, GrB_ONEB_FP64)) ;
 
     // get accum, if present
     GrB_BinaryOp accum ;
@@ -113,7 +117,7 @@ void mexFunction
     }
 
     // C<M> = accum(C,A*B)
-    METHOD (GrB_mxm (C, M, accum, MyPlusPlus, A, B, desc)) ;
+    METHOD (GrB_mxm (C, M, accum, MyPlusOne, A, B, desc)) ;
 
     // return C as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output from GrB_mxm", true) ;
