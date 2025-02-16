@@ -120,6 +120,10 @@ for k = 1:(ntypes + 1)
                 y1 = GB_mex_dot_iterator (X, Y, 3) ;
                 GB_spec_compare (y0, y1, 0, tol) ;
 
+                % with vector iterator, brute force, with functions, deep and jumbled
+                y1 = GB_mex_dot_iterator (X, Y, -3) ;
+                GB_spec_compare (y0, y1, 0, tol) ;
+
             end
             fprintf ('\n') ;
         end

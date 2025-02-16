@@ -149,7 +149,6 @@ GrB_Info GB_load_from_container // GxB_Container -> GrB_Matrix
             if (plen1 != plen + 1 ||
                 !(A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
             { 
-GB_GOTCHA ;
                 GB_FREE_ALL ;
                 return (GrB_INVALID_VALUE) ;
             }
@@ -184,7 +183,6 @@ GB_GOTCHA ;
             // basic sanity checks
             if (!(A->nvec == A->plen && A->plen == A->vdim))
             { 
-GB_GOTCHA ;
                 GB_FREE_ALL ;
                 return (GrB_INVALID_VALUE) ;
             }
@@ -216,7 +214,6 @@ GB_GOTCHA ;
             // basic sanity checks
             if (Ab_type != GrB_INT8 || !ok || Ab_len < nrows_times_ncols)
             { 
-GB_GOTCHA ;
                 GB_FREE_ALL ;
                 return (GrB_INVALID_VALUE) ;
             }
@@ -265,7 +262,6 @@ GB_GOTCHA ;
     // ensure Ax_len is the right size
     if (A->iso)
     { 
-GB_GOTCHA ;
         // A->x must have size >= 1 for all iso matrices
         ok = (Ax_len >= 1) ;
     }
@@ -294,13 +290,11 @@ GB_GOTCHA ;
     // if A->jumbled is true, ensure A has no readonly components
     if (A->jumbled)
     { 
-GB_GOTCHA ;
         ok = ok && !GB_is_shallow (A) ;
     }
 
     if (!ok)
     { 
-GB_GOTCHA ;
         GB_FREE_ALL ;
         return (GrB_INVALID_VALUE) ;
     }

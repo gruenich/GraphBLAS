@@ -82,7 +82,8 @@
 #define ASSERT_DESCRIPTOR_OK_OR_NULL(d,name,pr)
 
 #if 0
-// FIXME: remove this when done
+// For tracking down 64-bit integers when not expected;
+// this is meant for development only.
 #undef  ASSERT_MATRIX_OK
 #undef  ASSERT_MATRIX_OK_OR_NULL
 #undef  ASSERT_VECTOR_OK
@@ -103,7 +104,8 @@
         if (!((A)->p_is_32) || !((A)->i_is_32) || !((A)->j_is_32))  \
         { \
             printf ("Hey JIT: %s %d: %s (%d,%d,%d)\n", \
-            __FILE__, __LINE__, name, (A)->p_is_32, (A)->j_is_32, (A)->i_is_32) ; \
+            __FILE__, __LINE__, name, \
+            (A)->p_is_32, (A)->j_is_32, (A)->i_is_32) ; \
         } \
     } \
 }

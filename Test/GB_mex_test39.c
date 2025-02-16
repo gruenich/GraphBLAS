@@ -188,7 +188,41 @@ void mexFunction
     // test the container error conditions
     //--------------------------------------------------------------------------
 
-    // FIXME ...
+    printf ("test errors ...\n") ;
+    OK (GrB_Matrix_free (&C)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP64, 100, 100)) ;
+    OK (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
+    OK (GrB_Vector_free (&(Container->h))) ;
+    OK (GrB_Vector_new (&(Container->h), GrB_UINT64, 42)) ;
+    OK (GrB_Vector_assign_UINT64 (Container->h, NULL, NULL, 0, GrB_ALL, 100,
+        NULL)) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+    OK (GrB_Matrix_free (&C)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP64, 100, 100)) ;
+    Container->format = GxB_BITMAP ;
+    Container->nrows = 100 ;
+    Container->ncols = 100 ;
+    ERR (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+    Container->format = GxB_SPARSE ;
+    OK (GrB_Matrix_free (&C)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP64, 100, 100)) ;
+    ERR (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+
+    OK (GrB_Matrix_free (&C)) ;
+    OK (GxB_Container_free (&Container)) ;
+    OK (GxB_Container_new (&Container)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP64, 100, 100)) ;
+    OK (GxB_unload_Matrix_into_Container (C, Container, NULL)) ;
+
+    void *x = Container->p->x ;
+    size_t x_size = Container->p->x_size ;
+    Container->p->x_shallow = true ;
+    Container->jumbled = true ;
+    ERR (GxB_load_Matrix_from_Container (C, Container, NULL)) ;
+    Container->p->x_shallow = false ;
+    GB_FREE_MEMORY ((void **) &x, x_size) ;
+    OK (GxB_Container_free (&Container)) ;
 
     //--------------------------------------------------------------------------
     // finalize GraphBLAS

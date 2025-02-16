@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //------------------------------------------------------------------------------
-#define GB_DEBUG
 
 // These functions are only used by the @GrB interface for
 // SuiteSparse:GraphBLAS.

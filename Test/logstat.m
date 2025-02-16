@@ -208,10 +208,14 @@ for pji_control_trials = 1:length(pji_controls)
                         fprintf (   '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
                         fprintf (f, '     : %5d %4.1f%%', n-c, 100 * (c/n)) ;
                     else
+                        crel = 100 * (c/n) ;
+                        if (crel < 100 && crel > 99.9)
+                            crel = 99.9 ;
+                        end
                         fprintf (   '%5d: %5d %4.1f%% %7.1f/s', ...
-                            c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
+                            c - clast, n-c, crel, (c-clast) / t) ;
                         fprintf (f, '%5d: %5d %4.1f%% %7.1f/s', ...
-                            c - clast, n-c, 100 * (c/n), (c-clast) / t) ;
+                            c - clast, n-c, crel, (c-clast) / t) ;
                     end
                     if (debug)
                         fprintf (' [debug]') ;

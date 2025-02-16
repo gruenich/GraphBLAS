@@ -54,12 +54,32 @@ void mexFunction
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
 
-    // get X (shallow copy)
-    X = GB_mx_mxArray_to_Vector (pargin [0], "X input", false, true) ;
+    // get kind:
+    // 0: merge, using macros
+    // 1: iterate through x and lookup y, using macros
+    // 2: merge, using functions
+    // 3: iterate through x and lookup y, using functions
+    bool deep_and_jumbled = false ;
+    int GET_SCALAR (2, int, kind, 0) ;
+    if (kind < 0)
+    {
+        deep_and_jumbled = true ;
+        kind = -kind ;
+    }
+    bool use_macros = (kind <= 1) ;
+    kind = kind % 2 ;
+
+    // get X (deep or shallow copy)
+    X = GB_mx_mxArray_to_Vector (pargin [0], "X input", deep_and_jumbled, true) ;
     if (X == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("X failed") ;
+    }
+    if (deep_and_jumbled)
+    {
+        // to test the wait in Iterator_attach
+        X->jumbled = true ;
     }
 
     // get Y (shallow copy)
@@ -69,15 +89,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("Y failed") ;
     }
-
-    // get kind:
-    // 0: merge, using macros
-    // 1: iterate through x and lookup y, using macros
-    // 2: merge, using functions
-    // 3: iterate through x and lookup y, using functions
-    int GET_SCALAR (2, int, kind, 0) ;
-    bool use_macros = (kind <= 1) ;
-    kind = kind % 2 ;
 
     uint64_t n, ny ;
     OK (GrB_Vector_size (&n, X)) ;

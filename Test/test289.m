@@ -49,6 +49,13 @@ for k1 = 1:length (types)
     end
 end
 
+% iso test
+clear A
+A.matrix = pi * spones (sprand (10, 10, 0.2)) ;
+A.iso = true ;
+C = GB_mex_container (A) ;
+GB_spec_compare (A, C) ;
+
 fprintf ('\n') ;
 GB_mex_burble (0) ;
 fprintf ('\ntest289: all tests passed\n') ;
