@@ -154,6 +154,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     bool is_first  = (mult_opcode == GB_FIRST_binop_code) ;
     bool is_second = (mult_opcode == GB_SECOND_binop_code) ;
     bool is_pair   = (mult_opcode == GB_PAIR_binop_code) ;
+    bool is_user_monoid = (add_opcode == GB_USER_binop_code) ;
 
     if (C_iso)
     { 
@@ -165,7 +166,7 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
         fprintf (fp, "#define GB_MULTADD(z,x,y,i,k,j)\n") ;
 
     }
-    else if (u_expr != NULL && f_expr != NULL &&
+    else if (u_expr != NULL && f_expr != NULL && !is_user_monoid &&
         (is_float || is_double || is_bool || is_first || is_second || is_pair
             || is_positional))
     { 
@@ -321,14 +322,17 @@ void GB_macrofy_mxm         // construct all macros for GrB_mxm
     switch (mult_opcode)
     {
         case GB_PAIR_binop_code : 
-            fprintf (fp, "#define GB_IS_PAIR_MULTIPLIER 1\n") ;
-            if (zcode == GB_FC32_code)
+            if (!is_user_monoid)
             { 
-                fprintf (fp, "#define GB_PAIR_ONE GxB_CMPLXF (1,0)\n") ;
-            }
-            else if (zcode == GB_FC64_code)
-            { 
-                fprintf (fp, "#define GB_PAIR_ONE GxB_CMPLX (1,0)\n") ;
+                fprintf (fp, "#define GB_IS_PAIR_MULTIPLIER 1\n") ;
+                if (zcode == GB_FC32_code)
+                { 
+                    fprintf (fp, "#define GB_PAIR_ONE GxB_CMPLXF (1,0)\n") ;
+                }
+                else if (zcode == GB_FC64_code)
+                { 
+                    fprintf (fp, "#define GB_PAIR_ONE GxB_CMPLX (1,0)\n") ;
+                }
             }
             break ;
 

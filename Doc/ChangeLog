@@ -1,5 +1,7 @@
-Dec 20, 2024: version 9.4.3
+Feb 17, 2025: version 9.4.4
 
+    * (58) bug fix: semirings with user-defined monoids and the GrB_ONEB or
+        GxB_PAIR operators caused a JIT compiler error.  Caught by Gabe Gomez.
     * (57) bug fix: GraphBLAS.h header: remove duplicate definitions of
         GxB_MAX_FIRST_* semirings (incompletely moved to 'historical' section
         in 9.4.2).
