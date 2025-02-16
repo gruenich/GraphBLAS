@@ -117,6 +117,7 @@ F100 = {4,4,0,0} ;
 
 % < 1 second: debug_off
 set_malloc_debug (mdebug, 0) ;
+logstat ('test297'    ,t, J4   , F0   ) ; % plus_one semiring
 logstat ('test286'    ,t, J40  , F00  ) ; % kron with index binary op
 logstat ('test78'     ,t, J40  , F00  ) ; % subref
 logstat ('test285'    ,t, J40  , F00  ) ; % GB_mex_assign (bitmap, 7_whole)
