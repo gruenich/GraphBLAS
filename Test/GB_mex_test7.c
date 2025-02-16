@@ -57,6 +57,10 @@ void mexFunction
     OK (GrB_Matrix_wait (A, 1)) ;
     OK (GxB_Matrix_fprint (A, "A valid", 3, NULL)) ;
 
+    int will_wait = true ;
+    OK (GrB_Matrix_get_INT32 (A, &will_wait, GxB_WILL_WAIT)) ;
+    CHECK (!will_wait) ;
+
     printf ("\ninvalid A->p:\n") ;
     size_t save = A->p_size ;
     A->p_size = 3 ;
@@ -127,13 +131,28 @@ void mexFunction
     OK (GxB_Matrix_fprint (B,
         "B valid (shallow hypersparse: stats_mem_shallow false)", 3, NULL)) ;
 
-    GxB_print (A,3) ;
-    GxB_print (B,3) ;
+    expected = GrB_INVALID_OBJECT ;
+    B->jumbled = true ;
+    ERR (GxB_Matrix_fprint (B, "B invalid; jumbled and shallow", 3, NULL)) ;
+    B->jumbled = false ;
+
+    OK (GxB_print (A,3)) ;
+    OK (GxB_print (B,3)) ;
+
+    A->jumbled = true ;
+    will_wait = false ;
+    OK (GrB_Matrix_get_INT32 (A, &will_wait, GxB_WILL_WAIT)) ;
+    CHECK (will_wait) ;
+
+    A->jumbled = false ;
+    will_wait = true ;
+    OK (GrB_Matrix_get_INT32 (A, &will_wait, GxB_WILL_WAIT)) ;
+    CHECK (!will_wait) ;
 
     OK (GrB_Global_set_INT32 (GrB_GLOBAL, true,
         GxB_INCLUDE_READONLY_STATISTICS)) ;
 
-    GxB_print (B,3) ;
+    OK (GxB_print (B,3)) ;
 
     CHECK (GB_any_aliased (A, B)) ;
     OK (GrB_Matrix_free (&B)) ;
