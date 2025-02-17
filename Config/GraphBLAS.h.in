@@ -3463,7 +3463,7 @@ GrB_Info GxB_Matrix_build_Scalar    // build a matrix from (I,J,scalar) tuples
     GrB_Index nvals                 // number of tuples
 ) ;
 
-GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,X) tuples
+GrB_Info GxB_Matrix_build_Scalar_Vector // build a matrix from (I,J,s) tuples
 (
     GrB_Matrix C,               // matrix to build
     const GrB_Vector I_vector,  // row indices

@@ -1,0 +1,143 @@
+
+\newpage
+\begin{note}
+FIXME: add Doc updates for GraphBLAS v10:   %% FIXME
+\end{note}
+
+\begin{verbatim}
+NEW FOR v10:
+
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar: get/set
+    GxB_ROWINDEX_INTEGER_HINT = 7053,   // hint for row indices
+    GxB_COLINDEX_INTEGER_HINT = 7054,   // hint for column indices
+    GxB_OFFSET_INTEGER_HINT = 7056,     // hint for offsets
+
+    // GrB_Matrix, GrB_Vector, GrB_Scalar: get only
+    GxB_ROWINDEX_INTEGER_BITS = 7057,   // # bits for row indices
+    GxB_COLINDEX_INTEGER_BITS = 7058,   // # bits for column indices
+    GxB_OFFSET_INTEGER_BITS = 7059,     // # bits for offsets
+    GxB_IS_READONLY = 7078,
+
+    GxB_OUTPUT_IS_READONLY = -7002,
+
+    // GrB_get/GrB_set for GrB_Matrix:
+    GxB_ISO = 7079,     // get: returns the current iso status
+                        // set true: make the matrix iso-valued, if possible.
+                        // set false: make the matrix non-iso-valued.
+
+    GxB_INCLUDE_READONLY_STATISTICS = 7077, // include readonly memory in
+                                     // memory usage statistics
+
+    GxB_WILL_WAIT = 7076,           // true if GrB_wait(A) will do anything
+
+    // GrB_get/GrB_set for GrB_Descriptor:
+    GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted
+    GxB_COLINDEX_LIST = 7063,       // how GrB_Vector J is intrepretted
+    GxB_VALUE_LIST = 7064,          // how GrB_Vector X is intrepretted
+
+// settings for GxB_ROWINDEX_LIST, GxB_COLINDEX_LIST, and GxB_VALUE_LIST:
+#define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
+#define GxB_USE_INDICES (7060)  /* use the indices of the vector */
+#define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
+
+new Container methods:
+
+    struct GxB_Container_struct
+
+new _Vector methods for build, extract, extractTuples, assign, subassign:
+
+    GrB_assign polymorphic method extended
+    GxB_Row_assign_Vector
+    GxB_Col_assign_Vector
+    GxB_Matrix_assign_Scalar_Vector
+    GxB_Matrix_assign_Vector
+    GxB_Vector_assign_Scalar_Vector
+    GxB_Vector_assign_Vector
+
+    GxB_subassign polymorphic method extended
+    GxB_Row_subassign_Vector
+    GxB_Col_subassign_Vector
+    GxB_Matrix_subassign_Scalar_Vector
+    GxB_Matrix_subassign_Vector
+    GxB_Vector_subassign_Scalar_Vector
+    GxB_Vector_subassign_Vector
+
+    GxB_extract polymorphic method extended
+    GxB_Col_extract_Vector
+    GxB_Matrix_extract_Vector
+    GxB_Vector_extract_Vector
+
+    GxB_Container_new
+    GxB_Container_free
+    GxB_load_Matrix_from_Container
+    GxB_load_Vector_from_Container
+    GxB_unload_Matrix_into_Container
+    GxB_unload_Vector_into_Container
+    GxB_Vector_load
+    GxB_Vector_unload
+
+    The Container->[phbix] GrB_Vectors need not be freed by the user
+    application, just loaded/unloaded with GxB_Vector load/unload.  All of them
+    must be present for the Container to be used, for any matrix format.  They
+    are allocated when the Container is created, and freed when the Container
+    is freed.  If they are freed or removed by the user application, they are
+    simply recreated as vectors of length zero the next time
+    GxB_load_*_from_Container is called.  Alternatively, Container->[phbix]
+    components can be replaced with the following, where the type is
+    arbitrary:
+
+        GrB_Vector_new (&(Container->p), GrB_UINT32, 0) ;
+
+--------------------------------------------------------------------------------
+TODO:
+--------------------------------------------------------------------------------
+
+assign:
+> #define GxB_Row_assign_Vector
+> #define GxB_Col_assign_Vector
+> #define GxB_Matrix_assign_Scalar_Vector
+> #define GxB_Matrix_assign_Vector
+> #define GxB_Vector_assign_Scalar_Vector
+> #define GxB_Vector_assign_Vector
+
+subassign:
+> #define GxB_Row_subassign_Vector
+> #define GxB_Col_subassign_Vector
+> #define GxB_Matrix_subassign_Scalar_Vector
+> #define GxB_Matrix_subassign_Vector
+> #define GxB_Vector_subassign_Scalar_Vector
+> #define GxB_Vector_subassign_Vector
+
+extract:
+> #define GxB_Col_extract_Vector
+> #define GxB_Matrix_extract_Vector
+> #define GxB_Vector_extract_Vector
+
+container methods:
+> #define GxB_Container_free
+> #define GxB_Container_new
+> #define GxB_load_Matrix_from_Container
+> #define GxB_load_Vector_from_Container
+> #define GxB_unload_Matrix_into_Container
+> #define GxB_unload_Vector_into_Container
+> #define GxB_Vector_load
+> #define GxB_Vector_unload
+
+--------------------------------------------------------------------------------
+added: but with some fixme's
+--------------------------------------------------------------------------------
+
+Matrix build/extractTuples:
+> #define GxB_Matrix_build_Scalar_Vector
+> #define GxB_Matrix_build_Vector
+> #define GxB_Matrix_extractTuples_Vector
+
+Vector build/extractTuples:
+> #define GxB_Vector_build_Scalar_Vector
+> #define GxB_Vector_build_Vector
+> #define GxB_Vector_extractTuples_Vector
+
+
+\end{verbatim}
+
+
