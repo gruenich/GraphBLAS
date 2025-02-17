@@ -27,7 +27,7 @@ See Section~\ref{colon} for a description of
 \begin{verbatim}
 GrB_Info GrB_assign                 // w<mask>(I) = accum (w(I),u)
 (
-    GrB_Vector w,                   // input/output matrix for results
+    GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
@@ -44,7 +44,33 @@ described in Section~\ref{assign_matrix}, where all matrices have a single
 column each.  The only other difference is that the input \verb'u' in this
 method is not transposed via the \verb'GrB_INP0' descriptor.
 
-\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_assign\_Vector:} assign to a subvector }
+%-------------------------------------------------------------------------------
+\label{assign_vector_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_assign                 // w<mask>(I) = accum (w(I),u)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Descriptor desc
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Vector_assign_Vector' is identical to \verb'GrB_Vector_assign',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries.  The interpretation of \verb'I_vector' is controlled by descriptor
+setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
+values of the input vector, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_assign:} assign to a submatrix }
 %-------------------------------------------------------------------------------
@@ -108,6 +134,36 @@ the format of \verb'C' is \verb'GrB_ROWMAJOR'; if \verb'|J|' is small, then it i
 fastest if the format of \verb'C' is \verb'GrB_COLMAJOR'.  The opposite is true
 if \verb'A' is transposed.
 
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_assign\_Vector:} assign to a submatrix }
+%-------------------------------------------------------------------------------
+\label{assign_matrix_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_assign                 // C<Mask>(I,J) = accum (C(I,J),A)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),T)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Vector J_vector,      // column indices
+    const GrB_Descriptor desc
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_assign_Vector' is identical to \verb'GrB_Matrix_assign',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries, and the column indices are given by the \verb'GrB_Vector J' with
+\verb'nj' entries.  The interpretation of \verb'I_vector' and \verb'J_vector'
+are controlled by descriptor setting \verb'GxB_ROWINDEX_LIST' and
+\verb'GxB_COLINDEX_LIST', respectively.  The method can use either the indices
+or values of each of the input vectors, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Col\_assign:} assign to a sub-column of a matrix}
@@ -146,7 +202,34 @@ not transposed.  Refer to \verb'GrB_Matrix_assign' for further details.
 of \verb'C' is \verb'GrB_COLMAJOR'.  \verb'GrB_Row_assign' is much faster than
 \verb'GrB_Col_assign' if the format of \verb'C' is \verb'GrB_ROWMAJOR'.
 
-\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Col\_assign\_Vector:} assign to a sub-column of a matrix}
+%-------------------------------------------------------------------------------
+\label{assign_column_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_assign                 // C<mask>(I,j) = accum (C(I,j),u)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for C(:,j), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C(I,j),t)
+    const GrB_Vector u,             // input vector
+    const GrB_Vector I_vector,      // row indices
+    GrB_Index j,                    // column index
+    const GrB_Descriptor desc
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Col_assign_Vector' is identical to \verb'GrB_Col_assign',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries.  The interpretation of \verb'I_vector' is controlled by descriptor
+setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
+values of the input vector, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Row\_assign:} assign to a sub-row of a matrix}
 %-------------------------------------------------------------------------------
@@ -186,6 +269,34 @@ of \verb'C' is \verb'GrB_COLMAJOR'.  \verb'GrB_Row_assign' is much faster than
 
 \newpage
 %-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Row\_assign\_Vector:} assign to a sub-row of a matrix}
+%-------------------------------------------------------------------------------
+\label{assign_row_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_assign                 // C<mask'>(i,J) = accum (C(i,J),u')
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Vector mask,          // mask for C(i,:), unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C(i,J),t)
+    const GrB_Vector u,             // input vector
+    GrB_Index i,                    // row index
+    const GrB_Vector J_vector,      // column indices
+    const GrB_Descriptor desc
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Row_assign_Vector' is identical to \verb'GrB_Row_assign',
+except that the column indices are given by the \verb'GrB_Vector J' with \verb'nj'
+entries.  The interpretation of \verb'J_vector' is controlled by descriptor
+setting \verb'GxB_COLINDEX_LIST'.  The method can use either the indices or
+values of the input vector, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_assign\_$<$type$>$:} assign a scalar to a subvector}
 %-------------------------------------------------------------------------------
 \label{assign_vector_scalar}
@@ -217,7 +328,33 @@ Following the C API Specification, results are well-defined if \verb'I'
 contains duplicate indices.  Duplicate indices are simply ignored.  See
 Section~\ref{duplicates} for more details.
 
-% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_assign\_Scalar\_Vector:} assign a scalar to a subvector}
+%-------------------------------------------------------------------------------
+\label{assign_vector_scalar_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_assign                 // w<mask>(I) = accum (w(I),x)
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(w(I),x)
+    const GrB_Scalar x,             // scalar to assign to w(I)
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Descriptor desc
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Vector_assign_Scalar_Vector' is identical to \verb'GrB_Vector_assign_Scalar',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries.  The interpretation of \verb'I_vector' is controlled by descriptor
+setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
+values of the input vector, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_assign\_$<$type$>$:} assign a scalar to a submatrix}
 %-------------------------------------------------------------------------------
@@ -282,4 +419,33 @@ the format of \verb'C' is \verb'GrB_ROWMAJOR'; if \verb'|J|' is small, then it i
 fastest if the format of \verb'C' is \verb'GrB_COLMAJOR'.  The opposite is true
 if \verb'A' is transposed.
 
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_assign\_Scalar\_Vector:} assign a scalar to a submatrix}
+%-------------------------------------------------------------------------------
+\label{assign_matrix_scalar_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_assign                 // C<Mask>(I,J) = accum (C(I,J),x)
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
+    const GrB_Scalar x,             // scalar to assign to C(I,J)
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Vector J_vector,      // column indices
+    const GrB_Descriptor desc
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_assign_Scalar_Vector' is identical to \verb'GxB_Matrix_assign_Scalar',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries, and the column indices are given by the \verb'GrB_Vector J' with
+\verb'nj' entries.  The interpretation of \verb'I_vector' and \verb'J_vector'
+are controlled by descriptor setting \verb'GxB_ROWINDEX_LIST' and
+\verb'GxB_COLINDEX_LIST', respectively.  The method can use either the indices
+or values of each of the input vectors, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
 

@@ -11,7 +11,6 @@ The \verb'GrB_extract' function is a generic name for three specific functions:
 but the specific function name is used when describing what each variation
 does.
 
-% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extract:} extract subvector from vector}
 %-------------------------------------------------------------------------------
@@ -41,7 +40,33 @@ The final step is ${\bf w \langle m \rangle  = w \odot
 t}$, as described in Section~\ref{accummask}, except that all the terms are
 column vectors instead of matrices.
 
-\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_extract\_Vector:} extract subvector from vector}
+%-------------------------------------------------------------------------------
+\label{extract_vector_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_extract                // w<mask> = accum (w, u(I))
+(
+    GrB_Vector w,                   // input/output vector for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Vector u,             // first input:  vector u
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Descriptor desc       // descriptor for w and mask
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Vector_extract_Vector' is identical to \verb'GrB_Vector_extract',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries.  The interpretation of \verb'I_vector' is controlled by descriptor
+setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
+values of the input vector, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_extract:} extract submatrix from matrix}
 %-------------------------------------------------------------------------------
@@ -104,7 +129,36 @@ then it is fastest if \verb'A' is \verb'GrB_ROWMAJOR'; if
 \verb'|J|' is small, then it is fastest if \verb'A' is
 \verb'GrB_COLMAJOR'.  The opposite is true if \verb'A' is transposed.
 
-\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_extract\_Vector:} extract submatrix from matrix}
+%-------------------------------------------------------------------------------
+\label{extract_matrix_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_extract                // C<Mask> = accum (C, A(I,J))
+(
+    GrB_Matrix C,                   // input/output matrix for results
+    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Vector J_vector,      // column indices
+    const GrB_Descriptor desc       // descriptor for C, M, and A
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Matrix_extract_Vector' is identical to \verb'GrB_Matrix_extract',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries, and the column indices are given by the \verb'GrB_Vector J' with
+\verb'nj' entries.  The interpretation of \verb'I_vector' and \verb'J_vector'
+are controlled by descriptor setting \verb'GxB_ROWINDEX_LIST' and
+\verb'GxB_COLINDEX_LIST', respectively.  The method can use either the indices
+or values of each of the input vectors, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
+
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Col\_extract:} extract column vector from matrix}
 %-------------------------------------------------------------------------------
@@ -144,4 +198,31 @@ all the terms are column vectors instead of matrices.
 If \verb'A' is not transposed: it is fastest if the format of \verb'A' is
 \verb'GrB_COLMAJOR'.  The opposite is true if \verb'A' is transposed.
 
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Col\_extract\_Vector:} extract column vector from matrix}
+%-------------------------------------------------------------------------------
+\label{extract_column_Vector}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_extract                // w<mask> = accum (w, A(I,j))
+(
+    GrB_Vector w,                   // input/output matrix for results
+    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
+    const GrB_Matrix A,             // first input:  matrix A
+    const GrB_Vector I_vector,      // row indices
+    const GrB_Index j,              // column index
+    const GrB_Descriptor desc       // descriptor for w, mask, and A
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Col_extract_Vector' is identical to \verb'GrB_Col_extract',
+except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
+entries.  The interpretation of \verb'I_vector' is controlled by descriptor
+setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
+values of the input vector, or it can use the values as a stride
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
+for details.  %% FIXME
 

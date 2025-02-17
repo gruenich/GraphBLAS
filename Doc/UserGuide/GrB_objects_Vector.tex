@@ -25,16 +25,14 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_set'  & set properties of a vector       & \ref{get_set_vector} \\
 \verb'GrB_Vector_build'          & build a vector from tuples       & \ref{vector_build} \\
 \verb'GxB_Vector_build_Scalar'   & build a vector from tuples       & \ref{vector_build_Scalar} \\
-% NEW for v10:
-\verb'GxB_Vector_build_Vector'          & build a vector from tuples       & \ref{vector_build_Vector} \\   %% NEW
-\verb'GxB_Vector_build_Scalar_Vector'   & build a vector from tuples       & \ref{vector_build_Scalar_Vector} \\  %% NEW
+\verb'GxB_Vector_build_Vector'          & build a vector from tuples       & \ref{vector_build_Vector} \\
+\verb'GxB_Vector_build_Scalar_Vector'   & build a vector from tuples       & \ref{vector_build_Scalar_Vector} \\
 \verb'GrB_Vector_setElement'     & add an entry to a vector         & \ref{vector_setElement} \\
 \verb'GrB_Vector_extractElement' & get an entry from a vector       & \ref{vector_extractElement} \\
 \verb'GxB_Vector_isStoredElement'& check if entry present in vector & \ref{vector_isStoredElement} \\
 \verb'GrB_Vector_removeElement'  & remove an entry from a vector    & \ref{vector_removeElement} \\
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector    & \ref{vector_extractTuples} \\
-% NEW for v10:
-\verb'GxB_Vector_extractTuples_Vector'  & get all entries from a vector    & \ref{vector_extractTuples_Vector} \\ %% NEW
+\verb'GxB_Vector_extractTuples_Vector'  & get all entries from a vector    & \ref{vector_extractTuples_Vector} \\
 \verb'GrB_Vector_resize'         & resize a vector                  & \ref{vector_resize} \\
 \verb'GxB_Vector_diag'           & extract a diagonal from a matrix & \ref{vector_diag} \\
 \verb'GxB_Vector_memoryUsage'    & memory used by a vector          & \ref{vector_memusage} \\
@@ -266,7 +264,7 @@ non-commutative.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GrB\_Vector\_build\_Vector:} build a vector from a set of tuples}   %% NEW
+\subsubsection{{\sf GrB\_Vector\_build\_Vector:} build a vector from a set of tuples}
 %-------------------------------------------------------------------------------
 \label{vector_build_Vector}
 
@@ -320,7 +318,7 @@ entries in the sparsity pattern of \verb'w' are identical, and equal to the
 input scalar value.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_build\_Scalar\_Vector:} build a vector from a set of tuples} %% NEW
+\subsubsection{{\sf GxB\_Vector\_build\_Scalar\_Vector:} build a vector from a set of tuples}
 %-------------------------------------------------------------------------------
 \label{vector_build_Scalar_Vector}
 
@@ -460,7 +458,7 @@ Section~\ref{matrix_extractTuples} where further details of this function are
 described.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Vector\_extractTuples\_Vector:} get all entries from a vector} %% NEW
+\subsubsection{{\sf GxB\_Vector\_extractTuples\_Vector:} get all entries from a vector}
 %-------------------------------------------------------------------------------
 \label{vector_extractTuples_Vector}
 

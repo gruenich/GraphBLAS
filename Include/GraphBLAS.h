@@ -4635,7 +4635,7 @@ GrB_Info GxB_Col_extract_Vector     // w<mask> = accum (w, A(I,j))
 
 GrB_Info GxB_Vector_subassign       // w(I)<mask> = accum (w(I),u)
 (
-    GrB_Vector w,                   // input/output matrix for results
+    GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w(I), unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
@@ -4646,7 +4646,7 @@ GrB_Info GxB_Vector_subassign       // w(I)<mask> = accum (w(I),u)
 
 GrB_Info GxB_Vector_subassign_Vector // w(I)<mask> = accum (w(I),u)
 (
-    GrB_Vector w,                   // input/output matrix for results
+    GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w(I), unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
@@ -4792,7 +4792,7 @@ GrB_Info GxB_Matrix_subassign_Scalar   // C(I,J)<Mask> = accum (C(I,J),x)
 GrB_Info GxB_Matrix_subassign_Scalar_Vector   // C(I,J)<Mask> = accum (C(I,J),x)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_Matrix Mask,          // optional mask for C(I,J), unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),x)
     const GrB_Scalar scalar,        // scalar to assign to C(I,J)
     const GrB_Vector I_vector,      // row indices
@@ -4891,7 +4891,7 @@ GB_DECLARE_14 (GxB_, void *)
 
 GrB_Info GrB_Vector_assign          // w<mask>(I) = accum (w(I),u)
 (
-    GrB_Vector w,                   // input/output matrix for results
+    GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
@@ -4902,7 +4902,7 @@ GrB_Info GrB_Vector_assign          // w<mask>(I) = accum (w(I),u)
 
 GrB_Info GxB_Vector_assign_Vector   // w<mask>(I) = accum (w(I),u)
 (
-    GrB_Vector w,                   // input/output matrix for results
+    GrB_Vector w,                   // input/output vector for results
     const GrB_Vector mask,          // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w(I),t)
     const GrB_Vector u,             // first input:  vector u
@@ -5913,7 +5913,7 @@ GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
 GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
 (
     GrB_Vector V,               // GrB_Vector to load from the Container
-    GxB_Container Container,    // Container with contents to load into A
+    GxB_Container Container,    // Container with contents to load into V
     const GrB_Descriptor desc   // currently unused
 ) ;
 

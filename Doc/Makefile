@@ -10,7 +10,7 @@
 # creates the user guide
 
 GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
-    GraphBLAS_API_version.tex GraphBLAS_version.tex \
+    GraphBLAS_API_version.tex GraphBLAS_version.tex Makefile \
     UserGuide/GrB_abstract.tex \
     UserGuide/GrB_acknowledgements.tex \
     UserGuide/GrB_colon.tex \
@@ -28,7 +28,9 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_mask.tex \
     UserGuide/GrB_matlab_performance.tex \
     UserGuide/GrB_objects_BinaryOp.tex \
+    UserGuide/GrB_objects_Container.tex \
     UserGuide/GrB_objects_Descriptor.tex \
+    UserGuide/GrB_objects_formats.tex \
     UserGuide/GrB_objects_free.tex \
     UserGuide/GrB_objects_import.tex \
     UserGuide/GrB_objects_IndexBinaryOp.tex \
@@ -43,7 +45,6 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_objects_Type.tex \
     UserGuide/GrB_objects_UnaryOp.tex \
     UserGuide/GrB_objects_Vector.tex \
-    UserGuide/GrB_operations.tex \
     UserGuide/GrB_operations_apply.tex \
     UserGuide/GrB_operations_assign_duplicates.tex \
     UserGuide/GrB_operations_assign.tex \
@@ -58,6 +59,7 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_operations_reduce.tex \
     UserGuide/GrB_operations_select.tex \
     UserGuide/GrB_operations_subassign.tex \
+    UserGuide/GrB_operations.tex \
     UserGuide/GrB_operations_transpose.tex \
     UserGuide/GrB_operations_vxm.tex \
     UserGuide/GrB_performance.tex \
@@ -65,6 +67,7 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_references.tex \
     UserGuide/GrB_release.tex \
     UserGuide/GrB_resources.tex \
+    UserGuide/GrB_v10.tex \
     UserGuide/TODO.tex
 	pdflatex GraphBLAS_UserGuide.tex
 	bibtex GraphBLAS_UserGuide

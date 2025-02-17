@@ -27,16 +27,14 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_set'  & set properties of a matrix       & \ref{get_set_matrix} \\
 \verb'GrB_Matrix_build'         & build a matrix from tuples            & \ref{matrix_build} \\
 \verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples            & \ref{matrix_build_Scalar} \\
-% NEW:
-\verb'GxB_Matrix_build_Vector'         & build a matrix from tuples     & \ref{matrix_build_Vector} \\ %% NEW
-\verb'GxB_Matrix_build_Scalar_Vector'  & build a matrix from tuples     & \ref{matrix_build_Scalar_Vector} \\  %% NEW
+\verb'GxB_Matrix_build_Vector'         & build a matrix from tuples     & \ref{matrix_build_Vector} \\
+\verb'GxB_Matrix_build_Scalar_Vector'  & build a matrix from tuples     & \ref{matrix_build_Scalar_Vector} \\
 \verb'GrB_Matrix_setElement'    & add an entry to a matrix              & \ref{matrix_setElement} \\
 \verb'GrB_Matrix_extractElement'& get an entry from a matrix            & \ref{matrix_extractElement} \\
 \verb'GxB_Matrix_isStoredElement'& check if entry present in matrix     & \ref{matrix_isStoredElement} \\
 \verb'GrB_Matrix_removeElement' & remove an entry from a matrix         & \ref{matrix_removeElement} \\
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix         & \ref{matrix_extractTuples} \\
-% NEW:
-\verb'GxB_Matrix_extractTuples_Vector' & get all entries from a matrix  & \ref{matrix_extractTuples_Vector} \\ %% NEW
+\verb'GxB_Matrix_extractTuples_Vector' & get all entries from a matrix  & \ref{matrix_extractTuples_Vector} \\
 \verb'GrB_Matrix_resize'        & resize a matrix                       & \ref{matrix_resize} \\
 \verb'GxB_Matrix_concat'        & concatenate matrices                  & \ref{matrix_concat} \\
 \verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
@@ -378,7 +376,7 @@ The \verb'dup' operator cannot be a binary operator
 created by \verb'GxB_BinaryOp_new_IndexOp'.
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_build\_Vector:} build a matrix from a set of tuples}   %% NEW
+\subsubsection{{\sf GxB\_Matrix\_build\_Vector:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
 \label{matrix_build_Vector}
 
@@ -436,7 +434,7 @@ input scalar value.
 
 % \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_build\_Scalar\_Vector:} build a matrix from a set of tuples}   %% NEW
+\subsubsection{{\sf GxB\_Matrix\_build\_Scalar\_Vector:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
 \label{matrix_build_Scalar_Vector}
 
@@ -684,7 +682,7 @@ extracted.
 \end{alert}
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_Matrix\_extractTuples\_Vector:} get all entries from a matrix} %% NEW
+\subsubsection{{\sf GxB\_Matrix\_extractTuples\_Vector:} get all entries from a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_extractTuples_Vector}
 

@@ -28,13 +28,13 @@ table below.
 \verb'GrB_extract'   & extract submatrix       & ${\bf C \langle M \rangle = C \odot A(I,J)}$ \\
                      &                         & ${\bf w \langle m \rangle = w \odot u(i)}$ \\
 \hline
-\verb'GxB_subassign' & assign submatrix,       & ${\bf C (I,J) \langle M \rangle = C(I,J) \odot A}$ \\
-                     & with submask for ${\bf C(I,J)}$
-                                               & ${\bf w (i)   \langle m \rangle = w(i)   \odot u}$ \\
-\hline
 \verb'GrB_assign'    & assign submatrix        & ${\bf C \langle M \rangle (I,J) = C(I,J) \odot A}$ \\
                      & with submask for ${\bf C}$
                                                & ${\bf w \langle m \rangle (i)   = w(i)   \odot u}$ \\
+\hline
+\verb'GxB_subassign' & assign submatrix,       & ${\bf C (I,J) \langle M \rangle = C(I,J) \odot A}$ \\
+                     & with submask for ${\bf C(I,J)}$
+                                               & ${\bf w (i)   \langle m \rangle = w(i)   \odot u}$ \\
 \hline
 \verb'GrB_apply'     & apply unary operator    & ${\bf C \langle M \rangle = C \odot} f{\bf (A)}$ \\
                      &                         & ${\bf w \langle m \rangle = w \odot} f{\bf (u)}$ \\
@@ -71,8 +71,8 @@ string is reduction to a C scalar with \verb'GrB_reduce'.
 \input{UserGuide/GrB_operations_eWiseAdd.tex}
 \input{UserGuide/GrB_operations_eWiseUnion.tex}
 \input{UserGuide/GrB_operations_extract.tex}
-\input{UserGuide/GrB_operations_subassign.tex}
 \input{UserGuide/GrB_operations_assign.tex}
+\input{UserGuide/GrB_operations_subassign.tex}
 \input{UserGuide/GrB_operations_assign_duplicates.tex}
 \input{UserGuide/GrB_operations_assign_vs_subassign.tex}
 \input{UserGuide/GrB_operations_apply.tex}

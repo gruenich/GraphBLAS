@@ -44,38 +44,6 @@ new Container methods:
 
     struct GxB_Container_struct
 
-new _Vector methods for build, extract, extractTuples, assign, subassign:
-
-    GrB_assign polymorphic method extended
-    GxB_Row_assign_Vector
-    GxB_Col_assign_Vector
-    GxB_Matrix_assign_Scalar_Vector
-    GxB_Matrix_assign_Vector
-    GxB_Vector_assign_Scalar_Vector
-    GxB_Vector_assign_Vector
-
-    GxB_subassign polymorphic method extended
-    GxB_Row_subassign_Vector
-    GxB_Col_subassign_Vector
-    GxB_Matrix_subassign_Scalar_Vector
-    GxB_Matrix_subassign_Vector
-    GxB_Vector_subassign_Scalar_Vector
-    GxB_Vector_subassign_Vector
-
-    GxB_extract polymorphic method extended
-    GxB_Col_extract_Vector
-    GxB_Matrix_extract_Vector
-    GxB_Vector_extract_Vector
-
-    GxB_Container_new
-    GxB_Container_free
-    GxB_load_Matrix_from_Container
-    GxB_load_Vector_from_Container
-    GxB_unload_Matrix_into_Container
-    GxB_unload_Vector_into_Container
-    GxB_Vector_load
-    GxB_Vector_unload
-
     The Container->[phbix] GrB_Vectors need not be freed by the user
     application, just loaded/unloaded with GxB_Vector load/unload.  All of them
     must be present for the Container to be used, for any matrix format.  They
@@ -87,55 +55,6 @@ new _Vector methods for build, extract, extractTuples, assign, subassign:
     arbitrary:
 
         GrB_Vector_new (&(Container->p), GrB_UINT32, 0) ;
-
---------------------------------------------------------------------------------
-TODO:
---------------------------------------------------------------------------------
-
-assign:
-> #define GxB_Row_assign_Vector
-> #define GxB_Col_assign_Vector
-> #define GxB_Matrix_assign_Scalar_Vector
-> #define GxB_Matrix_assign_Vector
-> #define GxB_Vector_assign_Scalar_Vector
-> #define GxB_Vector_assign_Vector
-
-subassign:
-> #define GxB_Row_subassign_Vector
-> #define GxB_Col_subassign_Vector
-> #define GxB_Matrix_subassign_Scalar_Vector
-> #define GxB_Matrix_subassign_Vector
-> #define GxB_Vector_subassign_Scalar_Vector
-> #define GxB_Vector_subassign_Vector
-
-extract:
-> #define GxB_Col_extract_Vector
-> #define GxB_Matrix_extract_Vector
-> #define GxB_Vector_extract_Vector
-
-container methods:
-> #define GxB_Container_free
-> #define GxB_Container_new
-> #define GxB_load_Matrix_from_Container
-> #define GxB_load_Vector_from_Container
-> #define GxB_unload_Matrix_into_Container
-> #define GxB_unload_Vector_into_Container
-> #define GxB_Vector_load
-> #define GxB_Vector_unload
-
---------------------------------------------------------------------------------
-added: but with some fixme's
---------------------------------------------------------------------------------
-
-Matrix build/extractTuples:
-> #define GxB_Matrix_build_Scalar_Vector
-> #define GxB_Matrix_build_Vector
-> #define GxB_Matrix_extractTuples_Vector
-
-Vector build/extractTuples:
-> #define GxB_Vector_build_Scalar_Vector
-> #define GxB_Vector_build_Vector
-> #define GxB_Vector_extractTuples_Vector
 
 
 \end{verbatim}

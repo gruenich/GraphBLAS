@@ -1,0 +1,303 @@
+\newpage
+\subsection{The GxB\_Container object and its methods}
+\label{container}
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_load:} load data into a vector}
+%-------------------------------------------------------------------------------
+\label{vector_load}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_load
+(
+    // input/output:
+    GrB_Vector V,           // vector to load from the C array X
+    void **X,               // numerical array to load into V
+    // input:
+    GrB_Type type,          // type of X
+    uint64_t n,             // # of entries in X
+    uint64_t X_size,        // size of X in bytes (at least n*(sizeof the type))
+    int handling,           // GrB_DEFAULT (0): transfer ownership to GraphBLAS
+                            // GxB_IS_READONLY: X treated as readonly;
+                            //      ownership kept by the user application
+    const GrB_Descriptor desc   // currently unused; for future expansion
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Vector_load' loads data from a C array into a \verb'GrB_Vector' in
+O(1) time.
+
+On input, the \verb'GrB_Vector V' must already exist, but its content (type,
+size, and entries) are ignored.  On output, any prior content of \verb'V' is
+freed, and its data is replaced with the C array \verb'X' of length \verb'n'
+entries, whose type is given by the \verb'type' parameter.  The size of
+\verb'V' becomes \verb'n', and its type is changed to match the \verb'type'
+parameter.
+
+After this method returns, \verb'GrB_Vector_size' and \verb'GrB_Vector_nvals' 
+will both return \verb'n'.  That is, the vector \verb'V' is a dense vector.
+It is held in the \verb'GxB_FULL' data format, in \verb'GrB_COLMAJOR'
+orientation.
+
+The size in bytes of \verb'X' is also provided on input as \verb'X_size'; this
+must be at least \verb'n' times the size of the given \verb'type', but it can
+be larger.  This size is maintained and returned to the user application by
+\verb'GxB_Vector_unload'.  The error code \verb'GrB_INVALID_VALUE' is returned
+if \verb'X_size' is too small.
+
+The \verb'handling' parameter provides control over the ownership of the array
+\verb'X'.  By default, ownership of \verb'X' is handed over to the
+\verb'GrB_Vector V'.  In this case, the vector \verb'V' acts as a normal
+GraphBLAS vector.  It can be modified or freed as usual.  Freeing \verb'V' with
+\verb'GrB_Vector_free' will also free \verb'X'.  The array \verb'X' is returned
+as \verb'NULL' to denote this change of ownership.
+
+If the \verb'handling' parameter is \verb'GxB_IS_READONLY', then \verb'X' is
+still owned by the user application.  It remains non-\verb'NULL' when this
+method returns.  The resulting vector \verb'V' can be used as an input to any
+GraphBLAS method, but it cannot be modified (except that it can be freed).
+Freeing the vector \verb'V' does not modify \verb'X', however.  It simply
+frees the rest of the object \verb'V'.
+
+Note that this method does not rely on the \verb'GxB_Container' object.
+Instead, it loads a C array \verb'X' directly into a dense \verb'GrB_Vector V'.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_unload:} unload data from a vector}
+%-------------------------------------------------------------------------------
+\label{vector_unload}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_unload
+(
+    // input/output:
+    GrB_Vector V,           // vector to unload
+    void **X,               // numerical array to unload from V
+    // output:
+    GrB_Type *type,         // type of X
+    uint64_t *n,            // # of entries in X
+    uint64_t *X_size,       // size of X in bytes (at least n*(sizeof the type))
+    int *handling,          // see GxB_Vector_load
+    const GrB_Descriptor desc   // currently unused; for future expansion
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Vector_unload' unloads data from \verb'GrB_Vector' into a C array in
+O(1) time (unless the vector has pending work that must be finished first).
+
+On input, the vector \verb'V' must have all possible entries present (that is,
+\verb'GrB_Vector_nvals' and \verb'GrB_Vector_size' must return the same value).
+The vector can be in any internal data format; it does not have to be in the
+\verb'GxB_FULL' format on input, but it must be in \verb'GrB_COLMAJOR'
+orientation.  If any entries are missing, the unload is not performed and
+\verb'GrB_INVALID_OBJECT' is returned.
+
+On output, the size of \verb'V' is reduced to zero, and it holds no entries but
+its type is unchanged.  The array \verb'X' is returned to the called with the
+entries from the vector.  The type of \verb'X' is given by the \verb'type'
+parameter.  The number of entries in \verb'V' is returned as \verb'n'.
+The size of \verb'X' in bytes is returned as \verb'X_size'.
+
+The \verb'handling' parameter informs the user application of the ownership of
+the array \verb'X'.  If it was created by GraphBLAS, or passed into GraphBLAS
+via \verb'GxB_Vector_load' with \verb'handling' set to \verb'GrB_DEFAULT', then
+this is returned to the user as handling set to \verb'GrB_DEFAULT'.  This
+denotes that ownership of the array \verb'X' has been transfered from GraphBLAS
+The user application is now responsible for freeing the array \verb'X'.
+
+If the \verb'handling' parameter is returned as \verb'GxB_IS_READONLY', then
+this array \verb'X' was originally passed to GraphBLAS via
+\verb'GxB_Vector_load' with a \verb'handling' parameter of
+\verb'GxB_IS_READONLY'.  The ownership of the array \verb'X' is not changed; it
+remains owned by the user application.  The user application is still
+responsible for freeing the array \verb'X', but caution must be observed so
+that it is not freed twice.
+
+Note that this method does not rely on the \verb'GxB_Container' object.
+Instead, it unloads a dense \verb'GrB_Vector' \verb'V' directly into a
+C array \verb'X'.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Container\_new:} create a container}
+%-------------------------------------------------------------------------------
+\label{container_new}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Container_new (GxB_Container *Container) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Container_new' creates a new container.  It has the following
+definition (extra space for future expansion excluded for clarity):
+
+{\footnotesize
+\begin{verbatim}
+struct GxB_Container_struct
+{
+    uint64_t nrows ;
+    uint64_t ncols ;
+    int64_t nrows_nonempty ;
+    int64_t ncols_nonempty ;
+    uint64_t nvals ;
+    int32_t format ;                // GxB_HYPERSPARSE, GxB_SPARSE,
+                                    // GxB_BITMAP, or GxB_FULL
+    int32_t orientation ;           // GrB_ROWMAJOR or GrB_COLMAJOR
+    GrB_Vector p ;
+    GrB_Vector h ;
+    GrB_Vector b ;
+    GrB_Vector i ;
+    GrB_Vector x ;
+    GrB_Matrix Y ;
+    bool iso ;
+    bool jumbled ;
+} ;
+typedef struct GxB_Container_struct *GxB_Container ; \end{verbatim}}
+
+The \verb'Container' holds all of the data from a single GraphBLAS matrix or
+vector, with any data type and any data format.  It contains extra space for
+future data formats (not shown above).  Each scalar component is described
+below:
+
+\begin{itemize}
+\item \verb'nrows': the number of rows of a matrix, or the size of a vector.
+\item \verb'ncols': the number of columns of a matrix, or 1 for a vector. 
+\item \verb'nrows_nonempty':  if known, this value must give the exact number
+    of non-empty rows of a matrix or vector.  If not known, this value must be
+    set to -1.
+\item \verb'ncols_nonempty':  if known, this value must give the exact number
+    of non-empty columns of a matrix or vector.  If not known, this value must be
+    set to -1.
+\item \verb'nvals': the number of entries in the matrix or vector.
+\item \verb'format': this defines the data format of a matrix or vector.
+    Currently, GraphBLAS supports four formats, described in
+    Section~\ref{formats}, each with two orientations.
+\item \verb'orientation':  whether the matrix is held by row or by column.
+    This is always \verb'GrB_COLMAJOR' for a container holding data for a
+    \verb'GrB_Vector'.
+\item \verb'iso': if true, all of the entries in the matrix have the same
+    value, and only a single value is stored in the \verb'x' component of
+    the Container.
+\item \verb'jumbled': if true, the indices in any given row (if in row-major
+    orientation) or column (if column-major) may appear out of order.
+    Otherwise, they must appear in ascending order.
+\end{itemize}
+
+The Container holds five dense \verb'GrB_Vector' objects that hold
+the primary data for the matrix or vector, and a single \verb'GrB_Matrix'
+\verb'Y' that holds an optional optimization structure called the hyper-hash.
+These components are fully described in Section~\ref{formats}.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Container\_free:} free a container}
+%-------------------------------------------------------------------------------
+\label{container_free}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_free (GxB_Container *Container) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Container_free' frees a container.  It also frees all its opaque
+components.  Any read-only array inside these opaque objects is not freed.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_load\_Matrix\_from\_Container:} load a matrix from a container}
+%-------------------------------------------------------------------------------
+\label{load_matrix_from_container}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
+(
+    GrB_Matrix A,               // matrix to load from the Container.  On input,
+                                // A is a matrix of any size or type; on output
+                                // any prior size, type, or contents is freed
+                                // and overwritten with the Container.
+    GxB_Container Container,    // Container with contents to load into A
+    const GrB_Descriptor desc   // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_load_Matrix_from_Container' moves all of the data from a
+\verb'GxB_Container' into a \verb'GrB_Matrix' in O(1) time.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_load\_Vector\_from\_Container:} load a vector from a container}
+%-------------------------------------------------------------------------------
+\label{load_vector_from_container}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+
+GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
+(
+    GrB_Vector V,               // GrB_Vector to load from the Container
+    GxB_Container Container,    // Container with contents to load into V
+    const GrB_Descriptor desc   // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_load_Vector_from_Container' moves all of the data from a
+\verb'GxB_Container' into a \verb'GrB_Vector' in O(1) time.
+
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_unload\_Matrix\_into\_Container:} unload a matrix into a container}
+%-------------------------------------------------------------------------------
+\label{unload_matrix_into_container}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_unload_Matrix_into_Container   // GrB_Matrix -> GxB_Container
+(
+    GrB_Matrix A,               // matrix to unload into the Container
+    GxB_Container Container,    // Container to hold the contents of A
+    const GrB_Descriptor desc   // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_unload_Matrix_into_Container': moves all of the data from
+a \verb'GrB_Matrix' into a \verb'GxB_Container' in O(1) time.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_unload\_Vector\_into\_Container:} unload a vector into a container}
+%-------------------------------------------------------------------------------
+\label{unload_vector_into_container}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_unload_Vector_into_Container   // GrB_Vector -> GxB_Container
+(
+    GrB_Vector V,               // vector to unload into the Container
+    GxB_Container Container,    // Container to hold the contents of V
+    const GrB_Descriptor desc   // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_unload_Vector_into_Container': moves all of the data from
+a \verb'GrB_Vector' into a \verb'GxB_Container' in O(1) time.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Container example}
+%-------------------------------------------------------------------------------
+\label{container_example}
+
