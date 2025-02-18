@@ -8,10 +8,10 @@
 #-------------------------------------------------------------------------------
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 17, 2025" )
+set ( GraphBLAS_DATE "Feb 18, 2025" )
 set ( GraphBLAS_VERSION_MAJOR 9 CACHE STRING "" FORCE )
 set ( GraphBLAS_VERSION_MINOR 4 CACHE STRING "" FORCE )
-set ( GraphBLAS_VERSION_SUB   4 CACHE STRING "" FORCE )
+set ( GraphBLAS_VERSION_SUB   5 CACHE STRING "" FORCE )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "Dec 22, 2023" )

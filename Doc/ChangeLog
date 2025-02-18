@@ -1,3 +1,9 @@
+Feb 18, 2025: version 9.4.5
+
+    * (59) bug fix: the GxB_NO_INT32 and GxB_NOT_INT64 flags in GB_control.h
+        did not completely remove some of the INT32 and INT64 factory kernels.
+        Caught by Erik Welch, NVIDIA.
+
 Feb 17, 2025: version 9.4.4
 
     * (58) bug fix: semirings with user-defined monoids and the GrB_ONEB or
