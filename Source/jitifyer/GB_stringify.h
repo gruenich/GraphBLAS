@@ -1567,7 +1567,7 @@ uint64_t GB_encodify_masker     // encode a masker problem
     const GrB_Matrix Z
 ) ;
 
-uint64_t GB_enumify_masker  // enumify a masker problem
+void GB_enumify_masker  // enumify a masker problem
 (
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
