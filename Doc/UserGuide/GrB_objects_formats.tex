@@ -15,6 +15,11 @@ where the indices within any given row (if the orientation is row-major)
 or column may be out of order.  If \verb'Container->jumbled' is false, then
 the indices appear in ascending order.
 
+The \verb'p' \verb'h', and \verb'i' vectors in the Container have an integer
+type, either \verb'GrB_UINT32' or \verb'GrB_UINT64'.  These appear below as
+just \verb'integer', but the actual corresponding C type (\verb'uint32_t' or
+\verb'uint64_t') must be used.
+
 %-------------------------------------------------------------------------------
 \subsubsection{Sparse, held by row}
 %-------------------------------------------------------------------------------
@@ -75,8 +80,8 @@ The content of the arrays is shown below:
 
 {\footnotesize
 \begin{verbatim}
-    int64_t Ap [ ] = { 0,        2,             5,        7,            10 } ;
-    int64_t Aj [ ] = { 0,   2,   0,   1,   3,   1,   2,   0,   1,   3   } ;
+    integer Ap [ ] = { 0,        2,             5,        7,            10 } ;
+    integer Aj [ ] = { 0,   2,   0,   1,   3,   1,   2,   0,   1,   3   } ;
     double  Ax [ ] = { 4.5, 3.2, 3.1, 2.9, 0.9, 1.7, 3.0, 3.5, 0.4, 1.0 } ; \end{verbatim} }
 
 Spaces have been added to the \verb'Ap' array, just for illustration.  Row zero
@@ -92,14 +97,14 @@ used (assuming it has type \verb'GrB_FP64'):
 
     {\footnotesize
     \begin{verbatim}
-    int64_t nvals = Ap [nrows] ;
-    for (int64_t i = 0 ; i < nrows ; i++)
+    integer nvals = Ap [nrows] ;
+    for (integer i = 0 ; i < nrows ; i++)
     {
         // get A(i,:)
-        for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
+        for (integer p = Ap [i] ; p < Ap [i+1] ; p++)
         {
             // get A(i,j)
-            int64_t  j = Aj [p] ;           // column index
+            integer  j = Aj [p] ;           // column index
             double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
@@ -145,8 +150,8 @@ is held in CSC form as follows:
 
 {\footnotesize
 \begin{verbatim}
-    int64_t Ap [ ] = { 0,             3,             6,        8,       10 } ;
-    int64_t Ai [ ] = { 0,   1,   3,   1,   2,   3,   0,   2,   1,   3   } ;
+    integer Ap [ ] = { 0,             3,             6,        8,       10 } ;
+    integer Ai [ ] = { 0,   1,   3,   1,   2,   3,   0,   2,   1,   3   } ;
     double  Ax [ ] = { 4.5, 3.1, 3.5, 2.9, 1.7, 0.4, 3.2, 3.0, 0.9, 1.0 } ; \end{verbatim} }
 
 That is, the row indices of column 1 (the second column) are in
@@ -158,14 +163,14 @@ be used (assuming it has type \verb'GrB_FP64'):
 
     {\footnotesize
     \begin{verbatim}
-    int64_t nvals = Ap [ncols] ;
-    for (int64_t j = 0 ; j < ncols ; j++)
+    integer nvals = Ap [ncols] ;
+    for (integer j = 0 ; j < ncols ; j++)
     {
         // get A(:,j)
-        for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
+        for (integer p = Ap [j] ; p < Ap [j+1] ; p++)
         {
             // get A(i,j)
-            int64_t  i = Ai [p] ;             // row index
+            integer  i = Ai [p] ;             // row index
             double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
@@ -207,8 +212,8 @@ The conventional CSR format would appear as follows.  Since the third row (row
 
 {\footnotesize
 \begin{verbatim}
-    int64_t Ap [ ] = { 0,        2,2,      4,       5 } ;
-    int64_t Aj [ ] = { 0,   2,   0,   3,   0    3   }
+    integer Ap [ ] = { 0,        2,2,      4,       5 } ;
+    integer Aj [ ] = { 0,   2,   0,   3,   0    3   }
     double  Ax [ ] = { 4.5, 3.2, 3.1, 0.9, 3.5, 1.0 } ; \end{verbatim} }
 
 A hypersparse CSR format for this same matrix would discard
@@ -218,10 +223,10 @@ in the data structure.
 
 {\footnotesize
 \begin{verbatim}
-    int64_t nvec = 3 ;
-    int64_t Ah [ ] = { 0,        1,        3        } ;
-    int64_t Ap [ ] = { 0,        2,        4,       5 } ;
-    int64_t Aj [ ] = { 0,   2,   0,   3,   0    3   }
+    integer nvec = 3 ;
+    integer Ah [ ] = { 0,        1,        3        } ;
+    integer Ap [ ] = { 0,        2,        4,       5 } ;
+    integer Aj [ ] = { 0,   2,   0,   3,   0    3   }
     double  Ax [ ] = { 4.5, 3.2, 3.1, 0.9, 3.5, 1.0 } ; \end{verbatim} }
 
 Note that the \verb'Aj' and \verb'Ax' arrays are the same in the CSR and
@@ -231,15 +236,15 @@ this data structure (assuming it has type \verb'GrB_FP64'):
 
     {\footnotesize
     \begin{verbatim}
-    int64_t nvals = Ap [nvec] ;
-    for (int64_t k = 0 ; k < nvec ; k++)
+    integer nvals = Ap [nvec] ;
+    for (integer k = 0 ; k < nvec ; k++)
     {
-        int64_t i = Ah [k] ;                // row index
+        integer i = Ah [k] ;                // row index
         // get A(i,:)
-        for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
+        for (integer p = Ap [k] ; p < Ap [k+1] ; p++)
         {
             // get A(i,j)
-            int64_t  j = Aj [p] ;             // column index
+            integer  j = Aj [p] ;             // column index
             double aij = Ax [iso ? 0 : p] ;   // numerical value
         }
     } \end{verbatim}}
