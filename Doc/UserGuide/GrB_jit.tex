@@ -509,11 +509,15 @@ compiled while using GraphBLAS in MATLAB are interchangable, and the same cache
 folder can be used for both.  This is the default.
 
 However, when using the \verb'@GrB' MATLAB interface to GraphBLAS on Apple
-Silicon, the MATLAB JIT kernels are compiled as x86 binaries and executed
-inside MATLAB via Rosetta.  The pure C installation may compile native Arm64
-binaries for its JIT kernels.  Do not mix the two.  In this case, set another
-cache path for MATLAB using \verb'GrB.jit' in MATLAB, or using \verb'GrB_set'
-in the C interface for your native Arm64 binaries.
+Silicon, using an older version of MATLAB, the MATLAB JIT kernels are compiled
+as x86 binaries and executed inside MATLAB via Rosetta.  The pure C
+installation may compile native Arm64 binaries for its JIT kernels.  Do not mix
+the two.  In this case, set another cache path for MATLAB using \verb'GrB.jit'
+in MATLAB, or using \verb'GrB_set' in the C interface for your native Arm64
+binaries.
+
+This issue does not apply to for recent MATLAB versions on the Mac,
+which are native.
 
 %-------------------------------------------------------------------------------
 \subsection{Updating the JIT when GraphBLAS source code changes}

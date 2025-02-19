@@ -17,7 +17,23 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_concepts.tex \
     UserGuide/GrB_context.tex \
     UserGuide/GrB_examples.tex \
+    UserGuide/GrB_get_set_BinaryOp.tex \
+    UserGuide/GrB_get_set_Context.tex \
+    UserGuide/GrB_get_set_Descriptor.tex \
+    UserGuide/GrB_get_set_enum.tex \
+    UserGuide/GrB_get_set_Global.tex \
+    UserGuide/GrB_get_set_IndexBinaryOp.tex \
+    UserGuide/GrB_get_set_IndexUnaryOp.tex \
+    UserGuide/GrB_get_set_integers.tex \
+    UserGuide/GrB_get_set_Matrix.tex \
+    UserGuide/GrB_get_set_Monoid.tex \
+    UserGuide/GrB_get_set_Scalar.tex \
+    UserGuide/GrB_get_set_Semiring.tex \
+    UserGuide/GrB_get_set_Serialize.tex \
     UserGuide/GrB_get_set.tex \
+    UserGuide/GrB_get_set_Type.tex \
+    UserGuide/GrB_get_set_UnaryOp.tex \
+    UserGuide/GrB_get_set_Vector.tex \
     UserGuide/GrB_init.tex \
     UserGuide/GrB_installing.tex \
     UserGuide/GrB_interfaces.tex \
@@ -39,7 +55,7 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_objects_Monoid.tex \
     UserGuide/GrB_objects_Scalar.tex \
     UserGuide/GrB_objects_Semiring.tex \
-    UserGuide/GrB_objects_serialize.tex \
+    UserGuide/GrB_objects_Serialize.tex \
     UserGuide/GrB_objects_sort.tex \
     UserGuide/GrB_objects.tex \
     UserGuide/GrB_objects_Type.tex \
@@ -67,8 +83,7 @@ GraphBLAS_UserGuide.pdf: GraphBLAS_UserGuide.tex GraphBLAS_UserGuide.bib \
     UserGuide/GrB_references.tex \
     UserGuide/GrB_release.tex \
     UserGuide/GrB_resources.tex \
-    UserGuide/GrB_v10.tex \
-    UserGuide/TODO.tex
+    UserGuide/GrB_v10.tex
 	pdflatex GraphBLAS_UserGuide.tex
 	bibtex GraphBLAS_UserGuide
 	pdflatex GraphBLAS_UserGuide.tex

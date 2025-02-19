@@ -74,8 +74,8 @@ except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
 entries.  The interpretation of \verb'I_vector' is controlled by descriptor
 setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
 values of the input vector, or it can use the values as a stride
-(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
-for details.  %% FIXME
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{ijxvector}
+for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_subassign:} assign to a submatrix }
@@ -223,8 +223,8 @@ entries, and the column indices are given by the \verb'GrB_Vector J' with
 are controlled by descriptor setting \verb'GxB_ROWINDEX_LIST' and
 \verb'GxB_COLINDEX_LIST', respectively.  The method can use either the indices
 or values of each of the input vectors, or it can use the values as a stride
-(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
-for details.  %% FIXME
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{ijxvector}
+for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Col\_subassign:} assign to a sub-column of a matrix}
@@ -287,8 +287,8 @@ except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
 entries.  The interpretation of \verb'I_vector' is controlled by descriptor
 setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
 values of the input vector, or it can use the values as a stride
-(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
-for details.  %% FIXME
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{ijxvector}
+for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Row\_subassign:} assign to a sub-row of a matrix}
@@ -352,8 +352,8 @@ except that the column indices are given by the \verb'GrB_Vector J' with \verb'n
 entries.  The interpretation of \verb'J_vector' is controlled by descriptor
 setting \verb'GxB_COLINDEX_LIST'.  The method can use either the indices or
 values of the input vector, or it can use the values as a stride
-(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
-for details.  %% FIXME
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{ijxvector}
+for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_subassign\_$<$type$>$:} assign a scalar to a subvector}
@@ -378,9 +378,13 @@ GrB_Info GxB_subassign              // w(I)<mask> = accum (w(I),x)
 \verb'GxB_Vector_subassign_<type>' assigns a single scalar to an entire
 subvector of the vector \verb'w'.  The operation is exactly like setting a
 single entry in an \verb'n'-by-1 matrix, \verb'A(I,0) = x', where the column
-index for a vector is implicitly \verb'j=0'.  For further details of this
+index for a vector is implicitly \verb'j=0'.
+If \verb'x' is a \verb'GrB_Scalar', the nonpolymorphic name of the method is
+\verb'GxB_Vector_subassign_Scalar'.
+For further details of this
 function, see \verb'GxB_Matrix_subassign_<type>' in
 Section~\ref{subassign_matrix_scalar}.
+
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -402,13 +406,13 @@ GrB_Info GxB_subassign              // w(I)<mask> = accum (w(I),x)
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GxB_Vector_subassign_Scalar_Vector' is identical to \verb'GrB_Vector_subassign_Scalar',
+\verb'GxB_Vector_subassign_Scalar_Vector' is identical to \verb'GxB_Vector_subassign_Scalar',
 except that the row indices are given by the \verb'GrB_Vector I' with \verb'ni'
 entries.  The interpretation of \verb'I_vector' is controlled by descriptor
 setting \verb'GxB_ROWINDEX_LIST'.  The method can use either the indices or
 values of the input vector, or it can use the values as a stride
-(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
-for details.  %% FIXME
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{ijxvector}
+for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_subassign\_$<$type$>$:} assign a scalar to a submatrix}
@@ -457,9 +461,11 @@ If a \verb'void *' pointer is passed in and the type of the underlying scalar
 does not exactly match the user-defined type of \verb'C', then results are
 undefined.  No error status will be returned since GraphBLAS has no way of
 catching this error.
-If \verb'x' is a \verb'GrB_Scalar' with no entry, then it is implicitly
-expanded into a matrix \verb'A' of size \verb'ni' by \verb'nj', with no entries
-present.
+
+If \verb'x' is a \verb'GrB_Scalar', the nonpolymorphic name of the method is \newline
+\verb'GxB_Matrix_subassign_Scalar'.  In this case, if \verb'x' has no entry, then
+it is implicitly expanded into a matrix \verb'A' of size \verb'ni' by
+\verb'nj', with no entries present.
 
 \paragraph{\bf Performance considerations:} % C(I,J) = scalar
 If \verb'A' is not transposed: if \verb'|I|' is small, then it is fastest if
@@ -494,6 +500,6 @@ entries, and the column indices are given by the \verb'GrB_Vector J' with
 are controlled by descriptor setting \verb'GxB_ROWINDEX_LIST' and
 \verb'GxB_COLINDEX_LIST', respectively.  The method can use either the indices
 or values of each of the input vectors, or it can use the values as a stride
-(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{fixme}
-for details.  %% FIXME
+(\verb'lo:inc:hi'); the default is to use the values.  See Section~\ref{ijxvector}
+for details.
 

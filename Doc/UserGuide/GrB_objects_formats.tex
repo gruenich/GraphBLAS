@@ -7,11 +7,9 @@
 SuiteSparse:GraphBLAS uses four distinct data formats: sparse, hypersparse,
 bitmap, and full, each in row-major or column-major orientations, for eight
 different variants (each of which are listed below).
-
 Each of these eight total variants can be iso-valued, where if
 \verb'Container->iso' is true the numerical values are all the same, and
 \verb'Container->x' holds a single entry with this value.
-
 Each of the sparse and hypersparse formats can appear in {\em jumbled} form,
 where the indices within any given row (if the orientation is row-major)
 or column may be out of order.  If \verb'Container->jumbled' is false, then
@@ -261,7 +259,7 @@ In the container, the four arrays \verb'Ap', \verb'Ah', \verb'Aj' and \verb'Ax'
 are held in four \verb'GrB_Vector' objects:
 \verb'Container->p',
 \verb'Container->h',
-\verb'Container->i', and
+\verb'Container->i', and \newline
 \verb'Container->x', respectively.
 
 In addition, the container may hold an optional optimization structure,
@@ -286,16 +284,14 @@ A \verb'GrB_Vector' is never held in hypersparse format.
 \label{format_hypersparse_by_col}
 
 The hypersparse-by-column format is the transpose of the hypersparse-by-row format.
-The \verb'Container->format' is \verb'GxB_HYPERSPARSE' and the
+The \verb'Container->format' is \verb'GxB_HYPERSPARSE' and the \newline
 \verb'Container->orientation' is \verb'GrB_COLMAJOR'.
-
 In the container, the four arrays \verb'Ap', \verb'Ah', \verb'Ai' and \verb'Ax'
 are held in four \verb'GrB_Vector' objects:
 \verb'Container->p',
 \verb'Container->h',
 \verb'Container->i', and
 \verb'Container->x', respectively.
-
 A \verb'GrB_Vector' is never held in hypersparse format.
 
 %-------------------------------------------------------------------------------
@@ -305,11 +301,10 @@ A \verb'GrB_Vector' is never held in hypersparse format.
 
 The \verb'Container->format' is \verb'GxB_BITMAP' and the
 \verb'Container->orientation' is \verb'GrB_ROWMAJOR'.
-
 This format requires two arrays, \verb'Ab' and \verb'Ax', each of which are
 size \verb'nrows*ncols'.  They correspond to \verb'Container->b' and
 \verb'Container->x' in the \verb'GxB_Container' object.  These arrays define
-the pattern and values of the new matrix \verb'A':
+the pattern and values of the matrix \verb'A':
 
 \begin{itemize}
 \item \verb'int8_t Ab [nrows*ncols] ;'  The \verb'Ab' array defines which
@@ -318,7 +313,6 @@ $A(i,j)$ is present, with value \verb'Ax[i*ncols+j]'.  If
 \verb'Ab[i*ncols+j]=0', then the entry $A(i,j)$ is not present.  The \verb'Ab'
 array must contain only 0s and 1s.  The \verb'nvals' input must exactly match
 the number of 1s in the \verb'Ab' array.
-
 \item \verb'type Ax [nrows*ncols] ;'  The \verb'Ax' array defines the values of
 entries in the matrix.  If \verb'Ab[p]' is zero, the value of \verb'Ax[p]' is
 ignored.
@@ -332,7 +326,6 @@ ignored.
 This is the transpose of the bitmap-by-row format.
 The \verb'Container->format' is \verb'GxB_BITMAP' and the
 \verb'Container->orientation' is \verb'GrB_COLMAJOR'.
-
 The value of the entry $A(i,j)$ is held in \verb'Ax [i+j*nrows]'.
 It is present if \verb'Ab [i+j*nrows]' is 1, and not present if zero.
 
@@ -344,7 +337,7 @@ It is present if \verb'Ab [i+j*nrows]' is 1, and not present if zero.
 The \verb'Container->format' is \verb'GxB_FULL' and the
 \verb'Container->orientation' is \verb'GrB_ROWMAJOR'.  This format is held in a
 single \verb'GrB_Vector', \verb'Container->x'.  The $A(i,j)$ entry is in
-position \verb'i*ncols+j' in this array.
+position \verb'i*ncols+j' in this array.  All entries are present.
 
 %-------------------------------------------------------------------------------
 \subsubsection{Full, held by column}
@@ -355,5 +348,5 @@ This is the transpose of the full-by-row format.
 The \verb'Container->format' is \verb'GxB_FULL' and the
 \verb'Container->orientation' is \verb'GrB_COLMAJOR'.  This format is held in a
 single \verb'GrB_Vector', \verb'Container->x'.  The $A(i,j)$ entry is in
-position \verb'i+j*nrows' in this array.
+position \verb'i+j*nrows' in this array.  All entries are present.
 

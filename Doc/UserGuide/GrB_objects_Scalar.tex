@@ -140,7 +140,6 @@ GrB_Info GrB_Scalar_clear   // clear a GrB_Scalar of its entry
 Analogous with \verb's = sparse (0)' in MATLAB/Octave.  The type of \verb's' does not
 change.  Any pending updates to the scalar are discarded.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Scalar\_nvals:} return the number of entries in a scalar}
 %-------------------------------------------------------------------------------
@@ -225,6 +224,8 @@ GrB_Info GxB_Scalar_memoryUsage  // return # of bytes used for a scalar
 \end{verbatim} } \end{mdframed}
 
 Returns the memory space required for a scalar, in bytes.
+By default, any read-only components are not included in the total memory.
+This can be changed with via \verb'GrB_get'; see Section~\ref{get_set_global}.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_type:} type of a scalar}

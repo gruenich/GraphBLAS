@@ -23,6 +23,9 @@ typedef enum
     GxB_AxB_METHOD = 1000, // descriptor for selecting C=A*B algorithm
     GxB_SORT = 35   // control sort in GrB_mxm
     GxB_COMPRESSION = 36,   // select compression for serialize
+    GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted
+    GxB_COLINDEX_LIST = 7063,       // how GrB_Vector J is intrepretted
+    GxB_VALUE_LIST = 7064,          // how GrB_Vector X is intrepretted
 }
 GrB_Desc_Field ;
 
@@ -42,6 +45,10 @@ typedef enum
     GxB_AxB_DOT       = 1003,   // dot product
     GxB_AxB_HASH      = 1004,   // hash-based saxpy method
     GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
+    // for GxB_ROWINDEX_LIST, GxB_COLINDEX_LIST, and GxB_VALUE_LIST:
+    // GxB_USE_VALUES = ((int) GrB_DEFAULT) // use the values of the vector
+    GxB_USE_INDICES = 7060,  // use the indices of the vector
+    GxB_IS_STRIDE = 7061,    // use the values, of size 3, for lo:hi:inc
 }
 GrB_Desc_Value ;
 \end{verbatim} } \end{mdframed}
@@ -219,7 +226,6 @@ GraphBLAS function          & purpose                              & Section \\
 \end{tabular}
 }
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_new:}  create a new descriptor}
 %-------------------------------------------------------------------------------
@@ -286,6 +292,76 @@ Either usage:
 frees the \verb'descriptor' and sets \verb'descriptor' to \verb'NULL'.  It
 safely does nothing if passed a \verb'NULL' handle, or if
 \verb'descriptor == NULL' on input.
+
+%-------------------------------------------------------------------------------
+\subsubsection{Descriptor settings for \sf{GrB\_Vector} parameters}
+%-------------------------------------------------------------------------------
+\label{ijxvector}
+
+Several methods GraphBLAS v10 accept \verb'GrB_Vector' parameters for their index
+lists \verb'I' and \verb'J', which appear only as \verb'uint64_t *' C arrays in
+the v2.1 C Specification.  Likewise, several methods accept a \verb'GrB_Vector'
+parameter \verb'X', where the related method in the Specification accepts only
+a raw C array of a given type.
+
+By default, \verb'GrB_Vector' inputs \verb'I', \verb'J', and \verb'X' are
+interpretted as if their values are first extracted with
+\verb'GrB_Vector_extractTuples', where the values are extracted in order (with
+ascending indices), and their values are then passed to the method.
+The actual method is much faster; GraphBLAS uses the values directly.
+
+This behavior can be revised via the descriptor for the method.  Three settings
+are available:
+
+\begin{itemize}
+\item \verb'GxB_ROWINDEX_LIST': how the \verb'GrB_Vector I' is intrepretted.
+\item \verb'GxB_COLINDEX_LIST': how the \verb'GrB_Vector J' is intrepretted.
+\item \verb'GxB_VALUE_LIST': how \verb'GrB_Vector X' is intrepretted (for \verb'GrB_build' only).
+\end{itemize}
+
+These can be set to one of the following values:
+
+\begin{itemize}
+\item \verb'GrB_DEFAULT' or \verb'GxB_USE_VALUES': use the values of the vector (default).
+
+\item \verb'GxB_USE_INDICES': use the indices of the vector.
+    This acts as if the indices are first extracted into a C array with
+    \verb'GrB_Vector_extractTuples', where the indices are extracted in ascending order,
+    and then this C array is then passed to the method.
+    The actual method is much faster; GraphBLAS uses the indices directly.
+
+\item \verb'GxB_IS_STRIDE': use the values, of size 3, for a strided range,
+    or \verb'lo:inc:hi' in MATLAB notation.  This usage is limited to the
+    \verb'I' and \verb'J' vectors (except this option may not be used for
+    \verb'GrB_build').  The vector must have exactly three entries, 
+    \verb'lo', \verb'hi', and \verb'inc', in that order.
+
+\end{itemize}
+
+The \verb'GxB_IS_STRIDE' option is fully described in Section~\ref{colon}.  In
+that section, there are many options available.  Here, the \verb'GrB_Vector'
+\verb'I' or \verb'J' must have length exactly three.  The first entry present
+is the start of the sequence (\verb'lo'), the second entry is the end of the
+sequence (\verb'hi') and the third entry is the stride (\verb'inc').  This
+corresponds to the \verb'GxB_STRIDE' option when passing a \verb'uint64_t *'
+array.  To use a stride of one, simply set the third entry to 1; this
+corresponds to the \verb'GxB_RANGE' option when passing a \verb'uint64_t *'
+array.  To use a negative stride, simply pass in the vector with a signed data
+type (\verb'GrB_INT32' or \verb'GrB_INT64' as appropriate; this corresponds to
+the \verb'GxB_BACKWARDS' option desribed in Section~\ref{colon}).
+These three values appear in this order to be consistent \verb'GxB_BEGIN' (0),
+\verb'GxB_END' (1), \verb'GxB_INC' (2).
+
+When using the \verb'_Vector' methods, the \verb'GrB_Vector' objects \verb'I',
+\verb'J', and \verb'X' may be sparse.  If the vectors are sparse,
+\verb'GrB_Vector_extractTuples' returns a dense list of indices or values, and
+this is how the \verb'I,J,X' vectors may be used in the new methods in
+GraphBLAS v10 with the \verb'_Vector' suffix at then end of their name.
+
+To use the \verb'GrB_ALL' option, specifying all the rows or columns of a
+matrix or all indices of a vector, pass in the corresponding \verb'GrB_Vector'
+\verb'I' or \verb'J' as a NULL pointer.
+
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -355,5 +431,4 @@ Descriptor              &  \verb'OUTP'          & \verb'MASK'           & \verb'
 \verb'GrB_DESC_RSCT0T1' &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
 \hline
 \end{tabular}}
-
 

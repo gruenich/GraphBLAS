@@ -23,11 +23,9 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Matrix_nrows'         & number of rows of a matrix            & \ref{matrix_nrows} \\
 \verb'GrB_Matrix_ncols'         & number of columns of a matrix         & \ref{matrix_ncols} \\
 \verb'GrB_Matrix_nvals'         & number of entries in a matrix         & \ref{matrix_nvals} \\
-\verb'GrB_get'  & get properties of a matrix       & \ref{get_set_matrix} \\
-\verb'GrB_set'  & set properties of a matrix       & \ref{get_set_matrix} \\
 \verb'GrB_Matrix_build'         & build a matrix from tuples            & \ref{matrix_build} \\
-\verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples            & \ref{matrix_build_Scalar} \\
 \verb'GxB_Matrix_build_Vector'         & build a matrix from tuples     & \ref{matrix_build_Vector} \\
+\verb'GxB_Matrix_build_Scalar'  & build a matrix from tuples            & \ref{matrix_build_Scalar} \\
 \verb'GxB_Matrix_build_Scalar_Vector'  & build a matrix from tuples     & \ref{matrix_build_Scalar_Vector} \\
 \verb'GrB_Matrix_setElement'    & add an entry to a matrix              & \ref{matrix_setElement} \\
 \verb'GrB_Matrix_extractElement'& get an entry from a matrix            & \ref{matrix_extractElement} \\
@@ -36,6 +34,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix         & \ref{matrix_extractTuples} \\
 \verb'GxB_Matrix_extractTuples_Vector' & get all entries from a matrix  & \ref{matrix_extractTuples_Vector} \\
 \verb'GrB_Matrix_resize'        & resize a matrix                       & \ref{matrix_resize} \\
+\verb'GxB_Matrix_reshape'       & reshape a matrix                      & \ref{matrix_reshape} \\
+\verb'GxB_Matrix_reshapeDup'    & reshape a matrix                      & \ref{matrix_reshapedup} \\
 \verb'GxB_Matrix_concat'        & concatenate matrices                  & \ref{matrix_concat} \\
 \verb'GxB_Matrix_split'         & split a matrix into matrices          & \ref{matrix_split} \\
 \verb'GrB_Matrix_diag'          & diagonal matrix from vector           & \ref{matrix_diag} \\
@@ -50,6 +50,10 @@ GraphBLAS function   & purpose                                      & Section \\
 \verb'GxB_Matrix_serialize'     & serialize a matrix               & \ref{matrix_serialize_GxB} \\
 \verb'GrB_Matrix_deserialize'   & deserialize a matrix             & \ref{matrix_deserialize} \\
 \verb'GxB_Matrix_deserialize'   & deserialize a matrix             & \ref{matrix_deserialize_GxB} \\
+\hline
+\hline
+\verb'GrB_get'  & get properties of a matrix       & \ref{get_set_matrix} \\
+\verb'GrB_set'  & set properties of a matrix       & \ref{get_set_matrix} \\
 \hline
 \end{tabular}
 }
@@ -75,8 +79,8 @@ GraphBLAS function   & purpose                                      & Section \\
 Refer to
 Section~\ref{serialize_deserialize} for serialization/deserialization methods,
 Section~\ref{GrB_import_export} for \verb'GrB' import/export methods,
-and
-Section~\ref{sorting_methods} for sorting methods.
+Section~\ref{sorting_methods} for sorting methods,
+and Section~\ref{get_set_matrix} for get/set methods.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_new:}          create a matrix}
@@ -117,6 +121,7 @@ with \verb'fmt' equal to \verb'GrB_COLMAJOR' or \verb'GrB_ROWMAJOR'.
 as an extension to the specification.
 \end{alert}
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_wait:} wait for a matrix}
 %-------------------------------------------------------------------------------
@@ -146,7 +151,6 @@ See Section~\ref{omp_parallelism}
 if GraphBLAS is compiled without OpenMP.
 
 %-------------------------------------------------------------------------------
-\newpage
 \subsubsection{{\sf GrB\_Matrix\_dup:}          copy a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_dup}
@@ -207,7 +211,6 @@ empty, just as if it were created fresh with \verb'GrB_Matrix_new'.  Analogous
 with \verb'A (:,:) = 0' in MATLAB.  The type and dimensions of \verb'A' do not
 change.  Any pending updates to the matrix are discarded.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_nrows:}        return the number of rows of a matrix}
 %-------------------------------------------------------------------------------
@@ -226,7 +229,6 @@ GrB_Info GrB_Matrix_nrows   // get the number of rows of a matrix
 \verb'GrB_Matrix_nrows' returns the number of rows of a matrix
 (\verb'nrows=size(A,1)' in MATLAB).
 
-% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_ncols:}        return the number of columns of a matrix}
 %-------------------------------------------------------------------------------
@@ -246,6 +248,7 @@ GrB_Info GrB_Matrix_ncols   // get the number of columns of a matrix
 \verb'GrB_Matrix_ncols' returns the number of columns of a matrix
 (\verb'ncols=size(A,2)' in MATLAB).
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_nvals:}        return the number of entries in a matrix}
 %-------------------------------------------------------------------------------
@@ -266,7 +269,6 @@ analogous to \verb'nvals = nnz(A)' in MATLAB, except that the implicit value in
 GraphBLAS need not be zero and \verb'nnz' (short for ``number of nonzeros'') in
 MATLAB is better described as ``number of entries'' in GraphBLAS.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_build:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -400,10 +402,10 @@ each with \verb'nvals' entries.  The interpretation of \verb'I_vector',
 \verb'J_vector', and \verb'X_vector' are controlled by descriptor settings
 \verb'GxB_ROWINDEX_LIST', \verb'GxB_COLINDEX_LIST', and \verb'GxB_VALUE_LIST',
 respectively.  The method can use either the indices or values of each of the
-input vectors; the default is to use the values.  See Section~\ref{fixme} for
-details.  %% FIXME
+input vectors; the default is to use the values.  See Section~\ref{ijxvector} for
+details.
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_build\_Scalar:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -432,7 +434,6 @@ returned by \verb'GrB_Vector_nvals' after the matrix is constructed).  All
 entries in the sparsity pattern of \verb'C' are identical, and equal to the
 input scalar value.
 
-% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_build\_Scalar\_Vector:} build a matrix from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -458,9 +459,9 @@ interpretation of \verb'I_vector' and \verb'J_vector' are controlled by
 descriptor settings \verb'GxB_ROWINDEX_LIST' and \verb'GxB_VALUE_LIST',
 respectively.  The method can use either the indices or values of the
 \verb'I_input' and \verb'J_vector' vectors; the default is to use the values.
-See Section~\ref{fixme} for details.  %% FIXME
+See Section~\ref{ijxvector} for details.
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_setElement:}   add an entry to a matrix}
 %-------------------------------------------------------------------------------
@@ -542,7 +543,6 @@ See Section~\ref{random} for an example of how to use
 \verb'GrB_Matrix_setElement'.
 If an error occurs, \verb'GrB_error(&err,C)' returns details about the error.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_extractElement:} get an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -594,7 +594,6 @@ functions.  Everything will work correctly and results will be predictable, it
 will just be slow.
 
 %-------------------------------------------------------------------------------
-\newpage
 \subsubsection{{\sf GxB\_Matrix\_isStoredElement:} check if entry present in matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_isStoredElement}
@@ -615,6 +614,7 @@ present in the matrix \verb'A'.  It returns \verb'GrB_SUCCESS' if the entry is
 present, or \verb'GrB_NO_VALUE' otherwise.  The value of \verb'A(i,j)' is not
 returned. It is otherwise identical to \verb'GrB_Matrix_extractElement'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_removeElement:} remove an entry from a matrix}
 %-------------------------------------------------------------------------------
@@ -728,8 +728,8 @@ decrease, entries that fall outside the resized matrix are deleted.  Unlike
 \ref{matrix_reshapedup}), entries remain in their same position after resizing
 the matrix.
 
-%-------------------------------------------------------------------------------
 \newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_reshape:} reshape a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_reshape}
@@ -781,8 +781,8 @@ NOTE: because an intermediate linear index must be computed for each entry,
 \verb'GxB_Matrix_reshape' cannot be used on matrices for which
 \verb'nrows*ncols' exceeds $2^{60}$.
 
-%-------------------------------------------------------------------------------
 \newpage
+%-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_reshapeDup:} reshape a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_reshapedup}
@@ -808,7 +808,6 @@ Section \ref{matrix_reshape}), except that creates a new output matrix
 \verb'C' that is reshaped from the input matrix \verb'A'.
 
 %-------------------------------------------------------------------------------
-% \newpage
 \subsubsection{{\sf GxB\_Matrix\_concat:} concatenate matrices   }
 %-------------------------------------------------------------------------------
 \label{matrix_concat}
@@ -861,7 +860,6 @@ into the type of \verb'C'.  Any settings made to \verb'C' by
 switch, and sparsity control) are unchanged.
 
 %-------------------------------------------------------------------------------
-% \newpage
 \subsubsection{{\sf GxB\_Matrix\_split:} split a matrix   }
 %-------------------------------------------------------------------------------
 \label{matrix_split}
@@ -923,7 +921,6 @@ statement \verb'C=diag(v,k)', where \verb'v' is a vector.
 The output matrix \verb'C' is a newly-constructed square matrix with the
 same type as the input vector \verb'v'.  No typecasting is performed.
 
-% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_diag:} build a diagonal matrix}
 %-------------------------------------------------------------------------------
@@ -953,7 +950,6 @@ into the type of \verb'C'.  Any settings made to \verb'C' by
 \verb'GrB_set' (format by row or by column, bitmap switch, hyper
 switch, and sparsity control) are unchanged.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_memoryUsage:} memory used by a matrix}
 %-------------------------------------------------------------------------------
@@ -970,7 +966,10 @@ GrB_Info GxB_Matrix_memoryUsage  // return # of bytes used for a matrix
 \end{verbatim} } \end{mdframed}
 
 Returns the memory space required for a matrix, in bytes.
+By default, any read-only components are not included in the total memory.
+This can be changed with via \verb'GrB_get'; see Section~\ref{get_set_global}.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_type:} type of a matrix}
 %-------------------------------------------------------------------------------
@@ -1015,7 +1014,6 @@ As a result, freeing \verb'atype2' would be the same as freeing the original
 \verb'atype'.
 
 %-------------------------------------------------------------------------------
-% \newpage
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_free}

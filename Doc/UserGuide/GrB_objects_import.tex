@@ -86,6 +86,7 @@ The matrix can be imported in one of three different formats:
         \verb'Ai[Ap[i]...Ap[i+1]-1]', and the values of those entries appear in
         the same locations in \verb'Ax'.
         The column indices need not be in any particular order.
+        See Section~\ref{format_sparse_by_row} for details of the sparse-by-row (CSR) format.
 
     \item \verb'GrB_CSC_FORMAT': % CSC format (equiv to GxB_SPARSE with GrB_COLMAJOR)
         Compressed-column format.  \verb'Ap' is an array of size \verb'ncols+1'.
@@ -95,6 +96,7 @@ The matrix can be imported in one of three different formats:
         \verb'Ai[Ap[j]...Ap[j+1]-1]', and the values of those entries appear in
         the same locations in \verb'Ax'.
         The row indices need not be in any particular order.
+        See Section~\ref{format_sparse_by_col} for details of the sparse-by-column (CSC) format.
 
     \item \verb'GrB_COO_FORMAT': % triplet format (like input to GrB*build)
         Coordinate format.  This is the same format as \newline

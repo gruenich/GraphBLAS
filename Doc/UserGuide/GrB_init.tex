@@ -150,7 +150,7 @@ Section~\ref{hypersparse}).  The largest \verb'GrB_Vector' that can be
 constructed is $2^{60}$-by-1.
 
 Internally, GraphBLAS may store its integer indices using 32-bit integers
-(as of GraphBLAS v10.0.0).
+(as of GraphBLAS v10.0.0).  See Section~\ref{integer_bits} for details.
 
 %===============================================================================
 \subsection{{\sf GrB\_init:} initialize GraphBLAS} %============================
@@ -257,7 +257,6 @@ compile-time version check with \verb'GRB_VERSION' would be stale.
 \verb'GrB_getVersion' thus provides a run-time access of the version of the C
 API Specification supported by the library.
 
-% \newpage
 %===============================================================================
 \subsection{{\sf GxB\_init:} initialize with alternate malloc} %================
 %===============================================================================
@@ -300,7 +299,6 @@ The following usage is identical to \verb'GrB_init(mode)':
     \begin{verbatim}
     GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
 
-\newpage
 %===============================================================================
 \subsection{{\sf GrB\_Info:} status code returned by GraphBLAS} %===============
 %===============================================================================
@@ -348,13 +346,12 @@ Error                         & value & description \\
 \verb'GrB_INDEX_OUT_OF_BOUNDS'  & -105 & a row or column index is out of bounds \\
 \verb'GrB_EMPTY_OBJECT'         & -106 & a input scalar has no entry \\
 \verb'GxB_JIT_ERROR'            &-7001 & JIT compiler error \\
-\verb'GxB_OUTPUT_IS_READONLY'   &-7003 & output matrix has readonly components \\
+\verb'GxB_OUTPUT_IS_READONLY'   &-7003 & output has read-only components \\
 \hline
 \end{tabular}
 \vspace{0.2in}
 }
 
-\newpage
 %===============================================================================
 \subsection{{\sf GrB\_error:} get more details on the last error} %=============
 %===============================================================================

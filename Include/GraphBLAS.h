@@ -536,7 +536,10 @@ typedef enum    // GrB_Desc_Field ;
     GxB_AxB_METHOD = 7090,  // descriptor for selecting C=A*B algorithm
     GxB_SORT = 7091,          // control sort in GrB_mxm
     GxB_COMPRESSION = 7092,   // select compression for serialize
-    GxB_IMPORT = 7093,        // secure vs fast GxB_pack
+    GxB_IMPORT = 7093,        // secure vs fast GxB_pack (historical)
+    GxB_ROWINDEX_LIST = 7094,       // how GrB_Vector I is intrepretted
+    GxB_COLINDEX_LIST = 7095,       // how GrB_Vector J is intrepretted
+    GxB_VALUE_LIST = 7096,          // how GrB_Vector X is intrepretted
 }
 GrB_Desc_Field ;
 
@@ -563,18 +566,21 @@ typedef enum    // GrB_Desc_Value ;
     GxB_AxB_HASH      = 7084,   // hash-based saxpy method
     GxB_AxB_SAXPY     = 7085,   // saxpy method (any kind)
 
-    // for GxB_IMPORT only:
-    GxB_SECURE_IMPORT = 7080    // GxB*_pack* methods trust their input data
+    // for GxB_IMPORT only: (historical)
+    GxB_SECURE_IMPORT = 7080,   // GxB*_pack* methods trust their input data
+
+    // for GxB_ROWINDEX_LIST, GxB_COLINDEX_LIST, and GxB_VALUE_LIST:
+    // GxB_USE_VALUES = ((int) GrB_DEFAULT) // use the values of the vector
+    GxB_USE_INDICES = 7060,  // use the indices of the vector
+    GxB_IS_STRIDE = 7061,    // use the values, of size 3, for lo:hi:inc
 }
 GrB_Desc_Value ;
 
 // default for GxB pack is to trust the input data
-#define GxB_FAST_IMPORT ((int) GrB_DEFAULT)
+#define GxB_FAST_IMPORT ((int) GrB_DEFAULT) /* historical */
 
 // settings for GxB_ROWINDEX_LIST, GxB_COLINDEX_LIST, and GxB_VALUE_LIST:
-#define GxB_USE_VALUES (0)      /* use the values of the vector (default) */
-#define GxB_USE_INDICES (7060)  /* use the indices of the vector */
-#define GxB_IS_STRIDE (7061)    /* use the values, of size 3, for lo:hi:inc */
+#define GxB_USE_VALUES ((int) GrB_DEFAULT) /* use the values of the vector */
 
 // Predefined descriptors and their values:
 
@@ -1368,16 +1374,16 @@ typedef enum    // GxB_Option_Field ;
     // GrB enums in the C API
     //--------------------------------------------------------------------------
 
-    // GrB_Descriptor only:
+    // GrB_Descriptor only, get/set:
     GrB_OUTP_FIELD = 0,     // descriptor for output of a method
     GrB_MASK_FIELD = 1,     // descriptor for the mask input of a method
     GrB_INP0_FIELD = 2,     // descriptor for the first input of a method
     GrB_INP1_FIELD = 3,     // descriptor for the second input of a method
 
-    // all objects, including GrB_GLOBAL:
+    // all objects, including GrB_GLOBAL, get/set (but only get for global):
     GrB_NAME = 10,          // name of the object, as a string
 
-    // GrB_GLOBAL only:
+    // GrB_GLOBAL, get only:
     GrB_LIBRARY_VER_MAJOR = 11,     // SuiteSparse:GraphBLAS version
     GrB_LIBRARY_VER_MINOR = 12,
     GrB_LIBRARY_VER_PATCH = 13,
@@ -1386,14 +1392,14 @@ typedef enum    // GxB_Option_Field ;
     GrB_API_VER_PATCH = 16,
     GrB_BLOCKING_MODE = 17,         // GrB_Mode
 
-    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar:
+    // GrB_GLOBAL, GrB_Matrix, GrB_Vector, GrB_Scalar, get/set:
     GrB_STORAGE_ORIENTATION_HINT = 100, // GrB_Orientation
 
-    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize):
+    // GrB_Matrix, GrB_Vector, GrB_Scalar (and void * serialize), get only:
     GrB_EL_TYPE_CODE = 102,         // a GrB_Type_Code (see below)
     GrB_EL_TYPE_STRING = 106,       // name of the type
 
-    // GrB_*Op, GrB_Monoid, and GrB_Semiring:
+    // GrB_*Op, GrB_Monoid, and GrB_Semiring, get only:
     GrB_INP0_TYPE_CODE = 103,       // GrB_Type_Code
     GrB_INP1_TYPE_CODE = 104,
     GrB_OUTP_TYPE_CODE = 105,
@@ -1401,7 +1407,7 @@ typedef enum    // GxB_Option_Field ;
     GrB_INP1_TYPE_STRING = 108,
     GrB_OUTP_TYPE_STRING = 109,
 
-    // GrB_Type (readable only):
+    // GrB_Type, get only:
     GrB_SIZE = 110,                 // size of the type
 
     //--------------------------------------------------------------------------
@@ -1409,24 +1415,24 @@ typedef enum    // GxB_Option_Field ;
     //--------------------------------------------------------------------------
 
     // GrB_Type, GrB_UnaryOp, GrB_BinaryOp, GrB_IndexUnaryOp,
-    // and GxB_IndexBinaryOp
+    // and GxB_IndexBinaryOp, get/set:
     GxB_JIT_C_NAME = 7041,          // C type or function name
     GxB_JIT_C_DEFINITION = 7042,    // C typedef or function definition
 
-    // GrB_Monoid and GrB_Semiring:
+    // GrB_Monoid and GrB_Semiring, get only:
     GxB_MONOID_IDENTITY = 7043,     // monoid identity value
     GxB_MONOID_TERMINAL = 7044,     // monoid terminal value
     GxB_MONOID_OPERATOR = 7045,     // monoid binary operator
 
-    // GrB_Semiring only:
+    // GrB_Semiring, get only:
     GxB_SEMIRING_MONOID = 7046,     // semiring monoid
     GxB_SEMIRING_MULTIPLY = 7047,   // semiring multiplicative op
 
-    // GrB_BinaryOp and GxB_IndexBinaryOp:
+    // GrB_BinaryOp and GxB_IndexBinaryOp, get only::
     GxB_THETA_TYPE_CODE = 7050,     // for binary and index binary ops
     GxB_THETA_TYPE_STRING = 7051,
 
-    // GrB_BinaryOp or GrB_Semiring:
+    // GrB_BinaryOp or GrB_Semiring, get only:
     GxB_THETA = 7052,               // to get the value of theta
 
     //------------------------------------------------------------
@@ -1464,7 +1470,7 @@ typedef enum    // GxB_Option_Field ;
     GxB_WILL_WAIT = 7076,           // true if GrB_wait(A) will do anything
 
     //------------------------------------------------------------
-    // GrB_get for GrB_GLOBAL:
+    // GrB_GLOBAL, get only:
     //------------------------------------------------------------
 
     GxB_MODE = 7003,                 // Historical; use GrB_BLOCKING_MODE
@@ -1516,14 +1522,6 @@ typedef enum    // GxB_Option_Field ;
     GxB_JIT_ERROR_LOG = 7033,        // CPU JIT: error log file
 
     GxB_JIT_CUDA_PREFACE = 7100,     // CUDA JIT C++ preface
-
-    //------------------------------------------------------------
-    // GrB_get/GrB_set for GrB_Descriptor:
-    //------------------------------------------------------------
-
-    GxB_ROWINDEX_LIST = 7062,       // how GrB_Vector I is intrepretted
-    GxB_COLINDEX_LIST = 7063,       // how GrB_Vector J is intrepretted
-    GxB_VALUE_LIST = 7064,          // how GrB_Vector X is intrepretted
 
 } GxB_Option_Field ;
 

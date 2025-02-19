@@ -19,7 +19,14 @@ serialization/deserialization use essentially the same format for the blob, so
 the library versions are compatible with each other.  Version v9.0.0 adds the
 \verb'GrB_NAME' and \verb'GrB_EL_TYPE_STRING' to the blob in an upward
 compatible manner, so that older versions of SS:GraphBLAS can read the blobs
-created by v9.0.0; they simply ignore those components.
+created by v9.0.0; they simply ignore those components.  SS:GraphBLAS v10 adds
+32/64-bit integers, and can read the blobs created by any prior version of
+GraphBLAS (they be deserialized with all 64-bit integers however).  If an older
+version of SS:GraphBLAS (v9 or earlier) attempts to deserialize a blob
+containing a matrix with 32-bit integers, it will safely report that the blob
+is invalid and refuse to deserialize it.  If SS:GraphBLAS v10 creates a
+serialized blob with all-64-bit integers, then it can be read correctly by
+SS:GraphBLAS v9, and likely also be earlier versions.
 
 There are two forms of serialization: \verb'GrB*serialize' and
 \verb'GxB*serialize'.  For the \verb'GrB' form, the blob must first be
@@ -157,6 +164,7 @@ GraphBLAS function   & purpose                                      & Section \\
 % \verb'realloc''d to this revised size if desired (this is optional).
 % ZSTD (level 1) compression is used to construct a compact blob.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_serialize:}      serialize a vector}
 %-------------------------------------------------------------------------------
@@ -183,7 +191,6 @@ By default, ZSTD (level 1) compression is used, but other options can be
 selected via the descriptor.  Serializing a vector is identical to serializing
 a matrix; see Section \ref{matrix_serialize_GxB} for more information.
 
-\newpage
 %-------------------------------------------------------------------------------
 % \subsubsection{{\sf GrB\_Vector\_deserialize:}    deserialize a vector}
 %-------------------------------------------------------------------------------
@@ -245,6 +252,7 @@ to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
 method, either the \verb'free' function passed to \verb'GxB_init' or
 the C11 \verb'free' if \verb'GrB_init' was used.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_serializeSize:}  return size of serialized matrix}
 %-------------------------------------------------------------------------------
@@ -270,7 +278,6 @@ After the matrix is serialized, the actual size used is returned, and the blob
 may be \verb'realloc''d to that size if desired.
 This method is not required for \verb'GxB_Matrix_serialize'.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_serialize:}      serialize a matrix}
 %-------------------------------------------------------------------------------
@@ -300,6 +307,7 @@ the matrix.  After calling \verb'GrB_Matrix_serialize', the blob may be
 \verb'realloc''d to this revised size if desired (this is optional).
 ZSTD (level 1) compression is used to construct a compact blob.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_serialize:}      serialize a matrix}
 %-------------------------------------------------------------------------------
@@ -331,7 +339,6 @@ to initialize GraphBLAS.  The blob must be freed by the matching \verb'free'
 method, either the \verb'free' function passed to \verb'GxB_init' or
 the C11 \verb'free' if \verb'GrB_init' was used.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_deserialize:}    deserialize a matrix}
 %-------------------------------------------------------------------------------
@@ -391,5 +398,4 @@ GrB_Info GxB_Matrix_deserialize     // deserialize blob into a GrB_Matrix
 } \end{mdframed}
 
 Identical to \verb'GrB_Matrix_deserialize'.
-
 

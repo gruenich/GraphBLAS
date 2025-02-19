@@ -576,7 +576,7 @@ GrB_Info GxB_load_Matrix_from_Container     // GrB_Matrix <- GxB_Container
 
 GrB_Info GxB_load_Vector_from_Container     // GrB_Vector <- GxB_Container
 (
-    GrB_Vector A,               // GrB_Vector to load from the Container
+    GrB_Vector V,               // GrB_Vector to load from the Container
     GxB_Container Container,    // Container with contents to load into A
     const GrB_Descriptor desc   // currently unused
 ) ;

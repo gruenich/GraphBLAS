@@ -444,13 +444,13 @@ indexing (the mask of GraphBLAS) is extremely faster with GraphBLAS as compared
 in MATLAB R2019b; differences of up to 250,000x have been observed (0.4 seconds
 in GraphBLAS versus 28 hours in MATLAB).
 
-All of the 28 variants (each with their own source code) are either
-asymptotically optimal, or to within a log factor of being asymptotically
-optimal.  The methods are also fully parallel.  For hypersparse matrices, the
-term $n$ in the expressions in the above discussion is dropped, and is replaced
-with $h \log h$, at the worst case, where $h << n$ is the number of non-empty
-columns of a hypersparse matrix stored by column, or the number of non-empty
-rows of a hypersparse matrix stored by row.  In many methods, $n$ is replaced
-with $h$, not $h \log h$.
+All of the algorithmic variants of assign/subassign in SuiteSparse:GraphBLAS
+are either asymptotically optimal, or to within a log factor of being
+asymptotically optimal.  The methods are also fully parallel.  For hypersparse
+matrices, the term $n$ in the expressions in the above discussion is dropped,
+and is replaced with $h \log h$, at the worst case, where $h << n$ is the
+number of non-empty columns of a hypersparse matrix stored by column, or the
+number of non-empty rows of a hypersparse matrix stored by row.  In many
+methods, $n$ is replaced with $h$, not $h \log h$.
 
 

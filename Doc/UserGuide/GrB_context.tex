@@ -100,13 +100,17 @@ The next sections describe the methods for a \verb'GxB_Context':
 GraphBLAS function   & purpose                                      & Section \\
 \hline
 \verb'GxB_Context_new'           & create a context                     & \ref{context_new} \\
-\verb'GrB_get'                   & get a value from a context           & \ref{get_set_context} \\
-\verb'GrB_set'                   & set a value in a context             & \ref{get_set_context} \\
 \verb'GxB_Context_engage'        & engage a context                     & \ref{context_engage} \\
 \verb'GxB_Context_disengage'     & disengage a context                  & \ref{context_disengage} \\
-\verb'GxB_Context_fprint'        & check/print a context                & \ref{context_print} \\
 \verb'GxB_Context_free'          & free a context                       & \ref{context_free} \\
 \verb'GxB_Context_wait'          & wait for a context                   & \ref{context_wait} \\
+\hline
+\hline
+\verb'GrB_get'                   & get a value from a context           & \ref{get_set_context} \\
+\verb'GrB_set'                   & set a value in a context             & \ref{get_set_context} \\
+\hline
+\hline
+\verb'GxB_Context_fprint'        & check/print a context                & \ref{context_print} \\
 \hline
 \end{tabular}
 }
@@ -130,7 +134,6 @@ A new context is created and initialized with the current global settings for
 The context object will not have an effect on any calls to GraphBLAS until it
 is {\em engaged} by a user thread.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_Context\_engage:}  engaging context}
 %-------------------------------------------------------------------------------

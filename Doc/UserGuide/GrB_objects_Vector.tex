@@ -218,7 +218,6 @@ analogous to \verb'nvals = nnz(v)' in MATLAB, except that the implicit value in
 GraphBLAS need not be zero and \verb'nnz' (short for ``number of nonzeros'') in
 MATLAB is better described as ``number of entries'' in GraphBLAS.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_build:}         build a vector from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -262,7 +261,6 @@ created by \verb'GxB_BinaryOp_new_IndexOp'.
 non-commutative.
 \end{alert}
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_build\_Vector:} build a vector from a set of tuples}
 %-------------------------------------------------------------------------------
@@ -288,7 +286,7 @@ that the inputs \verb'I' and \verb'X' are \verb'GrB_Vector' objects, each with
 \verb'X_vector' are controlled by descriptor settings \verb'GxB_ROWINDEX_LIST'
 and \verb'GxB_VALUE_LIST', respectively.  The method can use either the indices
 or values of each of the input vectors; the default is to use the values.  See
-Section~\ref{fixme} for details.  %% FIXME
+Section~\ref{ijxvector} for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_build\_Scalar:} build a vector from a set of tuples}
@@ -340,7 +338,7 @@ are \verb'GrB_Vector' objects, each with \verb'nvals' entries.  The
 interpretation of \verb'I_vector' is controlled by the descriptor setting
 \verb'GxB_ROWINDEX_LIST'.  The method
 can use either the indices or values of the \verb'I_input' vector; the default
-is to use the values.  See Section~\ref{fixme} for details.  %% FIXME
+is to use the values.  See Section~\ref{ijxvector} for details.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_setElement:}    add an entry to a vector}
@@ -365,6 +363,7 @@ matrix, \verb'A(i,0) = x', where the column index for a vector is implicitly
 \verb'GrB_Matrix_setElement' in Section~\ref{matrix_setElement}.
 If an error occurs, \verb'GrB_error(&err,w)' returns details about the error.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Vector\_extractElement:} get an entry from a vector}
 %-------------------------------------------------------------------------------
@@ -393,7 +392,6 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 \verb'x = A(i,0)' from an \verb'n'-by-1 matrix; see
 Section~\ref{matrix_extractElement}.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_isStoredElement:} check if entry present in vector}
 %-------------------------------------------------------------------------------
@@ -559,6 +557,8 @@ GrB_Info GxB_Vector_memoryUsage  // return # of bytes used for a vector
 \end{verbatim} } \end{mdframed}
 
 Returns the memory space required for a vector, in bytes.
+By default, any read-only components are not included in the total memory.
+This can be changed with via \verb'GrB_get'; see Section~\ref{get_set_global}.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Vector\_type:} type of a vector}
