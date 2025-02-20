@@ -39,6 +39,38 @@ instead.  Eventually, all GraphBLAS/Demos methods will be removed, and LAGraph
 will serve all uses: for illustration, benchmarking, and production uses.}
 
 %----------------------------------------
+\subsection{Requirements}
+%----------------------------------------
+
+GraphBLAS requires \verb'cmake' version 3.20 or later.
+It optionally can use OpenMP for best performance.
+It requires the lz4 and zstd compression packages, but they are bundled
+with the GraphBLAS distribution and compiled into the GraphBLAS library
+by the cmake script.
+
+Using the GraphBLAS JIT has many requirements, but it greatly increases
+performance, particularly with user-defined types and operators, and when
+typecasting is done with built-in types and operators.
+
+The cmake build script sets up the JIT to use the compiler and compiler
+flags used to build GraphBLAS itself.  If the target environment does not
+have a compiler (the Apple iPad for example), then the JIT will not work.
+
+The JIT requires access to a cache folder, which should be preserved
+even after a program that uses GraphBLAS finishes, so that JIT kernels do not
+have to continually be recompiled.  By default the folder is
+\verb'~/.SuiteSparse/GrBX.Y.Z' on Linux/Mac, where \verb'X.Y.Z' is the version
+of GraphBLAS you have.  On Windows, the location is determined by your
+\verb'LOCALAPPDATA' environment variable, where the folder is
+\verb'SuiteSparse/GrBX.Y.Z' inside that location.  File locking is required,
+so if the file system does not support file locking, the JIT will not work and
+performance will suffer (the \verb'make demos' will fail since it tests this
+condition).  If this occurs, try making your \verb'SuiteSparse' cache folder
+a link to another a location on another file system that supports file locking,
+or set an environment variable, \verb'GRAPHBLAS_CACHE_PATH', to point to your
+a cache folder location on a file system that supports file locking.
+
+%----------------------------------------
 \subsection{Quick Start for MATLAB/Octave}
 %----------------------------------------
 
