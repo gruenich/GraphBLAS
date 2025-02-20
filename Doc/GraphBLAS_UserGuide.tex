@@ -14832,12 +14832,31 @@ GraphBLAS folder.
 
 \begin{itemize}
 
-\item Feb 18, 2025: version 9.4.5
+\item Feb 20, 2025: version 9.4.5
 
     \begin{itemize}
     \item (59) bug fix: the \verb'GxB_NO_INT32' and \verb'GxB_NOT_INT64' flags
         in \verb'GB_control.h' did not completely remove some of the INT32 and
         INT64 factory kernels.  Caught by Erik Welch, NVIDIA.
+
+    \item workaround for an AppleClang compiler bug:  On the Mac, the
+        \verb'Source/mask/GB_masker.c' file
+        triggers a bug in AppleClang 16.0.0 with -O3 in (MacOS 14.6.1 (23G93),
+        Xcode 16.2, Apple clang version 16.0.0, clang-1600.0.26.6).  It also
+        fails in MacOS 15.2 (Target: arm64-apple-darwin23.6.0).  The bug is
+        triggered by these tests in LAGraph (v1.2 branch, unreleased, Jan 4,
+        2025):
+        \begin{verbatim}
+	 39 - LAGraphX_BF (SIGTRAP)
+	 40 - LAGraphX_Coarsen_Matching (Failed)
+	 41 - LAGraphX_FastGraphletTransform (SIGTRAP)
+	 49 - LAGraphX_PageRankGX (SIGTRAP)
+	 54 - LAGraphX_SquareClustering (SIGTRAP)
+	 61 - LAGraphX_msf (Failed)
+        \end{verbatim}
+        When using clang, optimization is turned off for this file.  This has
+        no impact on performance since \verb'GB_masker.c' is very simple,
+        consisting of a single sequence of calls to other methods.
     \end{itemize}
 
 \item Feb 17, 2024: version 9.4.4
