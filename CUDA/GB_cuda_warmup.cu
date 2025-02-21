@@ -12,7 +12,7 @@
 
 bool GB_cuda_warmup (int device)
 {
-    
+    printf ("cuda warmup %d\n", device) ;
     //--------------------------------------------------------------------------
     // set the device
     //--------------------------------------------------------------------------
@@ -51,6 +51,7 @@ bool GB_cuda_warmup (int device)
     // return result
     //--------------------------------------------------------------------------
 
+    printf ("cuda warmup %d OK\n", device) ;
     return (true) ;
 }
 

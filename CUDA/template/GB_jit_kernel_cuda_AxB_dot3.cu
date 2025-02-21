@@ -311,11 +311,11 @@ GB_JIT_CUDA_KERNEL_DOT3_PROTO (GB_jit_kernel)
         int64_t blockbuckets_size = NBUCKETS * number_of_blocks_1 ;
         int64_t nanobuckets_size = blockbuckets_size * threads_per_block ;
 
-        Nanobuckets = GB_MALLOC_MEMORY (nanobuckets_size, sizeof (int64_t), &Nb_size) ;
-        Blockbucket = GB_MALLOC_MEMORY (blockbuckets_size, sizeof (int64_t), &Bb_size) ;
-        Bucketp = GB_MALLOC_MEMORY (NBUCKETS+1, sizeof (int64_t), &Bup_size) ;
-        offset = GB_MALLOC_MEMORY (NBUCKETS+1, sizeof (int64_t), &O_size) ;
-        Bucket = GB_MALLOC_MEMORY (mnz, sizeof (int64_t), &Bu_size) ;
+        Nanobuckets = (int64_t *) GB_MALLOC_MEMORY (nanobuckets_size, sizeof (int64_t), &Nb_size) ;
+        Blockbucket = (int64_t *) GB_MALLOC_MEMORY (blockbuckets_size, sizeof (int64_t), &Bb_size) ;
+        Bucketp = (int64_t *) GB_MALLOC_MEMORY (NBUCKETS+1, sizeof (int64_t), &Bup_size) ;
+        offset = (int64_t *) GB_MALLOC_MEMORY (NBUCKETS+1, sizeof (int64_t), &O_size) ;
+        Bucket = (int64_t *) GB_MALLOC_MEMORY (mnz, sizeof (int64_t), &Bu_size) ;
 
         memset (offset, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
         memset (Bucketp, 0, (NBUCKETS+1) * sizeof (int64_t)) ;
