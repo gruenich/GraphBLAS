@@ -14,6 +14,21 @@ Mar 1, 2025: version 10.0.0
         future updates to enum parameters, including the GrB_Field.
     * GxB_JIT_ERROR: added in 9.4.x, changed value to avoid conflict with
         LAGraph error codes.
+    * pack/unpack: these are declared historical; they still work but use
+        64-bit integers only.  Use the new GxB_Container methods instead.
+    * GxB_Matrix_iso and GxB_Vector_iso: declared historical; use GrB_get
+        with the new GxB_ISO enum.
+    * GxB_Matrix_type, GxB_Vector_type, GxB_Scalar_type: no longer historical;
+        added back to the user guide.
+    * Summary: the API is upward-compatible with 9.4.x, but only after
+        the user application is recompiled with GraphBLAS v10.0.0.
+        As a result, the SO version must increase from 9 to 10.
+
+Feb 20, 2025: version 9.4.5
+
+    * (59) bug fix: the GxB_NO_INT32 and GxB_NOT_INT64 flags in GB_control.h
+        did not completely remove some of the INT32 and INT64 factory kernels.
+        Caught by Erik Welch, NVIDIA.
     * AppleClang compiler bug:  On the Mac, the Source/mask/GB_masker.c file
         triggers a bug in AppleClang 16.0.0 with -O3 in (MacOS 14.6.1 (23G93),
         Xcode 16.2, Apple clang version 16.0.0, clang-1600.0.26.6).  It also
@@ -29,18 +44,11 @@ Mar 1, 2025: version 10.0.0
         When using clang, optimization is turned off for this file.  This has
         no impact on performance since GB_masker.c is very simple, consisting
         of a single sequence of calls to other methods.
-    * pack/unpack: these are declared historical; they still work but use
-        64-bit integers only.  Use the new GxB_Container methods instead.
-    * GxB_Matrix_iso and GxB_Vector_iso: declared historical; use GrB_get
-        with the new GxB_ISO enum.
-    * GxB_Matrix_type, GxB_Vector_type, GxB_Scalar_type: no longer historical;
-        added back to the user guide.
-    * Summary: the API is upward-compatible with 9.4.x, but only after
-        the user application is recompiled with GraphBLAS v10.0.0.
-        As a result, the SO version must increase from 9 to 10.
 
-Dec 20, 2024: version 9.4.3
+Feb 17, 2025: version 9.4.4
 
+    * (58) bug fix: semirings with user-defined monoids and the GrB_ONEB or
+        GxB_PAIR operators caused a JIT compiler error.  Caught by Gabe Gomez.
     * (57) bug fix: GraphBLAS.h header: remove duplicate definitions of
         GxB_MAX_FIRST_* semirings (incompletely moved to 'historical' section
         in 9.4.2).

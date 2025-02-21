@@ -28,6 +28,30 @@
     \item \verb'GxB_JIT_ERROR': added in 9.4.x, changed value to avoid conflict
         with LAGraph error codes.
 
+    \item pack/unpack: these are declared historical; they still work but use
+        64-bit integers only.  Use the new \verb'GxB_Container' methods
+        instead.
+
+    \item \verb'GxB_Matrix_iso' and \verb'GxB_Vector_iso': declared
+        historical; use \verb'GrB_get' with the new \verb'GxB_ISO' enum.
+
+    \item \verb'GxB_Matrix_type', \verb'GxB_Vector_type',
+        \verb'GxB_Scalar_type': no longer historical;
+        added back to the user guide.
+
+    \item Summary: the API is upward-compatible with 9.4.x, but only after
+        the user application is recompiled with GraphBLAS v10.0.0.
+        As a result, the SO version must increase from 9 to 10.
+
+    \end{itemize}
+
+\item Feb 20, 2025: version 9.4.5
+
+    \begin{itemize}
+    \item (59) bug fix: the \verb'GxB_NO_INT32' and \verb'GxB_NOT_INT64' flags
+        in \verb'GB_control.h' did not completely remove some of the INT32 and
+        INT64 factory kernels.  Caught by Erik Welch, NVIDIA.
+
     \item workaround for an AppleClang compiler bug:  On the Mac, the
         \verb'Source/mask/GB_masker.c' file
         triggers a bug in AppleClang 16.0.0 with -O3 in (MacOS 14.6.1 (23G93),
@@ -46,30 +70,6 @@
         When using clang, optimization is turned off for this file.  This has
         no impact on performance since \verb'GB_masker.c' is very simple,
         consisting of a single sequence of calls to other methods.
-
-    \item pack/unpack: these are declared historical; they still work but use
-        64-bit integers only.  Use the new \verb'GxB_Container' methods
-        instead.
-
-    \item \verb'GxB_Matrix_iso' and \verb'GxB_Vector_iso': declared
-        historical; use \verb'GrB_get' with the new \verb'GxB_ISO' enum.
-
-    \item \verb'GxB_Matrix_type', \verb'GxB_Vector_type',
-        \verb'GxB_Scalar_type': no longer historical;
-        added back to the user guide.
-
-    \item Summary: the API is upward-compatible with 9.4.x, but only after
-        the user application is recompiled with GraphBLAS v10.0.0.
-        As a result, the SO version must increase from 9 to 10.
-
-    \end{itemize}
-
-\item Feb 18, 2025: version 9.4.5
-
-    \begin{itemize}
-    \item (59) bug fix: the \verb'GxB_NO_INT32' and \verb'GxB_NOT_INT64' flags
-        in \verb'GB_control.h' did not completely remove some of the INT32 and
-        INT64 factory kernels.  Caught by Erik Welch, NVIDIA.
     \end{itemize}
 
 \item Feb 17, 2024: version 9.4.4
