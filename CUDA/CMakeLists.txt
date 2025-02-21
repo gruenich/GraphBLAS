@@ -16,7 +16,10 @@ project ( GRAPHBLAS_CUDA
     VERSION "${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}"
     LANGUAGES CXX CUDA )
 
-cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
+if ( CMAKE_VERSION VERSION_GREATER_EQUAL 3.24 )
+    # requires cmake 3.24:
+    cmake_policy ( SET CMP0135 NEW )    # URL download timestamp policy
+endif ( )
 
 set ( CMAKE_CXX_STANDARD 17 )
 
