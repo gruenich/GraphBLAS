@@ -49,6 +49,19 @@
 // R is iso if both C and Z are iso and zij == cij.  This is handled in
 // GB_masker_phase2.
 
+#include "include/GB_compiler.h"
+#if GB_COMPILER_CLANG
+// On the Mac, this file triggers a bug in AppleClang 16.0.0 when -O3
+// optimization is used (MacOS 14.6.1 (23G93), Xcode 16.2):
+//      Apple clang version 16.0.0 (clang-1600.0.26.6)
+//      Target: arm64-apple-darwin23.6.0
+//      Thread model: posix
+//      InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+// See the test for R_sparsity below.  R_sparsity is 4 but the if test (for
+// R_sparsity 1 or 2) evaluates as true, and then the assertion fails.
+#pragma clang optimize off
+#endif
+
 #include "mask/GB_mask.h"
 #include "add/GB_add.h"
 #define GB_FREE_ALL ;

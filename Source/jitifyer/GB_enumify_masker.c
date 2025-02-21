@@ -10,7 +10,7 @@
 #include "GB.h"
 #include "jitifyer/GB_stringify.h"
 
-uint64_t GB_enumify_masker  // enumify a masker problem
+void GB_enumify_masker  // enumify a masker problem
 (
     // output:
     uint64_t *method_code,  // unique encoding of the entire operation
