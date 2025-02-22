@@ -36,7 +36,8 @@
 #if !defined ( GBNCPUFEAT )
 
     // include the implementation files from cpu_features/src/impl_*.c
-    #include "src/impl_aarch64.c"
+    #include "src/impl_aarch64_linux_or_android.c"
+    #include "src/impl_aarch64_windows.c"
     #include "src/impl_arm_linux_or_android.c"
     #include "src/impl_mips_linux_or_android.c"
     #include "src/impl_ppc_linux.c"
